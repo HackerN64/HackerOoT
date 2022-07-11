@@ -6,40 +6,24 @@ SHELL = /bin/bash
 
 # Build options can either be changed by modifying the makefile, or by building with 'make SETTING=value'
 
-# If COMPARE is 1, check the output md5sum after building
-COMPARE ?= 1
-# If NON_MATCHING is 1, define the NON_MATCHING C flag when building
-NON_MATCHING ?= 1
-# If ORIG_COMPILER is 1, compile with QEMU_IRIX and the original compiler
-ORIG_COMPILER ?= 0
-# If COMPILER is "gcc", compile with GCC instead of IDO.
+# If COMPILER is "gcc", compile with GCC.
 COMPILER ?= gcc
 
 CFLAGS ?=
 CPPFLAGS ?=
 
-# ORIG_COMPILER cannot be combined with a non-IDO compiler. Check for this case and error out if found.
-ifneq ($(COMPILER),ido)
-  ifeq ($(ORIG_COMPILER),1)
-    $(error ORIG_COMPILER can only be used with the IDO compiler. Please check your Makefile variables and try again)
-  endif
-endif
-
 ifeq ($(COMPILER),gcc)
   CFLAGS += -DCOMPILER_GCC
   CPPFLAGS += -DCOMPILER_GCC
-  NON_MATCHING := 1
 endif
 
 # Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
 # In nearly all cases, not having 'mips-linux-gnu-*' binaries on the PATH is indicative of missing dependencies
 MIPS_BINUTILS_PREFIX ?= mips-linux-gnu-
 
-ifeq ($(NON_MATCHING),1)
-  CFLAGS += -DNON_MATCHING -DAVOID_UB
-  CPPFLAGS += -DNON_MATCHING -DAVOID_UB
-  COMPARE := 0
-endif
+CFLAGS += -DNON_MATCHING -DAVOID_UB
+CPPFLAGS += -DNON_MATCHING -DAVOID_UB
+COMPARE := 0
 
 PROJECT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
@@ -71,24 +55,7 @@ endif
 ifeq ($(COMPILER),gcc)
   CC       := $(MIPS_BINUTILS_PREFIX)gcc
 else 
-ifeq ($(COMPILER),ido)
-  CC       := tools/ido_recomp/$(DETECTED_OS)/7.1/cc
-  CC_OLD   := tools/ido_recomp/$(DETECTED_OS)/5.3/cc
-else
-$(error Unsupported compiler. Please use either ido or gcc as the COMPILER variable.)
-endif
-endif
-
-# if ORIG_COMPILER is 1, check that either QEMU_IRIX is set or qemu-irix package installed
-ifeq ($(ORIG_COMPILER),1)
-  ifndef QEMU_IRIX
-    QEMU_IRIX := $(shell which qemu-irix)
-    ifeq (, $(QEMU_IRIX))
-      $(error Please install qemu-irix package or set QEMU_IRIX env var to the full qemu-irix binary path)
-    endif
-  endif
-  CC        = $(QEMU_IRIX) -L tools/ido7.1_compiler tools/ido7.1_compiler/usr/bin/cc
-  CC_OLD    = $(QEMU_IRIX) -L tools/ido5.3_compiler tools/ido5.3_compiler/usr/bin/cc
+$(error Unsupported compiler. Please use either gcc as the COMPILER variable.)
 endif
 
 AS         := $(MIPS_BINUTILS_PREFIX)as
@@ -127,20 +94,7 @@ else
   MIPS_VERSION := -mips2
 endif
 
-ifeq ($(COMPILER),ido)
-  # Have CC_CHECK pretend to be a MIPS compiler
-  MIPS_BUILTIN_DEFS := -D_MIPS_ISA_MIPS2=2 -D_MIPS_ISA=_MIPS_ISA_MIPS2 -D_ABIO32=1 -D_MIPS_SIM=_ABIO32 -D_MIPS_SZINT=32 -D_MIPS_SZLONG=32 -D_MIPS_SZPTR=32
-  CC_CHECK  = gcc -fno-builtin -fsyntax-only -funsigned-char -std=gnu90 -D_LANGUAGE_C -DNON_MATCHING $(MIPS_BUILTIN_DEFS) $(INC) $(CHECK_WARNINGS)
-  ifeq ($(shell getconf LONG_BIT), 32)
-    # Work around memory allocation bug in QEMU
-    export QEMU_GUEST_BASE := 1
-  else
-    # Ensure that gcc (warning check) treats the code as 32-bit
-    CC_CHECK += -m32
-  endif
-else
-  CC_CHECK  = @:
-endif
+CC_CHECK  = @:
 
 OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
 
@@ -152,11 +106,7 @@ ELF := $(ROM:.z64=.elf)
 # description of ROM segments
 SPEC := spec
 
-ifeq ($(COMPILER),ido)
-SRC_DIRS := $(shell find src -type d -not -path src/gcc_fix)
-else
 SRC_DIRS := $(shell find src -type d)
-endif
 
 ASSET_BIN_DIRS := $(shell find assets/* -type d -not -path "assets/xml*" -not -path "assets/text")
 ASSET_FILES_XML := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.xml))
@@ -189,57 +139,12 @@ TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),build/$f) \
 # create build directories
 $(shell mkdir -p build/baserom build/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS) $(ASSET_BIN_DIRS),build/$(dir)))
 
-ifeq ($(COMPILER),ido)
-build/src/code/fault.o: CFLAGS += -trapuv
-build/src/code/fault.o: OPTFLAGS := -O2 -g3
-build/src/code/fault_drawer.o: CFLAGS += -trapuv
-build/src/code/fault_drawer.o: OPTFLAGS := -O2 -g3
-build/src/code/ucode_disas.o: OPTFLAGS := -O2 -g3
-build/src/code/fmodf.o: OPTFLAGS := -g
-build/src/code/__osMemset.o: OPTFLAGS := -g
-build/src/code/__osMemmove.o: OPTFLAGS := -g
-
-build/src/libultra/libc/absf.o: OPTFLAGS := -O2 -g3
-build/src/libultra/libc/sqrt.o: OPTFLAGS := -O2 -g3
-build/src/libultra/libc/ll.o: OPTFLAGS := -O1
-build/src/libultra/libc/ll.o: MIPS_VERSION := -mips3 -32
-build/src/libultra/libc/llcvt.o: OPTFLAGS := -O1
-build/src/libultra/libc/llcvt.o: MIPS_VERSION := -mips3 -32
-
-build/src/libultra/os/%.o: OPTFLAGS := -O1
-build/src/libultra/io/%.o: OPTFLAGS := -O2
-build/src/libultra/libc/%.o: OPTFLAGS := -O2
-build/src/libultra/rmon/%.o: OPTFLAGS := -O2
-build/src/libultra/gu/%.o: OPTFLAGS := -O2
-
-build/assets/misc/z_select_static/%.o: CFLAGS += -DF3DEX_GBI
-
-build/src/libultra/gu/%.o: CC := $(CC_OLD)
-build/src/libultra/io/%.o: CC := $(CC_OLD)
-build/src/libultra/libc/%.o: CC := $(CC_OLD)
-build/src/libultra/os/%.o: CC := $(CC_OLD)
-build/src/libultra/rmon/%.o: CC := $(CC_OLD)
-
-build/src/code/jpegutils.o: CC := $(CC_OLD)
-build/src/code/jpegdecoder.o: CC := $(CC_OLD)
-
-build/src/boot/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
-build/src/code/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
-build/src/overlays/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
-
-build/assets/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
-else
 build/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
 build/src/%.o: CC := $(CC) -fexec-charset=euc-jp
-endif
 
 #### Main Targets ###
 
 all: $(ROM)
-ifeq ($(COMPARE),1)
-	@md5sum $(ROM)
-	@md5sum -c checksum.md5
-endif
 
 clean:
 	$(RM) -r $(ROM) $(ELF) build
