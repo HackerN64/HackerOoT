@@ -2,6 +2,8 @@
  * ROM spec file
  */
 
+#include "include/config/config_all.h"
+
 beginseg
     name "makerom"
     include "build/src/makerom/rom_header.o"
