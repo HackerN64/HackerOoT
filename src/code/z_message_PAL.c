@@ -3,6 +3,8 @@
 #include "vt.h"
 #include "assets/textures/parameter_static/parameter_static.h"
 
+#include "config/config_game.h"
+
 s16 sTextFade = false; // original name: key_off_flag ?
 
 u8 D_8014B2F4 = 0;
@@ -1145,7 +1147,7 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
         }
     }
     if (msgCtx->textDelayTimer == 0) {
-        msgCtx->textDrawPos = i + 1;
+        msgCtx->textDrawPos = i + TEXT_SPEED;
         msgCtx->textDelayTimer = msgCtx->textDelay;
     } else {
         msgCtx->textDelayTimer--;
