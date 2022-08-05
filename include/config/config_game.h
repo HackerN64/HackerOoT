@@ -10,4 +10,7 @@
 // Wearing bunnyhood has the same functionality as in MM
 #define MM_BUNNYHOOD
 
+// Configure block push speed multiplier
+#define BLOCK_PUSH_SPEED 3
+
 #endif
