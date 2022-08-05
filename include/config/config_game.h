@@ -4,4 +4,7 @@
 // Configure text speed (1 is vanilla)
 #define TEXT_SPEED 2
 
+// Rupee counter symbol changes color with wallet upgrades like in MM
+#define WALLET_COLORS
+
 #endif
