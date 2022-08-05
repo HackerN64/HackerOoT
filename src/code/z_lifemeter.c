@@ -1,6 +1,8 @@
 #include "global.h"
 #include "assets/textures/parameter_static/parameter_static.h"
 
+#include "config/config_game.h"
+
 static s16 sHeartsPrimColors[3][3] = {
     { HEARTS_PRIM_R, HEARTS_PRIM_G, HEARTS_PRIM_B },
     { HEARTS_BURN_PRIM_R, HEARTS_BURN_PRIM_G, HEARTS_BURN_PRIM_B },    // unused
@@ -508,7 +510,11 @@ void Health_UpdateBeatingHeart(PlayState* play) {
             interfaceCtx->beatingHeartOscillatorDirection = 0;
             if (!Player_InCsMode(play) && (play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0) &&
                 Health_IsCritical() && !Play_InCsMode(play)) {
+                #ifdef NO_LOW_HEALTH_BEEP
+                Actor_SetColorFilter(&GET_PLAYER(play)->actor, 0x4000, 255, 0, 6);
+                #else
                 func_80078884(NA_SE_SY_HITPOINT_ALARM);
+                #endif
             }
         }
     } else {

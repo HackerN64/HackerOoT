@@ -13,4 +13,7 @@
 // Configure block push speed multiplier
 #define BLOCK_PUSH_SPEED 3
 
+// Replaces the low health beep sound with link blinking red
+#define NO_LOW_HEALTH_BEEP
+
 #endif
