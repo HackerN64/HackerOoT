@@ -627,7 +627,6 @@ s32 BgCheck_SphVsFirstDynaPoly(CollisionContext* colCtx, u16 xpFlags, CollisionP
                                Vec3f* center, f32 radius, Actor* actor, u16 bciFlags);
 void CollisionHeader_GetVirtual(void* colHeader, CollisionHeader** dest);
 void func_800418D0(CollisionContext* colCtx, PlayState* play);
-void BgCheck_ResetPolyCheckTbl(SSNodeList* nodeList, s32 numPolys);
 u32 SurfaceType_GetBgCamIndex(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
 u16 BgCheck_GetBgCamSettingImpl(CollisionContext* colCtx, u32 bgCamIndex, s32 bgId);
 u16 BgCheck_GetBgCamSetting(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);

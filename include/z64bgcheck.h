@@ -120,8 +120,6 @@ typedef struct {
     /* 0x00 */ u16 max;          // original name: short_slist_node_size
     /* 0x02 */ u16 count;        // original name: short_slist_node_last_index
     /* 0x04 */ SSNode* tbl;      // original name: short_slist_node_tbl
-    /* 0x08 */ u8* polyCheckTbl; // points to an array of bytes, one per static poly. Zero initialized when starting a
-                                 // bg check, and set to 1 if that poly has already been tested.
 } SSNodeList;
 
 typedef struct {
