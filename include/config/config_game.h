@@ -7,4 +7,7 @@
 // Rupee counter symbol changes color with wallet upgrades like in MM
 #define WALLET_COLORS
 
+// Wearing bunnyhood has the same functionality as in MM
+#define MM_BUNNYHOOD
+
 #endif

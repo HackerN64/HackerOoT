@@ -22,6 +22,8 @@
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/object_link_child/object_link_child.h"
 
+#include "config/config_game.h"
+
 typedef struct {
     /* 0x00 */ u8 itemId;
     /* 0x01 */ u8 field; // various bit-packed data
@@ -5950,6 +5952,14 @@ void func_8083DDC8(Player* this, PlayState* play) {
 }
 
 void func_8083DF68(Player* this, f32 arg1, s16 arg2) {
+    #ifdef MM_BUNNYHOOD
+
+    if (this->currentMask == PLAYER_MASK_BUNNY) {
+        arg1 *= 1.5f;
+    }
+
+    #endif
+
     Math_AsymStepToF(&this->linearVelocity, arg1, REG(19) / 100.0f, 1.5f);
     Math_ScaledStepToS(&this->currentYaw, arg2, REG(27));
 }
