@@ -4859,7 +4859,7 @@ void func_8083AE40(Player* this, s16 objectId) {
         size = gObjectTable[objectId].vromEnd - gObjectTable[objectId].vromStart;
 
         LOG_HEX("size", size, "../z_player.c", 9090);
-        ASSERT(size <= 1024 * 8, "size <= 1024 * 8", "../z_player.c", 9091);
+        ASSERT(size <= 1024 * 32, "size <= 1024 * 32", "../z_player.c", 9091);
 
         DmaMgr_SendRequest2(&this->giObjectDmaRequest, this->giObjectSegment, gObjectTable[objectId].vromStart, size, 0,
                             &this->giObjectLoadQueue, NULL, "../z_player.c", 9099);
@@ -9311,7 +9311,7 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     Player_SetEquipmentData(play, this);
     this->prevBoots = this->currentBoots;
     Player_InitCommon(this, play, gPlayerSkelHeaders[((void)0, gSaveContext.linkAge)]);
-    this->giObjectSegment = (void*)(((u32)ZeldaArena_MallocDebug(0x3008, "../z_player.c", 17175) + 8) & ~0xF);
+    this->giObjectSegment = (void*)(((u32)ZeldaArena_MallocDebug((1024 * 32), "../z_player.c", 17175) + 8) & ~0xF);
 
     respawnFlag = gSaveContext.respawnFlag;
 
