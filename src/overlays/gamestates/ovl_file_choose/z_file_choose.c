@@ -1441,7 +1441,7 @@ void FileSelect_LoadGame(GameState* thisx) {
     u16 swordEquipValue;
     s32 pad;
 
-#ifndef BOOT_TO_SCENE
+#if (!defined BOOT_TO_SCENE && !defined BOOT_TO_FILE_SELECT)
     if (this->buttonIndex == FS_BTN_SELECT_FILE_1) {
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
@@ -1459,7 +1459,7 @@ void FileSelect_LoadGame(GameState* thisx) {
         gSaveContext.gameMode = GAMEMODE_NORMAL;
         SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
         this->state.running = false;
-#ifndef BOOT_TO_SCENE
+#if (!defined BOOT_TO_SCENE && !defined BOOT_TO_FILE_SELECT)
     }
 #endif
 
@@ -1483,14 +1483,17 @@ void FileSelect_LoadGame(GameState* thisx) {
     gSaveContext.forcedSeqId = NA_BGM_GENERAL_SFX;
     gSaveContext.skyboxTime = CLOCK_TIME(0, 0);
     gSaveContext.nextTransitionType = TRANS_NEXT_TYPE_DEFAULT;
-#ifdef BOOT_TO_SCENE
+#if (defined BOOT_TO_SCENE && !defined BOOT_TO_SCENE_NEW_GAME_ONLY)
     gSaveContext.nextCutsceneIndex = BOOT_CUTSCENE;
+    gSaveContext.cutsceneTrigger = 0;
+    gSaveContext.chamberCutsceneNum = 0;
+    gSaveContext.nextDayTime = BOOT_TIME;
 #else
     gSaveContext.nextCutsceneIndex = 0xFFEF;
-#endif
     gSaveContext.cutsceneTrigger = 0;
     gSaveContext.chamberCutsceneNum = 0;
     gSaveContext.nextDayTime = NEXT_TIME_NONE;
+#endif
     gSaveContext.retainWeatherMode = false;
 
     gSaveContext.buttonStatus[0] = gSaveContext.buttonStatus[1] = gSaveContext.buttonStatus[2] =
@@ -1528,11 +1531,11 @@ void FileSelect_LoadGame(GameState* thisx) {
         this->n64ddFlag = 0;
         MemCpy(&this->fileNames[this->buttonIndex][0], &name, sizeof(name));
         Sram_InitSave(this, &this->sramCtx);
-    } else {
-        gSaveContext.entranceIndex = BOOT_ENTRANCE;
-        gSaveContext.nextDayTime = BOOT_TIME;
-        gSaveContext.linkAge = BOOT_AGE;
     }
+#ifndef BOOT_TO_SCENE_NEW_GAME_ONLY
+    gSaveContext.entranceIndex = BOOT_ENTRANCE;
+    gSaveContext.linkAge = BOOT_AGE;
+#endif
 #endif
 }
 
