@@ -3103,37 +3103,15 @@ void Interface_Draw(PlayState* play) {
 
         // Rupee Icon
         #ifndef WALLET_COLORS
-
         gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 200, 255, 100, interfaceCtx->magicAlpha);
-
         #else
-
-        static u8 walletColorR;
-        static u8 walletColorG;
-        static u8 walletColorB;
-
-        switch(CUR_UPG_VALUE(UPG_WALLET)) {
-            case 0:
-                walletColorR = 200;
-                walletColorG = 255;
-                walletColorB = 100;
-                break;
-            case 1:
-                walletColorR = 130;
-                walletColorG = 130;
-                walletColorB = 255;
-                break;
-            case 2:
-                walletColorR = 255;
-                walletColorG = 100;
-                walletColorB = 100;
-                break;
-            default:
-                break;
-        }
-
-        gDPSetPrimColor(OVERLAY_DISP++, 0, 0, walletColorR, walletColorG, walletColorB, interfaceCtx->magicAlpha);
-
+        static Color_RGB8 const walletColors[] = {
+            { 200, 255, 100 },
+            { 130, 130, 255 },
+            { 255, 100, 100 },
+        };
+        u8 walletUpg = CUR_UPG_VALUE(UPG_WALLET);
+        gDPSetPrimColor(OVERLAY_DISP++, 0, 0, walletColors[walletUpg].r, walletColors[walletUpg].g, walletColors[walletUpg].b, interfaceCtx->magicAlpha);
         #endif
         
         gDPSetEnvColor(OVERLAY_DISP++, 0, 80, 0, 255);
