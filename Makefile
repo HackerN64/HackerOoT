@@ -9,12 +9,20 @@ SHELL = /bin/bash
 # If COMPILER is "gcc", compile with GCC.
 COMPILER ?= gcc
 
+# If RELEASE_BUILD is 1, compile with NDEBUG defined
+RELEASE_BUILD ?= 1
+
 CFLAGS ?=
 CPPFLAGS ?=
 
 ifeq ($(COMPILER),gcc)
   CFLAGS += -DCOMPILER_GCC
   CPPFLAGS += -DCOMPILER_GCC
+endif
+
+ifeq ($(RELEASE_BUILD),1)
+  CFLAGS += -DNDEBUG
+  CPPFLAGS += -DNDEBUG
 endif
 
 # Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
