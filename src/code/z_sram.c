@@ -688,6 +688,14 @@ void Sram_InitSave(FileSelectState* fileSelect, SramContext* sramCtx) {
     u16* ptr;
     u16 checksum;
 
+#if (defined BOOT_TO_SCENE || defined BOOT_TO_FILE_SELECT)
+    Sram_InitNewSave();
+
+    gSaveContext.entranceIndex = BOOT_ENTRANCE;
+    gSaveContext.linkAge = BOOT_AGE;
+    gSaveContext.dayTime = BOOT_TIME;
+    gSaveContext.cutsceneIndex = BOOT_CUTSCENE;
+#else
     if (fileSelect->buttonIndex != 0) {
         Sram_InitNewSave();
     } else {
@@ -702,6 +710,7 @@ void Sram_InitSave(FileSelectState* fileSelect, SramContext* sramCtx) {
     if (fileSelect->buttonIndex == 0) {
         gSaveContext.cutsceneIndex = 0;
     }
+#endif
 
     for (offset = 0; offset < 8; offset++) {
         gSaveContext.playerName[offset] = fileSelect->fileNames[fileSelect->buttonIndex][offset];
