@@ -11,7 +11,7 @@
 #define MM_BUNNYHOOD
 
 // Configure block push speed multiplier
-#define BLOCK_PUSH_SPEED 3
+#define BLOCK_PUSH_SPEED 1.0f
 
 // Replaces the low health beep sound with link blinking red
 #define NO_LOW_HEALTH_BEEP
