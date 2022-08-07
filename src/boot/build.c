@@ -1,3 +1,7 @@
-const char gBuildTeam[] = "zelda@srd022j";
-const char gBuildDate[] = "03-02-21 00:16:31";
+const char gBuildTeam[] = "HackerOOT";
+const char gBuildDate[] = __TIME__;
+#ifndef NDEBUG
 const char gBuildMakeOption[] = "";
+#else
+const char gBuildMakeOption[] = "-DNDEBUG";
+#endif
