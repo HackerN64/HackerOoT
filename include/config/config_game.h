@@ -1,8 +1,8 @@
 #ifndef CONFIG_GAME_H
 #define CONFIG_GAME_H
 
-// Configure text speed (1 is vanilla)
-#define TEXT_SPEED 2
+// Configure dialogue print speed (1 is vanilla)
+#define DIALOGUE_PRINT_SPEED 2
 
 // Rupee counter symbol changes color with wallet upgrades like in MM
 #define WALLET_COLORS
