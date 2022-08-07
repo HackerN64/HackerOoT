@@ -609,8 +609,8 @@
 #define G_BL_0      3
 
 #ifdef DISABLE_AA
-#define AA_DEF
-#define RD_DEF
+#define AA_DEF 0
+#define RD_DEF 0
 #else
 #define AA_DEF AA_EN
 #define RD_DEF IM_RD
