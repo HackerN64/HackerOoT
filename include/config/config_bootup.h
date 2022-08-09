@@ -1,0 +1,13 @@
+#ifndef CONFIG_BOOTUP_H
+#define CONFIG_BOOTUP_H
+
+// #define BOOT_TO_SCENE
+// #define BOOT_TO_SCENE_NEW_GAME_ONLY
+// #define BOOT_TO_FILE_SELECT
+#define BOOT_ENTRANCE 0
+#define BOOT_AGE LINK_AGE_CHILD
+#define BOOT_TIME NEXT_TIME_NONE
+#define BOOT_CUTSCENE 0xFFEF
+#define BOOT_LINK_NAME 0x15, 0x12, 0x17, 0x14, 0x3E, 0x3E, 0x3E, 0x3E
+
+#endif
