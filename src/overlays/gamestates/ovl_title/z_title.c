@@ -10,7 +10,7 @@
 
 #include "config/config_game.h"
 
-#ifndef NDEBUG
+#ifdef DEBUG_ROM
 void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
     Gfx* g;
     GfxPrint* printer;
@@ -39,7 +39,7 @@ void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
 #endif
 
 void ConsoleLogo_Update(ConsoleLogoState* this) {
-#ifdef SKIP_N64_BOOT_LOGO
+#if (defined DEBUG_ROM && SKIP_N64_BOOT_LOGO)
     this->exit = true;
 #else
     if (this->coverAlpha == 0 && this->visibleDuration != 0) {
@@ -156,12 +156,8 @@ void ConsoleLogo_Main(GameState* thisx) {
     ConsoleLogo_Update(this);
     ConsoleLogo_Draw(this);
 
-#ifndef NDEBUG
-    if (gIsCtrlr2Valid) {
-        Gfx* gfx = POLY_OPA_DISP;
-        ConsoleLogo_PrintBuildInfo(&gfx);
-        POLY_OPA_DISP = gfx;
-    }
+#ifdef DEBUG_ROM
+    ConsoleLogo_PrintBuildInfo(&POLY_OPA_DISP);
 #endif
 
     if (this->exit) {
