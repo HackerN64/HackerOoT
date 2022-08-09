@@ -510,9 +510,7 @@ void Health_UpdateBeatingHeart(PlayState* play) {
             interfaceCtx->beatingHeartOscillatorDirection = 0;
             if (!Player_InCsMode(play) && (play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0) &&
                 Health_IsCritical() && !Play_InCsMode(play)) {
-                #ifdef NO_LOW_HEALTH_BEEP
-                Actor_SetColorFilter(&GET_PLAYER(play)->actor, 0x4000, 255, 0, 6);
-                #else
+                #ifdef ENABLE_LOW_HEALTH_BEEP
                 func_80078884(NA_SE_SY_HITPOINT_ALARM);
                 #endif
             }
