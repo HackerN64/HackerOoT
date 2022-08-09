@@ -39,7 +39,7 @@ void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
 #endif
 
 void ConsoleLogo_Update(ConsoleLogoState* this) {
-#if (defined DEBUG_ROM && SKIP_N64_BOOT_LOGO)
+#if (defined DEBUG_ROM && defined SKIP_N64_BOOT_LOGO)
     this->exit = true;
 #else
     if (this->coverAlpha == 0 && this->visibleDuration != 0) {
