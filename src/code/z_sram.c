@@ -1,5 +1,6 @@
 #include "global.h"
 #include "vt.h"
+#include "config.h"
 
 // these are the main substructs of save context.
 // we are going to hold off on splitting save context until later on,
@@ -27,7 +28,7 @@ typedef struct {
     /* 0x2E */ ItemEquips adultEquips;
     /* 0x38 */ u32 unk_38; // this may be incorrect, currently used for alignement
     /* 0x3C */ char unk_3C[0x0E];
-    /* 0x4A */ s16 savedSceneNum;
+    /* 0x4A */ s16 savedSceneId;
 } SavePlayerData; // size = 0x4C
 
 typedef struct {
@@ -126,7 +127,7 @@ static SavePlayerData sNewSavePlayerData = {
     },                                                  // adultEquips
     0,                                                  // unk_38
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },       // unk_3C
-    0x34,                                               // savedSceneNum
+    SCENE_LINK_HOME,                                    // savedSceneId
 };
 
 static ItemEquips sNewSaveEquips = {
@@ -171,7 +172,7 @@ void Sram_InitNewSave(void) {
     gSaveContext.inventory = sNewSaveInventory;
 
     temp->checksum = sNewSaveChecksum;
-    gSaveContext.horseData.scene = SCENE_SPOT00;
+    gSaveContext.horseData.sceneId = SCENE_SPOT00;
     gSaveContext.horseData.pos.x = -1840;
     gSaveContext.horseData.pos.y = 72;
     gSaveContext.horseData.pos.z = 5497;
@@ -211,7 +212,7 @@ static SavePlayerData sDebugSavePlayerData = {
     },                                                  // adultEquips
     0,                                                  // unk_38
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },       // unk_3C
-    0x51,                                               // savedSceneNum
+    SCENE_SPOT00,                                       // savedSceneId
 };
 
 static ItemEquips sDebugSaveEquips = {
@@ -274,7 +275,7 @@ void Sram_InitDebugSave(void) {
     gSaveContext.inventory = sDebugSaveInventory;
 
     temp->checksum = sDebugSaveChecksum;
-    gSaveContext.horseData.scene = SCENE_SPOT00;
+    gSaveContext.horseData.sceneId = SCENE_SPOT00;
     gSaveContext.horseData.pos.x = -1840;
     gSaveContext.horseData.pos.y = 72;
     gSaveContext.horseData.pos.z = 5497;
@@ -327,10 +328,10 @@ void Sram_OpenSave(SramContext* sramCtx) {
     MemCpy(&gSaveContext, sramCtx->readBuff + i, sizeof(Save));
 
     osSyncPrintf(VT_FGCOL(YELLOW));
-    osSyncPrintf("SCENE_DATA_ID = %d   SceneNo = %d\n", gSaveContext.savedSceneNum,
+    osSyncPrintf("SCENE_DATA_ID = %d   SceneNo = %d\n", gSaveContext.savedSceneId,
                  ((void)0, gSaveContext.entranceIndex));
 
-    switch (gSaveContext.savedSceneNum) {
+    switch (gSaveContext.savedSceneId) {
         case SCENE_YDAN:
         case SCENE_DDAN:
         case SCENE_BDAN:
@@ -345,7 +346,7 @@ void Sram_OpenSave(SramContext* sramCtx) {
         case SCENE_MEN:
         case SCENE_GERUDOWAY:
         case SCENE_GANONTIKA:
-            gSaveContext.entranceIndex = sDungeonEntrances[gSaveContext.savedSceneNum];
+            gSaveContext.entranceIndex = sDungeonEntrances[gSaveContext.savedSceneId];
             break;
 
         case SCENE_YDAN_BOSS:
@@ -389,7 +390,7 @@ void Sram_OpenSave(SramContext* sramCtx) {
             break;
 
         default:
-            if (gSaveContext.savedSceneNum != SCENE_LINK_HOME) {
+            if (gSaveContext.savedSceneId != SCENE_LINK_HOME) {
                 gSaveContext.entranceIndex = (LINK_AGE_IN_YEARS == YEARS_CHILD) ? ENTR_LINK_HOME_0 : ENTR_TOKINOMA_7;
             } else {
                 gSaveContext.entranceIndex = ENTR_LINK_HOME_0;
@@ -688,6 +689,14 @@ void Sram_InitSave(FileSelectState* fileSelect, SramContext* sramCtx) {
     u16* ptr;
     u16 checksum;
 
+#if (defined BOOT_TO_SCENE || defined BOOT_TO_FILE_SELECT)
+    Sram_InitNewSave();
+
+    gSaveContext.entranceIndex = BOOT_ENTRANCE;
+    gSaveContext.linkAge = BOOT_AGE;
+    gSaveContext.dayTime = BOOT_TIME;
+    gSaveContext.cutsceneIndex = BOOT_CUTSCENE;
+#else
     if (fileSelect->buttonIndex != 0) {
         Sram_InitNewSave();
     } else {
@@ -702,6 +711,7 @@ void Sram_InitSave(FileSelectState* fileSelect, SramContext* sramCtx) {
     if (fileSelect->buttonIndex == 0) {
         gSaveContext.cutsceneIndex = 0;
     }
+#endif
 
     for (offset = 0; offset < 8; offset++) {
         gSaveContext.playerName[offset] = fileSelect->fileNames[fileSelect->buttonIndex][offset];
