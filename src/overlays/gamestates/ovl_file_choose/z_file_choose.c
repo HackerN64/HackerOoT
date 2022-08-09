@@ -1,7 +1,7 @@
 #include "file_select.h"
 #include "assets/textures/title_static/title_static.h"
 #include "assets/textures/parameter_static/parameter_static.h"
-#include "include/config/config_bootup.h"
+#include "config.h"
 
 static s16 sUnused = 106;
 
@@ -1527,7 +1527,7 @@ void FileSelect_LoadGame(GameState* thisx) {
 
 #ifdef BOOT_TO_SCENE
     if (!SLOT_OCCUPIED((&this->sramCtx), this->buttonIndex)) {
-        u8 name[] = { BOOT_LINK_NAME };
+        u8 name[] = { BOOT_PLAYER_NAME };
         this->n64ddFlag = 0;
         MemCpy(&this->fileNames[this->buttonIndex][0], &name, sizeof(name));
         Sram_InitSave(this, &this->sramCtx);
