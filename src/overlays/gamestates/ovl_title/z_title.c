@@ -8,7 +8,7 @@
 #include "alloca.h"
 #include "assets/textures/nintendo_rogo_static/nintendo_rogo_static.h"
 
-#include "config/config_game.h"
+#include "config.h"
 
 #ifdef DEBUG_ROM
 void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
@@ -39,7 +39,7 @@ void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
 #endif
 
 void ConsoleLogo_Update(ConsoleLogoState* this) {
-#if (defined DEBUG_ROM && defined SKIP_N64_BOOT_LOGO)
+#ifdef SKIP_N64_BOOT_LOGO
     this->exit = true;
 #else
     if (this->coverAlpha == 0 && this->visibleDuration != 0) {
@@ -172,9 +172,6 @@ void ConsoleLogo_Main(GameState* thisx) {
 }
 
 void ConsoleLogo_Destroy(GameState* thisx) {
-    ConsoleLogoState* this = (ConsoleLogoState*)thisx;
-
-    Sram_InitSram(&this->state, &this->sramCtx);
 }
 
 void ConsoleLogo_Init(GameState* thisx) {
@@ -193,7 +190,6 @@ void ConsoleLogo_Init(GameState* thisx) {
     this->state.destroy = ConsoleLogo_Destroy;
     this->exit = false;
     gSaveContext.fileNum = 0xFF;
-    Sram_Alloc(&this->state, &this->sramCtx);
     this->ult = 0;
     this->timer = 20;
     this->coverAlpha = 255;

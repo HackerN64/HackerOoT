@@ -1527,7 +1527,7 @@ void FileSelect_LoadGame(GameState* thisx) {
 
 #ifdef BOOT_TO_SCENE
     if (!SLOT_OCCUPIED((&this->sramCtx), this->buttonIndex)) {
-        u8 name[] = { BOOT_LINK_NAME };
+        u8 name[] = { BOOT_PLAYER_NAME };
         this->n64ddFlag = 0;
         MemCpy(&this->fileNames[this->buttonIndex][0], &name, sizeof(name));
         Sram_InitSave(this, &this->sramCtx);
