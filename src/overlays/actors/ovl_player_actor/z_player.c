@@ -7481,6 +7481,12 @@ void func_80842180(Player* this, PlayState* play) {
 
         func_80837268(this, &sp2C, &sp2A, 0.018f, play);
 
+#ifdef MM_BUNNYHOOD
+        if (this->currentMask == PLAYER_MASK_BUNNY) {
+            sp2C *= 1.5f;
+        }
+#endif
+
         if (!func_8083C484(this, &sp2C, &sp2A)) {
             func_8083DF68(this, sp2C, sp2A);
             func_8083DDC8(this, play);
