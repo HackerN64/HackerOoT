@@ -36,7 +36,7 @@ void Main_ThreadEntry(void* arg) {
 
 void Idle_ThreadEntry(void* arg) {
     osSyncPrintf("アイドルスレッド(idleproc)実行開始\n");
-    osSyncPrintf("作製者    : %s\n", gBuildTeam);
+    osSyncPrintf("作製者    : %s\n", gBuildAuthor);
     osSyncPrintf("作成日時  : %s\n", gBuildDate);
     osSyncPrintf("MAKEOPTION: %s\n", gBuildMakeOption);
     osSyncPrintf(VT_FGCOL(GREEN));

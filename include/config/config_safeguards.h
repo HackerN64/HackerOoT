@@ -14,6 +14,7 @@
  * config_debug.h
  */
 #ifndef DEBUG_ROM
+#undef DETERMINISTIC_BUILD
 #undef SKIP_N64_BOOT_LOGO
 #undef BOOT_TO_SCENE
 #undef BOOT_TO_SCENE_NEW_GAME_ONLY
