@@ -1,6 +1,10 @@
 #ifndef CONFIG_GAME_H
 #define CONFIG_GAME_H
 
+/*****************
+ * GAME SETTINGS *
+ *****************/
+ 
 // Configure dialogue print speed (1 is vanilla)
 #define DIALOGUE_PRINT_SPEED 2
 
@@ -12,5 +16,6 @@
 
 // Enables the beep sound at low health
 // #define ENABLE_LOW_HEALTH_BEEP
+ 
 
 #endif

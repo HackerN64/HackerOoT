@@ -9,6 +9,9 @@ SHELL = /bin/bash
 # If COMPILER is "gcc", compile with GCC.
 COMPILER ?= gcc
 
+# If DEBUG_BUILD is 1, compile with DEBUG_ROM defined
+DEBUG_BUILD ?= 1
+
 CFLAGS ?=
 CPPFLAGS ?=
 
@@ -17,13 +20,40 @@ ifeq ($(COMPILER),gcc)
   CPPFLAGS += -DCOMPILER_GCC
 endif
 
+ifeq ($(DEBUG_BUILD),1)
+  CFLAGS += -DDEBUG_ROM
+  CPPFLAGS += -DDEBUG_ROM
+endif
+
+# Set PACKAGE_VERSION define for printing commit hash
+ifeq ($(origin PACKAGE_VERSION), undefined)
+  PACKAGE_VERSION := $(shell git log -1 --pretty=%h | tr -d '\n')
+  ifeq ('$(PACKAGE_VERSION)', '')
+    PACKAGE_VERSION = Unknown version
+  endif
+endif
+
+# Set PACKAGE_AUTHOR define for printing author's git name
+ifeq ($(origin PACKAGE_AUTHOR), undefined)
+  PACKAGE_AUTHOR := $(shell git config --get user.name)
+  ifeq ('$(PACKAGE_AUTHOR)', '')
+    PACKAGE_AUTHOR = Unknown author
+  endif
+endif
+
 # Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
 # In nearly all cases, not having 'mips-linux-gnu-*' binaries on the PATH is indicative of missing dependencies
 MIPS_BINUTILS_PREFIX ?= mips-linux-gnu-
 
 CFLAGS += -DNON_MATCHING -DAVOID_UB
 CPPFLAGS += -DNON_MATCHING -DAVOID_UB
-COMPARE := 0
+
+CFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)'
+CPPFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)'
+CFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)'
+CPPFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)'
+# Make sure the build reports the correct version
+$(shell touch src/boot/build.c)
 
 PROJECT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
