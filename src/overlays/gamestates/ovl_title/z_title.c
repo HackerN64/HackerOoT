@@ -8,6 +8,9 @@
 #include "alloca.h"
 #include "assets/textures/nintendo_rogo_static/nintendo_rogo_static.h"
 
+#include "config.h"
+
+#ifdef DEBUG_ROM
 void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
     Gfx* g;
     GfxPrint* printer;
@@ -17,23 +20,51 @@ void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
     printer = alloca(sizeof(GfxPrint));
     GfxPrint_Init(printer);
     GfxPrint_Open(printer, g);
-    GfxPrint_SetColor(printer, 255, 155, 255, 255);
-    GfxPrint_SetPos(printer, 9, 21);
-    GfxPrint_Printf(printer, "NOT MARIO CLUB VERSION");
+
     GfxPrint_SetColor(printer, 255, 255, 255, 255);
+
+    GfxPrint_SetPos(printer, 7, 22);
+    GfxPrint_Printf(printer, "[Author:%s]", gBuildAuthor);
+
     GfxPrint_SetPos(printer, 7, 23);
-    GfxPrint_Printf(printer, "[Creator:%s]", gBuildTeam);
-    GfxPrint_SetPos(printer, 7, 24);
     GfxPrint_Printf(printer, "[Date:%s]", gBuildDate);
+
+    GfxPrint_SetPos(printer, 7, 24);
+    GfxPrint_Printf(printer, "[Version:%s]", gBuildGitVersion);
+
+    GfxPrint_SetPos(printer, 7, 25);
+    GfxPrint_Printf(printer, "[Build Option:%s]", gBuildMakeOption);
+
     g = GfxPrint_Close(printer);
     GfxPrint_Destroy(printer);
     *gfxp = g;
 }
+#endif
 
-// Note: In other rom versions this function also updates unk_1D4, coverAlpha, addAlpha, visibleDuration to calculate
-// the fade-in/fade-out + the duration of the n64 logo animation
-void ConsoleLogo_Calc(ConsoleLogoState* this) {
+void ConsoleLogo_Update(ConsoleLogoState* this) {
+#ifdef SKIP_N64_BOOT_LOGO
     this->exit = true;
+#else
+    if (this->coverAlpha == 0 && this->visibleDuration != 0) {
+        this->timer--;
+        this->visibleDuration--;
+        if (this->timer == 0) {
+            this->timer = 400;
+        }
+    } else {
+        this->coverAlpha += this->addAlpha;
+        if (this->coverAlpha <= 0) {
+            this->coverAlpha = 0;
+            this->addAlpha = 3;
+        } else if (this->coverAlpha >= 255) {
+            this->coverAlpha = 255;
+            this->exit = true;
+        }
+    }
+
+    this->uls = this->ult & 0x7F;
+    this->ult++;
+#endif
 }
 
 void ConsoleLogo_SetupView(ConsoleLogoState* this, f32 x, f32 y, f32 z) {
@@ -125,16 +156,12 @@ void ConsoleLogo_Main(GameState* thisx) {
     gSPSegment(POLY_OPA_DISP++, 0, NULL);
     gSPSegment(POLY_OPA_DISP++, 1, this->staticSegment);
     func_80095248(this->state.gfxCtx, 0, 0, 0);
-    ConsoleLogo_Calc(this);
+    ConsoleLogo_Update(this);
     ConsoleLogo_Draw(this);
 
-    if (gIsCtrlr2Valid) {
-        Gfx* gfx = POLY_OPA_DISP;
-        s32 pad;
-
-        ConsoleLogo_PrintBuildInfo(&gfx);
-        POLY_OPA_DISP = gfx;
-    }
+#ifdef DEBUG_ROM
+    ConsoleLogo_PrintBuildInfo(&POLY_OPA_DISP);
+#endif
 
     if (this->exit) {
         gSaveContext.seqId = (u8)NA_BGM_DISABLED;
@@ -148,9 +175,6 @@ void ConsoleLogo_Main(GameState* thisx) {
 }
 
 void ConsoleLogo_Destroy(GameState* thisx) {
-    ConsoleLogoState* this = (ConsoleLogoState*)thisx;
-
-    Sram_InitSram(&this->state, &this->sramCtx);
 }
 
 void ConsoleLogo_Init(GameState* thisx) {
@@ -169,9 +193,8 @@ void ConsoleLogo_Init(GameState* thisx) {
     this->state.destroy = ConsoleLogo_Destroy;
     this->exit = false;
     gSaveContext.fileNum = 0xFF;
-    Sram_Alloc(&this->state, &this->sramCtx);
     this->ult = 0;
-    this->unk_1D4 = 0x14;
+    this->timer = 20;
     this->coverAlpha = 255;
     this->addAlpha = -3;
     this->visibleDuration = 0x3C;

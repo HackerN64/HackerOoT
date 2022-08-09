@@ -1,5 +1,5 @@
 #include "global.h"
-#include "include/config/config_bootup.h"
+#include "config.h"
 
 void Setup_InitImpl(SetupState* this) {
     osSyncPrintf("ゼルダ共通データ初期化\n"); // "Zelda common data initalization"
