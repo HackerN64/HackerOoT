@@ -2,7 +2,7 @@
  * ROM spec file
  */
 
-#include "include/config/config_all.h"
+#include "include/config.h"
 
 beginseg
     name "makerom"
@@ -320,7 +320,7 @@ beginseg
     include "build/src/code/z_demo.o"
     include "build/src/code/code_80069420.o"
     include "build/src/code/z_draw.o"
-    include "build/src/code/z_sound_source.o"
+    include "build/src/code/z_sfx_source.o"
     include "build/src/code/z_elf_message.o"
     include "build/src/code/z_face_reaction.o"
     include "build/src/code/code_8006C3A0.o"
@@ -411,6 +411,7 @@ beginseg
     include "build/src/code/fault.o"
     include "build/data/fault.bss.o"
     include "build/src/code/fault_drawer.o"
+    include "build/data/fault_drawer.bss.o"
     include "build/src/code/kanread.o"
     include "build/src/code/ucode_disas.o"
     pad_text // audio library aligned to 32 bytes?
@@ -425,9 +426,10 @@ beginseg
     include "build/src/code/audio_effects.o"
     include "build/src/code/audio_seqplayer.o"
     include "build/src/code/code_800EC960.o"
-    include "build/src/code/audio_sound_params.o"
+    include "build/src/code/audio_sfx_params.o"
     include "build/src/code/code_800F7260.o"
     include "build/src/code/code_800F9280.o"
+    include "build/src/code/audio_external_data.o"
     include "build/src/code/audio_init_params.o"
     include "build/src/code/logseverity.o"
     include "build/src/code/gfxprint.o"
