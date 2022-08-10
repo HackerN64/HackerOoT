@@ -365,7 +365,7 @@ void Minimap_Draw(PlayState* play) {
     OPEN_DISPS(play->state.gfxCtx, "../z_map_exp.c", 626);
 
     if (play->pauseCtx.state < 3) {
-        switch (play->sceneNum) {
+        switch (play->sceneId) {
             case SCENE_YDAN:
             case SCENE_DDAN:
             case SCENE_BDAN:
