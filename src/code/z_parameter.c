@@ -4,7 +4,7 @@
 #include "assets/textures/do_action_static/do_action_static.h"
 #include "assets/textures/icon_item_static/icon_item_static.h"
 
-#include "config/config_game.h"
+#include "config.h"
 
 // TODO extract this information from the texture definitions themselves
 #define DO_ACTION_TEX_WIDTH 48

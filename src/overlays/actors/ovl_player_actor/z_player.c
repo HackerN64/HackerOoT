@@ -22,7 +22,7 @@
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/object_link_child/object_link_child.h"
 
-#include "config/config_game.h"
+#include "config.h"
 
 typedef struct {
     /* 0x00 */ u8 itemId;

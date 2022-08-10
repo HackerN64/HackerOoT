@@ -3,7 +3,7 @@
 #include "vt.h"
 #include "assets/textures/parameter_static/parameter_static.h"
 
-#include "config/config_game.h"
+#include "config.h"
 
 s16 sTextFade = false; // original name: key_off_flag ?
 

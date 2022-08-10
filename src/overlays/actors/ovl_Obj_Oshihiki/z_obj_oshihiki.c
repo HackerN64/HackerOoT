@@ -8,7 +8,7 @@
 #include "overlays/actors/ovl_Obj_Switch/z_obj_switch.h"
 #include "assets/objects/gameplay_dangeon_keep/gameplay_dangeon_keep.h"
 
-#include "config/config_game.h"
+#include "config.h"
 
 #define FLAGS ACTOR_FLAG_4
 
