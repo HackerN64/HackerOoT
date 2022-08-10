@@ -8,8 +8,8 @@
 // Configure dialogue print speed (1 is vanilla)
 #define DIALOGUE_PRINT_SPEED 2
 
-// Rupee counter symbol changes color with wallet upgrades like in MM
-#define WALLET_COLORS
+// Rupee counter icon changes color with wallet upgrades like in MM
+#define MM_WALLET_ICON_COLORS
 
 // Configure block push speed multiplier
 #define BLOCK_PUSH_SPEED 1.0f

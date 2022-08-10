@@ -3103,7 +3103,7 @@ void Interface_Draw(PlayState* play) {
         Gfx_SetupDL_39Overlay(play->state.gfxCtx);
 
         // Rupee Icon
-        #ifndef WALLET_COLORS
+        #ifndef MM_WALLET_ICON_COLORS
         gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 200, 255, 100, interfaceCtx->magicAlpha);
         #else
         static Color_RGB8 const walletColors[] = {
