@@ -15,6 +15,6 @@
 *allocated for the is 0x3008. a safe number*
 *is 1024 * 32 which is way more than normal*
 *******************************************/
-#define GiSize 0x3008
+#define GET_ITEM_OBJECT_SEGMENT_SPACE 0x3008
 
 #endif
