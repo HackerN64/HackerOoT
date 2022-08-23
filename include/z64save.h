@@ -4,6 +4,8 @@
 #include "ultra64.h"
 #include "z64math.h"
 
+#include "config.h"
+
 typedef enum {
     /* 0x0 */ MAGIC_STATE_IDLE, // Regular gameplay
     /* 0x1 */ MAGIC_STATE_CONSUME_SETUP, // Sets the speed at which magic border flashes
@@ -212,7 +214,9 @@ typedef struct {
     /* 0x1420 */ s16 worldMapArea;
     /* 0x1422 */ s16 sunsSongState; // controls the effects of suns song
     /* 0x1424 */ s16 healthAccumulator;
+#ifdef FW_SPLIT_AGE
     /* 0x1428 */ FaroresWindData fw_secondary;
+#endif
 } SaveContext; // size = 0x1450
 
 typedef enum {

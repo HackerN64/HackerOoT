@@ -489,7 +489,10 @@ void func_80065134(PlayState* play, CutsceneContext* csCtx, CsCmdDayTime* cmd) {
 void Cutscene_Command_Terminator(PlayState* play, CutsceneContext* csCtx, CsCmdBase* cmd) {
     Player* player = GET_PLAYER(play);
     s32 temp = 0;
+
+#ifdef FW_SPLIT_AGE
     FaroresWindData fw_backup;
+#endif
 
     if ((gSaveContext.gameMode != GAMEMODE_NORMAL) && (gSaveContext.gameMode != GAMEMODE_END_CREDITS) &&
         (play->sceneId != SCENE_SPOT00) && (csCtx->frames > 20) &&
