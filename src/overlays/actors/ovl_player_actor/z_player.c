@@ -13054,7 +13054,7 @@ void func_8085063C(Player* this, PlayState* play) {
 
         if (play->msgCtx.choiceIndex == 1) {
             gSaveContext.respawn[RESPAWN_MODE_TOP].data = -respawnData;
-            gSaveContext.fw.set = 0;
+            gSaveContext.fw_main.set = 0;
             func_80078914(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, NA_SE_PL_MAGIC_WIND_VANISH);
         }
 
@@ -13156,16 +13156,16 @@ void func_808507F4(Player* this, PlayState* play) {
             if (this->unk_850 == 0) {
                 gSaveContext.respawn[RESPAWN_MODE_TOP].data = 1;
                 Play_SetupRespawnPoint(play, RESPAWN_MODE_TOP, 0x6FF);
-                gSaveContext.fw.set = 1;
-                gSaveContext.fw.pos.x = gSaveContext.respawn[RESPAWN_MODE_DOWN].pos.x;
-                gSaveContext.fw.pos.y = gSaveContext.respawn[RESPAWN_MODE_DOWN].pos.y;
-                gSaveContext.fw.pos.z = gSaveContext.respawn[RESPAWN_MODE_DOWN].pos.z;
-                gSaveContext.fw.yaw = gSaveContext.respawn[RESPAWN_MODE_DOWN].yaw;
-                gSaveContext.fw.playerParams = 0x6FF;
-                gSaveContext.fw.entranceIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex;
-                gSaveContext.fw.roomIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].roomIndex;
-                gSaveContext.fw.tempSwchFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempSwchFlags;
-                gSaveContext.fw.tempCollectFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags;
+                gSaveContext.fw_main.set = 1;
+                gSaveContext.fw_main.pos.x = gSaveContext.respawn[RESPAWN_MODE_DOWN].pos.x;
+                gSaveContext.fw_main.pos.y = gSaveContext.respawn[RESPAWN_MODE_DOWN].pos.y;
+                gSaveContext.fw_main.pos.z = gSaveContext.respawn[RESPAWN_MODE_DOWN].pos.z;
+                gSaveContext.fw_main.yaw = gSaveContext.respawn[RESPAWN_MODE_DOWN].yaw;
+                gSaveContext.fw_main.playerParams = 0x6FF;
+                gSaveContext.fw_main.entranceIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex;
+                gSaveContext.fw_main.roomIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].roomIndex;
+                gSaveContext.fw_main.tempSwchFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempSwchFlags;
+                gSaveContext.fw_main.tempCollectFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags;
                 this->unk_850 = 2;
             }
         } else if (this->unk_84F >= 0) {
