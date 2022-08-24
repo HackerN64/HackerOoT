@@ -183,7 +183,7 @@ static const char* sControlLabels[] = {
     "[B]: Change Link's Age",
     "[Z],[R]: Change the Scene Layer",
     "[A],[Start]: Load the scene",
-    "[C-Left/Right]: Change Colorblind Mode", // only for selected scene color in the list
+    "[C-Left/Right]: Selected Scene Color", // only for selected scene color in the list
 };
 
 static const Color_RGBA8 sColors[] = {
