@@ -200,13 +200,79 @@ static u8 showControls = false;
 static u8 sceneLayer = 0;
 static u8 selectedSceneColor = 5; // Red by default
 
+static const s16 childLinkSfx[] = {
+    NA_SE_VO_LI_SWORD_N_KID,
+    NA_SE_VO_LI_ROLLING_CUT_KID,
+    NA_SE_VO_LI_HANG_KID,
+    NA_SE_VO_LI_CLIMB_END_KID,
+    NA_SE_VO_LI_DAMAGE_S_KID,
+    NA_SE_VO_LI_FREEZE_KID,
+    NA_SE_VO_LI_FALL_S_KID,
+    NA_SE_VO_LI_FALL_L_KID,
+    NA_SE_VO_LI_BREATH_REST_KID,
+    NA_SE_VO_LI_BREATH_DRINK_KID,
+    NA_SE_VO_LI_DOWN_KID,
+    NA_SE_VO_LI_TAKEN_AWAY_KID,
+    NA_SE_VO_LI_HELD_KID,
+    NA_SE_VO_LI_SNEEZE_KID,
+    NA_SE_VO_LI_SWEAT_KID,
+    NA_SE_VO_LI_DRINK_KID,
+    NA_SE_VO_LI_RELAX_KID,
+    NA_SE_VO_LI_SWORD_PUTAWAY_KID,
+    NA_SE_VO_LI_GROAN_KID,
+    NA_SE_VO_LI_AUTO_JUMP_KID,
+    NA_SE_VO_LI_MAGIC_NALE_KID,
+    NA_SE_VO_LI_SURPRISE_KID,
+    NA_SE_VO_LI_MAGIC_FROL_KID,
+    NA_SE_VO_LI_PUSH_KID,
+    NA_SE_VO_LI_HOOKSHOT_HANG_KID,
+    NA_SE_VO_LI_LAND_DAMAGE_S_KID,
+    NA_SE_VO_LI_MAGIC_ATTACK_KID,
+    NA_SE_VO_BL_DOWN_KID,
+};
+
+static const u16 adultLinkSfx[] = {
+    NA_SE_VO_LI_SWORD_N,
+    NA_SE_VO_LI_SWORD_L,
+    NA_SE_VO_LI_LASH,
+    NA_SE_VO_LI_HANG,
+    NA_SE_VO_LI_CLIMB_END,
+    NA_SE_VO_LI_DAMAGE_S,
+    NA_SE_VO_LI_FREEZE,
+    NA_SE_VO_LI_FALL_S,
+    NA_SE_VO_LI_FALL_L,
+    NA_SE_VO_LI_BREATH_REST,
+    NA_SE_VO_LI_BREATH_DRINK,
+    NA_SE_VO_LI_DOWN,
+    NA_SE_VO_LI_TAKEN_AWAY,
+    NA_SE_VO_LI_HELD,
+    NA_SE_VO_LI_SNEEZE,
+    NA_SE_VO_LI_SWEAT,
+    NA_SE_VO_LI_DRINK,
+    NA_SE_VO_LI_RELAX,
+    NA_SE_VO_LI_SWORD_PUTAWAY,
+    NA_SE_VO_LI_GROAN,
+    NA_SE_VO_LI_AUTO_JUMP,
+    NA_SE_VO_LI_MAGIC_NALE,
+    NA_SE_VO_LI_SURPRISE,
+    NA_SE_VO_LI_MAGIC_FROL,
+    NA_SE_VO_LI_PUSH,
+    NA_SE_VO_LI_HOOKSHOT_HANG,
+    NA_SE_VO_LI_LAND_DAMAGE_S,
+    NA_SE_VO_LI_MAGIC_ATTACK,
+    NA_SE_VO_BL_DOWN,
+};
+
 void MapSelect_UpdateMenu(MapSelectState* this) {
     Input* input = &this->state.input[0];
     s32 pad;
     SceneSelectEntry* selectedScene;
+    u16 sfx, sfxIndex;
 
     if (CHECK_BTN_ALL(input->press.button, BTN_CDOWN)) {
         showControls = !showControls;
+        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                                &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 
     // change the color of the selected scene, red by default
@@ -252,6 +318,17 @@ void MapSelect_UpdateMenu(MapSelectState* this) {
         // change age
         if (CHECK_BTN_ALL(input->press.button, BTN_B)) {
             gSaveContext.linkAge = !gSaveContext.linkAge;
+            if (LINK_IS_CHILD) {
+                sfxIndex = ((u16)(Rand_ZeroOne() * 100) % ARRAY_COUNT(childLinkSfx));
+                sfxIndex = (sfxIndex < ARRAY_COUNT(childLinkSfx)) ? sfxIndex : 0;
+                sfx = childLinkSfx[sfxIndex];
+            } else {
+                sfxIndex = ((u16)(Rand_ZeroOne() * 100) % ARRAY_COUNT(adultLinkSfx));
+                sfxIndex = (sfxIndex < ARRAY_COUNT(adultLinkSfx)) ? sfxIndex : 0;
+                sfx = adultLinkSfx[sfxIndex];
+            }
+            Audio_PlaySfxGeneral(sfx, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                                &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
 
         // change scene layer
@@ -269,6 +346,11 @@ void MapSelect_UpdateMenu(MapSelectState* this) {
             }
         }
 
+        if (CHECK_BTN_ALL(input->press.button, BTN_R) || CHECK_BTN_ALL(input->press.button, BTN_Z)) {
+            Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                                &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        }
+
         // scroll up
         if (CHECK_BTN_ALL(input->press.button, BTN_DUP)) {
             if (this->lockUp == true) {
@@ -277,14 +359,14 @@ void MapSelect_UpdateMenu(MapSelectState* this) {
             if (this->timerUp == 0) {
                 this->timerUp = 20;
                 this->lockUp = true;
-                Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 this->verticalInput = R_UPDATE_RATE;
             }
         }
 
         if (CHECK_BTN_ALL(input->cur.button, BTN_DUP) && this->timerUp == 0) {
-            Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             this->verticalInput = R_UPDATE_RATE * 3;
         }
@@ -297,27 +379,27 @@ void MapSelect_UpdateMenu(MapSelectState* this) {
             if (this->timerDown == 0) {
                 this->timerDown = 20;
                 this->lockDown = true;
-                Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 this->verticalInput = -R_UPDATE_RATE;
             }
         }
 
         if (CHECK_BTN_ALL(input->cur.button, BTN_DDOWN) && (this->timerDown == 0)) {
-            Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             this->verticalInput = -R_UPDATE_RATE * 3;
         }
 
         // other scrolling options
         if (CHECK_BTN_ALL(input->press.button, BTN_DLEFT) || CHECK_BTN_ALL(input->cur.button, BTN_DLEFT)) {
-            Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             this->verticalInput = R_UPDATE_RATE;
         }
 
         if (CHECK_BTN_ALL(input->press.button, BTN_DRIGHT) || CHECK_BTN_ALL(input->cur.button, BTN_DRIGHT)) {
-            Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             this->verticalInput = -R_UPDATE_RATE;
         }
@@ -417,8 +499,8 @@ void MapSelect_PrintMenu(MapSelectState* this, GfxPrint* printer) {
         }
 
         if (scene == this->currentScene) {
-            GfxPrint_SetPos(printer, 2, i + 4);
-            GfxPrint_Printf(printer, "->");
+            GfxPrint_SetPos(printer, 3, i + 4);
+            GfxPrint_Printf(printer, ">");
         }
     };
 }
@@ -652,11 +734,12 @@ void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;
     u32 size;
     s32 pad;
+    u8 channelIndex;
 
     this->state.main = MapSelect_Main;
     this->state.destroy = MapSelect_Destroy;
     this->scenes = sScenes;
-    this->topDisplayedScene = 1;
+    this->topDisplayedScene = 0;
     this->currentScene = 0;
     this->pageDownStops[0] = 0;  // Hyrule Field
     this->pageDownStops[1] = 19; // Temple Of Time
@@ -690,4 +773,9 @@ void MapSelect_Init(GameState* thisx) {
     DmaMgr_SendRequest1(this->staticSegment, (uintptr_t)_z_select_staticSegmentRomStart, size, "../z_select.c", 1115);
     gSaveContext.cutsceneIndex = 0x8000;
     gSaveContext.linkAge = LINK_AGE_CHILD;
+
+    // turning the sfx volume back on
+    Audio_QueueSeqCmd((0xF << 0x1C) | 0xA);
+
+    Audio_PlayFanfare(NA_BGM_KAKARIKO_ADULT);
 }
