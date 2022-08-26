@@ -67,7 +67,6 @@ void MapSelect_Init(GameState* thisx) {
         if (this->scenes[i].entranceIndex == BOOT_ENTRANCE) {
             this->currentScene = i;
             this->topDisplayedScene = i - 1;
-            osSyncPrintf("[HACKEROOT:INFO]: i=%d\n", i);
             break;
         }
     }

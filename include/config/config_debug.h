@@ -45,6 +45,6 @@
 /**
  * Fix a crash if you spawn in a grotto without using the grotto actor
  */
-#define FIX_GROTTO_CRASH
+// #define FIX_GROTTO_CRASH
 
 #endif
