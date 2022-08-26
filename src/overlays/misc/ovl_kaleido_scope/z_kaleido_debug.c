@@ -1,6 +1,6 @@
 #include "config.h"
 
-#ifndef DISABLE_INV_EDITOR
+#ifdef ENABLE_INV_EDITOR
 
 #include "z_kaleido_scope.h"
 #include "assets/textures/parameter_static/parameter_static.h"

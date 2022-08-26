@@ -520,7 +520,7 @@ void Map_Update(PlayState* play) {
     s16 floor;
     s16 i;
 
-#if !(defined DISABLE_INV_EDITOR && defined DISABLE_EVENT_EDITOR)
+#if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
     if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0)) {
 #else
     if (play->pauseCtx.state == 0) {

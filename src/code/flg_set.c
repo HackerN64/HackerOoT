@@ -1,6 +1,6 @@
 #include "config.h"
 
-#ifndef DISABLE_EVENT_EDITOR
+#ifdef ENABLE_EVENT_EDITOR
 
 #include "global.h"
 

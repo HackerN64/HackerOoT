@@ -42,14 +42,14 @@
 #define NO_DEBUG_SCENES
 
 /**
- * Disable in-game inventory editor
+ * Enable in-game inventory editor
  */
-#define DISABLE_INV_EDITOR
+#define ENABLE_INV_EDITOR
 
 /**
- * Disable in-game event editor
+ * Enable in-game event editor
  */
-#define DISABLE_EVENT_EDITOR
+#define ENABLE_EVENT_EDITOR
 
 /**
  * Enable map select

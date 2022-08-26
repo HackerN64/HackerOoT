@@ -392,7 +392,7 @@ void KaleidoScope_SwitchPage(PauseContext* pauseCtx, u8 pt) {
 }
 
 void KaleidoScope_HandlePageToggles(PauseContext* pauseCtx, Input* input) {
-#ifndef DISABLE_INV_EDITOR
+#ifdef ENABLE_INV_EDITOR
     if ((pauseCtx->debugState == 0) && CHECK_BTN_ALL(input->press.button, BTN_L)) {
         pauseCtx->debugState = 1;
         return;
@@ -2275,7 +2275,7 @@ void KaleidoScope_Draw(PlayState* play) {
     gSPSegment(POLY_OPA_DISP++, 0x0C, pauseCtx->iconItemAltSegment);
     gSPSegment(POLY_OPA_DISP++, 0x0D, pauseCtx->iconItemLangSegment);
 
-#if !(defined DISABLE_INV_EDITOR && defined DISABLE_EVENT_EDITOR)
+#if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
     if (pauseCtx->debugState == 0) {
 #endif
         KaleidoScope_SetView(pauseCtx, pauseCtx->eye.x, pauseCtx->eye.y, pauseCtx->eye.z);
@@ -2293,7 +2293,7 @@ void KaleidoScope_Draw(PlayState* play) {
         if (!((pauseCtx->state >= 8) && (pauseCtx->state <= 0x11))) {
             KaleidoScope_DrawInfoPanel(play);
         }
-#if !(defined DISABLE_INV_EDITOR && defined DISABLE_EVENT_EDITOR)
+#if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
     }
 #endif
 
@@ -2301,7 +2301,7 @@ void KaleidoScope_Draw(PlayState* play) {
         KaleidoScope_DrawGameOver(play);
     }
 
-#ifndef DISABLE_INV_EDITOR
+#ifdef ENABLE_INV_EDITOR
     if ((pauseCtx->debugState == 1) || (pauseCtx->debugState == 2)) {
         KaleidoScope_DrawDebugEditor(play);
     }
@@ -3131,7 +3131,7 @@ void KaleidoScope_Update(PlayState* play) {
                             pauseCtx->alpha = 0;
                         }
                     } else {
-#if (!defined DISABLE_INV_EDITOR || !defined DISABLE_EVENT_EDITOR)
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
                         pauseCtx->debugState = 0;
 #endif
                         pauseCtx->state = 0x13;
@@ -3453,7 +3453,7 @@ void KaleidoScope_Update(PlayState* play) {
                     pauseCtx->alpha = 0;
                 }
             } else {
-#ifndef DISABLE_INV_EDITOR
+#ifdef ENABLE_INV_EDITOR
                 pauseCtx->debugState = 0;
 #endif
                 pauseCtx->state = 0x13;

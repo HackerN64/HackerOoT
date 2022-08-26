@@ -337,7 +337,7 @@ void EffectSsDeadSound_SpawnStationary(PlayState* play, Vec3f* pos, u16 sfxId, s
                                        s16 repeatMode, s32 life);
 void EffectSsIceSmoke_Spawn(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel, s16 scale);
 
-#ifndef DISABLE_EVENT_EDITOR
+#ifdef ENABLE_EVENT_EDITOR
 void FlagSet_Update(PlayState* play);
 #endif
 

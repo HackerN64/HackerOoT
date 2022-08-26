@@ -14,7 +14,7 @@ extern u8 gAreaGsFlags[];
 
 void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx);
 s32 KaleidoScope_UpdateQuestStatusPoint(PauseContext* pauseCtx, s32 point);
-#ifndef DISABLE_INV_EDITOR
+#ifdef ENABLE_INV_EDITOR
 void KaleidoScope_DrawDebugEditor(PlayState* play);
 #endif
 void KaleidoScope_DrawPlayerWork(PlayState* play);
