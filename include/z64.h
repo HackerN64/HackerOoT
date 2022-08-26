@@ -1111,7 +1111,13 @@ typedef struct MapSelectState {
     /* 0x022C */ s32 lockDown;
     /* 0x0230 */ s32 unk_234; // unused
     /* 0x0234 */ u8* staticSegment;
-} MapSelectState; // size = 0x246
+    /* 0x0238 */ u8 showControls;
+    /* 0x023C */ u8 toggleBGM;
+    /* 0x0240 */ u8 isBGMPlaying;
+    /* 0x0244 */ u8 sceneLayer;
+    /* 0x0248 */ u8 selectedSceneColor;
+    /* 0x024C */ u8 msgTimer;
+} MapSelectState; // size = 0x250
 
 typedef struct {
     /* 0x0000 */ GameState state;
