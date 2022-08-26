@@ -44,22 +44,22 @@
 /**
  * Enable in-game inventory editor
  */
-#define ENABLE_INV_EDITOR
+// #define ENABLE_INV_EDITOR
 
 /**
  * Enable in-game event editor
  */
-#define ENABLE_EVENT_EDITOR
-
-/**
- * Enable map select
- */
-// #define ENABLE_MAP_SELECT
+// #define ENABLE_EVENT_EDITOR
 
 /**
  * Enable in-game input display
  */
 // #define ENABLE_INPUT_DISPLAY
+
+/**
+ * Enable map select
+ */
+// #define ENABLE_MAP_SELECT
 
 /**
  * No map select on file 1 (enabled under certain conditions)
