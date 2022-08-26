@@ -304,7 +304,7 @@ beginseg
     include "build/src/code/z_effect_soft_sprite.o"
     include "build/src/code/z_effect_soft_sprite_old_init.o"
     include "build/src/code/z_effect_soft_sprite_dlftbls.o"
-#ifndef NO_EVENT_EDITOR
+#ifndef DISABLE_EVENT_EDITOR
     include "build/src/code/flg_set.o"
 #endif
     include "build/src/code/z_DLF.o"
@@ -543,7 +543,7 @@ beginseg
     include "build/src/overlays/gamestates/ovl_title/ovl_title_reloc.o"
 endseg
 
-#ifndef NO_MAP_SELECT
+#ifndef DISABLE_MAP_SELECT
 beginseg
     name "ovl_select"
     include "build/src/overlays/gamestates/ovl_select/z_select.o"
@@ -569,7 +569,7 @@ endseg
 beginseg
     name "ovl_kaleido_scope"
     include "build/src/overlays/misc/ovl_kaleido_scope/z_kaleido_collect.o"
-#ifndef NO_INVENTORY_EDITOR
+#ifndef DISABLE_INV_EDITOR
     include "build/src/overlays/misc/ovl_kaleido_scope/z_kaleido_debug.o"
 #endif
     include "build/src/overlays/misc/ovl_kaleido_scope/z_kaleido_equipment.o"

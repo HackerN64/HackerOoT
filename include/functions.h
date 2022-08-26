@@ -337,7 +337,7 @@ void EffectSsDeadSound_SpawnStationary(PlayState* play, Vec3f* pos, u16 sfxId, s
                                        s16 repeatMode, s32 life);
 void EffectSsIceSmoke_Spawn(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel, s16 scale);
 
-#ifndef NO_EVENT_EDITOR
+#ifndef DISABLE_EVENT_EDITOR
 void FlagSet_Update(PlayState* play);
 #endif
 
@@ -2269,7 +2269,7 @@ void Setup_Destroy(GameState* thisx);
 void ConsoleLogo_Init(GameState* thisx);
 void ConsoleLogo_Destroy(GameState* thisx);
 
-#ifndef NO_MAP_SELECT
+#ifndef DISABLE_MAP_SELECT
 void MapSelect_Init(GameState* thisx);
 void MapSelect_Destroy(GameState* thisx);
 #endif

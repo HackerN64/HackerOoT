@@ -6,7 +6,7 @@
 
 #include "config.h"
 
-#ifndef NO_MAP_SELECT
+#ifndef DISABLE_MAP_SELECT
 
 #include "ultra64.h"
 #include "global.h"

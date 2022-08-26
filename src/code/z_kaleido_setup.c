@@ -19,7 +19,7 @@ void KaleidoSetup_Update(PlayState* play) {
         gSaveContext.magicState != MAGIC_STATE_FILL &&
         (play->sceneId != SCENE_BOWLING || !Flags_GetSwitch(play, 0x38)));
 
-#ifndef NO_INVENTORY_EDITOR
+#ifndef DISABLE_INV_EDITOR
     canUpdate = (pauseCtx->state == 0 && pauseCtx->debugState == 0) && canUpdate;
 #else
     canUpdate = (pauseCtx->state == 0) && canUpdate;
@@ -27,10 +27,10 @@ void KaleidoSetup_Update(PlayState* play) {
 
     if (canUpdate) {
 
-#ifndef NO_EVENT_EDITOR
+#ifndef DISABLE_EVENT_EDITOR
         if (CHECK_BTN_ALL(input->cur.button, BTN_L) && CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
-            pauseCtx->debugState = 3;
             if (BREG(0)) {
+                pauseCtx->debugState = 3;
             }
         } else if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
 #else
@@ -79,7 +79,7 @@ void KaleidoSetup_Init(PlayState* play) {
     u64 temp = 0; // Necessary to match
 
     pauseCtx->state = 0;
-#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
+#if !(defined DISABLE_INV_EDITOR && defined DISABLE_EVENT_EDITOR)
     pauseCtx->debugState = 0;
 #endif
     pauseCtx->alpha = 0;

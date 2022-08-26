@@ -760,7 +760,7 @@ typedef struct {
     /* 0x01B8 */ OSMesgQueue loadQueue;
     /* 0x01D0 */ OSMesg loadMsg;
     /* 0x01D4 */ u16    state;
-#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
+#if !(defined DISABLE_INV_EDITOR && defined DISABLE_EVENT_EDITOR)
     /* 0x01D6 */ u16    debugState;
 #endif
     /* 0x01D8 */ Vec3f  eye;
@@ -1087,7 +1087,7 @@ typedef struct {
     /* 0x01E2 */ char unk_1E2[0x06];
 } ConsoleLogoState; // size = 0x1E8
 
-#ifndef NO_MAP_SELECT
+#ifndef DISABLE_MAP_SELECT
 
 struct MapSelectState;
 

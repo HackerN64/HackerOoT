@@ -838,7 +838,7 @@ void Play_Update(PlayState* this) {
             }
 
             PLAY_LOG(3551);
-#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
+#if !(defined DISABLE_INV_EDITOR && defined DISABLE_EVENT_EDITOR)
             sp80 = (this->pauseCtx.state != 0) || (this->pauseCtx.debugState != 0);
 #else
             sp80 = (this->pauseCtx.state != 0);
@@ -919,7 +919,7 @@ void Play_Update(PlayState* this) {
 
             if (this->viewpoint != VIEWPOINT_NONE) {
                 if (CHECK_BTN_ALL(input[0].press.button, BTN_CUP)) {
-#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
+#if !(defined DISABLE_INV_EDITOR && defined DISABLE_EVENT_EDITOR)
                     if ((this->pauseCtx.state != 0) || (this->pauseCtx.debugState != 0)) {
 #else
                     if (this->pauseCtx.state != 0) {
@@ -947,7 +947,7 @@ void Play_Update(PlayState* this) {
 
             PLAY_LOG(3716);
 
-#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
+#if !(defined DISABLE_INV_EDITOR && defined DISABLE_EVENT_EDITOR)
             if ((this->pauseCtx.state != 0) || (this->pauseCtx.debugState != 0)) {
 #else
             if (this->pauseCtx.state != 0) {
@@ -1011,13 +1011,10 @@ skip:
     PLAY_LOG(3816);
     Environment_Update(this, &this->envCtx, &this->lightCtx, &this->pauseCtx, &this->msgCtx, &this->gameOverCtx,
                        this->state.gfxCtx);
-
-    osSyncPrintf("[HACKEROOT:INFO]: sceneId: %04X\n",
-                    this->sceneId);
 }
 
 void Play_DrawOverlayElements(PlayState* this) {
-#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
+#if !(defined DISABLE_INV_EDITOR && defined DISABLE_EVENT_EDITOR)
     if ((this->pauseCtx.state != 0) || (this->pauseCtx.debugState != 0)) {
 #else
     if (this->pauseCtx.state != 0) {

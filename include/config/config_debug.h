@@ -34,32 +34,34 @@
 #define BOOT_CUTSCENE 0x0000
 #define BOOT_PLAYER_NAME 0x15, 0x12, 0x17, 0x14, 0x3E, 0x3E, 0x3E, 0x3E // "LINK"
 
+// TODO: Actor Debugger (see BREG(0) usage), Memory Editor, Camera Editor, Audio Editor
+
 /**
  * Remove debug scenes
  */
 #define NO_DEBUG_SCENES
 
 /**
- * Remove in-game inventory editor
+ * Disable in-game inventory editor
  */
-#define NO_INVENTORY_EDITOR
+#define DISABLE_INV_EDITOR
 
 /**
- * Remove in-game event editor
+ * Disable in-game event editor
  */
-#define NO_EVENT_EDITOR
+#define DISABLE_EVENT_EDITOR
 
 /**
- * Remove map select
+ * Disable map select
  */
-#define NO_MAP_SELECT
+#define DISABLE_MAP_SELECT
 
 /**
  * No map select on file 1 (enabled under certain conditions)
  */
 // #define FILE_1_NORMAL
 
-#if (defined BOOT_TO_SCENE && defined BOOT_TO_FILE_SELECT) || (defined NO_MAP_SELECT)
+#if (defined BOOT_TO_SCENE && defined BOOT_TO_FILE_SELECT) || (defined DISABLE_MAP_SELECT)
 #define FILE_1_NORMAL
 #endif
 

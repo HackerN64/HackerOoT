@@ -887,7 +887,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
     }
 
     if (pauseCtx->state == 0) {
-#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
+#if !(defined DISABLE_INV_EDITOR && defined DISABLE_EVENT_EDITOR)
         if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0)) {
 #else
         if ((play->pauseCtx.state == 0)) {
