@@ -57,6 +57,11 @@
 #define DISABLE_MAP_SELECT
 
 /**
+ * Enable in-game input display
+ */
+// #define ENABLE_INPUT_DISPLAY
+
+/**
  * No map select on file 1 (enabled under certain conditions)
  */
 // #define FILE_1_NORMAL

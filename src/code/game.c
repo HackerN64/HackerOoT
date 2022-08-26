@@ -107,6 +107,8 @@ void func_800C4344(GameState* gameState) {
     }
 }
 
+#ifdef ENABLE_INPUT_DISPLAY
+
 void GameState_DrawInputDisplay(u16 input, Gfx** gfx) {
     static const u16 sInpDispBtnColors[] = {
         GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),
@@ -138,6 +140,8 @@ void GameState_DrawInputDisplay(u16 input, Gfx** gfx) {
     *gfx = gfxP;
 }
 
+#endif
+
 void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     Gfx* newDList;
     Gfx* polyOpaP;
@@ -152,9 +156,12 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     }
 
     sLastButtonPressed = gameState->input[0].press.button | gameState->input[0].cur.button;
+
+#ifdef ENABLE_INPUT_DISPLAY
     if (R_DISABLE_INPUT_DISPLAY == 0) {
         GameState_DrawInputDisplay(sLastButtonPressed, &newDList);
     }
+#endif
 
     if (R_ENABLE_AUDIO_DBG & 1) {
         s32 pad;
