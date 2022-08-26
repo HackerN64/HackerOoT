@@ -8,6 +8,7 @@
 #include "global.h"
 #include "vt.h"
 #include "alloca.h"
+#include "config.h"
 
 void MapSelect_LoadTitle(MapSelectState* this) {
     this->state.running = false;
@@ -275,6 +276,7 @@ static SceneSelectEntry sScenes[] = {
     { "114:" GFXP_HIRAGANA "ｶｸｼﾄﾋﾞｺﾐｱﾅ 13", MapSelect_LoadGame, ENTR_KAKUSIANA_13 },
     // "115: Hyrule Cutscenes" (Cutscene Map)
     { "115:" GFXP_KATAKANA "ﾊｲﾗﾙ ﾃﾞﾓ", MapSelect_LoadGame, ENTR_HIRAL_DEMO_0 },
+#ifndef NO_DEBUG_SCENES
     // "116: Special Room (Treasure Chest Warp)" (Ganondorf Test Room)
     { "116:" GFXP_HIRAGANA "ﾍﾞｯｼﾂ (ﾀｶﾗﾊﾞｺ" GFXP_KATAKANA "ﾜｰﾌﾟ)", MapSelect_LoadGame, ENTR_BESITU_0 },
     // "117: Sasaki Test" (Sasa Test)
@@ -295,6 +297,7 @@ static SceneSelectEntry sScenes[] = {
     { "124:depth" GFXP_KATAKANA "ﾃｽﾄ", MapSelect_LoadGame, ENTR_DEPTH_TEST_0 },
     // "125: Hyrule Garden Game 2" (Early Hyrule Garden Game)
     { "125:" GFXP_KATAKANA "ﾊｲﾗﾙ" GFXP_HIRAGANA "ﾆﾜ" GFXP_KATAKANA "ｹﾞｰﾑ2", MapSelect_LoadGame, ENTR_HAIRAL_NIWA2_0 },
+#endif
     // "title" (Title Screen)
     { "title", (void*)MapSelect_LoadTitle, 0 },
 };
