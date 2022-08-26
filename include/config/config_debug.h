@@ -25,7 +25,7 @@
  */
 // #define BOOT_TO_SCENE
 // #define BOOT_TO_SCENE_NEW_GAME_ONLY
-// #define BOOT_TO_FILE_SELECT
+#define BOOT_TO_FILE_SELECT
 
 // Change these if using `BOOT_TO_SCENE` or `BOOT_TO_SCENE_NEW_GAME_ONLY`
 #define BOOT_ENTRANCE ENTR_YDAN_0
@@ -38,6 +38,16 @@
  * Remove debug scenes
  */
 #define NO_DEBUG_SCENES
+
+/**
+ * Remove in-game inventory editor
+ */
+#define NO_INVENTORY_EDITOR
+
+/**
+ * Remove in-game event editor
+ */
+#define NO_EVENT_EDITOR
 
 /**
  * Remove map select

@@ -56,7 +56,11 @@ void KaleidoScopeCall_Update(PlayState* play) {
     KaleidoMgrOverlay* kaleidoScopeOvl = &gKaleidoMgrOverlayTable[KALEIDO_OVL_KALEIDO_SCOPE];
     PauseContext* pauseCtx = &play->pauseCtx;
 
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
     if ((pauseCtx->state != 0) || (pauseCtx->debugState != 0)) {
+#else
+    if (pauseCtx->state != 0) {
+#endif
         if (pauseCtx->state == 1) {
             if (Letterbox_GetSize() == 0) {
                 HREG(80) = 7;
@@ -101,7 +105,11 @@ void KaleidoScopeCall_Update(PlayState* play) {
             if (gKaleidoMgrCurOvl == kaleidoScopeOvl) {
                 sKaleidoScopeUpdateFunc(play);
 
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
                 if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0)) {
+#else
+                if ((play->pauseCtx.state == 0)) {
+#endif
                     osSyncPrintf(VT_FGCOL(GREEN));
                     // "Kaleido area Kaleidoscope Emission"
                     osSyncPrintf("カレイド領域 カレイドスコープ排出\n");

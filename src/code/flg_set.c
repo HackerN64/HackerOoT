@@ -1,3 +1,7 @@
+#include "config.h"
+
+#ifndef NO_EVENT_EDITOR
+
 #include "global.h"
 
 void FlagSet_Update(PlayState* play) {
@@ -150,3 +154,5 @@ void FlagSet_Update(PlayState* play) {
 
     CLOSE_DISPS(gfxCtx, "../flg_set.c", 241);
 }
+
+#endif

@@ -304,7 +304,9 @@ beginseg
     include "build/src/code/z_effect_soft_sprite.o"
     include "build/src/code/z_effect_soft_sprite_old_init.o"
     include "build/src/code/z_effect_soft_sprite_dlftbls.o"
+#ifndef NO_EVENT_EDITOR
     include "build/src/code/flg_set.o"
+#endif
     include "build/src/code/z_DLF.o"
     include "build/src/code/z_actor.o"
     include "build/src/code/z_actor_dlftbls.o"
@@ -567,7 +569,9 @@ endseg
 beginseg
     name "ovl_kaleido_scope"
     include "build/src/overlays/misc/ovl_kaleido_scope/z_kaleido_collect.o"
+#ifndef NO_INVENTORY_EDITOR
     include "build/src/overlays/misc/ovl_kaleido_scope/z_kaleido_debug.o"
+#endif
     include "build/src/overlays/misc/ovl_kaleido_scope/z_kaleido_equipment.o"
     include "build/src/overlays/misc/ovl_kaleido_scope/z_kaleido_item.o"
     include "build/src/overlays/misc/ovl_kaleido_scope/z_kaleido_map_PAL.o"

@@ -2518,7 +2518,11 @@ void Magic_Update(PlayState* play) {
 
         case MAGIC_STATE_CONSUME_LENS:
             // Slowly consume magic while lens is on
-            if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0) && (msgCtx->msgMode == MSGMODE_NONE) &&
+            if ((play->pauseCtx.state == 0) &&
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
+            (play->pauseCtx.debugState == 0) &&
+#endif
+            (msgCtx->msgMode == MSGMODE_NONE) &&
                 (play->gameOverCtx.state == GAMEOVER_INACTIVE) && (play->transitionTrigger == TRANS_TRIGGER_OFF) &&
                 (play->transitionMode == TRANS_MODE_OFF) && !Play_InCsMode(play)) {
                 if ((gSaveContext.magic == 0) || ((func_8008F2F8(play) >= 2) && (func_8008F2F8(play) < 5)) ||
@@ -2764,7 +2768,11 @@ void Interface_DrawItemButtons(PlayState* play) {
                         G_TX_RENDERTILE, 0, 0, R_ITEM_BTN_DD(3) << 1, R_ITEM_BTN_DD(3) << 1);
 
     if ((pauseCtx->state < 8) || (pauseCtx->state >= 18)) {
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
         if ((play->pauseCtx.state != 0) || (play->pauseCtx.debugState != 0)) {
+#else
+        if (play->pauseCtx.state != 0) {
+#endif
             // Start Button Texture, Color & Label
             gDPPipeSync(OVERLAY_DISP++);
             gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 120, 120, 120, interfaceCtx->startAlpha);
@@ -2792,7 +2800,10 @@ void Interface_DrawItemButtons(PlayState* play) {
         }
     }
 
-    if (interfaceCtx->naviCalling && (play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0) &&
+    if (interfaceCtx->naviCalling && (play->pauseCtx.state == 0) &&
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
+    (play->pauseCtx.debugState == 0) &&
+#endif
         (play->csCtx.state == CS_STATE_IDLE)) {
         if (!sCUpInvisible) {
             // C-Up Button Texture, Color & Label (Navi Text)
@@ -3093,7 +3104,9 @@ void Interface_Draw(PlayState* play) {
     gSPSegment(OVERLAY_DISP++, 0x08, interfaceCtx->iconItemSegment);
     gSPSegment(OVERLAY_DISP++, 0x0B, interfaceCtx->mapSegment);
 
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
     if (pauseCtx->debugState == 0) {
+#endif
         Interface_InitVertices(play);
         func_8008A994(interfaceCtx);
         Health_DrawMeter(play);
@@ -3369,7 +3382,11 @@ void Interface_Draw(PlayState* play) {
 
         Gfx_SetupDL_39Overlay(play->state.gfxCtx);
 
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
         if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0)) {
+#else
+        if (play->pauseCtx.state == 0) {
+#endif
             if (gSaveContext.minigameState != 1) {
                 // Carrots rendering if the action corresponds to riding a horse
                 if (interfaceCtx->unk_1EE == 8) {
@@ -3465,7 +3482,10 @@ void Interface_Draw(PlayState* play) {
             }
         }
 
-        if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0) &&
+        if ((play->pauseCtx.state == 0) &&
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
+        (play->pauseCtx.debugState == 0) &&
+#endif
             (play->gameOverCtx.state == GAMEOVER_INACTIVE) && (msgCtx->msgMode == MSGMODE_NONE) &&
             !(player->stateFlags2 & PLAYER_STATE2_24) && (play->transitionTrigger == TRANS_TRIGGER_OFF) &&
             (play->transitionMode == TRANS_MODE_OFF) && !Play_InCsMode(play) && (gSaveContext.minigameState != 1) &&
@@ -3851,11 +3871,15 @@ void Interface_Draw(PlayState* play) {
                 }
             }
         }
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
     }
+#endif
 
+#ifndef NO_EVENT_EDITOR
     if (pauseCtx->debugState == 3) {
         FlagSet_Update(play);
     }
+#endif
 
     if (interfaceCtx->unk_244 != 0) {
         gDPPipeSync(OVERLAY_DISP++);
@@ -3889,7 +3913,11 @@ void Interface_Update(PlayState* play) {
         osSyncPrintf("J_N=%x J_N=%x\n", gSaveContext.language, &gSaveContext.language);
     }
 
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
     if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0)) {
+#else
+    if (play->pauseCtx.state == 0) {
+#endif
         if ((gSaveContext.minigameState == 1) || !IS_CUTSCENE_LAYER ||
             ((play->sceneId == SCENE_SPOT20) && (gSaveContext.sceneLayer == 4))) {
             if ((msgCtx->msgMode == MSGMODE_NONE) ||
@@ -4033,7 +4061,10 @@ void Interface_Update(PlayState* play) {
 
     Health_UpdateMeter(play);
 
-    if ((gSaveContext.timer1State >= 3) && (play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0) &&
+    if ((gSaveContext.timer1State >= 3) && (play->pauseCtx.state == 0) &&
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
+        (play->pauseCtx.debugState == 0) &&
+#endif
         (msgCtx->msgMode == MSGMODE_NONE) && !(player->stateFlags2 & PLAYER_STATE2_24) &&
         (play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->transitionMode == TRANS_MODE_OFF) &&
         !Play_InCsMode(play)) {}
@@ -4119,7 +4150,11 @@ void Interface_Update(PlayState* play) {
     WREG(7) = interfaceCtx->unk_1F4;
 
     // Update Magic
-    if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0) && (msgCtx->msgMode == MSGMODE_NONE) &&
+    if ((play->pauseCtx.state == 0) &&
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
+        (play->pauseCtx.debugState == 0) &&
+#endif
+        (msgCtx->msgMode == MSGMODE_NONE) &&
         (play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
         (play->transitionMode == TRANS_MODE_OFF) && ((play->csCtx.state == CS_STATE_IDLE) || !Player_InCsMode(play))) {
 

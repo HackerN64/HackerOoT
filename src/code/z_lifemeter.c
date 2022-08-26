@@ -500,14 +500,23 @@ void Health_DrawMeter(PlayState* play) {
 
 void Health_UpdateBeatingHeart(PlayState* play) {
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
+    u8 canPlayLowHealthSFX;
 
     if (interfaceCtx->beatingHeartOscillatorDirection != 0) {
         interfaceCtx->beatingHeartOscillator--;
         if (interfaceCtx->beatingHeartOscillator <= 0) {
             interfaceCtx->beatingHeartOscillator = 0;
             interfaceCtx->beatingHeartOscillatorDirection = 0;
-            if (!Player_InCsMode(play) && (play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0) &&
-                Health_IsCritical() && !Play_InCsMode(play)) {
+
+            canPlayLowHealthSFX = (!Player_InCsMode(play) && (play->pauseCtx.state == 0));
+
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
+            canPlayLowHealthSFX = canPlayLowHealthSFX && (play->pauseCtx.debugState == 0) &&
+                Health_IsCritical() && !Play_InCsMode(play);
+#else
+            canPlayLowHealthSFX = (canPlayLowHealthSFX && Health_IsCritical() && !Play_InCsMode(play));
+#endif
+            if (canPlayLowHealthSFX) {
                 func_80078884(NA_SE_SY_HITPOINT_ALARM);
             }
         }

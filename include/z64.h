@@ -760,7 +760,9 @@ typedef struct {
     /* 0x01B8 */ OSMesgQueue loadQueue;
     /* 0x01D0 */ OSMesg loadMsg;
     /* 0x01D4 */ u16    state;
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
     /* 0x01D6 */ u16    debugState;
+#endif
     /* 0x01D8 */ Vec3f  eye;
     /* 0x01E4 */ u16    unk_1E4;
     /* 0x01E6 */ u16    mode;

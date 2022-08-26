@@ -520,7 +520,11 @@ void Map_Update(PlayState* play) {
     s16 floor;
     s16 i;
 
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
     if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0)) {
+#else
+    if (play->pauseCtx.state == 0) {
+#endif
         switch (play->sceneId) {
             case SCENE_YDAN:
             case SCENE_DDAN:

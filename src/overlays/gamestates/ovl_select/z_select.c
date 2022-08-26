@@ -4,11 +4,14 @@
  * Description: Debug Scene Select Menu
  */
 
+#include "config.h"
+
+#ifndef NO_MAP_SELECT
+
 #include "ultra64.h"
 #include "global.h"
 #include "vt.h"
 #include "alloca.h"
-#include "config.h"
 
 void MapSelect_LoadTitle(MapSelectState* this) {
     this->state.running = false;
@@ -768,3 +771,5 @@ void MapSelect_Init(GameState* thisx) {
     gSaveContext.cutsceneIndex = 0x8000;
     gSaveContext.linkAge = LINK_AGE_CHILD;
 }
+
+#endif

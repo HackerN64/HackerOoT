@@ -3145,9 +3145,11 @@ f32 BgCheck_RaycastFloorDyna(DynaRaycast* dynaRaycast) {
     dynaActor = DynaPoly_GetActor(dynaRaycast->colCtx, *dynaRaycast->bgId);
     if ((result != BGCHECK_Y_MIN) && (dynaActor != NULL) && (dynaRaycast->play != NULL)) {
         pauseState = dynaRaycast->play->pauseCtx.state != 0;
+#if !(defined NO_INVENTORY_EDITOR && defined NO_EVENT_EDITOR)
         if (pauseState == 0) {
             pauseState = dynaRaycast->play->pauseCtx.debugState != 0;
         }
+#endif
         if (!pauseState && (dynaRaycast->colCtx->dyna.bgActorFlags[*dynaRaycast->bgId] & BGACTOR_1)) {
             curTransform = &dynaRaycast->dyna->bgActors[*dynaRaycast->bgId].curTransform;
             polyMin =

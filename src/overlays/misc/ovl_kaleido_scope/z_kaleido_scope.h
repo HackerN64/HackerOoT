@@ -3,6 +3,7 @@
 
 #include "ultra64.h"
 #include "global.h"
+#include "config.h"
 
 extern u8 gAmmoItems[];
 extern s16 D_8082AAEC[];
@@ -13,7 +14,9 @@ extern u8 gAreaGsFlags[];
 
 void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx);
 s32 KaleidoScope_UpdateQuestStatusPoint(PauseContext* pauseCtx, s32 point);
+#ifndef NO_INVENTORY_EDITOR
 void KaleidoScope_DrawDebugEditor(PlayState* play);
+#endif
 void KaleidoScope_DrawPlayerWork(PlayState* play);
 void KaleidoScope_DrawEquipment(PlayState* play);
 void KaleidoScope_SetCursorVtx(PauseContext* pauseCtx, u16 index, Vtx* vtx);
