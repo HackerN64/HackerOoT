@@ -14,7 +14,7 @@
 GameStateOverlay gGameStateOverlayTable[] = {
     GAMESTATE_OVERLAY_INTERNAL(Setup_Init, Setup_Destroy, sizeof(SetupState)),
 
-#ifndef DISABLE_MAP_SELECT
+#ifdef ENABLE_MAP_SELECT
     GAMESTATE_OVERLAY(select, MapSelect_Init, MapSelect_Destroy, sizeof(MapSelectState)),
 #else
     GAMESTATE_NONE,

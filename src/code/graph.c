@@ -107,7 +107,7 @@ GameStateOverlay* Graph_GetNextGameState(GameState* gameState) {
         return &gGameStateOverlayTable[0];
     }
 
-#ifndef DISABLE_MAP_SELECT
+#ifdef ENABLE_MAP_SELECT
     if (gameStateInitFunc == MapSelect_Init) {
         return &gGameStateOverlayTable[1];
     }
@@ -387,7 +387,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
         sGraphUpdateTime = time;
     }
 
-#ifndef DISABLE_MAP_SELECT
+#ifdef ENABLE_MAP_SELECT
     if (gIsCtrlr2Valid && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&
         CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_L | BTN_R)) {
         gSaveContext.gameMode = GAMEMODE_NORMAL;

@@ -52,9 +52,9 @@
 #define DISABLE_EVENT_EDITOR
 
 /**
- * Disable map select
+ * Enable map select
  */
-#define DISABLE_MAP_SELECT
+// #define ENABLE_MAP_SELECT
 
 /**
  * Enable in-game input display
@@ -66,7 +66,7 @@
  */
 // #define FILE_1_NORMAL
 
-#if (defined BOOT_TO_SCENE && defined BOOT_TO_FILE_SELECT) || (defined DISABLE_MAP_SELECT)
+#if (defined BOOT_TO_SCENE && defined BOOT_TO_FILE_SELECT) || (!defined ENABLE_MAP_SELECT)
 #define FILE_1_NORMAL
 #endif
 

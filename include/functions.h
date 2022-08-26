@@ -1572,7 +1572,9 @@ void AudioMgr_Init(AudioMgr* audioMgr, void* stack, OSPri pri, OSId id, Schedule
 void GameState_FaultPrint(void);
 void GameState_SetFBFilter(Gfx** gfx);
 // ? func_800C4344(?);
+#ifdef ENABLE_INPUT_DISPLAY
 void GameState_DrawInputDisplay(u16 input, Gfx** gfx);
+#endif
 void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx);
 void GameState_SetFrameBuffer(GraphicsContext* gfxCtx);
 // ? func_800C49F4(?);
@@ -2269,7 +2271,7 @@ void Setup_Destroy(GameState* thisx);
 void ConsoleLogo_Init(GameState* thisx);
 void ConsoleLogo_Destroy(GameState* thisx);
 
-#ifndef DISABLE_MAP_SELECT
+#ifdef ENABLE_MAP_SELECT
 void MapSelect_Init(GameState* thisx);
 void MapSelect_Destroy(GameState* thisx);
 #endif
