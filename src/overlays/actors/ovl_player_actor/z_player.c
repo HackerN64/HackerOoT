@@ -6,6 +6,7 @@
 
 #include "ultra64.h"
 #include "global.h"
+#include "config.h"
 
 #include "overlays/actors/ovl_Bg_Heavy_Block/z_bg_heavy_block.h"
 #include "overlays/actors/ovl_Demo_Kankyo/z_demo_kankyo.h"
@@ -4152,8 +4153,13 @@ s32 func_80839034(PlayState* play, Player* this, CollisionPoly* poly, u32 bgId) 
                 play->nextEntranceIndex = play->setupExitList[exitIndex - 1];
 
                 if (play->nextEntranceIndex == ENTR_RETURN_GROTTO) {
+#ifdef FIX_GROTTO_CRASH
+                    gSaveContext.respawnFlag = 0;
+                    play->nextEntranceIndex = ENTR_SPOT00_0;
+#else
                     gSaveContext.respawnFlag = 2;
                     play->nextEntranceIndex = gSaveContext.respawn[RESPAWN_MODE_RETURN].entranceIndex;
+#endif
                     play->transitionType = TRANS_TYPE_FADE_WHITE;
                     gSaveContext.nextTransitionType = TRANS_TYPE_FADE_WHITE;
                 } else if (play->nextEntranceIndex >= ENTR_RETURN_YOUSEI_IZUMI_YOKO) {

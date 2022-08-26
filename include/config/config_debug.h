@@ -42,4 +42,9 @@
  */
 #define MAP_SELECT_BGM NA_BGM_OWL
 
+/**
+ * Fix a crash if you spawn in a grotto without using the grotto actor
+ */
+#define FIX_GROTTO_CRASH
+
 #endif
