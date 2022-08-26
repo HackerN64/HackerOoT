@@ -36,6 +36,7 @@
 #include "padmgr.h"
 #include "fault.h"
 #include "sched.h"
+#include "config.h"
 
 #define SCREEN_WIDTH  320
 #define SCREEN_HEIGHT 240
@@ -1084,6 +1085,8 @@ typedef struct {
     /* 0x01E2 */ char unk_1E2[0x06];
 } ConsoleLogoState; // size = 0x1E8
 
+#ifndef NO_MAP_SELECT
+
 struct MapSelectState;
 
 typedef struct {
@@ -1113,6 +1116,8 @@ typedef struct MapSelectState {
     /* 0x0234 */ s32 unk_234; // unused
     /* 0x0238 */ u8* staticSegment;
 } MapSelectState; // size = 0x240
+
+#endif
 
 typedef struct {
     /* 0x0000 */ GameState state;

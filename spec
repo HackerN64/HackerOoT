@@ -541,11 +541,13 @@ beginseg
     include "build/src/overlays/gamestates/ovl_title/ovl_title_reloc.o"
 endseg
 
+#ifndef NO_MAP_SELECT
 beginseg
     name "ovl_select"
     include "build/src/overlays/gamestates/ovl_select/z_select.o"
     include "build/src/overlays/gamestates/ovl_select/ovl_select_reloc.o"
 endseg
+#endif
 
 beginseg
     name "ovl_opening"

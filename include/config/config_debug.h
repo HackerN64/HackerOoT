@@ -39,4 +39,18 @@
  */
 #define NO_DEBUG_SCENES
 
+/**
+ * Remove map select
+ */
+#define NO_MAP_SELECT
+
+/**
+ * No map select on file 1 (enabled under certain conditions)
+ */
+// #define FILE_1_NORMAL
+
+#if (defined BOOT_TO_SCENE && defined BOOT_TO_FILE_SELECT) || (defined NO_MAP_SELECT)
+#define FILE_1_NORMAL
+#endif
+
 #endif

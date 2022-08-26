@@ -3,6 +3,7 @@
 
 #include "z64.h"
 #include "macros.h"
+#include "config.h"
 
 f32 fabsf(f32 f);
 #ifndef __sgi
@@ -2263,8 +2264,12 @@ void Setup_Init(GameState* thisx);
 void Setup_Destroy(GameState* thisx);
 void ConsoleLogo_Init(GameState* thisx);
 void ConsoleLogo_Destroy(GameState* thisx);
+
+#ifndef NO_MAP_SELECT
 void MapSelect_Init(GameState* thisx);
 void MapSelect_Destroy(GameState* thisx);
+#endif
+
 void TitleSetup_Init(GameState* thisx);
 void TitleSetup_Destroy(GameState* thisx);
 void FileSelect_Init(GameState* thisx);

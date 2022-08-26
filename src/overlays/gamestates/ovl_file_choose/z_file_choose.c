@@ -1441,7 +1441,7 @@ void FileSelect_LoadGame(GameState* thisx) {
     u16 swordEquipValue;
     s32 pad;
 
-#if (!defined BOOT_TO_SCENE && !defined BOOT_TO_FILE_SELECT)
+#ifndef FILE_1_NORMAL
     if (this->buttonIndex == FS_BTN_SELECT_FILE_1) {
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
@@ -1459,7 +1459,7 @@ void FileSelect_LoadGame(GameState* thisx) {
         gSaveContext.gameMode = GAMEMODE_NORMAL;
         SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
         this->state.running = false;
-#if (!defined BOOT_TO_SCENE && !defined BOOT_TO_FILE_SELECT)
+#ifndef FILE_1_NORMAL
     }
 #endif
 
