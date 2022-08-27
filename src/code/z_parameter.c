@@ -3902,17 +3902,6 @@ void Interface_Update(PlayState* play) {
     u16 action;
     Input* debugInput = &play->state.input[2];
 
-    if (CHECK_BTN_ALL(debugInput->press.button, BTN_DLEFT)) {
-        gSaveContext.language = LANGUAGE_ENG;
-        osSyncPrintf("J_N=%x J_N=%x\n", gSaveContext.language, &gSaveContext.language);
-    } else if (CHECK_BTN_ALL(debugInput->press.button, BTN_DUP)) {
-        gSaveContext.language = LANGUAGE_GER;
-        osSyncPrintf("J_N=%x J_N=%x\n", gSaveContext.language, &gSaveContext.language);
-    } else if (CHECK_BTN_ALL(debugInput->press.button, BTN_DRIGHT)) {
-        gSaveContext.language = LANGUAGE_FRA;
-        osSyncPrintf("J_N=%x J_N=%x\n", gSaveContext.language, &gSaveContext.language);
-    }
-
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
     if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0)) {
 #else

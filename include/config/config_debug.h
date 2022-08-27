@@ -85,6 +85,12 @@
 // #define ENABLE_MSG_DEBUGGER
 
 /**
+ * Change language with D-Pad on file choose (controller 1)
+ */
+// D-Pad Left: English, D-Pad Up: German, D-Pad Right: French
+// #define CHANGE_LANGUAGE_DPAD
+
+/**
  * Show cutscene debug informations
  */
 // #define SHOW_CS_INFOS
