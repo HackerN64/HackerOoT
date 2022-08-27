@@ -1,6 +1,7 @@
 #include "ultra64.h"
 #include "global.h"
 #include "ultra64/abi.h"
+#include "config.h"
 
 typedef struct {
     u8 unk_0;
@@ -108,10 +109,12 @@ void Audio_ProcessSeqCmd(u32 cmd) {
     s32 new_var;
     f32 freqScale;
 
+#ifdef ENABLE_AUDIO_DEBUGGER
     if (D_8013340C && (cmd & 0xF0000000) != 0x70000000) {
         AudioDebug_ScrPrt("SEQ H", (cmd >> 16) & 0xFFFF);
         AudioDebug_ScrPrt("    L", cmd & 0xFFFF);
     }
+#endif
 
     op = cmd >> 28;
     playerIdx = (cmd & 0xF000000) >> 24;

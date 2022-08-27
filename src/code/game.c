@@ -166,6 +166,7 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     }
 #endif
 
+#ifdef ENABLE_AUDIO_DEBUGGER
     if (R_ENABLE_AUDIO_DBG & 1) {
         s32 pad;
         GfxPrint printer;
@@ -176,6 +177,7 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
         newDList = GfxPrint_Close(&printer);
         GfxPrint_Destroy(&printer);
     }
+#endif
 
     if (R_ENABLE_ARENA_DBG < 0) {
         s32 pad;

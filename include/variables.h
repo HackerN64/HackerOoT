@@ -155,13 +155,21 @@ extern u16 D_801333D0;
 extern Vec3f gSfxDefaultPos;
 extern f32 gSfxDefaultFreqAndVolScale;
 extern s8 gSfxDefaultReverb;
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 extern u8 D_801333F0;
+#endif
+
 extern u8 gAudioSfxSwapOff;
 extern u8 D_801333F8;
 extern u8 gSeqCmdWrPos;
 extern u8 gSeqCmdRdPos;
 extern u8 D_80133408;
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 extern u8 D_8013340C;
+#endif
+
 extern u8 gSoundModeList[];
 extern u8 gAudioSpecId;
 extern u8 D_80133418;

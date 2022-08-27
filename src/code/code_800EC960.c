@@ -1,5 +1,6 @@
 #include "ultra64.h"
 #include "global.h"
+#include "config.h"
 
 // TODO: can these macros be shared between files? code_800F9280 seems to use
 // versions without any casts...
@@ -1212,8 +1213,11 @@ OcarinaSongButtons gOcarinaSongButtons[OCARINA_SONG_MAX] = {
     { 0, { 0 } },
 };
 
+#ifdef ENABLE_AUDIO_DEBUGGER
 u32 sAudioUpdateStartTime;
 u32 sAudioUpdateEndTime;
+#endif
+
 f32 D_8016B7A8;
 f32 D_8016B7AC;
 f32 D_8016B7B0;
@@ -2304,6 +2308,8 @@ void AudioOcarina_ResetStaffs(void) {
 }
 
 f32 D_80131C8C = 0.0f;
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 
 // =========== Audio Debugging ===========
 
@@ -3693,6 +3699,8 @@ void AudioDebug_ProcessInput(void) {
     D_8013340C = sAudioScrPrtWork[10];
 }
 
+#endif
+
 void Audio_UpdateRiverSoundVolumes(void);
 void func_800F5CF8(void);
 
@@ -3701,8 +3709,10 @@ void func_800F5CF8(void);
  */
 void func_800F3054(void) {
     if (func_800FAD34() == 0) {
+#ifdef ENABLE_AUDIO_DEBUGGER
         sAudioUpdateTaskStart = gAudioContext.totalTaskCount;
         sAudioUpdateStartTime = osGetTime();
+#endif
         AudioOcarina_Update();
         Audio_StepFreqLerp(&sRiverFreqScaleLerp);
         Audio_StepFreqLerp(&sWaterfallFreqScaleLerp);
@@ -3716,11 +3726,15 @@ void func_800F3054(void) {
         Audio_ProcessSeqCmds();
         func_800F8F88();
         func_800FA3DC();
+#ifdef ENABLE_AUDIO_DEBUGGER
         AudioDebug_SetInput();
         AudioDebug_ProcessInput();
+#endif
         Audio_ScheduleProcessCmds();
+#ifdef ENABLE_AUDIO_DEBUGGER
         sAudioUpdateTaskEnd = gAudioContext.totalTaskCount;
         sAudioUpdateEndTime = osGetTime();
+#endif
     }
 }
 
@@ -5184,7 +5198,9 @@ void Audio_SetNatureAmbienceChannelIO(u8 channelIdxRange, u8 port, u8 val) {
     u8 channelIdx;
 
     if ((D_8016E750[SEQ_PLAYER_BGM_MAIN].unk_254 != NA_BGM_NATURE_AMBIENCE) && func_800FA11C(1, 0xF00000FF)) {
+#ifdef ENABLE_AUDIO_DEBUGGER
         sAudioNatureFailed = true;
+#endif
         return;
     }
 

@@ -1913,8 +1913,10 @@ OcarinaStaff* AudioOcarina_GetPlaybackStaff(void);
 void AudioOcarina_MemoryGameInit(u8 minigameRound);
 s32 AudioOcarina_MemoryGameNextNote(void);
 void AudioOcarina_PlayLongScarecrowAfterCredits(void);
+#ifdef ENABLE_AUDIO_DEBUGGER
 void AudioDebug_Draw(GfxPrint* printer);
 void AudioDebug_ScrPrt(const char* str, u16 num);
+#endif
 void func_800F3054(void);
 void Audio_SetSfxProperties(u8 bankId, u8 entryIdx, u8 channelIdx);
 void Audio_PlayCutsceneEffectsSequence(u8 csEffectType);

@@ -1,6 +1,7 @@
 #include "ultra64.h"
 #include "global.h"
 #include "vt.h"
+#include "config.h"
 
 typedef struct {
     /* 0x00 */ u16 sfxId;
@@ -162,10 +163,13 @@ void Audio_ProcessSfxRequest(void) {
         return;
     }
     bankId = SFX_BANK(req->sfxId);
+
+#ifdef ENABLE_AUDIO_DEBUGGER
     if ((1 << bankId) & D_801333F0) {
         AudioDebug_ScrPrt("SE", req->sfxId);
         bankId = SFX_BANK(req->sfxId);
     }
+#endif
     count = 0;
     index = gSfxBanks[bankId][0].next;
     while (index != 0xFF && index != 0) {

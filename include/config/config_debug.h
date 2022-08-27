@@ -34,7 +34,7 @@
 #define BOOT_CUTSCENE 0x0000
 #define BOOT_PLAYER_NAME 0x15, 0x12, 0x17, 0x14, 0x3E, 0x3E, 0x3E, 0x3E // "LINK"
 
-// TODO: Actor Debugger (see BREG(0) usage), Memory Editor, Audio Editor
+// TODO: Actor Debugger (see BREG(0) usage)
 
 /**
  * Remove debug scenes
@@ -70,6 +70,11 @@
  * Enable camera debugger (includes a cutscene debugger/exporter)
  */
 // #define ENABLE_CAMERA_DEBUGGER
+
+/**
+ * Enable audio debugger
+ */
+// #define ENABLE_AUDIO_DEBUGGER
 
 /**
  * No map select on file 1 (enabled under certain conditions)
