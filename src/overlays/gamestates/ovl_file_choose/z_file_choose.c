@@ -1587,24 +1587,17 @@ void FileSelect_Main(GameState* thisx) {
 
     if (CHECK_BTN_ALL(input->press.button, BTN_DLEFT)) {
         sramCtx->readBuff[SRAM_HEADER_LANGUAGE] = gSaveContext.language = LANGUAGE_ENG;
-        *((u8*)0x80000002) = LANGUAGE_ENG;
-
-        SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, 3, OS_WRITE);
-        SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, SRAM_SIZE, OS_READ);
     } else if (CHECK_BTN_ALL(input->press.button, BTN_DUP)) {
         sramCtx->readBuff[SRAM_HEADER_LANGUAGE] = gSaveContext.language = LANGUAGE_GER;
-        *((u8*)0x80000002) = LANGUAGE_GER;
-
-        SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, 3, OS_WRITE);
-        SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, SRAM_SIZE, OS_READ);
     } else if (CHECK_BTN_ALL(input->press.button, BTN_DRIGHT)) {
         sramCtx->readBuff[SRAM_HEADER_LANGUAGE] = gSaveContext.language = LANGUAGE_FRA;
-        *((u8*)0x80000002) = LANGUAGE_FRA;
-
-        SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, 3, OS_WRITE);
-        SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, SRAM_SIZE, OS_READ);
     }
 
+    // write to cartridge's save data
+    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, 3, OS_WRITE);
+    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, SRAM_SIZE, OS_READ);
+
+    // print the language
     switch (gSaveContext.language) {
         case LANGUAGE_ENG:
             languageName = "English";
