@@ -1,6 +1,7 @@
 #include "z_en_skj.h"
 #include "overlays/actors/ovl_En_Skjneedle/z_en_skjneedle.h"
 #include "assets/objects/object_skj/object_skj.h"
+#include "config.h"
 
 #define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4 | ACTOR_FLAG_25)
 
@@ -1342,11 +1343,13 @@ void EnSkj_SariasSongShortStumpUpdate(Actor* thisx, PlayState* play) {
 
     D_80B01EA0 = Actor_ProcessTalkRequest(&this->actor, play);
 
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0) != 0) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 255, 0, 0, 255, 4, play->state.gfxCtx);
     }
+#endif
 }
 
 void EnSkj_TurnPlayer(EnSkj* this, Player* player) {
@@ -1582,11 +1585,13 @@ void EnSkj_OcarinaMinigameShortStumpUpdate(Actor* thisx, PlayState* play) {
     this->actor.focus.pos.y = -90.0f;
     this->actor.focus.pos.z = 450.0f;
 
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0) != 0) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 255, 0, 0, 255, 4, play->state.gfxCtx);
     }
+#endif
 
     this->actionFunc(this, play);
 

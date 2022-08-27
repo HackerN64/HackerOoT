@@ -59,7 +59,7 @@
 /**
  * Enable in-game registers editor
  */
-// #define ENABLE_REG_EDITOR
+#define ENABLE_REG_EDITOR
 
 /**
  * Enable map select
@@ -77,12 +77,23 @@
 // #define ENABLE_AUDIO_DEBUGGER
 
 /**
- * No map select on file 1 (enabled under certain conditions)
+ * Enable actor debugger
+ */
+// #define ENABLE_ACTOR_DEBUGGER
+
+/**
+ * No map select on file 1
  */
 // #define FILE_1_NORMAL
 
+// Remove map select from file 1
 #if (defined BOOT_TO_SCENE && defined BOOT_TO_FILE_SELECT) || (!defined ENABLE_MAP_SELECT)
 #define FILE_1_NORMAL
+#endif
+
+// Remove actor and camera debug draw-related code if both are disabled
+#if !(defined ENABLE_ACTOR_DEBUGGER) && !(defined ENABLE_CAMERA_DEBUGGER)
+#define NO_DEBUG_DISPLAY
 #endif
 
 #endif

@@ -318,7 +318,9 @@ beginseg
     include "build/src/code/z_collision_check.o"
     include "build/src/code/z_common_data.o"
     include "build/src/code/z_debug.o"
+#ifndef NO_DEBUG_DISPLAY
     include "build/src/code/z_debug_display.o"
+#endif
     include "build/src/code/z_demo.o"
     include "build/src/code/code_80069420.o"
     include "build/src/code/z_draw.o"

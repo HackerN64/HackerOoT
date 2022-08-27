@@ -8,6 +8,7 @@
 #include "vt.h"
 #include "overlays/actors/ovl_Item_Etcetera/z_item_etcetera.h"
 #include "overlays/actors/ovl_En_Ex_Item/z_en_ex_item.h"
+#include "config.h"
 
 #define FLAGS 0
 
@@ -288,9 +289,11 @@ void EnChanger_Update(Actor* thisx, PlayState* play) {
         this->timer--;
     }
 
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0)) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 255, 0, 255, 255, 4, play->state.gfxCtx);
     }
+#endif
 }

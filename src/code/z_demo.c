@@ -1921,7 +1921,7 @@ void func_80068C3C(PlayState* play, CutsceneContext* csCtx) {
     if (gSaveContext.cutsceneIndex >= 0xFFF0) {
         if (0) {} // Also necessary to match
 
-        if (BREG(0) != 0) {
+        if (BREG(0) != 0) { // cs frame counter
             OPEN_DISPS(play->state.gfxCtx, "../z_demo.c", 4101);
 
             prevDisplayList = POLY_OPA_DISP;

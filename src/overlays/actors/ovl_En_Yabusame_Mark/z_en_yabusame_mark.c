@@ -6,6 +6,7 @@
 
 #include "z_en_yabusame_mark.h"
 #include "vt.h"
+#include "config.h"
 
 #define FLAGS 0
 
@@ -212,9 +213,12 @@ void EnYabusameMark_Update(Actor* thisx, PlayState* play) {
 
     Collider_SetQuadVertices(&this->collider, &this->vertexA, &this->vertexB, &this->vertexC, &this->vertexD);
     CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
+
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0)) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 0, 0xFF, 0, 0xFF, 4, play->state.gfxCtx);
     }
+#endif
 }

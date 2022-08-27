@@ -102,7 +102,9 @@ void EnEncount1_SpawnLeevers(EnEncount1* this, PlayState* play) {
     f32 floorY;
     EnReeba* leever;
 
+#ifdef ENABLE_ACTOR_DEBUGGER
     this->outOfRangeTimer = 0;
+#endif
     spawnPos = this->actor.world.pos;
 
     if ((this->timer == 0) && (play->csCtx.state == CS_STATE_IDLE) && (this->curNumSpawn <= this->maxCurSpawns) &&
@@ -185,9 +187,13 @@ void EnEncount1_SpawnTektites(EnEncount1* this, PlayState* play) {
         this->timer = 10;
         if ((fabsf(player->actor.world.pos.y - this->actor.world.pos.y) > 100.0f) ||
             (this->actor.xzDistToPlayer > this->spawnRange)) {
+#ifdef ENABLE_ACTOR_DEBUGGER
             this->outOfRangeTimer++;
+#endif
         } else {
+#ifdef ENABLE_ACTOR_DEBUGGER
             this->outOfRangeTimer = 0;
+#endif
             if ((this->curNumSpawn < this->maxCurSpawns) && (this->totalNumSpawn < this->maxTotalSpawns)) {
                 spawnPos.x = this->actor.world.pos.x + Rand_CenteredFloat(50.0f);
                 spawnPos.y = this->actor.world.pos.y + 120.0f;
@@ -228,7 +234,9 @@ void EnEncount1_SpawnStalchildOrWolfos(EnEncount1* this, PlayState* play) {
     if (play->sceneId != SCENE_SPOT00) {
         if ((fabsf(player->actor.world.pos.y - this->actor.world.pos.y) > 100.0f) ||
             (this->actor.xzDistToPlayer > this->spawnRange)) {
+#ifdef ENABLE_ACTOR_DEBUGGER
             this->outOfRangeTimer++;
+#endif
             return;
         }
     } else if (IS_DAY || (Player_GetMask(play) == PLAYER_MASK_BUNNY)) {
@@ -236,7 +244,9 @@ void EnEncount1_SpawnStalchildOrWolfos(EnEncount1* this, PlayState* play) {
         return;
     }
 
+#ifdef ENABLE_ACTOR_DEBUGGER
     this->outOfRangeTimer = 0;
+#endif
     spawnPos = this->actor.world.pos;
     if ((this->curNumSpawn < this->maxCurSpawns) && (this->totalNumSpawn < this->maxTotalSpawns)) {
         while ((this->curNumSpawn < this->maxCurSpawns) && (this->totalNumSpawn < this->maxTotalSpawns)) {
@@ -322,6 +332,7 @@ void EnEncount1_Update(Actor* thisx, PlayState* play) {
 
     this->updateFunc(this, play);
 
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0) != 0) {
         if (this->outOfRangeTimer != 0) {
             if ((this->outOfRangeTimer & 1) == 0) {
@@ -335,4 +346,5 @@ void EnEncount1_Update(Actor* thisx, PlayState* play) {
                                    1.0f, 1.0f, 255, 0, 255, 255, 4, play->state.gfxCtx);
         }
     }
+#endif
 }

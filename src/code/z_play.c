@@ -1250,9 +1250,11 @@ void Play_Draw(PlayState* this) {
                     }
                 }
 
+#ifndef NO_DEBUG_DISPLAY
                 if ((HREG(80) != 10) || (HREG(93) != 0)) {
                     DebugDisplay_DrawObjects(this);
                 }
+#endif
 
                 if ((R_PAUSE_MENU_MODE == 1) || (gTrnsnUnkState == 1)) {
                     Gfx* sp70 = OVERLAY_DISP;
@@ -1299,7 +1301,9 @@ void Play_Main(GameState* thisx) {
 
     D_8012D1F8 = &this->state.input[0];
 
+#ifndef NO_DEBUG_DISPLAY
     DebugDisplay_Init();
+#endif
 
     PLAY_LOG(4556);
 

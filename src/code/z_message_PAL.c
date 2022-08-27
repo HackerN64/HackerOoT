@@ -3007,7 +3007,7 @@ void Message_Draw(PlayState* play) {
 
     watchVar = gSaveContext.scarecrowLongSongSet;
     Message_DrawDebugVariableChanged(&watchVar, play->state.gfxCtx);
-    if (BREG(0) != 0 && play->msgCtx.textId != 0) {
+    if (BREG(0) != 0 && play->msgCtx.textId != 0) { // message text debug
         plusOne = Graph_GfxPlusOne(polyOpaP = POLY_OPA_DISP);
         gSPDisplayList(OVERLAY_DISP++, plusOne);
         Message_DrawDebugText(play, &plusOne);
@@ -3058,7 +3058,7 @@ void Message_Update(PlayState* play) {
     s16 playerFocusScreenPosY;
     s16 actorFocusScreenPosY;
 
-    if (BREG(0) != 0) {
+    if (BREG(0) != 0) { // message text debug
         if (CHECK_BTN_ALL(input->press.button, BTN_DDOWN) && CHECK_BTN_ALL(input->cur.button, BTN_L)) {
             osSyncPrintf("msgno=%d\n", D_80153D78);
             Message_StartTextbox(play, R_MESSAGE_DEBUGGER_TEXTID, NULL);

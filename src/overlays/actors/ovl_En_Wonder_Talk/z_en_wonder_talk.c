@@ -6,6 +6,7 @@
 
 #include "z_en_wonder_talk.h"
 #include "vt.h"
+#include "config.h"
 
 #define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_27)
 
@@ -239,6 +240,7 @@ void EnWonderTalk_Update(Actor* thisx, PlayState* play) {
     this->actionFunc(this, play);
     Actor_SetFocus(&this->actor, this->height);
 
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0) != 0) {
         if (this->unk_15A != 0) {
             if ((this->unk_15A & 1) == 0) {
@@ -252,4 +254,5 @@ void EnWonderTalk_Update(Actor* thisx, PlayState* play) {
                                    1.0f, 1.0f, 0, 255, 0, 255, 4, play->state.gfxCtx);
         }
     }
+#endif
 }
