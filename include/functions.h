@@ -1580,7 +1580,7 @@ void AudioMgr_Init(AudioMgr* audioMgr, void* stack, OSPri pri, OSId id, Schedule
 void GameState_FaultPrint(void);
 void GameState_SetFBFilter(Gfx** gfx);
 // ? func_800C4344(?);
-#ifdef ENABLE_INPUT_DISPLAY
+#ifdef SHOW_INPUT_DISPLAY
 void GameState_DrawInputDisplay(u16 input, Gfx** gfx);
 #endif
 void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx);

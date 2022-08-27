@@ -12,11 +12,7 @@ s16 sOcarinaButtonIndexBufPos = 0;
 
 s16 sOcarinaButtonIndexBufLen = 0;
 
-#ifdef ENABLE_FAST_TEXT
-u8 sTextboxSkipped = true;
-#else
 u8 sTextboxSkipped = false;
-#endif
 
 u16 sNextTextId = 0;
 
@@ -3066,6 +3062,10 @@ void Message_Update(PlayState* play) {
     s16 averageY;
     s16 playerFocusScreenPosY;
     s16 actorFocusScreenPosY;
+
+#ifdef ENABLE_FAST_TEXT
+    sTextboxSkipped = true;
+#endif
 
 #ifdef ENABLE_MSG_DEBUGGER
     if (BREG(0) != 0) {

@@ -7308,6 +7308,7 @@ s32 Camera_UpdateHotRoom(Camera* camera) {
 }
 
 #ifdef ENABLE_CAMERA_DEBUGGER
+// doesn't seem to work properly
 s32 Camera_DbgChangeMode(Camera* camera) {
     s32 changeDir = 0;
 

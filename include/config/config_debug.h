@@ -55,11 +55,6 @@
 // #define ENABLE_EVENT_EDITOR
 
 /**
- * Enable in-game input display
- */
-// #define ENABLE_INPUT_DISPLAY
-
-/**
  * Enable in-game registers editor
  */
 #define ENABLE_REG_EDITOR
@@ -93,6 +88,16 @@
  * Show cutscene debug informations
  */
 // #define SHOW_CS_INFOS
+
+/**
+ * Show time debug informations
+ */
+// #define SHOW_TIME_INFOS
+
+/**
+ * Show in-game input display
+ */
+// #define SHOW_INPUT_DISPLAY
 
 /**
  * No map select on file 1

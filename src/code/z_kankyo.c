@@ -813,6 +813,7 @@ void Environment_DisableUnderwaterLights(PlayState* play) {
     }
 }
 
+#ifdef SHOW_TIME_INFOS
 void Environment_PrintDebugInfo(PlayState* play, Gfx** gfx) {
     GfxPrint printer;
     s32 pad[2];
@@ -867,6 +868,7 @@ void Environment_PrintDebugInfo(PlayState* play, Gfx** gfx) {
     *gfx = GfxPrint_Close(&printer);
     GfxPrint_Destroy(&printer);
 }
+#endif
 
 void Environment_PlayTimeBasedSequence(PlayState* play);
 void Environment_UpdateRain(PlayState* play);
@@ -953,6 +955,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
             gSaveContext.nightFlag = 0;
         }
 
+#ifdef SHOW_TIME_INFOS
         if (SREG(0) != 0 || CREG(2) != 0) {
             Gfx* displayList;
             Gfx* prevDisplayList;
@@ -969,6 +972,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
             if (1) {}
             CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 1690);
         }
+#endif
 
         if ((envCtx->lightSettingOverride != LIGHT_SETTING_OVERRIDE_NONE) &&
             (envCtx->lightBlendOverride != LIGHT_BLEND_OVERRIDE_FULL_CONTROL) &&

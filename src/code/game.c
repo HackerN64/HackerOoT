@@ -110,7 +110,7 @@ void func_800C4344(GameState* gameState) {
     }
 }
 
-#ifdef ENABLE_INPUT_DISPLAY
+#ifdef SHOW_INPUT_DISPLAY
 
 void GameState_DrawInputDisplay(u16 input, Gfx** gfx) {
     static const u16 sInpDispBtnColors[] = {
@@ -160,7 +160,7 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 
     sLastButtonPressed = gameState->input[0].press.button | gameState->input[0].cur.button;
 
-#ifdef ENABLE_INPUT_DISPLAY
+#ifdef SHOW_INPUT_DISPLAY
     if (R_DISABLE_INPUT_DISPLAY == 0) {
         GameState_DrawInputDisplay(sLastButtonPressed, &newDList);
     }
