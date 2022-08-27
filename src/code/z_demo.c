@@ -159,7 +159,7 @@ void func_800645A0(PlayState* play, CutsceneContext* csCtx) {
     }
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-    condition = conditon && !gDbgCamEnabled;
+    condition = condition && !gDbgCamEnabled;
 #endif
 
     if (condition) {
