@@ -7,6 +7,7 @@
 #include "z_en_md.h"
 #include "assets/objects/object_md/object_md.h"
 #include "overlays/actors/ovl_En_Elf/z_en_elf.h"
+#include "config.h"
 
 #define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_25)
 
@@ -567,7 +568,11 @@ void func_80AAB158(EnMd* this, PlayState* play) {
         temp2 = 1;
     }
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if ((play->csCtx.state != CS_STATE_IDLE) || gDbgCamEnabled) {
+#else
+    if (play->csCtx.state != CS_STATE_IDLE) {
+#endif
         this->unk_1E0.unk_18 = play->view.eye;
         this->unk_1E0.unk_14 = 40.0f;
         temp = 2;

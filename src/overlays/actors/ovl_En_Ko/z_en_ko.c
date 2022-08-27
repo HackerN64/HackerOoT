@@ -10,6 +10,7 @@
 #include "assets/objects/object_km1/object_km1.h"
 #include "assets/objects/object_kw1/object_kw1.h"
 #include "vt.h"
+#include "config.h"
 
 #define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4)
 
@@ -930,10 +931,15 @@ s32 EnKo_AdultSaved(EnKo* this, PlayState* play) {
             return func_80A97E18(this, play);
     }
 }
+
 void func_80A9877C(EnKo* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if ((play->csCtx.state != 0) || (gDbgCamEnabled != 0)) {
+#else
+    if (play->csCtx.state != 0) {
+#endif
         this->unk_1E8.unk_18 = play->view.eye;
         this->unk_1E8.unk_14 = 40.0f;
         if (ENKO_TYPE != ENKO_TYPE_CHILD_0) {
@@ -1072,7 +1078,12 @@ void func_80A98DB4(EnKo* this, PlayState* play) {
         this->modelAlpha = 255.0f;
         return;
     }
+
+#ifdef ENABLE_CAMERA_DEBUGGER
     if (play->csCtx.state != 0 || gDbgCamEnabled != 0) {
+#else
+    if (play->csCtx.state != 0) {
+#endif
         dist = Math_Vec3f_DistXYZ(&this->actor.world.pos, &play->view.eye) * 0.25f;
     } else {
         dist = this->actor.xzDistToPlayer;

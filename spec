@@ -381,9 +381,13 @@ beginseg
     include "build/src/code/z_fbdemo_circle.o"
     include "build/src/code/z_fbdemo_fade.o"
     include "build/src/code/shrink_window.o"
+#ifdef ENABLE_CAMERA_DEBUGGER
     include "build/src/code/db_camera.o"
+#endif
     include "build/src/code/code_800BB0A0.o"
+#ifdef ENABLE_CAMERA_DEBUGGER
     include "build/src/code/mempak.o"
+#endif
     include "build/src/code/z_kaleido_manager.o"
     include "build/src/code/z_kaleido_scope_call.o"
     include "build/src/code/z_play.o"

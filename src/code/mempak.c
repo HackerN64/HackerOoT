@@ -1,3 +1,7 @@
+#include "config.h"
+
+#ifdef ENABLE_CAMERA_DEBUGGER
+
 #include "global.h"
 
 OSPfs sMempakPfsHandle;
@@ -185,3 +189,5 @@ s32 Mempak_GetFileSize(s32 controllerNb, char idx) {
     }
     return state.file_size;
 }
+
+#endif

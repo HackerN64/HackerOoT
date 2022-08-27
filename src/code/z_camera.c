@@ -1,6 +1,7 @@
 #include "ultra64.h"
 #include "global.h"
 #include "vt.h"
+#include "config.h"
 #include "overlays/actors/ovl_En_Horse/z_en_horse.h"
 
 s16 Camera_ChangeSettingFlags(Camera* camera, s16 setting, s16 flags);
@@ -6900,12 +6901,18 @@ void Camera_Init(Camera* camera, View* view, CollisionContext* colCtx, PlayState
             R_CAM_DATA(i) = sCamDataRegsInit[i];
         }
 
+#ifdef ENABLE_CAMERA_DEBUGGER
         DbCamera_Reset(camera, &D_8015BD80);
+#endif
         sInitRegs = false;
         PREG(88) = -1;
     }
     camera->play = D_8015BD7C = play;
+
+#ifdef ENABLE_CAMERA_DEBUGGER
     DbCamera_Init(&D_8015BD80, camera);
+#endif
+
     curUID = sNextUID;
     sNextUID++;
     while (curUID != 0) {
@@ -6957,7 +6964,11 @@ void Camera_Init(Camera* camera, View* view, CollisionContext* colCtx, PlayState
     camera->skyboxOffset.x = camera->skyboxOffset.y = camera->skyboxOffset.z = 0;
     camera->atLERPStepScale = 1;
     sCameraInterfaceFlags = 0xFF00;
+
+#ifdef ENABLE_CAMERA_DEBUGGER
     sDbgModeIdx = -1;
+#endif
+
     D_8011D3F0 = 3;
     osSyncPrintf(VT_FGCOL(BLUE) "camera: initialize --- " VT_RST " UID %d\n", camera->uid);
 }
@@ -7089,6 +7100,7 @@ s16 Camera_ChangeStatus(Camera* camera, s16 status) {
     return camera->status;
 }
 
+#ifdef ENABLE_CAMERA_DEBUGGER
 void Camera_PrintSettings(Camera* camera) {
     char sp58[8];
     char sp50[8];
@@ -7164,6 +7176,7 @@ void Camera_PrintSettings(Camera* camera) {
         func_8006376C(5, 26, 4, sp50);
     }
 }
+#endif
 
 s32 Camera_UpdateWater(Camera* camera) {
     f32 waterY;
@@ -7294,6 +7307,7 @@ s32 Camera_UpdateHotRoom(Camera* camera) {
     return 1;
 }
 
+#ifdef ENABLE_CAMERA_DEBUGGER
 s32 Camera_DbgChangeMode(Camera* camera) {
     s32 changeDir = 0;
 
@@ -7322,6 +7336,7 @@ s32 Camera_DbgChangeMode(Camera* camera) {
     }
     return true;
 }
+#endif
 
 void Camera_UpdateDistortion(Camera* camera) {
     static s16 depthPhase = 0x3F0;
@@ -7426,14 +7441,18 @@ Vec3s Camera_Update(Camera* camera) {
 
     player = camera->play->cameraPtrs[CAM_ID_MAIN]->player;
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if (R_DBG_CAM_UPDATE) {
         osSyncPrintf("camera: in %x\n", camera);
     }
+#endif
 
     if (camera->status == CAM_STAT_CUT) {
+#ifdef ENABLE_CAMERA_DEBUGGER
         if (R_DBG_CAM_UPDATE) {
             osSyncPrintf("camera: cut out %x\n", camera);
         }
+#endif
         return camera->inputDir;
     }
 
@@ -7501,13 +7520,18 @@ Vec3s Camera_Update(Camera* camera) {
             }
         }
     }
+
+#ifdef ENABLE_CAMERA_DEBUGGER
     Camera_PrintSettings(camera);
     Camera_DbgChangeMode(camera);
+#endif
 
     if (camera->status == CAM_STAT_WAIT) {
+#ifdef ENABLE_CAMERA_DEBUGGER
         if (R_DBG_CAM_UPDATE) {
             osSyncPrintf("camera: wait out %x\n", camera);
         }
+#endif
         return camera->inputDir;
     }
 
@@ -7515,10 +7539,12 @@ Vec3s Camera_Update(Camera* camera) {
     camera->unk_14C &= ~(0x400 | 0x20);
     camera->unk_14C |= 0x10;
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if (R_DBG_CAM_UPDATE) {
         osSyncPrintf("camera: engine (%d %d %d) %04x \n", camera->setting, camera->mode,
                      sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx, camera->unk_14C);
     }
+#endif
 
     if (sOOBTimer < 200) {
         sCameraFunctions[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx](camera);
@@ -7546,6 +7572,7 @@ Vec3s Camera_Update(Camera* camera) {
         }
     }
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if (R_DBG_CAM_UPDATE) {
         osSyncPrintf("camera: shrink_and_bitem %x(%d)\n", sCameraInterfaceFlags, camera->play->transitionMode);
     }
@@ -7577,6 +7604,7 @@ Vec3s Camera_Update(Camera* camera) {
         }
         return D_8015BD80.sub.unk_104A;
     }
+#endif
 
     OREG(0) &= ~8;
 
@@ -7644,6 +7672,7 @@ Vec3s Camera_Update(Camera* camera) {
         camera->timer = 0;
     }
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if (R_DBG_CAM_UPDATE) {
         osSyncPrintf("camera: out (%f %f %f) (%f %f %f)\n", camera->at.x, camera->at.y, camera->at.z, camera->eye.x,
                      camera->eye.y, camera->eye.z);
@@ -7655,6 +7684,7 @@ Vec3s Camera_Update(Camera* camera) {
                          curPlayerPosRot.pos.z, camera->dist);
         }
     }
+#endif
 
     return camera->inputDir;
 }
@@ -7945,13 +7975,17 @@ s32 Camera_ChangeBgCamIndex(Camera* camera, s32 bgCamIndex) {
 }
 
 Vec3s* Camera_GetInputDir(Vec3s* dst, Camera* camera) {
+#ifdef ENABLE_CAMERA_DEBUGGER
     if (gDbgCamEnabled) {
         *dst = D_8015BD80.sub.unk_104A;
         return dst;
     } else {
+#endif
         *dst = camera->inputDir;
         return dst;
+#ifdef ENABLE_CAMERA_DEBUGGER
     }
+#endif
 }
 
 s16 Camera_GetInputDirPitch(Camera* camera) {
@@ -7969,13 +8003,17 @@ s16 Camera_GetInputDirYaw(Camera* camera) {
 }
 
 Vec3s* Camera_GetCamDir(Vec3s* dst, Camera* camera) {
+#ifdef ENABLE_CAMERA_DEBUGGER
     if (gDbgCamEnabled) {
         *dst = D_8015BD80.sub.unk_104A;
         return dst;
     } else {
+#endif
         *dst = camera->camDir;
         return dst;
+#ifdef ENABLE_CAMERA_DEBUGGER
     }
+#endif
 }
 
 s16 Camera_GetCamDirPitch(Camera* camera) {
@@ -8165,9 +8203,11 @@ s32 Camera_Copy(Camera* dstCamera, Camera* srcCamera) {
     return true;
 }
 
+#ifdef ENABLE_CAMERA_DEBUGGER
 s32 Camera_GetDbgCamEnabled(void) {
     return gDbgCamEnabled;
 }
+#endif
 
 Vec3f* Camera_GetSkyboxOffset(Vec3f* dst, Camera* camera) {
     *dst = camera->skyboxOffset;

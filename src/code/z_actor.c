@@ -1,5 +1,6 @@
 #include "global.h"
 #include "vt.h"
+#include "config.h"
 
 #include "overlays/actors/ovl_Arms_Hook/z_arms_hook.h"
 #include "overlays/actors/ovl_En_Part/z_en_part.h"
@@ -3887,7 +3888,11 @@ s16 func_80034DD4(Actor* actor, PlayState* play, s16 arg2, f32 arg3) {
     Player* player = GET_PLAYER(play);
     f32 var;
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if ((play->csCtx.state != CS_STATE_IDLE) || gDbgCamEnabled) {
+#else
+    if (play->csCtx.state != CS_STATE_IDLE) {
+#endif
         var = Math_Vec3f_DistXYZ(&actor->world.pos, &play->view.eye) * 0.25f;
     } else {
         var = Math_Vec3f_DistXYZ(&actor->world.pos, &player->actor.world.pos);
@@ -5562,7 +5567,11 @@ s32 Actor_TrackPlayerSetFocusHeight(PlayState* play, Actor* actor, Vec3s* headRo
     actor->focus.pos = actor->world.pos;
     actor->focus.pos.y += focusHeight;
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if (!(((play->csCtx.state != CS_STATE_IDLE) || gDbgCamEnabled) && (gSaveContext.entranceIndex == ENTR_SPOT04_0))) {
+#else
+    if (!((play->csCtx.state != CS_STATE_IDLE) && (gSaveContext.entranceIndex == ENTR_SPOT04_0))) {
+#endif
         yaw = ABS((s16)(actor->yawTowardsPlayer - actor->shape.rot.y));
         if (yaw >= 0x4300) {
             Actor_TrackNone(headRot, torsoRot);
@@ -5570,7 +5579,11 @@ s32 Actor_TrackPlayerSetFocusHeight(PlayState* play, Actor* actor, Vec3s* headRo
         }
     }
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if (((play->csCtx.state != CS_STATE_IDLE) || gDbgCamEnabled) && (gSaveContext.entranceIndex == ENTR_SPOT04_0)) {
+#else
+    if ((play->csCtx.state != CS_STATE_IDLE) && (gSaveContext.entranceIndex == ENTR_SPOT04_0)) {
+#endif
         target = play->view.eye;
     } else {
         target = player->actor.focus.pos;
@@ -5604,7 +5617,11 @@ s32 Actor_TrackPlayer(PlayState* play, Actor* actor, Vec3s* headRot, Vec3s* tors
 
     actor->focus.pos = focusPos;
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if (!(((play->csCtx.state != CS_STATE_IDLE) || gDbgCamEnabled) && (gSaveContext.entranceIndex == ENTR_SPOT04_0))) {
+#else
+    if (!((play->csCtx.state != CS_STATE_IDLE) && (gSaveContext.entranceIndex == ENTR_SPOT04_0))) {
+#endif
         yaw = ABS((s16)(actor->yawTowardsPlayer - actor->shape.rot.y));
         if (yaw >= 0x4300) {
             Actor_TrackNone(headRot, torsoRot);
@@ -5612,7 +5629,11 @@ s32 Actor_TrackPlayer(PlayState* play, Actor* actor, Vec3s* headRot, Vec3s* tors
         }
     }
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if (((play->csCtx.state != CS_STATE_IDLE) || gDbgCamEnabled) && (gSaveContext.entranceIndex == ENTR_SPOT04_0)) {
+#else
+    if ((play->csCtx.state != CS_STATE_IDLE) && (gSaveContext.entranceIndex == ENTR_SPOT04_0)) {
+#endif
         target = play->view.eye;
     } else {
         target = player->actor.focus.pos;

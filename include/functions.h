@@ -1427,6 +1427,8 @@ u32 Letterbox_GetSize(void);
 void Letterbox_Init(void);
 void Letterbox_Destroy(void);
 void Letterbox_Update(s32 updateRate);
+
+#ifdef ENABLE_CAMERA_DEBUGGER
 // ? DbCamera_AddVecSph(?);
 // ? DbCamera_CalcUpFromPitchYawRoll(?);
 // ? DbCamera_SetTextValue(?);
@@ -1460,8 +1462,12 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam);
 // ? func_800B91B0(?);
 void DbCamera_Reset(Camera* cam, DbCamera* dbCam);
 // ? DbCamera_UpdateDemoControl(?);
+#endif
+
 void func_800BB0A0(f32 u, Vec3f* pos, f32* roll, f32* viewAngle, f32* point0, f32* point1, f32* point2, f32* point3);
 s32 func_800BB2B4(Vec3f* pos, f32* roll, f32* fov, CutsceneCameraPoint* point, s16* keyFrame, f32* curFrame);
+
+#ifdef ENABLE_CAMERA_DEBUGGER
 s32 Mempak_Init(s32 controllerNb);
 s32 Mempak_GetFreeBytes(s32 controllerNb);
 s32 Mempak_FindFile(s32 controllerNb, char start, char end);
@@ -1470,6 +1476,8 @@ s32 Mempak_Read(s32 controllerNb, char idx, void* buffer, s32 offset, s32 size);
 s32 Mempak_Alloc(s32 controllerNb, char* idx, s32 size);
 s32 Mempak_DeleteFile(s32 controllerNb, char idx);
 s32 Mempak_GetFileSize(s32 controllerNb, char idx);
+#endif
+
 void KaleidoManager_LoadOvl(KaleidoMgrOverlay* ovl);
 void KaleidoManager_ClearOvl(KaleidoMgrOverlay* ovl);
 void KaleidoManager_Init(PlayState* play);

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "vt.h"
+#include "config.h"
 
 void* D_8012D1F0 = NULL;
 UNK_TYPE D_8012D1F4 = 0; // unused
@@ -988,7 +989,11 @@ void Play_Update(PlayState* this) {
 skip:
     PLAY_LOG(3801);
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if ((sp80 == 0) || gDbgCamEnabled) {
+#else
+    if (sp80 == 0) {
+#endif
         s32 pad3[5];
         s32 i;
 

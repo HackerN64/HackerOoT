@@ -3,6 +3,7 @@
 
 #include "ultra64.h"
 #include "z64cutscene.h"
+#include "config.h"
 
 // these two angle conversion macros are slightly inaccurate
 #define CAM_DEG_TO_BINANG(degrees) (s16)((degrees) * 182.04167f + .5f)
@@ -27,7 +28,7 @@
 #define PARENT_CAM(cam) ((cam)->play->cameraPtrs[(cam)->parentCamId])
 #define CHILD_CAM(cam) ((cam)->play->cameraPtrs[(cam)->childCamId])
 
-// All scenes using `SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT` or `SCENE_CAM_TYPE_FIXED_TOGGLE_VIEWPOINT` are expected 
+// All scenes using `SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT` or `SCENE_CAM_TYPE_FIXED_TOGGLE_VIEWPOINT` are expected
 // to have their first two bgCamInfo entries be the following:
 #define BGCAM_INDEX_TOGGLE_LOCKED 0
 #define BGCAM_INDEX_TOGGLE_PIVOT 1
@@ -1411,6 +1412,8 @@ typedef struct {
     /* 0x16A */ s16 unk_16A;
 } Camera; // size = 0x16C
 
+#ifdef ENABLE_CAMERA_DEBUGGER
+
 /**
  * Debug Camera
 */
@@ -1476,5 +1479,7 @@ typedef struct {
     /* 0x28 */ f32 roll;
     /* 0x2C */ f32 fov;
 } DbCameraAnim; // size = 0x30
+
+#endif
 
 #endif

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "z64camera.h"
+#include "config.h"
 
 #include "assets/scenes/indoors/tokinoma/tokinoma_scene.h"
 #include "assets/scenes/overworld/spot00/spot00_scene.h"
@@ -149,6 +150,7 @@ void func_80064558(PlayState* play, CutsceneContext* csCtx) {
 
 void func_800645A0(PlayState* play, CutsceneContext* csCtx) {
     Input* input = &play->state.input[0];
+    u8 condition = (CHECK_BTN_ALL(input->press.button, BTN_DUP) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER);
 
     if (CHECK_BTN_ALL(input->press.button, BTN_DLEFT) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER) {
         D_8015FCC8 = 0;
@@ -156,8 +158,11 @@ void func_800645A0(PlayState* play, CutsceneContext* csCtx) {
         gSaveContext.cutsceneTrigger = 1;
     }
 
-    if (CHECK_BTN_ALL(input->press.button, BTN_DUP) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER &&
-        !gDbgCamEnabled) {
+#ifdef ENABLE_CAMERA_DEBUGGER
+    condition = conditon && !gDbgCamEnabled;
+#endif
+
+    if (condition) {
         D_8015FCC8 = 1;
         gSaveContext.cutsceneIndex = 0xFFFD;
         gSaveContext.cutsceneTrigger = 1;
