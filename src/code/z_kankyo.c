@@ -3,6 +3,7 @@
 #include "vt.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/gameplay_field_keep/gameplay_field_keep.h"
+#include "config.h"
 
 typedef enum {
     /* 0x00 */ LIGHTNING_BOLT_START,
@@ -927,7 +928,11 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
         if ((pauseCtx->state == 0) && (gameOverCtx->state == GAMEOVER_INACTIVE)) {
             if (((msgCtx->msgLength == 0) && (msgCtx->msgMode == MSGMODE_NONE)) ||
                 (((void)0, gSaveContext.gameMode) == GAMEMODE_END_CREDITS)) {
-                if ((envCtx->changeSkyboxTimer == 0) && !FrameAdvance_IsEnabled(play) &&
+
+                if ((envCtx->changeSkyboxTimer == 0) &&
+#ifdef ENABLE_FRAMERATE_OPTIONS
+                    !FrameAdvance_IsEnabled(play) &&
+#endif
                     (play->transitionMode == TRANS_MODE_OFF || ((void)0, gSaveContext.gameMode) != GAMEMODE_NORMAL)) {
 
                     if (IS_DAY || gTimeSpeed >= 400) {

@@ -10,6 +10,14 @@ typedef struct {
     /* 0x12 */ OSContPad rel; // X/Y store adjusted
 } Input; // size = 0x18
 
+typedef enum {
+    /* 0x0 */ CONTROLLER_PORT_1,
+    /* 0x1 */ CONTROLLER_PORT_2,
+    /* 0x2 */ CONTROLLER_PORT_3,
+    /* 0x3 */ CONTROLLER_PORT_4,
+    /* 0x4 */ CONTROLLER_PORT_MAX
+} ControllerPort;
+
 typedef struct PadMgr {
     /* 0x0000 */ OSContStatus padStatus[4];
     /* 0x0010 */ OSMesg serialLockMsgBuf[1];
@@ -21,7 +29,7 @@ typedef struct PadMgr {
     /* 0x0070 */ IrqMgrClient irqClient;
     /* 0x0078 */ IrqMgr* irqMgr;
     /* 0x0080 */ OSThread thread;
-    /* 0x0230 */ Input inputs[4];
+    /* 0x0230 */ Input inputs[CONTROLLER_PORT_MAX];
     /* 0x0290 */ OSContPad pads[4];
     /* 0x02A8 */ vu8 validCtrlrsMask;
     /* 0x02A9 */ u8 nControllers;

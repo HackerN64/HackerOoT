@@ -55,9 +55,26 @@
 // #define ENABLE_EVENT_EDITOR
 
 /**
+ * Enable framerate options (frame advance & pausing the game)
+ */
+// TODO: check for frame advance for drawing, improve how it works
+#define ENABLE_FRAMERATE_OPTIONS
+
+// Set the controller port to use for frame advance
+#define FA_CONTROLLER_PORT CONTROLLER_PORT_1
+
+// Set to true to use a button combo
+#define USE_BUTTON_COMBO true
+#define BUTTON_TO_HOLD_FOR_COMBO BTN_R
+
+// Set button to use with button to hold, if using one
+#define PAUSE_CONTROL BTN_DDOWN
+#define FA_CONTROL BTN_DUP
+
+/**
  * Enable in-game registers editor
  */
-#define ENABLE_REG_EDITOR
+// #define ENABLE_REG_EDITOR
 
 /**
  * Enable map select
@@ -82,7 +99,7 @@
 /**
  * Enable messages (texts/dialogs) debugger
  */
-// #define ENABLE_MSG_DEBUGGER
+#define ENABLE_MSG_DEBUGGER
 
 /**
  * Change language with D-Pad on file choose (controller 1)
@@ -93,12 +110,12 @@
 /**
  * Show cutscene debug informations
  */
-// #define SHOW_CS_INFOS
+#define SHOW_CS_INFOS
 
 /**
  * Show time debug informations
  */
-// #define SHOW_TIME_INFOS
+#define SHOW_TIME_INFOS
 
 /**
  * Show in-game input display

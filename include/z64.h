@@ -274,10 +274,12 @@ typedef struct {
     /* 0x01 */ u8   natureAmbienceId;
 } SequenceContext; // size = 0x2
 
+#ifdef ENABLE_FRAMERATE_OPTIONS
 typedef struct {
     /* 0x00 */ s32 enabled;
     /* 0x04 */ s32 timer;
 } FrameAdvanceContext; // size = 0x8
+#endif
 
 typedef struct {
     /* 0x00 */ Vec3f    pos;
@@ -1155,7 +1157,9 @@ typedef struct PlayState {
     /* 0x007A2 */ s16 nextCamId;
     /* 0x007A4 */ SequenceContext sequenceCtx;
     /* 0x007A8 */ LightContext lightCtx;
+#ifdef ENABLE_FRAMERATE_OPTIONS
     /* 0x007B8 */ FrameAdvanceContext frameAdvCtx;
+#endif
     /* 0x007C0 */ CollisionContext colCtx;
     /* 0x01C24 */ ActorContext actorCtx;
     /* 0x01D64 */ CutsceneContext csCtx; // "demo_play"

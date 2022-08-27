@@ -362,7 +362,11 @@ void Play_Init(GameState* thisx) {
     PreRender_SetValues(&this->pauseBgPreRender, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
     gTrnsnUnkState = 0;
     this->transitionMode = TRANS_MODE_OFF;
+
+#ifdef ENABLE_FRAMERATE_OPTIONS
     FrameAdvance_Init(&this->frameAdvCtx);
+#endif
+
     Rand_Seed((u32)osGetTime());
     Matrix_Init(&this->state);
     this->state.main = Play_Main;
@@ -480,7 +484,9 @@ void Play_Update(PlayState* this) {
     gSegments[5] = VIRTUAL_TO_PHYSICAL(this->objectCtx.status[this->objectCtx.subKeepIndex].segment);
     gSegments[2] = VIRTUAL_TO_PHYSICAL(this->sceneSegment);
 
-    if (FrameAdvance_Update(&this->frameAdvCtx, &input[1])) {
+#ifdef ENABLE_FRAMERATE_OPTIONS
+    if (FrameAdvance_Update(&this->frameAdvCtx, &input[FA_CONTROLLER_PORT])) {
+#endif
         if ((this->transitionMode == TRANS_MODE_OFF) && (this->transitionTrigger != TRANS_TRIGGER_OFF)) {
             this->transitionMode = TRANS_MODE_SETUP;
         }
@@ -982,7 +988,9 @@ void Play_Update(PlayState* this) {
         } else {
             goto skip;
         }
+#ifdef ENABLE_FRAMERATE_OPTIONS
     }
+#endif
 
     PLAY_LOG(3799);
 
@@ -1762,9 +1770,11 @@ s32 Play_CamIsNotFixed(PlayState* this) {
            (R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_FIXED_MARKET) && (this->sceneId != SCENE_HAIRAL_NIWA);
 }
 
+#ifdef ENABLE_FRAMERATE_OPTIONS
 s32 FrameAdvance_IsEnabled(PlayState* this) {
     return !!this->frameAdvCtx.enabled;
 }
+#endif
 
 s32 func_800C0D34(PlayState* this, Actor* actor, s16* yaw) {
     TransitionActorEntry* transitionActor;

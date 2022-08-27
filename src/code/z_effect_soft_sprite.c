@@ -1,5 +1,6 @@
 #include "global.h"
 #include "vt.h"
+#include "config.h"
 
 EffectSsInfo sEffectSsInfo = { 0 }; // "EffectSS2Info"
 
@@ -155,12 +156,16 @@ s32 EffectSs_FindSlot(s32 priority, s32* pIndex) {
 void EffectSs_Insert(PlayState* play, EffectSs* effectSs) {
     s32 index;
 
+#ifdef ENABLE_FRAMERATE_OPTIONS
     if (FrameAdvance_IsEnabled(play) != true) {
+#endif
         if (EffectSs_FindSlot(effectSs->priority, &index) == 0) {
             sEffectSsInfo.searchStartIndex = index + 1;
             sEffectSsInfo.table[index] = *effectSs;
         }
+#ifdef ENABLE_FRAMERATE_OPTIONS
     }
+#endif
 }
 
 // original name: "EffectSoftSprite2_makeEffect"

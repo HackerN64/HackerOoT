@@ -350,7 +350,9 @@ beginseg
     include "build/src/code/z_map_data.o"
     include "build/src/code/z_parameter.o"
     include "build/src/code/z_path.o"
+#ifdef ENABLE_FRAMERATE_OPTIONS
     include "build/src/code/z_frame_advance.o"
+#endif
     include "build/src/code/z_player_lib.o"
     include "build/src/code/z_prenmi.o"
     include "build/src/code/z_quake.o"

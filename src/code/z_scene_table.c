@@ -1,4 +1,5 @@
 #include "global.h"
+#include "config.h"
 
 #include "assets/scenes/overworld/spot00/spot00_scene.h"
 #include "assets/scenes/overworld/spot00/spot00_room_0.h"
@@ -1488,8 +1489,9 @@ void Scene_DrawConfigBdan(PlayState* play) {
     gDPPipeSync(POLY_XLU_DISP++);
     gDPSetEnvColor(POLY_XLU_DISP++, 128, 128, 128, 128);
 
+#ifdef ENABLE_FRAMERATE_OPTIONS
     if (FrameAdvance_IsEnabled(play) != true) {
-
+#endif
         D_8012A39C += 1820;
         D_8012A3A0 += 1820;
 
@@ -1524,7 +1526,9 @@ void Scene_DrawConfigBdan(PlayState* play) {
         }
 
         D_8012A398 += 0.15f + (play->roomCtx.unk_74[1] * 0.001f);
+#ifdef ENABLE_FRAMERATE_OPTIONS
     }
+#endif
 
     if (play->roomCtx.curRoom.num == 2) {
         Matrix_Scale(1.0f, sinf(D_8012A398) * 0.8f, 1.0f, MTXMODE_NEW);
