@@ -2,6 +2,7 @@
 #include "message_data_static.h"
 #include "vt.h"
 #include "assets/textures/parameter_static/parameter_static.h"
+#include "config.h"
 
 s16 sTextFade = false; // original name: key_off_flag ?
 
@@ -11,7 +12,11 @@ s16 sOcarinaButtonIndexBufPos = 0;
 
 s16 sOcarinaButtonIndexBufLen = 0;
 
+#ifdef ENABLE_FAST_TEXT
+u8 sTextboxSkipped = true;
+#else
 u8 sTextboxSkipped = false;
+#endif
 
 u16 sNextTextId = 0;
 
@@ -2946,6 +2951,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
     *p = gfx;
 }
 
+#ifdef ENABLE_MSG_DEBUGGER
 /**
  * If the s16 variable pointed to by `var` changes in value, a black bar and white box
  * are briefly drawn onto the screen. It can only watch one variable per build due to
@@ -2997,6 +3003,7 @@ void Message_DrawDebugText(PlayState* play, Gfx** p) {
     *p = GfxPrint_Close(&printer);
     GfxPrint_Destroy(&printer);
 }
+#endif
 
 void Message_Draw(PlayState* play) {
     Gfx* plusOne;
@@ -3005,9 +3012,10 @@ void Message_Draw(PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx, "../z_message_PAL.c", 3554);
 
+#ifdef ENABLE_MSG_DEBUGGER
     watchVar = gSaveContext.scarecrowLongSongSet;
     Message_DrawDebugVariableChanged(&watchVar, play->state.gfxCtx);
-    if (BREG(0) != 0 && play->msgCtx.textId != 0) { // message text debug
+    if (BREG(0) != 0 && play->msgCtx.textId != 0) {
         plusOne = Graph_GfxPlusOne(polyOpaP = POLY_OPA_DISP);
         gSPDisplayList(OVERLAY_DISP++, plusOne);
         Message_DrawDebugText(play, &plusOne);
@@ -3015,6 +3023,7 @@ void Message_Draw(PlayState* play) {
         Graph_BranchDlist(polyOpaP, plusOne);
         POLY_OPA_DISP = plusOne;
     }
+#endif
     if (1) {}
     plusOne = Graph_GfxPlusOne(polyOpaP = POLY_OPA_DISP);
     gSPDisplayList(OVERLAY_DISP++, plusOne);
@@ -3058,7 +3067,8 @@ void Message_Update(PlayState* play) {
     s16 playerFocusScreenPosY;
     s16 actorFocusScreenPosY;
 
-    if (BREG(0) != 0) { // message text debug
+#ifdef ENABLE_MSG_DEBUGGER
+    if (BREG(0) != 0) {
         if (CHECK_BTN_ALL(input->press.button, BTN_DDOWN) && CHECK_BTN_ALL(input->cur.button, BTN_L)) {
             osSyncPrintf("msgno=%d\n", D_80153D78);
             Message_StartTextbox(play, R_MESSAGE_DEBUGGER_TEXTID, NULL);
@@ -3083,6 +3093,7 @@ void Message_Update(PlayState* play) {
             }
         }
     }
+#endif
 
     if (msgCtx->msgLength == 0) {
         return;

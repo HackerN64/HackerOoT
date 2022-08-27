@@ -106,6 +106,7 @@ u8 D_8015FCE4;       // only written to, never read
 
 void func_80068ECC(PlayState* play, CutsceneContext* csCtx);
 
+#ifdef SHOW_CS_INFOS
 void Cutscene_DrawDebugInfo(PlayState* play, Gfx** dlist, CutsceneContext* csCtx) {
     GfxPrint printer;
     s32 pad[2];
@@ -119,12 +120,13 @@ void Cutscene_DrawDebugInfo(PlayState* play, Gfx** dlist, CutsceneContext* csCtx
     GfxPrint_SetColor(&printer, 255, 255, 255, 32);
     GfxPrint_Printf(&printer, "%06d", csCtx->frames);
     GfxPrint_SetColor(&printer, 50, 255, 255, 60);
-    GfxPrint_SetPos(&printer, 4, 26);
+    GfxPrint_SetPos(&printer, 10, 26);
     GfxPrint_Printf(&printer, "%s", "SKIP=(START) or (Cursole Right)");
 
     *dlist = GfxPrint_Close(&printer);
     GfxPrint_Destroy(&printer);
 }
+#endif
 
 void func_8006450C(PlayState* play, CutsceneContext* csCtx) {
     csCtx->state = CS_STATE_IDLE;
@@ -1921,7 +1923,8 @@ void func_80068C3C(PlayState* play, CutsceneContext* csCtx) {
     if (gSaveContext.cutsceneIndex >= 0xFFF0) {
         if (0) {} // Also necessary to match
 
-        if (BREG(0) != 0) { // cs frame counter
+#ifdef SHOW_CS_INFOS
+        if (BREG(0) != 0) {
             OPEN_DISPS(play->state.gfxCtx, "../z_demo.c", 4101);
 
             prevDisplayList = POLY_OPA_DISP;
@@ -1934,6 +1937,7 @@ void func_80068C3C(PlayState* play, CutsceneContext* csCtx) {
 
             CLOSE_DISPS(play->state.gfxCtx, "../z_demo.c", 4108);
         }
+#endif
 
         csCtx->frames++;
         if (dREG(95) != 0) {

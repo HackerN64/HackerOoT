@@ -34,7 +34,10 @@
 #define BOOT_CUTSCENE 0x0000
 #define BOOT_PLAYER_NAME 0x15, 0x12, 0x17, 0x14, 0x3E, 0x3E, 0x3E, 0x3E // "LINK"
 
-// TODO: Actor Debugger (see BREG(0) usage)
+/**
+ * Enable fast text
+ */
+#define ENABLE_FAST_TEXT
 
 /**
  * Remove debug scenes
@@ -80,6 +83,16 @@
  * Enable actor debugger
  */
 // #define ENABLE_ACTOR_DEBUGGER
+
+/**
+ * Enable messages (texts/dialogs) debugger
+ */
+// #define ENABLE_MSG_DEBUGGER
+
+/**
+ * Show cutscene debug informations
+ */
+// #define SHOW_CS_INFOS
 
 /**
  * No map select on file 1
