@@ -1,4 +1,5 @@
 #include "global.h"
+#include "config.h"
 
 typedef struct {
     u8 x;
@@ -26,6 +27,8 @@ Color_RGBA8 sDebugPrintTextColors[] = {
     { 128, 150, 255, 128 }, // 6
     { 128, 255, 32, 128 },  // 7
 };
+
+#ifdef ENABLE_REG_EDITOR
 
 InputCombo sRegGroupInputCombos[REG_GROUPS] = {
     { BTN_L, BTN_CUP },        //  REG
@@ -92,16 +95,22 @@ char sRegGroupChars[REG_GROUPS] = {
     'b', // bREG
 };
 
+#endif
+
 // Initialize GameInfo
 void func_800636C0(void) {
     s32 i;
 
     gGameInfo = (GameInfo*)SystemArena_MallocDebug(sizeof(GameInfo), "../z_debug.c", 260);
+
+#ifdef ENABLE_REG_EDITOR
     gGameInfo->regPage = 0;
     gGameInfo->regGroup = 0;
     gGameInfo->regCur = 0;
     gGameInfo->dPadInputPrev = 0;
     gGameInfo->inputRepeatTimer = 0;
+#endif
+
     for (i = 0; i < ARRAY_COUNT(gGameInfo->data); i++) {
         gGameInfo->data[i] = 0;
     }
@@ -152,6 +161,8 @@ void func_80063828(GfxPrint* printer) {
         GfxPrint_Printf(printer, "%s", entry->text);
     }
 }
+
+#ifdef ENABLE_REG_EDITOR
 
 // Process inputs to control the reg editor
 void func_8006390C(Input* input) {
@@ -268,6 +279,8 @@ void func_80063C04(GfxPrint* printer) {
     }
 }
 
+#endif
+
 void func_80063D7C(GraphicsContext* gfxCtx) {
     Gfx* gfx;
     Gfx* opaStart;
@@ -286,9 +299,11 @@ void func_80063D7C(GraphicsContext* gfxCtx) {
         func_80063828(&printer);
     }
 
+#ifdef ENABLE_REG_EDITOR
     if (gGameInfo->regPage != 0) {
         func_80063C04(&printer);
     }
+#endif
 
     sDebugPrintTextBufferNumUsed = 0;
 

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "vt.h"
+#include "config.h"
 
 SpeedMeter D_801664D0;
 struct_801664F0 D_801664F0;
@@ -83,9 +84,11 @@ void func_800C4344(GameState* gameState) {
         HREG(95) = CHECK_BTN_ALL(selectedInput->press.button, hReg82);
     }
 
+#ifdef ENABLE_REG_EDITOR
     if (gIsCtrlr2Valid) {
         func_8006390C(&gameState->input[1]);
     }
+#endif
 
     gDmaMgrVerbose = HREG(60);
     gDmaMgrDmaBuffSize = SREG(21) != 0 ? ALIGN16(SREG(21)) : 0x2000;

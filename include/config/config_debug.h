@@ -57,6 +57,11 @@
 // #define ENABLE_INPUT_DISPLAY
 
 /**
+ * Enable in-game registers editor
+ */
+// #define ENABLE_REG_EDITOR
+
+/**
  * Enable map select
  */
 // #define ENABLE_MAP_SELECT
