@@ -116,9 +116,11 @@ void func_800636C0(void) {
     }
 }
 
+#ifdef ENABLE_NO_CLIP
 // Called when free movement is active.
 void func_8006375C(s32 arg0, s32 arg1, const char* text) {
 }
+#endif
 
 // Store text during Update, to be drawn later during Draw
 void func_8006376C(u8 x, u8 y, u8 colorIndex, const char* text) {
