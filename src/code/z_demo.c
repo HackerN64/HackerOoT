@@ -151,24 +151,36 @@ void func_80064558(PlayState* play, CutsceneContext* csCtx) {
 }
 
 void func_800645A0(PlayState* play, CutsceneContext* csCtx) {
-    Input* input = &play->state.input[0];
-    u8 condition = (CHECK_BTN_ALL(input->press.button, BTN_DUP) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER);
+#ifdef ENABLE_CS_CONTROL
+    Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
 
-    if (CHECK_BTN_ALL(input->press.button, BTN_DLEFT) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER) {
+    // if using button combo check for the input, else simply return true
+    u8 buttonCombo = CS_CTRL_USE_BTN_COMBO ? CHECK_BTN_ALL(input->cur.button, CS_CTRL_BTN_HOLD_FOR_COMBO) : true;
+
+    // if the scene layer is a cutscene one, we're not playing a cutscene
+    // and we pressed D-Pad Up: restart the cutscene
+    u8 canStartCutscene = buttonCombo && (CHECK_BTN_ALL(input->press.button, CS_CTRL_RESTART_CONTROL) &&
+                            (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER);
+
+    // restart the cutscene without using the camera points,
+    // instead simply follow the player
+    if (buttonCombo && CHECK_BTN_ALL(input->press.button, CS_CTRL_RESTART_NO_CAMERA_CONTROL) &&
+        (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER) {
         D_8015FCC8 = 0;
         gSaveContext.cutsceneIndex = 0xFFFD;
         gSaveContext.cutsceneTrigger = 1;
     }
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-    condition = condition && !gDbgCamEnabled;
+    canStartCutscene = canStartCutscene && !gDbgCamEnabled;
 #endif
 
-    if (condition) {
+    if (canStartCutscene) {
         D_8015FCC8 = 1;
         gSaveContext.cutsceneIndex = 0xFFFD;
         gSaveContext.cutsceneTrigger = 1;
     }
+#endif
 
     if ((gSaveContext.cutsceneTrigger != 0) && (play->transitionTrigger == TRANS_TRIGGER_START)) {
         gSaveContext.cutsceneTrigger = 0;
@@ -493,22 +505,40 @@ void func_80065134(PlayState* play, CutsceneContext* csCtx, CsCmdDayTime* cmd) {
 // Command 0x3E8: Code Execution (& Terminates Cutscene?)
 void Cutscene_Command_Terminator(PlayState* play, CutsceneContext* csCtx, CsCmdBase* cmd) {
     Player* player = GET_PLAYER(play);
-    s32 temp = 0;
+    s32 titleDemoSkipped = false;
+    u8 runCmdDestination = false;
 
+#ifdef ENABLE_CS_CONTROL
+    Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
+
+    // if using button combo check for the input, else simply return true
+    u8 buttonCombo = CS_CTRL_USE_BTN_COMBO ? CHECK_BTN_ALL(input->cur.button, CS_CTRL_BTN_HOLD_FOR_COMBO) : true;
+
+    // same thing for the "skip title screen cs" feature
+    u8 skipTitleScreenCS = (gSaveContext.gameMode == GAMEMODE_TITLE_SCREEN) ? CS_CTRL_SKIP_TITLE_SCREEN : true;
+#endif
+
+    // if START, A or B on the title screen cutscene but not on the hyrule field part
     if ((gSaveContext.gameMode != GAMEMODE_NORMAL) && (gSaveContext.gameMode != GAMEMODE_END_CREDITS) &&
         (play->sceneId != SCENE_SPOT00) && (csCtx->frames > 20) &&
-        (CHECK_BTN_ALL(play->state.input[0].press.button, BTN_A) ||
-         CHECK_BTN_ALL(play->state.input[0].press.button, BTN_B) ||
-         CHECK_BTN_ALL(play->state.input[0].press.button, BTN_START)) &&
+        (CHECK_BTN_ALL(play->state.input[CONTROLLER_PORT_1].press.button, BTN_A) ||
+         CHECK_BTN_ALL(play->state.input[CONTROLLER_PORT_1].press.button, BTN_B) ||
+         CHECK_BTN_ALL(play->state.input[CONTROLLER_PORT_1].press.button, BTN_START)) &&
         (gSaveContext.fileNum != 0xFEDC) && (play->transitionTrigger == TRANS_TRIGGER_OFF)) {
         Audio_PlaySfxGeneral(NA_SE_SY_PIECE_OF_HEART, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        temp = 1;
+        titleDemoSkipped = true;
     }
 
-    if ((csCtx->frames == cmd->startFrame) || (temp != 0) ||
-        ((csCtx->frames > 20) && CHECK_BTN_ALL(play->state.input[0].press.button, BTN_START) &&
-         (gSaveContext.fileNum != 0xFEDC))) {
+    runCmdDestination = ((csCtx->frames == cmd->startFrame) || titleDemoSkipped);
+
+#ifdef ENABLE_CS_CONTROL
+    runCmdDestination = skipTitleScreenCS && (runCmdDestination || ((csCtx->frames > 20) &&
+        (buttonCombo && CHECK_BTN_ALL(input->press.button, CS_CTRL_RUN_DEST_CONTROL)) &&
+        (gSaveContext.fileNum != 0xFEDC)));
+#endif
+
+    if (runCmdDestination) {
         csCtx->state = CS_STATE_UNSKIPPABLE_EXEC;
         Audio_SetCutsceneFlag(0);
         gSaveContext.cutsceneTransitionControl = 1;
@@ -1577,6 +1607,13 @@ void Cutscene_ProcessCommands(PlayState* play, CutsceneContext* csCtx, u8* cutsc
     s32 cutsceneEndFrame;
     s16 j;
 
+#ifdef ENABLE_CS_CONTROL
+    Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
+
+    // if using button combo check for the input, else simply return true
+    u8 buttonCombo = CS_CTRL_USE_BTN_COMBO ? CHECK_BTN_ALL(input->cur.button, CS_CTRL_BTN_HOLD_FOR_COMBO) : true;
+#endif
+
     MemCpy(&totalEntries, cutscenePtr, 4);
     cutscenePtr += 4;
     MemCpy(&cutsceneEndFrame, cutscenePtr, 4);
@@ -1587,10 +1624,13 @@ void Cutscene_ProcessCommands(PlayState* play, CutsceneContext* csCtx, u8* cutsc
         return;
     }
 
-    if (CHECK_BTN_ALL(play->state.input[0].press.button, BTN_DRIGHT)) {
+#ifdef ENABLE_CS_CONTROL
+    // interrupt cutscene
+    if (buttonCombo && CHECK_BTN_ALL(input->press.button, CS_CTRL_STOP_CONTROL)) {
         csCtx->state = CS_STATE_UNSKIPPABLE_INIT;
         return;
     }
+#endif
 
     for (i = 0; i < totalEntries; i++) {
         MemCpy(&cmdType, cutscenePtr, 4);

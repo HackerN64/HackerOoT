@@ -25,7 +25,7 @@
  */
 // #define BOOT_TO_SCENE
 // #define BOOT_TO_SCENE_NEW_GAME_ONLY
-#define BOOT_TO_FILE_SELECT
+// #define BOOT_TO_FILE_SELECT
 
 // Change these if using `BOOT_TO_SCENE` or `BOOT_TO_SCENE_NEW_GAME_ONLY`
 #define BOOT_ENTRANCE ENTR_YDAN_0
@@ -60,16 +60,52 @@
 // TODO: check for frame advance for drawing, improve how it works
 #define ENABLE_FRAMERATE_OPTIONS
 
+/**** [FRAME ADVANCE CONTROLS] ****/
+
 // Set the controller port to use for frame advance
 #define FA_CONTROLLER_PORT CONTROLLER_PORT_1
 
 // Set to true to use a button combo
-#define USE_BUTTON_COMBO true
-#define BUTTON_TO_HOLD_FOR_COMBO BTN_R
+#define FA_USE_BTN_COMBO true
+#define FA_BTN_HOLD_FOR_COMBO BTN_R
 
 // Set button to use with button to hold, if using one
-#define PAUSE_CONTROL BTN_DDOWN
+
+// Control for pausing
+#define FA_PAUSE_CONTROL BTN_DDOWN
+
+// Control for frame advancing
 #define FA_CONTROL BTN_DUP
+
+/**
+ * Enable cutscene control (skip, restart, cancel)
+ */
+// #define ENABLE_CS_CONTROL
+
+/**** [CUTSCENE CONTROLS] ****/
+
+// Set the controller port to use for cutscene control
+#define CS_CTRL_CONTROLLER_PORT CONTROLLER_PORT_1
+
+// Set to true to use a button combo
+#define CS_CTRL_USE_BTN_COMBO true
+#define CS_CTRL_BTN_HOLD_FOR_COMBO BTN_Z
+
+// Control to stop the current cutscene
+#define CS_CTRL_STOP_CONTROL BTN_DRIGHT
+
+// Control to restart the cutscene
+#define CS_CTRL_RESTART_CONTROL BTN_DUP
+
+// Control to restart the cutscene
+// without the camera commands (the camera will follow the player)
+#define CS_CTRL_RESTART_NO_CAMERA_CONTROL BTN_DLEFT
+
+// Control to execute the cutscene destination command (currently called "terminator")
+#define CS_CTRL_RUN_DEST_CONTROL BTN_START
+
+// Set to true if you want to skip on the title screen
+#define CS_CTRL_SKIP_TITLE_SCREEN false
 
 /**
  * Enable in-game registers editor
