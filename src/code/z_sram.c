@@ -697,11 +697,16 @@ void Sram_InitSave(FileSelectState* fileSelect, SramContext* sramCtx) {
     gSaveContext.dayTime = BOOT_TIME;
     gSaveContext.cutsceneIndex = BOOT_CUTSCENE;
 #else
+
+#ifdef ENABLE_DEBUG_SAVE
     if (fileSelect->buttonIndex != 0) {
         Sram_InitNewSave();
     } else {
         Sram_InitDebugSave();
     }
+#else
+    Sram_InitNewSave();
+#endif
 
     gSaveContext.entranceIndex = ENTR_LINK_HOME_0;
     gSaveContext.linkAge = LINK_AGE_CHILD;

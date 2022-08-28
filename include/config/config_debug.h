@@ -38,14 +38,38 @@
 #define BOOT_PLAYER_NAME 0x15, 0x12, 0x17, 0x14, 0x3E, 0x3E, 0x3E, 0x3E // "LINK"
 
 /**
- * No map select on file 1
+ * Disable every debug features
  */
-// #define FILE_1_NORMAL
+// #define DISABLE_DEBUG_FEATURES
 
 // -------------------------------------------
 
+// TODO: find a better way to do that
+#ifndef DEBUG_ROM
+#define DISABLE_DEBUG_FEATURES
+#endif
+
+#ifdef DISABLE_DEBUG_FEATURES
+#undef SHOW_CS_INFOS
+#undef SHOW_INPUT_DISPLAY
+#undef SHOW_TIME_INFOS
+#undef NO_TEST_SCENES
+#undef ENABLE_NO_CLIP
+#undef ENABLE_CS_CONTROL
+#undef ENABLE_FRAMERATE_OPTIONS
+#undef ENABLE_MAP_SELECT
+#undef ENABLE_INV_EDITOR
+#undef ENABLE_EVENT_EDITOR
+#undef ENABLE_REG_EDITOR
+#undef ENABLE_CAMERA_DEBUGGER
+#undef ENABLE_AUDIO_DEBUGGER
+#undef ENABLE_ACTOR_DEBUGGER
+#undef ENABLE_MSG_DEBUGGER
+#undef ENABLE_DEBUG_SAVE
+#endif
+
 // Remove map select from file 1
-#if (defined BOOT_TO_SCENE && defined BOOT_TO_FILE_SELECT) || (!defined ENABLE_MAP_SELECT)
+#if (defined BOOT_TO_SCENE && defined BOOT_TO_FILE_SELECT) || (!defined ENABLE_MAP_SELECT) || (defined DISABLE_DEBUG_FEATURES)
 #define FILE_1_NORMAL
 #endif
 
