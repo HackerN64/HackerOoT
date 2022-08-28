@@ -1,6 +1,9 @@
 #ifndef CONFIG_BOOTUP_H
 #define CONFIG_BOOTUP_H
 
+#include "config_debug_toggles.h"
+#include "config_debug_controls.h"
+
 /******************
  * DEBUG SETTINGS *
  ******************/
@@ -35,157 +38,11 @@
 #define BOOT_PLAYER_NAME 0x15, 0x12, 0x17, 0x14, 0x3E, 0x3E, 0x3E, 0x3E // "LINK"
 
 /**
- * Enable fast text
- */
-#define ENABLE_FAST_TEXT
-
-/**
- * Remove debug scenes
- */
-#define NO_DEBUG_SCENES
-
-/**
- * Enable in-game inventory editor
- */
-// #define ENABLE_INV_EDITOR
-
-/**
- * Enable in-game event editor
- */
-// #define ENABLE_EVENT_EDITOR
-
-/**
- * Enable framerate options (frame advance & pausing the game)
- */
-// TODO: check for frame advance for drawing, improve how it works
-#define ENABLE_FRAMERATE_OPTIONS
-
-/**** [FRAME ADVANCE CONTROLS] ****/
-
-// Set the controller port to use for frame advance
-#define FA_CONTROLLER_PORT CONTROLLER_PORT_1
-
-// Set to true to use a button combo
-#define FA_USE_BTN_COMBO true
-#define FA_BTN_HOLD_FOR_COMBO BTN_R
-
-// Set button to use with button to hold, if using one
-
-// Control for pausing
-#define FA_PAUSE_CONTROL BTN_DDOWN
-
-// Control for frame advancing
-#define FA_CONTROL BTN_DUP
-
-/**
- * Enable cutscene control (skip, restart, cancel)
- */
-// #define ENABLE_CS_CONTROL
-
-/**** [CUTSCENE CONTROLS] ****/
-
-// Set the controller port to use for cutscene control
-#define CS_CTRL_CONTROLLER_PORT CONTROLLER_PORT_1
-
-// Set to true to use a button combo
-#define CS_CTRL_USE_BTN_COMBO true
-#define CS_CTRL_BTN_HOLD_FOR_COMBO BTN_Z
-
-// Control to stop the current cutscene
-#define CS_CTRL_STOP_CONTROL BTN_DRIGHT
-
-// Control to restart the cutscene
-#define CS_CTRL_RESTART_CONTROL BTN_DUP
-
-// Control to restart the cutscene
-// without the camera commands (the camera will follow the player)
-#define CS_CTRL_RESTART_NO_CAMERA_CONTROL BTN_DLEFT
-
-// Control to execute the cutscene destination command (currently called "terminator")
-#define CS_CTRL_RUN_DEST_CONTROL BTN_START
-
-// Set to true if you want to skip on the title screen
-#define CS_CTRL_SKIP_TITLE_SCREEN false
-
-/**
- * Enable no clip feature
- */
-// #define ENABLE_NO_CLIP
-
-/**** [NO CLIP CONTROLS] ****/
-
-// Set the controller port to use for no clip
-#define NOCLIP_CONTROLLER_PORT CONTROLLER_PORT_1
-
-// Set to true to use a button combo
-#define NOCLIP_USE_BTN_COMBO true
-#define NOCLIP_BTN_HOLD_FOR_COMBO BTN_L
-
-// Control to enable no clip
-#define NOCLIP_TOGGLE_BTN BTN_DRIGHT
-
-// Control to hold to go faster
-#define NOCLIP_FAST_BTN BTN_R
-
-// Controls to move Link up and down
-#define NOCLIP_GO_UP BTN_B
-#define NOCLIP_GO_DOWN BTN_A
-
-/**
- * Enable in-game registers editor
- */
-// #define ENABLE_REG_EDITOR
-
-/**
- * Enable map select
- */
-// #define ENABLE_MAP_SELECT
-
-/**
- * Enable camera debugger (includes a cutscene debugger/exporter)
- */
-// #define ENABLE_CAMERA_DEBUGGER
-
-/**
- * Enable audio debugger
- */
-// #define ENABLE_AUDIO_DEBUGGER
-
-/**
- * Enable actor debugger
- */
-// #define ENABLE_ACTOR_DEBUGGER
-
-/**
- * Enable messages (texts/dialogs) debugger
- */
-#define ENABLE_MSG_DEBUGGER
-
-/**
- * Change language with D-Pad on file choose (controller 1)
- */
-// D-Pad Left: English, D-Pad Up: German, D-Pad Right: French
-// #define CHANGE_LANGUAGE_DPAD
-
-/**
- * Show cutscene debug informations
- */
-#define SHOW_CS_INFOS
-
-/**
- * Show time debug informations
- */
-#define SHOW_TIME_INFOS
-
-/**
- * Show in-game input display
- */
-// #define SHOW_INPUT_DISPLAY
-
-/**
  * No map select on file 1
  */
 // #define FILE_1_NORMAL
+
+// -------------------------------------------
 
 // Remove map select from file 1
 #if (defined BOOT_TO_SCENE && defined BOOT_TO_FILE_SELECT) || (!defined ENABLE_MAP_SELECT)
