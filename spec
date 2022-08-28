@@ -8453,7 +8453,7 @@ beginseg
     number 3
 endseg
 
-#ifndef NO_DEBUG_SCENES
+#ifndef NO_TEST_SCENES
 beginseg
     name "syotes_scene"
     romalign 0x1000
@@ -8917,7 +8917,7 @@ beginseg
     number 3
 endseg
 
-#ifndef NO_DEBUG_SCENES
+#ifndef NO_TEST_SCENES
 beginseg
     name "testroom_scene"
     romalign 0x1000
@@ -8996,7 +8996,7 @@ beginseg
     number 3
 endseg
 
-#ifndef NO_DEBUG_SCENES
+#ifndef NO_TEST_SCENES
 beginseg
     name "sutaru_scene"
     romalign 0x1000
@@ -9250,7 +9250,7 @@ beginseg
     number 3
 endseg
 
-#ifndef NO_DEBUG_SCENES
+#ifndef NO_TEST_SCENES
 beginseg
     name "sasatest_scene"
     romalign 0x1000
@@ -9910,7 +9910,7 @@ beginseg
     number 3
 endseg
 
-#ifndef NO_DEBUG_SCENES
+#ifndef NO_TEST_SCENES
 beginseg
     name "hairal_niwa2_scene"
     romalign 0x1000
@@ -10339,7 +10339,7 @@ beginseg
     number 3
 endseg
 
-#ifndef NO_DEBUG_SCENES
+#ifndef NO_TEST_SCENES
 beginseg
     name "besitu_scene"
     romalign 0x1000
@@ -10404,7 +10404,7 @@ beginseg
     number 3
 endseg
 
-#ifndef NO_DEBUG_SCENES
+#ifndef NO_TEST_SCENES
 beginseg
     name "test01_scene"
     romalign 0x1000

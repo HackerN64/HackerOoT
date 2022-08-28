@@ -40,7 +40,7 @@
 // #define ENABLE_MAP_SELECT
 
 /**** [TEST SCENES] ****/
-#define NO_DEBUG_SCENES
+#define NO_TEST_SCENES
 
 // -------------------------------------------
 
