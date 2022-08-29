@@ -20,6 +20,8 @@ void EnItem00_DrawCollectible(EnItem00* this, PlayState* play);
 void EnItem00_DrawHeartContainer(EnItem00* this, PlayState* play);
 void EnItem00_DrawHeartPiece(EnItem00* this, PlayState* play);
 
+u8 Item_FlexDrop(PlayState* play, Vec3f* spawnPos, s16 params);
+
 const ActorInit En_Item00_InitVars = {
     ACTOR_EN_ITEM00,
     ACTORCAT_MISC,
@@ -954,36 +956,33 @@ EnItem00* Item_DropCollectible(PlayState* play, Vec3f* spawnPos, s16 params) {
     params &= 0x3FFF;
 
     if (((params & 0x00FF) == ITEM00_FLEXIBLE) && !param4000) {
-        // TODO: Prevent the cast to EnItem00 here since this is a different actor (En_Elf)
-        spawnedActor = (EnItem00*)Actor_Spawn(&play->actorCtx, play, ACTOR_EN_ELF, spawnPos->x, spawnPos->y + 40.0f,
-                                              spawnPos->z, 0, 0, 0, FAIRY_HEAL_TIMED);
-        EffectSsDeadSound_SpawnStationary(play, spawnPos, NA_SE_EV_BUTTERFRY_TO_FAIRY, true, DEADSOUND_REPEAT_MODE_OFF,
-                                          40);
-    } else {
-        if (!param8000) {
-            params = func_8001F404(params & 0x00FF);
-        }
+        params = Item_FlexDrop(play, spawnPos, params);
+    }
 
-        if (params != -1) {
-            spawnedActor = (EnItem00*)Actor_Spawn(&play->actorCtx, play, ACTOR_EN_ITEM00, spawnPos->x, spawnPos->y,
-                                                  spawnPos->z, 0, 0, 0, params | param8000 | param3F00);
-            if ((spawnedActor != NULL) && !param8000) {
-                spawnedActor->actor.velocity.y = !param4000 ? 8.0f : -2.0f;
-                spawnedActor->actor.speedXZ = 2.0f;
-                spawnedActor->actor.gravity = -0.9f;
-                spawnedActor->actor.world.rot.y = Rand_CenteredFloat(65536.0f);
-                Actor_SetScale(&spawnedActor->actor, 0.0f);
-                EnItem00_SetupAction(spawnedActor, func_8001E304);
-                spawnedActor->despawnTimer = 220;
-                if ((spawnedActor->actor.params != ITEM00_SMALL_KEY) &&
-                    (spawnedActor->actor.params != ITEM00_HEART_PIECE) &&
-                    (spawnedActor->actor.params != ITEM00_HEART_CONTAINER)) {
-                    spawnedActor->actor.room = -1;
-                }
-                spawnedActor->actor.flags |= ACTOR_FLAG_4;
+    if (!param8000) {
+        params = func_8001F404(params & 0x00FF);
+    }
+
+    if (params != -1) {
+        spawnedActor = (EnItem00*)Actor_Spawn(&play->actorCtx, play, ACTOR_EN_ITEM00, spawnPos->x, spawnPos->y,
+                                                spawnPos->z, 0, 0, 0, params | param8000 | param3F00);
+        if ((spawnedActor != NULL) && !param8000) {
+            spawnedActor->actor.velocity.y = !param4000 ? 8.0f : -2.0f;
+            spawnedActor->actor.speedXZ = 2.0f;
+            spawnedActor->actor.gravity = -0.9f;
+            spawnedActor->actor.world.rot.y = Rand_CenteredFloat(65536.0f);
+            Actor_SetScale(&spawnedActor->actor, 0.0f);
+            EnItem00_SetupAction(spawnedActor, func_8001E304);
+            spawnedActor->despawnTimer = 220;
+            if ((spawnedActor->actor.params != ITEM00_SMALL_KEY) &&
+                (spawnedActor->actor.params != ITEM00_HEART_PIECE) &&
+                (spawnedActor->actor.params != ITEM00_HEART_CONTAINER)) {
+                spawnedActor->actor.room = -1;
             }
+            spawnedActor->actor.flags |= ACTOR_FLAG_4;
         }
     }
+
     return spawnedActor;
 }
 
@@ -997,27 +996,70 @@ EnItem00* Item_DropCollectible2(PlayState* play, Vec3f* spawnPos, s16 params) {
     params &= 0x3FFF;
 
     if (((params & 0x00FF) == ITEM00_FLEXIBLE) && !param4000) {
-        // TODO: Prevent the cast to EnItem00 here since this is a different actor (En_Elf)
-        spawnedActor = (EnItem00*)Actor_Spawn(&play->actorCtx, play, ACTOR_EN_ELF, spawnPos->x, spawnPos->y + 40.0f,
-                                              spawnPos->z, 0, 0, 0, FAIRY_HEAL_TIMED);
-        EffectSsDeadSound_SpawnStationary(play, spawnPos, NA_SE_EV_BUTTERFRY_TO_FAIRY, true, DEADSOUND_REPEAT_MODE_OFF,
-                                          40);
-    } else {
-        params = func_8001F404(params & 0x00FF);
-        if (params != -1) {
-            spawnedActor = (EnItem00*)Actor_Spawn(&play->actorCtx, play, ACTOR_EN_ITEM00, spawnPos->x, spawnPos->y,
-                                                  spawnPos->z, 0, 0, 0, params | param8000 | param3F00);
-            if ((spawnedActor != NULL) && !param8000) {
-                spawnedActor->actor.velocity.y = 0.0f;
-                spawnedActor->actor.speedXZ = 0.0f;
-                spawnedActor->actor.gravity = param4000 ? 0.0f : -0.9f;
-                spawnedActor->actor.world.rot.y = Rand_CenteredFloat(65536.0f);
-                spawnedActor->actor.flags |= ACTOR_FLAG_4;
-            }
+        params = Item_FlexDrop(play, spawnPos, params);
+    } 
+
+    params = func_8001F404(params & 0x00FF);
+    if (params != -1) {
+        spawnedActor = (EnItem00*)Actor_Spawn(&play->actorCtx, play, ACTOR_EN_ITEM00, spawnPos->x, spawnPos->y,
+                                                spawnPos->z, 0, 0, 0, params | param8000 | param3F00);
+        if ((spawnedActor != NULL) && !param8000) {
+            spawnedActor->actor.velocity.y = 0.0f;
+            spawnedActor->actor.speedXZ = 0.0f;
+            spawnedActor->actor.gravity = param4000 ? 0.0f : -0.9f;
+            spawnedActor->actor.world.rot.y = Rand_CenteredFloat(65536.0f);
+            spawnedActor->actor.flags |= ACTOR_FLAG_4;
         }
     }
 
     return spawnedActor;
+}
+
+u8 Item_FlexDrop(PlayState* play, Vec3f* spawnPos, s16 params) {
+    s16 dropTableIndex = Rand_ZeroOne() * 16.0f;
+    u8 dropId;
+
+    if (gSaveContext.health <= 0x10) { // 1 heart or less
+        Actor_Spawn(&play->actorCtx, play, ACTOR_EN_ELF, spawnPos->x, spawnPos->y + 40.0f, spawnPos->z, 0, 0, 0,
+                    FAIRY_HEAL_TIMED);
+        EffectSsDeadSound_SpawnStationary(play, spawnPos, NA_SE_EV_BUTTERFRY_TO_FAIRY, true,
+                                            DEADSOUND_REPEAT_MODE_OFF, 40);
+        return ITEM_NONE;
+    } else if (gSaveContext.health <= 0x30) { // 3 hearts or less
+        params = 0xB * 0x10;
+        dropTableIndex = 0x0;
+        dropId = ITEM00_RECOVERY_HEART;
+    } else if (gSaveContext.health <= 0x50) { // 5 hearts or less
+        params = 0xA * 0x10;
+        dropTableIndex = 0x0;
+        dropId = ITEM00_RECOVERY_HEART;
+    } else if ((gSaveContext.magicLevel != 0) && (gSaveContext.magic == 0)) { // Empty magic meter
+        params = 0xA * 0x10;
+        dropTableIndex = 0x0;
+        dropId = ITEM00_MAGIC_LARGE;
+    } else if ((gSaveContext.magicLevel != 0) && (gSaveContext.magic <= (gSaveContext.magicLevel >> 1))) {
+        params = 0xA * 0x10;
+        dropTableIndex = 0x0;
+        dropId = ITEM00_MAGIC_SMALL;
+    } else if (!LINK_IS_ADULT && (AMMO(ITEM_SLINGSHOT) < 6)) {
+        params = 0xA * 0x10;
+        dropTableIndex = 0x0;
+        dropId = ITEM00_SEEDS;
+    } else if (LINK_IS_ADULT && (INV_CONTENT(SLOT_BOW) != ITEM_NONE && AMMO(ITEM_BOW) < 6)) {
+        params = 0xA * 0x10;
+        dropTableIndex = 0x0;
+        dropId = ITEM00_ARROWS_MEDIUM;
+    } else if (AMMO(ITEM_BOMB) < 6) {
+        params = 0xD * 0x10;
+        dropTableIndex = 0x0;
+        dropId = ITEM00_BOMBS_A;
+    } else if (gSaveContext.rupees < 11) {
+        params = 0xA * 0x10;
+        dropTableIndex = 0x0;
+        dropId = ITEM00_RUPEE_RED;
+    }
+
+    return dropId;
 }
 
 void Item_DropCollectibleRandom(PlayState* play, Actor* fromActor, Vec3f* spawnPos, s16 params) {
@@ -1066,47 +1108,7 @@ void Item_DropCollectibleRandom(PlayState* play, Actor* fromActor, Vec3f* spawnP
     }
 
     if (dropId == ITEM00_FLEXIBLE) {
-        if (gSaveContext.health <= 0x10) { // 1 heart or less
-            Actor_Spawn(&play->actorCtx, play, ACTOR_EN_ELF, spawnPos->x, spawnPos->y + 40.0f, spawnPos->z, 0, 0, 0,
-                        FAIRY_HEAL_TIMED);
-            EffectSsDeadSound_SpawnStationary(play, spawnPos, NA_SE_EV_BUTTERFRY_TO_FAIRY, true,
-                                              DEADSOUND_REPEAT_MODE_OFF, 40);
-            return;
-        } else if (gSaveContext.health <= 0x30) { // 3 hearts or less
-            params = 0xB * 0x10;
-            dropTableIndex = 0x0;
-            dropId = ITEM00_RECOVERY_HEART;
-        } else if (gSaveContext.health <= 0x50) { // 5 hearts or less
-            params = 0xA * 0x10;
-            dropTableIndex = 0x0;
-            dropId = ITEM00_RECOVERY_HEART;
-        } else if ((gSaveContext.magicLevel != 0) && (gSaveContext.magic == 0)) { // Empty magic meter
-            params = 0xA * 0x10;
-            dropTableIndex = 0x0;
-            dropId = ITEM00_MAGIC_LARGE;
-        } else if ((gSaveContext.magicLevel != 0) && (gSaveContext.magic <= (gSaveContext.magicLevel >> 1))) {
-            params = 0xA * 0x10;
-            dropTableIndex = 0x0;
-            dropId = ITEM00_MAGIC_SMALL;
-        } else if (!LINK_IS_ADULT && (AMMO(ITEM_SLINGSHOT) < 6)) {
-            params = 0xA * 0x10;
-            dropTableIndex = 0x0;
-            dropId = ITEM00_SEEDS;
-        } else if (LINK_IS_ADULT && (AMMO(ITEM_BOW) < 6)) {
-            params = 0xA * 0x10;
-            dropTableIndex = 0x0;
-            dropId = ITEM00_ARROWS_MEDIUM;
-        } else if (AMMO(ITEM_BOMB) < 6) {
-            params = 0xD * 0x10;
-            dropTableIndex = 0x0;
-            dropId = ITEM00_BOMBS_A;
-        } else if (gSaveContext.rupees < 11) {
-            params = 0xA * 0x10;
-            dropTableIndex = 0x0;
-            dropId = ITEM00_RUPEE_RED;
-        } else {
-            return;
-        }
+        dropId = Item_FlexDrop(play, spawnPos, params);
     }
 
     if (dropId != ITEM00_NONE) {
