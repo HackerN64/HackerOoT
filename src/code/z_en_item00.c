@@ -1041,15 +1041,15 @@ u8 Item_FlexDrop(PlayState* play, Vec3f* spawnPos, s16 params) {
         params = 0xA * 0x10;
         dropTableIndex = 0x0;
         dropId = ITEM00_MAGIC_SMALL;
-    } else if (!LINK_IS_ADULT && (AMMO(ITEM_SLINGSHOT) < 6)) {
+    } else if (LINK_IS_CHILD && (INV_CONTENT(ITEM_SLINGSHOT) != ITEM_NONE) && (AMMO(ITEM_SLINGSHOT) < 6)) {
         params = 0xA * 0x10;
         dropTableIndex = 0x0;
         dropId = ITEM00_SEEDS;
-    } else if (LINK_IS_ADULT && (INV_CONTENT(SLOT_BOW) != ITEM_NONE && AMMO(ITEM_BOW) < 6)) {
+    } else if (LINK_IS_ADULT && (INV_CONTENT(ITEM_BOW) != ITEM_NONE)&& (AMMO(ITEM_BOW) < 6)) {
         params = 0xA * 0x10;
         dropTableIndex = 0x0;
         dropId = ITEM00_ARROWS_MEDIUM;
-    } else if (AMMO(ITEM_BOMB) < 6) {
+    } else if ((INV_CONTENT(ITEM_BOMB) != ITEM_NONE) && (AMMO(ITEM_BOMB) < 6)) {
         params = 0xD * 0x10;
         dropTableIndex = 0x0;
         dropId = ITEM00_BOMBS_A;
