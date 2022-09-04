@@ -18,4 +18,7 @@
 // #define ENABLE_LOW_HEALTH_BEEP
  
 
+// Make the Bunnyhood Mask behave like in Majora's Mask where it increases Link's speed when equipped.
+// #define MM_BUNNYHOOD
+
 #endif

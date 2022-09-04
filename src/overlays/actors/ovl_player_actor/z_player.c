@@ -2974,7 +2974,7 @@ void func_80836448(PlayState* play, Player* this, LinkAnimationHeader* anim) {
         }
 
         OnePointCutscene_Init(play, 9806, cond ? 120 : 60, &this->actor, CAM_ID_MAIN);
-        ShrinkWindow_SetVal(0x20);
+        Letterbox_SetSizeTarget(32);
     }
 }
 
@@ -7482,6 +7482,12 @@ void func_80842180(Player* this, PlayState* play) {
         }
 
         func_80837268(this, &sp2C, &sp2A, 0.018f, play);
+
+#ifdef MM_BUNNYHOOD
+        if (this->currentMask == PLAYER_MASK_BUNNY) {
+            sp2C *= 1.5f;
+        }
+#endif
 
         if (!func_8083C484(this, &sp2C, &sp2A)) {
             func_8083DF68(this, sp2C, sp2A);

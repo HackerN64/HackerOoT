@@ -961,7 +961,7 @@ typedef enum {
     /*  6 */ TRANS_TYPE_FADE_BLACK_SLOW,
     /*  7 */ TRANS_TYPE_FADE_WHITE_SLOW,
     /*  8 */ TRANS_TYPE_WIPE_FAST,
-    /*  9 */ TRANS_TYPE_FILL_WHITE2, 
+    /*  9 */ TRANS_TYPE_FILL_WHITE2,
     /* 10 */ TRANS_TYPE_FILL_WHITE,
     /* 11 */ TRANS_TYPE_INSTANT,
     /* 12 */ TRANS_TYPE_FILL_BROWN,
@@ -1360,8 +1360,8 @@ typedef struct {
      & (ENTRANCE_INFO_START_TRANS_TYPE_MASK >> ENTRANCE_INFO_START_TRANS_TYPE_SHIFT))
 
 typedef struct {
-    /* 0x00 */ s8  sceneId;
-    /* 0x01 */ s8  spawn;
+    /* 0x00 */ u8  sceneId;
+    /* 0x01 */ u8  spawn;
     /* 0x02 */ u16 field;
 } EntranceInfo; // size = 0x4
 
