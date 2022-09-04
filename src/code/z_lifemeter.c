@@ -1,7 +1,7 @@
 #include "global.h"
 #include "assets/textures/parameter_static/parameter_static.h"
 
-#include "config/config_game.h"
+#include "config.h"
 
 static s16 sHeartsPrimColors[3][3] = {
     { HEARTS_PRIM_R, HEARTS_PRIM_G, HEARTS_PRIM_B },

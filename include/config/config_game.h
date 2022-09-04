@@ -14,9 +14,8 @@
 // Configure block push speed multiplier
 #define BLOCK_PUSH_SPEED 1.0f
 
-// Enables the beep sound at low health
-// #define ENABLE_LOW_HEALTH_BEEP
- 
+// Enables the beep sound at low health (vanilla behaviour)
+#define ENABLE_LOW_HEALTH_BEEP
 
 // Make the Bunnyhood Mask behave like in Majora's Mask where it increases Link's speed when equipped.
 // #define MM_BUNNYHOOD
