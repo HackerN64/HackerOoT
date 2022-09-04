@@ -8,6 +8,8 @@
 #include "overlays/actors/ovl_Obj_Switch/z_obj_switch.h"
 #include "assets/objects/gameplay_dangeon_keep/gameplay_dangeon_keep.h"
 
+#include "config.h"
+
 #define FLAGS ACTOR_FLAG_4
 
 void ObjOshihiki_Init(Actor* thisx, PlayState* play2);
@@ -542,10 +544,10 @@ void ObjOshihiki_Push(ObjOshihiki* this, PlayState* play) {
     f32 pushDistSigned;
     s32 stopFlag;
 
-    this->pushSpeed += 0.5f;
+    this->pushSpeed += 0.5f * BLOCK_PUSH_SPEED;
     this->stateFlags |= PUSHBLOCK_PUSH;
-    this->pushSpeed = CLAMP_MAX(this->pushSpeed, 2.0f);
-    stopFlag = Math_StepToF(&this->pushDist, 20.0f, this->pushSpeed);
+    this->pushSpeed = CLAMP_MAX(this->pushSpeed, 2.0f * BLOCK_PUSH_SPEED);
+    stopFlag = Math_StepToF(&this->pushDist, 20.0f * BLOCK_PUSH_SPEED, this->pushSpeed);
     pushDistSigned = ((this->direction >= 0.0f) ? 1.0f : -1.0f) * this->pushDist;
     thisx->world.pos.x = thisx->home.pos.x + (pushDistSigned * this->yawSin);
     thisx->world.pos.z = thisx->home.pos.z + (pushDistSigned * this->yawCos);
