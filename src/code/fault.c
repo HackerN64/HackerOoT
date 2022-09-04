@@ -352,14 +352,14 @@ void Fault_Sleep(u32 msec) {
     Fault_SleepImpl(msec);
 }
 
-void PadMgr_RequestPadData(PadMgr* padmgr, Input* input, s32 mode);
+void PadMgr_RequestPadData(PadMgr* padmgr, Input* inputs, s32 gameRequest);
 
-void Fault_PadCallback(Input* input) {
-    PadMgr_RequestPadData(&gPadMgr, input, 0);
+void Fault_PadCallback(Input* inputs) {
+    PadMgr_RequestPadData(&gPadMgr, inputs, false);
 }
 
 void Fault_UpdatePadImpl(void) {
-    sFaultInstance->padCallback(&sFaultInstance->padInput);
+    sFaultInstance->padCallback(sFaultInstance->inputs);
 }
 
 /**
@@ -372,7 +372,7 @@ void Fault_UpdatePadImpl(void) {
  * DPad-Left continues and returns false
  */
 u32 Fault_WaitForInputImpl(void) {
-    Input* input = &sFaultInstance->padInput;
+    Input* input = &sFaultInstance->inputs[0];
     s32 count = 600;
     u32 pressedBtn;
 
@@ -699,7 +699,7 @@ void Fault_DrawMemDumpContents(const char* title, uintptr_t addr, u32 arg2) {
  * @param cRightJump Unused parameter, pressing C-Right jumps to this address
  */
 void Fault_DrawMemDump(uintptr_t pc, uintptr_t sp, uintptr_t cLeftJump, uintptr_t cRightJump) {
-    Input* input = &sFaultInstance->padInput;
+    Input* input = &sFaultInstance->inputs[0];
     uintptr_t addr = pc;
     s32 scrollCountdown;
     u32 off;
