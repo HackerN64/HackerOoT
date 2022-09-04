@@ -55,8 +55,6 @@ typedef struct {
     /* 0x4 */ Vec3s* bgCamFuncData; // s16 data grouped in threes (ex. Vec3s), is usually of type `BgCamFuncData`, but can be a list of points of type `Vec3s` for crawlspaces
 } BgCamInfo; // size = 0x8
 
-typedef BgCamInfo CamData; // Todo: Zapd compatibility
-
 // The structure used for all instances of s16 data from `BgCamInfo` with the exception of crawlspaces.
 // See `Camera_Subj4` for Vec3s data usage in crawlspaces
 typedef struct {
