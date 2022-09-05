@@ -21,8 +21,7 @@ typedef enum {
     /* 0x0 */ CONTROLLER_PORT_1,
     /* 0x1 */ CONTROLLER_PORT_2,
     /* 0x2 */ CONTROLLER_PORT_3,
-    /* 0x3 */ CONTROLLER_PORT_4,
-    /* 0x4 */ CONTROLLER_PORT_MAX
+    /* 0x3 */ CONTROLLER_PORT_4
 } ControllerPort;
 
 typedef struct PadMgr {
