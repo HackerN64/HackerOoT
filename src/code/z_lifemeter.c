@@ -1,6 +1,8 @@
 #include "global.h"
 #include "assets/textures/parameter_static/parameter_static.h"
 
+#include "config.h"
+
 static s16 sHeartsPrimColors[3][3] = {
     { HEARTS_PRIM_R, HEARTS_PRIM_G, HEARTS_PRIM_B },
     { HEARTS_BURN_PRIM_R, HEARTS_BURN_PRIM_G, HEARTS_BURN_PRIM_B },    // unused
@@ -517,7 +519,9 @@ void Health_UpdateBeatingHeart(PlayState* play) {
             canPlayLowHealthSFX = (canPlayLowHealthSFX && Health_IsCritical() && !Play_InCsMode(play));
 #endif
             if (canPlayLowHealthSFX) {
+                #ifdef ENABLE_LOW_HEALTH_BEEP
                 func_80078884(NA_SE_SY_HITPOINT_ALARM);
+                #endif
             }
         }
     } else {
