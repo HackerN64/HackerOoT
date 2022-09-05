@@ -352,18 +352,14 @@ void Fault_Sleep(u32 msec) {
     Fault_SleepImpl(msec);
 }
 
-void PadMgr_RequestPadData(Input* input, s32 mode);
+void PadMgr_RequestPadData(PadMgr* padmgr, Input* inputs, s32 gameRequest);
 
-void Fault_PadCallback(Input* input) {
-    //! @bug This function is not called correctly, it is missing a leading PadMgr* argument. This
-    //! renders the crash screen unusable.
-    //! In Majora's Mask, PadMgr functions were changed to not require this argument, and this was
-    //! likely just not addressed when backporting.
-    PadMgr_RequestPadData(input, 0);
+void Fault_PadCallback(Input* inputs) {
+    PadMgr_RequestPadData(&gPadMgr, inputs, false);
 }
 
 void Fault_UpdatePadImpl(void) {
-    sFaultInstance->padCallback(&sFaultInstance->padInput);
+    sFaultInstance->padCallback(sFaultInstance->inputs);
 }
 
 /**
@@ -376,7 +372,7 @@ void Fault_UpdatePadImpl(void) {
  * DPad-Left continues and returns false
  */
 u32 Fault_WaitForInputImpl(void) {
-    Input* input = &sFaultInstance->padInput;
+    Input* input = &sFaultInstance->inputs[0];
     s32 count = 600;
     u32 pressedBtn;
 
@@ -645,156 +641,6 @@ void Fault_Wait5Seconds(void) {
     sFaultInstance->autoScroll = true;
 }
 
-/**
- * Waits for the following button combination to be entered before returning:
- *
- * (L & R & Z) + DPad-Up + C-Down + C-Up + DPad-Down + DPad-Left + C-Left + C-Right + DPad-Right + (B & A & START)
- */
-void Fault_WaitForButtonCombo(void) {
-    Input* input = &sFaultInstance->padInput;
-    s32 state;
-    u32 s1;
-    u32 s2;
-    u32 pressedBtn;
-    u32 curBtn;
-
-    if (1) {}
-    if (1) {}
-
-    osSyncPrintf(
-        VT_FGCOL(WHITE) "KeyWaitB (ＬＲＺ " VT_FGCOL(WHITE) "上" VT_FGCOL(YELLOW) "下 " VT_FGCOL(YELLOW) "上" VT_FGCOL(WHITE) "下 " VT_FGCOL(WHITE) "左" VT_FGCOL(
-            YELLOW) "左 " VT_FGCOL(YELLOW) "右" VT_FGCOL(WHITE) "右 " VT_FGCOL(GREEN) "Ｂ" VT_FGCOL(BLUE) "Ａ" VT_FGCOL(RED) "START" VT_FGCOL(WHITE) ")" VT_RST
-                                                                                                                                                     "\n");
-    osSyncPrintf(VT_FGCOL(WHITE) "KeyWaitB'(ＬＲ左" VT_FGCOL(YELLOW) "右 +" VT_FGCOL(RED) "START" VT_FGCOL(
-        WHITE) ")" VT_RST "\n");
-
-    FaultDrawer_SetForeColor(GPACK_RGBA5551(255, 255, 255, 1));
-    FaultDrawer_SetBackColor(GPACK_RGBA5551(0, 0, 0, 1));
-
-    state = 0;
-    s1 = 0;
-    s2 = 1;
-
-    while (state != 11) {
-        Fault_Sleep(1000 / 60);
-        Fault_UpdatePadImpl();
-
-        pressedBtn = input->press.button;
-        curBtn = input->cur.button;
-
-        if (curBtn == 0 && s1 == s2) {
-            s1 = 0;
-        } else if (pressedBtn != 0) {
-            if (s1 == s2) {
-                state = 0;
-            }
-
-            switch (state) {
-                case 0:
-                    if (curBtn == (BTN_Z | BTN_L | BTN_R) && pressedBtn == BTN_Z) {
-                        state = s2;
-                        s1 = s2;
-                    }
-                    break;
-                case 1:
-                    if (pressedBtn == BTN_DUP) {
-                        state = 2;
-                    } else {
-                        state = 0;
-                    }
-                    break;
-                case 2:
-                    if (pressedBtn == BTN_CDOWN) {
-                        state = 3;
-                        s1 = s2;
-                    } else {
-                        state = 0;
-                    }
-                    break;
-                case 3:
-                    if (pressedBtn == BTN_CUP) {
-                        state = 4;
-                    } else {
-                        state = 0;
-                    }
-                    break;
-                case 4:
-                    if (pressedBtn == BTN_DDOWN) {
-                        state = 5;
-                        s1 = s2;
-                    } else {
-                        state = 0;
-                    }
-                    break;
-                case 5:
-                    if (pressedBtn == BTN_DLEFT) {
-                        state = 6;
-                    } else {
-                        state = 0;
-                    }
-                    break;
-                case 6:
-                    if (pressedBtn == BTN_CLEFT) {
-                        state = 7;
-                        s1 = s2;
-                    } else {
-                        state = 0;
-                    }
-                    break;
-                case 7:
-                    if (pressedBtn == BTN_CRIGHT) {
-                        state = 8;
-                    } else {
-                        state = 0;
-                    }
-                    break;
-                case 8:
-                    if (pressedBtn == BTN_DRIGHT) {
-                        state = 9;
-                        s1 = s2;
-                    } else {
-                        state = 0;
-                    }
-                    break;
-                case 9:
-                    if (pressedBtn == (BTN_A | BTN_B)) {
-                        state = 10;
-                    } else if (pressedBtn == BTN_A) {
-                        state = 0x5B;
-                    } else if (pressedBtn == BTN_B) {
-                        state = 0x5C;
-                    } else {
-                        state = 0;
-                    }
-                    break;
-                case 0x5B:
-                    if (pressedBtn == BTN_B) {
-                        state = 10;
-                    } else {
-                        state = 0;
-                    }
-                    break;
-                case 0x5C:
-                    if (pressedBtn == BTN_A) {
-                        state = 10;
-                    } else {
-                        state = 0;
-                    }
-                    break;
-                case 10:
-                    if (pressedBtn == BTN_START) {
-                        state = 11;
-                    } else {
-                        state = 0;
-                    }
-                    break;
-            }
-        }
-
-        osWritebackDCacheAll();
-    }
-}
-
 void Fault_DrawMemDumpContents(const char* title, uintptr_t addr, u32 arg2) {
     uintptr_t alignedAddr = addr;
     u32* writeAddr;
@@ -853,7 +699,7 @@ void Fault_DrawMemDumpContents(const char* title, uintptr_t addr, u32 arg2) {
  * @param cRightJump Unused parameter, pressing C-Right jumps to this address
  */
 void Fault_DrawMemDump(uintptr_t pc, uintptr_t sp, uintptr_t cLeftJump, uintptr_t cRightJump) {
-    Input* input = &sFaultInstance->padInput;
+    Input* input = &sFaultInstance->inputs[0];
     uintptr_t addr = pc;
     s32 scrollCountdown;
     u32 off;
@@ -1206,7 +1052,6 @@ void Fault_ThreadEntry(void* arg) {
         } else {
             // Draw error bar signifying the crash screen is available
             Fault_DrawCornerRec(GPACK_RGBA5551(255, 0, 0, 1));
-            Fault_WaitForButtonCombo();
         }
 
         // Set auto-scrolling and default colors
