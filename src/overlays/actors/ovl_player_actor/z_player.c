@@ -9332,8 +9332,14 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     Player_SetEquipmentData(play, this);
     this->prevBoots = this->currentBoots;
     Player_InitCommon(this, play, gPlayerSkelHeaders[((void)0, gSaveContext.linkAge)]);
-    this->giObjectSegment = (void*)ALIGN16((uintptr_t)ZeldaArena_MallocDebug(Player_GetLargestGI() + 16, __FILE__, __LINE__));
-    *(u32*)0x80700000 = Player_GetLargestGI() + 16;
+
+    // Allocate the GI object segment
+    this->giObjectSegmentMaxSz = Player_GetLargestGI() + 16;
+    if (this->giObjectSegmentMaxSz < PLAYER_GI_SEG_MIN) {
+        this->giObjectSegmentMaxSz = PLAYER_GI_SEG_MIN;
+    }
+    this->giObjectSegment =
+        (void*)ALIGN16((uintptr_t)ZeldaArena_MallocDebug(this->giObjectSegmentMaxSz, __FILE__, __LINE__));
 
     respawnFlag = gSaveContext.respawnFlag;
 
