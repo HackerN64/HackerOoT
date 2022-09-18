@@ -1103,24 +1103,19 @@ typedef struct MapSelectState {
     /* 0x01D8 */ s32 currentScene;
     /* 0x01DC */ s32 pageDownIndex; // Index of pageDownStops
     /* 0x01E0 */ s32 pageDownStops[7];
-    /* 0x01FC */ char unk_1FC[0x0C];
-    /* 0x0208 */ s32 topDisplayedScene; // The scene which is currently at the top of the screen
-    /* 0x020C */ char unk_210[0x0C];
-    /* 0x0218 */ s32 verticalInputAccumulator;
-    /* 0x021C */ s32 verticalInput;
-    /* 0x0220 */ s32 timerUp;
-    /* 0x0224 */ s32 timerDown;
-    /* 0x0228 */ s32 lockUp;
-    /* 0x022C */ s32 lockDown;
-    /* 0x0230 */ s32 unk_234; // unused
-    /* 0x0234 */ u8* staticSegment;
-    /* 0x0238 */ u8 showControls;
-    /* 0x023C */ u8 toggleBGM;
-    /* 0x0240 */ u8 isBGMPlaying;
-    /* 0x0244 */ u8 sceneLayer;
-    /* 0x0248 */ u8 selectedSceneColor;
-    /* 0x024C */ u8 msgTimer;
-} MapSelectState; // size = 0x250
+    /* 0x01FC */ s32 topDisplayedScene; // The scene which is currently at the top of the screen
+    /* 0x0200 */ s32 verticalInputAccumulator;
+    /* 0x0204 */ s32 verticalInput;
+    /* 0x0208 */ s32 timerUp;
+    /* 0x020A */ s32 timerDown;
+    /* 0x020C */ s32 lockUp;
+    /* 0x0210 */ s32 lockDown;
+    /* 0x0214 */ u8 showControls;
+    /* 0x0218 */ u8 toggleBGM;
+    /* 0x021A */ u8 isBGMPlaying;
+    /* 0x021C */ u8 sceneLayer;
+    /* 0x0220 */ u8 selectedSceneColor;
+} MapSelectState; // size = 0x224
 
 typedef struct {
     /* 0x0000 */ GameState state;
