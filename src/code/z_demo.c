@@ -491,7 +491,7 @@ void Cutscene_Command_Terminator(PlayState* play, CutsceneContext* csCtx, CsCmdB
     s32 temp = 0;
 
 #ifdef FW_SPLIT_AGE
-    FaroresWindData fw_backup;
+    FaroresWindData fwBackup;
 #endif
 
     if ((gSaveContext.gameMode != GAMEMODE_NORMAL) && (gSaveContext.gameMode != GAMEMODE_END_CREDITS) &&
@@ -565,14 +565,15 @@ void Cutscene_Command_Terminator(PlayState* play, CutsceneContext* csCtx, CsCmdB
                 break;
             case 8:
 #ifdef FW_SPLIT_AGE
-                fw_backup = gSaveContext.fw_main;
-                gSaveContext.fw_main = gSaveContext.fw_secondary;
-                gSaveContext.fw_secondary = fw_backup;
+                fwBackup = gSaveContext.fwMain;
+                gSaveContext.fwMain = gSaveContext.fwSecondary;
+                gSaveContext.fwSecondary = fwBackup;
 #else
-                gSaveContext.fw_main.set = 0;
+                gSaveContext.fwMain.set = 0;
 #endif
                 gSaveContext.respawn[RESPAWN_MODE_TOP].data = 0;
                 if (!GET_EVENTCHKINF(EVENTCHKINF_45)) {
+                    SET_EVENTCHKINF(EVENTCHKINF_45);
                     play->nextEntranceIndex = ENTR_HIRAL_DEMO_0;
                     play->transitionTrigger = TRANS_TRIGGER_START;
                     gSaveContext.cutsceneIndex = 0xFFF3;

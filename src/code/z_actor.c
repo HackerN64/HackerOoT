@@ -1768,17 +1768,17 @@ f32 D_8015BC18;
 void func_8002FA60(PlayState* play) {
     Vec3f lightPos;
 
-    if (gSaveContext.fw_main.set) {
+    if (gSaveContext.fwMain.set) {
         gSaveContext.respawn[RESPAWN_MODE_TOP].data = 0x28;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].pos.x = gSaveContext.fw_main.pos.x;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].pos.y = gSaveContext.fw_main.pos.y;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].pos.z = gSaveContext.fw_main.pos.z;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].yaw = gSaveContext.fw_main.yaw;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].playerParams = gSaveContext.fw_main.playerParams;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].entranceIndex = gSaveContext.fw_main.entranceIndex;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].roomIndex = gSaveContext.fw_main.roomIndex;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].tempSwchFlags = gSaveContext.fw_main.tempSwchFlags;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].tempCollectFlags = gSaveContext.fw_main.tempCollectFlags;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].pos.x = gSaveContext.fwMain.pos.x;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].pos.y = gSaveContext.fwMain.pos.y;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].pos.z = gSaveContext.fwMain.pos.z;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].yaw = gSaveContext.fwMain.yaw;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].playerParams = gSaveContext.fwMain.playerParams;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].entranceIndex = gSaveContext.fwMain.entranceIndex;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].roomIndex = gSaveContext.fwMain.roomIndex;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].tempSwchFlags = gSaveContext.fwMain.tempSwchFlags;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].tempCollectFlags = gSaveContext.fwMain.tempCollectFlags;
     } else {
         gSaveContext.respawn[RESPAWN_MODE_TOP].data = 0;
         gSaveContext.respawn[RESPAWN_MODE_TOP].pos.x = 0.0f;
@@ -1889,7 +1889,7 @@ void Actor_DrawFaroresWindPointer(PlayState* play) {
             alpha = 255 - (temp * 30);
 
             if (alpha < 0) {
-                gSaveContext.fw_main.set = 0;
+                gSaveContext.fwMain.set = 0;
                 gSaveContext.respawn[RESPAWN_MODE_TOP].data = 0;
                 alpha = 0;
             } else {
