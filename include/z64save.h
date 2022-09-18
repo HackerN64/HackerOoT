@@ -4,6 +4,8 @@
 #include "ultra64.h"
 #include "z64math.h"
 
+#include "config.h"
+
 typedef enum {
     /* 0x0 */ MAGIC_STATE_IDLE, // Regular gameplay
     /* 0x1 */ MAGIC_STATE_CONSUME_SETUP, // Sets the speed at which magic border flashes
@@ -12,7 +14,7 @@ typedef enum {
     /* 0x4 */ MAGIC_STATE_METER_FLASH_2, // Flashes border and draws yellow magic to preview target consumption
     /* 0x5 */ MAGIC_STATE_RESET, // Reset colors and return to idle
     /* 0x6 */ MAGIC_STATE_METER_FLASH_3, // Flashes border with no additional behaviour
-    /* 0x7 */ MAGIC_STATE_CONSUME_LENS, // Magic slowly consumed by lens. 
+    /* 0x7 */ MAGIC_STATE_CONSUME_LENS, // Magic slowly consumed by lens.
     /* 0x8 */ MAGIC_STATE_STEP_CAPACITY, // Step `magicCapacity` to full capacity
     /* 0x9 */ MAGIC_STATE_FILL, // Add magic until magicFillTarget is reached.
     /* 0xA */ MAGIC_STATE_ADD // Add requested magic
@@ -132,7 +134,10 @@ typedef struct {
     /* 0x0068 */ ItemEquips equips;
     /* 0x0074 */ Inventory inventory;
     /* 0x00D4 */ SavedSceneFlags sceneFlags[124];
-    /* 0x0E64 */ FaroresWindData fw;
+    /* 0x0E64 */ FaroresWindData fwMain;
+#ifdef FW_SPLIT_AGE
+    /* 0x0E8C */ FaroresWindData fwSecondary;
+#endif
     /* 0x0E8C */ char unk_E8C[0x10];
     /* 0x0E9C */ s32 gsFlags[6];
     /* 0x0EB4 */ char unk_EB4[0x4];
@@ -257,7 +262,7 @@ typedef enum {
     /* 1 */ SCENE_LAYER_CHILD_NIGHT,
     /* 2 */ SCENE_LAYER_ADULT_DAY,
     /* 3 */ SCENE_LAYER_ADULT_NIGHT,
-    /* 4 */ SCENE_LAYER_CUTSCENE_FIRST 
+    /* 4 */ SCENE_LAYER_CUTSCENE_FIRST
 } SceneLayer;
 
 #define IS_CUTSCENE_LAYER (gSaveContext.sceneLayer >= SCENE_LAYER_CUTSCENE_FIRST)
