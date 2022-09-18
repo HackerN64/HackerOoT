@@ -131,7 +131,8 @@ def getEntranceDict(path: str):
         raise print("[DAF:Error]: Can't find entrance_table.h!")
 
     # return a dictionnary from the entrance list
-    return {f"0x{i:04X}": entrance for i, entrance in enumerate(entranceList)} | entrDictSpecial
+    entranceDict = {f"0x{i:04X}": entrance for i, entrance in enumerate(entranceList)}
+    return dict(entranceDict, **entrDictSpecial)
 
 
 def getNewFileData(data: list, dataDict: dict, arrayName: str):
