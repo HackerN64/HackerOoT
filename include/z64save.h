@@ -138,86 +138,86 @@ typedef struct {
 #ifdef FW_SPLIT_AGE
     /* 0x0E8C */ FaroresWindData fwSecondary;
 #endif
-    /* 0x0EB4 */ char unk_E8C[0x10];
-    /* 0x0EC4 */ s32 gsFlags[6];
-    /* 0x0EE8 */ char unk_EB4[0x4];
-    /* 0x0ECA */ s32 highScores[7];
-    /* 0x0EE6 */ u16 eventChkInf[14]; // "event_chk_inf"
-    /* 0x0F02 */ u16 itemGetInf[4]; // "item_get_inf"
-    /* 0x0F0A */ u16 infTable[30]; // "inf_table"
-    /* 0x0F46 */ char unk_F34[0x04];
-    /* 0x0F4A */ u32 worldMapAreaData; // "area_arrival"
-    /* 0x0F4E */ char unk_F3C[0x4];
-    /* 0x0F52 */ u8 scarecrowLongSongSet;
-    /* 0x0F53 */ u8 scarecrowLongSong[0x360];
-    /* 0x12B3 */ char unk_12A1[0x24];
-    /* 0x12D7 */ u8 scarecrowSpawnSongSet;
-    /* 0x12D8 */ u8 scarecrowSpawnSong[0x80];
-    /* 0x1358 */ char unk_1346[0x02];
-    /* 0x135A */ HorseData horseData;
-    /* 0x135C */ u16 checksum; // "check_sum"
-    /* 0x135E */ s32 fileNum; // "file_no"
-    /* 0x1362 */ char unk_1358[0x0004];
-    /* 0x1366 */ s32 gameMode;
-    /* 0x136A */ s32 sceneLayer; // "counter"
-    /* 0x136C */ s32 respawnFlag; // "restart_flag"
-    /* 0x1370 */ RespawnData respawn[RESPAWN_MODE_MAX]; // "restart_data"
-    /* 0x13C4 */ f32 entranceSpeed;
-    /* 0x13C8 */ u16 entranceSound;
-    /* 0x13CA */ char unk_13C2[0x0001];
-    /* 0x13CB */ u8 retainWeatherMode;
-    /* 0x13CC */ s16 dogParams;
-    /* 0x13CE */ u8 textTriggerFlags;
-    /* 0x13CF */ u8 showTitleCard;
-    /* 0x13D0 */ s16 nayrusLoveTimer;
-    /* 0x13D2 */ char unk_13CA[0x0002];
-    /* 0x13D4 */ s16 rupeeAccumulator;
-    /* 0x13D6 */ s16 timer1State;
-    /* 0x13D8 */ s16 timer1Value;
-    /* 0x13DA */ s16 timer2State;
-    /* 0x13DC */ s16 timer2Value;
-    /* 0x13DE */ s16 timerX[2];
-    /* 0x13E6 */ s16 timerY[2];
-    /* 0x13EE */ char unk_13DE[0x0002];
-    /* 0x1400 */ u8 seqId;
-    /* 0x1401 */ u8 natureAmbienceId;
-    /* 0x1402 */ u8 buttonStatus[5];
-    /* 0x1407 */ u8 unk_13E7; // alpha related
-    /* 0x1408 */ u16 unk_13E8; // alpha type?
-    /* 0x140A */ u16 unk_13EA; // also alpha type?
-    /* 0x140C */ u16 unk_13EC; // alpha type counter?
-    /* 0x140E */ u16 unk_13EE; // previous alpha type?
-    /* 0x1410 */ s16 magicState; // determines magic meter behavior on each frame
-    /* 0x1412 */ s16 prevMagicState; // used to resume the previous state after adding or filling magic
-    /* 0x1414 */ s16 magicCapacity; // maximum magic available
-    /* 0x1416 */ s16 magicFillTarget; // target used to fill magic. Target can either be full capacity (Magic_Fill, magic upgrades), or the saved magic amount (loading a file, game over)
-    /* 0x1418 */ s16 magicTarget; // target for magic to step to when adding or consuming magic
-    /* 0x141A */ u16 eventInf[4]; // "event_inf"
-    /* 0x1422 */ u16 mapIndex; // intended for maps/minimaps but commonly used as the dungeon index
-    /* 0x1424 */ u16 minigameState;
-    /* 0x1426 */ u16 minigameScore; // "yabusame_total"
-    /* 0x1428 */ char unk_1408[0x0001];
-    /* 0x1429 */ u8 language; // NTSC 0: Japanese; 1: English | PAL 0: English; 1: German; 2: French
-    /* 0x142A */ u8 audioSetting;
-    /* 0x142B */ char unk_140B[0x0001];
-    /* 0x142C */ u8 zTargetSetting; // 0: Switch; 1: Hold
-    /* 0x142D */ u16 forcedSeqId; // immediately start playing the sequence if set
-    /* 0x142F */ u8 cutsceneTransitionControl; // context dependent usage: can either trigger a delayed fade or control fill alpha
-    /* 0x1430 */ char unk_1411[0x0001];
-    /* 0x1431 */ u16 nextCutsceneIndex;
-    /* 0x1432 */ u8 cutsceneTrigger;
-    /* 0x1433 */ u8 chamberCutsceneNum;
-    /* 0x1434 */ u16 nextDayTime; // "next_zelda_time"
-    /* 0x1436 */ u8 transFadeDuration;
-    /* 0x1437 */ u8 transWipeSpeed;
-    /* 0x1438 */ u16 skyboxTime;
-    /* 0x143A */ u8 dogIsLost;
-    /* 0x143B */ u8 nextTransitionType;
-    /* 0x143C */ char unk_141E[0x0002];
-    /* 0x143E */ s16 worldMapArea;
-    /* 0x1440 */ s16 sunsSongState; // controls the effects of suns song
-    /* 0x1442 */ s16 healthAccumulator;
-} SaveContext; // size = 0x1444
+    /* 0x0E8C */ char unk_E8C[0x10];
+    /* 0x0E9C */ s32 gsFlags[6];
+    /* 0x0EB4 */ char unk_EB4[0x4];
+    /* 0x0EB8 */ s32 highScores[7];
+    /* 0x0ED4 */ u16 eventChkInf[14]; // "event_chk_inf"
+    /* 0x0EF0 */ u16 itemGetInf[4]; // "item_get_inf"
+    /* 0x0EF8 */ u16 infTable[30]; // "inf_table"
+    /* 0x0F34 */ char unk_F34[0x04];
+    /* 0x0F38 */ u32 worldMapAreaData; // "area_arrival"
+    /* 0x0F3C */ char unk_F3C[0x4];
+    /* 0x0F40 */ u8 scarecrowLongSongSet;
+    /* 0x0F41 */ u8 scarecrowLongSong[0x360];
+    /* 0x12A1 */ char unk_12A1[0x24];
+    /* 0x12C5 */ u8 scarecrowSpawnSongSet;
+    /* 0x12C6 */ u8 scarecrowSpawnSong[0x80];
+    /* 0x1346 */ char unk_1346[0x02];
+    /* 0x1348 */ HorseData horseData;
+    /* 0x1352 */ u16 checksum; // "check_sum"
+    /* 0x1354 */ s32 fileNum; // "file_no"
+    /* 0x1358 */ char unk_1358[0x0004];
+    /* 0x135C */ s32 gameMode;
+    /* 0x1360 */ s32 sceneLayer; // "counter"
+    /* 0x1364 */ s32 respawnFlag; // "restart_flag"
+    /* 0x1368 */ RespawnData respawn[RESPAWN_MODE_MAX]; // "restart_data"
+    /* 0x13BC */ f32 entranceSpeed;
+    /* 0x13C0 */ u16 entranceSound;
+    /* 0x13C2 */ char unk_13C2[0x0001];
+    /* 0x13C3 */ u8 retainWeatherMode;
+    /* 0x13C4 */ s16 dogParams;
+    /* 0x13C6 */ u8 textTriggerFlags;
+    /* 0x13C7 */ u8 showTitleCard;
+    /* 0x13C8 */ s16 nayrusLoveTimer;
+    /* 0x13CA */ char unk_13CA[0x0002];
+    /* 0x13CC */ s16 rupeeAccumulator;
+    /* 0x13CE */ s16 timer1State;
+    /* 0x13D0 */ s16 timer1Value;
+    /* 0x13D2 */ s16 timer2State;
+    /* 0x13D4 */ s16 timer2Value;
+    /* 0x13D6 */ s16 timerX[2];
+    /* 0x13DA */ s16 timerY[2];
+    /* 0x13DE */ char unk_13DE[0x0002];
+    /* 0x13E0 */ u8 seqId;
+    /* 0x13E1 */ u8 natureAmbienceId;
+    /* 0x13E2 */ u8 buttonStatus[5];
+    /* 0x13E7 */ u8 unk_13E7; // alpha related
+    /* 0x13E8 */ u16 unk_13E8; // alpha type?
+    /* 0x13EA */ u16 unk_13EA; // also alpha type?
+    /* 0x13EC */ u16 unk_13EC; // alpha type counter?
+    /* 0x13EE */ u16 unk_13EE; // previous alpha type?
+    /* 0x13F0 */ s16 magicState; // determines magic meter behavior on each frame
+    /* 0x13F2 */ s16 prevMagicState; // used to resume the previous state after adding or filling magic
+    /* 0x13F4 */ s16 magicCapacity; // maximum magic available
+    /* 0x13F6 */ s16 magicFillTarget; // target used to fill magic. Target can either be full capacity (Magic_Fill, magic upgrades), or the saved magic amount (loading a file, game over)
+    /* 0x13F8 */ s16 magicTarget; // target for magic to step to when adding or consuming magic
+    /* 0x13FA */ u16 eventInf[4]; // "event_inf"
+    /* 0x1402 */ u16 mapIndex; // intended for maps/minimaps but commonly used as the dungeon index
+    /* 0x1404 */ u16 minigameState;
+    /* 0x1406 */ u16 minigameScore; // "yabusame_total"
+    /* 0x1408 */ char unk_1408[0x0001];
+    /* 0x1409 */ u8 language; // NTSC 0: Japanese; 1: English | PAL 0: English; 1: German; 2: French
+    /* 0x140A */ u8 audioSetting;
+    /* 0x140B */ char unk_140B[0x0001];
+    /* 0x140C */ u8 zTargetSetting; // 0: Switch; 1: Hold
+    /* 0x140E */ u16 forcedSeqId; // immediately start playing the sequence if set
+    /* 0x1410 */ u8 cutsceneTransitionControl; // context dependent usage: can either trigger a delayed fade or control fill alpha
+    /* 0x1411 */ char unk_1411[0x0001];
+    /* 0x1412 */ u16 nextCutsceneIndex;
+    /* 0x1414 */ u8 cutsceneTrigger;
+    /* 0x1415 */ u8 chamberCutsceneNum;
+    /* 0x1416 */ u16 nextDayTime; // "next_zelda_time"
+    /* 0x1418 */ u8 transFadeDuration;
+    /* 0x1419 */ u8 transWipeSpeed;
+    /* 0x141A */ u16 skyboxTime;
+    /* 0x141C */ u8 dogIsLost;
+    /* 0x141D */ u8 nextTransitionType;
+    /* 0x141E */ char unk_141E[0x0002];
+    /* 0x1420 */ s16 worldMapArea;
+    /* 0x1422 */ s16 sunsSongState; // controls the effects of suns song
+    /* 0x1424 */ s16 healthAccumulator;
+} SaveContext; // size = 0x1428
 
 typedef enum {
     /* 0x00 */ BTN_ENABLED,
