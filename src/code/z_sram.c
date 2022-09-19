@@ -36,7 +36,10 @@ typedef struct {
     /* 0x004C */ ItemEquips equips;
     /* 0x0058 */ Inventory inventory;
     /* 0x00B8 */ SavedSceneFlags sceneFlags[124];
-    /* 0x0E48 */ FaroresWindData fw;
+    /* 0x0E48 */ FaroresWindData fwMain;
+#ifdef FW_SPLIT_AGE
+    /* 0x0E70 */ FaroresWindData fwSecondary;
+#endif
     /* 0x0E70 */ char unk_E70[0x10];
     /* 0x0E80 */ s32 gsFlags[6];
     /* 0x0E98 */ char unk_E98[0x10];

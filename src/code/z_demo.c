@@ -30,6 +30,8 @@
 
 #include "assets/scenes/misc/hakaana_ouke/hakaana_ouke_scene.h"
 
+#include "config.h"
+
 u16 D_8011E1C0 = 0;
 u16 D_8011E1C4 = 0;
 
@@ -518,6 +520,10 @@ void Cutscene_Command_Terminator(PlayState* play, CutsceneContext* csCtx, CsCmdB
     u8 skipTitleScreenCS = (gSaveContext.gameMode == GAMEMODE_TITLE_SCREEN) ? CS_CTRL_SKIP_TITLE_SCREEN : true;
 #endif
 
+#ifdef FW_SPLIT_AGE
+    FaroresWindData fwBackup;
+#endif
+
     // if START, A or B on the title screen cutscene but not on the hyrule field part
     if ((gSaveContext.gameMode != GAMEMODE_NORMAL) && (gSaveContext.gameMode != GAMEMODE_END_CREDITS) &&
         (play->sceneId != SCENE_SPOT00) && (csCtx->frames > 20) &&
@@ -595,7 +601,13 @@ void Cutscene_Command_Terminator(PlayState* play, CutsceneContext* csCtx, CsCmdB
                 play->transitionType = TRANS_TYPE_INSTANT;
                 break;
             case 8:
-                gSaveContext.fw.set = 0;
+#ifdef FW_SPLIT_AGE
+                fwBackup = gSaveContext.fwMain;
+                gSaveContext.fwMain = gSaveContext.fwSecondary;
+                gSaveContext.fwSecondary = fwBackup;
+#else
+                gSaveContext.fwMain.set = 0;
+#endif
                 gSaveContext.respawn[RESPAWN_MODE_TOP].data = 0;
                 if (!GET_EVENTCHKINF(EVENTCHKINF_45)) {
                     SET_EVENTCHKINF(EVENTCHKINF_45);
