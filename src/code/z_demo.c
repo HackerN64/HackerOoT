@@ -120,7 +120,7 @@ void Cutscene_DrawDebugInfo(PlayState* play, Gfx** dlist, CutsceneContext* csCtx
     GfxPrint_SetColor(&printer, 255, 255, 255, 32);
     GfxPrint_Printf(&printer, "%06d", csCtx->frames);
     GfxPrint_SetColor(&printer, 50, 255, 255, 60);
-    GfxPrint_SetPos(&printer, 10, 26);
+    GfxPrint_SetPos(&printer, 4, 26);
     GfxPrint_Printf(&printer, "%s", "SKIP=(START) or (Cursole Right)");
 
     *dlist = GfxPrint_Close(&printer);

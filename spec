@@ -389,7 +389,7 @@ beginseg
     include "build/src/code/db_camera.o"
 #endif
     include "build/src/code/code_800BB0A0.o"
-#ifdef ENABLE_CAMERA_DEBUGGER
+#ifdef ENABLE_MEMPAK
     include "build/src/code/mempak.o"
 #endif
     include "build/src/code/z_kaleido_manager.o"
@@ -8453,50 +8453,6 @@ beginseg
     number 3
 endseg
 
-#ifndef NO_TEST_SCENES
-beginseg
-    name "syotes_scene"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/syotes/syotes_scene.o"
-    number 2
-endseg
-
-beginseg
-    name "syotes_room_0"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/syotes/syotes_room_0.o"
-    number 3
-endseg
-
-beginseg
-    name "syotes2_scene"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/syotes2/syotes2_scene.o"
-    number 2
-endseg
-
-beginseg
-    name "syotes2_room_0"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/syotes2/syotes2_room_0.o"
-    number 3
-endseg
-
-beginseg
-    name "depth_test_scene"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/depth_test/depth_test_scene.o"
-    number 2
-endseg
-
-beginseg
-    name "depth_test_room_0"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/depth_test/depth_test_room_0.o"
-    number 3
-endseg
-#endif
-
 beginseg
     name "spot00_scene"
     romalign 0x1000
@@ -8917,50 +8873,6 @@ beginseg
     number 3
 endseg
 
-#ifndef NO_TEST_SCENES
-beginseg
-    name "testroom_scene"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/testroom/testroom_scene.o"
-    number 2
-endseg
-
-beginseg
-    name "testroom_room_0"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/testroom/testroom_room_0.o"
-    number 3
-endseg
-
-beginseg
-    name "testroom_room_1"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/testroom/testroom_room_1.o"
-    number 3
-endseg
-
-beginseg
-    name "testroom_room_2"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/testroom/testroom_room_2.o"
-    number 3
-endseg
-
-beginseg
-    name "testroom_room_3"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/testroom/testroom_room_3.o"
-    number 3
-endseg
-
-beginseg
-    name "testroom_room_4"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/testroom/testroom_room_4.o"
-    number 3
-endseg
-#endif
-
 beginseg
     name "kenjyanoma_scene"
     romalign 0x1000
@@ -8995,22 +8907,6 @@ beginseg
     include "build/assets/scenes/indoors/tokinoma/tokinoma_room_1.o"
     number 3
 endseg
-
-#ifndef NO_TEST_SCENES
-beginseg
-    name "sutaru_scene"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/sutaru/sutaru_scene.o"
-    number 2
-endseg
-
-beginseg
-    name "sutaru_room_0"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/sutaru/sutaru_room_0.o"
-    number 3
-endseg
-#endif
 
 beginseg
     name "link_home_scene"
@@ -9249,22 +9145,6 @@ beginseg
     include "build/assets/scenes/dungeons/ganon_tou/ganon_tou_room_0.o"
     number 3
 endseg
-
-#ifndef NO_TEST_SCENES
-beginseg
-    name "sasatest_scene"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/sasatest/sasatest_scene.o"
-    number 2
-endseg
-
-beginseg
-    name "sasatest_room_0"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/sasatest/sasatest_room_0.o"
-    number 3
-endseg
-#endif
 
 beginseg
     name "market_alley_scene"
@@ -9910,22 +9790,6 @@ beginseg
     number 3
 endseg
 
-#ifndef NO_TEST_SCENES
-beginseg
-    name "hairal_niwa2_scene"
-    romalign 0x1000
-    include "build/assets/scenes/indoors/hairal_niwa2/hairal_niwa2_scene.o"
-    number 2
-endseg
-
-beginseg
-    name "hairal_niwa2_room_0"
-    romalign 0x1000
-    include "build/assets/scenes/indoors/hairal_niwa2/hairal_niwa2_room_0.o"
-    number 3
-endseg
-#endif
-
 beginseg
     name "hakasitarelay_scene"
     romalign 0x1000
@@ -10339,22 +10203,6 @@ beginseg
     number 3
 endseg
 
-#ifndef NO_TEST_SCENES
-beginseg
-    name "besitu_scene"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/besitu/besitu_scene.o"
-    number 2
-endseg
-
-beginseg
-    name "besitu_room_0"
-    romalign 0x1000
-    include "build/assets/scenes/test_levels/besitu/besitu_room_0.o"
-    number 3
-endseg
-#endif
-
 beginseg
     name "face_shop_scene"
     romalign 0x1000
@@ -10404,7 +10252,98 @@ beginseg
     number 3
 endseg
 
-#ifndef NO_TEST_SCENES
+#ifdef INCLUDE_TEST_SCENES
+beginseg
+    name "besitu_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/besitu/besitu_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "depth_test_scene"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/depth_test/depth_test_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "depth_test_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/depth_test/depth_test_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "hairal_niwa2_scene"
+    romalign 0x1000
+    include "build/assets/scenes/indoors/hairal_niwa2/hairal_niwa2_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "hairal_niwa2_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/indoors/hairal_niwa2/hairal_niwa2_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "sasatest_scene"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/sasatest/sasatest_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "sasatest_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/sasatest/sasatest_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "sutaru_scene"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/sutaru/sutaru_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "sutaru_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/sutaru/sutaru_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "syotes_scene"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/syotes/syotes_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "syotes_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/syotes/syotes_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "syotes2_scene"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/syotes2/syotes2_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "syotes2_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/syotes2/syotes2_room_0.o"
+    number 3
+endseg
+
 beginseg
     name "test01_scene"
     romalign 0x1000
@@ -10417,5 +10356,54 @@ beginseg
     romalign 0x1000
     include "build/assets/scenes/test_levels/test01/test01_room_0.o"
     number 3
+endseg
+
+beginseg
+    name "testroom_scene"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/testroom/testroom_scene.o"
+    number 2
+endseg
+
+beginseg
+    name "testroom_room_0"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/testroom/testroom_room_0.o"
+    number 3
+endseg
+
+beginseg
+    name "testroom_room_1"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/testroom/testroom_room_1.o"
+    number 3
+endseg
+
+beginseg
+    name "testroom_room_2"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/testroom/testroom_room_2.o"
+    number 3
+endseg
+
+beginseg
+    name "testroom_room_3"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/testroom/testroom_room_3.o"
+    number 3
+endseg
+
+beginseg
+    name "testroom_room_4"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/testroom/testroom_room_4.o"
+    number 3
+endseg
+
+beginseg
+    name "besitu_scene"
+    romalign 0x1000
+    include "build/assets/scenes/test_levels/besitu/besitu_scene.o"
+    number 2
 endseg
 #endif

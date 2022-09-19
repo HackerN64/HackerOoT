@@ -1,6 +1,6 @@
 #include "config.h"
 
-#ifdef ENABLE_CAMERA_DEBUGGER
+#ifdef ENABLE_MEMPAK
 
 #include "global.h"
 

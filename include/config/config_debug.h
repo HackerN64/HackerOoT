@@ -38,6 +38,11 @@
 #define BOOT_PLAYER_NAME 0x15, 0x12, 0x17, 0x14, 0x3E, 0x3E, 0x3E, 0x3E // "LINK"
 
 /**
+ * Enable mempak-related code
+ */
+// #define ENABLE_MEMPAK
+
+/**
  * Disable every debug features
  */
 // #define DISABLE_DEBUG_FEATURES
@@ -53,7 +58,7 @@
 #undef SHOW_CS_INFOS
 #undef SHOW_INPUT_DISPLAY
 #undef SHOW_TIME_INFOS
-#undef NO_TEST_SCENES
+#undef INCLUDE_TEST_SCENES
 #undef ENABLE_NO_CLIP
 #undef ENABLE_CS_CONTROL
 #undef ENABLE_FRAMERATE_OPTIONS
@@ -66,16 +71,22 @@
 #undef ENABLE_ACTOR_DEBUGGER
 #undef ENABLE_MSG_DEBUGGER
 #undef ENABLE_DEBUG_SAVE
+#undef ENABLE_MEMPAK
 #endif
 
 // Remove map select from file 1
 #if (defined BOOT_TO_SCENE && defined BOOT_TO_FILE_SELECT) || (!defined ENABLE_MAP_SELECT) || (defined DISABLE_DEBUG_FEATURES)
-#define FILE_1_NORMAL
+#define DEBUG_FILE_1
 #endif
 
 // Remove actor and camera debug draw-related code if both are disabled
 #if !(defined ENABLE_ACTOR_DEBUGGER) && !(defined ENABLE_CAMERA_DEBUGGER)
 #define NO_DEBUG_DISPLAY
+#endif
+
+// The camera debugger needs mempak functions for the cutscene exporter
+#if (defined ENABLE_CAMERA_DEBUGGER) && !(defined ENABLE_MEMPAK)
+#define ENABLE_MEMPAK
 #endif
 
 #endif

@@ -40,10 +40,8 @@ void Main(void* arg) {
     OSMesg irqMgrMsgBuf[60];
     u32 systemHeapStart;
     u32 fb;
-#ifdef ENABLE_CAMERA_DEBUGGER
     u32 debugHeapStart;
     u32 debugHeapSize;
-#endif
     s16* msg;
 
     osSyncPrintf("mainproc 実行開始\n"); // "Start running"
@@ -60,7 +58,6 @@ void Main(void* arg) {
     osSyncPrintf("システムヒープ初期化 %08x-%08x %08x\n", systemHeapStart, fb, gSystemHeapSize);
     SystemHeap_Init((void*)systemHeapStart, gSystemHeapSize); // initializes the system heap
 
-#ifdef ENABLE_CAMERA_DEBUGGER
     if (osMemSize >= 0x800000) {
         debugHeapStart = SysCfb_GetFbEnd();
         debugHeapSize = PHYS_TO_K0(0x600000) - debugHeapStart;
@@ -70,7 +67,6 @@ void Main(void* arg) {
     }
     osSyncPrintf("debug_InitArena(%08x, %08x)\n", debugHeapStart, debugHeapSize);
     DebugArena_Init((void*)debugHeapStart, debugHeapSize);
-#endif
 
     func_800636C0();
 

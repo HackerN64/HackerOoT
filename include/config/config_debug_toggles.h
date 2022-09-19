@@ -43,7 +43,7 @@
 #define ENABLE_DEBUG_SAVE
 
 /**** [TEST SCENES] ****/
-#define NO_TEST_SCENES
+// #define INCLUDE_TEST_SCENES
 
 // -------------------------------------------
 
