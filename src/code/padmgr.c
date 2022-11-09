@@ -29,7 +29,7 @@
  * done while waiting for this operation to complete.
  */
 #include "global.h"
-#include "vt.h"
+#include "terminal.h"
 
 #define PADMGR_LOG(controllerNo, msg)                                    \
     if (1) {                                                             \
@@ -361,7 +361,7 @@ void PadMgr_HandleRetrace(PadMgr* padMgr) {
 
     // Execute retrace callback
     if (padMgr->retraceCallback != NULL) {
-        padMgr->retraceCallback(padMgr, padMgr->retraceCallbackValue);
+        padMgr->retraceCallback(padMgr, padMgr->retraceCallbackArg);
     }
 
     // Wait for controller data

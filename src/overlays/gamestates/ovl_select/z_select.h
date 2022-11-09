@@ -1,9 +1,6 @@
 #ifndef Z_SELECT_H
 #define Z_SELECT_H
 
-#include "global.h"
-#include "vt.h"
-#include "alloca.h"
 #include "config.h"
 
 void MapSelect_Init(GameState* thisx);

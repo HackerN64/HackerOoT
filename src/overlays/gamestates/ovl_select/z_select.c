@@ -3,6 +3,12 @@
  * Overlay: ovl_select
  * Description: Debug Scene Select Menu
  */
+#include "ultra64.h"
+#include "global.h"
+#include "terminal.h"
+#include "alloca.h"
+
+#include "config.h"
 
 #include "z_select.h"
 
@@ -54,7 +60,7 @@ void MapSelect_Init(GameState* thisx) {
     gSaveContext.cutsceneIndex = 0xFFEF;
 
     // turning the sfx volume back on
-    Audio_QueueSeqCmd((0xF << 0x1C) | 0xA);
+    SEQCMD_SET_PLAYER_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 10); 
 
 #ifdef BOOT_TO_MAP_SELECT
     gSaveContext.fileNum = 0xFF;
@@ -148,10 +154,10 @@ void MapSelect_UpdateMenu(MapSelectState* this) {
     // Play/Stop BGM
     if (this->toggleBGM && !this->isBGMPlaying) {
         this->isBGMPlaying = true;
-        Audio_QueueSeqCmd((SEQ_PLAYER_BGM_MAIN << 24) | MAP_SELECT_BGM);
+        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, MAP_SELECT_BGM);
     } else if (!this->toggleBGM) {
         this->isBGMPlaying = false;
-        Audio_QueueSeqCmd((SEQ_PLAYER_BGM_MAIN << 24) | NA_BGM_STOP);
+        SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0);
     }
 
     // when the controls screen is shown
@@ -403,7 +409,7 @@ void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex) {
     gSaveContext.buttonStatus[0] = gSaveContext.buttonStatus[1] = gSaveContext.buttonStatus[2] =
         gSaveContext.buttonStatus[3] = gSaveContext.buttonStatus[4] = BTN_ENABLED;
     gSaveContext.unk_13E7 = gSaveContext.unk_13E8 = gSaveContext.unk_13EA = gSaveContext.unk_13EC = 0;
-    Audio_QueueSeqCmd(SEQ_PLAYER_BGM_MAIN << 24 | NA_BGM_STOP);
+    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0);
     gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = gSaveContext.entranceIndex = entranceIndex;
     gSaveContext.respawnFlag = 0;
     gSaveContext.seqId = (u8)NA_BGM_DISABLED;
