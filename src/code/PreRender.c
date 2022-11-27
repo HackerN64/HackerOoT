@@ -770,7 +770,7 @@ void PreRender_DivotFilter(PreRender* this) {
  */
 #ifdef VANILLA_PAUSE_DELAY
 
-void PreRender_Calc(PreRender* this) {
+void PreRender_ApplyFilters(PreRender* this) {
     s32 x;
     s32 y;
 
