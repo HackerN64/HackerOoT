@@ -4,7 +4,7 @@
 /*****************
  * GAME SETTINGS *
  *****************/
- 
+
 // Configure dialogue print speed (1 is vanilla)
 #define DIALOGUE_PRINT_SPEED 2
 
@@ -25,8 +25,7 @@
  */
 // #define FW_SPLIT_AGE
 
- /* Keep pause delay inacurate emulators have **
- * can potentially crash                      */
+ /* Keep pause delay. Inacurate emulators have can potentially crash if enabled. */
 //#define VANILLA_PAUSE_DELAY
 
 
