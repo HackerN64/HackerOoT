@@ -1,8 +1,10 @@
 #include "global.h"
-#include "vt.h"
+#include "terminal.h"
 #include "assets/textures/parameter_static/parameter_static.h"
 #include "assets/textures/do_action_static/do_action_static.h"
 #include "assets/textures/icon_item_static/icon_item_static.h"
+
+#include "config.h"
 
 // TODO extract this information from the texture definitions themselves
 #define DO_ACTION_TEX_WIDTH 48
@@ -14,7 +16,7 @@ typedef struct {
     /* 0x01 */ u8 flags1;
     /* 0x02 */ u8 flags2;
     /* 0x03 */ u8 flags3;
-} RestrictionFlags;
+} RestrictionFlags; // size = 0x4
 
 static RestrictionFlags sRestrictionFlags[] = {
     { SCENE_SPOT00, 0x00, 0x00, 0x10 },
@@ -759,7 +761,7 @@ void func_80083108(PlayState* play) {
                 }
 
                 Interface_ChangeAlpha(50);
-            } else if ((player->stateFlags1 & PLAYER_STATE1_21) || (player->stateFlags2 & PLAYER_STATE2_18)) {
+            } else if ((player->stateFlags1 & PLAYER_STATE1_21) || (player->stateFlags2 & PLAYER_STATE2_CRAWLING)) {
                 if (gSaveContext.buttonStatus[0] != BTN_DISABLED) {
                     gSaveContext.buttonStatus[0] = BTN_DISABLED;
                     gSaveContext.buttonStatus[1] = BTN_DISABLED;
@@ -1277,7 +1279,8 @@ void Interface_LoadItemIcon1(PlayState* play, u16 button) {
 
     osCreateMesgQueue(&interfaceCtx->loadQueue, &interfaceCtx->loadMsg, 1);
     DmaMgr_SendRequest2(&interfaceCtx->dmaRequest_160, interfaceCtx->iconItemSegment + button * 0x1000,
-                        (u32)_icon_item_staticSegmentRomStart + (gSaveContext.equips.buttonItems[button] * 0x1000),
+                        (uintptr_t)_icon_item_staticSegmentRomStart +
+                            (gSaveContext.equips.buttonItems[button] * 0x1000),
                         0x1000, 0, &interfaceCtx->loadQueue, NULL, "../z_parameter.c", 1171);
     osRecvMesg(&interfaceCtx->loadQueue, NULL, OS_MESG_BLOCK);
 }
@@ -1287,7 +1290,8 @@ void Interface_LoadItemIcon2(PlayState* play, u16 button) {
 
     osCreateMesgQueue(&interfaceCtx->loadQueue, &interfaceCtx->loadMsg, 1);
     DmaMgr_SendRequest2(&interfaceCtx->dmaRequest_180, interfaceCtx->iconItemSegment + button * 0x1000,
-                        (u32)_icon_item_staticSegmentRomStart + (gSaveContext.equips.buttonItems[button] * 0x1000),
+                        (uintptr_t)_icon_item_staticSegmentRomStart +
+                            (gSaveContext.equips.buttonItems[button] * 0x1000),
                         0x1000, 0, &interfaceCtx->loadQueue, NULL, "../z_parameter.c", 1193);
     osRecvMesg(&interfaceCtx->loadQueue, NULL, OS_MESG_BLOCK);
 }
@@ -2085,8 +2089,8 @@ void Interface_LoadActionLabel(InterfaceContext* interfaceCtx, u16 action, s16 l
         osCreateMesgQueue(&interfaceCtx->loadQueue, &interfaceCtx->loadMsg, 1);
         DmaMgr_SendRequest2(&interfaceCtx->dmaRequest_160,
                             interfaceCtx->doActionSegment + (loadOffset * DO_ACTION_TEX_SIZE),
-                            (u32)_do_action_staticSegmentRomStart + (action * DO_ACTION_TEX_SIZE), DO_ACTION_TEX_SIZE,
-                            0, &interfaceCtx->loadQueue, NULL, "../z_parameter.c", 2145);
+                            (uintptr_t)_do_action_staticSegmentRomStart + (action * DO_ACTION_TEX_SIZE),
+                            DO_ACTION_TEX_SIZE, 0, &interfaceCtx->loadQueue, NULL, "../z_parameter.c", 2145);
         osRecvMesg(&interfaceCtx->loadQueue, NULL, OS_MESG_BLOCK);
     } else {
         gSegments[7] = VIRTUAL_TO_PHYSICAL(interfaceCtx->doActionSegment);
@@ -2148,8 +2152,8 @@ void Interface_LoadActionLabelB(PlayState* play, u16 action) {
 
     osCreateMesgQueue(&interfaceCtx->loadQueue, &interfaceCtx->loadMsg, 1);
     DmaMgr_SendRequest2(&interfaceCtx->dmaRequest_160, interfaceCtx->doActionSegment + DO_ACTION_TEX_SIZE,
-                        (u32)_do_action_staticSegmentRomStart + (action * DO_ACTION_TEX_SIZE), DO_ACTION_TEX_SIZE, 0,
-                        &interfaceCtx->loadQueue, NULL, "../z_parameter.c", 2228);
+                        (uintptr_t)_do_action_staticSegmentRomStart + (action * DO_ACTION_TEX_SIZE), DO_ACTION_TEX_SIZE,
+                        0, &interfaceCtx->loadQueue, NULL, "../z_parameter.c", 2228);
     osRecvMesg(&interfaceCtx->loadQueue, NULL, OS_MESG_BLOCK);
 
     interfaceCtx->unk_1FA = true;
@@ -2169,7 +2173,7 @@ s32 Health_ChangeBy(PlayState* play, s16 amount) {
     // clang-format off
     if (amount > 0) { Audio_PlaySfxGeneral(NA_SE_SY_HP_RECOVER, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-    } else if (gSaveContext.doubleDefense && (amount < 0)) {
+    } else if (gSaveContext.isDoubleDefenseAcquired && (amount < 0)) {
         amount >>= 1;
         osSyncPrintf("ハート減少半分！！＝%d\n", amount); // "Heart decrease halved!!＝%d"
     }
@@ -2801,7 +2805,7 @@ void Interface_DrawItemButtons(PlayState* play) {
             if ((gSaveContext.unk_13EA == 1) || (gSaveContext.unk_13EA == 2) || (gSaveContext.unk_13EA == 5)) {
                 temp = 0;
             } else if ((player->stateFlags1 & PLAYER_STATE1_21) || (func_8008F2F8(play) == 4) ||
-                       (player->stateFlags2 & PLAYER_STATE2_18)) {
+                       (player->stateFlags2 & PLAYER_STATE2_CRAWLING)) {
                 temp = 70;
             } else {
                 temp = interfaceCtx->healthAlpha;
@@ -3101,7 +3105,18 @@ void Interface_Draw(PlayState* play) {
         Gfx_SetupDL_39Overlay(play->state.gfxCtx);
 
         // Rupee Icon
+        #ifndef MM_WALLET_ICON_COLORS
         gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 200, 255, 100, interfaceCtx->magicAlpha);
+        #else
+        static Color_RGB8 const walletColors[] = {
+            { 200, 255, 100 },
+            { 130, 130, 255 },
+            { 255, 100, 100 },
+        };
+        u8 walletUpg = CUR_UPG_VALUE(UPG_WALLET);
+        gDPSetPrimColor(OVERLAY_DISP++, 0, 0, walletColors[walletUpg].r, walletColors[walletUpg].g, walletColors[walletUpg].b, interfaceCtx->magicAlpha);
+        #endif
+        
         gDPSetEnvColor(OVERLAY_DISP++, 0, 80, 0, 255);
         OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, gRupeeCounterIconTex, 16, 16, 26, 206, 16, 16, 1 << 10, 1 << 10);
 

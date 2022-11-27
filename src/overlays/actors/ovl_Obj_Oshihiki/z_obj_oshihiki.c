@@ -8,6 +8,8 @@
 #include "overlays/actors/ovl_Obj_Switch/z_obj_switch.h"
 #include "assets/objects/gameplay_dangeon_keep/gameplay_dangeon_keep.h"
 
+#include "config.h"
+
 #define FLAGS ACTOR_FLAG_4
 
 void ObjOshihiki_Init(Actor* thisx, PlayState* play2);
@@ -24,7 +26,7 @@ void ObjOshihiki_Push(ObjOshihiki* this, PlayState* play);
 void ObjOshihiki_SetupFall(ObjOshihiki* this, PlayState* play);
 void ObjOshihiki_Fall(ObjOshihiki* this, PlayState* play);
 
-const ActorInit Obj_Oshihiki_InitVars = {
+ActorInit Obj_Oshihiki_InitVars = {
     ACTOR_OBJ_OSHIHIKI,
     ACTORCAT_PROP,
     FLAGS,
@@ -333,7 +335,7 @@ void ObjOshihiki_SetFloors(ObjOshihiki* this, PlayState* play) {
         floorPoly = &this->floorPolys[i];
         floorBgId = &this->floorBgIds[i];
         this->floorHeights[i] =
-            BgCheck_EntityRaycastFloor6(&play->colCtx, floorPoly, floorBgId, &this->dyna.actor, &colCheckPoint, 0.0f);
+            BgCheck_EntityRaycastDown6(&play->colCtx, floorPoly, floorBgId, &this->dyna.actor, &colCheckPoint, 0.0f);
     }
 }
 
@@ -519,7 +521,7 @@ void ObjOshihiki_OnActor(ObjOshihiki* this, PlayState* play) {
         } else {
             dynaPolyActor = DynaPoly_GetActor(&play->colCtx, bgId);
 
-            if ((dynaPolyActor != NULL) && (dynaPolyActor->unk_15C & 1)) {
+            if ((dynaPolyActor != NULL) && (dynaPolyActor->transformFlags & DYNA_TRANSFORM_POS)) {
                 DynaPolyActor_SetActorOnTop(dynaPolyActor);
                 func_80043538(dynaPolyActor);
                 this->dyna.actor.world.pos.y = this->dyna.actor.floorHeight;
@@ -542,10 +544,10 @@ void ObjOshihiki_Push(ObjOshihiki* this, PlayState* play) {
     f32 pushDistSigned;
     s32 stopFlag;
 
-    this->pushSpeed += 0.5f;
+    this->pushSpeed += 0.5f * BLOCK_PUSH_SPEED;
     this->stateFlags |= PUSHBLOCK_PUSH;
-    this->pushSpeed = CLAMP_MAX(this->pushSpeed, 2.0f);
-    stopFlag = Math_StepToF(&this->pushDist, 20.0f, this->pushSpeed);
+    this->pushSpeed = CLAMP_MAX(this->pushSpeed, 2.0f * BLOCK_PUSH_SPEED);
+    stopFlag = Math_StepToF(&this->pushDist, 20.0f * BLOCK_PUSH_SPEED, this->pushSpeed);
     pushDistSigned = ((this->direction >= 0.0f) ? 1.0f : -1.0f) * this->pushDist;
     thisx->world.pos.x = thisx->home.pos.x + (pushDistSigned * this->yawSin);
     thisx->world.pos.z = thisx->home.pos.z + (pushDistSigned * this->yawCos);
