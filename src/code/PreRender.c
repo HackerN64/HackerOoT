@@ -538,7 +538,7 @@ void func_800C2FE4(PreRender* this) {
         }
     }
 }
-
+#ifdef VANILLA_PAUSE_DELAY
 void PreRender_Calc(PreRender* this) {
     s32 x;
     s32 y;
@@ -562,3 +562,4 @@ void PreRender_Calc(PreRender* this) {
         }
     }
 }
+#endif

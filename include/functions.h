@@ -3,7 +3,7 @@
 
 #include "z64.h"
 #include "macros.h"
-
+#include "config.h"
 f32 fabsf(f32 f);
 #ifndef __sgi
 #define fabsf(f) __builtin_fabsf((f32)(f))
@@ -1527,7 +1527,9 @@ void func_800C24BC(PreRender* this, Gfx** gfxp);
 void func_800C24E0(PreRender* this, Gfx** gfxp);
 void func_800C2500(PreRender* this, s32 x, s32 y);
 void func_800C2FE4(PreRender* this);
+#ifdef VANILLA_PAUSE_DELAY
 void PreRender_Calc(PreRender* this);
+#endif
 void THGA_Ct(TwoHeadGfxArena* thga, Gfx* start, u32 size);
 void THGA_Dt(TwoHeadGfxArena* thga);
 u32 THGA_IsCrash(TwoHeadGfxArena* thga);
