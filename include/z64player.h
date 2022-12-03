@@ -394,6 +394,8 @@ typedef struct {
     /* 0x10 */ Vec3f base;
 } WeaponInfo; // size = 0x1C
 
+#define PLAYER_GI_SEG_MIN 0x2880 // max size of a place title card file
+
 #define PLAYER_STATE1_0 (1 << 0)
 #define PLAYER_STATE1_SWINGING_BOTTLE (1 << 1)
 #define PLAYER_STATE1_2 (1 << 2)
@@ -502,6 +504,7 @@ typedef struct Player {
     /* 0x0194 */ OSMesgQueue giObjectLoadQueue;
     /* 0x01AC */ OSMesg     giObjectLoadMsg;
     /* 0x01B0 */ void*      giObjectSegment; // also used for title card textures
+                 u32        giObjectSegmentMaxSz;
     /* 0x01B4 */ SkelAnime  skelAnime;
     /* 0x01F8 */ Vec3s      jointTable[PLAYER_LIMB_BUF_COUNT];
     /* 0x0288 */ Vec3s      morphTable[PLAYER_LIMB_BUF_COUNT];

@@ -9633,6 +9633,20 @@ static void (*D_80854738[])(PlayState* play, Player* this) = {
 
 static Vec3f D_80854778 = { 0.0f, 50.0f, 0.0f };
 
+u32 Player_GetLargestGI(void) {
+    u32 maxObjSize = 0, curObjSize = 0;
+    for (s32 i = 0; true; i++) {
+        u16 objId = sGetItemTable[i].objectId;
+        if (objId == OBJECT_INVALID) {
+            return maxObjSize;
+        }
+        curObjSize = gObjectTable[objId].vromEnd - gObjectTable[objId].vromStart;
+        if (curObjSize > maxObjSize) {
+            maxObjSize = curObjSize;
+        }
+    }
+}
+
 void Player_Init(Actor* thisx, PlayState* play2) {
     Player* this = (Player*)thisx;
     PlayState* play = play2;
@@ -9663,7 +9677,14 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     Player_SetEquipmentData(play, this);
     this->prevBoots = this->currentBoots;
     Player_InitCommon(this, play, gPlayerSkelHeaders[((void)0, gSaveContext.linkAge)]);
-    this->giObjectSegment = (void*)(((uintptr_t)ZeldaArena_MallocDebug(0x3008, "../z_player.c", 17175) + 8) & ~0xF);
+
+    // Allocate the GI object segment
+    this->giObjectSegmentMaxSz = Player_GetLargestGI() + 16;
+    if (this->giObjectSegmentMaxSz < PLAYER_GI_SEG_MIN) {
+        this->giObjectSegmentMaxSz = PLAYER_GI_SEG_MIN;
+    }
+    this->giObjectSegment =
+        (void*)ALIGN16((uintptr_t)ZeldaArena_MallocDebug(this->giObjectSegmentMaxSz, __FILE__, __LINE__));
 
     respawnFlag = gSaveContext.respawnFlag;
 
