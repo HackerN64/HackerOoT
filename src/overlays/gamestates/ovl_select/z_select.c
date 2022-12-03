@@ -60,7 +60,7 @@ void MapSelect_Init(GameState* thisx) {
     gSaveContext.cutsceneIndex = 0xFFEF;
 
     // turning the sfx volume back on
-    SEQCMD_SET_PLAYER_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 10); 
+    SEQCMD_SET_PLAYER_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 10);
 
 #ifdef BOOT_TO_MAP_SELECT
     gSaveContext.fileNum = 0xFF;
@@ -408,7 +408,8 @@ void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex) {
     }
     gSaveContext.buttonStatus[0] = gSaveContext.buttonStatus[1] = gSaveContext.buttonStatus[2] =
         gSaveContext.buttonStatus[3] = gSaveContext.buttonStatus[4] = BTN_ENABLED;
-    gSaveContext.unk_13E7 = gSaveContext.unk_13E8 = gSaveContext.unk_13EA = gSaveContext.unk_13EC = 0;
+    gSaveContext.forceRisingButtonAlphas = gSaveContext.nextHudVisibilityMode = gSaveContext.hudVisibilityMode =
+        gSaveContext.hudVisibilityModeTimer = 0; // false, HUD_VISIBILITY_NO_CHANGE
     SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0);
     gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = gSaveContext.entranceIndex = entranceIndex;
     gSaveContext.respawnFlag = 0;
