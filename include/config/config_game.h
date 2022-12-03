@@ -20,4 +20,9 @@
 // Make the Bunnyhood Mask behave like in Majora's Mask where it increases Link's speed when equipped.
 // #define MM_BUNNYHOOD
 
+/**
+ * Splits Farore's Wind warp point across ages. One point for child Link, one point for adult Link.
+ */
+// #define FW_SPLIT_AGE
+
 #endif
