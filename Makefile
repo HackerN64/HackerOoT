@@ -195,7 +195,6 @@ setup:
 	python3 extract_baserom.py
 	python3 extract_assets.py -j$(N_THREADS)
 	python3 tools/daf/daf.py -a -p ./
-# ``./`` ok for relative path?
 
 test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
