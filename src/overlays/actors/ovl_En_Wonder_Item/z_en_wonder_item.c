@@ -5,7 +5,8 @@
  */
 
 #include "z_en_wonder_item.h"
-#include "vt.h"
+#include "terminal.h"
+
 #include "config.h"
 
 #define FLAGS 0
@@ -42,7 +43,7 @@ static ColliderCylinderInit sCylinderInit = {
     { 20, 30, 0, { 0, 0, 0 } },
 };
 
-const ActorInit En_Wonder_Item_InitVars = {
+ActorInit En_Wonder_Item_InitVars = {
     ACTOR_EN_WONDER_ITEM,
     ACTORCAT_PROP,
     FLAGS,

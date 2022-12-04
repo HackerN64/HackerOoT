@@ -5,7 +5,8 @@
  */
 
 #include "z_en_okarina_effect.h"
-#include "vt.h"
+#include "terminal.h"
+
 #include "config.h"
 
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_25)
@@ -17,7 +18,7 @@ void EnOkarinaEffect_Update(Actor* thisx, PlayState* play);
 void EnOkarinaEffect_TriggerStorm(EnOkarinaEffect* this, PlayState* play);
 void EnOkarinaEffect_ManageStorm(EnOkarinaEffect* this, PlayState* play);
 
-const ActorInit En_Okarina_Effect_InitVars = {
+ActorInit En_Okarina_Effect_InitVars = {
     ACTOR_EN_OKARINA_EFFECT,
     ACTORCAT_ITEMACTION,
     FLAGS,
@@ -97,7 +98,7 @@ void EnOkarinaEffect_ManageStorm(EnOkarinaEffect* this, PlayState* play) {
         play->envCtx.precipitation[PRECIP_SOS_MAX] = 0;
         if (play->csCtx.state == CS_STATE_IDLE) {
             Environment_StopStormNatureAmbience(play);
-        } else if (func_800FA0B4(SEQ_PLAYER_BGM_MAIN) == NA_BGM_NATURE_AMBIENCE) {
+        } else if (Audio_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == NA_BGM_NATURE_AMBIENCE) {
             Audio_SetNatureAmbienceChannelIO(NATURE_CHANNEL_LIGHTNING, CHANNEL_IO_PORT_1, 0);
             Audio_SetNatureAmbienceChannelIO(NATURE_CHANNEL_RAIN, CHANNEL_IO_PORT_1, 0);
         }

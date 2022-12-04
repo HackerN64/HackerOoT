@@ -31,7 +31,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play);
 
 static u8 sHorseSfxPlayed = false;
 
-const ActorInit En_Viewer_InitVars = {
+ActorInit En_Viewer_InitVars = {
     ACTOR_EN_VIEWER,
     ACTORCAT_ITEMACTION,
     FLAGS,
@@ -241,7 +241,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
             }
         }
         if (play->csCtx.frames == 1020) {
-            Audio_QueueSeqCmd(SEQ_PLAYER_FANFARE << 24 | NA_BGM_OPENING_GANON);
+            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_FANFARE, 0, 0, NA_BGM_OPENING_GANON);
         }
         if (play->csCtx.frames == 960) {
             Audio_PlaySfxGeneral(NA_SE_EV_HORSE_GROAN, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
@@ -387,7 +387,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
                 break;
         }
     } else if (type == ENVIEWER_TYPE_2_ZELDA) {
-        if (play->sceneId == SCENE_SPOT00) { // Hyrule Field
+        if (play->sceneId == SCENE_HYRULE_FIELD) { // Hyrule Field
             switch (this->state) {
                 case 0:
                     if (play->csCtx.state != CS_STATE_IDLE) {
@@ -541,23 +541,23 @@ void EnViewer_DrawGanondorf(EnViewer* this, PlayState* play) {
         }
 
         if (frames + 1127 >= play->csCtx.frames) {
-            gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(&gYoungGanondorfEyeOpenTex));
-            gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(&gYoungGanondorfEyeOpenTex));
+            gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(gYoungGanondorfEyeOpenTex));
+            gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(gYoungGanondorfEyeOpenTex));
 
         } else if (frames + 1128 >= play->csCtx.frames) {
-            gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(&gYoungGanondorfEyeHalfTex));
-            gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(&gYoungGanondorfEyeHalfTex));
+            gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(gYoungGanondorfEyeHalfTex));
+            gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(gYoungGanondorfEyeHalfTex));
 
         } else if (frames + 1129 >= play->csCtx.frames) {
-            gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(&gYoungGanondorfEyeClosedTex));
-            gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(&gYoungGanondorfEyeClosedTex));
+            gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(gYoungGanondorfEyeClosedTex));
+            gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(gYoungGanondorfEyeClosedTex));
 
         } else {
-            gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(&gYoungGanondorfEyeLookingDownTex));
-            gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(&gYoungGanondorfEyeLookingDownTex));
+            gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(gYoungGanondorfEyeLookingDownTex));
+            gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(gYoungGanondorfEyeLookingDownTex));
         }
     } else if (type == ENVIEWER_TYPE_9_GANONDORF) {
-        gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(&gGanondorfCrazedEyeTex));
+        gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(gGanondorfCrazedEyeTex));
     }
 
     if (type == ENVIEWER_TYPE_9_GANONDORF) {
@@ -587,7 +587,7 @@ void EnViewer_DrawHorse(EnViewer* this, PlayState* play) {
 }
 
 s32 EnViewer_ZeldaOverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
-    if (play->sceneId == SCENE_SPOT00) { // Hyrule Field
+    if (play->sceneId == SCENE_HYRULE_FIELD) { // Hyrule Field
         if (limbIndex == 2) {
             *dList = gChildZeldaCutsceneDressDL;
         }
@@ -613,7 +613,7 @@ s32 EnViewer_ZeldaOverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, 
 void EnViewer_ZeldaPostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
     s32 pad;
 
-    if (play->sceneId == SCENE_TOKINOMA) {
+    if (play->sceneId == SCENE_TEMPLE_OF_TIME) {
         if (limbIndex == 16) {
             OPEN_DISPS(play->state.gfxCtx, "../z_en_viewer.c", 1568);
             gSPDisplayList(POLY_OPA_DISP++, gChildZeldaOcarinaOfTimeDL);
@@ -624,7 +624,7 @@ void EnViewer_ZeldaPostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec
 
 void EnViewer_DrawZelda(EnViewer* this, PlayState* play) {
     OPEN_DISPS(play->state.gfxCtx, "../z_en_viewer.c", 1583);
-    if (play->sceneId == SCENE_SPOT00) { // Hyrule Field
+    if (play->sceneId == SCENE_HYRULE_FIELD) { // Hyrule Field
         if (play->csCtx.frames < 771) {
             gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(gChildZeldaEyeInTex));
             gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(gChildZeldaEyeOutTex));

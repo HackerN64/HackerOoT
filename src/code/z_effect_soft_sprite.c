@@ -1,5 +1,6 @@
 #include "global.h"
-#include "vt.h"
+#include "terminal.h"
+
 #include "config.h"
 
 EffectSsInfo sEffectSsInfo = { 0 }; // "EffectSS2Info"

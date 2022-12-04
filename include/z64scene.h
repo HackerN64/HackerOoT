@@ -6,8 +6,8 @@
 #include "command_macros_base.h"
 
 typedef struct {
-    /* 0x00 */ u32 vromStart;
-    /* 0x04 */ u32 vromEnd;
+    /* 0x00 */ uintptr_t vromStart;
+    /* 0x04 */ uintptr_t vromEnd;
 } RomFile; // size = 0x8
 
 typedef struct {
@@ -38,20 +38,12 @@ typedef struct {
 } TransitionActorEntry; // size = 0x10
 
 typedef struct {
-    /* 0x00 */ u8 spawn;
+    /* 0x00 */ u8 playerEntryIndex;
     /* 0x01 */ u8 room;
-} EntranceEntry;
+} Spawn;
 
-typedef struct {
-    /* 0x00 */ u8 ambientColor[3];
-    /* 0x03 */ s8 diffuseDir1[3];
-    /* 0x06 */ u8 diffuseColor1[3];
-    /* 0x09 */ s8 diffuseDir2[3];
-    /* 0x0C */ u8 diffuseColor2[3];
-    /* 0x0F */ u8 fogColor[3];
-    /* 0x12 */ u16 fogNear;
-    /* 0x14 */ u16 fogFar;
-} LightSettings; // size = 0x16
+// TODO: ZAPD Compatibility
+typedef Spawn EntranceEntry; 
 
 typedef struct {
     /* 0x00 */ u8 count; // number of points in the path
@@ -154,7 +146,8 @@ typedef union {
     RoomShapeCullable cullable;
 } RoomShape; // "Ground Shape"
 
-// TODO update ZAPD
+// ZAPD compatibility typedefs
+// TODO: Remove when ZAPD adds support for them
 typedef RoomShapeDListsEntry PolygonDlist;
 typedef RoomShapeNormal PolygonType0;
 typedef RoomShapeImageSingle MeshHeader1Single;
@@ -179,13 +172,13 @@ typedef struct {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  length;
     /* 0x04 */ ActorEntry* data;
-} SCmdSpawnList;
+} SCmdPlayerEntryList;
 
 typedef struct {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  length;
     /* 0x04 */ ActorEntry* data;
-} SCmdActorList;
+} SCmdActorEntryList;
 
 typedef struct {
     /* 0x00 */ u8  code;
@@ -218,12 +211,12 @@ typedef struct {
 typedef struct {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
-    /* 0x04 */ EntranceEntry* data;
-} SCmdEntranceList;
+    /* 0x04 */ Spawn* data;
+} SCmdSpawnList;
 
 typedef struct {
     /* 0x00 */ u8  code;
-    /* 0x01 */ u8  cUpElfMsgNum;
+    /* 0x01 */ u8  naviQuestHintFileId;
     /* 0x04 */ u32 keepObjectId;
 } SCmdSpecialFiles;
 
@@ -342,11 +335,11 @@ typedef struct {
 
 typedef union {
     SCmdBase              base;
-    SCmdSpawnList         spawnList;
-    SCmdActorList         actorList;
+    SCmdPlayerEntryList   playerEntryList;
+    SCmdActorEntryList    actorEntryList;
     SCmdUnused02          unused02;
     SCmdRoomList          roomList;
-    SCmdEntranceList      entranceList;
+    SCmdSpawnList         spawnList;
     SCmdObjectList        objectList;
     SCmdLightList         lightList;
     SCmdPathList          pathList;
@@ -406,58 +399,58 @@ typedef enum {
 
 typedef enum {
     /*  0 */ SDC_DEFAULT,
-    /*  1 */ SDC_SPOT00,
-    /*  2 */ SDC_SPOT01,
-    /*  3 */ SDC_SPOT03,
-    /*  4 */ SDC_SPOT04,
-    /*  5 */ SDC_SPOT06,
-    /*  6 */ SDC_SPOT07,
-    /*  7 */ SDC_SPOT08,
-    /*  8 */ SDC_SPOT09,
-    /*  9 */ SDC_SPOT10,
-    /* 10 */ SDC_SPOT11,
-    /* 11 */ SDC_SPOT12,
-    /* 12 */ SDC_SPOT13,
-    /* 13 */ SDC_SPOT15,
-    /* 14 */ SDC_SPOT16,
-    /* 15 */ SDC_SPOT17,
-    /* 16 */ SDC_SPOT18,
-    /* 17 */ SDC_SPOT20,
-    /* 18 */ SDC_HIDAN, // used for Fire Temple and its boss scene
-    /* 19 */ SDC_YDAN,
-    /* 20 */ SDC_DDAN,
-    /* 21 */ SDC_BDAN, // used for Jabu-Jabu and its boss scene
-    /* 22 */ SDC_BMORI1,
-    /* 23 */ SDC_MIZUSIN,
-    /* 24 */ SDC_HAKADAN, // used for Bottom Of The Well, Shadow Temple and its boss scene
-    /* 25 */ SDC_JYASINZOU,
-    /* 26 */ SDC_GANONTIKA,
-    /* 27 */ SDC_MEN,
-    /* 28 */ SDC_YDAN_BOSS,
-    /* 29 */ SDC_MIZUSIN_BS,
-    /* 30 */ SDC_TOKINOMA,
-    /* 31 */ SDC_KAKUSIANA,
-    /* 32 */ SDC_KENJYANOMA,
-    /* 33 */ SDC_GREAT_FAIRY_FOUNTAIN, // used for both Great Fairy Fountains scenes
-    /* 34 */ SDC_SYATEKIJYOU,
-    /* 35 */ SDC_HAIRAL_NIWA, // used for Castle Courtyard (with the hedges) (day, night and debug scenes)
-    /* 36 */ SDC_GANON_CASTLE_EXTERIOR, // used for two scenes
-    /* 37 */ SDC_ICE_DOUKUTO,
-    /* 38 */ SDC_GANON_FINAL,
-    /* 39 */ SDC_FAIRY_FOUNTAIN, // used for both Fairy Fountains scenes
-    /* 40 */ SDC_GERUDOWAY,
-    /* 41 */ SDC_BOWLING,
-    /* 42 */ SDC_HAKAANA_OUKE,
-    /* 43 */ SDC_HYLIA_LABO,
-    /* 44 */ SDC_SOUKO,
-    /* 45 */ SDC_MIHARIGOYA,
-    /* 46 */ SDC_MAHOUYA,
+    /*  1 */ SDC_HYRULE_FIELD,
+    /*  2 */ SDC_KAKARIKO_VILLAGE,
+    /*  3 */ SDC_ZORAS_RIVER,
+    /*  4 */ SDC_KOKIRI_FOREST,
+    /*  5 */ SDC_LAKE_HYLIA,
+    /*  6 */ SDC_ZORAS_DOMAIN,
+    /*  7 */ SDC_ZORAS_FOUNTAIN,
+    /*  8 */ SDC_GERUDO_VALLEY,
+    /*  9 */ SDC_LOST_WOODS,
+    /* 10 */ SDC_DESERT_COLOSSUS,
+    /* 11 */ SDC_GERUDOS_FORTRESS,
+    /* 12 */ SDC_HAUNTED_WASTELAND,
+    /* 13 */ SDC_HYRULE_CASTLE,
+    /* 14 */ SDC_DEATH_MOUNTAIN_TRAIL,
+    /* 15 */ SDC_DEATH_MOUNTAIN_CRATER,
+    /* 16 */ SDC_GORON_CITY,
+    /* 17 */ SDC_LON_LON_RANCH,
+    /* 18 */ SDC_FIRE_TEMPLE, // used for Fire Temple and its boss scene
+    /* 19 */ SDC_DEKU_TREE,
+    /* 20 */ SDC_DODONGOS_CAVERN,
+    /* 21 */ SDC_JABU_JABU, // used for Jabu-Jabu and its boss scene
+    /* 22 */ SDC_FOREST_TEMPLE,
+    /* 23 */ SDC_WATER_TEMPLE,
+    /* 24 */ SDC_SHADOW_TEMPLE, // used for Bottom Of The Well, Shadow Temple and its boss scene
+    /* 25 */ SDC_SPIRIT_TEMPLE,
+    /* 26 */ SDC_INSIDE_GANONS_CASTLE,
+    /* 27 */ SDC_GERUDO_TRAINING_GROUND,
+    /* 28 */ SDC_DEKU_TREE_BOSS,
+    /* 29 */ SDC_WATER_TEMPLE_BOSS,
+    /* 30 */ SDC_TEMPLE_OF_TIME,
+    /* 31 */ SDC_GROTTOS,
+    /* 32 */ SDC_CHAMBER_OF_THE_SAGES,
+    /* 33 */ SDC_GREAT_FAIRYS_FOUNTAIN, // used for both Great Fairy Fountains scenes
+    /* 34 */ SDC_SHOOTING_GALLERY,
+    /* 35 */ SDC_CASTLE_COURTYARD_GUARDS, // used for Castle Courtyard (with the hedges) (day, night and debug scenes)
+    /* 36 */ SDC_OUTSIDE_GANONS_CASTLE, // used for two scenes
+    /* 37 */ SDC_ICE_CAVERN,
+    /* 38 */ SDC_GANONS_TOWER_COLLAPSE_EXTERIOR,
+    /* 39 */ SDC_FAIRYS_FOUNTAIN, // used for both Fairy Fountains scenes
+    /* 40 */ SDC_THIEVES_HIDEOUT,
+    /* 41 */ SDC_BOMBCHU_BOWLING_ALLEY,
+    /* 42 */ SDC_ROYAL_FAMILYS_TOMB,
+    /* 43 */ SDC_LAKESIDE_LABORATORY,
+    /* 44 */ SDC_LON_LON_BUILDINGS,
+    /* 45 */ SDC_MARKET_GUARD_HOUSE,
+    /* 46 */ SDC_POTION_SHOP_GRANNY,
     /* 47 */ SDC_CALM_WATER, // used for Castle Courtyard (with Zelda), Sacred Forest Meadow, and debug Jungle Gym
     /* 48 */ SDC_GRAVE_EXIT_LIGHT_SHINING, // used for one grave scene and the Dampé race scene
     /* 49 */ SDC_BESITU,
-    /* 50 */ SDC_TURIBORI,
-    /* 51 */ SDC_GANON_SONOGO,
-    /* 52 */ SDC_GANONTIKA_SONOGO,
+    /* 50 */ SDC_FISHING_POND,
+    /* 51 */ SDC_GANONS_TOWER_COLLAPSE_INTERIOR,
+    /* 52 */ SDC_INSIDE_GANONS_CASTLE_COLLAPSE,
     /* 53 */ SDC_MAX
 } SceneDrawConfig;
 
@@ -468,6 +461,14 @@ typedef enum {
 #define SCENE_CAM_TYPE_FIXED 0x30 // Camera exhibits fixed behaviors (see `Play_CamIsNotFixed` usages for examples)
 #define SCENE_CAM_TYPE_FIXED_MARKET 0x40 // Camera exhibits fixed behaviors and delays textboxes by a small amount before they start to appear
 #define SCENE_CAM_TYPE_SHOOTING_GALLERY 0x50 // Unreferenced in code, and used only by the main layer of the shooting gallery scene
+
+// navi hints
+// TODO: make ZAPD use this enum for `SCENE_CMD_SPECIAL_FILES`
+typedef enum {
+    NAVI_QUEST_HINTS_NONE,
+    NAVI_QUEST_HINTS_OVERWORLD,
+    NAVI_QUEST_HINTS_DUNGEON
+} NaviQuestHintFileId;
 
 // Scene commands
 
@@ -522,8 +523,8 @@ typedef enum {
 #define SCENE_CMD_ENTRANCE_LIST(entranceList) \
     { SCENE_CMD_ID_ENTRANCE_LIST, 0, CMD_PTR(entranceList) }
 
-#define SCENE_CMD_SPECIAL_FILES(elfMessageFile, keepObjectId) \
-    { SCENE_CMD_ID_SPECIAL_FILES, elfMessageFile, CMD_W(keepObjectId) }
+#define SCENE_CMD_SPECIAL_FILES(naviQuestHintFileId, keepObjectId) \
+    { SCENE_CMD_ID_SPECIAL_FILES, naviQuestHintFileId, CMD_W(keepObjectId) }
 
 #define SCENE_CMD_ROOM_BEHAVIOR(curRoomUnk3, curRoomUnk2, showInvisActors, disableWarpSongs) \
     { SCENE_CMD_ID_ROOM_BEHAVIOR, curRoomUnk3, \
