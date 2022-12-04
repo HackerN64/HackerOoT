@@ -350,6 +350,7 @@ s32 func_80852FFC(PlayState* play, Actor* actor, s32 csMode);
 void func_80853080(Player* this, PlayState* play);
 s32 Player_InflictDamage(PlayState* play, s32 damage);
 void func_80853148(PlayState* play, Actor* actor);
+u32 Player_GetGIAllocSize();
 
 // .bss part 1
 static s32 D_80858AA0;
@@ -9633,6 +9634,30 @@ static void (*D_80854738[])(PlayState* play, Player* this) = {
 
 static Vec3f D_80854778 = { 0.0f, 50.0f, 0.0f };
 
+
+/**
+ * Iterates in the get item table to get the largest GI object size
+*/
+u32 Player_GetGIAllocSize() {
+    u32 curSize = 0, allocSize = PLAYER_ALLOC_GI_MIN;
+    u32 i = 0;
+
+    for (i = 0; i < ARRAY_COUNT(sGetItemTable); i++) {
+        u16 curGIObjectID = sGetItemTable[i].objectId;
+
+        if (curGIObjectID != OBJECT_INVALID) {
+            RomFile curObject = gObjectTable[curGIObjectID];
+            curSize = curObject.vromEnd - curObject.vromStart;
+
+            if (curSize > allocSize) {
+                allocSize = curSize;
+            }
+        }
+    }
+
+    return allocSize + 16;
+}
+
 void Player_Init(Actor* thisx, PlayState* play2) {
     Player* this = (Player*)thisx;
     PlayState* play = play2;
@@ -9663,7 +9688,7 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     Player_SetEquipmentData(play, this);
     this->prevBoots = this->currentBoots;
     Player_InitCommon(this, play, gPlayerSkelHeaders[((void)0, gSaveContext.linkAge)]);
-    this->giObjectSegment = (void*)(((uintptr_t)ZeldaArena_MallocDebug(0x3008, "../z_player.c", 17175) + 8) & ~0xF);
+    this->giObjectSegment = (void*)ALIGN16((uintptr_t)ZeldaArena_MallocDebug(Player_GetGIAllocSize(), __FILE__, __LINE__));
 
     respawnFlag = gSaveContext.respawnFlag;
 
