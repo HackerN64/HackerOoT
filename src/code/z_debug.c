@@ -1,22 +1,28 @@
 #include "global.h"
 #include "config.h"
 
+#ifdef ENABLE_CAMERA_DEBUGGER
 typedef struct {
     u8 x;
     u8 y;
     u8 colorIndex;
     char text[21];
 } PrintTextBufferEntry; // size = 0x18
+#endif
 
+#ifdef ENABLE_REG_EDITOR
 typedef struct {
     u16 hold;
     u16 press;
 } InputCombo; // size = 0x4
+#endif
 
-RegEditor* gRegEditor;
+RegEditor* gRegEditor; // ``gRegEditor->data`` is used by non-debug features in normal gameplay
 
+#ifdef ENABLE_CAMERA_DEBUGGER
 PrintTextBufferEntry sDebugPrintTextBuffer[22];
 s16 sDebugPrintTextBufferNumUsed = 0;
+
 Color_RGBA8 sDebugPrintTextColors[] = {
     { 255, 255, 32, 192 },  // 0
     { 255, 150, 128, 192 }, // 1
@@ -27,9 +33,9 @@ Color_RGBA8 sDebugPrintTextColors[] = {
     { 128, 150, 255, 128 }, // 6
     { 128, 255, 32, 128 },  // 7
 };
+#endif
 
 #ifdef ENABLE_REG_EDITOR
-
 InputCombo sRegGroupInputCombos[REG_GROUPS] = {
     { BTN_L, BTN_CUP },        //  REG
     { BTN_L, BTN_CLEFT },      // SREG
@@ -94,7 +100,6 @@ char sRegGroupChars[REG_GROUPS] = {
     'k', // kREG
     'b', // bREG
 };
-
 #endif
 
 void Regs_Init(void) {
@@ -121,6 +126,7 @@ void func_8006375C(s32 arg0, s32 arg1, const char* text) {
 }
 #endif
 
+#ifdef ENABLE_CAMERA_DEBUGGER
 // Store text during Update, to be drawn later during Draw
 void func_8006376C(u8 x, u8 y, u8 colorIndex, const char* text) {
     PrintTextBufferEntry* entry;
@@ -162,9 +168,9 @@ void func_80063828(GfxPrint* printer) {
         GfxPrint_Printf(printer, "%s", entry->text);
     }
 }
+#endif
 
 #ifdef ENABLE_REG_EDITOR
-
 // Process inputs to control the reg editor
 void Regs_UpdateEditor(Input* input) {
     s32 dPadInputCur;
@@ -279,9 +285,9 @@ void Regs_DrawEditor(GfxPrint* printer) {
         }
     }
 }
-
 #endif
 
+#if (defined ENABLE_CAMERA_DEBUGGER) || (defined ENABLE_REG_EDITOR)
 void func_80063D7C(GraphicsContext* gfxCtx) {
     Gfx* gfx;
     Gfx* opaStart;
@@ -296,9 +302,11 @@ void func_80063D7C(GraphicsContext* gfxCtx) {
     gSPDisplayList(OVERLAY_DISP++, gfx);
     GfxPrint_Open(&printer, gfx);
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if ((OREG(0) == 1) || (OREG(0) == 8)) {
         func_80063828(&printer);
     }
+#endif
 
 #ifdef ENABLE_REG_EDITOR
     if (gRegEditor->regPage != 0) {
@@ -306,7 +314,9 @@ void func_80063D7C(GraphicsContext* gfxCtx) {
     }
 #endif
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     sDebugPrintTextBufferNumUsed = 0;
+#endif
 
     gfx = GfxPrint_Close(&printer);
     gSPEndDisplayList(gfx++);
@@ -319,3 +329,4 @@ void func_80063D7C(GraphicsContext* gfxCtx) {
 
     GfxPrint_Destroy(&printer);
 }
+#endif

@@ -7710,9 +7710,9 @@ Vec3s Camera_Update(Camera* camera) {
         }
         return D_8015BD80.sub.unk_104A;
     }
-#endif
 
     OREG(0) &= ~8;
+#endif
 
     if (camera->status == CAM_STAT_UNK3) {
         return camera->inputDir;
