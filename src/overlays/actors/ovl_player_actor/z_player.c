@@ -9639,8 +9639,7 @@ static Vec3f D_80854778 = { 0.0f, 50.0f, 0.0f };
  * Iterates in the get item table to get the largest GI object size
 */
 u32 Player_GetGIAllocSize() {
-    u32 curSize = 0, allocSize = PLAYER_ALLOC_GI_MIN;
-    u32 i = 0;
+    u32 i = 0, curSize = 0, allocSize = PLAYER_ALLOC_GI_MIN;
 
     for (i = 0; i < ARRAY_COUNT(sGetItemTable); i++) {
         u16 curGIObjectID = sGetItemTable[i].objectId;
