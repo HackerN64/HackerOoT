@@ -9,9 +9,7 @@
 #include "alloca.h"
 
 #include "config.h"
-
 #include "z_select.h"
-#include "config.h"
 
 #ifdef ENABLE_MAP_SELECT
 
