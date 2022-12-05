@@ -70,16 +70,16 @@ If you are using GCC as the compiler for Ocarina of Time, you will also need:
 **N.B.** If using WSL, we strongly encourage you to clone into WSL's Linux filesystem using Linux's `git`.
 Cloning into the Windows filesystem will result in much slower read/write speeds, and often causes issues when Windows copies the files with the wrong line endings, which the compiler IDO cannot handle correctly.
 
-Clone `https://github.com/HackerN64/HackerOOT.git` where you wish to have the project, with a command such as:
+Clone `https://github.com/HackerN64/HackerOoT.git` where you wish to have the project, with a command such as:
 
 ```bash
-git clone https://github.com/HackerN64/HackerOOT.git
+git clone https://github.com/HackerN64/HackerOoT.git
 ```
 
-This will copy the GitHub repository contents into a new folder in the current directory called `HackerOOT`. Change into this directory before doing anything else:
+This will copy the GitHub repository contents into a new folder in the current directory called `HackerOoT`. Change into this directory before doing anything else:
 
 ```bash
-cd HackerOOT
+cd HackerOoT
 ```
 
 #### 3. Prepare a base ROM
