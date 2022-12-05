@@ -2,7 +2,7 @@
 #define CONFIG_H
 
 /**
- * All HackerOOT config headers included into one.
+ * All HackerOoT config headers included into one.
  */
 
 #include "config/config_debug.h"
