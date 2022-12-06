@@ -194,12 +194,13 @@ setup:
 	python3 fixbaserom.py
 	python3 extract_baserom.py
 	python3 extract_assets.py -j$(N_THREADS)
+	python3 tools/daf/daf.py -a -p ./
 
 test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
 
 
-.PHONY: all clean setup test distclean assetclean
+.PHONY: all clean setup test distclean assetclean daf
 
 #### Various Recipes ####
 
