@@ -1117,7 +1117,9 @@ void Play_Draw(PlayState* this) {
 
             if (R_PAUSE_MENU_MODE == 2) {
                 Sched_FlushTaskQueue();
+#ifdef VANILLA_PAUSE_DELAY
                 PreRender_ApplyFilters(&this->pauseBgPreRender);
+#endif
                 R_PAUSE_MENU_MODE = 3;
             } else if (R_PAUSE_MENU_MODE >= 4) {
                 R_PAUSE_MENU_MODE = 0;

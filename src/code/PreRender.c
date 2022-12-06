@@ -772,6 +772,8 @@ void PreRender_DivotFilter(PreRender* this) {
  * Applies the Video Interface anti-aliasing filter and (optionally) the divot filter to `this->fbufSave` using
  * `this->cvgSave`
  */
+#ifdef VANILLA_PAUSE_DELAY
+
 void PreRender_ApplyFilters(PreRender* this) {
     s32 x;
     s32 y;
@@ -797,3 +799,4 @@ void PreRender_ApplyFilters(PreRender* this) {
         }
     }
 }
+#endif
