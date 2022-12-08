@@ -42,9 +42,6 @@ typedef struct {
     /* 0x01 */ u8 room;
 } Spawn;
 
-// TODO: ZAPD Compatibility
-typedef Spawn EntranceEntry;
-
 typedef struct {
     /* 0x00 */ u8 count; // number of points in the path
     /* 0x04 */ Vec3s* points; // Segment Address to the array of points
@@ -452,7 +449,6 @@ typedef enum {
 #define SCENE_CAM_TYPE_SHOOTING_GALLERY 0x50 // Unreferenced in code, and used only by the main layer of the shooting gallery scene
 
 // navi hints
-// TODO: make ZAPD use this enum for `SCENE_CMD_SPECIAL_FILES`
 typedef enum {
     NAVI_QUEST_HINTS_NONE,
     NAVI_QUEST_HINTS_OVERWORLD,
