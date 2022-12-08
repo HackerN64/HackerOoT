@@ -8,7 +8,7 @@
 #include "assets/objects/object_mo/object_mo.h"
 #include "overlays/actors/ovl_Door_Warp1/z_door_warp1.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
-#include "vt.h"
+#include "terminal.h"
 
 #define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4 | ACTOR_FLAG_5)
 
@@ -118,7 +118,7 @@ typedef enum {
     /* 150 */ MO_DEATH_MO_CORE_BURST = 150
 } BossMoCsState;
 
-const ActorInit Boss_Mo_InitVars = {
+ActorInit Boss_Mo_InitVars = {
     ACTOR_BOSS_MO,
     ACTORCAT_BOSS,
     FLAGS,
@@ -140,7 +140,7 @@ static f32 sFlatWidth[41] = {
     8.6f,  8.3f,  8.2f, 8.1f, 7.2f, 6.7f, 5.9f, 4.9f, 2.7f, 0.0f, 0.0f, 0.0f, 0.0f,
 };
 
-#include "z_boss_mo_colchk.c"
+#include "z_boss_mo_colchk.inc.c"
 
 static BossMoEffect sEffects[BOSS_MO_EFFECT_COUNT];
 static s32 sSeed1;
@@ -360,7 +360,7 @@ void BossMo_Init(Actor* thisx, PlayState* play2) {
             return;
         }
         if (GET_EVENTCHKINF(EVENTCHKINF_74)) {
-            Audio_QueueSeqCmd(SEQ_PLAYER_BGM_MAIN << 24 | NA_BGM_BOSS);
+            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
             this->tentMaxAngle = 5.0f;
             this->timers[0] = 50;
         } else {
@@ -504,7 +504,7 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
                 swingSizeAccel = 60.0f;
                 if ((this->sfxTimer % 32) == 0) {
                     Audio_PlaySfxIncreasinglyTransposed(&this->tentTipPos, NA_SE_EN_MOFER_WAVE, gMorphaTransposeTable);
-                    func_800AA000(0, 100, 5, 2);
+                    Rumble_Request(0, 100, 5, 2);
                     func_8002F7DC(&player->actor, NA_SE_VO_LI_FREEZE + player->ageProperties->unk_92);
                 }
             } else {
@@ -518,7 +518,7 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
                 swingSizeAccel = 70.0f;
                 if ((this->sfxTimer % 16) == 0) {
                     Audio_PlaySfxIncreasinglyTransposed(&this->tentTipPos, NA_SE_EN_MOFER_WAVE, gMorphaTransposeTable);
-                    func_800AA000(0, 160, 5, 4);
+                    Rumble_Request(0, 160, 5, 4);
                     func_8002F7DC(&player->actor, NA_SE_VO_LI_FREEZE + player->ageProperties->unk_92);
                 }
             }
@@ -660,7 +660,7 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
             this->targetPos = this->actor.world.pos;
             Math_ApproachF(&this->tentMaxAngle, 0.5f, 1.0f, 0.01);
             Math_ApproachF(&this->tentSpeed, 160.0f, 1.0f, 50.0f);
-            if ((this->timers[0] == 0) || (this->linkHitTimer != 0)) {
+            if ((this->timers[0] == 0) || (this->playerHitTimer != 0)) {
                 dx = this->tentPos[22].x - player->actor.world.pos.x;
                 dy = this->tentPos[22].y - player->actor.world.pos.y;
                 dz = this->tentPos[22].z - player->actor.world.pos.z;
@@ -670,9 +670,9 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
                     this->timers[0] = 40;
                     this->tentSpeed = 0;
                     if ((s16)(this->actor.shape.rot.y - this->actor.yawTowardsPlayer) >= 0) {
-                        this->linkToLeft = false;
+                        this->playerToLeft = false;
                     } else {
-                        this->linkToLeft = true;
+                        this->playerToLeft = true;
                     }
                 } else {
                     this->tentMaxAngle = .001f;
@@ -702,7 +702,7 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
             }
             for (indS1 = 0; indS1 < 41; indS1++) {
                 if (this->timers[0] > 25) {
-                    if (!this->linkToLeft) {
+                    if (!this->playerToLeft) {
                         Math_ApproachS(&this->tentRot[indS1].z, sCurlRot[indS1] * 0x100, 1.0f / this->tentMaxAngle,
                                        this->tentSpeed);
                     } else {
@@ -710,7 +710,7 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
                                        this->tentSpeed);
                     }
                 } else {
-                    if (!this->linkToLeft) {
+                    if (!this->playerToLeft) {
                         Math_ApproachS(&this->tentRot[indS1].z, sGrabRot[indS1] * 0x100, 1.0f / this->tentMaxAngle,
                                        this->tentSpeed);
                     } else {
@@ -725,7 +725,7 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
                 Math_ApproachS(&this->actor.shape.rot.y, this->actor.yawTowardsPlayer, 5, 0xC8);
             }
             if (this->work[MO_TENT_ACTION_STATE] == MO_TENT_CURL) {
-                if ((this->timers[0] >= 5) && (this->linkHitTimer != 0) && (player->actor.parent == NULL)) {
+                if ((this->timers[0] >= 5) && (this->playerHitTimer != 0) && (player->actor.parent == NULL)) {
                     if (play->grabPlayer(play, player)) {
                         player->actor.parent = &this->actor;
                         this->work[MO_TENT_ACTION_STATE] = MO_TENT_GRAB;
@@ -790,8 +790,8 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
         tent_shake:
         case MO_TENT_SHAKE:
             if (this->timers[0] == 138) {
-                ShrinkWindow_SetVal(0);
-                Interface_ChangeAlpha(0xB);
+                Letterbox_SetSizeTarget(0);
+                Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_HEARTS);
             }
             if ((this->timers[0] % 8) == 0) {
                 play->damagePlayer(play, -1);
@@ -1101,7 +1101,7 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
                                        -280.0f, this->actor.world.pos.z, 0, 0, 0, WARP_DUNGEON_ADULT);
                     Actor_Spawn(&play->actorCtx, play, ACTOR_ITEM_B_HEART, this->actor.world.pos.x + 200.0f, -280.0f,
                                 this->actor.world.pos.z, 0, 0, 0, 0);
-                    Audio_QueueSeqCmd(SEQ_PLAYER_BGM_MAIN << 24 | NA_BGM_BOSS_CLEAR);
+                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS_CLEAR);
                     Flags_SetClear(play, play->roomCtx.curRoom.num);
                 }
             }
@@ -1158,7 +1158,7 @@ void BossMo_TentCollisionCheck(BossMo* this, PlayState* play) {
                 this->cutScale = 1.0f;
             } else if (hurtbox->toucher.dmgFlags & (DMG_JUMP_MASTER | DMG_JUMP_GIANT | DMG_SPIN_MASTER |
                                                     DMG_SPIN_GIANT | DMG_SLASH_GIANT | DMG_SLASH_MASTER)) {
-                this->linkHitTimer = 5;
+                this->playerHitTimer = 5;
             }
             this->tentRippleSize = 0.2f;
             for (i2 = 0; i2 < 10; i2++) {
@@ -1177,7 +1177,7 @@ void BossMo_TentCollisionCheck(BossMo* this, PlayState* play) {
             break;
         } else if (this->tentCollider.elements[i1].info.toucherFlags & TOUCH_HIT) {
             this->tentCollider.elements[i1].info.toucherFlags &= ~TOUCH_HIT;
-            this->linkHitTimer = 5;
+            this->playerHitTimer = 5;
             break;
         }
     }
@@ -1236,7 +1236,7 @@ void BossMo_IntroCs(BossMo* this, PlayState* play) {
                 this->actor.world.rot.y = 0x721A;
                 sMorphaTent1->work[MO_TENT_ACTION_STATE] = MO_TENT_READY;
                 sMorphaTent1->timers[0] = 30000;
-                Audio_QueueSeqCmd(0x1 << 28 | SEQ_PLAYER_BGM_MAIN << 24 | 0x3200FF);
+                SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 50);
                 Message_CloseTextbox(play);
             } else {
                 break;
@@ -1417,7 +1417,7 @@ void BossMo_IntroCs(BossMo* this, PlayState* play) {
                 this->subCamAccel = 0.01f;
             }
             if (this->timers[2] == 150) {
-                Audio_QueueSeqCmd(SEQ_PLAYER_BGM_MAIN << 24 | NA_BGM_BOSS);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
             }
             if (this->timers[2] == 130) {
                 TitleCard_InitBossName(play, &play->actorCtx.titleCtx, SEGMENTED_TO_VIRTUAL(gMorphaTitleCardTex), 0xA0,
@@ -1775,7 +1775,7 @@ void BossMo_CoreCollisionCheck(BossMo* this, PlayState* play) {
                         ((sMorphaTent1->subCamId == SUB_CAM_ID_DONE) && (sMorphaTent2 != NULL) &&
                          (sMorphaTent2->subCamId == SUB_CAM_ID_DONE))) {
                         Enemy_StartFinishingBlow(play, &this->actor);
-                        Audio_QueueSeqCmd(0x1 << 28 | SEQ_PLAYER_BGM_MAIN << 24 | 0x100FF);
+                        SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 1);
                         this->csState = MO_DEATH_START;
                         sMorphaTent1->drawActor = false;
                         sMorphaTent1->work[MO_TENT_ACTION_STATE] = MO_TENT_DEATH_START;
@@ -2377,8 +2377,8 @@ void BossMo_UpdateTent(Actor* thisx, PlayState* play) {
     if (this->work[MO_TENT_INVINC_TIMER] != 0) {
         this->work[MO_TENT_INVINC_TIMER]--;
     }
-    if (this->linkHitTimer != 0) {
-        this->linkHitTimer--;
+    if (this->playerHitTimer != 0) {
+        this->playerHitTimer--;
     }
 
     if (this->drawActor) {
@@ -2540,7 +2540,7 @@ void BossMo_DrawTentacle(BossMo* this, PlayState* play) {
             Vec3s sp84;
 
             Matrix_Push();
-            if (this->linkToLeft) {
+            if (this->playerToLeft) {
                 sp8C.x *= -1.0f;
             }
             Matrix_MultVec3f(&sp8C, &this->grabPosRot.pos);
@@ -3040,53 +3040,56 @@ void BossMo_Unknown(void) {
     // Appears to be a test function for sound effects.
     static Vec3f zeroVec = { 0.0f, 0.0f, 0.0f };
     static u16 unkSfx[] = {
-        NA_SE_PL_WALK_GROUND,
-        NA_SE_PL_WALK_GROUND,
-        NA_SE_PL_WALK_GROUND,
-        NA_SE_PL_WALK_SAND,
-        NA_SE_PL_WALK_CONCRETE,
-        NA_SE_PL_WALK_DIRT,
-        NA_SE_PL_WALK_WATER0,
-        NA_SE_PL_WALK_WATER1,
-        NA_SE_PL_WALK_WATER2,
-        NA_SE_PL_WALK_MAGMA,
-        NA_SE_PL_WALK_GRASS,
-        NA_SE_PL_WALK_GLASS,
-        NA_SE_PL_WALK_LADDER,
-        NA_SE_PL_WALK_GLASS,
-        NA_SE_PL_WALK_WALL,
-        NA_SE_PL_WALK_HEAVYBOOTS,
-        NA_SE_PL_WALK_ICE,
-        NA_SE_PL_JUMP,
-        NA_SE_PL_JUMP,
-        NA_SE_PL_JUMP_SAND,
-        NA_SE_PL_JUMP_CONCRETE,
-        NA_SE_PL_JUMP_DIRT,
-        NA_SE_PL_JUMP_WATER0,
-        NA_SE_PL_JUMP_WATER1,
-        NA_SE_PL_JUMP_WATER2,
-        NA_SE_PL_JUMP_MAGMA,
-        NA_SE_PL_JUMP_GRASS,
-        NA_SE_PL_JUMP_GLASS,
-        NA_SE_PL_JUMP_LADDER,
-        NA_SE_PL_JUMP_GLASS,
-        NA_SE_PL_JUMP_HEAVYBOOTS,
-        NA_SE_PL_JUMP_ICE,
-        NA_SE_PL_LAND,
-        NA_SE_PL_LAND,
-        NA_SE_PL_LAND_SAND,
-        NA_SE_PL_LAND_CONCRETE,
-        NA_SE_PL_LAND_DIRT,
-        NA_SE_PL_LAND_WATER0,
-        NA_SE_PL_LAND_WATER1,
-        NA_SE_PL_LAND_WATER2,
-        NA_SE_PL_LAND_MAGMA,
-        NA_SE_PL_LAND_GRASS,
-        NA_SE_PL_LAND_GLASS,
-        NA_SE_PL_LAND_LADDER,
-        NA_SE_PL_LAND_GLASS,
-        NA_SE_PL_LAND_HEAVYBOOTS,
-        NA_SE_PL_LAND_ICE,
+        // Walking
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_DIRT,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_DIRT,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_DIRT,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_SAND,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_STONE,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_JABU,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_WATER_SHALLOW,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_WATER_DEEP,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_TALL_GRASS,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_LAVA,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_GRASS,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_BRIDGE,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_WOOD,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_BRIDGE,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_VINE,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_IRON_BOOTS,
+        NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_ICE,
+        // Jumping
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_DIRT,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_DIRT,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_SAND,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_STONE,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_JABU,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_WATER_SHALLOW,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_WATER_DEEP,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_TALL_GRASS,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_LAVA,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_GRASS,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_BRIDGE,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_WOOD,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_BRIDGE,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_IRON_BOOTS,
+        NA_SE_PL_JUMP + SURFACE_SFX_OFFSET_ICE,
+        // Landing
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_DIRT,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_DIRT,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_SAND,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_STONE,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_JABU,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_WATER_SHALLOW,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_WATER_DEEP,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_TALL_GRASS,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_LAVA,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_GRASS,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_BRIDGE,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_WOOD,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_BRIDGE,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_IRON_BOOTS,
+        NA_SE_PL_LAND + SURFACE_SFX_OFFSET_ICE,
         NA_SE_PL_SLIPDOWN,
         NA_SE_PL_CLIMB_CLIFF,
         NA_SE_PL_CLIMB_CLIFF,
@@ -3114,37 +3117,39 @@ void BossMo_Unknown(void) {
         NA_SE_PL_SKIP,
         NA_SE_PL_BODY_HIT,
         NA_SE_PL_DAMAGE,
-        NA_SE_PL_SLIP,
-        NA_SE_PL_SLIP,
-        NA_SE_PL_SLIP,
-        NA_SE_PL_SLIP_SAND,
-        NA_SE_PL_SLIP_CONCRETE,
-        NA_SE_PL_SLIP_DIRT,
-        NA_SE_PL_SLIP_WATER0,
-        NA_SE_PL_SLIP_WATER1,
-        NA_SE_PL_SLIP_WATER2,
-        NA_SE_PL_SLIP_MAGMA,
-        NA_SE_PL_SLIP_GRASS,
-        NA_SE_PL_SLIP_GLASS,
-        NA_SE_PL_SLIP_LADDER,
-        NA_SE_PL_SLIP_GLASS,
-        NA_SE_PL_SLIP_HEAVYBOOTS,
-        NA_SE_PL_SLIP_ICE,
-        NA_SE_PL_BOUND,
-        NA_SE_PL_BOUND,
-        NA_SE_PL_BOUND_SAND,
-        NA_SE_PL_BOUND_CONCRETE,
-        NA_SE_PL_BOUND_DIRT,
-        NA_SE_PL_BOUND_WATER0,
-        NA_SE_PL_BOUND_WATER1,
-        NA_SE_PL_BOUND_WATER2,
-        NA_SE_PL_BOUND_MAGMA,
-        NA_SE_PL_BOUND_GRASS,
-        NA_SE_PL_BOUND_WOOD,
-        NA_SE_PL_BOUND_LADDER,
-        NA_SE_PL_BOUND_WOOD,
-        NA_SE_PL_BOUND_HEAVYBOOTS,
-        NA_SE_PL_BOUND_ICE,
+        // Slipping
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_DIRT,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_DIRT,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_DIRT,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_SAND,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_STONE,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_JABU,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_WATER_SHALLOW,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_WATER_DEEP,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_TALL_GRASS,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_LAVA,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_GRASS,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_BRIDGE,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_WOOD,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_BRIDGE,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_IRON_BOOTS,
+        NA_SE_PL_SLIP + SURFACE_SFX_OFFSET_ICE,
+        // Bound
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_DIRT,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_DIRT,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_SAND,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_STONE,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_JABU,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_WATER_SHALLOW,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_WATER_DEEP,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_TALL_GRASS,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_LAVA,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_GRASS,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_BRIDGE,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_WOOD,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_BRIDGE,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_IRON_BOOTS,
+        NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_ICE,
         NA_SE_PL_FACE_UP,
         NA_SE_PL_DIVE_BUBBLE,
         NA_SE_PL_MOVE_BUBBLE,
@@ -3175,8 +3180,8 @@ void BossMo_Unknown(void) {
         NA_SE_IT_ARROW_STICK_CRE,
         NA_SE_IT_ARROW_STICK_CRE,
         NA_SE_IT_ARROW_STICK_OBJ,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
+        NA_SE_NONE,
+        NA_SE_NONE,
         NA_SE_IT_SWORD_SWING_HARD,
         NA_SE_IT_WALL_HIT_HARD,
         NA_SE_IT_WALL_HIT_SOFT,
@@ -3289,8 +3294,8 @@ void BossMo_Unknown(void) {
         NA_SE_EV_TREE_CUT,
         NA_SE_EV_WATERDROP,
         NA_SE_EV_TORCH,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
+        NA_SE_NONE,
+        NA_SE_NONE,
         NA_SE_EN_DODO_J_WALK,
         NA_SE_EN_DODO_J_CRY,
         NA_SE_EN_DODO_J_FIRE - SFX_FLAG,
@@ -3441,13 +3446,13 @@ void BossMo_Unknown(void) {
         NA_SE_EN_OCTAROCK_LAND,
         NA_SE_EN_OCTAROCK_SINK,
         NA_SE_EN_OCTAROCK_BUBLE,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
+        NA_SE_NONE,
+        NA_SE_NONE,
+        NA_SE_NONE,
+        NA_SE_NONE,
+        NA_SE_NONE,
+        NA_SE_NONE,
+        NA_SE_NONE,
         NA_SE_SY_WIN_OPEN,
         NA_SE_SY_WIN_CLOSE,
         NA_SE_SY_CORRECT_CHIME,
@@ -3463,7 +3468,7 @@ void BossMo_Unknown(void) {
         NA_SE_SY_HP_RECOVER,
         NA_SE_SY_ATTENTION_ON,
         NA_SE_SY_ATTENTION_ON,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
+        NA_SE_NONE,
         NA_SE_SY_LOCK_ON,
         NA_SE_SY_LOCK_ON,
         NA_SE_SY_LOCK_OFF,
@@ -3473,9 +3478,9 @@ void BossMo_Unknown(void) {
         NA_SE_SY_ATTENTION_ON_OLD,
         NA_SE_SY_ATTENTION_URGENCY,
         NA_SE_SY_MESSAGE_PASS,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
+        NA_SE_NONE,
+        NA_SE_NONE,
+        NA_SE_NONE,
         NA_SE_SY_PIECE_OF_HEART,
         NA_SE_SY_GET_ITEM,
         NA_SE_SY_WIN_SCROLL_LEFT,
@@ -3488,7 +3493,7 @@ void BossMo_Unknown(void) {
         NA_SE_SY_ATTENTION_ON,
         NA_SE_SY_ATTENTION_URGENCY,
         NA_SE_OC_OCARINA,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
+        NA_SE_NONE,
         NA_SE_PL_LAND - SFX_FLAG,
         NA_SE_VO_LI_SWORD_N,
         NA_SE_VO_LI_SWORD_N,
@@ -3566,21 +3571,21 @@ void BossMo_Unknown(void) {
         NA_SE_EN_DEADHAND_BITE,
         NA_SE_EN_DEADHAND_WALK,
         NA_SE_EN_DEADHAND_GRIP,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
-        NA_SE_PL_WALK_GROUND - SFX_FLAG,
+        NA_SE_NONE,
+        NA_SE_NONE,
+        NA_SE_NONE,
+        NA_SE_NONE,
+        NA_SE_NONE,
+        NA_SE_NONE,
     };
 
     if (BREG(32) != 0) {
         BREG(32)--;
-        Audio_QueueSeqCmd(0x1 << 28 | SEQ_PLAYER_BGM_MAIN << 24 | 0x100FF);
+        SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 1);
         func_80078914(&zeroVec, unkSfx[BREG(33)]);
     }
     if (BREG(34) != 0) {
         BREG(34) = 0;
-        Audio_QueueSeqCmd(SEQ_PLAYER_BGM_MAIN << 24 | (u16)BREG(35));
+        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, BREG(35));
     }
 }
