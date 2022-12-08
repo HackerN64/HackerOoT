@@ -43,7 +43,7 @@ typedef struct {
 } Spawn;
 
 // TODO: ZAPD Compatibility
-typedef Spawn EntranceEntry; 
+typedef Spawn EntranceEntry;
 
 typedef struct {
     /* 0x00 */ u8 count; // number of points in the path
@@ -145,17 +145,6 @@ typedef union {
     } image;
     RoomShapeCullable cullable;
 } RoomShape; // "Ground Shape"
-
-// ZAPD compatibility typedefs
-// TODO: Remove when ZAPD adds support for them
-typedef RoomShapeDListsEntry PolygonDlist;
-typedef RoomShapeNormal PolygonType0;
-typedef RoomShapeImageSingle MeshHeader1Single;
-typedef RoomShapeImageMultiBgEntry BgImage;
-typedef RoomShapeImageMulti MeshHeader1Multi;
-typedef RoomShapeCullableEntry PolygonDlist2;
-typedef RoomShapeCullable PolygonType2;
-#define SCENE_CMD_MESH SCENE_CMD_ROOM_SHAPE
 
 #define ROOM_DRAW_OPA (1 << 0)
 #define ROOM_DRAW_XLU (1 << 1)
