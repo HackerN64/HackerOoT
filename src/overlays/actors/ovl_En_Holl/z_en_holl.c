@@ -1,3 +1,4 @@
+#include "config.h"
 #include "z_en_holl.h"
 
 #define FLAGS ACTOR_FLAG_4
@@ -155,11 +156,15 @@ void func_80A58DD4(EnHoll* this, PlayState* play) {
 // Horizontal Planes
 void func_80A59014(EnHoll* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
-    s32 useViewEye = gDbgCamEnabled || play->csCtx.state != CS_STATE_IDLE;
+    s32 useViewEye = play->csCtx.state != CS_STATE_IDLE;
     Vec3f vec;
     s32 temp;
     f32 planeHalfWidth;
     f32 absZ;
+
+#ifdef ENABLE_CAMERA_DEBUGGER
+    useViewEye = gDbgCamEnabled || useViewEye;
+#endif
 
     func_8002DBD0(&this->actor, &vec, (useViewEye) ? &play->view.eye : &player->actor.world.pos);
     planeHalfWidth = (((this->actor.params >> 6) & 7) == 6) ? PLANE_HALFWIDTH : PLANE_HALFWIDTH_2;

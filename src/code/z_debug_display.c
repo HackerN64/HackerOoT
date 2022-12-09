@@ -1,3 +1,7 @@
+#include "config.h"
+
+#ifndef NO_DEBUG_DISPLAY
+
 #include "global.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
@@ -106,3 +110,5 @@ void DebugDisplay_DrawPolygon(DebugDispObject* dispObj, void* dlist, PlayState* 
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_debug_display.c", 231);
 }
+
+#endif

@@ -1,6 +1,9 @@
 #ifndef CONFIG_BOOTUP_H
 #define CONFIG_BOOTUP_H
 
+#include "config_debug_toggles.h"
+#include "config_debug_controls.h"
+
 /******************
  * DEBUG SETTINGS *
  ******************/
@@ -46,5 +49,57 @@
  * Fix a crash if you spawn in a grotto without using the grotto actor
  */
 // #define FIX_GROTTO_CRASH
+
+/**
+ * Enable mempak-related code
+ */
+// #define ENABLE_MEMPAK
+
+/**
+ * Disable every debug features
+ */
+// #define DISABLE_DEBUG_FEATURES
+
+// -------------------------------------------
+
+// TODO: find a better way to do that
+#ifndef DEBUG_ROM
+#define DISABLE_DEBUG_FEATURES
+#endif
+
+#ifdef DISABLE_DEBUG_FEATURES
+#undef SHOW_CS_INFOS
+#undef SHOW_INPUT_DISPLAY
+#undef SHOW_TIME_INFOS
+#undef INCLUDE_TEST_SCENES
+#undef ENABLE_NO_CLIP
+#undef ENABLE_CS_CONTROL
+#undef ENABLE_FRAMERATE_OPTIONS
+#undef ENABLE_MAP_SELECT
+#undef ENABLE_INV_EDITOR
+#undef ENABLE_EVENT_EDITOR
+#undef ENABLE_REG_EDITOR
+#undef ENABLE_CAMERA_DEBUGGER
+#undef ENABLE_AUDIO_DEBUGGER
+#undef ENABLE_ACTOR_DEBUGGER
+#undef ENABLE_MSG_DEBUGGER
+#undef ENABLE_DEBUG_SAVE
+#undef ENABLE_MEMPAK
+#endif
+
+// Remove map select from file 1
+#if (defined BOOT_TO_SCENE && defined BOOT_TO_FILE_SELECT) || (!defined ENABLE_MAP_SELECT) || (defined DISABLE_DEBUG_FEATURES)
+#define DEBUG_FILE_1
+#endif
+
+// Remove actor and camera debug draw-related code if both are disabled
+#if !(defined ENABLE_ACTOR_DEBUGGER) && !(defined ENABLE_CAMERA_DEBUGGER)
+#define NO_DEBUG_DISPLAY
+#endif
+
+// The camera debugger needs mempak functions for the cutscene exporter
+#if (defined ENABLE_CAMERA_DEBUGGER) && !(defined ENABLE_MEMPAK)
+#define ENABLE_MEMPAK
+#endif
 
 #endif

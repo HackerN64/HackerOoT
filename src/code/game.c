@@ -1,6 +1,8 @@
 #include "global.h"
 #include "terminal.h"
 
+#include "config.h"
+
 SpeedMeter D_801664D0;
 struct_801664F0 D_801664F0;
 struct_80166500 D_80166500;
@@ -85,9 +87,11 @@ void func_800C4344(GameState* gameState) {
         R_INPUT_TEST_COMPARE_COMBO_PRESS = CHECK_BTN_ALL(selectedInput->press.button, inputCompareValue);
     }
 
+#ifdef ENABLE_REG_EDITOR
     if (gIsCtrlr2Valid) {
         Regs_UpdateEditor(&gameState->input[1]);
     }
+#endif
 
     gDmaMgrVerbose = HREG(60);
     gDmaMgrDmaBuffSize = SREG(21) != 0 ? ALIGN16(SREG(21)) : DMAMGR_DEFAULT_BUFSIZE;
@@ -109,6 +113,8 @@ void func_800C4344(GameState* gameState) {
         }
     }
 }
+
+#ifdef SHOW_INPUT_DISPLAY
 
 void GameState_DrawInputDisplay(u16 input, Gfx** gfx) {
     static const u16 sInpDispBtnColors[] = {
@@ -141,6 +147,8 @@ void GameState_DrawInputDisplay(u16 input, Gfx** gfx) {
     *gfx = gfxP;
 }
 
+#endif
+
 void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     Gfx* newDList;
     Gfx* polyOpaP;
@@ -155,10 +163,14 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     }
 
     sLastButtonPressed = gameState->input[0].press.button | gameState->input[0].cur.button;
+
+#ifdef SHOW_INPUT_DISPLAY
     if (R_DISABLE_INPUT_DISPLAY == 0) {
         GameState_DrawInputDisplay(sLastButtonPressed, &newDList);
     }
+#endif
 
+#ifdef ENABLE_AUDIO_DEBUGGER
     if (R_ENABLE_AUDIO_DBG & 1) {
         s32 pad;
         GfxPrint printer;
@@ -169,6 +181,7 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
         newDList = GfxPrint_Close(&printer);
         GfxPrint_Destroy(&printer);
     }
+#endif
 
     if (R_ENABLE_ARENA_DBG < 0) {
         s32 pad;
@@ -188,7 +201,9 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 
     CLOSE_DISPS(gfxCtx, "../game.c", 800);
 
+#if (defined ENABLE_CAMERA_DEBUGGER) || (defined ENABLE_REG_EDITOR)
     func_80063D7C(gfxCtx);
+#endif
 
     if (R_ENABLE_ARENA_DBG != 0) {
         SpeedMeter_DrawTimeEntries(&D_801664D0, gfxCtx);

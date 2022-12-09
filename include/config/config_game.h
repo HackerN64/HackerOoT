@@ -21,6 +21,11 @@
 // #define MM_BUNNYHOOD
 
 /**
+ * Enable fast text
+ */
+#define ENABLE_FAST_TEXT
+
+/**
  * Splits Farore's Wind warp point across ages. One point for child Link, one point for adult Link.
  */
 // #define FW_SPLIT_AGE

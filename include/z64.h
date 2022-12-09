@@ -44,6 +44,8 @@
 #include "tha.h"
 #include "thga.h"
 
+#include "config.h"
+
 #define SCREEN_WIDTH  320
 #define SCREEN_HEIGHT 240
 
@@ -93,11 +95,13 @@ typedef struct{
 } HorseStruct;
 
 typedef struct {
+#ifdef ENABLE_REG_EDITOR
     /* 0x00 */ s32  regPage; // 0: no page selected (reg editor is not active); 1: first page; `REG_PAGES`: last page
     /* 0x04 */ s32  regGroup; // Indexed from 0 to `REG_GROUPS`-1. Each group has its own character to identify it.
     /* 0x08 */ s32  regCur; // Selected reg, indexed from 0 as the page start
     /* 0x0C */ s32  dPadInputPrev;
     /* 0x10 */ s32  inputRepeatTimer;
+#endif
     /* 0x14 */ s16  data[REG_GROUPS * REGS_PER_GROUP]; // Accessed through *REG macros, see regs.h
 } RegEditor; // size = 0x15D4
 
@@ -267,10 +271,12 @@ typedef struct {
     /* 0x01 */ u8   natureAmbienceId;
 } SequenceContext; // size = 0x2
 
+#ifdef ENABLE_FRAMERATE_OPTIONS
 typedef struct {
     /* 0x00 */ s32 enabled;
     /* 0x04 */ s32 timer;
 } FrameAdvanceContext; // size = 0x8
+#endif
 
 typedef struct {
     /* 0x00 */ Vec3f    pos;
@@ -720,7 +726,9 @@ typedef struct {
     /* 0x01B8 */ OSMesgQueue loadQueue;
     /* 0x01D0 */ OSMesg loadMsg;
     /* 0x01D4 */ u16    state;
+#if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
     /* 0x01D6 */ u16    debugState;
+#endif
     /* 0x01D8 */ Vec3f  eye;
     /* 0x01E4 */ u16    unk_1E4;
     /* 0x01E6 */ u16    mode;
@@ -1045,6 +1053,8 @@ typedef struct {
     /* 0x01E2 */ char unk_1E2[0x06];
 } ConsoleLogoState; // size = 0x1E8
 
+#ifdef ENABLE_MAP_SELECT
+
 struct MapSelectState;
 
 typedef struct {
@@ -1074,6 +1084,8 @@ typedef struct MapSelectState {
     /* 0x021C */ u8 sceneLayer;
     /* 0x0220 */ u8 selectedSceneColor;
 } MapSelectState; // size = 0x224
+
+#endif
 
 typedef struct {
     /* 0x0000 */ GameState state;
@@ -1107,7 +1119,9 @@ typedef struct PlayState {
     /* 0x007A2 */ s16 nextCamId;
     /* 0x007A4 */ SequenceContext sequenceCtx;
     /* 0x007A8 */ LightContext lightCtx;
+#ifdef ENABLE_FRAMERATE_OPTIONS
     /* 0x007B8 */ FrameAdvanceContext frameAdvCtx;
+#endif
     /* 0x007C0 */ CollisionContext colCtx;
     /* 0x01C24 */ ActorContext actorCtx;
     /* 0x01D64 */ CutsceneContext csCtx; // "demo_play"
@@ -1362,7 +1376,7 @@ typedef struct {
 #define MAP_48x85_TEX_SIZE ((MAP_48x85_TEX_WIDTH * MAP_48x85_TEX_HEIGHT) / 2) // 48x85 CI4 texture
 
 // Note that z_kaleido_scope_PAL.c assumes that the dimensions and texture format here also matches the dimensions and
-// texture format for ITEM_NAME_TEX_* 
+// texture format for ITEM_NAME_TEX_*
 #define MAP_NAME_TEX1_WIDTH 128
 #define MAP_NAME_TEX1_HEIGHT 16
 #define MAP_NAME_TEX1_SIZE ((MAP_NAME_TEX1_WIDTH * MAP_NAME_TEX1_HEIGHT) / 2) // 128x16 IA4 texture

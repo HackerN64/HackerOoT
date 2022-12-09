@@ -3,6 +3,7 @@
 
 #include "ultra64.h"
 #include "z64cutscene.h"
+#include "config.h"
 
 // these two angle conversion macros are slightly inaccurate
 #define CAM_DEG_TO_BINANG(degrees) (s16)((degrees) * 182.04167f + .5f)
@@ -1413,6 +1414,8 @@ typedef struct Camera {
     /* 0x16A */ s16 unk_16A;
 } Camera; // size = 0x16C
 
+#ifdef ENABLE_CAMERA_DEBUGGER
+
 /**
  * Debug Camera
 */
@@ -1478,5 +1481,7 @@ typedef struct {
     /* 0x28 */ f32 roll;
     /* 0x2C */ f32 fov;
 } DbCameraAnim; // size = 0x30
+
+#endif
 
 #endif

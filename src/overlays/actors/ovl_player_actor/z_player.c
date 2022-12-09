@@ -256,7 +256,9 @@ void func_8084F9C0(Player* this, PlayState* play);
 void func_8084FA54(Player* this, PlayState* play);
 void func_8084FB10(Player* this, PlayState* play);
 void func_8084FBF4(Player* this, PlayState* play);
+#ifdef ENABLE_NO_CLIP
 s32 func_8084FCAC(Player* this, PlayState* play);
+#endif
 void func_8084FF7C(Player* this);
 void func_8085002C(Player* this);
 s32 func_80850224(Player* this, PlayState* play);
@@ -469,7 +471,7 @@ static PlayerAgeProperties sAgeProperties[] = {
     },
 };
 
-static u32 D_808535D0 = false;
+static u32 isNoClipEnabled = false;
 static f32 D_808535D4 = 0.0f;
 static s16 D_808535D8 = 0;
 static s16 D_808535DC = 0;
@@ -10910,7 +10912,9 @@ void Player_Update(Actor* thisx, PlayState* play) {
     Input sp44;
     Actor* dog;
 
+#ifdef ENABLE_NO_CLIP
     if (func_8084FCAC(this, play)) {
+#endif
         if (gSaveContext.dogParams < 0) {
             if (Object_GetIndex(&play->objectCtx, OBJECT_DOG) < 0) {
                 gSaveContext.dogParams = 0;
@@ -10946,7 +10950,9 @@ void Player_Update(Actor* thisx, PlayState* play) {
         }
 
         Player_UpdateCommon(this, play, &sp44);
+#ifdef ENABLE_NO_CLIP
     }
+#endif
 
     MREG(52) = this->actor.world.pos.x;
     MREG(53) = this->actor.world.pos.y;
@@ -13196,22 +13202,24 @@ void func_8084FBF4(Player* this, PlayState* play) {
     func_8002F8F0(&this->actor, NA_SE_VO_LI_TAKEN_AWAY - SFX_FLAG + this->ageProperties->unk_92);
 }
 
+#ifdef ENABLE_NO_CLIP
+// handles no clip mode, returns 0 when it's in no clip mode
 s32 func_8084FCAC(Player* this, PlayState* play) {
-    sControlInput = &play->state.input[0];
+    u8 buttonCombo;
+    sControlInput = &play->state.input[NOCLIP_CONTROLLER_PORT];
 
-    if ((CHECK_BTN_ALL(sControlInput->cur.button, BTN_A | BTN_L | BTN_R) &&
-         CHECK_BTN_ALL(sControlInput->press.button, BTN_B)) ||
-        (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DRIGHT))) {
+    buttonCombo = NOCLIP_USE_BTN_COMBO ? CHECK_BTN_ALL(sControlInput->cur.button, NOCLIP_BTN_HOLD_FOR_COMBO) : true;
 
-        D_808535D0 ^= 1;
-
-        if (D_808535D0) {
-            Camera_ChangeMode(Play_GetCamera(play, CAM_ID_MAIN), CAM_MODE_BOWARROWZ);
-        }
+    if ((buttonCombo && CHECK_BTN_ALL(sControlInput->press.button, NOCLIP_TOGGLE_BTN))) {
+        isNoClipEnabled ^= 1;
     }
 
-    if (D_808535D0) {
+    if (isNoClipEnabled) {
         f32 speed;
+        s8 stickLeftInput = (sControlInput->rel.stick_x < -30), stickRightInput = (sControlInput->rel.stick_x > 30);
+        s8 stickUpInput = (sControlInput->rel.stick_y > 30), stickDownInput = (sControlInput->rel.stick_y < -30);
+
+        Camera_ChangeMode(Play_GetCamera(play, CAM_ID_MAIN), CAM_MODE_BOWARROWZ);
 
         if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_R)) {
             speed = 100.0f;
@@ -13228,17 +13236,18 @@ s32 func_8084FCAC(Player* this, PlayState* play) {
                 this->actor.world.pos.y -= speed;
             }
 
-            if (CHECK_BTN_ANY(sControlInput->cur.button, BTN_DUP | BTN_DLEFT | BTN_DDOWN | BTN_DRIGHT)) {
+            if ((stickLeftInput || stickRightInput || stickUpInput || stickDownInput) ||
+                CHECK_BTN_ANY(sControlInput->cur.button, BTN_DUP | BTN_DLEFT | BTN_DDOWN | BTN_DRIGHT)) {
                 s16 angle;
                 s16 temp;
 
                 angle = temp = Camera_GetInputDirYaw(GET_ACTIVE_CAM(play));
 
-                if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DDOWN)) {
+                if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DDOWN) || stickDownInput) {
                     angle = temp + 0x8000;
-                } else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DLEFT)) {
+                } else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DLEFT) || stickLeftInput) {
                     angle = temp + 0x4000;
-                } else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DRIGHT)) {
+                } else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DRIGHT) || stickRightInput) {
                     angle = temp - 0x4000;
                 }
 
@@ -13254,9 +13263,10 @@ s32 func_8084FCAC(Player* this, PlayState* play) {
         this->actor.velocity.y = 0.0f;
         this->actor.velocity.x = 0.0f;
 
-        if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT)) {
-            Flags_SetTempClear(play, play->roomCtx.curRoom.num);
-        }
+        // should we keep that?
+        // if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT)) {
+        //     Flags_SetTempClear(play, play->roomCtx.curRoom.num);
+        // }
 
         Math_Vec3f_Copy(&this->actor.home.pos, &this->actor.world.pos);
 
@@ -13265,6 +13275,7 @@ s32 func_8084FCAC(Player* this, PlayState* play) {
 
     return 1;
 }
+#endif
 
 void func_8084FF7C(Player* this) {
     this->unk_858 += this->unk_85C;

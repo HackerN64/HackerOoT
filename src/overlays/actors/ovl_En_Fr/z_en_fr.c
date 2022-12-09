@@ -2,6 +2,7 @@
 #include "assets/objects/gameplay_field_keep/gameplay_field_keep.h"
 #include "terminal.h"
 #include "assets/objects/object_fr/object_fr.h"
+#include "config.h"
 
 #define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_25)
 
@@ -1035,11 +1036,14 @@ void EnFr_SetIdle(EnFr* this, PlayState* play) {
 void EnFr_UpdateIdle(Actor* thisx, PlayState* play) {
     EnFr* this = (EnFr*)thisx;
 
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0)) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 255, 0, 0, 255, 4, play->state.gfxCtx);
     }
+#endif
+
     this->jumpCounter++;
     this->actionFunc(this, play);
 }
