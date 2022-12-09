@@ -169,3 +169,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    os.system("python3 tools/daf/daf.py -a -p ./")

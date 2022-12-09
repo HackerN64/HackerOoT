@@ -23,7 +23,7 @@
 /**
  * Enable fast text
  */
-#define ENABLE_FAST_TEXT
+// #define ENABLE_FAST_TEXT
 
 /**
  * Splits Farore's Wind warp point across ages. One point for child Link, one point for adult Link.
@@ -32,6 +32,16 @@
 
 /* Apply the anti-aliasing filter for the background of the pause menu. This adds a delay when pausing. */
 //#define VANILLA_PAUSE_DELAY
+
+/**
+ * Disable Player froze when getting a Gold Skulltula Token
+*/
+#define DISABLE_GS_TOKEN_FREEZE
+
+/**
+ * Add Gold Skulltula count to the textbox
+*/
+#define GS_COUNT_IN_TEXT
 
 
 #endif

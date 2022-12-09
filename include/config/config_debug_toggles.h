@@ -34,7 +34,7 @@
 
 /**** [FRAMERATE OPTIONS] ****/
 // TODO: check for frame advance for drawing, improve how it works
-#define ENABLE_FRAMERATE_OPTIONS
+// #define ENABLE_FRAMERATE_OPTIONS
 
 /**** [MAP SELECT] ****/
 // #define ENABLE_MAP_SELECT

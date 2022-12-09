@@ -4,6 +4,8 @@
 #include "global.h"
 #include "message_data_fmt.h"
 
+#include "config.h"
+
 typedef enum {
     /*  0 */ TEXTBOX_TYPE_BLACK,
     /*  1 */ TEXTBOX_TYPE_WOODEN,
