@@ -7,6 +7,8 @@
 #include "z_en_anubice_tag.h"
 #include "terminal.h"
 
+#include "config.h"
+
 #define FLAGS ACTOR_FLAG_4
 
 void EnAnubiceTag_Init(Actor* thisx, PlayState* play);
@@ -99,9 +101,11 @@ void EnAnubiceTag_Update(Actor* thisx, PlayState* play) {
 void EnAnubiceTag_Draw(Actor* thisx, PlayState* play) {
     EnAnubiceTag* this = (EnAnubiceTag*)thisx;
 
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0) != 0) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 255, 0, 0, 255, 4, play->state.gfxCtx);
     }
+#endif
 }

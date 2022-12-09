@@ -1,5 +1,6 @@
 #include "ultra64.h"
 #include "global.h"
+#include "config.h"
 
 typedef struct {
     s16 val;
@@ -2553,8 +2554,11 @@ s32 (*sCameraFunctions[])(Camera*) = {
 
 s32 sInitRegs = 1;
 
+#ifdef ENABLE_CAMERA_DEBUGGER
 s32 gDbgCamEnabled = 0;
 s32 sDbgModeIdx = -1;
+#endif
+
 s16 sNextUID = 0;
 
 s32 sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_NONE, CAM_HUD_VISIBILITY_ALL, 1);
@@ -2826,5 +2830,9 @@ s16 D_8011DAFC[] = {
 };
 
 PlayState* D_8015BD7C;
+
+#ifdef ENABLE_CAMERA_DEBUGGER
 DbCamera D_8015BD80;
+#endif
+
 CollisionPoly* playerFloorPoly;

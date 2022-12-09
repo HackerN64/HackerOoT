@@ -8,6 +8,8 @@
 #include "assets/objects/object_sd/object_sd.h"
 #include "terminal.h"
 
+#include "config.h"
+
 #define FLAGS ACTOR_FLAG_4
 
 void EnHeishi1_Init(Actor* thisx, PlayState* play);
@@ -182,6 +184,7 @@ void EnHeishi1_Walk(EnHeishi1* this, PlayState* play) {
 
         Math_ApproachF(&this->headAngle, this->headAngleTarget, this->headTurnSpeedScale, this->headTurnSpeedMax);
 
+#ifdef ENABLE_ACTOR_DEBUGGER
         if ((this->path == BREG(1)) && (BREG(0) != 0)) {
             osSyncPrintf(VT_FGCOL(RED) " 種類  %d\n" VT_RST, this->path);
             osSyncPrintf(VT_FGCOL(RED) " ぱす  %d\n" VT_RST, this->waypoint);
@@ -190,6 +193,7 @@ void EnHeishi1_Walk(EnHeishi1* this, PlayState* play) {
             osSyncPrintf(VT_FGCOL(RED) " 点座  %d\n" VT_RST, path->count);
             osSyncPrintf("\n\n");
         }
+#endif
 
         // when 20 units away from a middle waypoint, decide whether or not to skip it
         if ((fabsf(pathDiffX) < 20.0f) && (fabsf(pathDiffZ) < 20.0f)) {
@@ -300,6 +304,7 @@ void EnHeishi1_Wait(EnHeishi1* this, PlayState* play) {
         Math_ApproachF(&this->headAngle, this->headAngleTarget, this->headTurnSpeedScale,
                        this->headTurnSpeedMax + this->headTurnSpeedMax);
 
+#ifdef ENABLE_ACTOR_DEBUGGER
         if ((this->path == BREG(1)) && (BREG(0) != 0)) {
             osSyncPrintf(VT_FGCOL(GREEN) " 種類  %d\n" VT_RST, this->path);
             osSyncPrintf(VT_FGCOL(GREEN) " ぱす  %d\n" VT_RST, this->waypoint);
@@ -307,6 +312,7 @@ void EnHeishi1_Wait(EnHeishi1* this, PlayState* play) {
             osSyncPrintf(VT_FGCOL(GREEN) " 時間  %d\n" VT_RST, this->waypointTimer);
             osSyncPrintf("\n\n");
         }
+#endif
     }
 }
 
@@ -490,9 +496,11 @@ void EnHeishi1_Draw(Actor* thisx, PlayState* play) {
                       this);
     func_80033C30(&this->actor.world.pos, &matrixScale, 0xFF, play);
 
+#ifdef ENABLE_ACTOR_DEBUGGER
     if ((this->path == BREG(1)) && (BREG(0) != 0)) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y + 100.0f, this->actor.world.pos.z,
                                17000, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f, 1.0f, 255, 0, 0,
                                255, 4, play->state.gfxCtx);
     }
+#endif
 }

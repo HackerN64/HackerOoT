@@ -2,6 +2,8 @@
 #include "quake.h"
 #include "terminal.h"
 
+#include "config.h"
+
 void* D_8012D1F0 = NULL;
 UNK_TYPE D_8012D1F4 = 0; // unused
 Input* D_8012D1F8 = NULL;
@@ -363,7 +365,11 @@ void Play_Init(GameState* thisx) {
     PreRender_SetValues(&this->pauseBgPreRender, SCREEN_WIDTH, SCREEN_HEIGHT, NULL, NULL);
     gTrnsnUnkState = 0;
     this->transitionMode = TRANS_MODE_OFF;
+
+#ifdef ENABLE_FRAMERATE_OPTIONS
     FrameAdvance_Init(&this->frameAdvCtx);
+#endif
+
     Rand_Seed((u32)osGetTime());
     Matrix_Init(&this->state);
     this->state.main = Play_Main;
@@ -484,7 +490,9 @@ void Play_Update(PlayState* this) {
     gSegments[5] = VIRTUAL_TO_PHYSICAL(this->objectCtx.status[this->objectCtx.subKeepIndex].segment);
     gSegments[2] = VIRTUAL_TO_PHYSICAL(this->sceneSegment);
 
-    if (FrameAdvance_Update(&this->frameAdvCtx, &input[1])) {
+#ifdef ENABLE_FRAMERATE_OPTIONS
+    if (FrameAdvance_Update(&this->frameAdvCtx, &input[FA_CONTROLLER_PORT])) {
+#endif
         if ((this->transitionMode == TRANS_MODE_OFF) && (this->transitionTrigger != TRANS_TRIGGER_OFF)) {
             this->transitionMode = TRANS_MODE_SETUP;
         }
@@ -843,7 +851,11 @@ void Play_Update(PlayState* this) {
             }
 
             PLAY_LOG(3551);
+#if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
             sp80 = (this->pauseCtx.state != 0) || (this->pauseCtx.debugState != 0);
+#else
+            sp80 = (this->pauseCtx.state != 0);
+#endif
 
             PLAY_LOG(3555);
             AnimationContext_Reset(&this->animationCtx);
@@ -920,7 +932,11 @@ void Play_Update(PlayState* this) {
 
             if (this->viewpoint != VIEWPOINT_NONE) {
                 if (CHECK_BTN_ALL(input[0].press.button, BTN_CUP)) {
+#if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
                     if ((this->pauseCtx.state != 0) || (this->pauseCtx.debugState != 0)) {
+#else
+                    if (this->pauseCtx.state != 0) {
+#endif
                         // "Changing viewpoint is prohibited due to the kaleidoscope"
                         osSyncPrintf(VT_FGCOL(CYAN) "カレイドスコープ中につき視点変更を禁止しております\n" VT_RST);
                     } else if (Player_InCsMode(this)) {
@@ -944,7 +960,11 @@ void Play_Update(PlayState* this) {
 
             PLAY_LOG(3716);
 
+#if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
             if ((this->pauseCtx.state != 0) || (this->pauseCtx.debugState != 0)) {
+#else
+            if (this->pauseCtx.state != 0) {
+#endif
                 PLAY_LOG(3721);
                 KaleidoScopeCall_Update(this);
             } else if (this->gameOverCtx.state != GAMEOVER_INACTIVE) {
@@ -974,14 +994,20 @@ void Play_Update(PlayState* this) {
         } else {
             goto skip;
         }
+#ifdef ENABLE_FRAMERATE_OPTIONS
     }
+#endif
 
     PLAY_LOG(3799);
 
 skip:
     PLAY_LOG(3801);
 
+#ifdef ENABLE_CAMERA_DEBUGGER
     if ((sp80 == 0) || gDbgCamEnabled) {
+#else
+    if (sp80 == 0) {
+#endif
         s32 pad3[5];
         s32 i;
 
@@ -1007,7 +1033,11 @@ skip:
 }
 
 void Play_DrawOverlayElements(PlayState* this) {
+#if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
     if ((this->pauseCtx.state != 0) || (this->pauseCtx.debugState != 0)) {
+#else
+    if (this->pauseCtx.state != 0) {
+#endif
         KaleidoScopeCall_Draw(this);
     }
 
@@ -1236,9 +1266,11 @@ void Play_Draw(PlayState* this) {
                     }
                 }
 
+#ifndef NO_DEBUG_DISPLAY
                 if ((R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_DEBUG_OBJECTS) {
                     DebugDisplay_DrawObjects(this);
                 }
+#endif
 
                 if ((R_PAUSE_MENU_MODE == 1) || (gTrnsnUnkState == 1)) {
                     Gfx* sp70 = OVERLAY_DISP;
@@ -1285,7 +1317,9 @@ void Play_Main(GameState* thisx) {
 
     D_8012D1F8 = &this->state.input[0];
 
+#ifndef NO_DEBUG_DISPLAY
     DebugDisplay_Init();
+#endif
 
     PLAY_LOG(4556);
 
@@ -1751,9 +1785,11 @@ s32 Play_CamIsNotFixed(PlayState* this) {
            (R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_FIXED_MARKET) && (this->sceneId != SCENE_CASTLE_COURTYARD_GUARDS_DAY);
 }
 
+#ifdef ENABLE_FRAMERATE_OPTIONS
 s32 FrameAdvance_IsEnabled(PlayState* this) {
     return !!this->frameAdvCtx.enabled;
 }
+#endif
 
 s32 func_800C0D34(PlayState* this, Actor* actor, s16* yaw) {
     TransitionActorEntry* transitionActor;

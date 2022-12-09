@@ -10,6 +10,8 @@
 #include "overlays/effects/ovl_Effect_Ss_Hahen/z_eff_ss_hahen.h"
 #include "terminal.h"
 
+#include "config.h"
+
 #define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4)
 
 void EnDntJiji_Init(Actor* thisx, PlayState* play);
@@ -373,10 +375,14 @@ void EnDntJiji_Update(Actor* thisx, PlayState* play) {
 
     Actor_SetScale(&this->actor, 0.015f);
     this->unkTimer++;
+
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0)) {
         // "time"
         osSyncPrintf(VT_FGCOL(YELLOW) "☆☆☆☆☆ 時間 ☆☆☆☆☆ %d\n" VT_RST, this->timer);
     }
+#endif
+
     if ((this->timer > 1) && (this->timer != 0)) {
         this->timer--;
     }

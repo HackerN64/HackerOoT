@@ -9,8 +9,9 @@
 #include "alloca.h"
 
 #include "config.h"
-
 #include "z_select.h"
+
+#ifdef ENABLE_MAP_SELECT
 
 void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;
@@ -579,3 +580,5 @@ void MapSelect_PrintControls(MapSelectState* this, GfxPrint* printer) {
         }
     }
 }
+
+#endif

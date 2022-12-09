@@ -10,6 +10,7 @@
 #include "overlays/actors/ovl_En_Bom_Chu/z_en_bom_chu.h"
 #include "overlays/actors/ovl_Bg_Bowl_Wall/z_bg_bowl_wall.h"
 #include "overlays/effects/ovl_Effect_Ss_Hahen/z_eff_ss_hahen.h"
+#include "config.h"
 
 #define FLAGS ACTOR_FLAG_4
 
@@ -147,9 +148,11 @@ void EnWallTubo_Update(Actor* thisx, PlayState* play) {
 
     this->actionFunc(this, play);
 
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0)) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 0, 0, 255, 255, 4, play->state.gfxCtx);
     }
+#endif
 }

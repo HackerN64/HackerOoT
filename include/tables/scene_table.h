@@ -1,3 +1,5 @@
+#include "config.h"
+
 /**
  * Scene Table
  *
@@ -110,6 +112,8 @@
 /* 0x62 */ DEFINE_SCENE(spot18_scene, g_pn_41, SCENE_GORON_CITY, SDC_GORON_CITY, 0, 0)
 /* 0x63 */ DEFINE_SCENE(spot20_scene, g_pn_42, SCENE_LON_LON_RANCH, SDC_LON_LON_RANCH, 0, 0)
 /* 0x64 */ DEFINE_SCENE(ganon_tou_scene, g_pn_43, SCENE_OUTSIDE_GANONS_CASTLE, SDC_OUTSIDE_GANONS_CASTLE, 0, 0)
+
+#ifdef INCLUDE_TEST_SCENES
 // Debug-only scenes
 /* 0x65 */ DEFINE_SCENE(test01_scene, none, SCENE_TEST01, SDC_CALM_WATER, 0, 0)
 /* 0x66 */ DEFINE_SCENE(besitu_scene, none, SCENE_BESITU, SDC_BESITU, 0, 0)
@@ -120,3 +124,4 @@
 /* 0x6B */ DEFINE_SCENE(hairal_niwa2_scene, g_pn_12, SCENE_HAIRAL_NIWA2, SDC_CASTLE_COURTYARD_GUARDS, 0, 0)
 /* 0x6C */ DEFINE_SCENE(sasatest_scene, none, SCENE_SASATEST, SDC_DEFAULT, 0, 0)
 /* 0x6D */ DEFINE_SCENE(testroom_scene, none, SCENE_TESTROOM, SDC_DEFAULT, 0, 0)
+#endif

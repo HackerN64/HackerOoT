@@ -9,6 +9,7 @@
 #include "overlays/actors/ovl_En_Encount1/z_en_encount1.h"
 #include "terminal.h"
 #include "assets/objects/object_reeba/object_reeba.h"
+#include "config.h"
 
 #define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4 | ACTOR_FLAG_27)
 
@@ -671,6 +672,7 @@ void EnReeba_Draw(Actor* thisx, PlayState* play) {
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_reeba.c", 1088);
 
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0)) {
         Vec3f debugPos;
 
@@ -680,4 +682,5 @@ void EnReeba_Draw(Actor* thisx, PlayState* play) {
         DebugDisplay_AddObject(debugPos.x, debugPos.y, debugPos.z, this->actor.world.rot.x, this->actor.world.rot.y,
                                this->actor.world.rot.z, 1.0f, 1.0f, 1.0f, 255, 0, 0, 255, 4, play->state.gfxCtx);
     }
+#endif
 }

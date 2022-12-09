@@ -1,6 +1,10 @@
 #ifndef MEMPAK_H
 #define MEMPAK_H
 
+#include "config.h"
+
+#ifdef ENABLE_MEMPAK
+
 #include "ultra64.h"
 
 s32 Mempak_Init(s32 controllerNum);
@@ -17,5 +21,7 @@ s32 Mempak_GetFileSize(s32 controllerNum, char letter);
 
 // Converts a numerical index to a file letter
 #define MEMPAK_INDEX_TO_LETTER(i) ((i) + 'A')
+
+#endif
 
 #endif

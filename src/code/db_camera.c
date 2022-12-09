@@ -1,3 +1,7 @@
+#include "config.h"
+
+#ifdef ENABLE_CAMERA_DEBUGGER
+
 #include "global.h"
 
 #define DBCAM_CONTROLLER_PORT 2
@@ -2337,3 +2341,5 @@ void func_800BB060(void) {
 s32 func_800BB06C(void) {
     return sDbCamPtr->unk_00 == 2 && sDbCamAnim.unk_0A != 0;
 }
+
+#endif

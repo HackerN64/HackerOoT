@@ -1,6 +1,7 @@
 #include "global.h"
 #include "terminal.h"
 #include "overlays/effects/ovl_Effect_Ss_HitMark/z_eff_ss_hitmark.h"
+#include "config.h"
 
 typedef s32 (*ColChkResetFunc)(PlayState*, Collider*);
 typedef void (*ColChkBloodFunc)(PlayState*, Collider*, Vec3f*);
@@ -1173,9 +1174,12 @@ static ColChkResetFunc sATResetFuncs[] = {
 s32 CollisionCheck_SetAT(PlayState* play, CollisionCheckContext* colChkCtx, Collider* collider) {
     s32 index;
 
+#ifdef ENABLE_FRAMERATE_OPTIONS
     if (FrameAdvance_IsEnabled(play) == true) {
         return -1;
     }
+#endif
+
     ASSERT(collider->shape < COLSHAPE_MAX, "pcl_obj->data_type <= CL_DATA_LBL_SWRD", "../z_collision_check.c", 2997);
     sATResetFuncs[collider->shape](play, collider);
     if (collider->actor != NULL && collider->actor->update == NULL) {
@@ -1201,9 +1205,13 @@ s32 CollisionCheck_SetAT(PlayState* play, CollisionCheckContext* colChkCtx, Coll
  */
 s32 CollisionCheck_SetAT_SAC(PlayState* play, CollisionCheckContext* colChkCtx, Collider* collider, s32 index) {
     ASSERT(collider->shape < COLSHAPE_MAX, "pcl_obj->data_type <= CL_DATA_LBL_SWRD", "../z_collision_check.c", 3037);
+
+#ifdef ENABLE_FRAMERATE_OPTIONS
     if (FrameAdvance_IsEnabled(play) == true) {
         return -1;
     }
+#endif
+
     sATResetFuncs[collider->shape](play, collider);
     if (collider->actor != NULL && collider->actor->update == NULL) {
         return -1;
@@ -1241,9 +1249,12 @@ static ColChkResetFunc sACResetFuncs[] = {
 s32 CollisionCheck_SetAC(PlayState* play, CollisionCheckContext* colChkCtx, Collider* collider) {
     s32 index;
 
+#ifdef ENABLE_FRAMERATE_OPTIONS
     if (FrameAdvance_IsEnabled(play) == true) {
         return -1;
     }
+#endif
+
     ASSERT(collider->shape < COLSHAPE_MAX, "pcl_obj->data_type <= CL_DATA_LBL_SWRD", "../z_collision_check.c", 3114);
     sACResetFuncs[collider->shape](play, collider);
     if (collider->actor != NULL && collider->actor->update == NULL) {
@@ -1269,9 +1280,13 @@ s32 CollisionCheck_SetAC(PlayState* play, CollisionCheckContext* colChkCtx, Coll
  */
 s32 CollisionCheck_SetAC_SAC(PlayState* play, CollisionCheckContext* colChkCtx, Collider* collider, s32 index) {
     ASSERT(collider->shape < COLSHAPE_MAX, "pcl_obj->data_type <= CL_DATA_LBL_SWRD", "../z_collision_check.c", 3153);
+
+#ifdef ENABLE_FRAMERATE_OPTIONS
     if (FrameAdvance_IsEnabled(play) == true) {
         return -1;
     }
+#endif
+
     sACResetFuncs[collider->shape](play, collider);
     if (collider->actor != NULL && collider->actor->update == NULL) {
         return -1;
@@ -1309,9 +1324,11 @@ static ColChkResetFunc sOCResetFuncs[] = {
 s32 CollisionCheck_SetOC(PlayState* play, CollisionCheckContext* colChkCtx, Collider* collider) {
     s32 index;
 
+#ifdef ENABLE_FRAMERATE_OPTIONS
     if (FrameAdvance_IsEnabled(play) == true) {
         return -1;
     }
+#endif
 
     ASSERT(collider->shape < COLSHAPE_MAX, "pcl_obj->data_type <= CL_DATA_LBL_SWRD", "../z_collision_check.c", 3229);
 
@@ -1338,9 +1355,12 @@ s32 CollisionCheck_SetOC(PlayState* play, CollisionCheckContext* colChkCtx, Coll
  * will be inserted into the next slot
  */
 s32 CollisionCheck_SetOC_SAC(PlayState* play, CollisionCheckContext* colChkCtx, Collider* collider, s32 index) {
+#ifdef ENABLE_FRAMERATE_OPTIONS
     if (FrameAdvance_IsEnabled(play) == true) {
         return -1;
     }
+#endif
+
     ASSERT(collider->shape < COLSHAPE_MAX, "pcl_obj->data_type <= CL_DATA_LBL_SWRD", "../z_collision_check.c", 3274);
     sOCResetFuncs[collider->shape](play, collider);
     if (collider->actor != NULL && collider->actor->update == NULL) {
@@ -1373,9 +1393,12 @@ s32 CollisionCheck_SetOC_SAC(PlayState* play, CollisionCheckContext* colChkCtx, 
 s32 CollisionCheck_SetOCLine(PlayState* play, CollisionCheckContext* colChkCtx, OcLine* collider) {
     s32 index;
 
+#ifdef ENABLE_FRAMERATE_OPTIONS
     if (FrameAdvance_IsEnabled(play) == true) {
         return -1;
     }
+#endif
+
     Collider_ResetLineOC(play, collider);
     if (!(colChkCtx->colLineCount < COLLISION_CHECK_OC_LINE_MAX)) {
         // "Index exceeded and cannot add more"

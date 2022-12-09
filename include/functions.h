@@ -3,6 +3,7 @@
 
 #include "z64.h"
 #include "macros.h"
+#include "config.h"
 
 #include "config.h"
 
@@ -323,7 +324,11 @@ void EffectSsDeadSound_Spawn(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f
 void EffectSsDeadSound_SpawnStationary(PlayState* play, Vec3f* pos, u16 sfxId, s16 lowerPriority,
                                        s16 repeatMode, s32 life);
 void EffectSsIceSmoke_Spawn(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel, s16 scale);
+
+#ifdef ENABLE_EVENT_EDITOR
 void FlagSet_Update(PlayState* play);
+#endif
+
 void Overlay_LoadGameState(GameStateOverlay* overlayEntry);
 void Overlay_FreeGameState(GameStateOverlay* overlayEntry);
 void ActorShape_Init(ActorShape* shape, f32 yOffset, ActorShadowFunc shadowDraw, f32 shadowScale);
@@ -764,9 +769,17 @@ void SaveContext_Init(void);
 s32 func_800635D0(s32);
 void Regs_Init(void);
 void func_8006375C(s32 arg0, s32 arg1, const char* text);
+
+#ifdef ENABLE_CAMERA_DEBUGGER
 void func_8006376C(u8 x, u8 y, u8 colorIndex, const char* text);
+#endif
+
 void Regs_UpdateEditor(Input* input);
+
+#if (defined ENABLE_CAMERA_DEBUGGER) || (defined ENABLE_REG_EDITOR)
 void func_80063D7C(GraphicsContext* gfxCtx);
+#endif
+
 void DebugDisplay_Init(void);
 DebugDispObject* DebugDisplay_AddObject(f32 posX, f32 posY, f32 posZ, s16 rotX, s16 rotY, s16 rotZ, f32 scaleX,
                                         f32 scaleY, f32 scaleZ, u8 red, u8 green, u8 blue, u8 alpha, s16 type,
@@ -990,8 +1003,12 @@ void Interface_Update(PlayState* play);
 Path* Path_GetByIndex(PlayState* play, s16 index, s16 max);
 f32 Path_OrientAndGetDistSq(Actor* actor, Path* path, s16 waypoint, s16* yaw);
 void Path_CopyLastPoint(Path* path, Vec3f* dest);
+
+#ifdef ENABLE_FRAMERATE_OPTIONS
 void FrameAdvance_Init(FrameAdvanceContext* frameAdvCtx);
 s32 FrameAdvance_Update(FrameAdvanceContext* frameAdvCtx, Input* input);
+#endif
+
 void Player_SetBootData(PlayState* play, Player* this);
 s32 Player_InBlockingCsMode(PlayState* play, Player* this);
 s32 Player_InCsMode(PlayState* play);
@@ -1257,7 +1274,8 @@ u32 Letterbox_GetSize(void);
 void Letterbox_Init(void);
 void Letterbox_Destroy(void);
 void Letterbox_Update(s32 updateRate);
-// ? DbCamera_AddVecGeoToVec3f(?);
+
+#ifdef ENABLE_CAMERA_DEBUGGER
 // ? DbCamera_CalcUpFromPitchYawRoll(?);
 // ? DbCamera_SetTextValue(?);
 // ? DbCamera_Vec3SToF(?);
@@ -1290,6 +1308,8 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam);
 // ? func_800B91B0(?);
 void DbCamera_Reset(Camera* cam, DbCamera* dbCam);
 // ? DbCamera_UpdateDemoControl(?);
+#endif
+
 void func_800BB0A0(f32 u, Vec3f* pos, f32* roll, f32* viewAngle, f32* point0, f32* point1, f32* point2, f32* point3);
 s32 func_800BB2B4(Vec3f* pos, f32* roll, f32* fov, CutsceneCameraPoint* point, s16* keyFrame, f32* curFrame);
 void KaleidoManager_LoadOvl(KaleidoMgrOverlay* ovl);
@@ -1332,7 +1352,11 @@ void Play_SetupRespawnPoint(PlayState* this, s32 respawnMode, s32 playerParams);
 void Play_TriggerVoidOut(PlayState* this);
 void Play_TriggerRespawn(PlayState* this);
 s32 Play_CamIsNotFixed(PlayState* this);
+
+#ifdef ENABLE_FRAMERATE_OPTIONS
 s32 FrameAdvance_IsEnabled(PlayState* this);
+#endif
+
 s32 func_800C0D34(PlayState* this, Actor* actor, s16* yaw);
 s32 func_800C0DB4(PlayState* this, Vec3f* pos);
 void PreRender_SetValuesSave(PreRender* this, u32 width, u32 height, void* fbuf, void* zbuf, void* cvg);
@@ -1360,7 +1384,9 @@ void AudioMgr_Unlock(AudioMgr* audioMgr);
 void AudioMgr_Init(AudioMgr* audioMgr, void* stack, OSPri pri, OSId id, Scheduler* sched, IrqMgr* irqMgr);
 void GameState_FaultPrint(void);
 void GameState_SetFBFilter(Gfx** gfx);
+#ifdef SHOW_INPUT_DISPLAY
 void GameState_DrawInputDisplay(u16 input, Gfx** gfx);
+#endif
 void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx);
 void GameState_SetFrameBuffer(GraphicsContext* gfxCtx);
 void GameState_ReqPadData(GameState* gameState);
@@ -1672,8 +1698,10 @@ OcarinaStaff* AudioOcarina_GetPlaybackStaff(void);
 void AudioOcarina_MemoryGameInit(u8 minigameRound);
 s32 AudioOcarina_MemoryGameNextNote(void);
 void AudioOcarina_PlayLongScarecrowAfterCredits(void);
+#ifdef ENABLE_AUDIO_DEBUGGER
 void AudioDebug_Draw(GfxPrint* printer);
 void AudioDebug_ScrPrt(const char* str, u16 num);
+#endif
 void func_800F3054(void);
 void Audio_SetSfxProperties(u8 bankId, u8 entryIdx, u8 channelIdx);
 void Audio_PlayCutsceneEffectsSequence(u8 csEffectType);
@@ -2030,8 +2058,12 @@ void Setup_Init(GameState* thisx);
 void Setup_Destroy(GameState* thisx);
 void ConsoleLogo_Init(GameState* thisx);
 void ConsoleLogo_Destroy(GameState* thisx);
+
+#ifdef ENABLE_MAP_SELECT
 void MapSelect_Init(GameState* thisx);
 void MapSelect_Destroy(GameState* thisx);
+#endif
+
 void TitleSetup_Init(GameState* thisx);
 void TitleSetup_Destroy(GameState* thisx);
 void FileSelect_Init(GameState* thisx);

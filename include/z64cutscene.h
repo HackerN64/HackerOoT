@@ -97,11 +97,11 @@ typedef struct {
 } CsCmdActorAction; // size = 0x30
 
 typedef enum {
-    CS_STATE_IDLE,
-    CS_STATE_SKIPPABLE_INIT,
-    CS_STATE_SKIPPABLE_EXEC,
+    CS_STATE_IDLE,            
+    CS_STATE_SKIPPABLE_INIT,  
+    CS_STATE_SKIPPABLE_EXEC,  
     CS_STATE_UNSKIPPABLE_INIT,
-    CS_STATE_UNSKIPPABLE_EXEC
+    CS_STATE_UNSKIPPABLE_EXEC 
 } CutsceneState;
 
 typedef enum {

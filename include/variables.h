@@ -3,6 +3,7 @@
 
 #include "z64.h"
 #include "segment_symbols.h"
+#include "config.h"
 
 extern Mtx D_01000000;
 
@@ -56,7 +57,11 @@ extern EffectSsOverlay gEffectSsOverlayTable[EFFECT_SS_TYPE_MAX];
 extern Gfx D_80116280[];
 extern ActorOverlay gActorOverlayTable[ACTOR_ID_MAX]; // original name: "actor_dlftbls" 801162A0
 extern s32 gMaxActorId; // original name: "MaxProfile"
+
+#ifdef ENABLE_CAMERA_DEBUGGER
 extern s32 gDbgCamEnabled;
+#endif
+
 extern GameStateOverlay gGameStateOverlayTable[6];
 extern u8 gWeatherMode;
 extern u8 gLightConfigAfterUnderwater;
@@ -142,13 +147,21 @@ extern u16 D_801333D0;
 extern Vec3f gSfxDefaultPos;
 extern f32 gSfxDefaultFreqAndVolScale;
 extern s8 gSfxDefaultReverb;
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 extern u8 D_801333F0;
+#endif
+
 extern u8 gAudioSfxSwapOff;
 extern u8 D_801333F8;
 extern u8 gSeqCmdWritePos;
 extern u8 gSeqCmdReadPos;
 extern u8 gStartSeqDisabled;
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 extern u8 gAudioDebugPrintSeqCmd;
+#endif
+
 extern u8 gSoundModeList[];
 extern u8 gAudioSpecId;
 extern u8 D_80133418;

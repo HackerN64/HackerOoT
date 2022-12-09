@@ -1,5 +1,6 @@
 #include "ultra64.h"
 #include "global.h"
+#include "config.h"
 
 #define Audio_DisableSeq(seqPlayerIndex, fadeOut) Audio_QueueCmdS32(0x83000000 | ((u8)seqPlayerIndex << 16), fadeOut)
 
@@ -1214,8 +1215,11 @@ OcarinaSongButtons gOcarinaSongButtons[OCARINA_SONG_MAX] = {
     { 0, { 0 } },
 };
 
+#ifdef ENABLE_AUDIO_DEBUGGER
 u32 sAudioUpdateStartTime;
 u32 sAudioUpdateEndTime;
+#endif
+
 f32 D_8016B7A8;
 f32 D_8016B7AC;
 f32 D_8016B7B0;
@@ -2307,6 +2311,8 @@ void AudioOcarina_ResetStaffs(void) {
 }
 
 f32 D_80131C8C = 0.0f;
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 
 // =========== Audio Debugging ===========
 
@@ -3692,6 +3698,8 @@ void AudioDebug_ProcessInput(void) {
     gAudioDebugPrintSeqCmd = sAudioScrPrtWork[10];
 }
 
+#endif
+
 void Audio_UpdateRiverSoundVolumes(void);
 void Audio_UpdateFanfare(void);
 
@@ -3700,8 +3708,12 @@ void Audio_UpdateFanfare(void);
  */
 void func_800F3054(void) {
     if (func_800FAD34() == 0) {
+
+#ifdef ENABLE_AUDIO_DEBUGGER
         sAudioUpdateTaskStart = gAudioCtx.totalTaskCount;
         sAudioUpdateStartTime = osGetTime();
+#endif
+
         AudioOcarina_Update();
         Audio_StepFreqLerp(&sRiverFreqScaleLerp);
         Audio_StepFreqLerp(&sWaterfallFreqScaleLerp);
@@ -3715,11 +3727,18 @@ void func_800F3054(void) {
         Audio_ProcessSeqCmds();
         func_800F8F88();
         Audio_UpdateActiveSequences();
+
+#ifdef ENABLE_AUDIO_DEBUGGER
         AudioDebug_SetInput();
         AudioDebug_ProcessInput();
+#endif
+
         Audio_ScheduleProcessCmds();
+
+#ifdef ENABLE_AUDIO_DEBUGGER
         sAudioUpdateTaskEnd = gAudioCtx.totalTaskCount;
         sAudioUpdateEndTime = osGetTime();
+#endif
     }
 }
 
@@ -5239,7 +5258,9 @@ void Audio_SetNatureAmbienceChannelIO(u8 channelIdxRange, u8 ioPort, u8 ioData) 
 
     if ((gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId != NA_BGM_NATURE_AMBIENCE) &&
         Audio_IsSeqCmdNotQueued(SEQCMD_OP_PLAY_SEQUENCE << 28 | NA_BGM_NATURE_AMBIENCE, SEQCMD_OP_MASK | 0xFF)) {
+#ifdef ENABLE_AUDIO_DEBUGGER
         sAudioNatureFailed = true;
+#endif
         return;
     }
 

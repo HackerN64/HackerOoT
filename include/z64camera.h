@@ -5,6 +5,8 @@
 #include "z64cutscene.h"
 #include "z64save.h"
 
+#include "config.h"
+
 // these two angle conversion macros are slightly inaccurate
 #define CAM_DEG_TO_BINANG(degrees) (s16)((degrees) * 182.04167f + .5f)
 #define CAM_BINANG_TO_DEG(binang) ((f32)(binang) * (360.0001525f / 65535.0f))
@@ -41,7 +43,7 @@
 #define CAM_LETTERBOX_MEDIUM CAM_LETTERBOX(2)
 #define CAM_LETTERBOX_LARGE  CAM_LETTERBOX(3)
 
-#define CAM_LETTERBOX_INSTANT CAM_LETTERBOX(8) // Bit to determine whether to set the current value directly (on), or to set the size target (off) 
+#define CAM_LETTERBOX_INSTANT CAM_LETTERBOX(8) // Bit to determine whether to set the current value directly (on), or to set the size target (off)
 #define CAM_LETTERBOX_IGNORE  CAM_LETTERBOX(0xF) // No change in letterbox size, keep the previous size
 
 // Camera-unique hud visibility mode macros
@@ -118,7 +120,7 @@
 #define CAM_VIEW_FOV (1 << 5) // camera->fov
 #define CAM_VIEW_ROLL (1 << 6) // camera->roll
 
-// All scenes using `SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT` or `SCENE_CAM_TYPE_FIXED_TOGGLE_VIEWPOINT` are expected 
+// All scenes using `SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT` or `SCENE_CAM_TYPE_FIXED_TOGGLE_VIEWPOINT` are expected
 // to have their first two bgCamInfo entries be the following:
 #define BGCAM_INDEX_TOGGLE_LOCKED 0
 #define BGCAM_INDEX_TOGGLE_PIVOT 1
@@ -1581,6 +1583,8 @@ typedef struct Camera {
     /* 0x16A */ s16 unk_16A;
 } Camera; // size = 0x16C
 
+#ifdef ENABLE_CAMERA_DEBUGGER
+
 /**
  * Debug Camera
 */
@@ -1646,5 +1650,7 @@ typedef struct {
     /* 0x28 */ f32 roll;
     /* 0x2C */ f32 fov;
 } DbCameraAnim; // size = 0x30
+
+#endif
 
 #endif

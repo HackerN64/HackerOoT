@@ -1,5 +1,6 @@
 #include "ultra64.h"
 #include "global.h"
+#include "config.h"
 
 // sSfxRequests ring buffer endpoints. read index <= write index, wrapping around mod 256.
 u8 gSfxRequestWriteIndex = 0;
@@ -44,7 +45,9 @@ s8 gSfxDefaultReverb = 0;
 
 s32 D_801333EC = 0; // unused
 
+#ifdef ENABLE_AUDIO_DEBUGGER
 u8 D_801333F0 = 0;
+#endif
 
 u8 gAudioSfxSwapOff = 0;
 
@@ -55,7 +58,10 @@ s32 D_801333FC = 0; // unused
 u8 gSeqCmdWritePos = 0;
 u8 gSeqCmdReadPos = 0;
 u8 gStartSeqDisabled = false;
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 u8 gAudioDebugPrintSeqCmd = true;
+#endif
 
 u8 gSoundModeList[] = {
     SOUNDMODE_STEREO,
