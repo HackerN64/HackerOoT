@@ -1372,7 +1372,7 @@ void PreRender_RestoreZBuffer(PreRender* this, Gfx** gfxp);
 void func_800C213C(PreRender* this, Gfx** gfxp);
 void PreRender_RestoreFramebuffer(PreRender* this, Gfx** gfxp);
 void PreRender_CopyImageRegion(PreRender* this, Gfx** gfxp);
-#ifdef VANILLA_PAUSE_DELAY
+#ifdef ENABLE_PAUSE_BG_AA
 void PreRender_ApplyFilters(PreRender* this);
 #endif
 void AudioMgr_StopAllSfx(void);

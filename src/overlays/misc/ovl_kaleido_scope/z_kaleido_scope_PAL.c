@@ -257,7 +257,7 @@ void KaleidoScope_SetupPlayerPreRender(PlayState* play) {
 }
 
 void KaleidoScope_ProcessPlayerPreRender(void) {
-#ifdef VANILLA_PAUSE_DELAY
+#ifdef ENABLE_PAUSE_BG_AA
     Sleep_Msec(50);
     PreRender_ApplyFilters(&sPlayerPreRender);
 #endif
