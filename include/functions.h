@@ -5,6 +5,8 @@
 #include "macros.h"
 #include "config.h"
 
+#include "config.h"
+
 f32 fabsf(f32 f);
 #ifndef __sgi
 #define fabsf(f) __builtin_fabsf((f32)(f))
@@ -1370,7 +1372,9 @@ void PreRender_RestoreZBuffer(PreRender* this, Gfx** gfxp);
 void func_800C213C(PreRender* this, Gfx** gfxp);
 void PreRender_RestoreFramebuffer(PreRender* this, Gfx** gfxp);
 void PreRender_CopyImageRegion(PreRender* this, Gfx** gfxp);
+#ifdef VANILLA_PAUSE_DELAY
 void PreRender_ApplyFilters(PreRender* this);
+#endif
 void AudioMgr_StopAllSfx(void);
 void func_800C3C80(AudioMgr* audioMgr);
 void AudioMgr_HandleRetrace(AudioMgr* audioMgr);

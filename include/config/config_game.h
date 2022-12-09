@@ -30,4 +30,8 @@
  */
 // #define FW_SPLIT_AGE
 
+/* Apply the anti-aliasing filter for the background of the pause menu. This adds a delay when pausing. */
+//#define VANILLA_PAUSE_DELAY
+
+
 #endif
