@@ -26,18 +26,18 @@
 /**
  * Options for booting directly into a scene, the map select or the file select, instead of the title screen.
  */
-#define BOOT_TO_SCENE
+// #define BOOT_TO_SCENE
 // #define BOOT_TO_SCENE_NEW_GAME_ONLY
 // #define BOOT_TO_FILE_SELECT
 // #define BOOT_TO_MAP_SELECT
 
 // Change these if using `BOOT_TO_SCENE`, `BOOT_TO_SCENE_NEW_GAME_ONLY` or `BOOT_TO_MAP_SELECT`
-#define BOOT_ENTRANCE ENTR_KOKIRI_FOREST_0
+#define BOOT_ENTRANCE ENTR_DEKU_TREE_0
 #define BOOT_AGE LINK_AGE_CHILD
 #define BOOT_CUTSCENE 0x0000
 
 // Change these if using `BOOT_TO_SCENE` or `BOOT_TO_SCENE_NEW_GAME_ONLY`
-#define BOOT_TIME NEXT_TIME_NIGHT
+#define BOOT_TIME NEXT_TIME_NONE
 #define BOOT_PLAYER_NAME 0x15, 0x12, 0x17, 0x14, 0x3E, 0x3E, 0x3E, 0x3E // "LINK"
 
 /**

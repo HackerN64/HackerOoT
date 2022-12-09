@@ -789,12 +789,7 @@ void Sram_InitSave(FileSelectState* fileSelect, SramContext* sramCtx) {
     u16 checksum;
 
 #if (defined BOOT_TO_SCENE || defined BOOT_TO_FILE_SELECT)
-
-#ifdef ENABLE_DEBUG_SAVE
-    Sram_InitDebugSave();
-#else
     Sram_InitNewSave();
-#endif
 
     gSaveContext.entranceIndex = BOOT_ENTRANCE;
     gSaveContext.linkAge = BOOT_AGE;
