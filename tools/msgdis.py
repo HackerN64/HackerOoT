@@ -389,7 +389,7 @@ def extract_all_text(text_out, staff_text_out):
 
             tokenFreezeMode = (
                 "#ifdef DISABLE_GS_TOKEN_FREEZE\n"
-                + "FADE(\"\\x50\")\n"
+                + "FADE(\"\\x20\")\n"
                 + "#endif\n"
             ) if message[0] in [0x00B4, 0x00B5] else ""
 
