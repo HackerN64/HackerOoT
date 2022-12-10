@@ -120,19 +120,23 @@ tools/elf2rom -cic 6105 zelda_ocarina_mq_dbg.elf zelda_ocarina_mq_dbg.z64
 
 Both of these have the disadvantage that the ordering of the terminal output is scrambled, so for debugging it is best to stick to one thread (i.e. not pass `-j` or `-jN`).
 
-## Compression and Virtual Console
+## Compression and Wii Virtual Console support
 
-If you are wondering why other n64 zelda roms ar 32 megabytes that is because they are compressed. HackerOOT supports yaz0 and lzo compression. For more information on compression visit [Z64.me's repo](https://github.com/z64me/z64enc#readme). You can compress your rom by doing this comand instead:
-
-```bash
-make compress
-```
-With compression comes Virtual Console support. As of right now put an original USA wad into the root folder, named `basewad.wad`. Then you must run the following commands. Yes you must `make clean` currently.
-
-```bash
-make clean
-make wad
-```
+Nintendo 64 games are using compression to fit the game in a cartridge, this is why you can see 64MB and 32MB (or less) roms. Currently, HackerOoT supports YAZ0 and LZO compression algorithms. 
+Run ``make compress`` to build a rom and compress it, to choose between YAZ0 and LZO, either edit the ``COMPRESS`` variable in the Makefile, or simply execute ``make compress COMPRESSION=yaz`` or ``make compress COMPRESSION=lzo``.
+For more informations about the algorithms, you can read [Z64.me's encoding readme](https://github.com/z64me/z64enc#readme).
+HackerOoT supports Wii Virtual Console too! To make a compatible wad, place the original Zelda: Ocarina of Time US (1.2) wad in the root folder of the workspace, rename it ``basewad.wad`` then run ``make wad`` (you will need to run ``make clean`` first if you execute ``make wad`` after either ``make compress`` or ``make``)
+The control mapping on Wii VC will be the following:
+- N64 A -> GCN A
+- N64 B -> GCN B
+- N64 C-Right -> GCN X and GCN C-Stick Right
+- N64 C-Left -> GCN Y and GCN C-Stick Left
+- N64 C-Up-> GCN C-Stick Up
+- N64 C-Down -> GCN Z
+- N64 Z -> GCN L
+- N64 R -> GCN R
+- N64 L -> GCN C-Stick Down
+Note that you can use the Wii Classic Controller too.
 
 ## Contributing
 
