@@ -31,6 +31,8 @@ docs/doxygen/
 out.txt
 
 # Tool artifacts
+gzinject/obj/*
+z64compress/o/*
 tools/mipspro7.2_compiler/
 tools/overlayhelpers/batchdisasm/output/*
 tools/overlayhelpers/batchdisasm/output2/*
