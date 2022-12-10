@@ -122,10 +122,14 @@ Both of these have the disadvantage that the ordering of the terminal output is 
 
 ## Compression and Wii Virtual Console support
 
-Nintendo 64 games are using compression to fit the game in a cartridge, this is why you can see 64MB and 32MB (or less) roms. Currently, HackerOoT supports YAZ0 and LZO compression algorithms. 
+Nintendo 64 games are using compression to fit the game in a cartridge, this is why you can see 64MB and 32MB (or less) roms. Currently, HackerOoT supports YAZ0 and LZO compression algorithms.
+
 Run ``make compress`` to build a rom and compress it, to choose between YAZ0 and LZO, either edit the ``COMPRESS`` variable in the Makefile, or simply execute ``make compress COMPRESSION=yaz`` or ``make compress COMPRESSION=lzo``.
+
 For more informations about the algorithms, you can read [Z64.me's encoding readme](https://github.com/z64me/z64enc#readme).
-HackerOoT supports Wii Virtual Console too! To make a compatible wad, place the original Zelda: Ocarina of Time US (1.2) wad in the root folder of the workspace, rename it ``basewad.wad`` then run ``make wad`` (you will need to run ``make clean`` first if you execute ``make wad`` after either ``make compress`` or ``make``)
+
+HackerOoT supports Wii Virtual Console too! To make a compatible wad, place the original Zelda: Ocarina of Time US (1.2) wad in the root folder of the workspace, rename it ``basewad.wad`` then run ``make wad`` (you will need to run ``make clean`` first if you execute ``make wad`` after either ``make compress`` or ``make``).
+
 The control mapping on Wii VC will be the following:
 - N64 A -> GCN A
 - N64 B -> GCN B
