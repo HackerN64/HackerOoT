@@ -60,6 +60,11 @@
  */
 // #define DISABLE_DEBUG_FEATURES
 
+/**
+ * Disable autoscroll on crash debugger
+*/
+#define DISABLE_CRASH_DBG_AUTOSCROLL
+
 // -------------------------------------------
 
 // TODO: find a better way to do that

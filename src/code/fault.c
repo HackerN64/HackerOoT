@@ -44,6 +44,8 @@
 #include "terminal.h"
 #include "alloca.h"
 
+#include "config.h"
+
 void FaultDrawer_Init(void);
 void FaultDrawer_SetOsSyncPrintfEnabled(u32 enabled);
 void FaultDrawer_DrawRecImpl(s32 xStart, s32 yStart, s32 xEnd, s32 yEnd, u16 color);
@@ -382,15 +384,19 @@ u32 Fault_WaitForInputImpl(void) {
 
         pressedBtn = input->press.button;
 
+#ifndef DISABLE_CRASH_DBG_AUTOSCROLL
         if (pressedBtn == BTN_L) {
             sFaultInstance->autoScroll = !sFaultInstance->autoScroll;
         }
+#endif
 
+#ifndef DISABLE_CRASH_DBG_AUTOSCROLL
         if (sFaultInstance->autoScroll) {
             if (count-- < 1) {
                 return false;
             }
         } else {
+#endif
             if (pressedBtn == BTN_A || pressedBtn == BTN_DRIGHT) {
                 return false;
             }
@@ -406,7 +412,9 @@ u32 Fault_WaitForInputImpl(void) {
             if (pressedBtn == BTN_DDOWN) {
                 FaultDrawer_SetOsSyncPrintfEnabled(false);
             }
+#ifndef DISABLE_CRASH_DBG_AUTOSCROLL
         }
+#endif
     }
 }
 
@@ -638,7 +646,9 @@ void Fault_Wait5Seconds(void) {
         Fault_Sleep(1000 / 60);
     } while ((osGetTime() - start) < OS_SEC_TO_CYCLES(5) + 1);
 
+#ifndef DISABLE_CRASH_DBG_AUTOSCROLL
     sFaultInstance->autoScroll = true;
+#endif
 }
 
 void Fault_DrawMemDumpContents(const char* title, uintptr_t addr, u32 arg2) {
@@ -720,6 +730,7 @@ void Fault_DrawMemDump(uintptr_t pc, uintptr_t sp, uintptr_t cLeftJump, uintptr_
         Fault_DrawMemDumpContents("Dump", addr, 0);
         scrollCountdown = 600;
 
+#ifndef DISABLE_CRASH_DBG_AUTOSCROLL
         while (sFaultInstance->autoScroll) {
             // Count down until it's time to move on to the next page
             if (scrollCountdown == 0) {
@@ -734,6 +745,7 @@ void Fault_DrawMemDump(uintptr_t pc, uintptr_t sp, uintptr_t cLeftJump, uintptr_
                 sFaultInstance->autoScroll = false;
             }
         }
+#endif
 
         // Wait for input
         do {
@@ -777,8 +789,10 @@ void Fault_DrawMemDump(uintptr_t pc, uintptr_t sp, uintptr_t cLeftJump, uintptr_
         }
     } while (!CHECK_BTN_ALL(input->press.button, BTN_L));
 
+#ifndef DISABLE_CRASH_DBG_AUTOSCROLL
     // Resume auto-scroll and move to next page
     sFaultInstance->autoScroll = true;
+#endif
 }
 
 /**
@@ -1047,15 +1061,21 @@ void Fault_ThreadEntry(void* arg) {
         // Show fault framebuffer
         Fault_DisplayFrameBuffer();
 
+#ifndef DISABLE_CRASH_DBG_AUTOSCROLL
         if (sFaultInstance->autoScroll) {
             Fault_Wait5Seconds();
         } else {
+#endif
             // Draw error bar signifying the crash screen is available
             Fault_DrawCornerRec(GPACK_RGBA5551(255, 0, 0, 1));
+#ifndef DISABLE_CRASH_DBG_AUTOSCROLL
         }
+#endif
 
+#ifndef DISABLE_CRASH_DBG_AUTOSCROLL
         // Set auto-scrolling and default colors
         sFaultInstance->autoScroll = true;
+#endif
         FaultDrawer_SetForeColor(GPACK_RGBA5551(255, 255, 255, 1));
         FaultDrawer_SetBackColor(GPACK_RGBA5551(0, 0, 0, 0));
 
@@ -1106,7 +1126,9 @@ void Fault_Init(void) {
     sFaultInstance->faultedThread = NULL;
     sFaultInstance->padCallback = Fault_PadCallback;
     sFaultInstance->clients = NULL;
+#ifndef DISABLE_CRASH_DBG_AUTOSCROLL
     sFaultInstance->autoScroll = false;
+#endif
     gFaultMgr.faultHandlerEnabled = true;
     osCreateMesgQueue(&sFaultInstance->queue, &sFaultInstance->msg, 1);
     StackCheck_Init(&sFaultThreadInfo, sFaultStack, STACK_TOP(sFaultStack), 0, 0x100, "fault");
