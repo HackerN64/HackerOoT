@@ -18,7 +18,6 @@ notes/
 baserom/
 docs/doxygen/
 cache/
-vc/
 *.elf
 *.sra
 *.z64
