@@ -5,6 +5,12 @@
  * GAME SETTINGS *
  *****************/
 
+// Fix annoying glitches (crashes and softlocks)
+#define FIX_ANNOYING_GLITCH
+
+// Add a fix for the Stale Reference Manipulation glitch (OoT's Pandora's Box)
+#define FIX_SRM
+
 // Configure dialogue print speed (1 is vanilla)
 #define DIALOGUE_PRINT_SPEED 2
 
