@@ -7,5 +7,8 @@ mkldscript
 reloc_prereq
 vtxdis
 yaz0
-
 graphovl/
+gzinject/gzinject
+gzinject/obj/
+z64compress/o/
+z64compress/z64compress

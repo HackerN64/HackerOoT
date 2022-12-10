@@ -81,6 +81,8 @@ If you are using GCC as the compiler for Ocarina of Time, you will also need:
 
 * gcc-mips-linux-gnu
 
+To compress the rom, you will need the Python module ``pyelftools``: ``python3 -m pip install pyelftools``
+
 #### 2. Clone the repository
 
 **N.B.** If using WSL, we strongly encourage you to clone into WSL's Linux filesystem using Linux's `git`.
