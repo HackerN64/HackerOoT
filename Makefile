@@ -12,6 +12,19 @@ COMPILER ?= gcc
 # If DEBUG_BUILD is 1, compile with DEBUG_ROM defined
 DEBUG_BUILD ?= 1
 
+# Valid compression algorithms are yaz and lzo
+COMPRESSION ?= yaz
+
+ifeq ($(COMPRESSION),lzo)
+  CFLAGS += -DCOMPRESSION_LZO
+  CPPFLAGS += -DCOMPRESSION_LZO
+endif
+
+ifeq ($(COMPRESSION),yaz)
+  CFLAGS += -DCOMPRESSION_YAZ
+  CPPFLAGS += -DCOMPRESSION_YAZ
+endif
+
 CFLAGS ?=
 CPPFLAGS ?=
 
@@ -131,8 +144,10 @@ OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
 #### Files ####
 
 # ROM image
-ROM := zelda_ocarina_mq_dbg.z64
-ELF := $(ROM:.z64=.elf)
+ROM  := HackerOoT.z64
+ELF  := $(ROM:.z64=.elf)
+ROMC := $(ROM:.z64=_compressed.z64)
+WAD  := $(ROM:.z64=.wad)
 # description of ROM segments
 SPEC := spec
 
@@ -172,18 +187,35 @@ $(shell mkdir -p build/baserom build/assets/text $(foreach dir,$(SRC_DIRS) $(UND
 build/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
 build/src/%.o: CC := $(CC) -fexec-charset=euc-jp
 
+build/src/overlays/actors/ovl_Item_Shield/%.o: OPTFLAGS := -O2
+build/src/overlays/actors/ovl_En_Part/%.o: OPTFLAGS := -O2
+build/src/overlays/actors/ovl_Item_B_Heart/%.o: OPTFLAGS := -O0
+build/src/overlays/actors/ovl_Bg_Mori_Hineri/%.o: OPTFLAGS := -O0
+
 #### Main Targets ###
 
 all: $(ROM)
 
+compress: $(ROMC)
+
+wad:
+	$(MAKE) compress CFLAGS="-DCONSOLE_WIIVC $(CFLAGS) -fno-reorder-blocks -fno-optimize-sibling-calls" CPPFLAGS="-DCONSOLE_WIIVC $(CPPFLAGS)"
+	@echo 45e | tools/gzinject/gzinject -a genkey -k common-key.bin >/dev/null
+	tools/gzinject/gzinject -a inject -r 1 -k common-key.bin -w basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
+	$(RM) -r wadextract/ common-key.bin
+
 clean:
-	$(RM) -r $(ROM) $(ELF) build
+	$(RM) -r $(ROM) $(ROMC) $(WAD) $(ELF) build cache
 
 assetclean:
 	$(RM) -r $(ASSET_BIN_DIRS)
 	$(RM) -r assets/text/*.h
 	$(RM) -r build/assets
 	$(RM) -r .extracted-assets.json
+
+rebuildtools:
+	$(MAKE) -C tools distclean
+	$(MAKE) -C tools
 
 distclean: clean assetclean
 	$(RM) -r baserom/
@@ -200,12 +232,15 @@ test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
 
 
-.PHONY: all clean setup test distclean assetclean daf
+.PHONY: all clean setup test distclean assetclean compress wad rebuildtools
 
 #### Various Recipes ####
 
 $(ROM): $(ELF)
 	$(ELF2ROM) -cic 6105 $< $@
+
+$(ROMC): $(ROM)
+	python3 tools/z64compress_wrapper.py --codec $(COMPRESSION) --cache cache --threads $(N_THREADS) $< $@ $(ELF) build/$(SPEC)
 
 $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) build/ldscript.txt build/undefined_syms.txt
 	$(LD) -T build/undefined_syms.txt -T build/ldscript.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map build/z64.map -o $@

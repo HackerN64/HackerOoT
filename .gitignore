@@ -17,6 +17,8 @@ expected/
 notes/
 baserom/
 docs/doxygen/
+cache/
+vc/
 *.elf
 *.sra
 *.z64
@@ -24,6 +26,7 @@ docs/doxygen/
 *.v64
 *.map
 *.dump
+*.wad
 out.txt
 
 # Tool artifacts

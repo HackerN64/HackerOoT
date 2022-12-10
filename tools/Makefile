@@ -16,15 +16,23 @@ endif
 ifneq ($(LLD),0)
   CFLAGS += -fuse-ld=lld
 endif
-
 all: $(PROGRAMS)
 	$(MAKE) -C ZAPD
 	$(MAKE) -C fado
+ifeq ($(wildcard ./gzinject/Makefile),)
+	cd ./gzinject && ./configure
+endif
+	$(MAKE) -C gzinject
+	$(MAKE) -C z64compress
 
 clean:
 	$(RM) $(PROGRAMS) $(addsuffix .exe,$(PROGRAMS))
 	$(MAKE) -C ZAPD clean
 	$(MAKE) -C fado clean
+ifneq ($(wildcard ./gzinject/Makefile),)
+	$(MAKE) -C gzinject clean
+endif
+	$(MAKE) -C z64compress clean
 
 distclean: clean
 
