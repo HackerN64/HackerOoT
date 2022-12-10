@@ -120,6 +120,19 @@ tools/elf2rom -cic 6105 zelda_ocarina_mq_dbg.elf zelda_ocarina_mq_dbg.z64
 
 Both of these have the disadvantage that the ordering of the terminal output is scrambled, so for debugging it is best to stick to one thread (i.e. not pass `-j` or `-jN`).
 
+## Compression and Virtual Console
+
+If you are wondering why other n64 zelda roms ar 32 megabytes that is because they are compressed. HackerOOT supports yaz0 and lzo compression. For more information on compression visit [Z64.me's repo](https://github.com/z64me/z64enc#readme). You can compress your rom by doing this comand instead:
+
+```bash
+make compress
+```
+With compression comes Virtual Console support. As of right now put an original USA wad into the root folder, named `basewad.wad`. Then you must run the following commands. Yes you must `make clean` currently.
+
+```bash
+make clean
+make wad
+```
 
 ## Contributing
 
