@@ -63,6 +63,10 @@
 // -------------------------------------------
 
 // TODO: find a better way to do that
+#ifndef EXPANSION
+#define DISABLE_DEBUG_FEARURES
+#endif
+
 #ifndef DEBUG_ROM
 #define DISABLE_DEBUG_FEATURES
 #endif
