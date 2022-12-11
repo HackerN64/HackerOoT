@@ -63,6 +63,14 @@
 // -------------------------------------------
 
 // TODO: find a better way to do that
+
+/*
+comment this out to make a rom that doesnt require the expansion pak
+doing so will disable debugging features
+*/
+
+#define EXPANSION
+
 #ifndef EXPANSION
 #define DISABLE_DEBUG_FEARURES
 #endif
