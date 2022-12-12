@@ -68,7 +68,7 @@
 * Enables the expanded memory (8MB RAM, requires the Expansion Pak), disabling this will disable debug features
 */
 
-//#define ENABLE_EXPANDED_MEMORY
+#define ENABLE_EXPANDED_MEMORY
 
 #ifndef ENABLE_EXPANDED_MEMORY
 #define DISABLE_DEBUG_FEARURES
