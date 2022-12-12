@@ -64,14 +64,13 @@
 
 // TODO: find a better way to do that
 
-/*
-comment this out to make a rom that doesnt require the expansion pak
-doing so will disable debugging features
+/**
+* Enables the expanded memory (8MB RAM, requires the Expansion Pak), disabling this will disable debug features
 */
 
-#define EXPANSION
+//#define ENABLE_EXPANDED_MEMORY
 
-#ifndef EXPANSION
+#ifndef ENABLE_EXPANDED_MEMORY
 #define DISABLE_DEBUG_FEARURES
 #endif
 

@@ -58,7 +58,7 @@ void Main(void* arg) {
     // "System heap initalization"
     osSyncPrintf("システムヒープ初期化 %08x-%08x %08x\n", systemHeapStart, fb, gSystemHeapSize);
     SystemHeap_Init((void*)systemHeapStart, gSystemHeapSize); // initializes the system heap
-#ifdef EXPANSION
+#ifdef ENABLE_EXPANDED_MEMORY
     if (osMemSize >= 0x800000) {
         debugHeapStart = SysCfb_GetFbEnd();
         debugHeapSize = PHYS_TO_K0(0x600000) - (uintptr_t)debugHeapStart;
@@ -66,7 +66,7 @@ void Main(void* arg) {
 #endif
         debugHeapSize = 0x400;
         debugHeapStart = SystemArena_MallocDebug(debugHeapSize, "../main.c", 565);
-#ifdef EXPANSION
+#ifdef ENABLE_EXPANDED_MEMORY
     }
 #endif
     osSyncPrintf("debug_InitArena(%08x, %08x)\n", debugHeapStart, debugHeapSize);
