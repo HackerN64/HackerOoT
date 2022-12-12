@@ -6,7 +6,6 @@ uintptr_t sSysCfbEnd;
 void SysCfb_Init(s32 n64dd) {
     u32 screenSize;
     uintptr_t tmpFbEnd;
-#ifdef ENABLE_EXPANDED_MEMORY
     if (osMemSize >= 0x800000) {
         // "8MB or more memory is installed"
         osSyncPrintf("８Ｍバイト以上のメモリが搭載されています\n");
@@ -20,9 +19,6 @@ void SysCfb_Init(s32 n64dd) {
             sSysCfbEnd = tmpFbEnd;
         }
     } else if (osMemSize >= 0x400000) {
-#else
-    if (osMemSize >= 0x400000) {
-#endif
         osSyncPrintf("RAM4M mode\n");
         sSysCfbEnd = 0x80400000;
     } else {

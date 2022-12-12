@@ -56,7 +56,8 @@
 // #define ENABLE_MEMPAK
 
 /**
- * Disable every debug features
+ * Disable every debug feature
+ * This will enable Jumper pak compatibility
  */
 // #define DISABLE_DEBUG_FEATURES
 
@@ -64,15 +65,6 @@
 
 // TODO: find a better way to do that
 
-/**
-* Enables the expanded memory (8MB RAM, requires the Expansion Pak), disabling this will disable debug features
-*/
-
-#define ENABLE_EXPANDED_MEMORY
-
-#ifndef ENABLE_EXPANDED_MEMORY
-#define DISABLE_DEBUG_FEARURES
-#endif
 
 #ifndef DEBUG_ROM
 #define DISABLE_DEBUG_FEATURES
