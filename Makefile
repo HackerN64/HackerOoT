@@ -142,16 +142,8 @@ $(shell touch src/boot/build.c)
 
 
 #==============================================================================#
-# Project Settings                                                             #
+# Tools                                                                        #
 #==============================================================================#
-
-# ???
-PROJECT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
-
-# CPU Threads to use
-N_THREADS ?= $(shell nproc)
-
-#### Tools ####
 
 EMULATOR = mupen64plus
 EMU_FLAGS = --noosd
@@ -163,13 +155,27 @@ ELF2ROM    := tools/elf2rom
 ZAPD       := tools/ZAPD/ZAPD.out
 FADO       := tools/fado/fado.elf
 
-#### Files ####
 
-# Output
-ROM  := HackerOoT.z64
-ELF  := $(ROM:.z64=.elf)
-ROMC := $(ROM:.z64=_compressed.z64)
-WAD  := $(ROM:.z64=.wad)
+#==============================================================================#
+# Project Settings                                                             #
+#==============================================================================#
+
+# ???
+PROJECT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+
+# CPU Threads to use
+N_THREADS ?= $(shell nproc)
+
+PROJECT_NAME := HackerOoT
+
+### Output Files ###
+
+ELF  := $(PROJECT_NAME).elf
+ROM  := $(PROJECT_NAME).z64
+ROMC := $(PROJECT_NAME)_compressed.z64
+WAD  := $(PROJECT_NAME).wad
+
+### Project Files ###
 
 # description of ROM segments
 SPEC := spec
@@ -207,15 +213,22 @@ TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),build/$f) \
 # create build directories
 $(shell mkdir -p build/baserom build/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS) $(ASSET_BIN_DIRS),build/$(dir)))
 
-build/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
-build/src/%.o: CC := $(CC) -fexec-charset=euc-jp
+# Fix for GCC issues
+ifeq ($(COMPILER),gcc)
+  build/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
+  build/src/%.o: CC := $(CC) -fexec-charset=euc-jp
 
-build/src/overlays/actors/ovl_Item_Shield/%.o: OPTFLAGS := -O2
-build/src/overlays/actors/ovl_En_Part/%.o: OPTFLAGS := -O2
-build/src/overlays/actors/ovl_Item_B_Heart/%.o: OPTFLAGS := -O0
-build/src/overlays/actors/ovl_Bg_Mori_Hineri/%.o: OPTFLAGS := -O0
+# Fix for specific Wii VC issues
+  build/src/overlays/actors/ovl_Item_Shield/%.o: OPTFLAGS := -O2
+  build/src/overlays/actors/ovl_En_Part/%.o: OPTFLAGS := -O2
+  build/src/overlays/actors/ovl_Item_B_Heart/%.o: OPTFLAGS := -O0
+  build/src/overlays/actors/ovl_Bg_Mori_Hineri/%.o: OPTFLAGS := -O0
+endif
 
-#### Main Targets ###
+
+#==============================================================================#
+# Main Targets                                                                 #
+#==============================================================================#
 
 all: $(ROM)
 
@@ -257,7 +270,10 @@ test: $(ROM)
 
 .PHONY: all clean setup test distclean assetclean compress wad rebuildtools
 
-#### Various Recipes ####
+
+#==============================================================================#
+# Compilation Recipes                                                          #
+#==============================================================================#
 
 $(ROM): $(ELF)
 	$(ELF2ROM) -cic 6105 $< $@
