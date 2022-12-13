@@ -1,49 +1,120 @@
+# ???
 MAKEFLAGS += --no-builtin-rules
 
 # Ensure the build fails if a piped command fails
 SHELL = /bin/bash
 .SHELLFLAGS = -o pipefail -c
 
-# Build options can either be changed by modifying the makefile, or by building with 'make SETTING=value'
 
-# If COMPILER is "gcc", compile with GCC.
-COMPILER ?= gcc
+#==============================================================================#
+# Compiler Settings                                                            #
+#==============================================================================#
 
-# If DEBUG_BUILD is 1, compile with DEBUG_ROM defined
-DEBUG_BUILD ?= 1
+# These options can either be set by building with 'make SETTING=value'.
+# 'make clean' may be required first.
 
-# Valid compression algorithms are yaz lzo and aplib
-COMPRESSION ?= yaz
+### Compilation flags ###
 
-ifeq ($(COMPRESSION),lzo)
-  CFLAGS += -DCOMPRESSION_LZO
-  CPPFLAGS += -DCOMPRESSION_LZO
-endif
-
-ifeq ($(COMPRESSION),yaz)
-  CFLAGS += -DCOMPRESSION_YAZ
-  CPPFLAGS += -DCOMPRESSION_YAZ
-endif
-
-ifeq ($(COMPRESSION),aplib)
-  CFLAGS += -DCOMPRESSION_APLIB
-  CPPFLAGS += -DCOMPRESSION_APLIB
-endif
-
-CFLAGS ?=
-CPPFLAGS ?=
+CFLAGS ?= -DNON_MATCHING -DAVOID_UB
+CPPFLAGS ?= -DNON_MATCHING -DAVOID_UB -fno-dollars-in-identifiers -P
+INCLUDES := -Iinclude -Isrc -Ibuild -I.
 
 ifeq ($(COMPILER),gcc)
-  CFLAGS += -DCOMPILER_GCC
-  CPPFLAGS += -DCOMPILER_GCC
+  CFLAGS += -G 0 -nostdinc $(INCLUDES) -march=vr4300 -mfix4300 -mabi=32 -fno-pic -mno-abicalls -mdivide-breaks -fno-zero-initialized-in-bss -fno-toplevel-reorder -ffreestanding -fno-common -fno-merge-constants -mno-explicit-relocs -mno-split-addresses $(CHECK_WARNINGS) -funsigned-char
+  OPTFLAGS := -Os -ffast-math -fno-unsafe-math-optimizations
+  MIPS_VERSION := -mips3
 endif
 
-ifeq ($(DEBUG_BUILD),1)
+# Check code syntax with host compiler
+CHECK_WARNINGS := -Wall -Wextra -Wno-format-security -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-variable -Wno-missing-braces
+
+ASFLAGS := -march=vr4300 -32 -no-pad-sections -Iinclude
+OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
+
+# Extra flags and make command detection for Mac OS
+MAKE = make
+
+ifneq ($(OS),Windows_NT)
+    UNAME_S := $(shell uname -s)
+
+    ifeq ($(UNAME_S),Darwin)
+        MAKE=gmake
+        CPPFLAGS += -xc++
+    endif
+endif
+
+### C compiler to use for builing ###
+
+# Currently, we only have support for the GNU C Compiler
+COMPILER ?= gcc
+
+ifeq ($(COMPILER), gcc)
+  CFLAGS += -DCOMPILER_GCC
+  CPPFLAGS += -DCOMPILER_GCC
+else
+  $(error Unsupported compiler. Currently GCC is the only supported compiler.)
+endif
+
+# Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
+# In nearly all cases, not having 'mips-linux-gnu-*' binaries on the PATH is indicative of missing dependencies
+MIPS_BINUTILS_PREFIX ?= mips-linux-gnu-
+
+ifneq ($(shell type $(MIPS_BINUTILS_PREFIX)ld >/dev/null 2>/dev/null; echo $$?), 0)
+  $(error Please install or build $(MIPS_BINUTILS_PREFIX))
+endif
+
+# Set binutils binaries variables
+ifeq ($(COMPILER),gcc)
+  CC       := $(MIPS_BINUTILS_PREFIX)gcc
+endif
+
+AS         := $(MIPS_BINUTILS_PREFIX)as
+LD         := $(MIPS_BINUTILS_PREFIX)ld
+OBJCOPY    := $(MIPS_BINUTILS_PREFIX)objcopy
+OBJDUMP    := $(MIPS_BINUTILS_PREFIX)objdump
+
+# ???
+CC_CHECK = @:
+
+#==============================================================================#
+# Build Settings                                                               #
+#==============================================================================#
+
+### Build Type ###
+
+# If DEBUG_BUILD is 1, compile with DEBUG_ROM defined
+# This is required to use debug features (as defined in ``include/config/config_debug.h``)
+DEBUG_BUILD ?= 1
+
+ifeq ($(DEBUG_BUILD), 1)
   CFLAGS += -DDEBUG_ROM
   CPPFLAGS += -DDEBUG_ROM
 endif
 
-# Set PACKAGE_VERSION define for printing commit hash
+### Compression algorithm ###
+
+# Supported: ``yaz0``, ``lzo``, and ``aplib``
+# See https://github.com/z64me/z64enc#codec-comparison-chart for more informations
+# Note: the vanilla compression algorithm is YAZ0
+COMPRESSION ?= yaz0
+
+ifeq ($(COMPRESSION), lzo)
+  CFLAGS += -DCOMPRESSION_LZO
+  CPPFLAGS += -DCOMPRESSION_LZO
+
+else ifeq ($(COMPRESSION), yaz0)
+  CFLAGS += -DCOMPRESSION_YAZ0
+  CPPFLAGS += -DCOMPRESSION_YAZ0
+
+else ifeq ($(COMPRESSION), aplib)
+  CFLAGS += -DCOMPRESSION_APLIB
+  CPPFLAGS += -DCOMPRESSION_APLIB
+
+endif
+
+### Build Informations ###
+
+# Set the version define based on the commit hash
 ifeq ($(origin PACKAGE_VERSION), undefined)
   PACKAGE_VERSION := $(shell git log -1 --pretty=%h | tr -d '\n')
   ifeq ('$(PACKAGE_VERSION)', '')
@@ -51,7 +122,11 @@ ifeq ($(origin PACKAGE_VERSION), undefined)
   endif
 endif
 
-# Set PACKAGE_AUTHOR define for printing author's git name
+CFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)'
+CPPFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)'
+
+# Set the author define based on the author's name
+# You can set the name with ``git config --global user.name "NAME_HERE"``
 ifeq ($(origin PACKAGE_AUTHOR), undefined)
   PACKAGE_AUTHOR := $(shell git config --get user.name)
   ifeq ('$(PACKAGE_AUTHOR)', '')
@@ -59,64 +134,27 @@ ifeq ($(origin PACKAGE_AUTHOR), undefined)
   endif
 endif
 
-# Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
-# In nearly all cases, not having 'mips-linux-gnu-*' binaries on the PATH is indicative of missing dependencies
-MIPS_BINUTILS_PREFIX ?= mips-linux-gnu-
-
-CFLAGS += -DNON_MATCHING -DAVOID_UB
-CPPFLAGS += -DNON_MATCHING -DAVOID_UB
-
-CFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)'
-CPPFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)'
 CFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)'
 CPPFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)'
+
 # Make sure the build reports the correct version
 $(shell touch src/boot/build.c)
 
+
+#==============================================================================#
+# Project Settings                                                             #
+#==============================================================================#
+
+# ???
 PROJECT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
-MAKE = make
-CPPFLAGS += -fno-dollars-in-identifiers -P
-
-ifeq ($(OS),Windows_NT)
-    DETECTED_OS=windows
-else
-    UNAME_S := $(shell uname -s)
-    ifeq ($(UNAME_S),Linux)
-        DETECTED_OS=linux
-    endif
-    ifeq ($(UNAME_S),Darwin)
-        DETECTED_OS=macos
-        MAKE=gmake
-        CPPFLAGS += -xc++
-    endif
-endif
-
+# CPU Threads to use
 N_THREADS ?= $(shell nproc)
 
 #### Tools ####
-ifneq ($(shell type $(MIPS_BINUTILS_PREFIX)ld >/dev/null 2>/dev/null; echo $$?), 0)
-  $(error Please install or build $(MIPS_BINUTILS_PREFIX))
-endif
 
-# Detect compiler and set variables appropriately.
-ifeq ($(COMPILER),gcc)
-  CC       := $(MIPS_BINUTILS_PREFIX)gcc
-else
-$(error Unsupported compiler. Please use either gcc as the COMPILER variable.)
-endif
-
-AS         := $(MIPS_BINUTILS_PREFIX)as
-LD         := $(MIPS_BINUTILS_PREFIX)ld
-OBJCOPY    := $(MIPS_BINUTILS_PREFIX)objcopy
-OBJDUMP    := $(MIPS_BINUTILS_PREFIX)objdump
 EMULATOR = mupen64plus
 EMU_FLAGS = --noosd
-
-INC        := -Iinclude -Isrc -Ibuild -I.
-
-# Check code syntax with host compiler
-CHECK_WARNINGS := -Wall -Wextra -Wno-format-security -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-variable -Wno-missing-braces
 
 CPP        := cpp
 MKLDSCRIPT := tools/mkldscript
@@ -125,34 +163,14 @@ ELF2ROM    := tools/elf2rom
 ZAPD       := tools/ZAPD/ZAPD.out
 FADO       := tools/fado/fado.elf
 
-ifeq ($(COMPILER),gcc)
-  OPTFLAGS := -Os -ffast-math -fno-unsafe-math-optimizations
-else
-  OPTFLAGS := -O2
-endif
-
-ASFLAGS := -march=vr4300 -32 -no-pad-sections -Iinclude
-
-ifeq ($(COMPILER),gcc)
-  CFLAGS += -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -fno-pic -mno-abicalls -mdivide-breaks -fno-zero-initialized-in-bss -fno-toplevel-reorder -ffreestanding -fno-common -fno-merge-constants -mno-explicit-relocs -mno-split-addresses $(CHECK_WARNINGS) -funsigned-char
-  MIPS_VERSION := -mips3
-else
-  # we support Microsoft extensions such as anonymous structs, which the compiler does support but warns for their usage. Surpress the warnings with -woff.
-  CFLAGS += -G 0 -non_shared -fullwarn -verbose -Xcpluscomm $(INC) -Wab,-r4300_mul -woff 516,649,838,712
-  MIPS_VERSION := -mips2
-endif
-
-CC_CHECK  = @:
-
-OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
-
 #### Files ####
 
-# ROM image
+# Output
 ROM  := HackerOoT.z64
 ELF  := $(ROM:.z64=.elf)
 ROMC := $(ROM:.z64=_compressed.z64)
 WAD  := $(ROM:.z64=.wad)
+
 # description of ROM segments
 SPEC := spec
 
