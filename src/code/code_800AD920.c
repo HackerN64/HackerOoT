@@ -47,6 +47,7 @@ void func_800AD958(struct_80166500* this, Gfx** gfxp) {
     gDPSetColor(gfx++, G_SETENVCOLOR, this->envColor.rgba);
 
     for (y = 0; y <= SCREEN_HEIGHT - height; y += height) {
+        gDPLoadSync(gfx++);
         gDPLoadTextureBlock(gfx++, tex, fmt, G_IM_SIZ_16b, SCREEN_WIDTH, height, 0, G_TX_NOMIRROR | G_TX_CLAMP,
                             G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 

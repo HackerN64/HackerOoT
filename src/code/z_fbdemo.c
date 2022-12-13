@@ -71,7 +71,7 @@ void TransitionUnk_InitGraphics(TransitionUnk* this) {
         gSPVertex(gfx++, SEGMENT_ADDR(0xA, (u32)col * (this->row + 1) * sizeof(Vtx)), 2 * (this->row + 1), 0);
 
         for (rowTex = 0, row = 0, row2 = 0; row < this->row;) {
-            gDPPipeSync(gfx++);
+            gDPLoadSync(gfx++);
 
             gDPLoadTextureTile(gfx++, SEGMENT_ADDR(0xB, 0), G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, SCREEN_HEIGHT,
                                rowTex, colTex, rowTex + 0x20, colTex + 0x20, 0, G_TX_NOMIRROR | G_TX_WRAP,
