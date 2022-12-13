@@ -16,6 +16,14 @@
  * General features
  */
 
+/**** [DEBUG HEAP] ****/
+// #define ENABLE_DEBUG_HEAP
+
+// The memory space to allocate for the debug heap (used by the Camera Debugger)
+// Note: it can't be higher than 0x800000 with the Expansion Pak
+// Note: if the Expansion Pak is missing the heap's size will be 0x400
+#define DEBUG_HEAP_SIZE 0x600000
+
 /**** [NO CLIP] ****/
 #define ENABLE_NO_CLIP
 
@@ -78,5 +86,9 @@
 
 /**** [MESSAGES DEBUGGER] ****/
 // #define ENABLE_MSG_DEBUGGER
+
+/**** [SPEEDMETER] ****/
+// This looks like a profiler
+// #define ENABLE_SPEEDMETER
 
 #endif

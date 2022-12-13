@@ -85,6 +85,8 @@
 #undef ENABLE_MSG_DEBUGGER
 #undef ENABLE_DEBUG_SAVE
 #undef ENABLE_MEMPAK
+#undef ENABLE_SPEEDMETER
+#undef ENABLE_DEBUG_HEAP
 #endif
 
 // Remove map select from file 1
@@ -100,6 +102,11 @@
 // The camera debugger needs mempak functions for the cutscene exporter
 #if (defined ENABLE_CAMERA_DEBUGGER) && !(defined ENABLE_MEMPAK)
 #define ENABLE_MEMPAK
+#endif
+
+// The camera debugger uses the debug heap, which is located in the expanded RAM
+#if (defined ENABLE_CAMERA_DEBUGGER) && !(defined ENABLE_DEBUG_HEAP)
+#define ENABLE_DEBUG_HEAP
 #endif
 
 #endif
