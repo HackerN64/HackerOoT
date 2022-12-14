@@ -28,6 +28,12 @@
 // #define BOOT_TO_FILE_SELECT
 // #define BOOT_TO_MAP_SELECT
 
+/**
+ * Use file 1 to load the map select from the file select
+ * Note: using this will automatically enable the map select
+*/
+// #define MAP_SELECT_ON_FILE_1
+
 // Change these if using `BOOT_TO_SCENE`, `BOOT_TO_SCENE_NEW_GAME_ONLY` or `BOOT_TO_MAP_SELECT`
 #define BOOT_ENTRANCE ENTR_DEKU_TREE_0
 #define BOOT_AGE LINK_AGE_CHILD
