@@ -39,12 +39,9 @@
     #undef ENABLE_ACTOR_DEBUGGER
     #undef ENABLE_MSG_DEBUGGER
     #undef ENABLE_DEBUG_SAVE
+    #undef MAP_SELECT_ON_FILE_1
 #endif
 
-// Remove map select from file 1
-#if ((defined BOOT_TO_SCENE && defined BOOT_TO_FILE_SELECT) || (defined DISABLE_DEBUG_FEATURES)) && (!defined ENABLE_MAP_SELECT)
-    #define DEBUG_FILE_1
-#endif
 
 // Remove actor and camera debug draw-related code if both are disabled
 #if !(defined ENABLE_ACTOR_DEBUGGER) && !(defined ENABLE_CAMERA_DEBUGGER)
@@ -56,9 +53,14 @@
     #define ENABLE_MEMPAK
 #endif
 
-// Enable the map select feature if booting to map select
-#if (defined BOOT_TO_MAP_SELECT) && !(defined ENABLE_MAP_SELECT)
+// Enable the map select feature if booting to map select or using map select for file 1
+#if ((defined BOOT_TO_MAP_SELECT) || (defined MAP_SELECT_ON_FILE_1)) && !(defined ENABLE_MAP_SELECT)
     #define ENABLE_MAP_SELECT
+#endif
+
+// Remove map select from file 1
+#if !(defined ENABLE_MAP_SELECT)
+    #undef MAP_SELECT_ON_FILE_1
 #endif
 
 // The camera debugger uses the debug heap, which is located in the expanded RAM
