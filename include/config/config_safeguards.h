@@ -39,7 +39,6 @@
     #undef ENABLE_ACTOR_DEBUGGER
     #undef ENABLE_MSG_DEBUGGER
     #undef ENABLE_DEBUG_SAVE
-    #undef ENABLE_MEMPAK
 #endif
 
 // Remove map select from file 1
@@ -55,6 +54,11 @@
 // The camera debugger needs mempak functions for the cutscene exporter
 #if (defined ENABLE_CAMERA_DEBUGGER) && !(defined ENABLE_MEMPAK)
     #define ENABLE_MEMPAK
+#endif
+
+// Enable the map select feature if booting to map select
+#if (defined BOOT_TO_MAP_SELECT) && !(defined ENABLE_MAP_SELECT)
+    #define ENABLE_MAP_SELECT
 #endif
 
 

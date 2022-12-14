@@ -48,11 +48,6 @@
 // #define FIX_GROTTO_CRASH
 
 /**
- * Enable mempak-related code
- */
-// #define ENABLE_MEMPAK
-
-/**
  * Disable every debug feature
  * This will enable Jumper pak compatibility
  */

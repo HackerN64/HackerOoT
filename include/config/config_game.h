@@ -5,6 +5,11 @@
  * GAME SETTINGS *
  *****************/
 
+/**
+ * Enable mempak-related code
+ */
+// #define ENABLE_MEMPAK
+
 // Configure dialogue print speed (1 is vanilla)
 #define DIALOGUE_PRINT_SPEED 2
 
