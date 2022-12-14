@@ -53,7 +53,8 @@
 // #define ENABLE_MEMPAK
 
 /**
- * Disable every debug features
+ * Disable every debug feature
+ * This will enable Jumper pak compatibility
  */
 // #define DISABLE_DEBUG_FEATURES
 
