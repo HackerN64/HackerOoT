@@ -61,6 +61,11 @@
     #define ENABLE_MAP_SELECT
 #endif
 
+// The camera debugger uses the debug heap, which is located in the expanded RAM
+#if (defined ENABLE_CAMERA_DEBUGGER) && !(defined ENABLE_DEBUG_HEAP)
+    #define ENABLE_DEBUG_HEAP
+#endif
+
 
 /*****************
  * config_game.h

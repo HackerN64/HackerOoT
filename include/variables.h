@@ -200,6 +200,8 @@ extern Color_RGBA8_u32 D_801614B0;
 extern PreNmiBuff* gAppNmiBufferPtr;
 extern Scheduler gScheduler;
 extern uintptr_t gSegments[NUM_SEGMENTS];
+
+#ifdef ENABLE_SPEEDMETER
 extern volatile OSTime gAudioThreadUpdateTimeTotalPerGfxTask;
 extern volatile OSTime gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime;
 extern volatile OSTime gRSPAudioTimeTotal;
@@ -212,6 +214,7 @@ extern volatile OSTime gRSPAudioTimeAcc;
 extern volatile OSTime gRSPGfxTimeAcc;
 extern volatile OSTime gRSPOtherTimeAcc;
 extern volatile OSTime gRDPTimeAcc;
+#endif
 
 extern SfxBankEntry D_8016BAD0[9];
 extern SfxBankEntry D_8016BC80[12];
