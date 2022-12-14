@@ -58,7 +58,6 @@ void Main(void* arg) {
     // "System heap initalization"
     osSyncPrintf("システムヒープ初期化 %08x-%08x %08x\n", systemHeapStart, fb, gSystemHeapSize);
     SystemHeap_Init((void*)systemHeapStart, gSystemHeapSize); // initializes the system heap
-
     if (osMemSize >= 0x800000) {
         debugHeapStart = SysCfb_GetFbEnd();
         debugHeapSize = PHYS_TO_K0(0x600000) - (uintptr_t)debugHeapStart;
