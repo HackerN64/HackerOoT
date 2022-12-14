@@ -1,5 +1,5 @@
-#ifndef CONFIG_DEBUG_TOGGLES_H
-#define CONFIG_DEBUG_TOGGLES_H
+#ifndef CONFIG_DEBUG_FEATURES_H
+#define CONFIG_DEBUG_FEATURES_H
 
 /******************
  * DEBUG FEATURES *
@@ -42,7 +42,7 @@
 
 /**** [FRAMERATE OPTIONS] ****/
 // TODO: check for frame advance for drawing, improve how it works
-#define ENABLE_FRAMERATE_OPTIONS
+// #define ENABLE_FRAMERATE_OPTIONS
 
 /**** [MAP SELECT] ****/
 // #define ENABLE_MAP_SELECT
