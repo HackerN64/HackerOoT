@@ -150,10 +150,10 @@ extern s8 gSfxDefaultReverb;
 
 #ifdef ENABLE_AUDIO_DEBUGGER
 extern u8 D_801333F0;
-#endif
-
 extern u8 gAudioSfxSwapOff;
 extern u8 D_801333F8;
+#endif
+
 extern u8 gSeqCmdWritePos;
 extern u8 gSeqCmdReadPos;
 extern u8 gStartSeqDisabled;
@@ -200,6 +200,8 @@ extern Color_RGBA8_u32 D_801614B0;
 extern PreNmiBuff* gAppNmiBufferPtr;
 extern Scheduler gScheduler;
 extern uintptr_t gSegments[NUM_SEGMENTS];
+
+#ifdef ENABLE_SPEEDMETER
 extern volatile OSTime gAudioThreadUpdateTimeTotalPerGfxTask;
 extern volatile OSTime gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime;
 extern volatile OSTime gRSPAudioTimeTotal;
@@ -212,6 +214,7 @@ extern volatile OSTime gRSPAudioTimeAcc;
 extern volatile OSTime gRSPGfxTimeAcc;
 extern volatile OSTime gRSPOtherTimeAcc;
 extern volatile OSTime gRDPTimeAcc;
+#endif
 
 extern SfxBankEntry D_8016BAD0[9];
 extern SfxBankEntry D_8016BC80[12];
@@ -222,9 +225,13 @@ extern SfxBankEntry D_8016C820[3];
 extern SfxBankEntry D_8016C8B0[5];
 extern ActiveSfx gActiveSfx[7][MAX_CHANNELS_PER_BANK]; // total size = 0xA8
 extern u8 gSfxBankMuted[];
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 extern u16 gAudioSfxSwapSource[10];
 extern u16 gAudioSfxSwapTarget[10];
 extern u8 gAudioSfxSwapMode[10];
+#endif
+
 extern ActiveSequence gActiveSeqs[4];
 extern AudioContext gAudioCtx;
 extern void(*D_801755D0)(void);

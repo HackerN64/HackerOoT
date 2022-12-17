@@ -1,6 +1,8 @@
 #ifndef REGS_H
 #define REGS_H
 
+#include "config.h"
+
 #define REG_GROUPS 29 // number of REG groups, i.e. REG, SREG, OREG, etc.
 #define REG_PAGES 6
 #define REGS_PER_PAGE 16
@@ -47,7 +49,11 @@
 #define R_ENV_FOG_NEAR                           REG(14)
 #define R_ENV_TIME_SPEED_OLD                     REG(15) // Most likely used during development. Unused in the final game.
 #define R_RUN_SPEED_LIMIT                        REG(45)
+
+#if (defined ENABLE_SPEEDMETER) || (defined SHOW_TIME_INFO)
 #define R_ENABLE_ARENA_DBG                       SREG(0)
+#endif
+
 #define R_ROOM_IMAGE_NODRAW_FLAGS                SREG(25)
 #define R_ROOM_BG2D_FORCE_SCALEBG                SREG(26)
 #define R_UPDATE_RATE                            SREG(30)

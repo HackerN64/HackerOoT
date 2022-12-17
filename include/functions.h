@@ -1372,7 +1372,7 @@ void PreRender_RestoreZBuffer(PreRender* this, Gfx** gfxp);
 void func_800C213C(PreRender* this, Gfx** gfxp);
 void PreRender_RestoreFramebuffer(PreRender* this, Gfx** gfxp);
 void PreRender_CopyImageRegion(PreRender* this, Gfx** gfxp);
-#ifdef VANILLA_PAUSE_DELAY
+#ifdef ENABLE_PAUSE_BG_AA
 void PreRender_ApplyFilters(PreRender* this);
 #endif
 void AudioMgr_StopAllSfx(void);
@@ -1427,6 +1427,8 @@ void ListAlloc_Free(ListAlloc* this, void* data);
 void ListAlloc_FreeAll(ListAlloc* this);
 void Main_LogSystemHeap(void);
 void Main(void* arg);
+
+#ifdef ENABLE_SPEEDMETER
 void SpeedMeter_InitImpl(SpeedMeter* this, u32 arg1, u32 y);
 void SpeedMeter_Init(SpeedMeter* this);
 void SpeedMeter_Destroy(SpeedMeter* this);
@@ -1435,6 +1437,8 @@ void SpeedMeter_InitAllocEntry(SpeedMeterAllocEntry* this, u32 maxval, u32 val, 
                                u32 lrx, u32 uly, u32 lry);
 void SpeedMeter_DrawAllocEntry(SpeedMeterAllocEntry* this, GraphicsContext* gfxCtx);
 void SpeedMeter_DrawAllocEntries(SpeedMeter* meter, GraphicsContext* gfxCtx, GameState* state);
+#endif
+
 void SysCfb_Init(s32 n64dd);
 void* SysCfb_GetFbPtr(s32 idx);
 void* SysCfb_GetFbEnd(void);
@@ -1549,6 +1553,8 @@ u64* SysUcode_GetUCodeData(void);
 void func_800D31A0(void);
 void func_800D31F0(void);
 void func_800D3210(void);
+
+#ifdef ENABLE_DEBUG_HEAP
 void DebugArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action);
 void* DebugArena_Malloc(u32 size);
 void* DebugArena_MallocDebug(u32 size, const char* file, s32 line);
@@ -1565,6 +1571,8 @@ void DebugArena_Check(void);
 void DebugArena_Init(void* start, u32 size);
 void DebugArena_Cleanup(void);
 u8 DebugArena_IsInitialized(void);
+#endif
+
 void UCodeDisas_Init(UCodeDisas*);
 void UCodeDisas_Destroy(UCodeDisas*);
 void UCodeDisas_Disassemble(UCodeDisas*, Gfx*);

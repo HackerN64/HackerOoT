@@ -3,13 +3,13 @@
 #define STEP 0x100000
 
 u32 osGetMemSize(void) {
-    vu32* ptr;
+    volatile u32* ptr;
     u32 size = 0x400000;
     u32 data0;
     u32 data1;
 
     while (size < 0x800000) {
-        ptr = (vu32*)(K1BASE + size);
+        ptr = OS_PHYSICAL_TO_K1(size);
 
         data0 = *ptr;
         data1 = ptr[STEP / 4 - 1];
