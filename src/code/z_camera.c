@@ -7146,7 +7146,7 @@ void func_80057FC4(Camera* camera) {
 void Camera_Stub80058140(Camera* camera) {
 }
 
-void Camera_InitPlayerSettings(Camera* camera, Player* player) {
+void Camera_InitDataUsingPlayer(Camera* camera, Player* player) {
     PosRot playerPosShape;
     VecGeo eyeNextAtOffset;
     s32 bgId;
