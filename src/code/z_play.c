@@ -181,7 +181,7 @@ void Play_Destroy(GameState* thisx) {
     this->state.gfxCtx->callbackParam = NULL;
 
     SREG(91) = 0;
-    R_PAUSE_MENU_MODE = 0;
+    R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_OFF;
 
     PreRender_Destroy(&this->pauseBgPreRender);
     Effect_DeleteAll(this);
@@ -200,7 +200,7 @@ void Play_Destroy(GameState* thisx) {
     }
 
     Letterbox_Destroy();
-    TransitionFade_Destroy(&this->transitionFade);
+    TransitionFade_Destroy(&this->transitionFadeFlash);
     VisMono_Destroy(&D_80161498);
 
     if (gSaveContext.linkAge != this->linkAgeOnLoad) {
@@ -359,7 +359,7 @@ void Play_Init(GameState* thisx) {
     }
 
     SREG(91) = -1;
-    R_PAUSE_MENU_MODE = 0;
+    R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_OFF;
     PreRender_Init(&this->pauseBgPreRender);
     PreRender_SetValuesSave(&this->pauseBgPreRender, SCREEN_WIDTH, SCREEN_HEIGHT, NULL, NULL, NULL);
     PreRender_SetValues(&this->pauseBgPreRender, SCREEN_WIDTH, SCREEN_HEIGHT, NULL, NULL);
@@ -392,10 +392,10 @@ void Play_Init(GameState* thisx) {
     }
 
     Letterbox_Init();
-    TransitionFade_Init(&this->transitionFade);
-    TransitionFade_SetType(&this->transitionFade, 3);
-    TransitionFade_SetColor(&this->transitionFade, RGBA8(160, 160, 160, 255));
-    TransitionFade_Start(&this->transitionFade);
+    TransitionFade_Init(&this->transitionFadeFlash);
+    TransitionFade_SetType(&this->transitionFadeFlash, TRANS_INSTANCE_TYPE_FADE_FLASH);
+    TransitionFade_SetColor(&this->transitionFadeFlash, RGBA8(160, 160, 160, 255));
+    TransitionFade_Start(&this->transitionFadeFlash);
     VisMono_Init(&D_80161498);
     D_801614B0.a = 0;
     Flags_UnsetAllEnv(this);
@@ -617,9 +617,9 @@ void Play_Update(PlayState* this) {
                     }
 
                     if (this->transitionTrigger == TRANS_TRIGGER_END) {
-                        this->transitionCtx.setType(&this->transitionCtx.instanceData, 1);
+                        this->transitionCtx.setType(&this->transitionCtx.instanceData, TRANS_INSTANCE_TYPE_FILL_OUT);
                     } else {
-                        this->transitionCtx.setType(&this->transitionCtx.instanceData, 2);
+                        this->transitionCtx.setType(&this->transitionCtx.instanceData, TRANS_INSTANCE_TYPE_FILL_IN);
                     }
 
                     this->transitionCtx.start(&this->transitionCtx.instanceData);
@@ -990,7 +990,7 @@ void Play_Update(PlayState* this) {
             Letterbox_Update(R_UPDATE_RATE);
 
             PLAY_LOG(3783);
-            TransitionFade_Update(&this->transitionFade, R_UPDATE_RATE);
+            TransitionFade_Update(&this->transitionFadeFlash, R_UPDATE_RATE);
         } else {
             goto skip;
         }
@@ -1124,7 +1124,7 @@ void Play_Draw(PlayState* this) {
                 this->transitionCtx.draw(&this->transitionCtx.instanceData, &gfxP);
             }
 
-            TransitionFade_Draw(&this->transitionFade, &gfxP);
+            TransitionFade_Draw(&this->transitionFadeFlash, &gfxP);
 
             if (D_801614B0.a > 0) {
                 D_80161498.primColor.rgba = D_801614B0.rgba;
@@ -1145,21 +1145,26 @@ void Play_Draw(PlayState* this) {
         } else {
             PreRender_SetValues(&this->pauseBgPreRender, SCREEN_WIDTH, SCREEN_HEIGHT, gfxCtx->curFrameBuffer, gZBuffer);
 
-            if (R_PAUSE_MENU_MODE == 2) {
+            if (R_PAUSE_BG_PRERENDER_STATE == PAUSE_BG_PRERENDER_PROCESS) {
+                // Wait for the previous frame's display list to be processed,
+                // so that `pauseBgPreRender.fbufSave` and `pauseBgPreRender.cvgSave` are filled with the appropriate
+                // content and can be used by `PreRender_ApplyFilters` below.
                 Sched_FlushTaskQueue();
+
 #ifdef ENABLE_PAUSE_BG_AA
                 PreRender_ApplyFilters(&this->pauseBgPreRender);
 #endif
-                R_PAUSE_MENU_MODE = 3;
-            } else if (R_PAUSE_MENU_MODE >= 4) {
-                R_PAUSE_MENU_MODE = 0;
+                R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_DONE;
+            } else if (R_PAUSE_BG_PRERENDER_STATE >= PAUSE_BG_PRERENDER_MAX) {
+                R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_OFF;
             }
 
-            if (R_PAUSE_MENU_MODE == 3) {
-                Gfx* sp84 = POLY_OPA_DISP;
+            if (R_PAUSE_BG_PRERENDER_STATE == PAUSE_BG_PRERENDER_DONE) {
+                Gfx* gfxP = POLY_OPA_DISP;
 
-                PreRender_RestoreFramebuffer(&this->pauseBgPreRender, &sp84);
-                POLY_OPA_DISP = sp84;
+                PreRender_RestoreFramebuffer(&this->pauseBgPreRender, &gfxP);
+                POLY_OPA_DISP = gfxP;
+
                 goto Play_Draw_DrawOverlayElements;
             } else {
                 s32 roomDrawFlags;
@@ -1272,22 +1277,25 @@ void Play_Draw(PlayState* this) {
                 }
 #endif
 
-                if ((R_PAUSE_MENU_MODE == 1) || (gTrnsnUnkState == 1)) {
-                    Gfx* sp70 = OVERLAY_DISP;
+                if ((R_PAUSE_BG_PRERENDER_STATE == PAUSE_BG_PRERENDER_SETUP) || (gTrnsnUnkState == 1)) {
+                    Gfx* gfxP = OVERLAY_DISP;
 
+                    // Copy the frame buffer contents at this point in the display list to the zbuffer
+                    // The zbuffer must then stay untouched until unpausing
                     this->pauseBgPreRender.fbuf = gfxCtx->curFrameBuffer;
                     this->pauseBgPreRender.fbufSave = (u16*)gZBuffer;
-                    PreRender_SaveFramebuffer(&this->pauseBgPreRender, &sp70);
-                    if (R_PAUSE_MENU_MODE == 1) {
+                    PreRender_SaveFramebuffer(&this->pauseBgPreRender, &gfxP);
+                    if (R_PAUSE_BG_PRERENDER_STATE == PAUSE_BG_PRERENDER_SETUP) {
                         this->pauseBgPreRender.cvgSave = (u8*)gfxCtx->curFrameBuffer;
-                        PreRender_DrawCoverage(&this->pauseBgPreRender, &sp70);
-                        R_PAUSE_MENU_MODE = 2;
+                        PreRender_DrawCoverage(&this->pauseBgPreRender, &gfxP);
+
+                        R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_PROCESS;
                     } else {
                         gTrnsnUnkState = 2;
                     }
-                    OVERLAY_DISP = sp70;
+                    OVERLAY_DISP = gfxP;
                     this->unk_121C7 = 2;
-                    SREG(33) |= 1;
+                    R_GRAPH_TASKSET00_FLAGS |= 1;
                 } else {
                 Play_Draw_DrawOverlayElements:
                     if ((R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_OVERLAY_ELEMENTS) {

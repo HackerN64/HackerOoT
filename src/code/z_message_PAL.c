@@ -1738,7 +1738,7 @@ void Message_ContinueTextbox(PlayState* play, u16 textId) {
     msgCtx->textboxColorAlphaCurrent = msgCtx->textboxColorAlphaTarget;
 }
 
-void Message_StartOcarina(PlayState* play, u16 ocarinaActionId) {
+void Message_StartOcarinaImpl(PlayState* play, u16 ocarinaActionId) {
     static u16 sOcarinaSongFlagsMap[] = {
         (1 << OCARINA_SONG_MINUET),
         (1 << OCARINA_SONG_BOLERO),
@@ -1876,14 +1876,14 @@ void Message_StartOcarina(PlayState* play, u16 ocarinaActionId) {
     }
 }
 
-void func_8010BD58(PlayState* play, u16 ocarinaActionId) {
-    play->msgCtx.unk_E40E = 0;
-    Message_StartOcarina(play, ocarinaActionId);
+void Message_StartOcarina(PlayState* play, u16 ocarinaActionId) {
+    play->msgCtx.disableSunsSong = false;
+    Message_StartOcarinaImpl(play, ocarinaActionId);
 }
 
-void func_8010BD88(PlayState* play, u16 ocarinaActionId) {
-    play->msgCtx.unk_E40E = 1;
-    Message_StartOcarina(play, ocarinaActionId);
+void Message_StartOcarinaSunsSongDisabled(PlayState* play, u16 ocarinaActionId) {
+    play->msgCtx.disableSunsSong = true;
+    Message_StartOcarinaImpl(play, ocarinaActionId);
 }
 
 u8 Message_GetState(MessageContext* msgCtx) {
@@ -2580,7 +2580,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
             case MSGMODE_OCARINA_AWAIT_INPUT:
                 Message_DrawText(play, &gfx);
                 if (Message_ShouldAdvance(play)) {
-                    func_8010BD58(play, msgCtx->ocarinaAction);
+                    Message_StartOcarina(play, msgCtx->ocarinaAction);
                 }
                 break;
             case MSGMODE_SCARECROW_LONG_RECORDING_START:
