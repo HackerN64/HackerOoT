@@ -365,12 +365,12 @@ void Actor_Kill(Actor* actor);
 void Actor_SetFocus(Actor* actor, f32 yOffset);
 void Actor_SetScale(Actor* actor, f32 scale);
 void Actor_SetObjectDependency(PlayState* play, Actor* actor);
-void func_8002D7EC(Actor* actor);
-void func_8002D868(Actor* actor);
-void Actor_MoveForward(Actor* actor);
-void func_8002D908(Actor* actor);
-void func_8002D97C(Actor* actor);
-void func_8002D9A4(Actor* actor, f32 arg1);
+void Actor_UpdatePos(Actor* actor);
+void Actor_UpdateVelocityXZGravity(Actor* actor);
+void Actor_MoveXZGravity(Actor* actor);
+void Actor_UpdateVelocityXYZ(Actor* actor);
+void Actor_MoveXYZ(Actor* actor);
+void Actor_SetProjectileSpeed(Actor* actor, f32 speedXYZ);
 s16 Actor_WorldYawTowardActor(Actor* actorA, Actor* actorB);
 s16 Actor_WorldYawTowardPoint(Actor* actor, Vec3f* refPoint);
 f32 Actor_WorldDistXYZToActor(Actor* actorA, Actor* actorB);
@@ -768,16 +768,16 @@ u8 CollisionCheck_GetSwordDamage(s32 dmgFlags);
 void SaveContext_Init(void);
 s32 func_800635D0(s32);
 void Regs_Init(void);
-void func_8006375C(s32 arg0, s32 arg1, const char* text);
+void DbCamera_ScreenText(u8 x, u8 y, const char* text);
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-void func_8006376C(u8 x, u8 y, u8 colorIndex, const char* text);
+void DbCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text);
 #endif
 
 void Regs_UpdateEditor(Input* input);
 
 #if (defined ENABLE_CAMERA_DEBUGGER) || (defined ENABLE_REG_EDITOR)
-void func_80063D7C(GraphicsContext* gfxCtx);
+void Debug_DrawText(GraphicsContext* gfxCtx);
 #endif
 
 void DebugDisplay_Init(void);
@@ -1227,13 +1227,10 @@ void func_800AD920(struct_80166500* this);
 void func_800AD950(struct_80166500* this);
 void func_800AD958(struct_80166500* this, Gfx** gfxp);
 void PlayerCall_InitFuncPtrs(void);
-void TransitionUnk_InitGraphics(TransitionUnk* this);
-void TransitionUnk_InitData(TransitionUnk* this);
-void TransitionUnk_Destroy(TransitionUnk* this);
-TransitionUnk* TransitionUnk_Init(TransitionUnk* this, s32 row, s32 col);
-void TransitionUnk_SetData(TransitionUnk* this);
-void TransitionUnk_Draw(TransitionUnk* this, Gfx**);
-void func_800B23E8(TransitionUnk* this);
+void TransitionTile_Destroy(TransitionTile* this);
+TransitionTile* TransitionTile_Init(TransitionTile* this, s32 cols, s32 rows);
+void TransitionTile_Draw(TransitionTile* this, Gfx** gfxP);
+void TransitionTile_Update(TransitionTile* this);
 void TransitionTriforce_Start(void* thisx);
 void* TransitionTriforce_Init(void* thisx);
 void TransitionTriforce_Destroy(void* thisx);

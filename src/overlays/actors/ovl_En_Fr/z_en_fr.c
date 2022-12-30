@@ -587,7 +587,7 @@ void EnFr_UpdateActive(Actor* thisx, PlayState* play) {
         SkelAnime_Update(&this->skelAnime);
         SkelAnime_Update(&this->skelAnimeButterfly);
         EnFr_ButterflyPath(this, play);
-        Actor_MoveForward(&this->actor);
+        Actor_MoveXZGravity(&this->actor);
     }
 }
 
