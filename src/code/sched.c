@@ -40,6 +40,7 @@
  * @see irqmgr.c
  */
 #include "global.h"
+#include "profiling.h"
 
 #define RSP_DONE_MSG 667
 #define RDP_DONE_MSG 668
@@ -396,10 +397,13 @@ void Sched_RunTask(Scheduler* sc, OSScTask* spTask, OSScTask* dpTask) {
         // Begin profiling timers
         if (spTask->list.t.type == M_AUDTASK) {
             sRSPAudioTimeStart = osGetTime();
+            profiler_rsp_started(PROFILER_RSP_AUDIO);
         } else if (spTask->list.t.type == M_GFXTASK) {
             sRSPGfxTimeStart = osGetTime();
+            profiler_rsp_started(PROFILER_RSP_GFX);
         } else {
             sRSPOtherTimeStart = osGetTime();
+            profiler_rsp_started(PROFILER_TIME_RSP_OTHER);
         }
 
         // Run RSP
@@ -514,10 +518,13 @@ void Sched_HandleRSPDone(Scheduler* sc) {
     // Task profiling
     if (sc->curRSPTask->list.t.type == M_AUDTASK) {
         gRSPAudioTimeAcc += osGetTime() - sRSPAudioTimeStart;
+        profiler_rsp_completed(PROFILER_RSP_AUDIO);
     } else if (sc->curRSPTask->list.t.type == M_GFXTASK) {
         gRSPGfxTimeAcc += osGetTime() - sRSPGfxTimeStart;
+        profiler_rsp_completed(PROFILER_RSP_GFX);
     } else {
         gRSPOtherTimeAcc += osGetTime() - sRSPOtherTimeStart;
+        profiler_rsp_completed(PROFILER_TIME_RSP_OTHER);
     }
 
     // Clear current RSP task

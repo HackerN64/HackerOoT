@@ -2,6 +2,7 @@
 #include "terminal.h"
 
 #include "config.h"
+#include "profiling.h"
 
 s32 gScreenWidth = SCREEN_WIDTH;
 s32 gScreenHeight = SCREEN_HEIGHT;

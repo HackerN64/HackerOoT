@@ -1,4 +1,5 @@
 #include "global.h"
+#include "profiling.h"
 
 void func_800C3C80(AudioMgr* audioMgr) {
     AudioTask* task = audioMgr->rspTask;
@@ -63,6 +64,7 @@ void AudioMgr_ThreadEntry(void* arg0) {
 
     while (true) {
         osRecvMesg(&audioMgr->interruptQueue, (OSMesg*)&msg, OS_MESG_BLOCK);
+        profiler_audio_started();
         switch (*msg) {
             case OS_SC_RETRACE_MSG:
                 AudioMgr_HandleRetrace(audioMgr);
@@ -81,6 +83,7 @@ void AudioMgr_ThreadEntry(void* arg0) {
                 AudioMgr_HandlePreNMI(audioMgr);
                 break;
         }
+        profiler_audio_completed();
     }
 }
 

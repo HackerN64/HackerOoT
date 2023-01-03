@@ -371,3 +371,38 @@ s32 GfxPrint_Printf(GfxPrint* this, const char* fmt, ...) {
 
     return ret;
 }
+
+void GfxPrint_Print(GameState* gameState, u16 posX, u16 posY, Color_RGBA32 rgba, const char* fmt, ...) {
+    GfxPrint gfxP;
+    Gfx *dl, *polyOpaP;
+    s32 ret;
+
+    OPEN_DISPS(gameState->gfxCtx, __FILE__, __LINE__);
+
+    dl = Graph_GfxPlusOne(polyOpaP = POLY_OPA_DISP);
+    gSPDisplayList(OVERLAY_DISP++, dl);
+
+    GfxPrint_Init(&gfxP);
+    GfxPrint_Open(&gfxP, dl);
+
+    GfxPrint_SetPos(&gfxP, posX, posY);
+    gfxP.posX = gfxP.baseX = posX * GFX_CHAR_X_SPACING;
+
+    GfxPrint_SetColor(&gfxP, rgba.r, rgba.g, rgba.b, rgba.a);
+
+    va_list args;
+    va_start(args, fmt);
+
+    ret = GfxPrint_VPrintf(&gfxP, fmt, args);
+
+    va_end(args);
+
+    dl = GfxPrint_Close(&gfxP);
+    GfxPrint_Destroy(&gfxP);
+
+    gSPEndDisplayList(dl++);
+    Graph_BranchDlist(polyOpaP, dl);
+    POLY_OPA_DISP = dl;
+
+    CLOSE_DISPS(gameState->gfxCtx, __FILE__, __LINE__);
+}

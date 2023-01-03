@@ -1,5 +1,6 @@
 #include "global.h"
 #include "terminal.h"
+#include "profiling.h"
 
 #include "config.h"
 
@@ -181,6 +182,11 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
         newDList = GfxPrint_Close(&printer);
         GfxPrint_Destroy(&printer);
     }
+#endif
+
+#ifdef USE_PROFILER
+    profiler_print_times(gameState);
+    newDList = Graph_GfxPlusOne(polyOpaP = POLY_OPA_DISP);
 #endif
 
     if (R_ENABLE_ARENA_DBG < 0) {
