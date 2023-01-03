@@ -38,6 +38,10 @@ typedef union {
     };
 } MtxF;
 
+typedef struct {
+    u8 r, g, b, a;
+} Color_RGBA32;
+
 #endif
 
 #endif
