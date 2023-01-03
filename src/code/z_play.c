@@ -660,7 +660,7 @@ void Play_Update(PlayState* this) {
                             if (gTrnsnUnkState == 3) {
                                 TransitionUnk_Destroy(&sTrnsnUnk);
                                 gTrnsnUnkState = 0;
-                                R_UPDATE_RATE = 3;
+                                R_UPDATE_RATE = DEFAULT_REFRESH_RATE;
                             }
                         }
 
@@ -708,7 +708,7 @@ void Play_Update(PlayState* this) {
 
                     if (sTransitionFillTimer >= 20) {
                         gTrnsnUnkState = 0;
-                        R_UPDATE_RATE = 3;
+                        R_UPDATE_RATE = DEFAULT_REFRESH_RATE;
                         this->transitionTrigger = TRANS_TRIGGER_OFF;
                         this->transitionMode = TRANS_MODE_OFF;
                         this->envCtx.fillScreen = false;
@@ -742,7 +742,7 @@ void Play_Update(PlayState* this) {
                         this->transitionMode = TRANS_MODE_OFF;
                     } else {
                         gTrnsnUnkState = 0;
-                        R_UPDATE_RATE = 3;
+                        R_UPDATE_RATE = DEFAULT_REFRESH_RATE;
                         this->transitionTrigger = TRANS_TRIGGER_OFF;
                         this->transitionMode = TRANS_MODE_OFF;
                     }
@@ -773,7 +773,7 @@ void Play_Update(PlayState* this) {
                     if (this->transitionTrigger == TRANS_TRIGGER_END) {
                         if (this->envCtx.sandstormPrimA < 110) {
                             gTrnsnUnkState = 0;
-                            R_UPDATE_RATE = 3;
+                            R_UPDATE_RATE = DEFAULT_REFRESH_RATE;
                             this->transitionTrigger = TRANS_TRIGGER_OFF;
                             this->transitionMode = TRANS_MODE_OFF;
                         }
@@ -808,7 +808,7 @@ void Play_Update(PlayState* this) {
                     if (this->transitionTrigger == TRANS_TRIGGER_END) {
                         if (this->envCtx.sandstormPrimA <= 0) {
                             gTrnsnUnkState = 0;
-                            R_UPDATE_RATE = 3;
+                            R_UPDATE_RATE = DEFAULT_REFRESH_RATE;
                             this->transitionTrigger = TRANS_TRIGGER_OFF;
                             this->transitionMode = TRANS_MODE_OFF;
                         }
@@ -831,7 +831,7 @@ void Play_Update(PlayState* this) {
 
                         if (gSaveContext.cutsceneTransitionControl <= 100) {
                             gTrnsnUnkState = 0;
-                            R_UPDATE_RATE = 3;
+                            R_UPDATE_RATE = DEFAULT_REFRESH_RATE;
                             this->transitionTrigger = TRANS_TRIGGER_OFF;
                             this->transitionMode = TRANS_MODE_OFF;
                         }

@@ -51,6 +51,7 @@
 #define R_ROOM_IMAGE_NODRAW_FLAGS                SREG(25)
 #define R_ROOM_BG2D_FORCE_SCALEBG                SREG(26)
 #define R_UPDATE_RATE                            SREG(30)
+#define DEFAULT_REFRESH_RATE                     3 // 3 is 20fps, 2 is 30fps (so framerate == (60 / this define))
 #define R_ENABLE_AUDIO_DBG                       SREG(36)
 #define R_VI_MODE_EDIT_STATE                     SREG(48)
 #define R_VI_MODE_EDIT_WIDTH                     SREG(49)

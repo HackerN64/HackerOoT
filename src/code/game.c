@@ -425,7 +425,7 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
 
     startTime = endTime;
     GameState_InitArena(gameState, 0x100000);
-    R_UPDATE_RATE = 3;
+    R_UPDATE_RATE = DEFAULT_REFRESH_RATE;
     init(gameState);
 
     endTime = osGetTime();

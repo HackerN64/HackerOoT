@@ -3425,7 +3425,7 @@ void KaleidoScope_Update(PlayState* play) {
                 if (interfaceCtx->unk_244 >= 255) {
                     interfaceCtx->unk_244 = 255;
                     pauseCtx->state = 0;
-                    R_UPDATE_RATE = 3;
+                    R_UPDATE_RATE = DEFAULT_REFRESH_RATE;
                     R_PAUSE_MENU_MODE = 0;
                     func_800981B8(&play->objectCtx);
                     func_800418D0(&play->colCtx, play);
@@ -3486,7 +3486,7 @@ void KaleidoScope_Update(PlayState* play) {
 
         case 0x13:
             pauseCtx->state = 0;
-            R_UPDATE_RATE = 3;
+            R_UPDATE_RATE = DEFAULT_REFRESH_RATE;
             R_PAUSE_MENU_MODE = 0;
             func_800981B8(&play->objectCtx);
             func_800418D0(&play->colCtx, play);
