@@ -1142,7 +1142,7 @@ typedef struct PlayState {
     /* 0x11D44 */ s32 (*isPlayerDroppingFish)(struct PlayState* play);
     /* 0x11D48 */ s32 (*startPlayerFishing)(struct PlayState* play);
     /* 0x11D4C */ s32 (*grabPlayer)(struct PlayState* play, Player* player);
-    /* 0x11D50 */ s32 (*startPlayerCutscene)(struct PlayState* play, Actor* actor, s32 mode);
+    /* 0x11D50 */ s32 (*startPlayerCutscene)(struct PlayState* play, Actor* actor, s32 csMode);
     /* 0x11D54 */ void (*func_11D54)(Player* player, struct PlayState* play);
     /* 0x11D58 */ s32 (*damagePlayer)(struct PlayState* play, s32 damage);
     /* 0x11D5C */ void (*talkWithPlayer)(struct PlayState* play, Actor* actor);
@@ -1722,6 +1722,7 @@ typedef struct {
     /* 0x08 */ Color_RGBA8_u32 envColor;
 } struct_80166500; // size = 0x10
 
+#ifdef ENABLE_SPEEDMETER
 typedef struct {
     /* 0x00 */ char unk_00[0x18];
     /* 0x18 */ s32 unk_18;
@@ -1745,6 +1746,7 @@ typedef struct {
     /* 0x05 */ u8 y;
     /* 0x06 */ u16 color;
 } SpeedMeterTimeEntry; // size = 0x08
+#endif
 
 typedef struct {
     /* 0x00 */ u32 value;

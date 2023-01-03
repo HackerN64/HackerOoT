@@ -5,6 +5,8 @@
  * All HackerOoT config headers included into one.
  */
 
+#include "config/config_debug_features.h"
+#include "config/config_debug_controls.h"
 #include "config/config_debug.h"
 #include "config/config_game.h"
 #include "config/config_graphics.h"

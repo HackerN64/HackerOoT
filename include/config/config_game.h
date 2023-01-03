@@ -5,6 +5,11 @@
  * GAME SETTINGS *
  *****************/
 
+/**
+ * Enable mempak-related code
+ */
+// #define ENABLE_MEMPAK
+
 // Configure dialogue print speed (1 is vanilla)
 #define DIALOGUE_PRINT_SPEED 2
 
@@ -30,8 +35,10 @@
  */
 // #define FW_SPLIT_AGE
 
-/* Apply the anti-aliasing filter for the background of the pause menu. This adds a delay when pausing. */
-//#define VANILLA_PAUSE_DELAY
-
+/**
+ * Applies the anti-aliasing filter for the background of the pause menu.
+ * Note: this adds a significant delay when pausing.
+*/
+// #define ENABLE_PAUSE_BG_AA
 
 #endif
