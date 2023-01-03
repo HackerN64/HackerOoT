@@ -854,7 +854,7 @@ void Play_Update(PlayState* this) {
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
             sp80 = (this->pauseCtx.state != 0) || (this->pauseCtx.debugState != 0);
 #else
-            sp80 = (this->pauseCtx.state != 0);
+        sp80 = (this->pauseCtx.state != 0);
 #endif
 
             PLAY_LOG(3555);
@@ -935,7 +935,7 @@ void Play_Update(PlayState* this) {
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
                     if ((this->pauseCtx.state != 0) || (this->pauseCtx.debugState != 0)) {
 #else
-                    if (this->pauseCtx.state != 0) {
+                if (this->pauseCtx.state != 0) {
 #endif
                         // "Changing viewpoint is prohibited due to the kaleidoscope"
                         osSyncPrintf(VT_FGCOL(CYAN) "カレイドスコープ中につき視点変更を禁止しております\n" VT_RST);
@@ -963,7 +963,7 @@ void Play_Update(PlayState* this) {
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
             if ((this->pauseCtx.state != 0) || (this->pauseCtx.debugState != 0)) {
 #else
-            if (this->pauseCtx.state != 0) {
+        if (this->pauseCtx.state != 0) {
 #endif
                 PLAY_LOG(3721);
                 KaleidoScopeCall_Update(this);

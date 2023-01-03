@@ -12,7 +12,7 @@ COMPILER ?= gcc
 # If DEBUG_BUILD is 1, compile with DEBUG_ROM defined
 DEBUG_BUILD ?= 1
 
-# Valid compression algorithms are yaz lzo and aplib
+# Valid compression algorithms are yaz, lzo and aplib
 COMPRESSION ?= yaz
 
 ifeq ($(COMPRESSION),lzo)
