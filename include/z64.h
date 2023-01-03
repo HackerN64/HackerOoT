@@ -1,6 +1,8 @@
 #ifndef Z64_H
 #define Z64_H
 
+#include "config.h"
+
 #include "ultra64.h"
 #include "ultra64/gs2dex.h"
 #include "z64save.h"
@@ -43,8 +45,6 @@
 #include "mempak.h"
 #include "tha.h"
 #include "thga.h"
-
-#include "config.h"
 
 #define SCREEN_WIDTH  320
 #define SCREEN_HEIGHT 240
