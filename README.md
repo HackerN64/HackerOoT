@@ -122,9 +122,10 @@ Both of these have the disadvantage that the ordering of the terminal output is 
 
 ## Compression and Wii Virtual Console support
 
-Nintendo 64 games are using compression to fit the game in a cartridge, this is why you can see 64MB and 32MB (or less) roms. Currently, HackerOoT supports YAZ0 and LZO compression algorithms.
+Nintendo 64 games are using compression to fit the game in a cartridge, this is why you can see 64MB and 32MB (or less) roms. Currently, HackerOoT supports YAZ0, LZO and
+APLIB compression algorithms.
 
-Run ``make compress`` to build a rom and compress it, to choose between YAZ0 LZO or APLIB, either edit the ``COMPRESS`` variable in the Makefile, or simply execute ``make compress COMPRESSION=yaz`` ``make compress COMPRESSION=lzo`` or ``make compress COMPRESSION=aplib``.
+Run ``make compress`` to build a rom and compress it, to choose between YAZ0, LZO or APLIB, either edit the ``COMPRESS`` variable in the Makefile, or simply execute ``make compress COMPRESSION=yaz`` ``make compress COMPRESSION=lzo`` or ``make compress COMPRESSION=aplib``.
 
 For more informations about the algorithms, you can read [Z64.me's encoding readme](https://github.com/z64me/z64enc#readme).
 

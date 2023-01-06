@@ -163,7 +163,7 @@ void func_800645A0(PlayState* play, CutsceneContext* csCtx) {
     // if the scene layer is a cutscene one, we're not playing a cutscene
     // and we pressed D-Pad Up: restart the cutscene
     u8 canStartCutscene = buttonCombo && (CHECK_BTN_ALL(input->press.button, CS_CTRL_RESTART_CONTROL) &&
-                            (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER);
+                                          (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER);
 
     // restart the cutscene without using the camera points,
     // instead simply follow the player
@@ -540,9 +540,11 @@ void Cutscene_Command_Terminator(PlayState* play, CutsceneContext* csCtx, CsCmdB
     runCmdDestination = ((csCtx->frames == cmd->startFrame) || titleDemoSkipped);
 
 #ifdef ENABLE_CS_CONTROL
-    runCmdDestination = skipTitleScreenCS && (runCmdDestination || ((csCtx->frames > 20) &&
-        (buttonCombo && CHECK_BTN_ALL(input->press.button, CS_CTRL_RUN_DEST_CONTROL)) &&
-        (gSaveContext.fileNum != 0xFEDC)));
+    runCmdDestination =
+        skipTitleScreenCS &&
+        (runCmdDestination ||
+         ((csCtx->frames > 20) && (buttonCombo && CHECK_BTN_ALL(input->press.button, CS_CTRL_RUN_DEST_CONTROL)) &&
+          (gSaveContext.fileNum != 0xFEDC)));
 #endif
 
     if (runCmdDestination) {
