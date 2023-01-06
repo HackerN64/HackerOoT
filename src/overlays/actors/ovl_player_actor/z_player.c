@@ -9636,10 +9636,9 @@ static void (*D_80854738[])(PlayState* play, Player* this) = {
 
 static Vec3f D_80854778 = { 0.0f, 50.0f, 0.0f };
 
-
 /**
  * Iterates in the get item table to get the largest GI object size
-*/
+ */
 u32 Player_GetGIAllocSize() {
     u32 i = 0, curSize = 0, allocSize = PLAYER_ALLOC_GI_MIN;
 
@@ -9689,7 +9688,8 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     Player_SetEquipmentData(play, this);
     this->prevBoots = this->currentBoots;
     Player_InitCommon(this, play, gPlayerSkelHeaders[((void)0, gSaveContext.linkAge)]);
-    this->giObjectSegment = (void*)ALIGN16((uintptr_t)ZeldaArena_MallocDebug(Player_GetGIAllocSize(), __FILE__, __LINE__));
+    this->giObjectSegment =
+        (void*)ALIGN16((uintptr_t)ZeldaArena_MallocDebug(Player_GetGIAllocSize(), __FILE__, __LINE__));
 
     respawnFlag = gSaveContext.respawnFlag;
 
@@ -13277,7 +13277,8 @@ s32 func_8084FCAC(Player* this, PlayState* play) {
         this->actor.velocity.x = 0.0f;
 
         // should we keep that?
-        // if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT)) {
+        // if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT))
+        // {
         //     Flags_SetTempClear(play, play->roomCtx.curRoom.num);
         // }
 

@@ -649,7 +649,6 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
         pauseCtx->debugState = 0;
     }
 
-
     CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_debug.c", 861);
 }
 

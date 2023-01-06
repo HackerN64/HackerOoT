@@ -51,7 +51,6 @@ u8 gAudioSfxSwapOff = 0;
 u8 D_801333F8 = 0;
 #endif
 
-
 s32 D_801333FC = 0; // unused
 
 u8 gSeqCmdWritePos = 0;

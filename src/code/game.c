@@ -190,9 +190,9 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     if (R_ENABLE_ARENA_DBG < 0) {
         s32 pad;
 
-    #ifdef ENABLE_DEBUG_HEAP
+#ifdef ENABLE_DEBUG_HEAP
         DebugArena_Display();
-    #endif
+#endif
         SystemArena_Display();
         // "%08x bytes left until the death of Hyrule (game_alloc)"
         osSyncPrintf("ハイラル滅亡まであと %08x バイト(game_alloc)\n", THA_GetRemaining(&gameState->tha));

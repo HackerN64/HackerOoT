@@ -2549,11 +2549,11 @@ void Magic_Update(PlayState* play) {
             // Slowly consume magic while lens is on
             if ((play->pauseCtx.state == 0) &&
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
-            (play->pauseCtx.debugState == 0) &&
+                (play->pauseCtx.debugState == 0) &&
 #endif
-            (msgCtx->msgMode == MSGMODE_NONE) &&
-                (play->gameOverCtx.state == GAMEOVER_INACTIVE) && (play->transitionTrigger == TRANS_TRIGGER_OFF) &&
-                (play->transitionMode == TRANS_MODE_OFF) && !Play_InCsMode(play)) {
+                (msgCtx->msgMode == MSGMODE_NONE) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
+                (play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->transitionMode == TRANS_MODE_OFF) &&
+                !Play_InCsMode(play)) {
                 if ((gSaveContext.magic == 0) ||
                     ((Player_GetEnvironmentalHazard(play) >= PLAYER_ENV_HAZARD_UNDERWATER_FLOOR) &&
                      (Player_GetEnvironmentalHazard(play) <= PLAYER_ENV_HAZARD_UNDERWATER_FREE)) ||
@@ -2841,7 +2841,7 @@ void Interface_DrawItemButtons(PlayState* play) {
 
     if (interfaceCtx->naviCalling && (play->pauseCtx.state == 0) &&
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
-    (play->pauseCtx.debugState == 0) &&
+        (play->pauseCtx.debugState == 0) &&
 #endif
         (play->csCtx.state == CS_STATE_IDLE)) {
         if (!sCUpInvisible) {
@@ -3155,18 +3155,19 @@ void Interface_Draw(PlayState* play) {
 
         Gfx_SetupDL_39Overlay(play->state.gfxCtx);
 
-        // Rupee Icon
-        #ifndef MM_WALLET_ICON_COLORS
+// Rupee Icon
+#ifndef MM_WALLET_ICON_COLORS
         gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 200, 255, 100, interfaceCtx->magicAlpha);
-        #else
-        static Color_RGB8 const walletColors[] = {
-            { 200, 255, 100 },
-            { 130, 130, 255 },
-            { 255, 100, 100 },
-        };
-        u8 walletUpg = CUR_UPG_VALUE(UPG_WALLET);
-        gDPSetPrimColor(OVERLAY_DISP++, 0, 0, walletColors[walletUpg].r, walletColors[walletUpg].g, walletColors[walletUpg].b, interfaceCtx->magicAlpha);
-        #endif
+#else
+    static Color_RGB8 const walletColors[] = {
+        { 200, 255, 100 },
+        { 130, 130, 255 },
+        { 255, 100, 100 },
+    };
+    u8 walletUpg = CUR_UPG_VALUE(UPG_WALLET);
+    gDPSetPrimColor(OVERLAY_DISP++, 0, 0, walletColors[walletUpg].r, walletColors[walletUpg].g,
+                    walletColors[walletUpg].b, interfaceCtx->magicAlpha);
+#endif
 
         gDPSetEnvColor(OVERLAY_DISP++, 0, 80, 0, 255);
         OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, gRupeeCounterIconTex, 16, 16, 26, 206, 16, 16, 1 << 10, 1 << 10);
@@ -3439,7 +3440,7 @@ void Interface_Draw(PlayState* play) {
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
         if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0)) {
 #else
-        if (play->pauseCtx.state == 0) {
+    if (play->pauseCtx.state == 0) {
 #endif
             if (gSaveContext.minigameState != 1) {
                 // Carrots rendering if the action corresponds to riding a horse
@@ -3539,7 +3540,7 @@ void Interface_Draw(PlayState* play) {
 
         if ((play->pauseCtx.state == 0) &&
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
-        (play->pauseCtx.debugState == 0) &&
+            (play->pauseCtx.debugState == 0) &&
 #endif
             (play->gameOverCtx.state == GAMEOVER_INACTIVE) && (msgCtx->msgMode == MSGMODE_NONE) &&
             !(player->stateFlags2 & PLAYER_STATE2_24) && (play->transitionTrigger == TRANS_TRIGGER_OFF) &&
@@ -4152,7 +4153,8 @@ void Interface_Update(PlayState* play) {
 #endif
         (msgCtx->msgMode == MSGMODE_NONE) && !(player->stateFlags2 & PLAYER_STATE2_24) &&
         (play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->transitionMode == TRANS_MODE_OFF) &&
-        !Play_InCsMode(play)) {}
+        !Play_InCsMode(play)) {
+    }
 
     if (gSaveContext.rupeeAccumulator != 0) {
         if (gSaveContext.rupeeAccumulator > 0) {
@@ -4239,9 +4241,9 @@ void Interface_Update(PlayState* play) {
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
         (play->pauseCtx.debugState == 0) &&
 #endif
-        (msgCtx->msgMode == MSGMODE_NONE) &&
-        (play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
-        (play->transitionMode == TRANS_MODE_OFF) && ((play->csCtx.state == CS_STATE_IDLE) || !Player_InCsMode(play))) {
+        (msgCtx->msgMode == MSGMODE_NONE) && (play->transitionTrigger == TRANS_TRIGGER_OFF) &&
+        (play->gameOverCtx.state == GAMEOVER_INACTIVE) && (play->transitionMode == TRANS_MODE_OFF) &&
+        ((play->csCtx.state == CS_STATE_IDLE) || !Player_InCsMode(play))) {
 
         if (gSaveContext.isMagicAcquired && (gSaveContext.magicLevel == 0)) {
             gSaveContext.magicLevel = gSaveContext.isDoubleMagicAcquired + 1;
