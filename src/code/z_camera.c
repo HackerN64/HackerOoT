@@ -2592,8 +2592,8 @@ s32 Camera_Jump3(Camera* camera) {
             rwData->mode = CAM_MODE_NORMAL;
             modeSwitch = true;
         }
-    } else if (((camera->waterYPos - eye->y) > OREG(45)) && (rwData->mode != CAM_MODE_BOOMERANG)) {
-        rwData->mode = CAM_MODE_BOOMERANG;
+    } else if (((camera->waterYPos - eye->y) > OREG(45)) && (rwData->mode != CAM_MODE_AIM_BOOMERANG)) {
+        rwData->mode = CAM_MODE_AIM_BOOMERANG;
         modeSwitch = true;
     }
 
@@ -2867,7 +2867,7 @@ s32 Camera_Battle1(Camera* camera) {
                 VT_COL(YELLOW, BLACK) "camera: warning: battle: target is not valid, change parallel\n" VT_RST);
         }
         camera->target = NULL;
-        Camera_ChangeMode(camera, CAM_MODE_TARGET);
+        Camera_ChangeMode(camera, CAM_MODE_Z_PARALLEL);
         return true;
     }
 
@@ -2883,7 +2883,7 @@ s32 Camera_Battle1(Camera* camera) {
         } else {
             osSyncPrintf("camera: battle: target actor name " VT_COL(RED, WHITE) "%d" VT_RST "\n", rwData->target->id);
             camera->target = NULL;
-            Camera_ChangeMode(camera, CAM_MODE_TARGET);
+            Camera_ChangeMode(camera, CAM_MODE_Z_PARALLEL);
             return true;
         }
         rwData->animTimer = R_CAM_DEFAULT_ANIM_TIME + OREG(24);
@@ -3150,7 +3150,7 @@ s32 Camera_KeepOn1(Camera* camera) {
                 VT_COL(YELLOW, BLACK) "camera: warning: keepon: target is not valid, change parallel\n" VT_RST);
         }
         camera->target = NULL;
-        Camera_ChangeMode(camera, CAM_MODE_TARGET);
+        Camera_ChangeMode(camera, CAM_MODE_Z_PARALLEL);
         return 1;
     }
 
@@ -3388,7 +3388,7 @@ s32 Camera_KeepOn3(Camera* camera) {
             osSyncPrintf(VT_COL(YELLOW, BLACK) "camera: warning: talk: target is not valid, change parallel\n" VT_RST);
         }
         camera->target = NULL;
-        Camera_ChangeMode(camera, CAM_MODE_TARGET);
+        Camera_ChangeMode(camera, CAM_MODE_Z_PARALLEL);
         return 1;
     }
     if (RELOAD_PARAMS(camera)) {
@@ -5263,7 +5263,7 @@ s32 Camera_Unique9(Camera* camera) {
                         CAM_INTERFACE_FIELD(CAM_LETTERBOX_IGNORE, CAM_HUD_VISIBILITY(rwData->curKeyFrame->unk_01), 0));
                 } else if (camera->player->stateFlags1 & PLAYER_STATE1_27 &&
                            player->currentBoots != PLAYER_BOOTS_IRON) {
-                    func_8002DF38(camera->play, camera->target, 8);
+                    func_8002DF38(camera->play, camera->target, PLAYER_CSMODE_8);
                     osSyncPrintf("camera: demo: player demo set WAIT\n");
                 } else {
                     osSyncPrintf("camera: demo: player demo set %d\n", rwData->curKeyFrame->unk_01);
@@ -5467,9 +5467,9 @@ s32 Camera_Unique9(Camera* camera) {
         rwData->rollTarget = CAM_DEG_TO_BINANG(rwData->curKeyFrame->rollTargetInit);
     }
 
-    action = rwData->curKeyFrame->actionFlags & 0x1F;
+    action = ONEPOINT_CS_GET_ACTION(rwData->curKeyFrame);
     switch (action) {
-        case 15:
+        case ONEPOINT_CS_ACTION_ID_15:
             // static copy to at/eye/fov/roll
             *at = rwData->atTarget;
             *eyeNext = rwData->eyeTarget;
@@ -5477,7 +5477,8 @@ s32 Camera_Unique9(Camera* camera) {
             camera->roll = rwData->rollTarget;
             camera->stateFlags |= CAM_STATE_10;
             break;
-        case 21:
+
+        case ONEPOINT_CS_ACTION_ID_21:
             // same as 15, but with unk_38 ?
             if (rwData->unk_38 == 0) {
                 rwData->unk_38 = 1;
@@ -5490,7 +5491,8 @@ s32 Camera_Unique9(Camera* camera) {
             camera->fov = rwData->fovTarget;
             camera->roll = rwData->rollTarget;
             break;
-        case 16:
+
+        case ONEPOINT_CS_ACTION_ID_16:
             // same as 21, but don't unset CAM_STATE_3 on stateFlags
             if (rwData->unk_38 == 0) {
                 rwData->unk_38 = 1;
@@ -5503,7 +5505,8 @@ s32 Camera_Unique9(Camera* camera) {
             camera->fov = rwData->fovTarget;
             camera->roll = rwData->rollTarget;
             break;
-        case 1:
+
+        case ONEPOINT_CS_ACTION_ID_1:
             // linear interpolation of eye/at using the geographic coordinates
             OLib_Vec3fDiffToVecGeo(&eyeNextAtOffset, at, eyeNext);
             OLib_Vec3fDiffToVecGeo(&rwData->atEyeOffsetTarget, &rwData->atTarget, &rwData->eyeTarget);
@@ -5515,7 +5518,8 @@ s32 Camera_Unique9(Camera* camera) {
                 eyeNextAtOffset.yaw + ((s16)(rwData->atEyeOffsetTarget.yaw - eyeNextAtOffset.yaw) * invKeyFrameTimer);
             Camera_AddVecGeoToVec3f(&eyeTarget, at, &scratchGeo);
             goto setEyeNext;
-        case 2:
+
+        case ONEPOINT_CS_ACTION_ID_2:
             // linear interpolation of eye/at using the eyeTarget
             invKeyFrameTimer = 1.0f / rwData->keyFrameTimer;
             eyeTarget.x = F32_LERPIMP(camera->eyeNext.x, rwData->eyeTarget.x, invKeyFrameTimer);
@@ -5530,8 +5534,8 @@ s32 Camera_Unique9(Camera* camera) {
             camera->eyeNext.z =
                 Camera_LERPFloorF(eyeTarget.z, camera->eyeNext.z, rwData->curKeyFrame->lerpStepScale, 1.0f);
             FALLTHROUGH;
-        case 9:
-        case 10:
+        case ONEPOINT_CS_ACTION_ID_9:
+        case ONEPOINT_CS_ACTION_ID_10:
             // linear interpolation of at/fov/roll
             invKeyFrameTimer = 1.0f / rwData->keyFrameTimer;
             atTarget.x = F32_LERPIMP(camera->at.x, rwData->atTarget.x, invKeyFrameTimer);
@@ -5545,7 +5549,8 @@ s32 Camera_Unique9(Camera* camera) {
             camera->roll = Camera_LERPFloorS(BINANG_LERPIMPINV(camera->roll, rwData->rollTarget, rwData->keyFrameTimer),
                                              camera->roll, rwData->curKeyFrame->lerpStepScale, 0xA);
             break;
-        case 4:
+
+        case ONEPOINT_CS_ACTION_ID_4:
             // linear interpolation of eye/at/fov/roll using the step scale, and spherical coordinates
             OLib_Vec3fDiffToVecGeo(&eyeNextAtOffset, at, eyeNext);
             OLib_Vec3fDiffToVecGeo(&rwData->atEyeOffsetTarget, &rwData->atTarget, &rwData->eyeTarget);
@@ -5557,7 +5562,8 @@ s32 Camera_Unique9(Camera* camera) {
                                               rwData->curKeyFrame->lerpStepScale, 1);
             Camera_AddVecGeoToVec3f(eyeNext, at, &scratchGeo);
             goto setAtFOVRoll;
-        case 3:
+
+        case ONEPOINT_CS_ACTION_ID_3:
             // linear interplation of eye/at/fov/roll using the step scale using eyeTarget
             camera->eyeNext.x =
                 Camera_LERPCeilF(rwData->eyeTarget.x, camera->eyeNext.x, rwData->curKeyFrame->lerpStepScale, 1.0f);
@@ -5566,8 +5572,8 @@ s32 Camera_Unique9(Camera* camera) {
             camera->eyeNext.z =
                 Camera_LERPCeilF(rwData->eyeTarget.z, camera->eyeNext.z, rwData->curKeyFrame->lerpStepScale, 1.0f);
             FALLTHROUGH;
-        case 11:
-        case 12:
+        case ONEPOINT_CS_ACTION_ID_11:
+        case ONEPOINT_CS_ACTION_ID_12:
         setAtFOVRoll:
             // linear interpolation of at/fov/roll using the step scale.
             camera->at.x = Camera_LERPCeilF(rwData->atTarget.x, camera->at.x, rwData->curKeyFrame->lerpStepScale, 1.0f);
@@ -5576,7 +5582,8 @@ s32 Camera_Unique9(Camera* camera) {
             camera->fov = Camera_LERPCeilF(rwData->fovTarget, camera->fov, rwData->curKeyFrame->lerpStepScale, 1.0f);
             camera->roll = Camera_LERPCeilS(rwData->rollTarget, camera->roll, rwData->curKeyFrame->lerpStepScale, 1);
             break;
-        case 13:
+
+        case ONEPOINT_CS_ACTION_ID_13:
             // linear interpolation of at, with rotation around eyeTargetInit.y
             camera->at.x = Camera_LERPCeilF(rwData->atTarget.x, camera->at.x, rwData->curKeyFrame->lerpStepScale, 1.0f);
             camera->at.y += camera->playerPosDelta.y * rwData->curKeyFrame->lerpStepScale;
@@ -5606,18 +5613,20 @@ s32 Camera_Unique9(Camera* camera) {
                                  camera->fov, rwData->curKeyFrame->lerpStepScale, 1.0f);
             camera->roll = Camera_LERPCeilS(rwData->rollTarget, camera->roll, rwData->curKeyFrame->lerpStepScale, 1);
             break;
-        case 24:
+
+        case ONEPOINT_CS_ACTION_ID_24:
             // Set current keyframe to the roll target?
             rwData->curKeyFrameIdx = rwData->rollTarget;
             break;
-        case 19: {
+
+        case ONEPOINT_CS_ACTION_ID_19: {
             // Change the parent camera (or default)'s mode to normal
             s32 camIdx = camera->parentCamId <= CAM_ID_NONE ? CAM_ID_MAIN : camera->parentCamId;
 
             Camera_ChangeModeFlags(camera->play->cameraPtrs[camIdx], CAM_MODE_NORMAL, 1);
         }
             FALLTHROUGH;
-        case 18: {
+        case ONEPOINT_CS_ACTION_ID_18: {
             // copy the current camera to the parent (or default)'s camera.
             s32 camIdx = camera->parentCamId <= CAM_ID_NONE ? CAM_ID_MAIN : camera->parentCamId;
             Camera* cam = camera->play->cameraPtrs[camIdx];
@@ -5635,11 +5644,11 @@ s32 Camera_Unique9(Camera* camera) {
 
     *eye = *eyeNext;
 
-    if (rwData->curKeyFrame->actionFlags & 0x80) {
+    if (rwData->curKeyFrame->actionFlags & ONEPOINT_CS_ACTION_FLAG_BGCHECK) {
         Camera_BGCheck(camera, at, eye);
     }
 
-    if (rwData->curKeyFrame->actionFlags & 0x40) {
+    if (rwData->curKeyFrame->actionFlags & ONEPOINT_CS_ACTION_FLAG_40) {
         // Set the player's position
         camera->player->actor.world.pos.x = rwData->playerPos.x;
         camera->player->actor.world.pos.z = rwData->playerPos.z;
@@ -6075,7 +6084,7 @@ s32 Camera_Demo5(Camera* camera) {
         ONEPOINT_CS_INFO(camera)->keyFrameCnt = ARRAY_COUNT(D_8011D79C);
         if ((targetScreenPosX < 0x15) || (targetScreenPosX >= 0x12C) || (targetScreenPosY < 0x29) ||
             (targetScreenPosY >= 0xC8)) {
-            D_8011D79C[0].actionFlags = 0x41;
+            D_8011D79C[0].actionFlags = ONEPOINT_CS_ACTION(ONEPOINT_CS_ACTION_ID_1, true, false);
             D_8011D79C[0].atTargetInit.y = -30.0f;
             D_8011D79C[0].atTargetInit.x = 0.0f;
             D_8011D79C[0].atTargetInit.z = 0.0f;
@@ -6159,8 +6168,8 @@ s32 Camera_Demo5(Camera* camera) {
         targethead.pos.x += 50.0f * Math_SinS(sp4A - 0x7FFF);
         targethead.pos.z += 50.0f * Math_CosS(sp4A - 0x7FFF);
         if (Camera_BGCheck(camera, &playerhead.pos, &targethead.pos)) {
-            D_8011D954[1].actionFlags = 0xC1;
-            D_8011D954[2].actionFlags = 0x8F;
+            D_8011D954[1].actionFlags = ONEPOINT_CS_ACTION(ONEPOINT_CS_ACTION_ID_1, true, true);
+            D_8011D954[2].actionFlags = ONEPOINT_CS_ACTION(ONEPOINT_CS_ACTION_ID_15, false, true);
         } else {
             D_8011D954[2].timerInit = (s16)(eyeTargetDist * 0.004f) + 6;
         }
@@ -6184,7 +6193,7 @@ s32 Camera_Demo5(Camera* camera) {
         Actor_GetFocus(&targethead, camera->target);
         if (Camera_BGCheck(camera, &playerhead.pos, &targethead.pos)) {
             D_8011D9F4[1].timerInit = 4;
-            D_8011D9F4[1].actionFlags = 0x8F;
+            D_8011D9F4[1].actionFlags = ONEPOINT_CS_ACTION(ONEPOINT_CS_ACTION_ID_15, false, true);
         } else {
             t = eyeTargetDist * 0.005f;
             D_8011D9F4[1].timerInit = t + 8;
@@ -6221,14 +6230,14 @@ s32 Camera_Demo5(Camera* camera) {
             framesDiff = camera->play->state.frames - sDemo5PrevAction12Frame;
             if (player->stateFlags1 & PLAYER_STATE1_11) {
                 // holding object over head.
-                func_8002DF54(camera->play, camera->target, 8);
+                func_8002DF54(camera->play, camera->target, PLAYER_CSMODE_8);
             } else if (ABS(framesDiff) > 3000) {
-                func_8002DF54(camera->play, camera->target, 12);
+                func_8002DF54(camera->play, camera->target, PLAYER_CSMODE_12);
             } else {
-                func_8002DF54(camera->play, camera->target, 69);
+                func_8002DF54(camera->play, camera->target, PLAYER_CSMODE_69);
             }
         } else {
-            func_8002DF54(camera->play, camera->target, 1);
+            func_8002DF54(camera->play, camera->target, PLAYER_CSMODE_1);
         }
     }
 
@@ -6288,7 +6297,7 @@ s32 Camera_Demo6(Camera* camera) {
             FALLTHROUGH;
         case 1:
             if (stateTimers[camera->animState] < rwData->animTimer) {
-                func_8002DF54(camera->play, &camera->player->actor, 8);
+                func_8002DF54(camera->play, &camera->player->actor, PLAYER_CSMODE_8);
                 Actor_GetWorld(&focusPosRot, camFocus);
                 rwData->atTarget.x = focusPosRot.pos.x;
                 rwData->atTarget.y = focusPosRot.pos.y - 20.0f;
@@ -7137,7 +7146,7 @@ void func_80057FC4(Camera* camera) {
 void Camera_Stub80058140(Camera* camera) {
 }
 
-void Camera_InitPlayerSettings(Camera* camera, Player* player) {
+void Camera_InitDataUsingPlayer(Camera* camera, Player* player) {
     PosRot playerPosShape;
     VecGeo eyeNextAtOffset;
     s32 bgId;
@@ -7846,8 +7855,8 @@ void Camera_Finish(Camera* camera) {
             player->actor.freezeTimer = 0;
             player->stateFlags1 &= ~PLAYER_STATE1_29;
 
-            if (player->csMode != 0) {
-                func_8002DF54(camera->play, &player->actor, 7);
+            if (player->csMode != PLAYER_CSMODE_NONE) {
+                func_8002DF54(camera->play, &player->actor, PLAYER_CSMODE_7);
                 osSyncPrintf("camera: player demo end!!\n");
             }
 
@@ -7893,7 +7902,7 @@ s32 Camera_ChangeModeFlags(Camera* camera, s16 mode, u8 flags) {
     }
 
     if (!((sCameraSettings[camera->setting].unk_00 & 0x3FFFFFFF) & (1 << mode))) {
-        if (mode == CAM_MODE_FIRSTPERSON) {
+        if (mode == CAM_MODE_FIRST_PERSON) {
             osSyncPrintf("camera: error sound\n");
             func_80078884(NA_SE_SY_ERROR);
         }
@@ -7921,33 +7930,33 @@ s32 Camera_ChangeModeFlags(Camera* camera, s16 mode, u8 flags) {
         Camera_CopyDataToRegs(camera, mode);
         modeChangeFlags = 0;
         switch (mode) {
-            case CAM_MODE_FIRSTPERSON:
+            case CAM_MODE_FIRST_PERSON:
                 modeChangeFlags = 0x20;
                 break;
-            case CAM_MODE_BATTLE:
+            case CAM_MODE_Z_TARGET_UNFRIENDLY:
                 modeChangeFlags = 4;
                 break;
-            case CAM_MODE_FOLLOWTARGET:
+            case CAM_MODE_Z_TARGET_FRIENDLY:
                 if (camera->target != NULL && camera->target->id != ACTOR_EN_BOOM) {
                     modeChangeFlags = 8;
                 }
                 break;
-            case CAM_MODE_TARGET:
+            case CAM_MODE_Z_PARALLEL:
             case CAM_MODE_TALK:
-            case CAM_MODE_BOWARROWZ:
-            case CAM_MODE_HANGZ:
-            case CAM_MODE_PUSHPULL:
+            case CAM_MODE_Z_AIM:
+            case CAM_MODE_Z_LEDGE_HANG:
+            case CAM_MODE_PUSH_PULL:
                 modeChangeFlags = 2;
                 break;
         }
 
         switch (camera->mode) {
-            case CAM_MODE_FIRSTPERSON:
+            case CAM_MODE_FIRST_PERSON:
                 if (modeChangeFlags & 0x20) {
                     camera->animState = 10;
                 }
                 break;
-            case CAM_MODE_TARGET:
+            case CAM_MODE_Z_PARALLEL:
                 if (modeChangeFlags & 0x10) {
                     camera->animState = 10;
                 }
@@ -7956,21 +7965,21 @@ s32 Camera_ChangeModeFlags(Camera* camera, s16 mode, u8 flags) {
             case CAM_MODE_CHARGE:
                 modeChangeFlags |= 1;
                 break;
-            case CAM_MODE_FOLLOWTARGET:
+            case CAM_MODE_Z_TARGET_FRIENDLY:
                 if (modeChangeFlags & 8) {
                     camera->animState = 10;
                 }
                 modeChangeFlags |= 1;
                 break;
-            case CAM_MODE_BATTLE:
+            case CAM_MODE_Z_TARGET_UNFRIENDLY:
                 if (modeChangeFlags & 4) {
                     camera->animState = 10;
                 }
                 modeChangeFlags |= 1;
                 break;
-            case CAM_MODE_BOWARROWZ:
-            case CAM_MODE_HANGZ:
-            case CAM_MODE_PUSHPULL:
+            case CAM_MODE_Z_AIM:
+            case CAM_MODE_Z_LEDGE_HANG:
+            case CAM_MODE_PUSH_PULL:
                 modeChangeFlags |= 1;
                 break;
             case CAM_MODE_NORMAL:

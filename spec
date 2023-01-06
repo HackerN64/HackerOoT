@@ -46,7 +46,7 @@ beginseg
     include "build/src/libultra/os/initialize.o"
     include "build/src/libultra/libc/ll.o"
     include "build/src/libultra/os/exceptasm.o"
-    include "build/src/libultra/os/dequeuethread.o"
+    include "build/src/libultra/os/thread.o"
     include "build/src/libultra/os/destroythread.o"
     include "build/src/libultra/libc/bzero.o"
     include "build/src/libultra/os/parameters.o"
@@ -423,7 +423,9 @@ beginseg
     include "build/src/code/main.o"
     include "build/src/code/padmgr.o"
     include "build/src/code/sched.o"
+#ifdef ENABLE_SPEEDMETER
     include "build/src/code/speed_meter.o"
+#endif
     include "build/src/code/sys_cfb.o"
     include "build/src/code/sys_math.o"
     include "build/src/code/sys_math3d.o"
@@ -433,7 +435,9 @@ beginseg
     include "build/src/code/sys_rumble.o"
     include "build/src/code/code_800D31A0.o"
     include "build/src/code/irqmgr.o"
+#ifdef ENABLE_DEBUG_HEAP
     include "build/src/code/debug_malloc.o"
+#endif
     include "build/src/code/fault.o"
     include "build/data/fault.bss.o"
     include "build/src/code/fault_drawer.o"

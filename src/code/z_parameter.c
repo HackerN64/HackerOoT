@@ -1305,10 +1305,9 @@ void Interface_LoadItemIcon1(PlayState* play, u16 button) {
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
 
     osCreateMesgQueue(&interfaceCtx->loadQueue, &interfaceCtx->loadMsg, 1);
-    DmaMgr_RequestAsync(&interfaceCtx->dmaRequest_160, interfaceCtx->iconItemSegment + button * ICON_ITEM_TEX_SIZE,
-                        (uintptr_t)_icon_item_staticSegmentRomStart +
-                            (gSaveContext.equips.buttonItems[button] * ICON_ITEM_TEX_SIZE),
-                        ICON_ITEM_TEX_SIZE, 0, &interfaceCtx->loadQueue, NULL, "../z_parameter.c", 1171);
+    DmaMgr_RequestAsync(&interfaceCtx->dmaRequest_160, interfaceCtx->iconItemSegment + (button * ITEM_ICON_SIZE),
+                        GET_ITEM_ICON_VROM(gSaveContext.equips.buttonItems[button]), ITEM_ICON_SIZE, 0,
+                        &interfaceCtx->loadQueue, NULL, "../z_parameter.c", 1171);
     osRecvMesg(&interfaceCtx->loadQueue, NULL, OS_MESG_BLOCK);
 }
 
@@ -1316,10 +1315,9 @@ void Interface_LoadItemIcon2(PlayState* play, u16 button) {
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
 
     osCreateMesgQueue(&interfaceCtx->loadQueue, &interfaceCtx->loadMsg, 1);
-    DmaMgr_RequestAsync(&interfaceCtx->dmaRequest_180, interfaceCtx->iconItemSegment + button * ICON_ITEM_TEX_SIZE,
-                        (uintptr_t)_icon_item_staticSegmentRomStart +
-                            (gSaveContext.equips.buttonItems[button] * ICON_ITEM_TEX_SIZE),
-                        ICON_ITEM_TEX_SIZE, 0, &interfaceCtx->loadQueue, NULL, "../z_parameter.c", 1193);
+    DmaMgr_RequestAsync(&interfaceCtx->dmaRequest_180, interfaceCtx->iconItemSegment + (button * ITEM_ICON_SIZE),
+                        GET_ITEM_ICON_VROM(gSaveContext.equips.buttonItems[button]), ITEM_ICON_SIZE, 0,
+                        &interfaceCtx->loadQueue, NULL, "../z_parameter.c", 1193);
     osRecvMesg(&interfaceCtx->loadQueue, NULL, OS_MESG_BLOCK);
 }
 
@@ -2554,11 +2552,11 @@ void Magic_Update(PlayState* play) {
             // Slowly consume magic while lens is on
             if ((play->pauseCtx.state == 0) &&
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
-            (play->pauseCtx.debugState == 0) &&
+                (play->pauseCtx.debugState == 0) &&
 #endif
-            (msgCtx->msgMode == MSGMODE_NONE) &&
-                (play->gameOverCtx.state == GAMEOVER_INACTIVE) && (play->transitionTrigger == TRANS_TRIGGER_OFF) &&
-                (play->transitionMode == TRANS_MODE_OFF) && !Play_InCsMode(play)) {
+                (msgCtx->msgMode == MSGMODE_NONE) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
+                (play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->transitionMode == TRANS_MODE_OFF) &&
+                !Play_InCsMode(play)) {
                 if ((gSaveContext.magic == 0) ||
                     ((Player_GetEnvironmentalHazard(play) >= PLAYER_ENV_HAZARD_UNDERWATER_FLOOR) &&
                      (Player_GetEnvironmentalHazard(play) <= PLAYER_ENV_HAZARD_UNDERWATER_FREE)) ||
@@ -2846,7 +2844,7 @@ void Interface_DrawItemButtons(PlayState* play) {
 
     if (interfaceCtx->naviCalling && (play->pauseCtx.state == 0) &&
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
-    (play->pauseCtx.debugState == 0) &&
+        (play->pauseCtx.debugState == 0) &&
 #endif
         (play->csCtx.state == CS_STATE_IDLE)) {
         if (!sCUpInvisible) {
@@ -3160,18 +3158,19 @@ void Interface_Draw(PlayState* play) {
 
         Gfx_SetupDL_39Overlay(play->state.gfxCtx);
 
-        // Rupee Icon
-        #ifndef MM_WALLET_ICON_COLORS
+// Rupee Icon
+#ifndef MM_WALLET_ICON_COLORS
         gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 200, 255, 100, interfaceCtx->magicAlpha);
-        #else
-        static Color_RGB8 const walletColors[] = {
-            { 200, 255, 100 },
-            { 130, 130, 255 },
-            { 255, 100, 100 },
-        };
-        u8 walletUpg = CUR_UPG_VALUE(UPG_WALLET);
-        gDPSetPrimColor(OVERLAY_DISP++, 0, 0, walletColors[walletUpg].r, walletColors[walletUpg].g, walletColors[walletUpg].b, interfaceCtx->magicAlpha);
-        #endif
+#else
+    static Color_RGB8 const walletColors[] = {
+        { 200, 255, 100 },
+        { 130, 130, 255 },
+        { 255, 100, 100 },
+    };
+    u8 walletUpg = CUR_UPG_VALUE(UPG_WALLET);
+    gDPSetPrimColor(OVERLAY_DISP++, 0, 0, walletColors[walletUpg].r, walletColors[walletUpg].g,
+                    walletColors[walletUpg].b, interfaceCtx->magicAlpha);
+#endif
 
         gDPSetEnvColor(OVERLAY_DISP++, 0, 80, 0, 255);
         OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, gRupeeCounterIconTex, 16, 16, 26, 206, 16, 16, 1 << 10, 1 << 10);
@@ -3409,8 +3408,8 @@ void Interface_Draw(PlayState* play) {
                 gSPVertex(OVERLAY_DISP++, &pauseCtx->cursorVtx[16], 4, 0);
 
                 gDPLoadTextureBlock(OVERLAY_DISP++, gItemIcons[pauseCtx->equipTargetItem], G_IM_FMT_RGBA, G_IM_SIZ_32b,
-                                    32, 32, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
-                                    G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+                                    ITEM_ICON_WIDTH, ITEM_ICON_HEIGHT, 0, G_TX_NOMIRROR | G_TX_WRAP,
+                                    G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
             } else {
                 // Magic Arrow Equip Effect
                 svar1 = pauseCtx->equipTargetItem - 0xBF;
@@ -3443,7 +3442,7 @@ void Interface_Draw(PlayState* play) {
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
         if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0)) {
 #else
-        if (play->pauseCtx.state == 0) {
+    if (play->pauseCtx.state == 0) {
 #endif
             if (gSaveContext.minigameState != 1) {
                 // Carrots rendering if the action corresponds to riding a horse
@@ -3543,7 +3542,7 @@ void Interface_Draw(PlayState* play) {
 
         if ((play->pauseCtx.state == 0) &&
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
-        (play->pauseCtx.debugState == 0) &&
+            (play->pauseCtx.debugState == 0) &&
 #endif
             (play->gameOverCtx.state == GAMEOVER_INACTIVE) && (msgCtx->msgMode == MSGMODE_NONE) &&
             !(player->stateFlags2 & PLAYER_STATE2_24) && (play->transitionTrigger == TRANS_TRIGGER_OFF) &&
@@ -3842,7 +3841,7 @@ void Interface_Draw(PlayState* play) {
                                                 gSaveContext.subTimerState = SUBTIMER_STATE_RESPAWN;
                                                 gSaveContext.cutsceneIndex = 0;
                                                 Message_StartTextbox(play, 0x71B0, NULL);
-                                                func_8002DF54(play, NULL, 8);
+                                                func_8002DF54(play, NULL, PLAYER_CSMODE_8);
                                             } else {
                                                 sSubTimerStateTimer = 40;
                                                 gSaveContext.subTimerState = SUBTIMER_STATE_STOP;
@@ -4156,7 +4155,8 @@ void Interface_Update(PlayState* play) {
 #endif
         (msgCtx->msgMode == MSGMODE_NONE) && !(player->stateFlags2 & PLAYER_STATE2_24) &&
         (play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->transitionMode == TRANS_MODE_OFF) &&
-        !Play_InCsMode(play)) {}
+        !Play_InCsMode(play)) {
+    }
 
     if (gSaveContext.rupeeAccumulator != 0) {
         if (gSaveContext.rupeeAccumulator > 0) {
@@ -4243,9 +4243,9 @@ void Interface_Update(PlayState* play) {
 #if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
         (play->pauseCtx.debugState == 0) &&
 #endif
-        (msgCtx->msgMode == MSGMODE_NONE) &&
-        (play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
-        (play->transitionMode == TRANS_MODE_OFF) && ((play->csCtx.state == CS_STATE_IDLE) || !Player_InCsMode(play))) {
+        (msgCtx->msgMode == MSGMODE_NONE) && (play->transitionTrigger == TRANS_TRIGGER_OFF) &&
+        (play->gameOverCtx.state == GAMEOVER_INACTIVE) && (play->transitionMode == TRANS_MODE_OFF) &&
+        ((play->csCtx.state == CS_STATE_IDLE) || !Player_InCsMode(play))) {
 
         if (gSaveContext.isMagicAcquired && (gSaveContext.magicLevel == 0)) {
             gSaveContext.magicLevel = gSaveContext.isDoubleMagicAcquired + 1;

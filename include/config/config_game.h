@@ -11,6 +11,11 @@
 // Add a fix for the Stale Reference Manipulation glitch (OoT's Pandora's Box)
 #define FIX_SRM
 
+/**
+ * Enable mempak-related code
+ */
+// #define ENABLE_MEMPAK
+
 // Configure dialogue print speed (1 is vanilla)
 #define DIALOGUE_PRINT_SPEED 2
 
@@ -37,7 +42,7 @@
 // #define FW_SPLIT_AGE
 
 /* Apply the anti-aliasing filter for the background of the pause menu. This adds a delay when pausing. */
-//#define VANILLA_PAUSE_DELAY
+// #define VANILLA_PAUSE_DELAY
 
 /**
  * Disable Player froze when getting a Gold Skulltula Token
@@ -49,5 +54,10 @@
 */
 #define GS_COUNT_IN_TEXT
 
+/**
+ * Applies the anti-aliasing filter for the background of the pause menu.
+ * Note: this adds a significant delay when pausing.
+*/
+// #define ENABLE_PAUSE_BG_AA
 
 #endif

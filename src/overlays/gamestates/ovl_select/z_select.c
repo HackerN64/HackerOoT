@@ -124,7 +124,7 @@ void MapSelect_UpdateMenu(MapSelectState* this) {
     if (CHECK_BTN_ALL(input->press.button, BTN_CDOWN)) {
         this->showControls = !this->showControls;
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 
     // change the color of the selected scene, red by default
@@ -192,8 +192,8 @@ void MapSelect_UpdateMenu(MapSelectState* this) {
                 sfxIndex = (sfxIndex < ARRAY_COUNT(adultLinkSfx)) ? sfxIndex : 0;
                 sfx = adultLinkSfx[sfxIndex];
             }
-            Audio_PlaySfxGeneral(sfx, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+            Audio_PlaySfxGeneral(sfx, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
+                                 &gSfxDefaultReverb);
         }
 
         // change scene layer
@@ -213,7 +213,7 @@ void MapSelect_UpdateMenu(MapSelectState* this) {
 
         if (CHECK_BTN_ALL(input->press.button, BTN_R) || CHECK_BTN_ALL(input->press.button, BTN_Z)) {
             Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
 
         // scroll up
@@ -432,9 +432,8 @@ void MapSelect_PrintMenu(MapSelectState* this, GfxPrint* printer) {
 
         scene = (this->topDisplayedScene + i + this->sceneTotal) % this->sceneTotal;
         if (scene == this->currentScene) {
-            GfxPrint_SetColor(printer,
-                sColors[this->selectedSceneColor].r, sColors[this->selectedSceneColor].g, sColors[this->selectedSceneColor].b,
-                sColors[this->selectedSceneColor].a);
+            GfxPrint_SetColor(printer, sColors[this->selectedSceneColor].r, sColors[this->selectedSceneColor].g,
+                              sColors[this->selectedSceneColor].b, sColors[this->selectedSceneColor].a);
         } else {
             GfxPrint_SetColor(printer, 200, 200, 55, 255);
         }

@@ -9,7 +9,8 @@
 #define GAMESTATE_OVERLAY_INTERNAL(init, destroy, size) \
     { NULL, 0, 0, NULL, NULL, NULL, init, destroy, NULL, NULL, 0, size }
 
-#define GAMESTATE_NONE { NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0 }
+#define GAMESTATE_NONE \
+    { NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0 }
 
 GameStateOverlay gGameStateOverlayTable[] = {
     GAMESTATE_OVERLAY_INTERNAL(Setup_Init, Setup_Destroy, sizeof(SetupState)),

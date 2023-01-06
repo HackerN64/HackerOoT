@@ -174,8 +174,10 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
     OSScTask* scTask = &gfxCtx->task;
     CfbInfo* cfb;
 
+#ifdef ENABLE_SPEEDMETER
     gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime =
         osGetTime() - sGraphPrevTaskTimeStart - gAudioThreadUpdateTimeAcc;
+#endif
 
     osSetTimer(&timer, OS_USEC_TO_CYCLES(3000000), 0, &gfxCtx->queue, (OSMesg)666);
 
@@ -211,6 +213,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
     }
 
     timeNow = osGetTime();
+#ifdef ENABLE_SPEEDMETER
     if (gAudioThreadUpdateTimeStart != 0) {
         // The audio thread update is running
         // Add the time already spent to the accumulator and leave the rest for the next cycle
@@ -218,8 +221,10 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
         gAudioThreadUpdateTimeAcc += timeNow - gAudioThreadUpdateTimeStart;
         gAudioThreadUpdateTimeStart = timeNow;
     }
+
     gAudioThreadUpdateTimeTotalPerGfxTask = gAudioThreadUpdateTimeAcc;
     gAudioThreadUpdateTimeAcc = 0;
+#endif
 
     sGraphPrevTaskTimeStart = osGetTime();
 
@@ -395,6 +400,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
         OSTime timeNow = osGetTime();
         s32 pad[4];
 
+#ifdef ENABLE_SPEEDMETER
         gRSPGfxTimeTotal = gRSPGfxTimeAcc;
         gRSPAudioTimeTotal = gRSPAudioTimeAcc;
         gRDPTimeTotal = gRDPTimeAcc;
@@ -405,6 +411,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
         if (sGraphPrevUpdateEndTime != 0) {
             gGraphUpdatePeriod = timeNow - sGraphPrevUpdateEndTime;
         }
+#endif
         sGraphPrevUpdateEndTime = timeNow;
     }
 
