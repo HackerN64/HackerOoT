@@ -1277,7 +1277,7 @@ typedef struct {
 } OnePointCsFull; // size = 0x28
 
 typedef struct {
-    /* 0x0 */ s32 keyFrameCnt;
+    /* 0x0 */ s32 keyFrameCount;
     /* 0x4 */ OnePointCsFull* keyFrames;
 } OnePointCsInfo; // size = 0x8
 
@@ -1569,7 +1569,7 @@ typedef struct Camera {
     /* 0x0D8 */ f32 xzSpeed;
     /* 0x0DC */ f32 dist;
     /* 0x0E0 */ f32 speedRatio;
-    /* 0x0E4 */ Vec3f posOffset;
+    /* 0x0E4 */ Vec3f playerToAtOffset;
     /* 0x0F0 */ Vec3f playerPosDelta;
     /* 0x0FC */ f32 fov;
     /* 0x100 */ f32 atLERPStepScale;
@@ -1678,6 +1678,17 @@ typedef struct {
     /* 0x28 */ f32 roll;
     /* 0x2C */ f32 fov;
 } DbCameraAnim; // size = 0x30
+
+typedef enum {
+    /* 0 */ DBCAMERA_TEXT_YELLOW,
+    /* 1 */ DBCAMERA_TEXT_PEACH,
+    /* 2 */ DBCAMERA_TEXT_BROWN,
+    /* 3 */ DBCAMERA_TEXT_ORANGE,
+    /* 4 */ DBCAMERA_TEXT_GOLD,
+    /* 5 */ DBCAMERA_TEXT_WHITE,
+    /* 6 */ DBCAMERA_TEXT_BLUE,
+    /* 7 */ DBCAMERA_TEXT_GREEN
+} DbCameraTextColor;
 
 #endif
 
