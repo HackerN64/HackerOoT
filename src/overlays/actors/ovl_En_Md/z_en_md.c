@@ -570,7 +570,7 @@ void func_80AAB158(EnMd* this, PlayState* play) {
     }
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-    if ((play->csCtx.state != CS_STATE_IDLE) || gDbgCamEnabled) {
+    if ((play->csCtx.state != CS_STATE_IDLE) || gDebugCamEnabled) {
 #else
     if (play->csCtx.state != CS_STATE_IDLE) {
 #endif

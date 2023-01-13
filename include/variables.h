@@ -59,7 +59,7 @@ extern ActorOverlay gActorOverlayTable[ACTOR_ID_MAX]; // original name: "actor_d
 extern s32 gMaxActorId; // original name: "MaxProfile"
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-extern s32 gDbgCamEnabled;
+extern s32 gDebugCamEnabled;
 #endif
 
 extern GameStateOverlay gGameStateOverlayTable[6];

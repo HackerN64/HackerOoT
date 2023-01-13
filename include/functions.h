@@ -768,10 +768,10 @@ u8 CollisionCheck_GetSwordDamage(s32 dmgFlags);
 void SaveContext_Init(void);
 s32 func_800635D0(s32);
 void Regs_Init(void);
-void DbCamera_ScreenText(u8 x, u8 y, const char* text);
+void DebugCamera_ScreenText(u8 x, u8 y, const char* text);
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-void DbCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text);
+void DebugCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text);
 #endif
 
 void Regs_UpdateEditor(Input* input);
@@ -1273,38 +1273,10 @@ void Letterbox_Destroy(void);
 void Letterbox_Update(s32 updateRate);
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-// ? DbCamera_CalcUpFromPitchYawRoll(?);
-// ? DbCamera_SetTextValue(?);
-// ? DbCamera_Vec3SToF(?);
-// ? DbCamera_Vec3FToS(?);
-// ? DbCamera_CopyVec3f(?);
-// ? DbCamera_Vec3SToF2(?);
-// ? func_800B3F94(?);
-// ? func_800B3FF4(?);
-// ? func_800B404C(?);
-// ? func_800B4088(?);
-// ? func_800B41DC(?);
-// ? func_800B42C0(?);
-// ? func_800B4370(?);
-// ? func_800B44E0(?);
-// ? DbCamera_PrintPoints(?);
-// ? DbCamera_PrintF32Bytes(?);
-// ? DbCamera_PrintU16Bytes(?);
-// ? DbCamera_PrintS16Bytes(?);
-// ? DbCamera_PrintCutBytes(?);
-void DbCamera_Init(DbCamera* dbCamera, Camera* cameraPtr);
-void DbgCamera_Enable(DbCamera* dbCamera, Camera* cam);
-void DbCamera_Update(DbCamera* dbCamera, Camera* cam);
-// ? DbCamera_GetFirstAvailableLetter(?);
-// ? DbCamera_InitCut(?);
-// ? DbCamera_ResetCut(?);
-// ? DbCamera_CalcMempakAllocSize(?);
-// ? DbCamera_GetMempakAllocSize(?);
-// ? DbCamera_DrawSlotLetters(?);
-// ? DbCamera_PrintAllCuts(?);
-// ? func_800B91B0(?);
-void DbCamera_Reset(Camera* cam, DbCamera* dbCam);
-// ? DbCamera_UpdateDemoControl(?);
+void DebugCamera_Init(DebugCam* debugCam, Camera* cameraPtr);
+void DebugCamera_Enable(DebugCam* debugCam, Camera* cam);
+void DebugCamera_Update(DebugCam* debugCam, Camera* cam);
+void DebugCamera_Reset(Camera* cam, DebugCam* debugCam);
 #endif
 
 void func_800BB0A0(f32 u, Vec3f* pos, f32* roll, f32* viewAngle, f32* point0, f32* point1, f32* point2, f32* point3);
