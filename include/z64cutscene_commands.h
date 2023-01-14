@@ -242,8 +242,7 @@
  * Both the day time and skybox time are set by this command.
  * @note `endFrame` is not used in the implementation of the command, so its value does not matter
  */
-// TODO: remove ``zapdCompat`` when ZAPD is updated
-#define CS_TIME(unused0, startFrame, endFrame, hour, min, zapdCompat) \
+#define CS_TIME(unused0, startFrame, endFrame, hour, min) \
     CMD_HH(unused0, startFrame), CMD_HBB(endFrame, hour, min), CMD_W(0)
 
 /**
