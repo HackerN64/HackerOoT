@@ -4065,7 +4065,7 @@ s16 func_80034DD4(Actor* actor, PlayState* play, s16 arg2, f32 arg3) {
     f32 var;
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-    if ((play->csCtx.state != CS_STATE_IDLE) || gDbgCamEnabled) {
+    if ((play->csCtx.state != CS_STATE_IDLE) || gDebugCamEnabled) {
 #else
     if (play->csCtx.state != CS_STATE_IDLE) {
 #endif
@@ -5743,7 +5743,7 @@ s32 Actor_TrackPlayerSetFocusHeight(PlayState* play, Actor* actor, Vec3s* headRo
     actor->focus.pos.y += focusHeight;
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-    if (!(((play->csCtx.state != CS_STATE_IDLE) || gDbgCamEnabled) &&
+    if (!(((play->csCtx.state != CS_STATE_IDLE) || gDebugCamEnabled) &&
           (gSaveContext.entranceIndex == ENTR_KOKIRI_FOREST_0))) {
 #else
     if (!((play->csCtx.state != CS_STATE_IDLE) && (gSaveContext.entranceIndex == ENTR_KOKIRI_FOREST_0))) {
@@ -5756,7 +5756,7 @@ s32 Actor_TrackPlayerSetFocusHeight(PlayState* play, Actor* actor, Vec3s* headRo
     }
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-    if (((play->csCtx.state != CS_STATE_IDLE) || gDbgCamEnabled) &&
+    if (((play->csCtx.state != CS_STATE_IDLE) || gDebugCamEnabled) &&
         (gSaveContext.entranceIndex == ENTR_KOKIRI_FOREST_0)) {
 #else
     if ((play->csCtx.state != CS_STATE_IDLE) && (gSaveContext.entranceIndex == ENTR_KOKIRI_FOREST_0)) {
@@ -5795,7 +5795,7 @@ s32 Actor_TrackPlayer(PlayState* play, Actor* actor, Vec3s* headRot, Vec3s* tors
     actor->focus.pos = focusPos;
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-    if (!(((play->csCtx.state != CS_STATE_IDLE) || gDbgCamEnabled) &&
+    if (!(((play->csCtx.state != CS_STATE_IDLE) || gDebugCamEnabled) &&
           (gSaveContext.entranceIndex == ENTR_KOKIRI_FOREST_0))) {
 #else
     if (!((play->csCtx.state != CS_STATE_IDLE) && (gSaveContext.entranceIndex == ENTR_KOKIRI_FOREST_0))) {
@@ -5808,7 +5808,7 @@ s32 Actor_TrackPlayer(PlayState* play, Actor* actor, Vec3s* headRot, Vec3s* tors
     }
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-    if (((play->csCtx.state != CS_STATE_IDLE) || gDbgCamEnabled) &&
+    if (((play->csCtx.state != CS_STATE_IDLE) || gDebugCamEnabled) &&
         (gSaveContext.entranceIndex == ENTR_KOKIRI_FOREST_0)) {
 #else
     if ((play->csCtx.state != CS_STATE_IDLE) && (gSaveContext.entranceIndex == ENTR_KOKIRI_FOREST_0)) {
