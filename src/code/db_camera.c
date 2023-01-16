@@ -196,9 +196,9 @@ s32 DebugCamera_LoadCallback(char* c);
 s32 DebugCamera_ClearCallback(char* c);
 s32 DebugCamera_UpdateDemoControl(DebugCam* debugCam, Camera* cam);
 
-static debugCam* sDbCamPtr;
+static DebugCam* sDebugCamPtr;
 static s16 D_8016110C; // export cutscene slot index ('A' to 'O')
-static debugCamAnim sDebugCamAnim;
+static DebugCamAnim sDebugCamAnim;
 
 Vec3f* DebugCamera_AddVecGeoToVec3f(Vec3f* dest, Vec3f* a, VecGeo* geo) {
     Vec3f sum;
@@ -1099,7 +1099,7 @@ void DebugCamera_Update(DebugCam* debugCam, Camera* cam) {
     if (debugCam->unk_00 == 1) {
         // demo camera tool
         OREG(0) = 8;
-        DebugCamera_ScreenTextColored(12, 5, DebugCamera_TEXT_YELLOW, D_8012CEF4);
+        DebugCamera_ScreenTextColored(12, 5, DEBUG_CAM_TEXT_YELLOW, D_8012CEF4);
         if (CHECK_BTN_ALL(sPlay->state.input[DEBUG_CAM_CONTROLLER_PORT].cur.button, CAMDBG_CSTOOL_PLAYBACK) &&
             !CHECK_BTN_ALL(sPlay->state.input[DEBUG_CAM_CONTROLLER_PORT].cur.button, CAMDBG_CSTOOL_BTN_HOLD_FOR_COMBO)) {
             func_800B44E0(debugCam, cam);
@@ -2234,8 +2234,8 @@ s32 DebugCamera_UpdateDemoControl(DebugCam* debugCam, Camera* cam) {
                         }
                         goto block_2;
                     } else {
-                        DebugCamera_ScreenTextColored(12, 26, DebugCamera_TEXT_GOLD, D_8012CF60[0]);
-                        DebugCamera_ScreenTextColored(19, 26, DebugCamera_TEXT_GOLD, D_8012CF80); // mempak not found
+                        DebugCamera_ScreenTextColored(12, 26, DEBUG_CAM_TEXT_GOLD, D_8012CF60[0]);
+                        DebugCamera_ScreenTextColored(19, 26, DEBUG_CAM_TEXT_GOLD, D_8012CF80); // mempak not found
                         if (CHECK_BTN_ALL(sPlay->state.input[DEBUG_CAM_CONTROLLER_PORT].press.button, CAMDBG_CSCTRL_RETURN_TO_PREV_MENU) ||
                             CHECK_BTN_ALL(sPlay->state.input[DEBUG_CAM_CONTROLLER_PORT].press.button, CAMDBG_CSCTRL_PREV_MENU) ||
                             CHECK_BTN_ALL(sPlay->state.input[DEBUG_CAM_CONTROLLER_PORT].press.button, CAMDBG_CSCTRL_NEXT_MENU)) {
@@ -2435,10 +2435,10 @@ s32 DebugCamera_UpdateDemoControl(DebugCam* debugCam, Camera* cam) {
 
             if (CHECK_BTN_COMBO(CAMDBG_PRINT_DATA_USE_COMBO,
                 &sPlay->state.input[DEBUG_CAM_CONTROLLER_PORT], CAMDBG_CSCTRL_BTN_HOLD_FOR_COMBO, CAMDBG_PRINT_DATA)) {
-                for (i = 0; i < ARRAY_COUNT(sdebugCamCuts) - 1; i++) {
-                    osSyncPrintf("###%2d:(%c) (%d %d) %d %d %d\n", i, sdebugCamCuts[i].letter,
-                                 sdebugCamCuts[i].position, sdebugCamCuts[i].lookAt, sdebugCamCuts[i].nFrames,
-                                 sdebugCamCuts[i].nPoints, sdebugCamCuts[i].mode);
+                for (i = 0; i < ARRAY_COUNT(sDebugCamCuts) - 1; i++) {
+                    osSyncPrintf("###%2d:(%c) (%d %d) %d %d %d\n", i, sDebugCamCuts[i].letter,
+                                 sDebugCamCuts[i].position, sDebugCamCuts[i].lookAt, sDebugCamCuts[i].nFrames,
+                                 sDebugCamCuts[i].nPoints, sDebugCamCuts[i].mode);
                 }
                 DebugCamera_PrintAllCuts(cam);
             } else if (CHECK_BTN_COMBO(CAMDBG_PRINT_DATA_USE_COMBO,

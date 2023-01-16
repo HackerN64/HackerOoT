@@ -7493,7 +7493,7 @@ s32 Camera_DbgChangeMode(Camera* camera) {
         }
 
         if (Camera_ChangeSetting(camera, D_8011DAFC[sDbgModeIdx]) > 0) {
-            if (R_DBG_CAM_UPDATE) {
+            if (R_DEBUG_CAM_UPDATE) {
                 osSyncPrintf("camera: force change SET to %s!\n", sCameraSettingNames[D_8011DAFC[sDbgModeIdx]]);
             }
             return true;
@@ -7767,7 +7767,7 @@ Vec3s Camera_Update(Camera* camera) {
             Cutscene_StopManual(camera->play, &camera->play->csCtx);
         }
 
-        osSyncPrintf("gDbgCamEnabled: %X\n", gDbgCamEnabled);
+        osSyncPrintf("gDebugCamEnabled: %X\n", gDebugCamEnabled);
     }
 
     // Debug cam update
