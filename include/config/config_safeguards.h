@@ -14,7 +14,7 @@
  * config_debug.h
  */
 #ifndef DEBUG_ROM
-    #define DISABLE_DEBUG_FEATURES
+    // #define DISABLE_DEBUG_FEATURES
     #undef DETERMINISTIC_BUILD
     #undef SKIP_N64_BOOT_LOGO
     #undef BOOT_TO_SCENE

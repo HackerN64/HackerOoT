@@ -38,36 +38,35 @@ Color_RGBA8 sDbCameraTextColors[] = {
 
 #ifdef ENABLE_REG_EDITOR
 InputCombo sRegGroupInputCombos[REG_GROUPS] = {
-    { BTN_L, BTN_CUP },        //  REG
-    { BTN_L, BTN_CLEFT },      // SREG
-    { BTN_L, BTN_CDOWN },      // OREG
-    { BTN_L, BTN_A },          // PREG
-    { BTN_R, BTN_CDOWN },      // QREG
-    { BTN_L, BTN_CRIGHT },     // MREG
-    { BTN_L, BTN_R },          // YREG
-    { BTN_L, BTN_DLEFT },      // DREG
-    { BTN_L, BTN_DRIGHT },     // UREG
-    { BTN_L, BTN_DUP },        // IREG
-    { BTN_L, BTN_B },          // ZREG
-    { BTN_L, BTN_Z },          // CREG
-    { BTN_L, BTN_DDOWN },      // NREG
-    { BTN_R, BTN_A },          // KREG
-    { BTN_R, BTN_B },          // XREG
-    { BTN_R, BTN_Z },          // cREG
-    { BTN_R, BTN_L },          // sREG
-    { BTN_R, BTN_CUP },        // iREG
-    { BTN_R, BTN_CRIGHT },     // WREG
-    { BTN_R, BTN_DLEFT },      // AREG
-    { BTN_R, BTN_CLEFT },      // VREG
-    { BTN_R, BTN_START },      // HREG
-    { BTN_L, BTN_START },      // GREG
-    { BTN_R, BTN_DRIGHT },     // mREG
-    { BTN_R, BTN_DUP },        // nREG
-    { BTN_START, BTN_R },      // BREG
-    { BTN_START, BTN_A },      // dREG
-    { BTN_START, BTN_B },      // kREG
-    { BTN_START, BTN_CRIGHT }, // bREG
-
+    { REGS_EDITOR_REG_COMBO  }, //  REG
+    { REGS_EDITOR_SREG_COMBO }, // SREG
+    { REGS_EDITOR_OREG_COMBO }, // OREG
+    { REGS_EDITOR_PREG_COMBO }, // PREG
+    { REGS_EDITOR_QREG_COMBO }, // QREG
+    { REGS_EDITOR_MREG_COMBO }, // MREG
+    { REGS_EDITOR_YREG_COMBO }, // YREG
+    { REGS_EDITOR_DREG_COMBO }, // DREG
+    { REGS_EDITOR_UREG_COMBO }, // UREG
+    { REGS_EDITOR_IREG_COMBO }, // IREG
+    { REGS_EDITOR_ZREG_COMBO }, // ZREG
+    { REGS_EDITOR_CREG_COMBO }, // CREG
+    { REGS_EDITOR_NREG_COMBO }, // NREG
+    { REGS_EDITOR_KREG_COMBO }, // KREG
+    { REGS_EDITOR_XREG_COMBO }, // XREG
+    { REGS_EDITOR_cREG_COMBO }, // cREG
+    { REGS_EDITOR_sREG_COMBO }, // sREG
+    { REGS_EDITOR_iREG_COMBO }, // iREG
+    { REGS_EDITOR_WREG_COMBO }, // WREG
+    { REGS_EDITOR_AREG_COMBO }, // AREG
+    { REGS_EDITOR_VREG_COMBO }, // VREG
+    { REGS_EDITOR_HREG_COMBO }, // HREG
+    { REGS_EDITOR_GREG_COMBO }, // GREG
+    { REGS_EDITOR_mREG_COMBO }, // mREG
+    { REGS_EDITOR_nREG_COMBO }, // nREG
+    { REGS_EDITOR_BREG_COMBO }, // BREG
+    { REGS_EDITOR_dREG_COMBO }, // dREG
+    { REGS_EDITOR_kREG_COMBO }, // kREG
+    { REGS_EDITOR_bREG_COMBO }, // bREG
 };
 
 char sRegGroupChars[REG_GROUPS] = {
@@ -181,6 +180,10 @@ void Regs_UpdateEditor(Input* input) {
     s32 increment;
     s32 i;
 
+    u16 incrementBy10;
+    u16 incrementBy100;
+    u16 incrementBy1000;
+
     dPadInputCur = input->cur.button & (BTN_DUP | BTN_DLEFT | BTN_DRIGHT | BTN_DDOWN);
 
     if (CHECK_BTN_ALL(input->cur.button, BTN_L) || CHECK_BTN_ALL(input->cur.button, BTN_R) ||
@@ -223,15 +226,19 @@ void Regs_UpdateEditor(Input* input) {
                     gRegEditor->dPadInputPrev = dPadInputCur;
                 }
 
+                incrementBy1000 = CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_1000)
+                incrementBy100 = CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_100)
+                incrementBy10 = CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_10)
+
                 increment =
-                    CHECK_BTN_ANY(dPadInputCur, BTN_DRIGHT)  ? (CHECK_BTN_ALL(input->cur.button, BTN_A | BTN_B) ? 1000
-                                                                : CHECK_BTN_ALL(input->cur.button, BTN_A)       ? 100
-                                                                : CHECK_BTN_ALL(input->cur.button, BTN_B)       ? 10
-                                                                                                                : 1)
-                    : CHECK_BTN_ANY(dPadInputCur, BTN_DLEFT) ? (CHECK_BTN_ALL(input->cur.button, BTN_A | BTN_B) ? -1000
-                                                                : CHECK_BTN_ALL(input->cur.button, BTN_A)       ? -100
-                                                                : CHECK_BTN_ALL(input->cur.button, BTN_B)       ? -10
-                                                                                                                : -1)
+                    CHECK_BTN_ANY(dPadInputCur, BTN_DRIGHT)  ? (incrementBy1000     ? 1000
+                                                                : incrementBy100    ? 100
+                                                                : incrementBy10     ? 10
+                                                                : 1)
+                    : CHECK_BTN_ANY(dPadInputCur, BTN_DLEFT) ? (incrementBy1000     ? -1000
+                                                                : incrementBy100    ? -100
+                                                                : incrementBy10     ? -10
+                                                                : -1)
                                                              : 0;
 
                 gRegEditor->data[gRegEditor->regCur + pageDataStart] += increment;
@@ -308,9 +315,7 @@ void Debug_DrawText(GraphicsContext* gfxCtx) {
     GfxPrint_Open(&printer, gfx);
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-    if ((OREG(0) == 1) || (OREG(0) == 8)) {
-        DbCamera_DrawScreenText(&printer);
-    }
+    DbCamera_DrawScreenText(&printer);
 #endif
 
 #ifdef ENABLE_REG_EDITOR
