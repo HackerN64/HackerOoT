@@ -961,7 +961,7 @@ void func_80A9877C(EnKo* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-    if ((play->csCtx.state != 0) || (gDbgCamEnabled != 0)) {
+    if ((play->csCtx.state != 0) || (gDebugCamEnabled != 0)) {
 #else
     if (play->csCtx.state != 0) {
 #endif
@@ -1107,7 +1107,7 @@ void func_80A98DB4(EnKo* this, PlayState* play) {
     }
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-    if (play->csCtx.state != 0 || gDbgCamEnabled != 0) {
+    if (play->csCtx.state != 0 || gDebugCamEnabled != 0) {
 #else
     if (play->csCtx.state != 0) {
 #endif

@@ -196,7 +196,7 @@ void Cutscene_UpdateScripted(PlayState* play, CutsceneContext* csCtx) {
     }
 
     #ifdef ENABLE_CAMERA_DEBUGGER
-    canStartCutscene = canStartCutscene && !gDbgCamEnabled;
+    canStartCutscene = canStartCutscene && !gDebugCamEnabled;
     #endif
 
     if (canStartCutscene) {
