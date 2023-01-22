@@ -76,7 +76,7 @@
 
 /**** [CAMERA DEBUGGER] ****/
 // Includes a cutscene debugger/exporter
-#define ENABLE_CAMERA_DEBUGGER
+// #define ENABLE_CAMERA_DEBUGGER
 
 /**** [AUDIO DEBUGGER] ****/
 // #define ENABLE_AUDIO_DEBUGGER // TODO: controls
