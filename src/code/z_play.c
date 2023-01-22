@@ -235,6 +235,11 @@ void Play_Init(GameState* thisx) {
         return;
     }
 
+#ifdef ENABLE_MOTION_BLUR
+    R_MOTION_BLUR_ENABLED = 0;
+    R_MOTION_BLUR_ALPHA = 0;
+#endif
+
     SystemArena_Display();
     GameState_Realloc(&this->state, 0x1D4790);
     KaleidoManager_Init(this);
@@ -1010,6 +1015,27 @@ void Play_Update(PlayState* this) {
 skip:
     PLAY_LOG(3801);
 
+#ifdef ENABLE_MOTION_BLUR
+    {   // motion blur testing controls
+        if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_DUP)) {
+            R_MOTION_BLUR_ENABLED ^= 1;
+        }
+        if (R_MOTION_BLUR_ENABLED != 0) {
+            if (CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_DRIGHT)) {
+                R_MOTION_BLUR_ALPHA++;
+                if (R_MOTION_BLUR_ALPHA > 255) {
+                    R_MOTION_BLUR_ALPHA = 255;
+                }
+            } else if (CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_DLEFT)) {
+                R_MOTION_BLUR_ALPHA--;
+                if (R_MOTION_BLUR_ALPHA < 0) {
+                    R_MOTION_BLUR_ALPHA = 0;
+                }
+            }
+        }
+    }
+#endif
+
 #ifdef ENABLE_CAMERA_DEBUGGER
     if ((sp80 == 0) || gDebugCamEnabled) {
 #else
@@ -1058,6 +1084,46 @@ void Play_DrawOverlayElements(PlayState* this) {
         GameOver_FadeInLights(this);
     }
 }
+
+#ifdef ENABLE_MOTION_BLUR
+void PreRender_MotionBlurOpaque(PreRender* this, Gfx** gfxP);
+void PreRender_MotionBlur(PreRender* this, Gfx** gfxp, s32 alpha);
+
+extern u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT];
+
+void Play_DrawMotionBlur(PlayState* this) {
+    static u8 sFirstDraw = true;
+
+    if (R_MOTION_BLUR_ENABLED == 0) { // disabled
+        sFirstDraw = true;
+    } else {
+        Gfx* gfxRef;
+        Gfx* gfx;
+
+        OPEN_DISPS(this->state.gfxCtx, __FILE__, __LINE__);
+
+        gfxRef = POLY_OPA_DISP;
+        gfx = Graph_GfxPlusOne(gfxRef);
+        gSPDisplayList(OVERLAY_DISP++, gfx);
+
+        this->pauseBgPreRender.fbuf = this->state.gfxCtx->curFrameBuffer;
+        this->pauseBgPreRender.fbufSave = (u16*)gWorkBuf;
+
+        if (sFirstDraw) {
+            sFirstDraw = false;
+        } else {
+            PreRender_MotionBlur(&this->pauseBgPreRender, &gfx, R_MOTION_BLUR_ALPHA);
+        }
+        PreRender_MotionBlurOpaque(&this->pauseBgPreRender, &gfx);
+
+        gSPEndDisplayList(gfx++);
+        Graph_BranchDlist(gfxRef, gfx);
+        POLY_OPA_DISP = gfx;
+
+        CLOSE_DISPS(this->state.gfxCtx, __FILE__, __LINE__);
+    }
+}
+#endif
 
 void Play_Draw(PlayState* this) {
     GraphicsContext* gfxCtx = this->state.gfxCtx;
@@ -1284,6 +1350,10 @@ void Play_Draw(PlayState* this) {
                 }
 #endif
 
+#ifdef ENABLE_MOTION_BLUR
+                Play_DrawMotionBlur(this);
+#endif
+
                 if ((R_PAUSE_BG_PRERENDER_STATE == PAUSE_BG_PRERENDER_SETUP) ||
                     (gTransitionTileState == TRANS_TILE_SETUP)) {
                     Gfx* gfxP = OVERLAY_DISP;
@@ -1313,6 +1383,35 @@ void Play_Draw(PlayState* this) {
             }
         }
     }
+
+#ifdef ENABLE_MOTION_BLUR
+    {   // motion blur testing display
+        GfxPrint printer;
+        Gfx* gfxRef;
+        Gfx* gfx;
+
+        gfxRef = POLY_OPA_DISP;
+        gfx = Graph_GfxPlusOne(POLY_OPA_DISP);
+        gSPDisplayList(OVERLAY_DISP++, gfx);
+
+        GfxPrint_Init(&printer);
+        GfxPrint_Open(&printer, gfx);
+
+        GfxPrint_SetColor(&printer, 255, 255, 55, 32);
+
+        GfxPrint_SetPos(&printer, 6, 18);
+        GfxPrint_Printf(&printer, "Motion Blur Enabled: %x", R_MOTION_BLUR_ENABLED);
+        GfxPrint_SetPos(&printer, 6, 20);
+        GfxPrint_Printf(&printer, "Motion Blur Alpha: %x", R_MOTION_BLUR_ALPHA);
+
+        gfx = GfxPrint_Close(&printer);
+        GfxPrint_Destroy(&printer);
+
+        gSPEndDisplayList(gfx++);
+        Graph_BranchDlist(gfxRef, gfx);
+        POLY_OPA_DISP = gfx;
+    }
+#endif
 
     if (this->view.unk_124 != 0) {
         Camera_Update(GET_ACTIVE_CAM(this));

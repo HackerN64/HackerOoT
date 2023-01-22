@@ -32,6 +32,13 @@ UCodeInfo D_8012D248[3] = {
     { UCODE_S2DEX, gspS2DEX2d_fifoTextStart },
 };
 
+#ifdef ENABLE_MOTION_BLUR
+
+u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT]; // pointer-to-array, array itself is allocated (see below)
+#define ALIGN64(val) (((val) + 0x3F) & ~0x3F)
+
+#endif
+
 void Graph_FaultClient(void) {
     void* nextFb = osViGetNextFramebuffer();
     void* newFb = (SysCfb_GetFbPtr(0) != nextFb) ? SysCfb_GetFbPtr(0) : SysCfb_GetFbPtr(1);
@@ -439,6 +446,11 @@ void Graph_ThreadEntry(void* arg0) {
     GameStateOverlay* nextOvl;
     GameStateOverlay* ovl;
     char faultMsg[0x50];
+
+#ifdef ENABLE_MOTION_BLUR
+    gWorkBuf = SystemArena_MallocDebug(sizeof(*gWorkBuf) + 64 - 1, __FILE__, __LINE__);
+    gWorkBuf = (void*)ALIGN64((u32)gWorkBuf);
+#endif
 
     nextOvl = &gGameStateOverlayTable[0];
 

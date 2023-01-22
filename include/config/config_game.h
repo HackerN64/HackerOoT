@@ -41,4 +41,9 @@
 */
 // #define ENABLE_PAUSE_BG_AA
 
+/**
+ * Motion Blur
+*/
+#define ENABLE_MOTION_BLUR
+
 #endif

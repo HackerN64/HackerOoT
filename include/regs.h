@@ -209,6 +209,10 @@
 #define R_NAVI_MSG_REGION_ALPHA                  nREG(87)
 #define R_USE_DEBUG_CUTSCENE                     dREG(95)
 
+#ifdef ENABLE_MOTION_BLUR
+    #define R_MOTION_BLUR_ENABLED                SREG(92)
+    #define R_MOTION_BLUR_ALPHA                  SREG(93)
+#endif
 
 #define R_HREG_MODE  HREG(80) // see `HRegMode` for mode options
 
