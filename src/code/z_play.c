@@ -1015,7 +1015,7 @@ void Play_Update(PlayState* this) {
 skip:
     PLAY_LOG(3801);
 
-#ifdef ENABLE_MOTION_BLUR
+#ifdef ENABLE_MOTION_BLUR_DEBUG
     {   // motion blur testing controls
         if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_DUP)) {
             R_MOTION_BLUR_ENABLED ^= 1;
@@ -1384,7 +1384,7 @@ void Play_Draw(PlayState* this) {
         }
     }
 
-#ifdef ENABLE_MOTION_BLUR
+#ifdef ENABLE_MOTION_BLUR_DEBUG
     {   // motion blur testing display
         GfxPrint printer;
         Gfx* gfxRef;

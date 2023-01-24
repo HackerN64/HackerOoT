@@ -44,6 +44,6 @@
 /**
  * Motion Blur
 */
-#define ENABLE_MOTION_BLUR
+// #define ENABLE_MOTION_BLUR
 
 #endif
