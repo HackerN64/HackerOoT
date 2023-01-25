@@ -180,6 +180,10 @@ void Play_Destroy(GameState* thisx) {
     this->state.gfxCtx->callback = NULL;
     this->state.gfxCtx->callbackParam = NULL;
 
+#ifdef ENABLE_MOTION_BLUR
+    Play_DestroyMotionBlur();
+#endif
+
     SREG(91) = 0;
     R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_OFF;
 
@@ -345,6 +349,10 @@ void Play_Init(GameState* thisx) {
     Cutscene_HandleEntranceTriggers(this);
     KaleidoScopeCall_Init(this);
     Interface_Init(this);
+
+#ifdef ENABLE_MOTION_BLUR
+    Play_InitMotionBlur();
+#endif
 
     if (gSaveContext.nextDayTime != NEXT_TIME_NONE) {
         if (gSaveContext.nextDayTime == NEXT_TIME_DAY) {
@@ -1091,37 +1099,99 @@ void PreRender_MotionBlur(PreRender* this, Gfx** gfxp, s32 alpha);
 
 extern u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT];
 
+static u8 sMotionBlurStatus;
+
+typedef enum {
+    /* 0 */ MOTION_BLUR_OFF,
+    /* 1 */ MOTION_BLUR_SETUP,
+    /* 2 */ MOTION_BLUR_PROCESS
+} MotionBlurStatus;
+
 void Play_DrawMotionBlur(PlayState* this) {
-    static u8 sFirstDraw = true;
+    GraphicsContext* gfxCtx = this->state.gfxCtx;
+    s32 alpha;
+    Gfx* gfx;
+    Gfx* gfxHead;
 
-    if (R_MOTION_BLUR_ENABLED == 0) { // disabled
-        sFirstDraw = true;
+    if (R_MOTION_BLUR_PRIORITY_ENABLED) {
+        alpha = R_MOTION_BLUR_PRIORITY_ALPHA;
+
+        if (sMotionBlurStatus == MOTION_BLUR_OFF) {
+            sMotionBlurStatus = MOTION_BLUR_SETUP;
+        }
+    } else if (R_MOTION_BLUR_ENABLED) {
+        alpha = R_MOTION_BLUR_ALPHA;
+
+        if (sMotionBlurStatus == MOTION_BLUR_OFF) {
+            sMotionBlurStatus = MOTION_BLUR_SETUP;
+        }
     } else {
-        Gfx* gfxRef;
-        Gfx* gfx;
+        alpha = 0;
+        sMotionBlurStatus = MOTION_BLUR_OFF;
+    }
 
-        OPEN_DISPS(this->state.gfxCtx, __FILE__, __LINE__);
+    if (sMotionBlurStatus != MOTION_BLUR_OFF) {
+        OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
 
-        gfxRef = POLY_OPA_DISP;
-        gfx = Graph_GfxPlusOne(gfxRef);
+        gfxHead = POLY_OPA_DISP;
+        gfx = Graph_GfxPlusOne(gfxHead);
         gSPDisplayList(OVERLAY_DISP++, gfx);
 
-        this->pauseBgPreRender.fbuf = this->state.gfxCtx->curFrameBuffer;
+        this->pauseBgPreRender.fbuf = gfxCtx->curFrameBuffer;
         this->pauseBgPreRender.fbufSave = (u16*)gWorkBuf;
 
-        if (sFirstDraw) {
-            sFirstDraw = false;
+        if (sMotionBlurStatus == MOTION_BLUR_PROCESS) {
+            PreRender_MotionBlur(&this->pauseBgPreRender, &gfx, alpha);
         } else {
-            PreRender_MotionBlur(&this->pauseBgPreRender, &gfx, R_MOTION_BLUR_ALPHA);
+            sMotionBlurStatus = MOTION_BLUR_PROCESS;
         }
+
         PreRender_MotionBlurOpaque(&this->pauseBgPreRender, &gfx);
 
         gSPEndDisplayList(gfx++);
-        Graph_BranchDlist(gfxRef, gfx);
+        Graph_BranchDlist(gfxHead, gfx);
         POLY_OPA_DISP = gfx;
 
-        CLOSE_DISPS(this->state.gfxCtx, __FILE__, __LINE__);
+        CLOSE_DISPS(gfxCtx, __FILE__, __LINE__);
     }
+}
+
+void Play_InitMotionBlur(void) {
+    R_MOTION_BLUR_ENABLED = false;
+    R_MOTION_BLUR_PRIORITY_ENABLED = false;
+    sMotionBlurStatus = MOTION_BLUR_OFF;
+}
+
+void Play_DestroyMotionBlur(void) {
+    R_MOTION_BLUR_ENABLED = false;
+    R_MOTION_BLUR_PRIORITY_ENABLED = false;
+    sMotionBlurStatus = MOTION_BLUR_OFF;
+}
+
+void Play_SetMotionBlurAlpha(u32 alpha) {
+    R_MOTION_BLUR_ALPHA = alpha;
+}
+
+void Play_EnableMotionBlur(u32 alpha) {
+    R_MOTION_BLUR_ALPHA = alpha;
+    R_MOTION_BLUR_ENABLED = true;
+}
+
+void Play_DisableMotionBlur(void) {
+    R_MOTION_BLUR_ENABLED = false;
+}
+
+void Play_SetMotionBlurPriorityAlpha(u32 alpha) {
+    R_MOTION_BLUR_PRIORITY_ALPHA = alpha;
+}
+
+void Play_EnableMotionBlurPriority(u32 alpha) {
+    R_MOTION_BLUR_PRIORITY_ALPHA = alpha;
+    R_MOTION_BLUR_PRIORITY_ENABLED = true;
+}
+
+void Play_DisableMotionBlurPriority(void) {
+    R_MOTION_BLUR_PRIORITY_ENABLED = false;
 }
 #endif
 

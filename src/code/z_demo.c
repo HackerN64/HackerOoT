@@ -1808,6 +1808,26 @@ void CutsceneCmd_Text(PlayState* play, CutsceneContext* csCtx, CsCmdText* cmd) {
     }
 }
 
+#ifdef ENABLE_MOTION_BLUR
+void CutsceneCmd_MotionBlur(PlayState* play, CutsceneContext* csCtx, CsCmdMotionBlur* cmd) {
+    if ((csCtx->curFrame >= cmd->startFrame) && (cmd->endFrame >= csCtx->curFrame)) {
+        if ((csCtx->curFrame == cmd->startFrame) && (cmd->type == CS_MOTION_BLUR_ENABLE)) {
+            Play_EnableMotionBlur(cmd->alpha);
+        }
+
+        if (cmd->type == CS_MOTION_BLUR_DISABLE) {
+            f32 lerp = Environment_LerpWeight(cmd->endFrame, cmd->startFrame, csCtx->curFrame);
+
+            if (lerp >= 0.9f) {
+                Play_DisableMotionBlur();
+            } else {
+                Play_SetMotionBlurAlpha((1.0f - lerp) * cmd->alpha);
+            }
+        }
+    }
+}
+#endif
+
 void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script) {
     s16 i;
     s32 totalEntries;
@@ -2235,6 +2255,17 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 script += sizeof(CsCmdTransition);
                 break;
 
+#ifdef ENABLE_MOTION_BLUR
+            case CS_CMD_MOTION_BLUR:
+                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                script += sizeof(cmdEntries);
+
+                for (j = 0; j < cmdEntries; j++) {
+                    CutsceneCmd_MotionBlur(play, csCtx, (CsCmdMotionBlur*)script);
+                    script += sizeof(CsCmdMotionBlur);
+                }
+                break;
+#endif
             default:
                 MemCpy(&cmdEntries, script, 4);
                 script += sizeof(cmdEntries);

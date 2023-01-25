@@ -3,6 +3,8 @@
 
 #include "ultra64.h"
 
+#include "config.h"
+
 /**
  * Special type for blocks of cutscene data, asm-processor checks
  * arrays for CutsceneData type and converts floats within the array
@@ -161,6 +163,9 @@ typedef enum {
     /* 0x008F */ CS_CMD_ACTOR_CUE_9_0,
     /* 0x0090 */ CS_CMD_ACTOR_CUE_0_17,
     /* 0x03E8 */ CS_CMD_DESTINATION = 0x03E8,
+#ifdef ENABLE_MOTION_BLUR
+                 CS_CMD_MOTION_BLUR,
+#endif
     /* 0xFFFF */ CS_CMD_END = 0xFFFF
 } CutsceneCmd;
 
@@ -491,6 +496,11 @@ typedef union {
     s32 _words[4];
 } CutsceneCameraPoint; // size = 0x10
 
+/**
+ * #define CS_CAM_POINT(continueFlag, roll, frame, viewAngle, xPos, yPos, zPos, unused) \
+    CMD_BBH(continueFlag, roll, frame), CMD_F(viewAngle), CMD_HH(xPos, yPos), CMD_HH(zPos, unused)
+*/
+
 #define CS_CAM_CONTINUE 0
 #define CS_CAM_STOP -1
 
@@ -512,5 +522,22 @@ typedef struct {
     /* 0x4 */ CutsceneCameraPoint* eyePoints;
     /* 0x8 */ s16 relativeToPlayer;
 } CutsceneCameraMove; // size = 0xC
+
+#ifdef ENABLE_MOTION_BLUR
+typedef union {
+    struct {
+        /* 0x0 */ u16 type;
+        /* 0x2 */ u16 alpha;
+        /* 0x4 */ u16 startFrame;
+        /* 0x6 */ u16 endFrame;
+    };
+    s32 _words[2];
+} CsCmdMotionBlur; // size = 0x8
+
+typedef enum {
+    /* 1 */ CS_MOTION_BLUR_ENABLE = 1, // enable instantly
+    /* 2 */ CS_MOTION_BLUR_DISABLE // disable gradually
+} CsMotionBlurType;
+#endif
 
 #endif
