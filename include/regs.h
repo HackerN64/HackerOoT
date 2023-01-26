@@ -211,9 +211,9 @@
 
 #ifdef ENABLE_MOTION_BLUR
     #define R_MOTION_BLUR_ALPHA                  SREG(90)
-    #define R_MOTION_BLUR_ENABLED                SREG(91)
     #define R_MOTION_BLUR_PRIORITY_ALPHA         SREG(92)
     #define R_MOTION_BLUR_PRIORITY_ENABLED       SREG(93)
+    #define R_MOTION_BLUR_ENABLED                SREG(95)
 #endif
 
 #define R_HREG_MODE  HREG(80) // see `HRegMode` for mode options

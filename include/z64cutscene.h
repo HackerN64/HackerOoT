@@ -496,11 +496,6 @@ typedef union {
     s32 _words[4];
 } CutsceneCameraPoint; // size = 0x10
 
-/**
- * #define CS_CAM_POINT(continueFlag, roll, frame, viewAngle, xPos, yPos, zPos, unused) \
-    CMD_BBH(continueFlag, roll, frame), CMD_F(viewAngle), CMD_HH(xPos, yPos), CMD_HH(zPos, unused)
-*/
-
 #define CS_CAM_CONTINUE 0
 #define CS_CAM_STOP -1
 
@@ -535,8 +530,8 @@ typedef union {
 } CsCmdMotionBlur; // size = 0x8
 
 typedef enum {
-    /* 1 */ CS_MOTION_BLUR_ENABLE = 1, // enable instantly
-    /* 2 */ CS_MOTION_BLUR_DISABLE // disable gradually
+    /* 1 */ CS_MOTION_BLUR_ENABLE = 1,
+    /* 2 */ CS_MOTION_BLUR_DISABLE
 } CsMotionBlurType;
 #endif
 

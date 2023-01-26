@@ -33,10 +33,7 @@ UCodeInfo D_8012D248[3] = {
 };
 
 #ifdef ENABLE_MOTION_BLUR
-
 u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT]; // pointer-to-array, array itself is allocated (see below)
-#define ALIGN64(val) (((val) + 0x3F) & ~0x3F)
-
 #endif
 
 void Graph_FaultClient(void) {
