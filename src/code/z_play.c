@@ -239,11 +239,6 @@ void Play_Init(GameState* thisx) {
         return;
     }
 
-#ifdef ENABLE_MOTION_BLUR
-    R_MOTION_BLUR_ENABLED = 0;
-    R_MOTION_BLUR_ALPHA = 0;
-#endif
-
     SystemArena_Display();
     GameState_Realloc(&this->state, 0x1D4790);
     KaleidoManager_Init(this);
@@ -351,7 +346,7 @@ void Play_Init(GameState* thisx) {
     Interface_Init(this);
 
 #ifdef ENABLE_MOTION_BLUR
-    Play_InitMotionBlur();
+    Play_InitMotionBlur(this);
 #endif
 
     if (gSaveContext.nextDayTime != NEXT_TIME_NONE) {
@@ -1156,10 +1151,11 @@ void Play_DrawMotionBlur(PlayState* this) {
     }
 }
 
-void Play_InitMotionBlur(void) {
+void Play_InitMotionBlur(PlayState* this) {
     R_MOTION_BLUR_ENABLED = false;
     R_MOTION_BLUR_PRIORITY_ENABLED = false;
     sMotionBlurStatus = MOTION_BLUR_OFF;
+    this->csCtx.originalBlurAlpha = R_MOTION_BLUR_ALPHA = 0;
 }
 
 void Play_DestroyMotionBlur(void) {

@@ -1324,7 +1324,7 @@ s32 Play_CamIsNotFixed(PlayState* this);
 
 #ifdef ENABLE_MOTION_BLUR
 void Play_DrawMotionBlur(PlayState* this);
-void Play_InitMotionBlur(void);
+void Play_InitMotionBlur(PlayState* this);
 void Play_DestroyMotionBlur(void);
 void Play_SetMotionBlurAlpha(u32 alpha);
 void Play_EnableMotionBlur(u32 alpha);

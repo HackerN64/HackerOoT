@@ -273,14 +273,14 @@
 /**
  * Enables motion blur
  * ``alpha`` is how visible the motion blur is, MM uses 180 for every instance of motion blur.
- * Note: this happens instantly
+ * Note: this can happen gradually
  */
-#define CS_MOTION_BLUR_ENABLE(startFrame, alpha) \
-    CS_MOTION_BLUR(CS_MOTION_BLUR_ENABLE, alpha, startFrame, startFrame + 1)
+#define CS_MOTION_BLUR_ENABLE(startFrame, endFrame, alpha) \
+    CS_MOTION_BLUR(CS_MOTION_BLUR_ENABLE, alpha, startFrame, endFrame)
 
 /**
  * Disables motion blur
- * Note: this happens gradually
+ * Note: this can happen gradually
 */
 #define CS_MOTION_BLUR_DISABLE(startFrame, endFrame) \
     CS_MOTION_BLUR(CS_MOTION_BLUR_DISABLE, 0, startFrame, endFrame)

@@ -1811,17 +1811,24 @@ void CutsceneCmd_Text(PlayState* play, CutsceneContext* csCtx, CsCmdText* cmd) {
 #ifdef ENABLE_MOTION_BLUR
 void CutsceneCmd_MotionBlur(PlayState* play, CutsceneContext* csCtx, CsCmdMotionBlur* cmd) {
     if ((csCtx->curFrame >= cmd->startFrame) && (cmd->endFrame >= csCtx->curFrame)) {
-        if ((csCtx->curFrame == cmd->startFrame) && (cmd->type == CS_MOTION_BLUR_ENABLE)) {
-            Play_EnableMotionBlur(cmd->alpha);
-        }
+        f32 lerp = Environment_LerpWeight(cmd->endFrame, cmd->startFrame, csCtx->curFrame);
 
-        if (cmd->type == CS_MOTION_BLUR_DISABLE) {
-            f32 lerp = Environment_LerpWeight(cmd->endFrame, cmd->startFrame, csCtx->curFrame);
+#ifdef ENABLE_MOTION_BLUR_DEBUG
+        osSyncPrintf("originalBlurAlpha: 0x%X, lerp: %f\n", play->csCtx.originalBlurAlpha, lerp);
+#endif
 
+        if (cmd->type == CS_MOTION_BLUR_ENABLE) {
+            if (csCtx->originalBlurAlpha == 0) {
+                csCtx->originalBlurAlpha = cmd->alpha;
+            }
+
+            Play_EnableMotionBlur(lerp * cmd->alpha);
+        } else if (cmd->type == CS_MOTION_BLUR_DISABLE) {
             if (lerp >= 0.9f) {
                 Play_DisableMotionBlur();
+                csCtx->originalBlurAlpha = 0;
             } else {
-                Play_SetMotionBlurAlpha((1.0f - lerp) * cmd->alpha);
+                Play_SetMotionBlurAlpha((1.0f - lerp) * csCtx->originalBlurAlpha);
             }
         }
     }
@@ -2288,19 +2295,17 @@ void CutsceneHandler_RunScript(PlayState* play, CutsceneContext* csCtx) {
         if (0) {} // Also necessary to match
 
 #ifdef SHOW_CS_INFOS
-        if (BREG(0) != 0) {
-            OPEN_DISPS(play->state.gfxCtx, "../z_demo.c", 4101);
+        OPEN_DISPS(play->state.gfxCtx, "../z_demo.c", 4101);
 
-            prevDisplayList = POLY_OPA_DISP;
-            displayList = Graph_GfxPlusOne(POLY_OPA_DISP);
-            gSPDisplayList(OVERLAY_DISP++, displayList);
-            Cutscene_DrawDebugInfo(play, &displayList, csCtx);
-            gSPEndDisplayList(displayList++);
-            Graph_BranchDlist(prevDisplayList, displayList);
-            POLY_OPA_DISP = displayList;
+        prevDisplayList = POLY_OPA_DISP;
+        displayList = Graph_GfxPlusOne(POLY_OPA_DISP);
+        gSPDisplayList(OVERLAY_DISP++, displayList);
+        Cutscene_DrawDebugInfo(play, &displayList, csCtx);
+        gSPEndDisplayList(displayList++);
+        Graph_BranchDlist(prevDisplayList, displayList);
+        POLY_OPA_DISP = displayList;
 
-            CLOSE_DISPS(play->state.gfxCtx, "../z_demo.c", 4108);
-        }
+        CLOSE_DISPS(play->state.gfxCtx, "../z_demo.c", 4108);
 #endif
 
         csCtx->curFrame++;

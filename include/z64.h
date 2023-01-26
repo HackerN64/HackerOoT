@@ -321,6 +321,9 @@ typedef struct {
     /* 0x20 */ CutsceneCameraPoint* camEyePoints;
     /* 0x24 */ CsCmdActorCue* playerCue;
     /* 0x28 */ CsCmdActorCue* actorCues[10]; // "npcdemopnt"
+#ifdef ENABLE_MOTION_BLUR
+               u16 originalBlurAlpha;
+#endif
 } CutsceneContext; // size = 0x50
 
 typedef struct {
