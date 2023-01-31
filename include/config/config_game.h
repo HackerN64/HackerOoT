@@ -41,4 +41,12 @@
 */
 // #define ENABLE_PAUSE_BG_AA
 
+/**
+ * Widescreen mode
+*/
+#define ENABLE_WIDESCREEN
+
+// Force widescreen mode regardless of SaveContext
+// #define FORCE_WIDESCREEN
+
 #endif

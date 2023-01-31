@@ -416,7 +416,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     }
 
 #ifdef ENABLE_MAP_SELECT
-    if (gIsCtrlr2Valid && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&
+    if (CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&
         CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_L | BTN_R)) {
         gSaveContext.gameMode = GAMEMODE_NORMAL;
         SET_NEXT_GAMESTATE(gameState, MapSelect_Init, MapSelectState);
@@ -430,6 +430,13 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
         SET_NEXT_GAMESTATE(gameState, PreNMI_Init, PreNMIState);
         gameState->running = false;
     }
+
+#ifdef ENABLE_WIDESCREEN
+    if (CHECK_BTN_ALL(gameState->input[0].press.button, BTN_DUP) &&
+        CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_Z | BTN_R)) {
+        gSaveContext.isUsingWidescreen ^= 1;
+    }
+#endif
 }
 
 void Graph_ThreadEntry(void* arg0) {
@@ -444,6 +451,10 @@ void Graph_ThreadEntry(void* arg0) {
 
     osSyncPrintf("グラフィックスレッド実行開始\n"); // "Start graphic thread execution"
     Graph_Init(&gfxCtx);
+
+#ifdef ENABLE_WIDESCREEN
+    gSaveContext.isUsingWidescreen = true;
+#endif
 
     while (nextOvl) {
         ovl = nextOvl;

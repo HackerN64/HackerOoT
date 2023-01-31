@@ -70,6 +70,9 @@ typedef struct {
     /* 0x14 */ s32 totalDays;
     /* 0x18 */ s32 unk_18;    // increments with totalDays, gets reset by goron for bgs and one other use
     /* 0x1C */ SaveInfo info; // "information"
+#ifdef ENABLE_WIDESCREEN
+                 u8 isUsingWidescreen; // TODO: doesn't get saved?
+#endif
 } Save;                       // size = 0x1354
 
 #define SAVE_PLAYER_DATA (*((SavePlayerData*)&gSaveContext.newf))
