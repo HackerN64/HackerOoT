@@ -2841,9 +2841,9 @@ void Interface_DrawItemButtons(PlayState* play) {
             gDPPipeSync(OVERLAY_DISP++);
             gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 120, 120, 120, interfaceCtx->startAlpha);
             gSPTextureRectangle(OVERLAY_DISP++,
-                WIDE_INCR((startButtonLeftPos[gSaveContext.language] << 2), WIDE_BTNSTART_SHIFT),
+                WIDE_N64_MODE(WIDE_INCR((startButtonLeftPos[gSaveContext.language] << 2), WIDE_BTNSTART_SHIFT), -3),
                 17 << 2, WIDE_INCR((startButtonLeftPos[gSaveContext.language] + 22), 40 - (s16)WIDE_GET_4_3) << 2,
-                39 << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((s32)(1.4277344 * (1 << 10)), WIDE_GET_RATIO), (s32)(1.4277344 * (1 << 10)));
+                WIDE_N64_MODE(39, 3) << 2, G_TX_RENDERTILE, 0, 0, WIDE_N64_MODE(WIDE_DIV((s32)(1.4277344 * (1 << 10)), WIDE_GET_RATIO), -128), WIDE_N64_MODE((s32)(1.4277344 * (1 << 10)), -128));
             gDPPipeSync(OVERLAY_DISP++);
             gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 255, 255, 255, interfaceCtx->startAlpha);
             gDPSetEnvColor(OVERLAY_DISP++, 0, 0, 0, 0);
@@ -2858,11 +2858,11 @@ void Interface_DrawItemButtons(PlayState* play) {
             width = WIDE_INCR(DO_ACTION_TEX_WIDTH / (R_START_LABEL_DD(gSaveContext.language) / 100.0f), 32 - (s16)WIDE_GET_4_3);
             height = DO_ACTION_TEX_HEIGHT / (R_START_LABEL_DD(gSaveContext.language) / 100.0f);
 
-            gSPTextureRectangle(OVERLAY_DISP++, (WIDE_INCR(R_START_LABEL_X(gSaveContext.language), 3 + 44) << 2),
-                                R_START_LABEL_Y(gSaveContext.language) << 2,
+            gSPTextureRectangle(OVERLAY_DISP++, WIDE_N64_MODE((WIDE_INCR(R_START_LABEL_X(gSaveContext.language), 3 + 44) << 2), -3),
+                                WIDE_N64_MODE(R_START_LABEL_Y(gSaveContext.language), 1) << 2,
                                 (R_START_LABEL_X(gSaveContext.language) + width) << 2,
                                 (R_START_LABEL_Y(gSaveContext.language) + height) << 2, G_TX_RENDERTILE, 0, 0,
-                                WIDE_DIV(texCoordScale, WIDE_GET_RATIO), texCoordScale);
+                                WIDE_N64_MODE(WIDE_DIV(texCoordScale, WIDE_GET_RATIO), -32), WIDE_N64_MODE(texCoordScale, -32));
         }
     }
 
@@ -2902,10 +2902,9 @@ void Interface_DrawItemButtons(PlayState* play) {
                                    G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
                                    G_TX_NOLOD, G_TX_NOLOD);
 
-
             gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((R_C_UP_ICON_X << 2), WIDE_CUP_SHIFT), R_C_UP_ICON_Y << 2,
                 WIDE_INCR((R_C_UP_ICON_X + 32), WIDE_CUP_SHIFT - (s32)WIDE_GET_4_3) << 2,
-                (R_C_UP_ICON_Y + 8) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
+                (R_C_UP_ICON_Y + 8) << 2, G_TX_RENDERTILE, 0, 0, WIDE_N64_MODE(WIDE_DIV((1 << 10), WIDE_GET_RATIO), -20), WIDE_N64_MODE((1 << 10), -20));
         }
 
         sCUpTimer--;
@@ -3408,7 +3407,7 @@ void Interface_Draw(PlayState* play) {
         gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 255, 255, 255, interfaceCtx->aAlpha);
         gDPSetEnvColor(OVERLAY_DISP++, 0, 0, 0, 0);
         Matrix_Translate(0.0f, 0.0f, WREG(46 + gSaveContext.language) / 10.0f, MTXMODE_NEW);
-        Matrix_Scale(1.0f, 1.0f, 1.0f, MTXMODE_APPLY);
+        Matrix_Scale(WIDE_N64_MODE(1.0f, 0.1), WIDE_N64_MODE(1.0f, 0.1), WIDE_N64_MODE(1.0f, 0.1), MTXMODE_APPLY);
         Matrix_RotateX(interfaceCtx->unk_1F4 / 10000.0f, MTXMODE_APPLY);
         gSPMatrix(OVERLAY_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_parameter.c", 3701),
                   G_MTX_MODELVIEW | G_MTX_LOAD);

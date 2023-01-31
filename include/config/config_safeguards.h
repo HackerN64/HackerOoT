@@ -77,7 +77,7 @@
     #ifdef FORCE_WIDESCREEN
         #define USE_WIDESCREEN true
     #else
-        #define USE_WIDESCREEN (gSaveContext.isUsingWidescreen == true)
+        #define USE_WIDESCREEN (gIsUsingWidescreen == true)
     #endif
 #else
     #define USE_WIDESCREEN false

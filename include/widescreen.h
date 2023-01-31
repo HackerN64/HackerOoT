@@ -1,5 +1,5 @@
-#ifndef CONFIG_WIDESCREEN_H
-#define CONFIG_WIDESCREEN_H
+#ifndef WIDESCREEN_H
+#define WIDESCREEN_H
 
 // This file provides macros to handle switching between 4:3 and 16:9 and fixing issues.
 // It is not meant to be something the users can edit.
@@ -33,5 +33,6 @@
 #define WIDE_MINIMAP_ARROW_SHIFT 1.55f
 #define WIDE_MINIMAP_ARROW_SHIFT_DGN (1585.0f / 900.0f)
 #define WIDE_ITEMICON_RIGHT_X(button) (button != 0 ? -25 : -32)
+#define WIDE_N64_MODE(originalVal, changeBy) (WIDESCREEN_N64_MODE ? WIDE_INCR(originalVal, changeBy) : originalVal)
 
 #endif

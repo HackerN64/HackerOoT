@@ -739,7 +739,7 @@ f32 sFontWidths[144] = {
     14.0f, // ?
     14.0f, // ?
 };
-s16 t = 1.0f;
+
 u16 Message_DrawItemIcon(PlayState* play, u16 itemId, Gfx** p, u16 i) {
     s32 pad;
     Gfx* gfx = *p;
@@ -766,9 +766,6 @@ u16 Message_DrawItemIcon(PlayState* play, u16 itemId, Gfx** p, u16 i) {
                             ITEM_ICON_WIDTH, ITEM_ICON_HEIGHT, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
                             G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
     }
-
-    if (CHECK_BTN_ALL(play->state.input[0].press.button, BTN_DUP)) t++;
-    if (CHECK_BTN_ALL(play->state.input[0].press.button, BTN_DDOWN)) t--;
 
     gSPTextureRectangle(gfx++, (WIDE_INCR(msgCtx->textPosX, 3) + R_TEXTBOX_ICON_XPOS) << 2, R_TEXTBOX_ICON_YPOS << 2,
                         WIDE_INCR((msgCtx->textPosX + R_TEXTBOX_ICON_XPOS + R_TEXTBOX_ICON_DIMENSION), (itemId < ITEM_MEDALLION_FOREST ? -5 : -3)) << 2,
@@ -1145,7 +1142,15 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
                 }
                 Message_DrawTextChar(play, &font->charTexBuf[charTexIdx], &gfx);
                 charTexIdx += FONT_CHAR_TEX_SIZE;
-                msgCtx->textPosX += (s32)WIDE_MULT((sFontWidths[character - ' '] * (R_TEXT_CHAR_SCALE / 100.0f)), WIDE_GET_RATIO);
+                {
+                    f32 fontWidth = sFontWidths[character - ' '];
+
+                    if (character - ' ' == 7) {
+                        fontWidth = WIDE_N64_MODE(sFontWidths[character - ' '], 3.0f);
+                    }
+
+                    msgCtx->textPosX += (s32)WIDE_MULT((fontWidth * (R_TEXT_CHAR_SCALE / 100.0f)), WIDE_GET_RATIO);
+                }
                 break;
         }
     }
