@@ -739,7 +739,7 @@ f32 sFontWidths[144] = {
     14.0f, // ?
     14.0f, // ?
 };
-
+s16 t = 1.0f;
 u16 Message_DrawItemIcon(PlayState* play, u16 itemId, Gfx** p, u16 i) {
     s32 pad;
     Gfx* gfx = *p;
@@ -767,8 +767,11 @@ u16 Message_DrawItemIcon(PlayState* play, u16 itemId, Gfx** p, u16 i) {
                             G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
     }
 
-    gSPTextureRectangle(gfx++, (WIDE_INCR(msgCtx->textPosX, 25) + R_TEXTBOX_ICON_XPOS) << 2, R_TEXTBOX_ICON_YPOS << 2,
-                        WIDE_INCR((msgCtx->textPosX + R_TEXTBOX_ICON_XPOS + R_TEXTBOX_ICON_DIMENSION), (itemId < ITEM_MEDALLION_FOREST ? 17 : 19)) << 2,
+    if (CHECK_BTN_ALL(play->state.input[0].press.button, BTN_DUP)) t++;
+    if (CHECK_BTN_ALL(play->state.input[0].press.button, BTN_DDOWN)) t--;
+
+    gSPTextureRectangle(gfx++, (WIDE_INCR(msgCtx->textPosX, 3) + R_TEXTBOX_ICON_XPOS) << 2, R_TEXTBOX_ICON_YPOS << 2,
+                        WIDE_INCR((msgCtx->textPosX + R_TEXTBOX_ICON_XPOS + R_TEXTBOX_ICON_DIMENSION), (itemId < ITEM_MEDALLION_FOREST ? -5 : -3)) << 2,
                         (R_TEXTBOX_ICON_YPOS + R_TEXTBOX_ICON_DIMENSION) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
     gDPPipeSync(gfx++);
     gDPSetCombineLERP(gfx++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0);
