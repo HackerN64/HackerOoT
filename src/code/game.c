@@ -209,7 +209,7 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     CLOSE_DISPS(gfxCtx, "../game.c", 800);
 
 #if (defined ENABLE_CAMERA_DEBUGGER) || (defined ENABLE_REG_EDITOR)
-    func_80063D7C(gfxCtx);
+    Debug_DrawText(gfxCtx);
 #endif
 
 #ifdef ENABLE_SPEEDMETER
@@ -343,7 +343,7 @@ void GameState_Update(GameState* gameState) {
         }
     }
 
-    if (R_PAUSE_MENU_MODE != 2u) {
+    if (R_PAUSE_BG_PRERENDER_STATE != (u32)PAUSE_BG_PRERENDER_PROCESS) {
         GameState_Draw(gameState, gfxCtx);
         func_800C49F4(gfxCtx);
     }

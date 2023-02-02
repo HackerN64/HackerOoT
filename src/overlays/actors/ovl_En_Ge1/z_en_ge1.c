@@ -333,7 +333,7 @@ void EnGe1_Open_GTGGuard(EnGe1* this, PlayState* play) {
         this->cutsceneTimer = 50;
         Message_CloseTextbox(play);
     } else if ((this->skelAnime.curFrame == 15.0f) || (this->skelAnime.curFrame == 19.0f)) {
-        Audio_PlayActorSfx2(&this->actor, NA_SE_IT_HAND_CLAP);
+        Actor_PlaySfx(&this->actor, NA_SE_IT_HAND_CLAP);
     }
 }
 
@@ -426,7 +426,7 @@ void EnGe1_OpenGate_GateOp(EnGe1* this, PlayState* play) {
         this->cutsceneTimer = 50;
         Message_CloseTextbox(play);
     } else if ((this->skelAnime.curFrame == 15.0f) || (this->skelAnime.curFrame == 19.0f)) {
-        Audio_PlayActorSfx2(&this->actor, NA_SE_IT_HAND_CLAP);
+        Actor_PlaySfx(&this->actor, NA_SE_IT_HAND_CLAP);
     }
 }
 
@@ -722,7 +722,7 @@ void EnGe1_Update(Actor* thisx, PlayState* play) {
 
     Collider_UpdateCylinder(&this->actor, &this->collider);
     CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
-    Actor_MoveForward(&this->actor);
+    Actor_MoveXZGravity(&this->actor);
     Actor_UpdateBgCheckInfo(play, &this->actor, 40.0f, 25.0f, 40.0f, UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2);
     this->animFunc(this);
     this->actionFunc(this, play);
