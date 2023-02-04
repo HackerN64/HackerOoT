@@ -79,7 +79,7 @@ void KaleidoSetup_Init(PlayState* play) {
     u64 temp = 0; // Necessary to match
 
     pauseCtx->state = 0;
-#if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
     pauseCtx->debugState = 0;
 #endif
     pauseCtx->alpha = 0;

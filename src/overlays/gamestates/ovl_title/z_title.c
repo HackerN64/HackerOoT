@@ -23,16 +23,16 @@ void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
 
     GfxPrint_SetColor(printer, 255, 255, 255, 255);
 
-    GfxPrint_SetPos(printer, 7, 22);
+    GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 22);
     GfxPrint_Printf(printer, "[Author:%s]", gBuildAuthor);
 
-    GfxPrint_SetPos(printer, 7, 23);
+    GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 23);
     GfxPrint_Printf(printer, "[Date:%s]", gBuildDate);
 
-    GfxPrint_SetPos(printer, 7, 24);
+    GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 24);
     GfxPrint_Printf(printer, "[Version:%s]", gBuildGitVersion);
 
-    GfxPrint_SetPos(printer, 7, 25);
+    GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 25);
     GfxPrint_Printf(printer, "[Build Option:%s]", gBuildMakeOption);
 
     g = GfxPrint_Close(printer);
@@ -113,7 +113,7 @@ void ConsoleLogo_Draw(ConsoleLogoState* this) {
     gSPSetLights1(POLY_OPA_DISP++, sTitleLights);
     ConsoleLogo_SetupView(this, 0, 150.0, 300.0);
     Gfx_SetupDL_25Opa(this->state.gfxCtx);
-    Matrix_Translate(-53.0, -5.0, 0, MTXMODE_NEW);
+    Matrix_Translate(WIDE_INCR(-53.0, -8.0), -5.0, 0, MTXMODE_NEW);
     Matrix_Scale(1.0, 1.0, 1.0, MTXMODE_APPLY);
     Matrix_RotateZYX(0, sTitleRotY, 0, MTXMODE_APPLY);
 
@@ -137,7 +137,7 @@ void ConsoleLogo_Draw(ConsoleLogoState* this) {
                             G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
         gDPSetTileSize(POLY_OPA_DISP++, 1, this->uls, (this->ult & 0x7F) - (idx << 2), 0, 0);
-        gSPTextureRectangle(POLY_OPA_DISP++, 97 << 2, y << 2, 289 << 2, (y + 2) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10,
+        gSPTextureRectangle(POLY_OPA_DISP++, WIDE_INCR(97, 8) << 2, y << 2, 289 << 2, (y + 2) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO),
                             1 << 10);
     }
 
