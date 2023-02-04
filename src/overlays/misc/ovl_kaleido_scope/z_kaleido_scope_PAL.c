@@ -2287,7 +2287,7 @@ void KaleidoScope_Draw(PlayState* play) {
     gSPSegment(POLY_OPA_DISP++, 0x0C, pauseCtx->iconItemAltSegment);
     gSPSegment(POLY_OPA_DISP++, 0x0D, pauseCtx->iconItemLangSegment);
 
-#if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
     if (pauseCtx->debugState == 0) {
 #endif
         KaleidoScope_SetView(pauseCtx, pauseCtx->eye.x, pauseCtx->eye.y, pauseCtx->eye.z);
@@ -2305,7 +2305,7 @@ void KaleidoScope_Draw(PlayState* play) {
         if (!((pauseCtx->state >= 8) && (pauseCtx->state <= 0x11))) {
             KaleidoScope_DrawInfoPanel(play);
         }
-#if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
     }
 #endif
 

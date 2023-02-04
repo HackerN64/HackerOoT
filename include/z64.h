@@ -47,6 +47,7 @@
 #include "mempak.h"
 #include "tha.h"
 #include "thga.h"
+#include "widescreen.h"
 
 #include "config.h"
 

@@ -78,4 +78,14 @@
  * config_game.h
  */
 
+#ifdef ENABLE_WIDESCREEN
+    #ifdef FORCE_WIDESCREEN
+        #define USE_WIDESCREEN true
+    #else
+        #define USE_WIDESCREEN (gIsUsingWidescreen == true)
+    #endif
+#else
+    #define USE_WIDESCREEN false
+#endif
+
 #endif
