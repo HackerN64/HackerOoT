@@ -3213,7 +3213,7 @@ f32 BgCheck_RaycastDownDyna(DynaRaycastDown* dynaRaycastDown) {
     dynaActor = DynaPoly_GetActor(dynaRaycastDown->colCtx, *dynaRaycastDown->bgId);
     if ((result != BGCHECK_Y_MIN) && (dynaActor != NULL) && (dynaRaycastDown->play != NULL)) {
         pauseState = dynaRaycastDown->play->pauseCtx.state != 0;
-#if (defined ENABLE_INV_EDITOR && defined ENABLE_EVENT_EDITOR)
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
         if (pauseState == 0) {
             pauseState = dynaRaycastDown->play->pauseCtx.debugState != 0;
         }
