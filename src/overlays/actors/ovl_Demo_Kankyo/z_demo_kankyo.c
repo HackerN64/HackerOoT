@@ -525,7 +525,7 @@ void DemoKankyo_DrawRain(Actor* thisx, PlayState* play) {
     f32 translateZ;
     s16 j;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 1186);
+    OPEN_DISPS(play->state.gfxCtx);
 
     for (i = 0; i < 30; i++) {
         s32 pad[2];
@@ -630,14 +630,14 @@ void DemoKankyo_DrawRain(Actor* thisx, PlayState* play) {
             gSPDisplayList(POLY_XLU_DISP++, object_efc_star_field_DL_000080);
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 1358);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoKankyo_DrawRock(Actor* thisx, PlayState* play) {
     DemoKankyo* this = (DemoKankyo*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 1376);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Matrix_Translate(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z, MTXMODE_NEW);
@@ -651,7 +651,7 @@ void DemoKankyo_DrawRock(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, object_efc_star_field_DL_000DE0);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 1409);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoKankyo_DrawClouds(Actor* thisx, PlayState* play) {
@@ -662,7 +662,7 @@ void DemoKankyo_DrawClouds(Actor* thisx, PlayState* play) {
     f32 dy;
     f32 dz;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 1425);
+    OPEN_DISPS(play->state.gfxCtx);
 
     for (i = 0; i < 30; i++) {
         dx = -(Math_SinS(this->unk_150[i].unk_20 - 0x8000) * 120.0f) * (30.0f + (i / 30.0f) * 10.0f);
@@ -688,14 +688,14 @@ void DemoKankyo_DrawClouds(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, gEffDustDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 1474);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoKankyo_DrawDoorOfTime(Actor* thisx, PlayState* play) {
     DemoKankyo* this = (DemoKankyo*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 1487);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Matrix_Translate(-this->unk_150[0].unk_18, 0.0f, 0.0f, MTXMODE_APPLY);
@@ -707,14 +707,14 @@ void DemoKankyo_DrawDoorOfTime(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, object_toki_objects_DL_007578);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 1501);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoKankyo_DrawLightPlane(Actor* thisx, PlayState* play) {
     DemoKankyo* this = (DemoKankyo*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 1514);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (play->csCtx.state == CS_STATE_IDLE || IS_CUTSCENE_LAYER) {
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -725,7 +725,7 @@ void DemoKankyo_DrawLightPlane(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, object_toki_objects_DL_008390);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 1534);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoKankyo_Vec3fCopy(Vec3f* src, Vec3f* dst) {
@@ -779,7 +779,7 @@ void DemoKankyo_DrawWarpSparkles(Actor* thisx, PlayState* play) {
     PosRot posRot;
     u8 linkAge = gSaveContext.linkAge;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 1824);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->sparkleCounter < 30) {
         this->sparkleCounter += 2;
@@ -895,7 +895,7 @@ void DemoKankyo_DrawWarpSparkles(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 2019);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoKankyo_DrawSparkles(Actor* thisx, PlayState* play) {
@@ -917,7 +917,7 @@ void DemoKankyo_DrawSparkles(Actor* thisx, PlayState* play) {
     s16 i;
     PosRot posRot;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 2434);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->sparkleCounter < 20) {
         this->sparkleCounter++;
@@ -999,5 +999,5 @@ void DemoKankyo_DrawSparkles(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_kankyo.c", 2579);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

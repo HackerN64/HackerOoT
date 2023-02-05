@@ -534,7 +534,7 @@ void BgSpot16Bombstone_Draw(Actor* thisx, PlayState* play) {
     BgSpot16Bombstone* this = (BgSpot16Bombstone*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot16_bombstone.c", 1253);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -550,5 +550,5 @@ void BgSpot16Bombstone_Draw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_OPA_DISP++, this->dList);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot16_bombstone.c", 1274);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

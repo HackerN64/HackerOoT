@@ -20,13 +20,13 @@ static s16 D_80812544[] = {
 };
 
 void FileSelect_DrawCharacter(GraphicsContext* gfxCtx, void* texture, s16 vtx) {
-    OPEN_DISPS(gfxCtx, "../z_file_nameset_PAL.c", 110);
+    OPEN_DISPS(gfxCtx);
 
     gDPLoadTextureBlock_4b(POLY_OPA_DISP++, texture, G_IM_FMT_I, 16, 16, 0, G_TX_NOMIRROR | G_TX_CLAMP,
                            G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
     gSP1Quadrangle(POLY_OPA_DISP++, vtx, vtx + 2, vtx + 3, vtx + 1, 0);
 
-    CLOSE_DISPS(gfxCtx, "../z_file_nameset_PAL.c", 119);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void FileSelect_SetKeyboardVtx(GameState* thisx) {
@@ -117,7 +117,7 @@ void FileSelect_SetNameEntryVtx(GameState* thisx) {
     u8 temp;
     s16 phi_v0;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_nameset_PAL.c", 205);
+    OPEN_DISPS(this->state.gfxCtx);
 
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetCombineLERP(POLY_OPA_DISP++, PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0, PRIMITIVE,
@@ -224,7 +224,7 @@ void FileSelect_SetNameEntryVtx(GameState* thisx) {
         this->nameEntryVtx[0x29].v.tc[0] = this->nameEntryVtx[0x2B].v.tc[0] = 0x500;
     }
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_nameset_PAL.c", 307);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 void FileSelect_DrawKeyboard(GameState* thisx) {
@@ -234,7 +234,7 @@ void FileSelect_DrawKeyboard(GameState* thisx) {
     s16 tmp;
     s16 vtx = 0;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_nameset_PAL.c", 324);
+    OPEN_DISPS(this->state.gfxCtx);
 
     Gfx_SetupDL_42Opa(this->state.gfxCtx);
     gDPSetCycleType(POLY_OPA_DISP++, G_CYC_2CYCLE);
@@ -256,7 +256,7 @@ void FileSelect_DrawKeyboard(GameState* thisx) {
     gSPVertex(POLY_OPA_DISP++, &this->keyboardVtx[0x100], 4, 0);
     FileSelect_DrawCharacter(this->state.gfxCtx, font->fontBuf + D_808123F0[i] * FONT_CHAR_TEX_SIZE, 0);
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_nameset_PAL.c", 347);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 void FileSelect_DrawNameEntry(GameState* thisx) {
@@ -268,7 +268,7 @@ void FileSelect_DrawNameEntry(GameState* thisx) {
     u16 dayTime;
     s16 validName;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_nameset_PAL.c", 368);
+    OPEN_DISPS(this->state.gfxCtx);
 
     FileSelect_SetKeyboardVtx(&this->state);
     FileSelect_SetNameEntryVtx(&this->state);
@@ -476,7 +476,7 @@ void FileSelect_DrawNameEntry(GameState* thisx) {
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetCombineMode(POLY_OPA_DISP++, G_CC_MODULATEIDECALA, G_CC_MODULATEIDECALA);
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_nameset_PAL.c", 550);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 /**
@@ -813,7 +813,7 @@ void FileSelect_DrawOptionsImpl(GameState* thisx) {
     s16 j;
     s16 vtx;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_nameset_PAL.c", 848);
+    OPEN_DISPS(this->state.gfxCtx);
 
     cursorRed = ABS(cursorPrimRed - cursorPrimColors[cursorPulseDir][0]) / cursorFlashTimer;
     cursorGreen = ABS(cursorPrimGreen - cursorPrimColors[cursorPulseDir][1]) / cursorFlashTimer;
@@ -1001,7 +1001,7 @@ void FileSelect_DrawOptionsImpl(GameState* thisx) {
     gSP1Quadrangle(POLY_OPA_DISP++, 0, 2, 3, 1, 0);
     Matrix_Pop();
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_nameset_PAL.c", 1040);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 void FileSelect_DrawOptions(GameState* thisx) {

@@ -1208,7 +1208,7 @@ void EnNiw_DrawEffects(EnNiw* this, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     EnNiwEffect* effect = &this->effects[0];
 
-    OPEN_DISPS(gfxCtx, "../z_en_niw.c", 1897);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -1229,5 +1229,5 @@ void EnNiw_DrawEffects(EnNiw* this, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_en_niw.c", 1919);
+    CLOSE_DISPS(gfxCtx);
 }

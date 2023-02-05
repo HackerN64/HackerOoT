@@ -127,7 +127,7 @@ void BgSpot17Bakudankabe_Draw(Actor* thisx, PlayState* play) {
     s8 r = coss(play->gameplayFrames * 1500) >> 8;
     s8 g = coss(play->gameplayFrames * 1500) >> 8;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot17_bakudankabe.c", 269);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -141,9 +141,9 @@ void BgSpot17Bakudankabe_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_OPA_DISP++, gCraterBombableWallDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot17_bakudankabe.c", 283);
+    CLOSE_DISPS(play->state.gfxCtx);
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot17_bakudankabe.c", 286);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -151,5 +151,5 @@ void BgSpot17Bakudankabe_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gCraterBombableWallCracksDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot17_bakudankabe.c", 295);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

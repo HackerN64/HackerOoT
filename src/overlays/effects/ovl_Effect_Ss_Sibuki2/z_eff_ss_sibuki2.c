@@ -59,7 +59,7 @@ void EffectSsSibuki2_Draw(PlayState* play, u32 index, EffectSs* this) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     f32 scale = this->rScale / 100.0f;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_ss_sibuki2.c", 158);
+    OPEN_DISPS(gfxCtx);
 
     Matrix_Translate(this->pos.x, this->pos.y, this->pos.z, MTXMODE_NEW);
     Matrix_Scale(scale, scale, scale, MTXMODE_APPLY);
@@ -71,7 +71,7 @@ void EffectSsSibuki2_Draw(PlayState* play, u32 index, EffectSs* this) {
     gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(bubbleTextures[this->rTexIdx]));
     gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(gEffUnusedBubblesDL));
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_ss_sibuki2.c", 198);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EffectSsSibuki2_Update(PlayState* play, u32 index, EffectSs* this) {

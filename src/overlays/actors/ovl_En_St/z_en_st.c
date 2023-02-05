@@ -1057,7 +1057,7 @@ void EnSt_Update(Actor* thisx, PlayState* play) {
 s32 EnSt_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dListP, Vec3f* pos, Vec3s* rot, void* thisx) {
     EnSt* this = (EnSt*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_st.c", 2260);
+    OPEN_DISPS(play->state.gfxCtx);
     switch (limbIndex) {
         case 1:
             if (this->gaveDamageSpinTimer != 0 && this->swayTimer == 0) {
@@ -1074,7 +1074,7 @@ s32 EnSt_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dListP, Vec3f* p
             gDPSetEnvColor(POLY_OPA_DISP++, this->teethR, this->teethG, this->teethB, 0);
             break;
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_st.c", 2295);
+    CLOSE_DISPS(play->state.gfxCtx);
     return false;
 }
 

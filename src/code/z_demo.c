@@ -2258,7 +2258,7 @@ void CutsceneHandler_RunScript(PlayState* play, CutsceneContext* csCtx) {
 
 #ifdef SHOW_CS_INFOS
         if (BREG(0) != 0) {
-            OPEN_DISPS(play->state.gfxCtx, "../z_demo.c", 4101);
+            OPEN_DISPS(play->state.gfxCtx);
 
             prevDisplayList = POLY_OPA_DISP;
             displayList = Graph_GfxPlusOne(POLY_OPA_DISP);
@@ -2268,7 +2268,7 @@ void CutsceneHandler_RunScript(PlayState* play, CutsceneContext* csCtx) {
             Graph_BranchDlist(prevDisplayList, displayList);
             POLY_OPA_DISP = displayList;
 
-            CLOSE_DISPS(play->state.gfxCtx, "../z_demo.c", 4108);
+            CLOSE_DISPS(play->state.gfxCtx);
         }
 #endif
 

@@ -59,7 +59,7 @@ void Lights_Draw(Lights* lights, GraphicsContext* gfxCtx) {
     Light* light;
     s32 i;
 
-    OPEN_DISPS(gfxCtx, "../z_lights.c", 339);
+    OPEN_DISPS(gfxCtx);
 
     gSPNumLights(POLY_OPA_DISP++, lights->numLights);
     gSPNumLights(POLY_XLU_DISP++, lights->numLights);
@@ -77,7 +77,7 @@ void Lights_Draw(Lights* lights, GraphicsContext* gfxCtx) {
     gSPLight(POLY_OPA_DISP++, &lights->l.a, ++i);
     gSPLight(POLY_XLU_DISP++, &lights->l.a, i);
 
-    CLOSE_DISPS(gfxCtx, "../z_lights.c", 352);
+    CLOSE_DISPS(gfxCtx);
 }
 
 Light* Lights_FindSlot(Lights* lights) {
@@ -359,7 +359,7 @@ void Lights_DrawGlow(PlayState* play) {
 
     node = play->lightCtx.listHead;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_lights.c", 887);
+    OPEN_DISPS(play->state.gfxCtx);
 
     POLY_XLU_DISP = func_800947AC(POLY_XLU_DISP++);
     gDPSetAlphaDither(POLY_XLU_DISP++, G_AD_NOISE);
@@ -389,5 +389,5 @@ void Lights_DrawGlow(PlayState* play) {
         node = node->next;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_lights.c", 927);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

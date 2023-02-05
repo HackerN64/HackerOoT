@@ -820,7 +820,7 @@ void EnItem00_DrawRupee(EnItem00* this, PlayState* play) {
     s32 pad;
     s32 texIndex;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1546);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     func_8002EBCC(&this->actor, play, 0);
@@ -838,7 +838,7 @@ void EnItem00_DrawRupee(EnItem00* this, PlayState* play) {
 
     gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1568);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -847,7 +847,7 @@ void EnItem00_DrawRupee(EnItem00* this, PlayState* play) {
 void EnItem00_DrawCollectible(EnItem00* this, PlayState* play) {
     s32 texIndex = this->actor.params - 3;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1594);
+    OPEN_DISPS(play->state.gfxCtx);
 
     POLY_OPA_DISP = Play_SetFog(play, POLY_OPA_DISP);
 
@@ -865,7 +865,7 @@ void EnItem00_DrawCollectible(EnItem00* this, PlayState* play) {
               G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_OPA_DISP++, gItemDropDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1611);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -874,7 +874,7 @@ void EnItem00_DrawCollectible(EnItem00* this, PlayState* play) {
 void EnItem00_DrawHeartContainer(EnItem00* this, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1623);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     func_8002EBCC(&this->actor, play, 0);
@@ -888,7 +888,7 @@ void EnItem00_DrawHeartContainer(EnItem00* this, PlayState* play) {
               G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_XLU_DISP++, gHeartContainerInteriorDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1647);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -897,7 +897,7 @@ void EnItem00_DrawHeartContainer(EnItem00* this, PlayState* play) {
 void EnItem00_DrawHeartPiece(EnItem00* this, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1658);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     func_8002ED80(&this->actor, play, 0);
@@ -905,7 +905,7 @@ void EnItem00_DrawHeartPiece(EnItem00* this, PlayState* play) {
               G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_XLU_DISP++, gHeartPieceInteriorDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1673);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**

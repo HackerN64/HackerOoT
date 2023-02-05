@@ -143,7 +143,7 @@ void DoorGerudo_Update(Actor* thisx, PlayState* play) {
 void DoorGerudo_Draw(Actor* thisx, PlayState* play) {
     DoorGerudo* this = (DoorGerudo*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_door_gerudo.c", 361);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -156,5 +156,5 @@ void DoorGerudo_Draw(Actor* thisx, PlayState* play) {
         Actor_DrawDoorLock(play, this->unk_166, DOORLOCK_NORMAL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_door_gerudo.c", 377);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

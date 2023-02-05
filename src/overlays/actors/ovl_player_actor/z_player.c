@@ -10996,7 +10996,7 @@ static Vec3s D_80854864 = { 0, 0, 0 };
 void Player_DrawGameplay(PlayState* play, Player* this, s32 lod, Gfx* cullDList, OverrideLimbDrawOpa overrideLimbDraw) {
     static s32 D_8085486C = 255;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_player.c", 19228);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x0C, cullDList);
     gSPSegment(POLY_XLU_DISP++, 0x0C, cullDList);
@@ -11067,14 +11067,14 @@ void Player_DrawGameplay(PlayState* play, Player* this, s32 lod, Gfx* cullDList,
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_player.c", 19328);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Player_Draw(Actor* thisx, PlayState* play2) {
     PlayState* play = play2;
     Player* this = (Player*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_player.c", 19346);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (!(this->stateFlags2 & PLAYER_STATE2_29)) {
         OverrideLimbDrawOpa overrideLimbDraw = Player_OverrideLimbDrawGameplayDefault;
@@ -11164,7 +11164,7 @@ void Player_Draw(Actor* thisx, PlayState* play2) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_player.c", 19473);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Player_Destroy(Actor* thisx, PlayState* play) {

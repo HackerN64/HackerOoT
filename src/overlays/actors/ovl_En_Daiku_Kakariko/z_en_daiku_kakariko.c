@@ -527,20 +527,20 @@ void EnDaikuKakariko_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, V
     static Vec3f unkVec = { 700.0f, 1100.0f, 0.0f };
     EnDaikuKakariko* this = (EnDaikuKakariko*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_daiku_kakariko.c", 1104);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limbIndex == 15) {
         Matrix_MultVec3f(&unkVec, &this->actor.focus.pos);
         gSPDisplayList(POLY_OPA_DISP++, carpenterHeadDLists[this->actor.params & 3]);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_daiku_kakariko.c", 1113);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnDaikuKakariko_Draw(Actor* thisx, PlayState* play) {
     EnDaikuKakariko* this = (EnDaikuKakariko*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_daiku_kakariko.c", 1124);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -557,5 +557,5 @@ void EnDaikuKakariko_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnDaikuKakariko_OverrideLimbDraw, EnDaikuKakariko_PostLimbDraw, thisx);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_daiku_kakariko.c", 1151);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

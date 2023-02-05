@@ -2439,7 +2439,7 @@ void BossMo_DrawTentacle(BossMo* this, PlayState* play) {
     f32 phi_f22;
     Vec3f sp110;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_mo.c", 6366);
+    OPEN_DISPS(play->state.gfxCtx);
 
     sp110.x = play->envCtx.dirLight1.params.dir.x;
     sp110.y = play->envCtx.dirLight1.params.dir.y;
@@ -2558,13 +2558,13 @@ void BossMo_DrawTentacle(BossMo* this, PlayState* play) {
     }
 
     Matrix_Pop();
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_mo.c", 6571);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossMo_DrawWater(BossMo* this, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_mo.c", 6582);
+    OPEN_DISPS(play->state.gfxCtx);
     if (1) {}
 
     Matrix_Push();
@@ -2588,14 +2588,14 @@ void BossMo_DrawWater(BossMo* this, PlayState* play) {
     gSPDisplayList(POLY_XLU_DISP++, gMorphaWaterDL);
 
     Matrix_Pop();
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_mo.c", 6680);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossMo_DrawCore(Actor* thisx, PlayState* play) {
     s32 pad;
     BossMo* this = (BossMo*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_mo.c", 6688);
+    OPEN_DISPS(play->state.gfxCtx);
     if (this->actor.world.pos.y > MO_WATER_LEVEL(play)) {
         BossMo_DrawWater(this, play);
     }
@@ -2714,7 +2714,7 @@ void BossMo_DrawCore(Actor* thisx, PlayState* play) {
 
         gSPDisplayList(POLY_XLU_DISP++, gMorphaWaterDL);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_mo.c", 6945);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     BossMo_DrawEffects(play->specialEffects, play);
 }
@@ -2724,7 +2724,7 @@ void BossMo_DrawTent(Actor* thisx, PlayState* play) {
     BossMo* this = (BossMo*)thisx;
     u16 texCoordScale;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_mo.c", 6958);
+    OPEN_DISPS(play->state.gfxCtx);
     if (1) {}
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, (s8)(this->baseAlpha * 1.5f));
@@ -2743,7 +2743,7 @@ void BossMo_DrawTent(Actor* thisx, PlayState* play) {
     if (this->drawActor) {
         BossMo_DrawTentacle(this, play);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_mo.c", 7023);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossMo_UpdateEffects(BossMo* this, PlayState* play) {
@@ -2906,7 +2906,7 @@ void BossMo_DrawEffects(BossMoEffect* effect, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     BossMoEffect* effectHead = effect;
 
-    OPEN_DISPS(gfxCtx, "../z_boss_mo.c", 7264);
+    OPEN_DISPS(gfxCtx);
     Matrix_Push();
 
     for (i = 0; i < BOSS_MO_EFFECT_COUNT; i++, effect++) {
@@ -3033,7 +3033,7 @@ void BossMo_DrawEffects(BossMoEffect* effect, PlayState* play) {
     }
 
     Matrix_Pop();
-    CLOSE_DISPS(gfxCtx, "../z_boss_mo.c", 7482);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void BossMo_Unknown(void) {

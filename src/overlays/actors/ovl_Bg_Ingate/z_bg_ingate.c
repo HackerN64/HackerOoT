@@ -103,7 +103,7 @@ void BgInGate_Update(Actor* thisx, PlayState* play) {
 }
 
 void BgInGate_Draw(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_ingate.c", 240);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -112,5 +112,5 @@ void BgInGate_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_OPA_DISP++, gIngoGateDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_ingate.c", 250);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

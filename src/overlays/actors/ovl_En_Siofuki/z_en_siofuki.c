@@ -281,7 +281,7 @@ void EnSiofuki_Draw(Actor* thisx, PlayState* play) {
     u32 y;
     u32 gameplayFrames = play->gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_siofuki.c", 654);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     Matrix_Translate(0.0f, this->unk_170, 0.0f, MTXMODE_APPLY);
     Matrix_Scale(1.0f, 1.0f, 1.0f, MTXMODE_APPLY);
@@ -292,7 +292,7 @@ void EnSiofuki_Draw(Actor* thisx, PlayState* play) {
     gSPSegment(POLY_XLU_DISP++, 0x08,
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, x, y, 64, 64, 1, x, y, 64, 64));
     gSPDisplayList(POLY_XLU_DISP++, object_siofuki_DL_000B70);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_siofuki.c", 674);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     if (this->sfxFlags & 1) {
         f32 heightRatio;

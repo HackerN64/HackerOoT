@@ -1828,12 +1828,12 @@ s32 EnTest_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* 
         rot->y -= this->headRot.x;
         rot->z += this->headRot.z;
     } else if (limbIndex == STALFOS_LIMB_HEAD) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_test.c", 3582);
+        OPEN_DISPS(play->state.gfxCtx);
 
         gDPPipeSync(POLY_OPA_DISP++);
         gDPSetEnvColor(POLY_OPA_DISP++, 80 + ABS((s16)(Math_SinS(play->gameplayFrames * 2000) * 175.0f)), 0, 0, 255);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_test.c", 3587);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 
     if ((this->actor.params == STALFOS_TYPE_INVISIBLE) && !CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_7)) {

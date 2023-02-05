@@ -23,7 +23,7 @@ void SkelAnime_DrawLimbLod(PlayState* play, s32 limbIndex, void** skeleton, Vec3
     Vec3f pos;
     Vec3s rot;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_skelanime.c", 773);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
     limb = (LodLimb*)SEGMENTED_TO_VIRTUAL(skeleton[limbIndex]);
@@ -60,7 +60,7 @@ void SkelAnime_DrawLimbLod(PlayState* play, s32 limbIndex, void** skeleton, Vec3
         SkelAnime_DrawLimbLod(play, limb->sibling, skeleton, jointTable, overrideLimbDraw, postLimbDraw, arg, lod);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_skelanime.c", 821);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -82,7 +82,7 @@ void SkelAnime_DrawLod(PlayState* play, void** skeleton, Vec3s* jointTable, Over
         return;
     }
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_skelanime.c", 849);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
 
@@ -111,7 +111,7 @@ void SkelAnime_DrawLod(PlayState* play, void** skeleton, Vec3s* jointTable, Over
 
     Matrix_Pop();
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_skelanime.c", 894);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -145,10 +145,10 @@ void SkelAnime_DrawFlexLimbLod(PlayState* play, s32 limbIndex, void** skeleton, 
         if (newDList != NULL) {
             Matrix_ToMtx(*mtx, "../z_skelanime.c", 945);
             {
-                OPEN_DISPS(play->state.gfxCtx, "../z_skelanime.c", 946);
+                OPEN_DISPS(play->state.gfxCtx);
                 gSPMatrix(POLY_OPA_DISP++, *mtx, G_MTX_LOAD);
                 gSPDisplayList(POLY_OPA_DISP++, newDList);
-                CLOSE_DISPS(play->state.gfxCtx, "../z_skelanime.c", 949);
+                CLOSE_DISPS(play->state.gfxCtx);
             }
             (*mtx)++;
         } else if (limbDList != NULL) {
@@ -194,7 +194,7 @@ void SkelAnime_DrawFlexLod(PlayState* play, void** skeleton, Vec3s* jointTable, 
         return;
     }
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_skelanime.c", 1000);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0xD, mtx);
     Matrix_Push();
@@ -231,7 +231,7 @@ void SkelAnime_DrawFlexLod(PlayState* play, void** skeleton, Vec3s* jointTable, 
 
     Matrix_Pop();
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_skelanime.c", 1053);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -244,7 +244,7 @@ void SkelAnime_DrawLimbOpa(PlayState* play, s32 limbIndex, void** skeleton, Vec3
     Vec3f pos;
     Vec3s rot;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_skelanime.c", 1076);
+    OPEN_DISPS(play->state.gfxCtx);
     Matrix_Push();
 
     limb = (StandardLimb*)SEGMENTED_TO_VIRTUAL(skeleton[limbIndex]);
@@ -278,7 +278,7 @@ void SkelAnime_DrawLimbOpa(PlayState* play, s32 limbIndex, void** skeleton, Vec3
     if (limb->sibling != LIMB_DONE) {
         SkelAnime_DrawLimbOpa(play, limb->sibling, skeleton, jointTable, overrideLimbDraw, postLimbDraw, arg);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_skelanime.c", 1121);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -299,7 +299,7 @@ void SkelAnime_DrawOpa(PlayState* play, void** skeleton, Vec3s* jointTable, Over
         return;
     }
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_skelanime.c", 1148);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
     rootLimb = (StandardLimb*)SEGMENTED_TO_VIRTUAL(skeleton[0]);
@@ -329,7 +329,7 @@ void SkelAnime_DrawOpa(PlayState* play, void** skeleton, Vec3s* jointTable, Over
 
     Matrix_Pop();
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_skelanime.c", 1190);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -344,7 +344,7 @@ void SkelAnime_DrawFlexLimbOpa(PlayState* play, s32 limbIndex, void** skeleton, 
     Vec3f pos;
     Vec3s rot;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_skelanime.c", 1214);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
 
@@ -386,7 +386,7 @@ void SkelAnime_DrawFlexLimbOpa(PlayState* play, s32 limbIndex, void** skeleton, 
         SkelAnime_DrawFlexLimbOpa(play, limb->sibling, skeleton, jointTable, overrideLimbDraw, postLimbDraw, arg,
                                   limbMatrices);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_skelanime.c", 1265);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -411,7 +411,7 @@ void SkelAnime_DrawFlexOpa(PlayState* play, void** skeleton, Vec3s* jointTable, 
         return;
     }
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_skelanime.c", 1294);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0xD, mtx);
 
@@ -450,7 +450,7 @@ void SkelAnime_DrawFlexOpa(PlayState* play, void** skeleton, Vec3s* jointTable, 
     }
 
     Matrix_Pop();
-    CLOSE_DISPS(play->state.gfxCtx, "../z_skelanime.c", 1347);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**

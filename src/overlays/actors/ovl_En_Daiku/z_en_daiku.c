@@ -588,7 +588,7 @@ void EnDaiku_Update(Actor* thisx, PlayState* play) {
 void EnDaiku_Draw(Actor* thisx, PlayState* play) {
     EnDaiku* this = (EnDaiku*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_daiku.c", 1227);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -605,7 +605,7 @@ void EnDaiku_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnDaiku_OverrideLimbDraw, EnDaiku_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_daiku.c", 1255);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 EnDaiku_OverrideLimbDraw(PlayState* play, s32 limb, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
@@ -631,12 +631,12 @@ void EnDaiku_PostLimbDraw(PlayState* play, s32 limb, Gfx** dList, Vec3s* rot, vo
     static Vec3f targetPosHeadLocal = { 700, 1100, 0 };
     EnDaiku* this = (EnDaiku*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_daiku.c", 1323);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limb == 15) { // head
         Matrix_MultVec3f(&targetPosHeadLocal, &this->actor.focus.pos);
         gSPDisplayList(POLY_OPA_DISP++, hairDLists[this->actor.params & 3]);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_daiku.c", 1330);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

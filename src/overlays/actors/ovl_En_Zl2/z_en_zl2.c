@@ -1676,7 +1676,7 @@ void func_80B523C8(EnZl2* this, PlayState* play) {
     void* mouthTex = sMouthTextures[mouthTexIndex];
     s32 pad1;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_zl2.c", 1623);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -1689,7 +1689,7 @@ void func_80B523C8(EnZl2* this, PlayState* play) {
     POLY_OPA_DISP = SkelAnime_DrawFlex(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                                        EnZl2_OverrideLimbDraw, EnZl2_PostLimbDraw, this, POLY_OPA_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_zl2.c", 1648);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_80B525D4(EnZl2* this, PlayState* play) {
@@ -1701,7 +1701,7 @@ void func_80B525D4(EnZl2* this, PlayState* play) {
     void* mouthTex = sMouthTextures[mouthTexIndex];
     s32 pad1;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_zl2.c", 1663);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -1714,7 +1714,7 @@ void func_80B525D4(EnZl2* this, PlayState* play) {
     POLY_XLU_DISP = SkelAnime_DrawFlex(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                                        EnZl2_OverrideLimbDraw, NULL, this, POLY_XLU_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_zl2.c", 1692);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnZl2_Draw(Actor* thisx, PlayState* play) {

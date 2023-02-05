@@ -3834,7 +3834,7 @@ s32 EnHorse_OverrideLimbDraw(Actor* thisx, PlayState* play, s32 limbIndex, Skin*
     EnHorse* this = (EnHorse*)thisx;
     s32 drawOriginalLimb = true;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_horse.c", 8582);
+    OPEN_DISPS(play->state.gfxCtx);
     if (limbIndex == 13 && this->type == HORSE_EPONA) {
         u8 index = eyeBlinkIndices[this->blinkTimer];
 
@@ -3843,7 +3843,7 @@ s32 EnHorse_OverrideLimbDraw(Actor* thisx, PlayState* play, s32 limbIndex, Skin*
         Skin_DrawLimb(play->state.gfxCtx, &this->skin, limbIndex, gHorseIngoGerudoSaddleDL, 0);
         drawOriginalLimb = false;
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_horse.c", 8601);
+    CLOSE_DISPS(play->state.gfxCtx);
     return drawOriginalLimb;
 }
 

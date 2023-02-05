@@ -316,7 +316,7 @@ void Minimap_DrawCompassIcons(PlayState* play) {
     Player* player = GET_PLAYER(play);
     s16 tempX, tempZ;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_map_exp.c", 565);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (play->interfaceCtx.minimapAlpha >= 0xAA) {
         Gfx_SetupDL_42Overlay(play->state.gfxCtx);
@@ -357,7 +357,7 @@ void Minimap_DrawCompassIcons(PlayState* play) {
         gSPDisplayList(OVERLAY_DISP++, gCompassArrowDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_map_exp.c", 607);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Minimap_Draw(PlayState* play) {
@@ -365,7 +365,7 @@ void Minimap_Draw(PlayState* play) {
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
     s32 mapIndex = gSaveContext.mapIndex;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_map_exp.c", 626);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (play->pauseCtx.state < 3) {
         switch (play->sceneId) {
@@ -512,7 +512,7 @@ void Minimap_Draw(PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_map_exp.c", 782);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s16 Map_GetFloorTextIndexOffset(s32 mapIndex, s32 floor) {

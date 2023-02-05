@@ -61,7 +61,7 @@ void EffectSsBlast_Draw(PlayState* play, u32 index, EffectSs* this) {
     s32 pad;
     f32 radius;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_ss_blast.c", 170);
+    OPEN_DISPS(gfxCtx);
 
     radius = this->rScale * 0.0025f;
 
@@ -75,7 +75,7 @@ void EffectSsBlast_Draw(PlayState* play, u32 index, EffectSs* this) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, this->gfx);
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_ss_blast.c", 204);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EffectSsBlast_Update(PlayState* play, u32 index, EffectSs* this) {

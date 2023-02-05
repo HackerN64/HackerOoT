@@ -160,7 +160,7 @@ void BgMoriKaitenkabe_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     BgMoriKaitenkabe* this = (BgMoriKaitenkabe*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mori_kaitenkabe.c", 347);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, play->objectCtx.status[this->moriTexObjIndex].segment);
@@ -170,5 +170,5 @@ void BgMoriKaitenkabe_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_OPA_DISP++, gMoriKaitenkabeDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mori_kaitenkabe.c", 356);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

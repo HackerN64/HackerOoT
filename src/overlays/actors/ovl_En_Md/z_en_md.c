@@ -882,7 +882,7 @@ void EnMd_Draw(Actor* thisx, PlayState* play) {
     };
     EnMd* this = (EnMd*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_md.c", 1280);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->alpha == 255) {
         gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sEyeTextures[this->eyeIdx]));
@@ -892,5 +892,5 @@ void EnMd_Draw(Actor* thisx, PlayState* play) {
         func_80034CC4(play, &this->skelAnime, EnMd_OverrideLimbDraw, EnMd_PostLimbDraw, &this->actor, this->alpha);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_md.c", 1317);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -103,7 +103,7 @@ void BgMjin_Draw(Actor* thisx, PlayState* play) {
     BgMjin* this = (BgMjin*)thisx;
     Gfx* dlist;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mjin.c", 250);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (thisx->params != 0) {
         s32 objBankIndex = Object_GetIndex(&play->objectCtx, sObjectIDs[thisx->params - 1]);
@@ -123,5 +123,5 @@ void BgMjin_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_OPA_DISP++, dlist);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mjin.c", 288);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

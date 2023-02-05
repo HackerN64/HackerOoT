@@ -370,7 +370,7 @@ void EnJsjutan_Draw(Actor* thisx, PlayState* play2) {
     s16 i;
     Actor* parent = thisx->parent;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_jsjutan.c", 701);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (thisx->params == ENJSJUTAN_TYPE_01) {
         thisx->world.pos.x = parent->world.pos.x;
@@ -442,5 +442,5 @@ void EnJsjutan_Draw(Actor* thisx, PlayState* play2) {
     }
     gSPDisplayList(POLY_OPA_DISP++, sModelDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_jsjutan.c", 823);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

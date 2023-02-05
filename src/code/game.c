@@ -156,7 +156,7 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     Gfx* newDList;
     Gfx* polyOpaP;
 
-    OPEN_DISPS(gfxCtx, "../game.c", 746);
+    OPEN_DISPS(gfxCtx);
 
     newDList = Graph_GfxPlusOne(polyOpaP = POLY_OPA_DISP);
     gSPDisplayList(OVERLAY_DISP++, newDList);
@@ -206,7 +206,7 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 
     if (1) {}
 
-    CLOSE_DISPS(gfxCtx, "../game.c", 800);
+    CLOSE_DISPS(gfxCtx);
 
 #if (defined ENABLE_CAMERA_DEBUGGER) || (defined ENABLE_REG_EDITOR)
     Debug_DrawText(gfxCtx);
@@ -221,7 +221,7 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 }
 
 void GameState_SetFrameBuffer(GraphicsContext* gfxCtx) {
-    OPEN_DISPS(gfxCtx, "../game.c", 814);
+    OPEN_DISPS(gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0, 0);
     gSPSegment(POLY_OPA_DISP++, 0xF, gfxCtx->curFrameBuffer);
@@ -233,14 +233,14 @@ void GameState_SetFrameBuffer(GraphicsContext* gfxCtx) {
     gSPSegment(OVERLAY_DISP++, 0xF, gfxCtx->curFrameBuffer);
     gSPSegment(OVERLAY_DISP++, 0xE, gZBuffer);
 
-    CLOSE_DISPS(gfxCtx, "../game.c", 838);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_800C49F4(GraphicsContext* gfxCtx) {
     Gfx* newDlist;
     Gfx* polyOpaP;
 
-    OPEN_DISPS(gfxCtx, "../game.c", 846);
+    OPEN_DISPS(gfxCtx);
 
     newDlist = Graph_GfxPlusOne(polyOpaP = POLY_OPA_DISP);
     gSPDisplayList(OVERLAY_DISP++, newDlist);
@@ -251,7 +251,7 @@ void func_800C49F4(GraphicsContext* gfxCtx) {
 
     if (1) {}
 
-    CLOSE_DISPS(gfxCtx, "../game.c", 865);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void PadMgr_RequestPadData(PadMgr* padMgr, Input* inputs, s32 gameRequest);

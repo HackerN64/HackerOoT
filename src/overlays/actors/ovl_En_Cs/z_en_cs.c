@@ -461,7 +461,7 @@ void EnCs_Draw(Actor* thisx, PlayState* play) {
     EnCs* this = (EnCs*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_cs.c", 968);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeIndex]));
@@ -485,7 +485,7 @@ void EnCs_Draw(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_cs.c", 1015);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 EnCs_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {

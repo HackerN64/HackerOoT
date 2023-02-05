@@ -826,13 +826,13 @@ void EnHeishi2_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* 
 }
 
 void EnHeishi2_DrawKingGuard(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_heishi2.c", 1772);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_heishi2.c", 1774),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gHeishiKingGuardDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_heishi2.c", 1777);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnHeishi2_Draw(Actor* thisx, PlayState* play) {
@@ -840,7 +840,7 @@ void EnHeishi2_Draw(Actor* thisx, PlayState* play) {
     Mtx* mtx;
     s32 linkObjBankIndex;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_heishi2.c", 1792);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -861,5 +861,5 @@ void EnHeishi2_Draw(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_heishi2.c", 1834);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

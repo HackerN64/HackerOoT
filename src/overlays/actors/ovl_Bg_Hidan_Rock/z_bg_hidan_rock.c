@@ -351,7 +351,7 @@ static void* sVerticalFlamesTexs[] = {
 void func_8088BC40(PlayState* play, BgHidanRock* this) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_hidan_rock.c", 808);
+    OPEN_DISPS(play->state.gfxCtx);
 
     POLY_XLU_DISP = Gfx_SetupDL(POLY_XLU_DISP, SETUPDL_20);
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0x01, 255, 255, 0, 150);
@@ -373,7 +373,7 @@ void func_8088BC40(PlayState* play, BgHidanRock* this) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gFireTempleBigVerticalFlameDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_hidan_rock.c", 857);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BgHidanRock_Draw(Actor* thisx, PlayState* play) {

@@ -268,7 +268,7 @@ void EffDust_DrawFunc_8099E4F4(Actor* thisx, PlayState* play2) {
     s32 i;
     f32 aux;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_dust.c", 425);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Opa(gfxCtx);
 
@@ -303,7 +303,7 @@ void EffDust_DrawFunc_8099E4F4(Actor* thisx, PlayState* play2) {
         if (0) {}
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_dust.c", 458);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EffDust_DrawFunc_8099E784(Actor* thisx, PlayState* play2) {
@@ -316,7 +316,7 @@ void EffDust_DrawFunc_8099E784(Actor* thisx, PlayState* play2) {
     f32 aux;
     Player* player = GET_PLAYER(play);
 
-    OPEN_DISPS(gfxCtx, "../z_eff_dust.c", 472);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Opa(gfxCtx);
 
@@ -362,7 +362,7 @@ void EffDust_DrawFunc_8099E784(Actor* thisx, PlayState* play2) {
         distanceTraveled++;
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_dust.c", 515);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EffDust_Draw(Actor* thisx, PlayState* play) {

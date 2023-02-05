@@ -804,7 +804,7 @@ void DemoDu_Draw_02(Actor* thisx, PlayState* play2) {
     void* mouthTexture = sMouthTextures[mouthTexIndex];
     SkelAnime* skelAnime = &this->skelAnime;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_du_inKenjyanomaDemo02.c", 275);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -819,7 +819,7 @@ void DemoDu_Draw_02(Actor* thisx, PlayState* play2) {
     POLY_XLU_DISP = SkelAnime_DrawFlex(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount, 0, 0, 0,
                                        POLY_XLU_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_du_inKenjyanomaDemo02.c", 304);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoDu_InitCs_Credits(DemoDu* this, PlayState* play) {
@@ -999,7 +999,7 @@ void DemoDu_Draw_01(Actor* thisx, PlayState* play2) {
     void* mouthTexture = sMouthTextures[mouthTexIndex];
     SkelAnime* skelAnime = &this->skelAnime;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_du.c", 615);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -1013,7 +1013,7 @@ void DemoDu_Draw_01(Actor* thisx, PlayState* play2) {
 
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount, NULL, NULL, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_du.c", 638);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 static DemoDuDrawFunc sDrawFuncs[] = {

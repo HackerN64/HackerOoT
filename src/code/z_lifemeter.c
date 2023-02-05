@@ -320,7 +320,7 @@ void Health_DrawMeter(PlayState* play) {
     u8* curBgImgLoaded = NULL;
     s32 ddHeartCountMinusOne = gSaveContext.inventory.defenseHearts - 1;
 
-    OPEN_DISPS(gfxCtx, "../z_lifemeter.c", 353);
+    OPEN_DISPS(gfxCtx);
 
     if (!(gSaveContext.health % 0x10)) {
         fullHeartCount--;
@@ -498,7 +498,7 @@ void Health_DrawMeter(PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_lifemeter.c", 606);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void Health_UpdateBeatingHeart(PlayState* play) {

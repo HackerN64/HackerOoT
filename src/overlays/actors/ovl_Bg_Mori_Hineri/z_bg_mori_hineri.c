@@ -226,7 +226,7 @@ void BgMoriHineri_DrawHallAndRoom(Actor* thisx, PlayState* play) {
     s8 objIndex;
     MtxF mtx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mori_hineri.c", 611);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, play->objectCtx.status[this->moriTexObjIdx].segment);
@@ -273,5 +273,5 @@ void BgMoriHineri_DrawHallAndRoom(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_OPA_DISP++, gTreasureChestBossKeyChestSideAndTopDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mori_hineri.c", 709);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

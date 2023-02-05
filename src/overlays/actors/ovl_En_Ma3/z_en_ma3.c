@@ -343,7 +343,7 @@ void EnMa3_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot,
     EnMa3* this = (EnMa3*)thisx;
     Vec3f vec = { 900.0f, 0.0f, 0.0f };
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ma3.c", 927);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limbIndex == MALON_ADULT_LIMB_HEAD) {
         Matrix_MultVec3f(&vec, &this->actor.focus.pos);
@@ -353,7 +353,7 @@ void EnMa3_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot,
         gSPDisplayList(POLY_OPA_DISP++, gMalonAdultBasketDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ma3.c", 950);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnMa3_Draw(Actor* thisx, PlayState* play) {
@@ -364,7 +364,7 @@ void EnMa3_Draw(Actor* thisx, PlayState* play) {
     f32 distFromCamEye;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ma3.c", 978);
+    OPEN_DISPS(play->state.gfxCtx);
 
     activeCam = GET_ACTIVE_CAM(play);
     distFromCamEye = Math_Vec3f_DistXZ(&this->actor.world.pos, &activeCam->eye);
@@ -377,5 +377,5 @@ void EnMa3_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnMa3_OverrideLimbDraw, EnMa3_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ma3.c", 1013);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

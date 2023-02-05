@@ -450,7 +450,7 @@ void EnMa1_Draw(Actor* thisx, PlayState* play) {
     f32 distFromCamEye;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ma1.c", 1226);
+    OPEN_DISPS(play->state.gfxCtx);
 
     activeCam = GET_ACTIVE_CAM(play);
     distFromCamEye = Math_Vec3f_DistXZ(&this->actor.world.pos, &activeCam->eye);
@@ -463,5 +463,5 @@ void EnMa1_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnMa1_OverrideLimbDraw, EnMa1_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ma1.c", 1261);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

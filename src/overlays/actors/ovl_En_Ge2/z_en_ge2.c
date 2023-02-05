@@ -650,7 +650,7 @@ void EnGe2_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnGe2* this = (EnGe2*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ge2.c", 1274);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeIndex]));
@@ -658,5 +658,5 @@ void EnGe2_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnGe2_OverrideLimbDraw, EnGe2_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ge2.c", 1291);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

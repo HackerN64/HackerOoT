@@ -69,7 +69,7 @@ void BgSpot07Taki_Draw(Actor* thisx, PlayState* play) {
     BgSpot07Taki* this = (BgSpot07Taki*)thisx;
     u32 frames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot07_taki.c", 169);
+    OPEN_DISPS(play->state.gfxCtx);
     frames = play->gameplayFrames;
     if (LINK_IS_ADULT) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -115,5 +115,5 @@ void BgSpot07Taki_Draw(Actor* thisx, PlayState* play) {
     } else {
         gSPDisplayList(POLY_XLU_DISP++, object_spot07_object_DL_0032D8);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot07_taki.c", 272);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

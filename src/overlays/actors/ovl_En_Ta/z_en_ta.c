@@ -1311,7 +1311,7 @@ void EnTa_Draw(Actor* thisx, PlayState* play) {
     EnTa* this = (EnTa*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ta.c", 2381);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
 
@@ -1321,5 +1321,5 @@ void EnTa_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnTa_OverrideLimbDraw, EnTa_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ta.c", 2400);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

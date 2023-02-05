@@ -1084,7 +1084,7 @@ void EnXc_DrawPullingOutHarp(Actor* thisx, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     s32 pad2;
 
-    OPEN_DISPS(gfxCtx, "../z_en_oA2_inSpot05.c", 1444);
+    OPEN_DISPS(gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTexture));
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(eyeTexture));
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 20, 0);
@@ -1094,7 +1094,7 @@ void EnXc_DrawPullingOutHarp(Actor* thisx, PlayState* play) {
     func_8002EBCC(&this->actor, play, 0);
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                           EnXc_PullingOutHarpOverrideLimbDraw, NULL, this);
-    CLOSE_DISPS(gfxCtx, "../z_en_oA2_inSpot05.c", 1497);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EnXc_DrawHarp(Actor* thisx, PlayState* play) {
@@ -1106,7 +1106,7 @@ void EnXc_DrawHarp(Actor* thisx, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     s32 pad2;
 
-    OPEN_DISPS(gfxCtx, "../z_en_oA2_inSpot05.c", 1511);
+    OPEN_DISPS(gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTexture));
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(eyeTexture));
@@ -1117,7 +1117,7 @@ void EnXc_DrawHarp(Actor* thisx, PlayState* play) {
     func_8002EBCC(&this->actor, play, 0);
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                           EnXc_HarpOverrideLimbDraw, NULL, this);
-    CLOSE_DISPS(gfxCtx, "../z_en_oA2_inSpot05.c", 1564);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_80B3EBF0(EnXc* this, PlayState* play) {
@@ -1717,7 +1717,7 @@ void EnXc_DrawTriforce(Actor* thisx, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     s32 pad2;
 
-    OPEN_DISPS(gfxCtx, "../z_en_oA2_inMetamol.c", 565);
+    OPEN_DISPS(gfxCtx);
     if (this->unk_2BC != 0) {
         Mtx* mtx = Graph_Alloc(gfxCtx, sizeof(Mtx));
         s32* primColor = this->triforcePrimColor;
@@ -1743,7 +1743,7 @@ void EnXc_DrawTriforce(Actor* thisx, PlayState* play) {
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(eyeTexture));
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                           EnXc_TriforceOverrideLimbDraw, EnXc_TriforcePostLimbDraw, this);
-    CLOSE_DISPS(gfxCtx, "../z_en_oA2_inMetamol.c", 668);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_80B40590(EnXc* this, PlayState* play) {
@@ -2139,12 +2139,12 @@ void EnXc_DrawSquintingEyes(Actor* thisx, PlayState* play) {
     SkelAnime* skelAnime = &this->skelAnime;
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_en_oA2_inStalker.c", 839);
+    OPEN_DISPS(gfxCtx);
     Gfx_SetupDL_25Opa(gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(gSheikEyeSquintingTex));
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(gSheikEyeSquintingTex));
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount, NULL, NULL, NULL);
-    CLOSE_DISPS(gfxCtx, "../z_en_oA2_inStalker.c", 854);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EnXc_InitTempleOfTime(EnXc* this, PlayState* play) {
@@ -2392,14 +2392,14 @@ void EnXc_DrawDefault(Actor* thisx, PlayState* play) {
     GraphicsContext* localGfxCtx = play->state.gfxCtx;
     GraphicsContext* gfxCtx = localGfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_en_oA2.c", 1164);
+    OPEN_DISPS(gfxCtx);
     func_8002EBCC(&this->actor, play, 0);
     Gfx_SetupDL_25Opa(gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeSegment));
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(eyeSegment));
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                           EnXc_OverrideLimbDraw, EnXc_PostLimbDraw, this);
-    CLOSE_DISPS(gfxCtx, "../z_en_oA2.c", 1207);
+    CLOSE_DISPS(gfxCtx);
 }
 
 static EnXcDrawFunc sDrawFuncs[] = {

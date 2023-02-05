@@ -364,11 +364,11 @@ void EnSth_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot,
     if (limbIndex == 15) {
         Matrix_MultVec3f(&D_80B0B49C, &this->actor.focus.pos);
         if (this->actor.params != 0) { // Children
-            OPEN_DISPS(play->state.gfxCtx, "../z_en_sth.c", 2079);
+            OPEN_DISPS(play->state.gfxCtx);
 
             gSPDisplayList(POLY_OPA_DISP++, D_80B0A3C0);
 
-            CLOSE_DISPS(play->state.gfxCtx, "../z_en_sth.c", 2081);
+            CLOSE_DISPS(play->state.gfxCtx);
         }
     }
 }
@@ -387,7 +387,7 @@ void EnSth_Draw(Actor* thisx, PlayState* play) {
     EnSth* this = (EnSth*)thisx;
     Color_RGB8* envColor1;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_sth.c", 2133);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.status[this->objectBankIdx].segment);
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
@@ -404,5 +404,5 @@ void EnSth_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnSth_OverrideLimbDraw, EnSth_PostLimbDraw, &this->actor);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_sth.c", 2176);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

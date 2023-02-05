@@ -318,7 +318,7 @@ void EnAni_Draw(Actor* thisx, PlayState* play) {
     EnAni* this = (EnAni*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ani.c", 719);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
 
@@ -327,5 +327,5 @@ void EnAni_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnAni_OverrideLimbDraw, EnAni_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ani.c", 736);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

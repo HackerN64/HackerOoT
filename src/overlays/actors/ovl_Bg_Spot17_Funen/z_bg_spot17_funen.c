@@ -54,7 +54,7 @@ void func_808B746C(Actor* thisx, PlayState* play) {
 void func_808B7478(Actor* thisx, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot17_funen.c", 153);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     Matrix_RotateY((s16)(Camera_GetCamDirYaw(GET_ACTIVE_CAM(play)) - thisx->shape.rot.y + 0x8000) * 9.58738019108e-05f,
@@ -69,5 +69,5 @@ void func_808B7478(Actor* thisx, PlayState* play) {
 
     if (1) {}
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot17_funen.c", 176);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

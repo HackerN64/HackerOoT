@@ -806,7 +806,7 @@ void EnKanban_Draw(Actor* thisx, PlayState* play) {
     s16 i;
     u8* shadowTex = Graph_Alloc(play->state.gfxCtx, 0x400);
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_kanban.c", 1659);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gSPDisplayList(POLY_OPA_DISP++, object_kanban_DL_000C30);
@@ -908,5 +908,5 @@ void EnKanban_Draw(Actor* thisx, PlayState* play) {
             gSPDisplayList(POLY_XLU_DISP++, sShadowDL);
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_kanban.c", 1857);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

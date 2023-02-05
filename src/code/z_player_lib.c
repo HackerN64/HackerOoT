@@ -871,7 +871,7 @@ void Player_DrawImpl(PlayState* play, void** skeleton, Vec3s* jointTable, s32 dL
     s32 eyeIndex = (jointTable[22].x & 0xF) - 1;
     s32 mouthIndex = (jointTable[22].x >> 4) - 1;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_player_lib.c", 1721);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (eyeIndex < 0) {
         eyeIndex = sEyeMouthIndices[face][0];
@@ -935,7 +935,7 @@ void Player_DrawImpl(PlayState* play, void** skeleton, Vec3s* jointTable, s32 dL
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_player_lib.c", 1803);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 Vec3f sZeroVec = { 0.0f, 0.0f, 0.0f };
@@ -1294,7 +1294,7 @@ void func_800906D4(PlayState* play, Player* this, Vec3f* newTipPos) {
 void Player_DrawGetItemImpl(PlayState* play, Player* this, Vec3f* refPos, s32 drawIdPlusOne) {
     f32 height = (this->exchangeItemId != EXCH_ITEM_NONE) ? 6.0f : 14.0f;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_player_lib.c", 2401);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSegments[6] = VIRTUAL_TO_PHYSICAL(this->giObjectSegment);
 
@@ -1308,7 +1308,7 @@ void Player_DrawGetItemImpl(PlayState* play, Player* this, Vec3f* refPos, s32 dr
 
     GetItem_Draw(play, drawIdPlusOne - 1);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_player_lib.c", 2421);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Player_DrawGetItem(PlayState* play, Player* this) {
@@ -1353,7 +1353,7 @@ void Player_DrawHookshotReticle(PlayState* play, Player* this, f32 arg2) {
     if (1) {}
 
     if (BgCheck_AnyLineTest3(&play->colCtx, &sp8C, &sp80, &sp74, &sp9C, 1, 1, 1, 1, &bgId)) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_player_lib.c", 2572);
+        OPEN_DISPS(play->state.gfxCtx);
 
         OVERLAY_DISP = Gfx_SetupDL(OVERLAY_DISP, SETUPDL_7);
 
@@ -1369,7 +1369,7 @@ void Player_DrawHookshotReticle(PlayState* play, Player* this, f32 arg2) {
         gSPSegment(OVERLAY_DISP++, 0x06, play->objectCtx.status[this->actor.objBankIndex].segment);
         gSPDisplayList(OVERLAY_DISP++, gLinkAdultHookshotReticleDL);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_player_lib.c", 2592);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 
@@ -1455,7 +1455,7 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList, Ve
         if (this->itemAction == PLAYER_IA_DEKU_STICK) {
             Vec3f sp124[3];
 
-            OPEN_DISPS(play->state.gfxCtx, "../z_player_lib.c", 2633);
+            OPEN_DISPS(play->state.gfxCtx);
 
             if (this->actor.scale.y >= 0.0f) {
                 D_80126080.x = this->unk_85C * 5000.0f;
@@ -1475,7 +1475,7 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList, Ve
                       G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(POLY_OPA_DISP++, gLinkChildLinkDekuStickDL);
 
-            CLOSE_DISPS(play->state.gfxCtx, "../z_player_lib.c", 2656);
+            CLOSE_DISPS(play->state.gfxCtx);
         } else if ((this->actor.scale.y >= 0.0f) && (this->meleeWeaponState != 0)) {
             Vec3f spE4[3];
 
@@ -1490,14 +1490,14 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList, Ve
         } else if ((*dList != NULL) && (this->leftHandType == PLAYER_MODELTYPE_LH_BOTTLE)) {
             Color_RGB8* bottleColor = &sBottleColors[Player_ActionToBottle(this, this->itemAction)];
 
-            OPEN_DISPS(play->state.gfxCtx, "../z_player_lib.c", 2710);
+            OPEN_DISPS(play->state.gfxCtx);
 
             gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_player_lib.c", 2712),
                       G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gDPSetEnvColor(POLY_XLU_DISP++, bottleColor->r, bottleColor->g, bottleColor->b, 0);
             gSPDisplayList(POLY_XLU_DISP++, sBottleDLists[((void)0, gSaveContext.linkAge)]);
 
-            CLOSE_DISPS(play->state.gfxCtx, "../z_player_lib.c", 2717);
+            CLOSE_DISPS(play->state.gfxCtx);
         }
 
         if (this->actor.scale.y >= 0.0f) {
@@ -1534,7 +1534,7 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList, Ve
                    (this->rightHandType == PLAYER_MODELTYPE_RH_BOW_SLINGSHOT_2)) {
             BowSlingshotStringData* stringData = &sBowSlingshotStringData[gSaveContext.linkAge];
 
-            OPEN_DISPS(play->state.gfxCtx, "../z_player_lib.c", 2783);
+            OPEN_DISPS(play->state.gfxCtx);
 
             Matrix_Push();
             Matrix_Translate(stringData->pos.x, stringData->pos.y, stringData->pos.z, MTXMODE_APPLY);
@@ -1571,7 +1571,7 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList, Ve
 
             Matrix_Pop();
 
-            CLOSE_DISPS(play->state.gfxCtx, "../z_player_lib.c", 2809);
+            CLOSE_DISPS(play->state.gfxCtx);
         } else if ((this->actor.scale.y >= 0.0f) && (this->rightHandType == PLAYER_MODELTYPE_RH_SHIELD)) {
             Matrix_Get(&this->shieldMf);
             Player_UpdateShieldCollider(play, this, &this->shieldQuad, sRightHandLimbModelShieldQuadVertices);
@@ -1727,7 +1727,7 @@ void Player_DrawPauseImpl(PlayState* play, void* gameplayKeep, void* linkObject,
     Mtx* perspMtx = Graph_Alloc(play->state.gfxCtx, sizeof(Mtx));
     Mtx* lookAtMtx = Graph_Alloc(play->state.gfxCtx, sizeof(Mtx));
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_player_lib.c", 3129);
+    OPEN_DISPS(play->state.gfxCtx);
 
     { s32 pad[2]; }
 
@@ -1814,7 +1814,7 @@ void Player_DrawPauseImpl(PlayState* play, void* gameplayKeep, void* linkObject,
     gSPBranchList(opaRef, POLY_OPA_DISP);
     gSPBranchList(xluRef, POLY_XLU_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_player_lib.c", 3288);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Player_DrawPause(PlayState* play, u8* segment, SkelAnime* skelAnime, Vec3f* pos, Vec3s* rot, f32 scale, s32 sword,

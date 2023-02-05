@@ -361,7 +361,7 @@ void EnDoor_Draw(Actor* thisx, PlayState* play) {
     EnDoor* this = (EnDoor*)thisx;
 
     if (this->actor.objBankIndex == this->requiredObjBankIndex) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_door.c", 910);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         SkelAnime_DrawOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, EnDoor_OverrideLimbDraw, NULL,
@@ -378,6 +378,6 @@ void EnDoor_Draw(Actor* thisx, PlayState* play) {
             Actor_DrawDoorLock(play, this->lockTimer, DOORLOCK_NORMAL);
         }
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_door.c", 941);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

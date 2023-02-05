@@ -519,7 +519,7 @@ void EnVm_Draw(Actor* thisx, PlayState* play2) {
     PlayState* play = play2;
     Vec3f actorPos;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_vm.c", 1014);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -552,5 +552,5 @@ void EnVm_Draw(Actor* thisx, PlayState* play2) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gBeamosLaserDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_vm.c", 1068);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

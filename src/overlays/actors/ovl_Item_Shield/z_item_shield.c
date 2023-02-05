@@ -218,11 +218,11 @@ void ItemShield_Draw(Actor* thisx, PlayState* play) {
     ItemShield* this = (ItemShield*)thisx;
 
     if (!(this->unk_19C & 2)) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_item_shield.c", 457);
+        OPEN_DISPS(play->state.gfxCtx);
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_item_shield.c", 460),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, SEGMENTED_TO_VIRTUAL(gLinkChildDekuShieldDL));
-        CLOSE_DISPS(play->state.gfxCtx, "../z_item_shield.c", 465);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

@@ -681,7 +681,7 @@ void EnReeba_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnReeba* this = (EnReeba*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_reeba.c", 1062);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -693,7 +693,7 @@ void EnReeba_Draw(Actor* thisx, PlayState* play) {
 
     SkelAnime_DrawOpa(play, this->skelanime.skeleton, this->skelanime.jointTable, NULL, NULL, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_reeba.c", 1088);
+    CLOSE_DISPS(play->state.gfxCtx);
 
 #ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0)) {

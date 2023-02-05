@@ -1021,15 +1021,15 @@ s32 BossFd2_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f*
     }
 
     if ((limbIndex == 32) || (limbIndex == 35) || (limbIndex == 36)) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_boss_fd2.c", 2165);
+        OPEN_DISPS(play->state.gfxCtx);
         gDPPipeSync(POLY_OPA_DISP++);
         gDPSetEnvColor(POLY_OPA_DISP++, 255, 255, 255, (s8)bossFd->fwork[BFD_HEAD_TEX2_ALPHA]);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_boss_fd2.c", 2172);
+        CLOSE_DISPS(play->state.gfxCtx);
     } else {
-        OPEN_DISPS(play->state.gfxCtx, "../z_boss_fd2.c", 2174);
+        OPEN_DISPS(play->state.gfxCtx);
         gDPPipeSync(POLY_OPA_DISP++);
         gDPSetEnvColor(POLY_OPA_DISP++, 255, 255, 255, (s8)bossFd->fwork[BFD_BODY_TEX2_ALPHA]);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_boss_fd2.c", 2181);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
     if ((0 < limbIndex) && (limbIndex < 16)) {
         *dList = NULL;
@@ -1069,7 +1069,7 @@ void BossFd2_UpdateMane(BossFd2* this, PlayState* play, Vec3f* head, Vec3f* pos,
     Vec3f spB0;
     f32 xyScale;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_fd2.c", 2389);
+    OPEN_DISPS(play->state.gfxCtx);
     Matrix_Push();
     gDPPipeSync(POLY_OPA_DISP++);
 
@@ -1150,7 +1150,7 @@ void BossFd2_UpdateMane(BossFd2* this, PlayState* play, Vec3f* head, Vec3f* pos,
         gSPDisplayList(POLY_XLU_DISP++, gHoleVolvagiaManeModelDL);
     }
     Matrix_Pop();
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_fd2.c", 2503);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossFd2_DrawMane(BossFd2* this, PlayState* play) {
@@ -1158,7 +1158,7 @@ void BossFd2_DrawMane(BossFd2* this, PlayState* play) {
     BossFd* bossFd = (BossFd*)this->actor.parent;
     s16 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_fd2.c", 2515);
+    OPEN_DISPS(play->state.gfxCtx);
     if (1) {}
     for (i = 0; i < 10; i++) {
         this->centerMane.scale[i] = 1.5f + 0.3f * Math_SinS(5596.0f * this->work[FD2_VAR_TIMER] + i * 0x3200);
@@ -1182,7 +1182,7 @@ void BossFd2_DrawMane(BossFd2* this, PlayState* play) {
     BossFd2_UpdateMane(this, play, &this->leftMane.head, this->leftMane.pos, this->leftMane.rot, this->leftMane.pull,
                        this->leftMane.scale);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_fd2.c", 2601);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossFd2_Draw(Actor* thisx, PlayState* play) {
@@ -1190,7 +1190,7 @@ void BossFd2_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     BossFd2* this = (BossFd2*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_fd2.c", 2617);
+    OPEN_DISPS(play->state.gfxCtx);
     osSyncPrintf("FD2 draw start \n");
     if (this->actionFunc != BossFd2_Wait) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -1212,5 +1212,5 @@ void BossFd2_Draw(Actor* thisx, PlayState* play) {
         BossFd2_DrawMane(this, play);
         POLY_OPA_DISP = Play_SetFog(play, POLY_OPA_DISP);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_fd2.c", 2688);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -1518,7 +1518,7 @@ void BossFd_DrawEffects(BossFdEffect* effect, PlayState* play) {
     s16 i;
     BossFdEffect* firstEffect = effect;
 
-    OPEN_DISPS(gfxCtx, "../z_boss_fd.c", 4023);
+    OPEN_DISPS(gfxCtx);
 
     for (i = 0; i < BOSSFD_EFFECT_COUNT; i++, effect++) {
         if (effect->type == BFD_FX_EMBER) {
@@ -1627,7 +1627,7 @@ void BossFd_DrawEffects(BossFdEffect* effect, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_boss_fd.c", 4198);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void BossFd_Draw(Actor* thisx, PlayState* play) {
@@ -1636,7 +1636,7 @@ void BossFd_Draw(Actor* thisx, PlayState* play) {
 
     osSyncPrintf("FD DRAW START\n");
     if (this->actionFunc != BossFd_Wait) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4217);
+        OPEN_DISPS(play->state.gfxCtx);
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         if (this->work[BFD_DAMAGE_FLASH_TIMER] & 2) {
             POLY_OPA_DISP = Gfx_SetFog(POLY_OPA_DISP, 255, 255, 255, 0, 900, 1099);
@@ -1644,7 +1644,7 @@ void BossFd_Draw(Actor* thisx, PlayState* play) {
 
         BossFd_DrawBody(play, this);
         POLY_OPA_DISP = Play_SetFog(play, POLY_OPA_DISP);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4243);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 
     osSyncPrintf("FD DRAW END\n");
@@ -1715,7 +1715,7 @@ void BossFd_DrawMane(PlayState* play, BossFd* this, Vec3f* manePos, Vec3f* maneR
     f32 phi_f20;
     f32 phi_f22;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4419);
+    OPEN_DISPS(play->state.gfxCtx);
 
     maneLength = this->skinSegments;
     maneLength = CLAMP_MAX(maneLength, 10);
@@ -1761,7 +1761,7 @@ void BossFd_DrawMane(PlayState* play, BossFd* this, Vec3f* manePos, Vec3f* maneR
         gSPDisplayList(POLY_XLU_DISP++, gVolvagiaManeModelDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4483);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 BossFd_OverrideHeadDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
@@ -1821,7 +1821,7 @@ void BossFd_DrawBody(PlayState* play, BossFd* this) {
     f32 temp_float;
     Mtx* tempMat = Graph_Alloc(play->state.gfxCtx, 18 * sizeof(Mtx));
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4589);
+    OPEN_DISPS(play->state.gfxCtx);
     if (this->skinSegments != 0) {
         gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(sEyeTextures[this->eyeState]));
     }
@@ -1974,5 +1974,5 @@ void BossFd_DrawBody(PlayState* play, BossFd* this) {
 
     Matrix_Pop();
     osSyncPrintf("END\n");
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4987);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

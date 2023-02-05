@@ -131,7 +131,7 @@ void EnStream_Draw(Actor* thisx, PlayState* play) {
     u32 multipliedFrames;
     u32 frames = play->gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_stream.c", 295);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_stream.c", 299),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -140,5 +140,5 @@ void EnStream_Draw(Actor* thisx, PlayState* play) {
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, frames * 30, -multipliedFrames, 0x40, 0x40, 1,
                                 multipliedFrames, -multipliedFrames, 0x40, 0x40));
     gSPDisplayList(POLY_XLU_DISP++, object_stream_DL_000950);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_stream.c", 310);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

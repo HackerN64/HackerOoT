@@ -746,7 +746,7 @@ void EnTorch2_Draw(Actor* thisx, PlayState* play2) {
     Player* this = (Player*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_torch2.c", 1050);
+    OPEN_DISPS(play->state.gfxCtx);
     func_80093C80(play);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     if (sAlpha == 255) {
@@ -766,5 +766,5 @@ void EnTorch2_Draw(Actor* thisx, PlayState* play2) {
             SkelAnime_DrawFlex(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                                EnTorch2_OverrideLimbDraw, EnTorch2_PostLimbDraw, this, POLY_XLU_DISP);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_torch2.c", 1114);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

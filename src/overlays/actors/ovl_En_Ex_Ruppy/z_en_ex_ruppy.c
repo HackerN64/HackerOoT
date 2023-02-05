@@ -382,7 +382,7 @@ void EnExRuppy_Draw(Actor* thisx, PlayState* play) {
     EnExRuppy* this = (EnExRuppy*)thisx;
 
     if (!this->invisible) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_ex_ruppy.c", 774);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         func_8002EBCC(thisx, play, 0);
@@ -391,6 +391,6 @@ void EnExRuppy_Draw(Actor* thisx, PlayState* play) {
         gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(rupeeTextures[this->colorIdx]));
         gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_ex_ruppy.c", 784);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

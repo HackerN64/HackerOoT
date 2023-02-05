@@ -80,7 +80,7 @@ void EffectSsGMagma2_Draw(PlayState* play, u32 index, EffectSs* this) {
     scale = this->rScale / 100.0f;
     object = play->objectCtx.status[this->rObjBankIdx].segment;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_ss_g_magma2.c", 261);
+    OPEN_DISPS(gfxCtx);
 
     Matrix_Translate(this->pos.x, this->pos.y, this->pos.z, MTXMODE_NEW);
     Matrix_Scale(scale, scale, scale, MTXMODE_APPLY);
@@ -100,7 +100,7 @@ void EffectSsGMagma2_Draw(PlayState* play, u32 index, EffectSs* this) {
     gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sTextures[this->rTexIdx]));
     gSPDisplayList(POLY_XLU_DISP++, this->gfx);
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_ss_g_magma2.c", 311);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EffectSsGMagma2_Update(PlayState* play, u32 index, EffectSs* this) {

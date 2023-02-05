@@ -720,7 +720,7 @@ void EnFz_Draw(Actor* thisx, PlayState* play) {
 
     index = (6 - this->actor.colChkInfo.health) >> 1;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fz.c", 1167);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (1) {}
 
@@ -743,7 +743,7 @@ void EnFz_Draw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, displayLists[index]);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fz.c", 1200);
+    CLOSE_DISPS(play->state.gfxCtx);
     EnFz_DrawEffects(this, play);
 }
 
@@ -864,7 +864,7 @@ void EnFz_DrawEffects(EnFz* this, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     u8 materialFlag = 0;
 
-    OPEN_DISPS(gfxCtx, "../z_en_fz.c", 1384);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -892,5 +892,5 @@ void EnFz_DrawEffects(EnFz* this, PlayState* play) {
         effect++;
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_en_fz.c", 1430);
+    CLOSE_DISPS(gfxCtx);
 }

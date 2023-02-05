@@ -2974,7 +2974,7 @@ void Message_DrawDebugVariableChanged(s16* var, GraphicsContext* gfxCtx) {
     static s16 sFillTimer = 0;
     s32 pad;
 
-    OPEN_DISPS(gfxCtx, "../z_message_PAL.c", 3485);
+    OPEN_DISPS(gfxCtx);
 
     if (sVarLastValue != *var) {
         sVarLastValue = *var;
@@ -2995,7 +2995,7 @@ void Message_DrawDebugVariableChanged(s16* var, GraphicsContext* gfxCtx) {
         gDPFillRectangle(POLY_OPA_DISP++, 40, 120, 60, 140); // 20x20 white box
         gDPPipeSync(POLY_OPA_DISP++);
     }
-    CLOSE_DISPS(gfxCtx, "../z_message_PAL.c", 3513);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void Message_DrawDebugText(PlayState* play, Gfx** p) {
@@ -3022,7 +3022,7 @@ void Message_Draw(PlayState* play) {
     Gfx* polyOpaP;
     s16 watchVar;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_message_PAL.c", 3554);
+    OPEN_DISPS(play->state.gfxCtx);
 
 #ifdef ENABLE_MSG_DEBUGGER
     watchVar = gSaveContext.scarecrowLongSongSet;
@@ -3043,7 +3043,7 @@ void Message_Draw(PlayState* play) {
     gSPEndDisplayList(plusOne++);
     Graph_BranchDlist(polyOpaP, plusOne);
     POLY_OPA_DISP = plusOne;
-    CLOSE_DISPS(play->state.gfxCtx, "../z_message_PAL.c", 3582);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Message_Update(PlayState* play) {

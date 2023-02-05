@@ -203,7 +203,7 @@ void ArrowLight_Draw(Actor* thisx, PlayState* play) {
         if (1) {}
         transform = (arrow->hitFlags & 2) ? &this->actor : &arrow->actor;
 
-        OPEN_DISPS(play->state.gfxCtx, "../z_arrow_light.c", 598);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Matrix_Translate(transform->world.pos.x, transform->world.pos.y, transform->world.pos.z, MTXMODE_NEW);
         Matrix_RotateY(BINANG_TO_RAD(transform->shape.rot.y), MTXMODE_APPLY);
@@ -241,6 +241,6 @@ void ArrowLight_Draw(Actor* thisx, PlayState* play) {
                                         511 - (stateFrames * 10) % 512, 511 - (stateFrames * 30) % 512, 8, 16));
         gSPDisplayList(POLY_XLU_DISP++, sModelDL);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_arrow_light.c", 664);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

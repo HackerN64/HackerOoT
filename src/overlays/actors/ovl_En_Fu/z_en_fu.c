@@ -298,7 +298,7 @@ void EnFu_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnFu* this = (EnFu*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fu.c", 773);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sEyesSegments[this->facialExpression]));
@@ -306,5 +306,5 @@ void EnFu_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelanime.skeleton, this->skelanime.jointTable, this->skelanime.dListCount,
                           EnFu_OverrideLimbDraw, EnFu_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fu.c", 791);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
