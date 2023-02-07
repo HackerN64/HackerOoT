@@ -9693,8 +9693,15 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     Player_SetEquipmentData(play, this);
     this->prevBoots = this->currentBoots;
     Player_InitCommon(this, play, gPlayerSkelHeaders[((void)0, gSaveContext.linkAge)]);
+
+#ifdef ENABLE_AUTO_GI_ALLOC
     this->giObjectSegment =
-        (void*)ALIGN16((uintptr_t)ZeldaArena_MallocDebug(Player_GetGIAllocSize(), __FILE__, __LINE__));
+        (void*)ALIGN16((uintptr_t)ZeldaArena_MallocDebug(Player_GetGIAllocSize(), __BASE_FILE__, __LINE__));
+#else
+    ASSERT(Player_GetGIAllocSize() < 0x3008,
+            "[HackerOoT:ERROR]: GI Object larger than the allocated size.", __BASE_FILE__, __LINE__);
+    this->giObjectSegment = (void*)(((uintptr_t)ZeldaArena_MallocDebug(0x3008, __BASE_FILE__, __LINE__) + 8) & ~0xF);
+#endif
 
     respawnFlag = gSaveContext.respawnFlag;
 
