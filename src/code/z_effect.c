@@ -112,7 +112,7 @@ void Effect_Add(PlayState* play, s32* pIndex, s32 type, u8 arg3, u8 arg4, void* 
         switch (type) {
             case EFFECT_SPARK:
                 for (i = 0; i < SPARK_COUNT; i++) {
-                    if (sEffectContext.sparks[i].status.active == false) {
+                    if (!sEffectContext.sparks[i].status.active) {
                         slotFound = true;
                         *pIndex = i;
                         effect = &sEffectContext.sparks[i].effect;
@@ -124,7 +124,7 @@ void Effect_Add(PlayState* play, s32* pIndex, s32 type, u8 arg3, u8 arg4, void* 
             case EFFECT_BLURE1:
             case EFFECT_BLURE2:
                 for (i = 0; i < BLURE_COUNT; i++) {
-                    if (sEffectContext.blures[i].status.active == false) {
+                    if (!sEffectContext.blures[i].status.active) {
                         slotFound = true;
                         *pIndex = i + SPARK_COUNT;
                         effect = &sEffectContext.blures[i].effect;
@@ -135,7 +135,7 @@ void Effect_Add(PlayState* play, s32* pIndex, s32 type, u8 arg3, u8 arg4, void* 
                 break;
             case EFFECT_SHIELD_PARTICLE:
                 for (i = 0; i < SHIELD_PARTICLE_COUNT; i++) {
-                    if (sEffectContext.shieldParticles[i].status.active == false) {
+                    if (!sEffectContext.shieldParticles[i].status.active) {
                         slotFound = true;
                         *pIndex = i + SPARK_COUNT + BLURE_COUNT;
                         effect = &sEffectContext.shieldParticles[i].effect;
