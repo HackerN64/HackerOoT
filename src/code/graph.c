@@ -1,6 +1,8 @@
 #include "global.h"
 #include "terminal.h"
 
+#include "config.h"
+
 #define GFXPOOL_HEAD_MAGIC 0x1234
 #define GFXPOOL_TAIL_MAGIC 0x5678
 
@@ -119,9 +121,13 @@ GameStateOverlay* Graph_GetNextGameState(GameState* gameState) {
     if (gameStateInitFunc == Setup_Init) {
         return &gGameStateOverlayTable[0];
     }
+
+#ifdef ENABLE_MAP_SELECT
     if (gameStateInitFunc == MapSelect_Init) {
         return &gGameStateOverlayTable[1];
     }
+#endif
+
     if (gameStateInitFunc == ConsoleLogo_Init) {
         return &gGameStateOverlayTable[2];
     }
@@ -168,8 +174,10 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
     OSScTask* scTask = &gfxCtx->task;
     CfbInfo* cfb;
 
+#ifdef ENABLE_SPEEDMETER
     gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime =
         osGetTime() - sGraphPrevTaskTimeStart - gAudioThreadUpdateTimeAcc;
+#endif
 
     osSetTimer(&timer, OS_USEC_TO_CYCLES(3000000), 0, &gfxCtx->queue, (OSMesg)666);
 
@@ -205,6 +213,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
     }
 
     timeNow = osGetTime();
+#ifdef ENABLE_SPEEDMETER
     if (gAudioThreadUpdateTimeStart != 0) {
         // The audio thread update is running
         // Add the time already spent to the accumulator and leave the rest for the next cycle
@@ -212,8 +221,10 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
         gAudioThreadUpdateTimeAcc += timeNow - gAudioThreadUpdateTimeStart;
         gAudioThreadUpdateTimeStart = timeNow;
     }
+
     gAudioThreadUpdateTimeTotalPerGfxTask = gAudioThreadUpdateTimeAcc;
     gAudioThreadUpdateTimeAcc = 0;
+#endif
 
     sGraphPrevTaskTimeStart = osGetTime();
 
@@ -242,8 +253,8 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
 
     scTask->next = NULL;
     scTask->flags = OS_SC_NEEDS_RSP | OS_SC_NEEDS_RDP | OS_SC_SWAPBUFFER | OS_SC_LAST_TASK;
-    if (SREG(33) & 1) {
-        SREG(33) &= ~1;
+    if (R_GRAPH_TASKSET00_FLAGS & 1) {
+        R_GRAPH_TASKSET00_FLAGS &= ~1;
         scTask->flags &= ~OS_SC_SWAPBUFFER;
         gfxCtx->fbIdx--;
     }
@@ -389,6 +400,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
         OSTime timeNow = osGetTime();
         s32 pad[4];
 
+#ifdef ENABLE_SPEEDMETER
         gRSPGfxTimeTotal = gRSPGfxTimeAcc;
         gRSPAudioTimeTotal = gRSPAudioTimeAcc;
         gRDPTimeTotal = gRDPTimeAcc;
@@ -399,15 +411,18 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
         if (sGraphPrevUpdateEndTime != 0) {
             gGraphUpdatePeriod = timeNow - sGraphPrevUpdateEndTime;
         }
+#endif
         sGraphPrevUpdateEndTime = timeNow;
     }
 
-    if (gIsCtrlr2Valid && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&
+#ifdef ENABLE_MAP_SELECT
+    if (CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&
         CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_L | BTN_R)) {
         gSaveContext.gameMode = GAMEMODE_NORMAL;
         SET_NEXT_GAMESTATE(gameState, MapSelect_Init, MapSelectState);
         gameState->running = false;
     }
+#endif
 
     if (gIsCtrlr2Valid && PreNmiBuff_IsResetting(gAppNmiBufferPtr) && !gameState->inPreNMIState) {
         // "To reset mode"
@@ -415,6 +430,13 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
         SET_NEXT_GAMESTATE(gameState, PreNMI_Init, PreNMIState);
         gameState->running = false;
     }
+
+#ifdef ENABLE_WIDESCREEN
+    if (CHECK_BTN_ALL(gameState->input[0].press.button, BTN_DUP) &&
+        CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_Z | BTN_R)) {
+        gIsUsingWidescreen ^= 1;
+    }
+#endif
 }
 
 void Graph_ThreadEntry(void* arg0) {
@@ -429,6 +451,10 @@ void Graph_ThreadEntry(void* arg0) {
 
     osSyncPrintf("グラフィックスレッド実行開始\n"); // "Start graphic thread execution"
     Graph_Init(&gfxCtx);
+
+#ifdef ENABLE_WIDESCREEN
+    gIsUsingWidescreen = true;
+#endif
 
     while (nextOvl) {
         ovl = nextOvl;

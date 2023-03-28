@@ -2,6 +2,8 @@
 #include "global.h"
 #include "terminal.h"
 
+#include "config.h"
+
 typedef struct {
     /* 0x00 */ u16 sfxId;
     /* 0x04 */ Vec3f* pos;
@@ -33,9 +35,12 @@ ActiveSfx gActiveSfx[7][3];
 u8 sCurSfxPlayerChannelIdx;
 u8 gSfxBankMuted[7];
 UnusedBankLerp sUnusedBankLerp[7];
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 u16 gAudioSfxSwapSource[10];
 u16 gAudioSfxSwapTarget[10];
 u8 gAudioSfxSwapMode[10];
+#endif
 
 void Audio_SetSfxBanksMute(u16 muteMask) {
     u8 bankId;
@@ -70,6 +75,7 @@ void Audio_PlaySfxGeneral(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* 
 
     if (!gSfxBankMuted[SFX_BANK_SHIFT(sfxId)]) {
         req = &sSfxRequests[gSfxRequestWriteIndex];
+#ifdef ENABLE_AUDIO_DEBUGGER
         if (!gAudioSfxSwapOff) {
             for (i = 0; i < 10; i++) {
                 if (sfxId == gAudioSfxSwapSource[i]) {
@@ -89,6 +95,7 @@ void Audio_PlaySfxGeneral(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* 
                 }
             }
         }
+#endif
         req->sfxId = sfxId;
         req->pos = pos;
         req->token = token;
@@ -162,10 +169,13 @@ void Audio_ProcessSfxRequest(void) {
         return;
     }
     bankId = SFX_BANK(req->sfxId);
+
+#ifdef ENABLE_AUDIO_DEBUGGER
     if ((1 << bankId) & D_801333F0) {
         AudioDebug_ScrPrt("SE", req->sfxId);
         bankId = SFX_BANK(req->sfxId);
     }
+#endif
     count = 0;
     index = gSfxBanks[bankId][0].next;
     while (index != 0xFF && index != 0) {
@@ -716,6 +726,7 @@ void Audio_ResetSfx(void) {
         gSfxBanks[bankId][i].prev = i - 1;
         gSfxBanks[bankId][i].next = 0xFF;
     }
+#ifdef ENABLE_AUDIO_DEBUGGER
     if (D_801333F8 == 0) {
         for (bankId = 0; bankId < 10; bankId++) {
             gAudioSfxSwapSource[bankId] = 0;
@@ -724,4 +735,5 @@ void Audio_ResetSfx(void) {
         }
         D_801333F8++;
     }
+#endif
 }

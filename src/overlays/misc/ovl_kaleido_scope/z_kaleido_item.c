@@ -344,7 +344,11 @@ void KaleidoScope_DrawItemSelect(PlayState* play) {
                 index = cursorSlot * 4; // required to match?
                 KaleidoScope_SetCursorVtx(pauseCtx, index, pauseCtx->itemVtx);
 
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
                 if ((pauseCtx->debugState == 0) && (pauseCtx->state == 6) && (pauseCtx->unk_1E4 == 0)) {
+#else
+                if ((pauseCtx->state == 6) && (pauseCtx->unk_1E4 == 0)) {
+#endif
                     if (CHECK_BTN_ANY(input->press.button, BTN_CLEFT | BTN_CDOWN | BTN_CRIGHT)) {
                         if (((gSlotAgeReqs[cursorSlot] == 9) ||
                              (gSlotAgeReqs[cursorSlot] == ((void)0, gSaveContext.linkAge))) &&
@@ -467,8 +471,8 @@ void KaleidoScope_DrawItemSelect(PlayState* play) {
             }
 
             gSPVertex(POLY_OPA_DISP++, &pauseCtx->itemVtx[j + 0], 4, 0);
-            KaleidoScope_DrawQuadTextureRGBA32(play->state.gfxCtx, gItemIcons[gSaveContext.inventory.items[i]], 32, 32,
-                                               0);
+            KaleidoScope_DrawQuadTextureRGBA32(play->state.gfxCtx, gItemIcons[gSaveContext.inventory.items[i]],
+                                               ITEM_ICON_WIDTH, ITEM_ICON_HEIGHT, 0);
         }
     }
 
@@ -530,7 +534,7 @@ void KaleidoScope_UpdateItemEquip(PlayState* play) {
         offsetX = ABS(pauseCtx->equipAnimX - bowItemVtx->v.ob[0] * 10) / sEquipMoveTimer;
         offsetY = ABS(pauseCtx->equipAnimY - bowItemVtx->v.ob[1] * 10) / sEquipMoveTimer;
     } else {
-        offsetX = ABS(pauseCtx->equipAnimX - sCButtonPosX[pauseCtx->equipTargetCBtn]) / sEquipMoveTimer;
+        offsetX = ABS(pauseCtx->equipAnimX - WIDE_C_VAL(sCButtonPosX[pauseCtx->equipTargetCBtn], pauseCtx->equipTargetCBtn)) / sEquipMoveTimer;
         offsetY = ABS(pauseCtx->equipAnimY - sCButtonPosY[pauseCtx->equipTargetCBtn]) / sEquipMoveTimer;
     }
 
@@ -560,7 +564,7 @@ void KaleidoScope_UpdateItemEquip(PlayState* play) {
                 pauseCtx->equipAnimY += offsetY;
             }
         } else {
-            if (pauseCtx->equipAnimX >= sCButtonPosX[pauseCtx->equipTargetCBtn]) {
+            if (pauseCtx->equipAnimX >= WIDE_C_VAL(sCButtonPosX[pauseCtx->equipTargetCBtn], pauseCtx->equipTargetCBtn)) {
                 pauseCtx->equipAnimX -= offsetX;
             } else {
                 pauseCtx->equipAnimX += offsetX;

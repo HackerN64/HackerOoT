@@ -3,6 +3,7 @@
 
 #include "z64.h"
 #include "macros.h"
+#include "config.h"
 
 #include "config.h"
 
@@ -323,7 +324,11 @@ void EffectSsDeadSound_Spawn(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f
 void EffectSsDeadSound_SpawnStationary(PlayState* play, Vec3f* pos, u16 sfxId, s16 lowerPriority,
                                        s16 repeatMode, s32 life);
 void EffectSsIceSmoke_Spawn(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel, s16 scale);
+
+#ifdef ENABLE_EVENT_EDITOR
 void FlagSet_Update(PlayState* play);
+#endif
+
 void Overlay_LoadGameState(GameStateOverlay* overlayEntry);
 void Overlay_FreeGameState(GameStateOverlay* overlayEntry);
 void ActorShape_Init(ActorShape* shape, f32 yOffset, ActorShadowFunc shadowDraw, f32 shadowScale);
@@ -360,12 +365,12 @@ void Actor_Kill(Actor* actor);
 void Actor_SetFocus(Actor* actor, f32 yOffset);
 void Actor_SetScale(Actor* actor, f32 scale);
 void Actor_SetObjectDependency(PlayState* play, Actor* actor);
-void func_8002D7EC(Actor* actor);
-void func_8002D868(Actor* actor);
-void Actor_MoveForward(Actor* actor);
-void func_8002D908(Actor* actor);
-void func_8002D97C(Actor* actor);
-void func_8002D9A4(Actor* actor, f32 arg1);
+void Actor_UpdatePos(Actor* actor);
+void Actor_UpdateVelocityXZGravity(Actor* actor);
+void Actor_MoveXZGravity(Actor* actor);
+void Actor_UpdateVelocityXYZ(Actor* actor);
+void Actor_MoveXYZ(Actor* actor);
+void Actor_SetProjectileSpeed(Actor* actor, f32 speedXYZ);
 s16 Actor_WorldYawTowardActor(Actor* actorA, Actor* actorB);
 s16 Actor_WorldYawTowardPoint(Actor* actor, Vec3f* refPoint);
 f32 Actor_WorldDistXYZToActor(Actor* actorA, Actor* actorB);
@@ -416,12 +421,12 @@ u32 Actor_TextboxIsClosing(Actor* actor, PlayState* play);
 s8 func_8002F368(PlayState* play);
 void Actor_GetScreenPos(PlayState* play, Actor* actor, s16* x, s16* y);
 u32 Actor_HasParent(Actor* actor, PlayState* play);
-s32 func_8002F434(Actor* actor, PlayState* play, s32 getItemId, f32 xzRange, f32 yRange);
-void func_8002F554(Actor* actor, PlayState* play, s32 getItemId);
-void func_8002F580(Actor* actor, PlayState* play);
+s32 Actor_OfferGetItem(Actor* actor, PlayState* play, s32 getItemId, f32 xzRange, f32 yRange);
+s32 Actor_OfferGetItemNearby(Actor* actor, PlayState* play, s32 getItemId);
+s32 Actor_OfferCarry(Actor* actor, PlayState* play);
 u32 Actor_HasNoParent(Actor* actor, PlayState* play);
 void func_8002F5C4(Actor* actorA, Actor* actorB, PlayState* play);
-void func_8002F5F0(Actor* actor, PlayState* play);
+void Actor_SetClosestSecretDistance(Actor* actor, PlayState* play);
 s32 Actor_IsMounted(PlayState* play, Actor* horse);
 u32 Actor_SetRideActor(PlayState* play, Actor* horse, s32 mountSide);
 s32 Actor_NotMounted(PlayState* play, Actor* horse);
@@ -430,21 +435,21 @@ void func_8002F6D4(PlayState* play, Actor* actor, f32 arg2, s16 arg3, f32 arg4, 
 void func_8002F71C(PlayState* play, Actor* actor, f32 arg2, s16 arg3, f32 arg4);
 void func_8002F758(PlayState* play, Actor* actor, f32 arg2, s16 arg3, f32 arg4, u32 arg5);
 void func_8002F7A0(PlayState* play, Actor* actor, f32 arg2, s16 arg3, f32 arg4);
-void func_8002F7DC(Actor* actor, u16 sfxId);
-void Audio_PlayActorSfx2(Actor* actor, u16 sfxId);
+void Player_PlaySfx(Player* player, u16 sfxId);
+void Actor_PlaySfx(Actor* actor, u16 sfxId);
 void func_8002F850(PlayState* play, Actor* actor);
 void func_8002F8F0(Actor* actor, u16 sfxId);
 void func_8002F91C(Actor* actor, u16 sfxId);
 void func_8002F948(Actor* actor, u16 sfxId);
 void func_8002F974(Actor* actor, u16 sfxId);
-void func_8002F994(Actor* actor, s32 arg1);
+void func_8002F994(Actor* actor, s32 timer);
 s32 func_8002F9EC(PlayState* play, Actor* actor, CollisionPoly* poly, s32 bgId, Vec3f* pos);
 void Actor_DisableLens(PlayState* play);
 void Actor_InitContext(PlayState* play, ActorContext* actorCtx, ActorEntry* playerEntry);
 void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx);
 s32 func_800314D4(PlayState* play, Actor* actor, Vec3f* arg2, f32 arg3);
 void func_800315AC(PlayState* play, ActorContext* actorCtx);
-void func_80031A28(PlayState* play, ActorContext* actorCtx);
+void Actor_KillAllWithMissingObject(PlayState* play, ActorContext* actorCtx);
 void func_80031B14(PlayState* play, ActorContext* actorCtx);
 void func_80031C3C(ActorContext* actorCtx, PlayState* play);
 Actor* Actor_Spawn(ActorContext* actorCtx, PlayState* play, s16 actorId, f32 posX, f32 posY, f32 posZ,
@@ -483,7 +488,7 @@ f32 Rand_ZeroFloat(f32 f);
 f32 Rand_CenteredFloat(f32 f);
 void Actor_DrawDoorLock(PlayState* play, s32 frame, s32 type);
 void func_8003424C(PlayState* play, Vec3f* arg1);
-void Actor_SetColorFilter(Actor* actor, s16 colorFlag, s16 colorIntensityMax, s16 xluFlag, s16 duration);
+void Actor_SetColorFilter(Actor* actor, s16 colorFlag, s16 colorIntensityMax, s16 bufFlag, s16 duration);
 Hilite* func_800342EC(Vec3f* object, PlayState* play);
 Hilite* func_8003435C(Vec3f* object, PlayState* play);
 s32 Npc_UpdateTalking(PlayState* play, Actor* actor, s16* talkState, f32 interactRange,
@@ -642,7 +647,7 @@ s32 DynaPolyActor_IsPlayerAbove(DynaPolyActor* dynaActor);
 s32 func_800435B4(DynaPolyActor* dynaActor);
 s32 func_800435D8(PlayState* play, DynaPolyActor* dynaActor, s16 arg2, s16 arg3, s16 arg4);
 void Camera_Init(Camera* camera, View* view, CollisionContext* colCtx, PlayState* play);
-void Camera_InitPlayerSettings(Camera* camera, Player* player);
+void Camera_InitDataUsingPlayer(Camera* camera, Player* player);
 s16 Camera_ChangeStatus(Camera* camera, s16 status);
 Vec3s Camera_Update(Camera* camera);
 void Camera_Finish(Camera* camera);
@@ -655,10 +660,10 @@ Vec3s* Camera_GetCamDir(Vec3s* dst, Camera* camera);
 s16 Camera_GetCamDirPitch(Camera* camera);
 s16 Camera_GetCamDirYaw(Camera* camera);
 s32 Camera_RequestQuake(Camera* camera, s32 unused, s16 y, s32 duration);
-s32 Camera_SetParam(Camera* camera, s32 param, void* value);
-s32 func_8005AC48(Camera* camera, s16 arg1);
-s16 func_8005ACFC(Camera* camera, s16 arg1);
-s16 func_8005AD1C(Camera* camera, s16 arg1);
+s32 Camera_SetViewParam(Camera* camera, s32 viewFlag, void* param);
+s32 Camera_OverwriteStateFlags(Camera* camera, s16 stateFlags);
+s16 Camera_SetStateFlag(Camera* camera, s16 stateFlag);
+s16 Camera_UnsetStateFlag(Camera* camera, s16 stateFlag);
 s32 Camera_ResetAnim(Camera* camera);
 s32 Camera_SetCSParams(Camera* camera, CutsceneCameraPoint* atPoints, CutsceneCameraPoint* eyePoints, Player* player,
                        s16 relativeToPlayer);
@@ -763,23 +768,31 @@ u8 CollisionCheck_GetSwordDamage(s32 dmgFlags);
 void SaveContext_Init(void);
 s32 func_800635D0(s32);
 void Regs_Init(void);
-void func_8006375C(s32 arg0, s32 arg1, const char* text);
-void func_8006376C(u8 x, u8 y, u8 colorIndex, const char* text);
+void DebugCamera_ScreenText(u8 x, u8 y, const char* text);
+
+#ifdef ENABLE_CAMERA_DEBUGGER
+void DebugCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text);
+#endif
+
 void Regs_UpdateEditor(Input* input);
-void func_80063D7C(GraphicsContext* gfxCtx);
+
+#if (defined ENABLE_CAMERA_DEBUGGER) || (defined ENABLE_REG_EDITOR)
+void Debug_DrawText(GraphicsContext* gfxCtx);
+#endif
+
 void DebugDisplay_Init(void);
 DebugDispObject* DebugDisplay_AddObject(f32 posX, f32 posY, f32 posZ, s16 rotX, s16 rotY, s16 rotZ, f32 scaleX,
                                         f32 scaleY, f32 scaleZ, u8 red, u8 green, u8 blue, u8 alpha, s16 type,
                                         GraphicsContext* gfxCtx);
 void DebugDisplay_DrawObjects(PlayState* play);
-void func_8006450C(PlayState* play, CutsceneContext* csCtx);
-void func_80064520(PlayState* play, CutsceneContext* csCtx);
-void func_80064534(PlayState* play, CutsceneContext* csCtx);
-void func_80064558(PlayState* play, CutsceneContext* csCtx);
-void func_800645A0(PlayState* play, CutsceneContext* csCtx);
+void Cutscene_InitContext(PlayState* play, CutsceneContext* csCtx);
+void Cutscene_StartManual(PlayState* play, CutsceneContext* csCtx);
+void Cutscene_StopManual(PlayState* play, CutsceneContext* csCtx);
+void Cutscene_UpdateManual(PlayState* play, CutsceneContext* csCtx);
+void Cutscene_UpdateScripted(PlayState* play, CutsceneContext* csCtx);
 void Cutscene_HandleEntranceTriggers(PlayState* play);
 void Cutscene_HandleConditionalTriggers(PlayState* play);
-void Cutscene_SetSegment(PlayState* play, void* segment);
+void Cutscene_SetScript(PlayState* play, void* script);
 void* MemCpy(void* dest, const void* src, s32 len);
 void GetItem_Draw(PlayState* play, s16 drawId);
 void SfxSource_InitAll(PlayState* play);
@@ -788,10 +801,10 @@ void SfxSource_PlaySfxAtFixedWorldPos(PlayState* play, Vec3f* worldPos, s32 dura
 u16 QuestHint_GetSariaTextId(PlayState* play);
 u16 QuestHint_GetNaviTextId(PlayState* play);
 u16 Text_GetFaceReaction(PlayState* play, u32 reactionSet);
-void Flags_UnsetAllEnv(PlayState* play);
-void Flags_SetEnv(PlayState* play, s16 flag);
-void Flags_UnsetEnv(PlayState* play, s16 flag);
-s32 Flags_GetEnv(PlayState* play, s16 flag);
+void CutsceneFlags_UnsetAll(PlayState* play);
+void CutsceneFlags_Set(PlayState* play, s16 flag);
+void CutsceneFlags_Unset(PlayState* play, s16 flag);
+s32 CutsceneFlags_Get(PlayState* play, s16 flag);
 s32 func_8006CFC0(s32 sceneId);
 void func_8006D074(PlayState* play);
 void func_8006D0AC(PlayState* play);
@@ -990,8 +1003,12 @@ void Interface_Update(PlayState* play);
 Path* Path_GetByIndex(PlayState* play, s16 index, s16 max);
 f32 Path_OrientAndGetDistSq(Actor* actor, Path* path, s16 waypoint, s16* yaw);
 void Path_CopyLastPoint(Path* path, Vec3f* dest);
+
+#ifdef ENABLE_FRAMERATE_OPTIONS
 void FrameAdvance_Init(FrameAdvanceContext* frameAdvCtx);
 s32 FrameAdvance_Update(FrameAdvanceContext* frameAdvCtx, Input* input);
+#endif
+
 void Player_SetBootData(PlayState* play, Player* this);
 s32 Player_InBlockingCsMode(PlayState* play, Player* this);
 s32 Player_InCsMode(PlayState* play);
@@ -1210,13 +1227,10 @@ void func_800AD920(struct_80166500* this);
 void func_800AD950(struct_80166500* this);
 void func_800AD958(struct_80166500* this, Gfx** gfxp);
 void PlayerCall_InitFuncPtrs(void);
-void TransitionUnk_InitGraphics(TransitionUnk* this);
-void TransitionUnk_InitData(TransitionUnk* this);
-void TransitionUnk_Destroy(TransitionUnk* this);
-TransitionUnk* TransitionUnk_Init(TransitionUnk* this, s32 row, s32 col);
-void TransitionUnk_SetData(TransitionUnk* this);
-void TransitionUnk_Draw(TransitionUnk* this, Gfx**);
-void func_800B23E8(TransitionUnk* this);
+void TransitionTile_Destroy(TransitionTile* this);
+TransitionTile* TransitionTile_Init(TransitionTile* this, s32 cols, s32 rows);
+void TransitionTile_Draw(TransitionTile* this, Gfx** gfxP);
+void TransitionTile_Update(TransitionTile* this);
 void TransitionTriforce_Start(void* thisx);
 void* TransitionTriforce_Init(void* thisx);
 void TransitionTriforce_Destroy(void* thisx);
@@ -1241,7 +1255,7 @@ void TransitionCircle_Draw(void* thisx, Gfx** gfxP);
 s32 TransitionCircle_IsDone(void* thisx);
 void TransitionCircle_SetType(void* thisx, s32 type);
 void TransitionCircle_SetColor(void* thisx, u32 color);
-void TransitionCircle_SetUnkColor(void* thisx, u32 unkColor);
+void TransitionCircle_SetUnkColor(void* thisx, u32 color);
 void TransitionFade_Start(void* thisx);
 void* TransitionFade_Init(void* thisx);
 void TransitionFade_Destroy(void* thisx);
@@ -1257,39 +1271,14 @@ u32 Letterbox_GetSize(void);
 void Letterbox_Init(void);
 void Letterbox_Destroy(void);
 void Letterbox_Update(s32 updateRate);
-// ? DbCamera_AddVecGeoToVec3f(?);
-// ? DbCamera_CalcUpFromPitchYawRoll(?);
-// ? DbCamera_SetTextValue(?);
-// ? DbCamera_Vec3SToF(?);
-// ? DbCamera_Vec3FToS(?);
-// ? DbCamera_CopyVec3f(?);
-// ? DbCamera_Vec3SToF2(?);
-// ? func_800B3F94(?);
-// ? func_800B3FF4(?);
-// ? func_800B404C(?);
-// ? func_800B4088(?);
-// ? func_800B41DC(?);
-// ? func_800B42C0(?);
-// ? func_800B4370(?);
-// ? func_800B44E0(?);
-// ? DbCamera_PrintPoints(?);
-// ? DbCamera_PrintF32Bytes(?);
-// ? DbCamera_PrintU16Bytes(?);
-// ? DbCamera_PrintS16Bytes(?);
-// ? DbCamera_PrintCutBytes(?);
-void DbCamera_Init(DbCamera* dbCamera, Camera* cameraPtr);
-void DbgCamera_Enable(DbCamera* dbCamera, Camera* cam);
-void DbCamera_Update(DbCamera* dbCamera, Camera* cam);
-// ? DbCamera_GetFirstAvailableLetter(?);
-// ? DbCamera_InitCut(?);
-// ? DbCamera_ResetCut(?);
-// ? DbCamera_CalcMempakAllocSize(?);
-// ? DbCamera_GetMempakAllocSize(?);
-// ? DbCamera_DrawSlotLetters(?);
-// ? DbCamera_PrintAllCuts(?);
-// ? func_800B91B0(?);
-void DbCamera_Reset(Camera* cam, DbCamera* dbCam);
-// ? DbCamera_UpdateDemoControl(?);
+
+#ifdef ENABLE_CAMERA_DEBUGGER
+void DebugCamera_Init(DebugCam* debugCam, Camera* cameraPtr);
+void DebugCamera_Enable(DebugCam* debugCam, Camera* cam);
+void DebugCamera_Update(DebugCam* debugCam, Camera* cam);
+void DebugCamera_Reset(Camera* cam, DebugCam* debugCam);
+#endif
+
 void func_800BB0A0(f32 u, Vec3f* pos, f32* roll, f32* viewAngle, f32* point0, f32* point1, f32* point2, f32* point3);
 s32 func_800BB2B4(Vec3f* pos, f32* roll, f32* fov, CutsceneCameraPoint* point, s16* keyFrame, f32* curFrame);
 void KaleidoManager_LoadOvl(KaleidoMgrOverlay* ovl);
@@ -1319,20 +1308,24 @@ s16 Play_ChangeCameraStatus(PlayState* this, s16 camId, s16 status);
 void Play_ClearCamera(PlayState* this, s16 camId);
 void Play_ClearAllSubCameras(PlayState* this);
 Camera* Play_GetCamera(PlayState* this, s16 camId);
-s32 Play_CameraSetAtEye(PlayState* this, s16 camId, Vec3f* at, Vec3f* eye);
-s32 Play_CameraSetAtEyeUp(PlayState* this, s16 camId, Vec3f* at, Vec3f* eye, Vec3f* up);
-s32 Play_CameraSetFov(PlayState* this, s16 camId, f32 fov);
+s32 Play_SetCameraAtEye(PlayState* this, s16 camId, Vec3f* at, Vec3f* eye);
+s32 Play_SetCameraAtEyeUp(PlayState* this, s16 camId, Vec3f* at, Vec3f* eye, Vec3f* up);
+s32 Play_SetCameraFov(PlayState* this, s16 camId, f32 fov);
 s32 Play_SetCameraRoll(PlayState* this, s16 camId, s16 roll);
 void Play_CopyCamera(PlayState* this, s16 destCamId, s16 srcCamId);
-s32 func_800C0808(PlayState* this, s16 camId, Player* player, s16 setting);
-s32 Play_CameraChangeSetting(PlayState* this, s16 camId, s16 setting);
-void func_800C08AC(PlayState* this, s16 camId, s16 arg2);
+s32 Play_InitCameraDataUsingPlayer(PlayState* this, s16 camId, Player* player, s16 setting);
+s32 Play_ChangeCameraSetting(PlayState* this, s16 camId, s16 setting);
+void Play_ReturnToMainCam(PlayState* this, s16 camId, s16 duration);
 void Play_SaveSceneFlags(PlayState* this);
 void Play_SetupRespawnPoint(PlayState* this, s32 respawnMode, s32 playerParams);
 void Play_TriggerVoidOut(PlayState* this);
 void Play_TriggerRespawn(PlayState* this);
 s32 Play_CamIsNotFixed(PlayState* this);
+
+#ifdef ENABLE_FRAMERATE_OPTIONS
 s32 FrameAdvance_IsEnabled(PlayState* this);
+#endif
+
 s32 func_800C0D34(PlayState* this, Actor* actor, s16* yaw);
 s32 func_800C0DB4(PlayState* this, Vec3f* pos);
 void PreRender_SetValuesSave(PreRender* this, u32 width, u32 height, void* fbuf, void* zbuf, void* cvg);
@@ -1348,7 +1341,7 @@ void PreRender_RestoreZBuffer(PreRender* this, Gfx** gfxp);
 void func_800C213C(PreRender* this, Gfx** gfxp);
 void PreRender_RestoreFramebuffer(PreRender* this, Gfx** gfxp);
 void PreRender_CopyImageRegion(PreRender* this, Gfx** gfxp);
-#ifdef VANILLA_PAUSE_DELAY
+#ifdef ENABLE_PAUSE_BG_AA
 void PreRender_ApplyFilters(PreRender* this);
 #endif
 void AudioMgr_StopAllSfx(void);
@@ -1360,7 +1353,9 @@ void AudioMgr_Unlock(AudioMgr* audioMgr);
 void AudioMgr_Init(AudioMgr* audioMgr, void* stack, OSPri pri, OSId id, Scheduler* sched, IrqMgr* irqMgr);
 void GameState_FaultPrint(void);
 void GameState_SetFBFilter(Gfx** gfx);
+#ifdef SHOW_INPUT_DISPLAY
 void GameState_DrawInputDisplay(u16 input, Gfx** gfx);
+#endif
 void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx);
 void GameState_SetFrameBuffer(GraphicsContext* gfxCtx);
 void GameState_ReqPadData(GameState* gameState);
@@ -1401,6 +1396,8 @@ void ListAlloc_Free(ListAlloc* this, void* data);
 void ListAlloc_FreeAll(ListAlloc* this);
 void Main_LogSystemHeap(void);
 void Main(void* arg);
+
+#ifdef ENABLE_SPEEDMETER
 void SpeedMeter_InitImpl(SpeedMeter* this, u32 arg1, u32 y);
 void SpeedMeter_Init(SpeedMeter* this);
 void SpeedMeter_Destroy(SpeedMeter* this);
@@ -1409,6 +1406,8 @@ void SpeedMeter_InitAllocEntry(SpeedMeterAllocEntry* this, u32 maxval, u32 val, 
                                u32 lrx, u32 uly, u32 lry);
 void SpeedMeter_DrawAllocEntry(SpeedMeterAllocEntry* this, GraphicsContext* gfxCtx);
 void SpeedMeter_DrawAllocEntries(SpeedMeter* meter, GraphicsContext* gfxCtx, GameState* state);
+#endif
+
 void SysCfb_Init(s32 n64dd);
 void* SysCfb_GetFbPtr(s32 idx);
 void* SysCfb_GetFbEnd(void);
@@ -1523,6 +1522,8 @@ u64* SysUcode_GetUCodeData(void);
 void func_800D31A0(void);
 void func_800D31F0(void);
 void func_800D3210(void);
+
+#ifdef ENABLE_DEBUG_HEAP
 void DebugArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action);
 void* DebugArena_Malloc(u32 size);
 void* DebugArena_MallocDebug(u32 size, const char* file, s32 line);
@@ -1539,6 +1540,8 @@ void DebugArena_Check(void);
 void DebugArena_Init(void* start, u32 size);
 void DebugArena_Cleanup(void);
 u8 DebugArena_IsInitialized(void);
+#endif
+
 void UCodeDisas_Init(UCodeDisas*);
 void UCodeDisas_Destroy(UCodeDisas*);
 void UCodeDisas_Disassemble(UCodeDisas*, Gfx*);
@@ -1671,9 +1674,13 @@ OcarinaStaff* AudioOcarina_GetPlayingStaff(void);
 OcarinaStaff* AudioOcarina_GetPlaybackStaff(void);
 void AudioOcarina_MemoryGameInit(u8 minigameRound);
 s32 AudioOcarina_MemoryGameNextNote(void);
-void AudioOcarina_PlayLongScarecrowAfterCredits(void);
+void AudioOcarina_PlayLongScarecrowSong(void);
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 void AudioDebug_Draw(GfxPrint* printer);
 void AudioDebug_ScrPrt(const char* str, u16 num);
+#endif
+
 void func_800F3054(void);
 void Audio_SetSfxProperties(u8 bankId, u8 entryIdx, u8 channelIdx);
 void Audio_PlayCutsceneEffectsSequence(u8 csEffectType);
@@ -2012,8 +2019,8 @@ u8 Message_ShouldAdvance(PlayState* play);
 void Message_CloseTextbox(PlayState*);
 void Message_StartTextbox(PlayState* play, u16 textId, Actor* actor);
 void Message_ContinueTextbox(PlayState* play, u16 textId);
-void func_8010BD58(PlayState* play, u16 ocarinaActionId);
-void func_8010BD88(PlayState* play, u16 ocarinaActionId);
+void Message_StartOcarina(PlayState* play, u16 ocarinaActionId);
+void Message_StartOcarinaSunsSongDisabled(PlayState* play, u16 ocarinaActionId);
 u8 Message_GetState(MessageContext* msgCtx);
 void Message_Draw(PlayState* play);
 void Message_Update(PlayState* play);
@@ -2030,8 +2037,12 @@ void Setup_Init(GameState* thisx);
 void Setup_Destroy(GameState* thisx);
 void ConsoleLogo_Init(GameState* thisx);
 void ConsoleLogo_Destroy(GameState* thisx);
+
+#ifdef ENABLE_MAP_SELECT
 void MapSelect_Init(GameState* thisx);
 void MapSelect_Destroy(GameState* thisx);
+#endif
+
 void TitleSetup_Init(GameState* thisx);
 void TitleSetup_Destroy(GameState* thisx);
 void FileSelect_Init(GameState* thisx);

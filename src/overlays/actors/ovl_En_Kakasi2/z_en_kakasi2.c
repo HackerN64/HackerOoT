@@ -114,10 +114,13 @@ void EnKakasi2_Destroy(Actor* thisx, PlayState* play) {
 void func_80A90264(EnKakasi2* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
+#ifdef ENABLE_ACTOR_DEBUGGER
     this->unk_194++;
+#endif
 
     if ((BREG(1) != 0) && (this->actor.xzDistToPlayer < this->maxSpawnDistance.x) &&
         (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < this->maxSpawnDistance.y)) {
+        // debug feature?
 
         this->actor.draw = func_80A90948;
         Collider_InitCylinder(play, &this->collider);
@@ -137,7 +140,9 @@ void func_80A90264(EnKakasi2* this, PlayState* play) {
                (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < this->maxSpawnDistance.y) &&
                GET_EVENTCHKINF(EVENTCHKINF_9C)) {
 
+#ifdef ENABLE_ACTOR_DEBUGGER
         this->unk_194 = 0;
+#endif
         if (play->msgCtx.ocarinaMode == OCARINA_MODE_0B) {
             if (this->switchFlag >= 0) {
                 Flags_SetSwitch(play, this->switchFlag);
@@ -161,7 +166,7 @@ void func_80A904D8(EnKakasi2* this, PlayState* play) {
     f32 frameCount = Animation_GetLastFrame(&object_ka_Anim_000214);
 
     Animation_Change(&this->skelAnime, &object_ka_Anim_000214, 1.0f, 0.0f, (s16)frameCount, ANIMMODE_LOOP, -10.0f);
-    Audio_PlayActorSfx2(&this->actor, NA_SE_EV_COME_UP_DEKU_JR);
+    Actor_PlaySfx(&this->actor, NA_SE_EV_COME_UP_DEKU_JR);
     this->actionFunc = func_80A90578;
 }
 
@@ -172,7 +177,7 @@ void func_80A90578(EnKakasi2* this, PlayState* play) {
 
     currentFrame = this->skelAnime.curFrame;
     if (currentFrame == 11 || currentFrame == 17) {
-        Audio_PlayActorSfx2(&this->actor, NA_SE_EV_KAKASHI_SWING);
+        Actor_PlaySfx(&this->actor, NA_SE_EV_KAKASHI_SWING);
     }
 
     this->actor.shape.rot.y += 0x800;
@@ -206,13 +211,15 @@ void EnKakasi2_Update(Actor* thisx, PlayState* play2) {
     this->actor.world.rot = this->actor.shape.rot;
     Actor_SetFocus(&this->actor, this->height);
     this->actionFunc(this, play);
-    Actor_MoveForward(&this->actor);
+    Actor_MoveXZGravity(&this->actor);
 
     if (this->actor.shape.yOffset == 0.0f) {
         Collider_UpdateCylinder(&this->actor, &this->collider);
         CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
         CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
     }
+
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0) != 0) {
         if (BREG(5) != 0) {
             osSyncPrintf(VT_FGCOL(YELLOW) "☆☆☆☆☆ this->actor.player_distance ☆☆☆☆☆ %f\n" VT_RST,
@@ -234,6 +241,7 @@ void EnKakasi2_Update(Actor* thisx, PlayState* play2) {
             }
         }
     }
+#endif
 }
 
 void func_80A90948(Actor* thisx, PlayState* play) {

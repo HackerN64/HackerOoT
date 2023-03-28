@@ -269,7 +269,7 @@ void Scene_CommandObjectList(PlayState* play, SceneCmd* cmd) {
                 status2++;
             }
             play->objectCtx.num = i;
-            func_80031A28(play, &play->actorCtx);
+            Actor_KillAllWithMissingObject(play, &play->actorCtx);
 
             continue;
         }
@@ -443,8 +443,8 @@ void Scene_CommandAlternateHeaderList(PlayState* play, SceneCmd* cmd) {
 }
 
 void Scene_CommandCutsceneData(PlayState* play, SceneCmd* cmd) {
-    osSyncPrintf("\ngame_play->demo_play.data=[%x]", play->csCtx.segment);
-    play->csCtx.segment = SEGMENTED_TO_VIRTUAL(cmd->cutsceneData.data);
+    osSyncPrintf("\ngame_play->demo_play.data=[%x]", play->csCtx.script);
+    play->csCtx.script = SEGMENTED_TO_VIRTUAL(cmd->cutsceneData.data);
 }
 
 // Camera & World Map Area

@@ -3,6 +3,8 @@
 
 #include "config.h"
 
+#ifdef ENABLE_MAP_SELECT
+
 void MapSelect_Init(GameState* thisx);
 void MapSelect_Main(GameState* thisx);
 void MapSelect_Draw(MapSelectState* this);
@@ -177,6 +179,7 @@ static SceneSelectEntry sScenes[] = {
     { "Deku Theater Grotto", MapSelect_LoadGame, ENTR_GROTTOS_12 },
     { "Death Mountain Trail Cow Grotto", MapSelect_LoadGame, ENTR_GROTTOS_13 },
     { "Cutscene Map", MapSelect_LoadGame, ENTR_CUTSCENE_MAP_0 },
+#ifdef INCLUDE_TEST_SCENES
     { "Test Room", MapSelect_LoadGame, ENTR_BESITU_0 },
     { "SRD Map", MapSelect_LoadGame, ENTR_SASATEST_0 },
     { "Test Map", MapSelect_LoadGame, ENTR_TEST01_0 },
@@ -184,9 +187,10 @@ static SceneSelectEntry sScenes[] = {
     { "Stalfos Miniboss Room", MapSelect_LoadGame, ENTR_SYOTES_0 },
     { "Stalfos Boss Room", MapSelect_LoadGame, ENTR_SYOTES2_0 },
     { "Dark Link Room", MapSelect_LoadGame, ENTR_SUTARU_0 },
-    { "Shooting Gallery Duplicate", MapSelect_LoadGame, ENTR_TEST_SYATEKIJYOU_0 },
+    { "Shooting Gallery Duplicate", MapSelect_LoadGame, ENTR_TEST_SHOOTING_GALLERY_0 },
     { "Depth Test", MapSelect_LoadGame, ENTR_DEPTH_TEST_0 },
     { "Hyrule Garden Game (Broken)", MapSelect_LoadGame, ENTR_HAIRAL_NIWA2_0 },
+#endif
 };
 
 static const s16 childLinkSfx[] = {
@@ -251,5 +255,7 @@ static const u16 adultLinkSfx[] = {
     NA_SE_VO_LI_MAGIC_ATTACK,
     NA_SE_VO_BL_DOWN,
 };
+
+#endif
 
 #endif

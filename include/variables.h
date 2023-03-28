@@ -3,6 +3,7 @@
 
 #include "z64.h"
 #include "segment_symbols.h"
+#include "config.h"
 
 extern Mtx D_01000000;
 
@@ -56,7 +57,11 @@ extern EffectSsOverlay gEffectSsOverlayTable[EFFECT_SS_TYPE_MAX];
 extern Gfx D_80116280[];
 extern ActorOverlay gActorOverlayTable[ACTOR_ID_MAX]; // original name: "actor_dlftbls" 801162A0
 extern s32 gMaxActorId; // original name: "MaxProfile"
-extern s32 gDbgCamEnabled;
+
+#ifdef ENABLE_CAMERA_DEBUGGER
+extern s32 gDebugCamEnabled;
+#endif
+
 extern GameStateOverlay gGameStateOverlayTable[6];
 extern u8 gWeatherMode;
 extern u8 gLightConfigAfterUnderwater;
@@ -99,7 +104,7 @@ extern u64 gMojiFontTex[]; // original name: "font_ff"
 extern KaleidoMgrOverlay gKaleidoMgrOverlayTable[KALEIDO_OVL_MAX];
 extern KaleidoMgrOverlay* gKaleidoMgrCurOvl;
 extern u8 gBossMarkState;
-extern void* D_8012D1F0;
+extern void* gDebugCutsceneScript;
 extern s32 gScreenWidth;
 extern s32 gScreenHeight;
 extern Mtx gMtxClear;
@@ -142,13 +147,21 @@ extern u16 D_801333D0;
 extern Vec3f gSfxDefaultPos;
 extern f32 gSfxDefaultFreqAndVolScale;
 extern s8 gSfxDefaultReverb;
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 extern u8 D_801333F0;
 extern u8 gAudioSfxSwapOff;
 extern u8 D_801333F8;
+#endif
+
 extern u8 gSeqCmdWritePos;
 extern u8 gSeqCmdReadPos;
 extern u8 gStartSeqDisabled;
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 extern u8 gAudioDebugPrintSeqCmd;
+#endif
+
 extern u8 gSoundModeList[];
 extern u8 gAudioSpecId;
 extern u8 D_80133418;
@@ -169,10 +182,12 @@ extern u8 gSampleBankTable[];
 
 extern SaveContext gSaveContext;
 extern RegEditor* gRegEditor;
-extern u16 D_8015FCC0;
-extern u16 D_8015FCC2;
-extern u16 D_8015FCC4;
-extern u8 D_8015FCC8;
+
+extern u16 gCamAtSplinePointsAppliedFrame;
+extern u16 gCamEyePointAppliedFrame;
+extern u16 gCamAtPointAppliedFrame;
+extern u8 gUseCutsceneCam;
+
 extern u8 gCustomLensFlareOn;
 extern Vec3f gCustomLensFlarePos;
 extern s16 gLensFlareScale;
@@ -182,11 +197,13 @@ extern LightningStrike gLightningStrike;
 extern MapData* gMapData;
 extern f32 gBossMarkScale;
 extern PauseMapMarksData* gLoadedPauseMarkDataTable;
-extern s32 gTrnsnUnkState;
-extern Color_RGBA8_u32 D_801614B0;
+extern s32 gTransitionTileState;
+extern Color_RGBA8_u32 gVisMonoColor;
 extern PreNmiBuff* gAppNmiBufferPtr;
 extern Scheduler gScheduler;
 extern uintptr_t gSegments[NUM_SEGMENTS];
+
+#ifdef ENABLE_SPEEDMETER
 extern volatile OSTime gAudioThreadUpdateTimeTotalPerGfxTask;
 extern volatile OSTime gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime;
 extern volatile OSTime gRSPAudioTimeTotal;
@@ -199,6 +216,7 @@ extern volatile OSTime gRSPAudioTimeAcc;
 extern volatile OSTime gRSPGfxTimeAcc;
 extern volatile OSTime gRSPOtherTimeAcc;
 extern volatile OSTime gRDPTimeAcc;
+#endif
 
 extern SfxBankEntry D_8016BAD0[9];
 extern SfxBankEntry D_8016BC80[12];
@@ -209,9 +227,13 @@ extern SfxBankEntry D_8016C820[3];
 extern SfxBankEntry D_8016C8B0[5];
 extern ActiveSfx gActiveSfx[7][MAX_CHANNELS_PER_BANK]; // total size = 0xA8
 extern u8 gSfxBankMuted[];
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 extern u16 gAudioSfxSwapSource[10];
 extern u16 gAudioSfxSwapTarget[10];
 extern u8 gAudioSfxSwapMode[10];
+#endif
+
 extern ActiveSequence gActiveSeqs[4];
 extern AudioContext gAudioCtx;
 extern void(*D_801755D0)(void);
@@ -230,5 +252,9 @@ extern u64 gGfxSPTaskStack[SP_DRAM_STACK_SIZE64]; // 0x400 bytes
 extern GfxPool gGfxPools[2]; // 0x24820 bytes
 extern u8 gAudioHeap[0x38000]; // 0x38000 bytes
 extern u8 gSystemHeap[];
+
+#ifdef ENABLE_WIDESCREEN
+extern u8 gIsUsingWidescreen;
+#endif
 
 #endif

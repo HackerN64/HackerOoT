@@ -7,6 +7,8 @@
 #include "z_en_zl2.h"
 #include "terminal.h"
 
+#include "config.h"
+
 #include "overlays/actors/ovl_Door_Warp1/z_door_warp1.h"
 #include "assets/objects/object_zl2/object_zl2.h"
 #include "assets/objects/object_zl2_anime1/object_zl2_anime1.h"
@@ -210,21 +212,22 @@ s32 EnZl2_UpdateSkelAnime(EnZl2* this) {
     return SkelAnime_Update(&this->skelAnime);
 }
 
-CsCmdActorAction* EnZl2_GetNpcAction(PlayState* play, s32 idx) {
+CsCmdActorCue* EnZl2_GetCue(PlayState* play, s32 cueChannel) {
     if (play->csCtx.state != CS_STATE_IDLE) {
-        return play->csCtx.npcActions[idx];
+        return play->csCtx.actorCues[cueChannel];
     }
     return NULL;
 }
 
-void func_80B4EDB8(EnZl2* this, PlayState* play, s32 arg2) {
-    CsCmdActorAction* npcAction = EnZl2_GetNpcAction(play, arg2);
+void func_80B4EDB8(EnZl2* this, PlayState* play, s32 cueChannel) {
+    CsCmdActorCue* cue = EnZl2_GetCue(play, cueChannel);
 
-    if (npcAction != NULL) {
-        this->actor.world.pos.x = npcAction->startPos.x;
-        this->actor.world.pos.y = npcAction->startPos.y;
-        this->actor.world.pos.z = npcAction->startPos.z;
-        this->actor.world.rot.y = this->actor.shape.rot.y = npcAction->rot.y;
+    if (cue != NULL) {
+        this->actor.world.pos.x = cue->startPos.x;
+        this->actor.world.pos.y = cue->startPos.y;
+        this->actor.world.pos.z = cue->startPos.z;
+
+        this->actor.world.rot.y = this->actor.shape.rot.y = cue->rot.y;
     }
 }
 
@@ -452,29 +455,41 @@ s32 func_80B4F45C(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s
         Matrix_Translate(362.0f, -133.0f, 0.0f, MTXMODE_APPLY);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         if (!FrameAdvance_IsEnabled(play)) {
+#endif
             func_80B4EE38(this, sp2C.y, 0);
             func_80B4F230(this, sp2C.x, 1);
             func_80B4EF64(this, sp2C.z, 2);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         }
+#endif
         Matrix_RotateZYX(unk_1DC[0] + kREG(31), unk_1DC[1] + kREG(32), unk_1DC[2] + kREG(33), MTXMODE_APPLY);
         Matrix_Translate(-188.0f, -184.0f, 0.0f, MTXMODE_APPLY);
         Matrix_ToMtx(&sp74[0], "../z_en_zl2.c", 1056);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         if (!FrameAdvance_IsEnabled(play)) {
+#endif
             func_80B4EE38(this, sp2C.y, 3);
             func_80B4F230(this, sp2C.x, 4);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         }
+#endif
         Matrix_RotateZYX(unk_1DC[3] + kREG(34), unk_1DC[4] + kREG(35), unk_1DC[5] + kREG(36), MTXMODE_APPLY);
         Matrix_Translate(-410.0f, -184.0f, 0.0f, MTXMODE_APPLY);
         Matrix_ToMtx(&sp74[1], "../z_en_zl2.c", 1100);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         if (!FrameAdvance_IsEnabled(play)) {
+#endif
             func_80B4EE38(this, sp2C.y, 6);
             func_80B4F230(this, sp2C.x, 7);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         }
+#endif
         Matrix_RotateZYX(unk_1DC[6] + kREG(37), unk_1DC[7] + kREG(38), unk_1DC[8] + kREG(39), MTXMODE_APPLY);
         Matrix_Translate(-1019.0f, -26.0f, 0.0f, MTXMODE_APPLY);
         Matrix_ToMtx(&sp74[2], "../z_en_zl2.c", 1120);
@@ -483,21 +498,29 @@ s32 func_80B4F45C(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s
         Matrix_Translate(467.0f, 265.0f, 389.0f, MTXMODE_APPLY);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         if (!FrameAdvance_IsEnabled(play)) {
+#endif
             func_80B4EE38(this, sp2C.y, 9);
             func_80B4F230(this, sp2C.x, 10);
             func_80B4EF64(this, sp2C.z, 11);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         }
+#endif
         Matrix_RotateZYX(unk_1DC[9] + kREG(40), unk_1DC[10] + kREG(41), unk_1DC[11] + kREG(42), MTXMODE_APPLY);
         Matrix_Translate(-427.0f, -1.0f, -3.0f, MTXMODE_APPLY);
         Matrix_ToMtx(&sp74[3], "../z_en_zl2.c", 1145);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         if (!FrameAdvance_IsEnabled(play)) {
+#endif
             func_80B4EE38(this, sp2C.y, 12);
             func_80B4F230(this, sp2C.x, 13);
             func_80B4EF64(this, sp2C.z, 14);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         }
+#endif
         Matrix_RotateZYX(unk_1DC[12] + kREG(43), unk_1DC[13] + kREG(44), unk_1DC[14] + kREG(45), MTXMODE_APPLY);
         Matrix_Translate(-446.0f, -52.0f, 84.0f, MTXMODE_APPLY);
         Matrix_ToMtx(&sp74[4], "../z_en_zl2.c", 1164);
@@ -506,21 +529,29 @@ s32 func_80B4F45C(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s
         Matrix_Translate(467.0f, 265.0f, -389.0f, MTXMODE_APPLY);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         if (!FrameAdvance_IsEnabled(play)) {
+#endif
             func_80B4EE38(this, sp2C.y, 15);
             func_80B4F230(this, sp2C.x, 16);
             func_80B4EF64(this, sp2C.z, 17);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         }
+#endif
         Matrix_RotateZYX(unk_1DC[15] + kREG(46), unk_1DC[16] + kREG(47), unk_1DC[17] + kREG(48), MTXMODE_APPLY);
         Matrix_Translate(-427.0f, -1.0f, 3.0f, MTXMODE_APPLY);
         Matrix_ToMtx(&sp74[5], "../z_en_zl2.c", 1189);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         if (!FrameAdvance_IsEnabled(play)) {
+#endif
             func_80B4EE38(this, sp2C.y, 18);
             func_80B4F230(this, sp2C.x, 19);
             func_80B4EF64(this, sp2C.z, 20);
+#ifdef ENABLE_FRAMERATE_OPTIONS
         }
+#endif
         Matrix_RotateZYX(unk_1DC[18] + kREG(49), unk_1DC[19] + kREG(50), unk_1DC[20] + kREG(51), MTXMODE_APPLY);
         Matrix_Translate(-446.0f, -52.0f, -84.0f, MTXMODE_APPLY);
         Matrix_ToMtx(&sp74[6], "../z_en_zl2.c", 1208);
@@ -536,7 +567,7 @@ void EnZl2_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot,
     s32 pad[2];
 
     if (limbIndex == 10) {
-        if ((this->unk_254 != 0) && (play->csCtx.frames >= 900)) {
+        if ((this->unk_254 != 0) && (play->csCtx.curFrame >= 900)) {
             gSPDisplayList((*gfx)++, gZelda2OcarinaDL);
         }
 
@@ -594,7 +625,7 @@ void func_80B4FDD4(EnZl2* this) {
 }
 
 void func_80B4FE10(PlayState* play) {
-    if ((play->csCtx.frames >= 830) && (play->csCtx.frames < 1081)) {
+    if ((play->csCtx.curFrame >= 830) && (play->csCtx.curFrame < 1081)) {
         func_800788CC(NA_SE_EV_EARTHQUAKE - SFX_FLAG);
     }
 }
@@ -678,28 +709,30 @@ void func_80B5008C(EnZl2* this) {
 }
 
 void func_80B500E0(EnZl2* this, PlayState* play) {
-    CsCmdActorAction* npcAction = EnZl2_GetNpcAction(play, 0);
-    Vec3f* thisPos = &this->actor.world.pos;
+    CsCmdActorCue* cue = EnZl2_GetCue(play, 0);
+    Vec3f* worldPos = &this->actor.world.pos;
     f32 startX;
     f32 startY;
     f32 startZ;
     f32 endX;
     f32 endY;
     f32 endZ;
-    f32 someFloat;
+    f32 lerp;
 
-    if (npcAction != NULL) {
-        someFloat =
-            Environment_LerpWeightAccelDecel(npcAction->endFrame, npcAction->startFrame, play->csCtx.frames, 8, 8);
-        startX = npcAction->startPos.x;
-        startY = npcAction->startPos.y;
-        startZ = npcAction->startPos.z;
-        endX = npcAction->endPos.x;
-        endY = npcAction->endPos.y;
-        endZ = npcAction->endPos.z;
-        thisPos->x = ((endX - startX) * someFloat) + startX;
-        thisPos->y = ((endY - startY) * someFloat) + startY;
-        thisPos->z = ((endZ - startZ) * someFloat) + startZ;
+    if (cue != NULL) {
+        lerp = Environment_LerpWeightAccelDecel(cue->endFrame, cue->startFrame, play->csCtx.curFrame, 8, 8);
+
+        startX = cue->startPos.x;
+        startY = cue->startPos.y;
+        startZ = cue->startPos.z;
+
+        endX = cue->endPos.x;
+        endY = cue->endPos.y;
+        endZ = cue->endPos.z;
+
+        worldPos->x = ((endX - startX) * lerp) + startX;
+        worldPos->y = ((endY - startY) * lerp) + startY;
+        worldPos->z = ((endZ - startZ) * lerp) + startZ;
     }
 }
 
@@ -710,11 +743,11 @@ void func_80B501C4(EnZl2* this, s32 alpha) {
 }
 
 void func_80B501E8(EnZl2* this, PlayState* play) {
-    CsCmdActorAction* npcAction = EnZl2_GetNpcAction(play, 0);
+    CsCmdActorCue* cue = EnZl2_GetCue(play, 0);
 
-    if (npcAction != NULL) {
+    if (cue != NULL) {
         this->actor.shape.shadowAlpha = this->alpha =
-            (1.0f - Environment_LerpWeight(npcAction->endFrame, npcAction->startFrame, play->csCtx.frames)) * 255.0f;
+            (1.0f - Environment_LerpWeight(cue->endFrame, cue->startFrame, play->csCtx.curFrame)) * 255.0f;
         func_80B501C4(this, this->alpha);
     }
 }
@@ -726,13 +759,15 @@ void func_80B50260(EnZl2* this, PlayState* play) {
 }
 
 void func_80B50278(EnZl2* this, PlayState* play) {
-    CsCmdActorAction* npcAction = EnZl2_GetNpcAction(play, 0);
+    CsCmdActorCue* cue = EnZl2_GetCue(play, 0);
 
-    this->actor.world.pos.x = npcAction->startPos.x;
-    this->actor.world.pos.y = npcAction->startPos.y;
-    this->actor.world.pos.z = npcAction->startPos.z;
-    this->actor.world.rot.y = this->actor.shape.rot.y = npcAction->rot.y;
-    this->actor.shape.shadowAlpha = 0xFF;
+    this->actor.world.pos.x = cue->startPos.x;
+    this->actor.world.pos.y = cue->startPos.y;
+    this->actor.world.pos.z = cue->startPos.z;
+
+    this->actor.world.rot.y = this->actor.shape.rot.y = cue->rot.y;
+
+    this->actor.shape.shadowAlpha = 255;
     this->action = 2;
     this->drawConfig = 1;
 }
@@ -740,24 +775,25 @@ void func_80B50278(EnZl2* this, PlayState* play) {
 void func_80B50304(EnZl2* this, PlayState* play) {
     s32 pad[2];
     ActorShape* shape = &this->actor.shape;
-    CsCmdActorAction* npcAction = EnZl2_GetNpcAction(play, 0);
-    f32 actionXDelta;
-    f32 actionZDelta;
+    CsCmdActorCue* cue = EnZl2_GetCue(play, 0);
+    f32 cueXDelta;
+    f32 cueZDelta;
 
-    actionXDelta = npcAction->endPos.x - npcAction->startPos.x;
-    actionZDelta = npcAction->endPos.z - npcAction->startPos.z;
+    cueXDelta = cue->endPos.x - cue->startPos.x;
+    cueZDelta = cue->endPos.z - cue->startPos.z;
+
     func_80B4FD00(this, &gZelda2Anime1Anim_0003BC, 0, -12.0f, 0);
     this->action = 3;
     this->drawConfig = 1;
     this->unk_23C = 0.0f;
     shape->shadowAlpha = 255;
-    this->actor.world.rot.y = shape->rot.y = RAD_TO_BINANG(Math_FAtan2F(actionXDelta, actionZDelta));
+    this->actor.world.rot.y = shape->rot.y = RAD_TO_BINANG(Math_FAtan2F(cueXDelta, cueZDelta));
 }
 
 void func_80B503DC(EnZl2* this, PlayState* play) {
-    CsCmdActorAction* npcAction = EnZl2_GetNpcAction(play, 0);
+    CsCmdActorCue* cue = EnZl2_GetCue(play, 0);
 
-    if ((npcAction != NULL) && (play->csCtx.frames >= npcAction->endFrame)) {
+    if ((cue != NULL) && (play->csCtx.curFrame >= cue->endFrame)) {
         this->action = 4;
     }
 }
@@ -900,10 +936,10 @@ void func_80B50980(EnZl2* this, PlayState* play) {
 }
 
 void func_80B509A0(EnZl2* this, PlayState* play) {
-    CsCmdActorAction* npcAction = EnZl2_GetNpcAction(play, 0);
+    CsCmdActorCue* cue = EnZl2_GetCue(play, 0);
 
-    if (npcAction != NULL) {
-        if (play->csCtx.frames >= npcAction->endFrame) {
+    if (cue != NULL) {
+        if (play->csCtx.curFrame >= cue->endFrame) {
             this->action = 24;
             this->drawConfig = 0;
             func_80B4FE6C(this);
@@ -912,15 +948,16 @@ void func_80B509A0(EnZl2* this, PlayState* play) {
 }
 
 void func_80B50A04(EnZl2* this, PlayState* play) {
-    CsCmdActorAction* npcAction = EnZl2_GetNpcAction(play, 0);
-    s32 newAction;
-    s32 unk_240;
+    CsCmdActorCue* cue = EnZl2_GetCue(play, 0);
+    s32 nextCueId;
+    s32 currentCueId;
 
-    if (npcAction != NULL) {
-        newAction = npcAction->action;
-        unk_240 = this->unk_240;
-        if (newAction != unk_240) {
-            switch (newAction) {
+    if (cue != NULL) {
+        nextCueId = cue->id;
+        currentCueId = this->cueId;
+
+        if (nextCueId != currentCueId) {
+            switch (nextCueId) {
                 case 1:
                     func_80B50260(this, play);
                     break;
@@ -969,7 +1006,7 @@ void func_80B50A04(EnZl2* this, PlayState* play) {
                 default:
                     osSyncPrintf("En_Zl2_inAgain_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
             }
-            this->unk_240 = newAction;
+            this->cueId = nextCueId;
         }
     }
 }
@@ -1155,7 +1192,7 @@ void func_80B512B8(EnZl2* this, PlayState* play) {
 void func_80B51310(EnZl2* this, PlayState* play) {
     Actor* child;
 
-    if (EnZl2_GetNpcAction(play, 0) == NULL) {
+    if (EnZl2_GetCue(play, 0) == NULL) {
         child = this->actor.child;
         if (child != NULL) {
             Actor_Kill(child);
@@ -1188,7 +1225,7 @@ void func_80B513A8(EnZl2* this, PlayState* play) {
 
 void func_80B51418(EnZl2* this, PlayState* play) {
     EnZl2_UpdateEyes(this);
-    if (play->csCtx.frames < 431) {
+    if (play->csCtx.curFrame < 431) {
         EnZl2_setMouthIndex(this, 1);
     } else {
         EnZl2_setMouthIndex(this, 0);
@@ -1201,7 +1238,7 @@ void func_80B5146C(EnZl2* this, PlayState* play) {
 }
 
 void func_80B5149C(EnZl2* this, PlayState* play) {
-    if (play->csCtx.frames < 988) {
+    if (play->csCtx.curFrame < 988) {
         EnZl2_setEyesIndex(this, 7);
         EnZl2_setEyeIndex2(this, 8);
     } else {
@@ -1212,7 +1249,7 @@ void func_80B5149C(EnZl2* this, PlayState* play) {
 
 void func_80B514F8(EnZl2* this, PlayState* play) {
     EnZl2_UpdateEyes(this);
-    if (play->csCtx.frames < 1190) {
+    if (play->csCtx.curFrame < 1190) {
         EnZl2_setMouthIndex(this, 1);
     } else {
         EnZl2_setMouthIndex(this, 0);
@@ -1226,9 +1263,9 @@ void func_80B5154C(EnZl2* this, PlayState* play) {
         EnZl2_UpdateEyes(this);
     } else {
         csCtx = &play->csCtx;
-        if (csCtx->frames < 0x5F0) {
+        if (csCtx->curFrame < 0x5F0) {
             func_80B4EBB8(this);
-        } else if (csCtx->frames == 0x5F0) {
+        } else if (csCtx->curFrame == 0x5F0) {
             this->unk_27C = 0.0f;
         } else {
             func_80B4EC48(this);
@@ -1323,15 +1360,16 @@ void func_80B518C0(EnZl2* this) {
 }
 
 void func_80B51948(EnZl2* this, PlayState* play) {
-    CsCmdActorAction* npcAction = EnZl2_GetNpcAction(play, 0);
-    s32 newAction;
-    s32 unk_240;
+    CsCmdActorCue* cue = EnZl2_GetCue(play, 0);
+    s32 nextCueId;
+    s32 currentCueId;
 
-    if (npcAction != NULL) {
-        newAction = npcAction->action;
-        unk_240 = this->unk_240;
-        if (newAction != unk_240) {
-            switch (newAction) {
+    if (cue != NULL) {
+        nextCueId = cue->id;
+        currentCueId = this->cueId;
+
+        if (nextCueId != currentCueId) {
+            switch (nextCueId) {
                 case 1:
                     func_80B515C4(this);
                     break;
@@ -1359,7 +1397,7 @@ void func_80B51948(EnZl2* this, PlayState* play) {
                 default:
                     osSyncPrintf("En_Zl2_inEnding_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
             }
-            this->unk_240 = newAction;
+            this->cueId = nextCueId;
         }
     }
 }
@@ -1444,29 +1482,28 @@ void func_80B51D24(EnZl2* this, PlayState* play) {
 }
 
 void func_80B51DA4(EnZl2* this, PlayState* play) {
-    CsCmdActorAction* npcAction = EnZl2_GetNpcAction(play, 0);
-    Vec3f* thisPos = &this->actor.world.pos;
+    CsCmdActorCue* cue = EnZl2_GetCue(play, 0);
+    Vec3f* worldPos = &this->actor.world.pos;
     f32 startX;
     f32 startY;
     f32 startZ;
     f32 endX;
     f32 endY;
     f32 endZ;
-    f32 someFloat;
+    f32 lerp;
 
-    if (npcAction != NULL) {
-        someFloat =
-            Environment_LerpWeightAccelDecel(npcAction->endFrame, npcAction->startFrame, play->csCtx.frames, 0, 8);
-        startX = npcAction->startPos.x;
-        startY = npcAction->startPos.y;
-        startZ = npcAction->startPos.z;
-        endX = npcAction->endPos.x;
-        endY = npcAction->endPos.y;
-        endZ = npcAction->endPos.z;
-        thisPos->x = ((endX - startX) * someFloat) + startX;
-        thisPos->y = ((endY - startY) * someFloat) + startY;
-        thisPos->z = ((endZ - startZ) * someFloat) + startZ;
-        if (npcAction->endFrame < play->csCtx.frames) {
+    if (cue != NULL) {
+        lerp = Environment_LerpWeightAccelDecel(cue->endFrame, cue->startFrame, play->csCtx.curFrame, 0, 8);
+        startX = cue->startPos.x;
+        startY = cue->startPos.y;
+        startZ = cue->startPos.z;
+        endX = cue->endPos.x;
+        endY = cue->endPos.y;
+        endZ = cue->endPos.z;
+        worldPos->x = ((endX - startX) * lerp) + startX;
+        worldPos->y = ((endY - startY) * lerp) + startY;
+        worldPos->z = ((endZ - startZ) * lerp) + startZ;
+        if (cue->endFrame < play->csCtx.curFrame) {
             Actor_Kill(&this->actor);
         }
     }
@@ -1480,10 +1517,10 @@ void func_80B51EA8(EnZl2* this) {
 
 void func_80B51EBC(EnZl2* this, PlayState* play) {
     ActorShape* shape = &this->actor.shape;
-    CsCmdActorAction* npcAction = EnZl2_GetNpcAction(play, 0);
+    CsCmdActorCue* cue = EnZl2_GetCue(play, 0);
     s32 pad[2];
 
-    this->actor.world.rot.y = shape->rot.y = npcAction->rot.y;
+    this->actor.world.rot.y = shape->rot.y = cue->rot.y;
     func_80B4FD00(this, &gZelda2Anime1Anim_00B224, 0, 0.0f, 0);
     this->action = 34;
     this->drawConfig = 1;
@@ -1491,10 +1528,10 @@ void func_80B51EBC(EnZl2* this, PlayState* play) {
 }
 
 void func_80B51F38(EnZl2* this, PlayState* play) {
-    CsCmdActorAction* npcAction = EnZl2_GetNpcAction(play, 0);
+    CsCmdActorCue* cue = EnZl2_GetCue(play, 0);
 
-    if (npcAction != NULL) {
-        if (play->csCtx.frames - 8 >= npcAction->endFrame) {
+    if (cue != NULL) {
+        if (play->csCtx.curFrame - 8 >= cue->endFrame) {
             func_80B4FD00(this, &gZelda2Anime1Anim_00B5FC, 0, -8.0f, 0);
             this->action = 35;
         }
@@ -1502,15 +1539,16 @@ void func_80B51F38(EnZl2* this, PlayState* play) {
 }
 
 void func_80B51FA8(EnZl2* this, PlayState* play) {
-    CsCmdActorAction* npcAction = EnZl2_GetNpcAction(play, 0);
-    s32 action;
-    s32 unk_240;
+    CsCmdActorCue* cue = EnZl2_GetCue(play, 0);
+    s32 nextCueId;
+    s32 currentCueId;
 
-    if (npcAction != NULL) {
-        action = npcAction->action;
-        unk_240 = this->unk_240;
-        if (action != unk_240) {
-            switch (action) {
+    if (cue != NULL) {
+        nextCueId = cue->id;
+        currentCueId = this->cueId;
+
+        if (nextCueId != currentCueId) {
+            switch (nextCueId) {
                 case 1:
                     func_80B51EA8(this);
                     break;
@@ -1524,7 +1562,7 @@ void func_80B51FA8(EnZl2* this, PlayState* play) {
                     osSyncPrintf("En_Zl2_inRunning_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
                     break;
             }
-            this->unk_240 = action;
+            this->cueId = nextCueId;
         }
     }
 }

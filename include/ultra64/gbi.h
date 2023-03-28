@@ -3409,8 +3409,8 @@ _DW({                                                       \
     Gfx *_g = (Gfx *)(pkt);                                 \
                                                             \
     _g->words.w0 = (_SHIFTL(cmd,                24, 8) |    \
-                    _SHIFTL(32 - (sft)- ( len),  8, 8)|     \
-                    _SHIFTL((len) - 1,             0, 8));  \
+                    _SHIFTL(32 - (sft) - (len),  8, 8) |    \
+                    _SHIFTL((len) - 1,           0, 8));    \
     _g->words.w1 = (unsigned int)(data);                    \
 })
 
@@ -4155,7 +4155,7 @@ _DW({                                                                           
         0, cmt, maskt,shiftt, cms, masks, shifts),                      \
     gsDPLoadSync(),                                                     \
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0,                                  \
-        (((width) * (height) + siz##_INCR) >> siz##_SHIFT) - 1, 0 ),    \
+        (((width) * (height) + siz##_INCR) >> siz##_SHIFT) - 1, 0),     \
     gsDPPipeSync(),                                                     \
     gsDPSetTile(fmt, siz,                                               \
         ((((width) * siz##_LINE_BYTES) + 7) >> 3), 0,                   \
@@ -4518,7 +4518,7 @@ _DW({                                                                       \
     gDPSetTextureImage(pkt, fmt, siz, width, timg);                         \
     gDPSetTile(pkt, fmt, siz,                                               \
         (((((lrs) - (uls) + 1) * siz##_TILE_BYTES) + 7) >> 3), tmem,        \
-        G_TX_LOADTILE, 0 , cmt, maskt, shiftt, cms, masks, shifts);         \
+        G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks, shifts);          \
     gDPLoadSync(pkt);                                                       \
     gDPLoadTile(pkt, G_TX_LOADTILE,                                         \
         (uls) << G_TEXTURE_IMAGE_FRAC,                                      \
@@ -4543,9 +4543,9 @@ _DW({                                                                       \
     gsDPSetTextureImage(fmt, siz, width, timg),                         \
     gsDPSetTile(fmt, siz,                                               \
         (((((lrs) - (uls) + 1) * siz##_TILE_BYTES) + 7) >> 3), 0,       \
-        G_TX_LOADTILE, 0 , cmt, maskt, shiftt, cms, masks, shifts),     \
+        G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks, shifts),      \
     gsDPLoadSync(),                                                     \
-    gsDPLoadTile(   G_TX_LOADTILE,                                      \
+    gsDPLoadTile(G_TX_LOADTILE,                                         \
         (uls) << G_TEXTURE_IMAGE_FRAC,                                  \
         (ult) << G_TEXTURE_IMAGE_FRAC,                                  \
         (lrs) << G_TEXTURE_IMAGE_FRAC,                                  \
@@ -4570,7 +4570,7 @@ _DW({                                                                       \
     gsDPSetTextureImage(fmt, siz, width, timg),                         \
     gsDPSetTile(fmt, siz,                                               \
         (((((lrs) - (uls) + 1) * siz##_TILE_BYTES) + 7) >> 3), tmem,    \
-        G_TX_LOADTILE, 0 , cmt, maskt, shiftt, cms, masks, shifts),     \
+        G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks, shifts),      \
     gsDPLoadSync(),                                                     \
     gsDPLoadTile(G_TX_LOADTILE,                                         \
         (uls) << G_TEXTURE_IMAGE_FRAC,                                  \
@@ -4594,7 +4594,7 @@ _DW({                                                                       \
     gDPSetTextureImage(pkt, fmt, G_IM_SIZ_8b, ((width) >> 1), timg);        \
     gDPSetTile(pkt, fmt, G_IM_SIZ_8b,                                       \
         (((((lrs) - (uls) + 1) >> 1) + 7) >> 3), 0,                         \
-        G_TX_LOADTILE, 0 , cmt, maskt, shiftt, cms, masks, shifts);         \
+        G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks, shifts);          \
     gDPLoadSync(pkt);                                                       \
     gDPLoadTile(pkt, G_TX_LOADTILE,                                         \
         (uls) << (G_TEXTURE_IMAGE_FRAC - 1),                                \
@@ -4623,7 +4623,7 @@ _DW({                                                                       \
     gDPSetTextureImage(pkt, fmt, G_IM_SIZ_8b, ((width) >> 1), timg);        \
     gDPSetTile(pkt, fmt, G_IM_SIZ_8b,                                       \
         (((((lrs) - (uls) + 1) >> 1) + 7) >> 3), tmem,                      \
-        G_TX_LOADTILE, 0 , cmt, maskt, shiftt, cms, masks, shifts);         \
+        G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks, shifts);          \
     gDPLoadSync(pkt);                                                       \
     gDPLoadTile(pkt, G_TX_LOADTILE,                                         \
         (uls) << (G_TEXTURE_IMAGE_FRAC - 1),                                \
@@ -4647,7 +4647,7 @@ _DW({                                                                       \
     gsDPSetTextureImage(fmt, G_IM_SIZ_8b, ((width) >> 1), timg),        \
     gsDPSetTile(fmt, G_IM_SIZ_8b,                                       \
         (((((lrs) - (uls) + 1) >> 1) + 7) >> 3), 0,                     \
-        G_TX_LOADTILE, 0 , cmt, maskt, shiftt, cms, masks, shifts),     \
+        G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks, shifts),      \
     gsDPLoadSync(),                                                     \
     gsDPLoadTile(G_TX_LOADTILE,                                         \
         (uls) << (G_TEXTURE_IMAGE_FRAC - 1),                            \
@@ -4677,7 +4677,7 @@ _DW({                                                                       \
         (((((lrs) - (uls) + 1) >> 1) + 7) >> 3), tmem,                  \
         G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks, shifts),      \
     gsDPLoadSync(),                                                     \
-    gsDPLoadTile(   G_TX_LOADTILE,                                      \
+    gsDPLoadTile(G_TX_LOADTILE,                                         \
         (uls) << (G_TEXTURE_IMAGE_FRAC - 1),                            \
         (ult) << (G_TEXTURE_IMAGE_FRAC),                                \
         (lrs) << (G_TEXTURE_IMAGE_FRAC - 1),                            \
@@ -4703,7 +4703,7 @@ _DW({                                                               \
     gDPSetTextureImage(pkt, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, dram);  \
     gDPTileSync(pkt);                                               \
     gDPSetTile(pkt, 0, 0, 0, (256 + (((pal) & 0xF) * 16)),          \
-                    G_TX_LOADTILE, 0 , 0, 0, 0, 0, 0, 0);           \
+                    G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);            \
     gDPLoadSync(pkt);                                               \
     gDPLoadTLUTCmd(pkt, G_TX_LOADTILE, 15);                         \
     gDPPipeSync(pkt);                                               \
@@ -4729,7 +4729,7 @@ _DW({                                                               \
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, dram),  \
     gsDPTileSync(),                                             \
     gsDPSetTile(0, 0, 0, (256 + (((pal) & 0xF) * 16)),          \
-                G_TX_LOADTILE, 0 , 0, 0, 0, 0, 0, 0),           \
+                G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0),            \
     gsDPLoadSync(),                                             \
     gsDPLoadTLUTCmd(G_TX_LOADTILE, 15),                         \
     gsDPPipeSync()
@@ -4754,7 +4754,7 @@ _DW({                                                                   \
     gDPSetTextureImage(pkt, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, dram);      \
     gDPTileSync(pkt);                                                   \
     gDPSetTile(pkt, 0, 0, 0, 256,                                       \
-                    G_TX_LOADTILE, 0 , 0, 0, 0, 0, 0, 0);               \
+                    G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);                \
     gDPLoadSync(pkt);                                                   \
     gDPLoadTLUTCmd(pkt, G_TX_LOADTILE, 255);                            \
     gDPPipeSync(pkt);                                                   \
@@ -4821,7 +4821,7 @@ _DW({                                                               \
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, dram),  \
     gsDPTileSync(),                                             \
     gsDPSetTile(0, 0, 0, tmemaddr,                              \
-                G_TX_LOADTILE, 0 , 0, 0, 0, 0, 0, 0),           \
+                G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0),            \
     gsDPLoadSync(),                                             \
     gsDPLoadTLUTCmd(G_TX_LOADTILE, ((count) - 1)),              \
     gsDPPipeSync()

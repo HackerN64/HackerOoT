@@ -12,18 +12,30 @@ void KaleidoSetup_Update(PlayState* play) {
     PauseContext* pauseCtx = &play->pauseCtx;
     Input* input = &play->state.input[0];
 
-    if (pauseCtx->state == 0 && pauseCtx->debugState == 0 && play->gameOverCtx.state == GAMEOVER_INACTIVE &&
-        play->transitionTrigger == TRANS_TRIGGER_OFF && play->transitionMode == TRANS_MODE_OFF &&
-        gSaveContext.cutsceneIndex < 0xFFF0 && gSaveContext.nextCutsceneIndex < 0xFFF0 && !Play_InCsMode(play) &&
-        play->shootingGalleryStatus <= 1 && gSaveContext.magicState != MAGIC_STATE_STEP_CAPACITY &&
-        gSaveContext.magicState != MAGIC_STATE_FILL &&
-        (play->sceneId != SCENE_BOMBCHU_BOWLING_ALLEY || !Flags_GetSwitch(play, 0x38))) {
+    u8 canUpdate =
+        (play->gameOverCtx.state == GAMEOVER_INACTIVE && play->transitionTrigger == TRANS_TRIGGER_OFF &&
+         play->transitionMode == TRANS_MODE_OFF && gSaveContext.cutsceneIndex < 0xFFF0 &&
+         gSaveContext.nextCutsceneIndex < 0xFFF0 && !Play_InCsMode(play) && play->shootingGalleryStatus <= 1 &&
+         gSaveContext.magicState != MAGIC_STATE_STEP_CAPACITY && gSaveContext.magicState != MAGIC_STATE_FILL &&
+         (play->sceneId != SCENE_BOMBCHU_BOWLING_ALLEY || !Flags_GetSwitch(play, 0x38)));
 
+#ifdef ENABLE_INV_EDITOR
+    canUpdate = (pauseCtx->state == 0 && pauseCtx->debugState == 0) && canUpdate;
+#else
+    canUpdate = (pauseCtx->state == 0) && canUpdate;
+#endif
+
+    if (canUpdate) {
+
+#ifdef ENABLE_EVENT_EDITOR
         if (CHECK_BTN_ALL(input->cur.button, BTN_L) && CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
             if (BREG(0)) {
                 pauseCtx->debugState = 3;
             }
         } else if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
+#else
+        if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
+#endif
             gSaveContext.prevHudVisibilityMode = gSaveContext.hudVisibilityMode;
 
             WREG(16) = -175;
@@ -67,7 +79,9 @@ void KaleidoSetup_Init(PlayState* play) {
     u64 temp = 0; // Necessary to match
 
     pauseCtx->state = 0;
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
     pauseCtx->debugState = 0;
+#endif
     pauseCtx->alpha = 0;
     pauseCtx->unk_1EA = 0;
     pauseCtx->unk_1E4 = 0;

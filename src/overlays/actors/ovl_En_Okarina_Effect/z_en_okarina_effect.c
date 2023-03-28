@@ -7,6 +7,8 @@
 #include "z_en_okarina_effect.h"
 #include "terminal.h"
 
+#include "config.h"
+
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_25)
 
 void EnOkarinaEffect_Init(Actor* thisx, PlayState* play);
@@ -70,9 +72,13 @@ void EnOkarinaEffect_TriggerStorm(EnOkarinaEffect* this, PlayState* play) {
 }
 
 void EnOkarinaEffect_ManageStorm(EnOkarinaEffect* this, PlayState* play) {
-    Flags_UnsetEnv(play, 5); // clear storms env flag
+    CutsceneFlags_Unset(play, 5);
+
     if (((play->pauseCtx.state == 0) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
-         (play->msgCtx.msgLength == 0) && (!FrameAdvance_IsEnabled(play)) &&
+         (play->msgCtx.msgLength == 0) &&
+#ifdef ENABLE_FRAMERATE_OPTIONS
+         (!FrameAdvance_IsEnabled(play)) &&
+#endif
          ((play->transitionMode == TRANS_MODE_OFF) || (gSaveContext.gameMode != GAMEMODE_NORMAL))) ||
         (this->timer >= 250)) {
         if ((play->envCtx.lightMode != LIGHT_MODE_TIME) || play->envCtx.lightConfig != 1) {
@@ -81,7 +87,7 @@ void EnOkarinaEffect_ManageStorm(EnOkarinaEffect* this, PlayState* play) {
         osSyncPrintf("\nthis->timer=[%d]", this->timer);
         if (this->timer == 308) {
             osSyncPrintf("\n\n\n豆よ のびろ 指定\n\n\n"); // "Let's grow some beans"
-            Flags_SetEnv(play, 5);                        // set storms env flag
+            CutsceneFlags_Set(play, 5);
         }
     }
 
@@ -114,9 +120,12 @@ void EnOkarinaEffect_Update(Actor* thisx, PlayState* play) {
     EnOkarinaEffect* this = (EnOkarinaEffect*)thisx;
 
     this->actionFunc(this, play);
+
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0) != 0) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 0xFF, 0, 0xFF, 0xFF, 4, play->state.gfxCtx);
     }
+#endif
 }

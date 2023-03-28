@@ -454,11 +454,11 @@ void Health_DrawMeter(PlayState* play) {
             heartTexCoordPerPixel *= 1 << 10;
             halfHeartLength = 8.0f;
             halfHeartLength *= 0.68f;
-            gSPTextureRectangle(OVERLAY_DISP++, (s32)((heartCenterX - halfHeartLength) * 4),
+            gSPTextureRectangle(OVERLAY_DISP++, WIDE_DIV(((heartCenterX - halfHeartLength) * 4), WIDE_GET_4_3),
                                 (s32)((heartCenterY - halfHeartLength) * 4),
-                                (s32)((heartCenterX + halfHeartLength) * 4),
+                                WIDE_DIV(((heartCenterX + halfHeartLength) * 4), WIDE_GET_RATIO),
                                 (s32)((heartCenterY + halfHeartLength) * 4), G_TX_RENDERTILE, 0, 0,
-                                (s32)heartTexCoordPerPixel, (s32)heartTexCoordPerPixel);
+                                WIDE_DIV(heartTexCoordPerPixel, WIDE_GET_RATIO), (s32)heartTexCoordPerPixel);
         } else {
             if ((ddHeartCountMinusOne < 0) || (heartIndex > ddHeartCountMinusOne)) {
                 if (curCombineModeSet != 2) {
@@ -478,9 +478,10 @@ void Health_DrawMeter(PlayState* play) {
 
             {
                 Mtx* matrix = Graph_Alloc(gfxCtx, sizeof(Mtx));
+                f32 wideOffsetX = USE_WIDESCREEN ? (offsetX - (30.f * WIDE_GET_16_9)) : offsetX;
                 Matrix_SetTranslateScaleMtx2(
                     matrix, 1.0f - (0.32f * beatingHeartPulsingSize), 1.0f - (0.32f * beatingHeartPulsingSize),
-                    1.0f - (0.32f * beatingHeartPulsingSize), -130.0f + offsetX, 94.5f - offsetY, 0.0f);
+                    1.0f - (0.32f * beatingHeartPulsingSize), -129.7f + wideOffsetX, 94.f - offsetY, 0.0f);
                 gSPMatrix(OVERLAY_DISP++, matrix, G_MTX_MODELVIEW | G_MTX_LOAD);
                 gSPVertex(OVERLAY_DISP++, beatingHeartVtx, 4, 0);
                 gSP1Quadrangle(OVERLAY_DISP++, 0, 2, 3, 1, 0);
@@ -502,17 +503,26 @@ void Health_DrawMeter(PlayState* play) {
 
 void Health_UpdateBeatingHeart(PlayState* play) {
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
+    u8 canPlayLowHealthSFX;
 
     if (interfaceCtx->beatingHeartOscillatorDirection != 0) {
         interfaceCtx->beatingHeartOscillator--;
         if (interfaceCtx->beatingHeartOscillator <= 0) {
             interfaceCtx->beatingHeartOscillator = 0;
             interfaceCtx->beatingHeartOscillatorDirection = 0;
-            if (!Player_InCsMode(play) && (play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0) &&
-                Health_IsCritical() && !Play_InCsMode(play)) {
-                #ifdef ENABLE_LOW_HEALTH_BEEP
+
+            canPlayLowHealthSFX = (!Player_InCsMode(play) && (play->pauseCtx.state == 0));
+
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
+            canPlayLowHealthSFX =
+                canPlayLowHealthSFX && (play->pauseCtx.debugState == 0) && Health_IsCritical() && !Play_InCsMode(play);
+#else
+            canPlayLowHealthSFX = (canPlayLowHealthSFX && Health_IsCritical() && !Play_InCsMode(play));
+#endif
+            if (canPlayLowHealthSFX) {
+#ifdef ENABLE_LOW_HEALTH_BEEP
                 func_80078884(NA_SE_SY_HITPOINT_ALARM);
-                #endif
+#endif
             }
         }
     } else {

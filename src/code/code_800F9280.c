@@ -20,6 +20,7 @@
 #include "ultra64.h"
 #include "global.h"
 #include "ultra64/abi.h"
+#include "config.h"
 
 // Direct audio command (skips the queueing system)
 #define SEQCMD_SET_PLAYER_VOLUME_NOW(seqPlayerIndex, duration, volume)                                                \
@@ -103,10 +104,12 @@ void Audio_ProcessSeqCmd(u32 cmd) {
     f32 freqScaleTarget;
     s32 pad;
 
+#ifdef ENABLE_AUDIO_DEBUGGER
     if (gAudioDebugPrintSeqCmd && (cmd & SEQCMD_OP_MASK) != (SEQCMD_OP_SET_PLAYER_IO << 28)) {
         AudioDebug_ScrPrt("SEQ H", (cmd >> 16) & 0xFFFF);
         AudioDebug_ScrPrt("    L", cmd & 0xFFFF);
     }
+#endif
 
     op = cmd >> 28;
     seqPlayerIndex = (cmd & 0xF000000) >> 24;

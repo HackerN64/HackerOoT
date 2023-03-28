@@ -1,6 +1,12 @@
 #include "global.h"
 #include "terminal.h"
 
+#include "config.h"
+
+#ifdef ENABLE_WIDESCREEN
+u8 gIsUsingWidescreen = false;
+#endif
+
 s32 gScreenWidth = SCREEN_WIDTH;
 s32 gScreenHeight = SCREEN_HEIGHT;
 u32 gSystemHeapSize = 0;
@@ -56,18 +62,24 @@ void Main(void* arg) {
     // "System heap initalization"
     osSyncPrintf("システムヒープ初期化 %08x-%08x %08x\n", systemHeapStart, fb, gSystemHeapSize);
     SystemHeap_Init((void*)systemHeapStart, gSystemHeapSize); // initializes the system heap
+
+#ifdef ENABLE_DEBUG_HEAP
     if (osMemSize >= 0x800000) {
         debugHeapStart = SysCfb_GetFbEnd();
-        debugHeapSize = PHYS_TO_K0(0x600000) - (uintptr_t)debugHeapStart;
+        debugHeapSize = PHYS_TO_K0(DEBUG_HEAP_SIZE) - (uintptr_t)debugHeapStart;
     } else {
         debugHeapSize = 0x400;
         debugHeapStart = SystemArena_MallocDebug(debugHeapSize, "../main.c", 565);
     }
     osSyncPrintf("debug_InitArena(%08x, %08x)\n", debugHeapStart, debugHeapSize);
     DebugArena_Init(debugHeapStart, debugHeapSize);
+#endif
+
     Regs_Init();
 
+#ifdef ENABLE_SPEEDMETER
     R_ENABLE_ARENA_DBG = 0;
+#endif
 
     osCreateMesgQueue(&sSerialEventQueue, sSerialMsgBuf, ARRAY_COUNT(sSerialMsgBuf));
     osSetEventMesg(OS_EVENT_SI, &sSerialEventQueue, NULL);

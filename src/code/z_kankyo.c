@@ -3,6 +3,7 @@
 #include "terminal.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/gameplay_field_keep/gameplay_field_keep.h"
+#include "config.h"
 
 typedef enum {
     /* 0x00 */ LIGHTNING_BOLT_START,
@@ -417,7 +418,7 @@ void Environment_Init(PlayState* play2, EnvironmentContext* envCtx, s32 unused) 
     cREG(12) = 0;
     cREG(13) = 0;
     cREG(14) = 0;
-    D_8015FCC8 = 1;
+    gUseCutsceneCam = true;
 
     for (i = 0; i < ARRAY_COUNT(sLightningBolts); i++) {
         sLightningBolts[i].state = LIGHTNING_BOLT_INACTIVE;
@@ -426,8 +427,8 @@ void Environment_Init(PlayState* play2, EnvironmentContext* envCtx, s32 unused) 
     play->roomCtx.unk_74[0] = 0;
     play->roomCtx.unk_74[1] = 0;
 
-    for (i = 0; i < ARRAY_COUNT(play->csCtx.npcActions); i++) {
-        play->csCtx.npcActions[i] = 0;
+    for (i = 0; i < ARRAY_COUNT(play->csCtx.actorCues); i++) {
+        play->csCtx.actorCues[i] = NULL;
     }
 
     if (Object_GetIndex(&play->objectCtx, OBJECT_GAMEPLAY_FIELD_KEEP) < 0 && !play->envCtx.sunMoonDisabled) {
@@ -813,6 +814,7 @@ void Environment_DisableUnderwaterLights(PlayState* play) {
     }
 }
 
+#ifdef SHOW_TIME_INFOS
 void Environment_PrintDebugInfo(PlayState* play, Gfx** gfx) {
     GfxPrint printer;
     s32 pad[2];
@@ -867,6 +869,7 @@ void Environment_PrintDebugInfo(PlayState* play, Gfx** gfx) {
     *gfx = GfxPrint_Close(&printer);
     GfxPrint_Destroy(&printer);
 }
+#endif
 
 void Environment_PlayTimeBasedSequence(PlayState* play);
 void Environment_UpdateRain(PlayState* play);
@@ -887,7 +890,11 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
     }
 
     if (pauseCtx->state == 0) {
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
         if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0)) {
+#else
+        if ((play->pauseCtx.state == 0)) {
+#endif
             if (play->skyboxId == SKYBOX_NORMAL_SKY) {
                 play->skyboxCtx.rot.y -= 0.001f;
             } else if (play->skyboxId == SKYBOX_CUTSCENE_MAP) {
@@ -921,7 +928,11 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
         if ((pauseCtx->state == 0) && (gameOverCtx->state == GAMEOVER_INACTIVE)) {
             if (((msgCtx->msgLength == 0) && (msgCtx->msgMode == MSGMODE_NONE)) ||
                 (((void)0, gSaveContext.gameMode) == GAMEMODE_END_CREDITS)) {
-                if ((envCtx->changeSkyboxTimer == 0) && !FrameAdvance_IsEnabled(play) &&
+
+                if ((envCtx->changeSkyboxTimer == 0) &&
+#ifdef ENABLE_FRAMERATE_OPTIONS
+                    !FrameAdvance_IsEnabled(play) &&
+#endif
                     (play->transitionMode == TRANS_MODE_OFF || ((void)0, gSaveContext.gameMode) != GAMEMODE_NORMAL)) {
 
                     if (IS_DAY || gTimeSpeed >= 400) {
@@ -949,6 +960,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
             gSaveContext.nightFlag = 0;
         }
 
+#ifdef SHOW_TIME_INFOS
         if (R_ENABLE_ARENA_DBG != 0 || CREG(2) != 0) {
             Gfx* displayList;
             Gfx* prevDisplayList;
@@ -965,6 +977,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
             if (1) {}
             CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 1690);
         }
+#endif
 
         if ((envCtx->lightSettingOverride != LIGHT_SETTING_OVERRIDE_NONE) &&
             (envCtx->lightBlendOverride != LIGHT_BLEND_OVERRIDE_FULL_CONTROL) &&
@@ -1700,7 +1713,8 @@ void Environment_DrawRain(PlayState* play, View* view, GraphicsContext* gfxCtx) 
     Vec3f windDirection = { 0.0f, 0.0f, 0.0f };
     Player* player = GET_PLAYER(play);
 
-    if (!(play->cameraPtrs[0]->unk_14C & 0x100) && (play->envCtx.precipitation[PRECIP_SNOW_CUR] == 0)) {
+    if (!(play->cameraPtrs[CAM_ID_MAIN]->stateFlags & CAM_STATE_8) &&
+        (play->envCtx.precipitation[PRECIP_SNOW_CUR] == 0)) {
         OPEN_DISPS(gfxCtx, "../z_kankyo.c", 2799);
 
         vec.x = view->at.x - view->eye.x;

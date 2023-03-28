@@ -225,7 +225,7 @@ void Sram_InitNewSave(void) {
     gSaveContext.horseData.angle = -0x6AD9;
     gSaveContext.magicLevel = 0;
     gSaveContext.infTable[INFTABLE_1DX_INDEX] = 1;
-    gSaveContext.sceneFlags[5].swch = 0x40000000;
+    gSaveContext.sceneFlags[SCENE_WATER_TEMPLE].swch = 0x40000000;
 }
 
 static SavePlayerData sDebugSavePlayerData = {
@@ -319,7 +319,7 @@ static Inventory sDebugSaveInventory = {
     // equipment
     ((((1 << EQUIP_INV_SWORD_KOKIRI) << (EQUIP_TYPE_SWORD * 4)) |
       ((1 << EQUIP_INV_SWORD_MASTER) << (EQUIP_TYPE_SWORD * 4)) |
-      ((1 << EQUIP_INV_SWORD_BGS) << (EQUIP_TYPE_SWORD * 4))) |
+      ((1 << EQUIP_INV_SWORD_BIGGORON) << (EQUIP_TYPE_SWORD * 4))) |
      (((1 << EQUIP_INV_SHIELD_DEKU) << (EQUIP_TYPE_SHIELD * 4)) |
       ((1 << EQUIP_INV_SHIELD_HYLIAN) << (EQUIP_TYPE_SHIELD * 4)) |
       ((1 << EQUIP_INV_SHIELD_MIRROR) << (EQUIP_TYPE_SHIELD * 4))) |
@@ -382,7 +382,7 @@ void Sram_InitDebugSave(void) {
 
     gSaveContext.entranceIndex = ENTR_HYRULE_FIELD_0;
     gSaveContext.magicLevel = 0;
-    gSaveContext.sceneFlags[5].swch = 0x40000000;
+    gSaveContext.sceneFlags[SCENE_WATER_TEMPLE].swch = 0x40000000;
 }
 
 static s16 sDungeonEntrances[] = {
@@ -796,11 +796,16 @@ void Sram_InitSave(FileSelectState* fileSelect, SramContext* sramCtx) {
     gSaveContext.dayTime = BOOT_TIME;
     gSaveContext.cutsceneIndex = BOOT_CUTSCENE;
 #else
+
+#ifdef ENABLE_DEBUG_SAVE
     if (fileSelect->buttonIndex != 0) {
         Sram_InitNewSave();
     } else {
         Sram_InitDebugSave();
     }
+#else
+    Sram_InitNewSave();
+#endif
 
     gSaveContext.entranceIndex = ENTR_LINKS_HOUSE_0;
     gSaveContext.linkAge = LINK_AGE_CHILD;

@@ -3,6 +3,7 @@
 #include "overlays/actors/ovl_En_Syateki_Man/z_en_syateki_man.h"
 #include "overlays/actors/ovl_En_Ex_Ruppy/z_en_ex_ruppy.h"
 #include "overlays/actors/ovl_En_G_Switch/z_en_g_switch.h"
+#include "config.h"
 
 #define FLAGS ACTOR_FLAG_4
 
@@ -105,7 +106,7 @@ void EnSyatekiItm_Idle(EnSyatekiItm* this, PlayState* play) {
         player->actor.world.pos.x = -12.0f;
         player->actor.world.pos.y = 20.0f;
         player->actor.world.pos.z = 182.0f;
-        player->currentYaw = player->actor.world.rot.y = player->actor.shape.rot.y = 0x7F03;
+        player->yaw = player->actor.world.rot.y = player->actor.shape.rot.y = 0x7F03;
         player->actor.world.rot.x = player->actor.shape.rot.x = player->actor.world.rot.z = player->actor.shape.rot.z =
             0;
         func_8008EF44(play, 15);
@@ -342,9 +343,12 @@ void EnSyatekiItm_Update(Actor* thisx, PlayState* play) {
     if (this->unkTimer != 0) {
         this->unkTimer--;
     }
+
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0)) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 255, 0, 0, 255, 4, play->state.gfxCtx);
     }
+#endif
 }

@@ -11,6 +11,7 @@
 #include "overlays/effects/ovl_Effect_Ss_HitMark/z_eff_ss_hitmark.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/object_tsubo/object_tsubo.h"
+#include "config.h"
 
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5)
 
@@ -275,7 +276,7 @@ void EnGSwitch_GalleryRupee(EnGSwitch* this, PlayState* play) {
     if (this->delayTimer == 0) {
         switch (this->moveMode) {
             case GSWITCH_THROW:
-                Actor_MoveForward(&this->actor);
+                Actor_MoveXZGravity(&this->actor);
                 if ((this->actor.velocity.y < 0.0f) && (this->actor.world.pos.y < (this->actor.home.pos.y - 50.0f))) {
                     gallery = ((EnSyatekiItm*)this->actor.parent);
                     this->actor.velocity.y = 0.0f;
@@ -287,7 +288,7 @@ void EnGSwitch_GalleryRupee(EnGSwitch* this, PlayState* play) {
                 }
                 break;
             case GSWITCH_LEFT:
-                func_8002D7EC(&this->actor);
+                Actor_UpdatePos(&this->actor);
                 if ((this->actor.velocity.x < 0.0f) && (this->actor.world.pos.x < this->targetPos.x)) {
                     gallery = ((EnSyatekiItm*)this->actor.parent);
                     if (gallery->actor.update != NULL) {
@@ -297,7 +298,7 @@ void EnGSwitch_GalleryRupee(EnGSwitch* this, PlayState* play) {
                 }
                 break;
             case GSWITCH_RIGHT:
-                func_8002D7EC(&this->actor);
+                Actor_UpdatePos(&this->actor);
                 if (this->actor.world.pos.x > this->targetPos.x) {
                     gallery = ((EnSyatekiItm*)this->actor.parent);
                     if (gallery->actor.update != NULL) {
@@ -430,7 +431,7 @@ void EnGSwitch_Update(Actor* thisx, PlayState* play) {
     }
     if ((this->type != ENGSWITCH_SILVER_TRACKER) && (this->type != ENGSWITCH_SILVER_RUPEE) &&
         (this->type != ENGSWITCH_TARGET_RUPEE)) {
-        Actor_MoveForward(&this->actor);
+        Actor_MoveXZGravity(&this->actor);
         Actor_UpdateBgCheckInfo(play, &this->actor, 50.0f, 50.0f, 100.0f,
                                 UPDBGCHECKINFO_FLAG_2 | UPDBGCHECKINFO_FLAG_3 | UPDBGCHECKINFO_FLAG_4);
     }
@@ -443,11 +444,14 @@ void EnGSwitch_Update(Actor* thisx, PlayState* play) {
             CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
         }
     }
+
+#ifdef ENABLE_ACTOR_DEBUGGER
     if (BREG(0) && (this->type == ENGSWITCH_SILVER_TRACKER)) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 255, 0, 0, 255, 4, play->state.gfxCtx);
     }
+#endif
 }
 
 void EnGSwitch_DrawPot(Actor* thisx, PlayState* play) {

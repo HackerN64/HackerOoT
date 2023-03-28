@@ -1,9 +1,9 @@
 from os import walk
-from re import sub
+from re import sub, finditer
 from argparse import ArgumentParser as Parser
 
 try:
-    from data import dataToFix, entrDictSpecial
+    from data import dataToFix, entrDictSpecial, specialFilesCmd
 except:
     print("[DAF:Error]: ``data.py`` not found! Make sure everything is in the same folder.")
     quit()
@@ -24,7 +24,7 @@ def getArguments():
         dest="mode",
         type=str,
         default="",
-        help="available modes: `fix_types`, `name_entrances`, `fix_segments`",
+        help="available modes: `fix_types`, `name_entrances`, `fix_segments`, `fix_command_args`",
     )
 
     parser.add_argument(
@@ -104,8 +104,8 @@ def replaceOldData(path: str, extension: str):
             fileData = curFile.read()
         for data in dataToFix:
             for key in data.keys():
-                fileData = sub(rf"{key}\b", data[key], fileData)
-                fileData = sub(rf"{key}_\B", f"{data[key]}_", fileData)
+                fileData = sub(rf"\b{key}\b", data[key], fileData)
+                fileData = sub(rf"\B{key}\B", f"{data[key]}", fileData)
         with open(path, "w") as curFile:
             curFile.write(fileData)
 
@@ -174,7 +174,7 @@ def replaceEntranceHex(decompRoot: str):
 ### [FIX SEGMENTS] ###
 
 
-def fixSegments(decompRoot):
+def fixSegments(decompRoot: str):
     """Adds u32 casts to room's segment symbols"""
     paths = getPaths(f"{decompRoot}/assets/scenes", ".c")
     for path in paths:
@@ -188,3 +188,44 @@ def fixSegments(decompRoot):
         )
         with open(path, "w") as curFile:
             curFile.write(fileData)
+
+
+# -------------------------------------------------------
+
+### [FIX SCENE & ROOM COMMANDS ARGUMENTS] ###
+
+
+def fixSceneRoomCommandsArgs(decompRoot: str, commandName: str, fileTypeToExclude: str):
+    paths = getPaths(f"{decompRoot}/assets/scenes", ".c")
+
+    for path in paths:
+        with open(path, "r") as curFile:
+            fileData = curFile.read()
+
+        for match in finditer(rf"{commandName}\(([a-zA-Z0-9,\s_&]*)\)", fileData):
+            if match is not None:
+                oldCommand = match.group(0)
+                oldArgs = match.group(1)
+                newArgsList = []
+
+                if "SPECIAL_FILES" in commandName:
+                    for argPos in specialFilesCmd.keys():
+                        for i, curArg in enumerate(oldArgs.strip().split(","), 1):
+                            if i == argPos:
+                                try:
+                                    base = 10
+                                    if "0x" in curArg or "0X" in curArg:
+                                        base = 16
+                                    newArg = specialFilesCmd[i][int(curArg, base)]
+                                except:
+                                    newArg = curArg
+
+                                newArgsList.append(f"{newArg}, {oldArgs.split(',')[1].strip()}")
+                                break
+
+                for newArgs in newArgsList:
+                    newCommand = oldCommand.replace(oldArgs, newArgs)
+                    fileData = fileData.replace(oldCommand, newCommand)
+
+            with open(path, "w") as curFile:
+                curFile.write(fileData)

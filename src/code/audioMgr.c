@@ -27,14 +27,18 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
         Sched_Notify(audioMgr->sched);
     }
 
+#ifdef ENABLE_SPEEDMETER
     gAudioThreadUpdateTimeStart = osGetTime();
+#endif
     if (SREG(20) >= 2) {
         rspTask = NULL;
     } else {
         rspTask = func_800E4FE0();
     }
+#ifdef ENABLE_SPEEDMETER
     gAudioThreadUpdateTimeAcc += osGetTime() - gAudioThreadUpdateTimeStart;
     gAudioThreadUpdateTimeStart = 0;
+#endif
 
     if (audioMgr->rspTask != NULL) {
         osRecvMesg(&audioMgr->taskQueue, NULL, OS_MESG_BLOCK);

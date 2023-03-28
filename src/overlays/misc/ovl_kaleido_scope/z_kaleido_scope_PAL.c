@@ -251,13 +251,13 @@ void KaleidoScope_SetupPlayerPreRender(PlayState* play) {
     Graph_BranchDlist(gfxRef, gfx);
     POLY_OPA_DISP = gfx;
 
-    SREG(33) |= 1;
+    R_GRAPH_TASKSET00_FLAGS |= 1;
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_scope_PAL.c", 509);
 }
 
 void KaleidoScope_ProcessPlayerPreRender(void) {
-#ifdef VANILLA_PAUSE_DELAY
+#ifdef ENABLE_PAUSE_BG_AA
     Sleep_Msec(50);
     PreRender_ApplyFilters(&sPlayerPreRender);
 #endif
@@ -394,10 +394,12 @@ void KaleidoScope_SwitchPage(PauseContext* pauseCtx, u8 pt) {
 }
 
 void KaleidoScope_HandlePageToggles(PauseContext* pauseCtx, Input* input) {
+#ifdef ENABLE_INV_EDITOR
     if ((pauseCtx->debugState == 0) && CHECK_BTN_ALL(input->press.button, BTN_L)) {
         pauseCtx->debugState = 1;
         return;
     }
+#endif
 
     if (CHECK_BTN_ALL(input->press.button, BTN_R)) {
         KaleidoScope_SwitchPage(pauseCtx, 2);
@@ -1186,7 +1188,8 @@ void KaleidoScope_DrawInfoPanel(PlayState* play) {
                 gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, pauseCtx->alpha);
                 gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 0);
 
-                KaleidoScope_DrawQuadTextureRGBA32(play->state.gfxCtx, gGoldSkulltulaIconTex, 24, 24, 0);
+                KaleidoScope_DrawQuadTextureRGBA32(play->state.gfxCtx, gQuestIconGoldSkulltulaTex, QUEST_ICON_WIDTH,
+                                                   QUEST_ICON_HEIGHT, 0);
             }
         }
     } else if ((pauseCtx->unk_1E4 < 3) || (pauseCtx->unk_1E4 == 7) || (pauseCtx->unk_1E4 == 8)) {
@@ -2284,7 +2287,9 @@ void KaleidoScope_Draw(PlayState* play) {
     gSPSegment(POLY_OPA_DISP++, 0x0C, pauseCtx->iconItemAltSegment);
     gSPSegment(POLY_OPA_DISP++, 0x0D, pauseCtx->iconItemLangSegment);
 
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
     if (pauseCtx->debugState == 0) {
+#endif
         KaleidoScope_SetView(pauseCtx, pauseCtx->eye.x, pauseCtx->eye.y, pauseCtx->eye.z);
 
         Gfx_SetupDL_42Opa(play->state.gfxCtx);
@@ -2300,15 +2305,19 @@ void KaleidoScope_Draw(PlayState* play) {
         if (!((pauseCtx->state >= 8) && (pauseCtx->state <= 0x11))) {
             KaleidoScope_DrawInfoPanel(play);
         }
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
     }
+#endif
 
     if ((pauseCtx->state >= 0xB) && (pauseCtx->state <= 0x11)) {
         KaleidoScope_DrawGameOver(play);
     }
 
+#ifdef ENABLE_INV_EDITOR
     if ((pauseCtx->debugState == 1) || (pauseCtx->debugState == 2)) {
         KaleidoScope_DrawDebugEditor(play);
     }
+#endif
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_scope_PAL.c", 3254);
 }
@@ -2501,8 +2510,9 @@ void KaleidoScope_Update(PlayState* play) {
     s16 stepA;
     s32 pad;
 
-    if ((R_PAUSE_MENU_MODE >= 3) && (((pauseCtx->state >= 4) && (pauseCtx->state <= 7)) ||
-                                     ((pauseCtx->state >= 0xA) && (pauseCtx->state <= 0x12)))) {
+    if ((R_PAUSE_BG_PRERENDER_STATE >= PAUSE_BG_PRERENDER_READY) &&
+        (((pauseCtx->state >= 4) && (pauseCtx->state <= 7)) ||
+         ((pauseCtx->state >= 0xA) && (pauseCtx->state <= 0x12)))) {
 
         if ((!pauseCtx->unk_1E4 || (pauseCtx->unk_1E4 == 8)) && (pauseCtx->state == 6)) {
             pauseCtx->stickAdjX = input->rel.stick_x;
@@ -2552,7 +2562,8 @@ void KaleidoScope_Update(PlayState* play) {
 
             for (i = 0; i < ARRAY_COUNTU(gItemAgeReqs); i++) {
                 if ((gItemAgeReqs[i] != 9) && (gItemAgeReqs[i] != ((void)0, gSaveContext.linkAge))) {
-                    KaleidoScope_GrayOutTextureRGBA32(SEGMENTED_TO_VIRTUAL(gItemIcons[i]), 0x400);
+                    KaleidoScope_GrayOutTextureRGBA32(SEGMENTED_TO_VIRTUAL(gItemIcons[i]),
+                                                      ITEM_ICON_WIDTH * ITEM_ICON_HEIGHT);
                 }
             }
 
@@ -3141,7 +3152,9 @@ void KaleidoScope_Update(PlayState* play) {
                             pauseCtx->alpha = 0;
                         }
                     } else {
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
                         pauseCtx->debugState = 0;
+#endif
                         pauseCtx->state = 0x13;
                         pauseCtx->unk_1F4 = pauseCtx->unk_1F8 = pauseCtx->unk_1FC = pauseCtx->unk_200 = 160.0f;
                         pauseCtx->namedItem = PAUSE_ITEM_NONE;
@@ -3416,7 +3429,7 @@ void KaleidoScope_Update(PlayState* play) {
                     interfaceCtx->unk_244 = 255;
                     pauseCtx->state = 0;
                     R_UPDATE_RATE = 3;
-                    R_PAUSE_MENU_MODE = 0;
+                    R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_OFF;
                     func_800981B8(&play->objectCtx);
                     func_800418D0(&play->colCtx, play);
                     if (pauseCtx->promptChoice == 0) {
@@ -3461,7 +3474,9 @@ void KaleidoScope_Update(PlayState* play) {
                     pauseCtx->alpha = 0;
                 }
             } else {
+#ifdef ENABLE_INV_EDITOR
                 pauseCtx->debugState = 0;
+#endif
                 pauseCtx->state = 0x13;
                 pauseCtx->unk_200 = 160.0f;
                 pauseCtx->unk_1FC = 160.0f;
@@ -3475,7 +3490,7 @@ void KaleidoScope_Update(PlayState* play) {
         case 0x13:
             pauseCtx->state = 0;
             R_UPDATE_RATE = 3;
-            R_PAUSE_MENU_MODE = 0;
+            R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_OFF;
             func_800981B8(&play->objectCtx);
             func_800418D0(&play->colCtx, play);
 
