@@ -13,7 +13,7 @@
 /*****************
  * config_debug.h
  */
-#ifndef DEBUG_ROM
+#ifdef RELEASE_ROM
     #define DISABLE_DEBUG_FEATURES
     #undef DETERMINISTIC_BUILD
     #undef SKIP_N64_BOOT_LOGO
