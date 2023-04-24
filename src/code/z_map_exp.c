@@ -165,7 +165,11 @@ void Map_InitData(PlayState* play, s16 room) {
                                     (uintptr_t)_map_i_staticSegmentRomStart +
                                         ((gMapData->dgnMinimapTexIndexOffset[mapIndex] + room) * MAP_I_TEX_SIZE),
                                     MAP_I_TEX_SIZE, "../z_map_exp.c", 346);
-            R_COMPASS_OFFSET_X = WIDE_MULT(WIDE_MULT(gMapData->roomCompassOffsetX[mapIndex][room], WIDE_GET_16_9), WIDE_GET_RATIO);
+#ifdef WIDESCREEN_N64_MODE true
+            R_COMPASS_OFFSET_X = gMapData->roomCompassOffsetX[mapIndex][room] + 515;
+#else
+            R_COMPASS_OFFSET_X = gMapData->roomCompassOffsetX[mapIndex][room];
+#endif
             R_COMPASS_OFFSET_Y = gMapData->roomCompassOffsetY[mapIndex][room];
             Map_SetFloorPalettesData(play, VREG(30));
             osSyncPrintf("ＭＡＰ 各階ＯＮチェック\n"); // "MAP Individual Floor ON Check"
@@ -265,7 +269,7 @@ void Map_Init(PlayState* play) {
             R_MAP_INDEX = gSaveContext.mapIndex = mapIndex;
             R_COMPASS_SCALE_X = gMapData->owCompassInfo[mapIndex][0];
             R_COMPASS_SCALE_Y = gMapData->owCompassInfo[mapIndex][1];
-            R_COMPASS_OFFSET_X = WIDE_MULT(gMapData->owCompassInfo[mapIndex][2], WIDE_MINIMAP_ARROW_SHIFT);
+            R_COMPASS_OFFSET_X = gMapData->owCompassInfo[mapIndex][2];
             R_COMPASS_OFFSET_Y = gMapData->owCompassInfo[mapIndex][3];
             Map_InitData(play, mapIndex);
             R_OW_MINIMAP_X = gMapData->owMinimapPosX[mapIndex];
