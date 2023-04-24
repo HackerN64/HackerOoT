@@ -165,7 +165,7 @@ void Map_InitData(PlayState* play, s16 room) {
                                     (uintptr_t)_map_i_staticSegmentRomStart +
                                         ((gMapData->dgnMinimapTexIndexOffset[mapIndex] + room) * MAP_I_TEX_SIZE),
                                     MAP_I_TEX_SIZE, "../z_map_exp.c", 346);
-#ifdef WIDESCREEN_N64_MODE true
+#ifdef ENABLE_WIDESCREEN
             R_COMPASS_OFFSET_X = gMapData->roomCompassOffsetX[mapIndex][room] + 515;
 #else
             R_COMPASS_OFFSET_X = gMapData->roomCompassOffsetX[mapIndex][room];
