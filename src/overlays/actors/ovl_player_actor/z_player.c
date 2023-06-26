@@ -4433,7 +4433,7 @@ s32 func_80839034(PlayState* play, Player* this, CollisionPoly* poly, u32 bgId) 
                 if (play->nextEntranceIndex == ENTR_RETURN_GROTTO) {
 #ifdef FIX_GROTTO_CRASH
                     gSaveContext.respawnFlag = 0;
-                    play->nextEntranceIndex = ENTR_SPOT00_0;
+                    play->nextEntranceIndex = ENTR_HYRULE_FIELD_0;
 #else
                     gSaveContext.respawnFlag = 2;
                     play->nextEntranceIndex = gSaveContext.respawn[RESPAWN_MODE_RETURN].entranceIndex;
