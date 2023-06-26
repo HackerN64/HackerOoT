@@ -2839,7 +2839,7 @@ void Interface_DrawItemButtons(PlayState* play) {
 #endif
             // Start Button Texture, Color & Label
             gDPPipeSync(OVERLAY_DISP++);
-            gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 120, 120, 120, interfaceCtx->startAlpha);
+            gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 200, 0, 0, interfaceCtx->startAlpha);
             gSPTextureRectangle(OVERLAY_DISP++,
                 WIDE_N64_MODE(WIDE_INCR((startButtonLeftPos[gSaveContext.language] << 2), WIDE_BTNSTART_SHIFT), -3),
                 17 << 2, WIDE_INCR((startButtonLeftPos[gSaveContext.language] + 22), 40 - (s16)WIDE_GET_4_3) << 2,
