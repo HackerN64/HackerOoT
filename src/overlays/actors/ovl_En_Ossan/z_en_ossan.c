@@ -1877,8 +1877,13 @@ void EnOssan_UpdateCursorAnim(EnOssan* this) {
         }
     }
     this->cursorColorR = ColChanMix(0, 0.0f, t);
+    #ifdef N64_BTN_COLORS
     this->cursorColorG = ColChanMix(80, 80.0f, t);
     this->cursorColorB = ColChanMix(255, 0.0f, t);
+    #else
+    this->cursorColorG = ColChanMix(255, 80.0f, t);
+    this->cursorColorB = ColChanMix(80, 0.0f, t);
+    #endif
     this->cursorColorA = ColChanMix(255, 0.0f, t);
     this->cursorAnimTween = t;
 }
