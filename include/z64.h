@@ -824,6 +824,8 @@ typedef struct PlayState {
     /* 0x007A8 */ LightContext lightCtx;
 #ifdef ENABLE_FRAMERATE_OPTIONS
     /* 0x007B8 */ FrameAdvanceContext frameAdvCtx;
+#else
+    /* 0x007B8 */ u8 padding[8]; // preserves correct offsets
 #endif
     /* 0x007C0 */ CollisionContext colCtx;
     /* 0x01C24 */ ActorContext actorCtx;
