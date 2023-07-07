@@ -1448,7 +1448,7 @@ void FileSelect_LoadGame(GameState* thisx) {
 #else
     gSaveContext.nextCutsceneIndex = 0xFFEF;
     gSaveContext.cutsceneTrigger = 0;
-    gSaveContext.chamberCutsceneNum = 0;
+    gSaveContext.chamberCutsceneNum = CHAMBER_CS_FOREST;
     gSaveContext.nextDayTime = NEXT_TIME_NONE;
 #endif
     gSaveContext.retainWeatherMode = false;

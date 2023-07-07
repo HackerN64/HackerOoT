@@ -961,9 +961,9 @@ void func_80A9877C(EnKo* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-    if ((play->csCtx.state != 0) || (gDebugCamEnabled != 0)) {
+    if ((play->csCtx.state != CS_STATE_IDLE) || (gDebugCamEnabled != 0)) {
 #else
-    if (play->csCtx.state != 0) {
+    if (play->csCtx.state != CS_STATE_IDLE) {
 #endif
         this->interactInfo.trackPos = play->view.eye;
         this->interactInfo.yOffset = 40.0f;
