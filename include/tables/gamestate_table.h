@@ -11,7 +11,6 @@
  * DEFINE_GAMESTATE_INTERNAL should be used for gamestates that aren't an overlay, the first two arguments are the same as for DEFINE_GAMESTATE
  */
 /* 0x00 */ DEFINE_GAMESTATE_INTERNAL(Setup, GAMESTATE_SETUP)
-/* 0x01 */ DEFINE_GAMESTATE(MapSelect, GAMESTATE_MAP_SELECT, select)
 #ifdef ENABLE_MAP_SELECT
 /* 0x01 */ DEFINE_GAMESTATE(MapSelect, GAMESTATE_MAP_SELECT, select)
 #endif
