@@ -227,6 +227,7 @@ distclean: clean assetclean
 	$(MAKE) -C tools distclean
 
 setup:
+	$(MAKE) submodules
 	$(MAKE) -C tools
 	python3 fixbaserom.py
 	python3 extract_baserom.py
@@ -236,8 +237,11 @@ setup:
 test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
 
+submodules:
+	git submodule update --init --recursive
 
-.PHONY: all clean setup test distclean assetclean compress wad rebuildtools
+
+.PHONY: all clean setup test distclean assetclean compress wad rebuildtools submodules
 
 #### Various Recipes ####
 
