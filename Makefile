@@ -238,6 +238,8 @@ test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
 
 submodules:
+	git rm -rf --ignore-unmatch tools/z64compress
+	git submodule add --force https://github.com/z64tools/z64compress tools/z64compress
 	git submodule update --init --recursive
 
 
