@@ -521,7 +521,7 @@ void Health_UpdateBeatingHeart(PlayState* play) {
 #endif
             if (canPlayLowHealthSFX) {
 #ifdef ENABLE_LOW_HEALTH_BEEP
-                func_80078884(NA_SE_SY_HITPOINT_ALARM);
+                Sfx_PlaySfxCentered(NA_SE_SY_HITPOINT_ALARM);
 #endif
             }
         }

@@ -892,9 +892,9 @@ f32 Math_SmoothStepToDegF(f32* pValue, f32 target, f32 fraction, f32 step, f32 m
 s16 Math_SmoothStepToS(s16* pValue, s16 target, s16 scale, s16 step, s16 minStep);
 void Math_ApproachS(s16* pValue, s16 target, s16 scale, s16 step);
 void Color_RGBA8_Copy(Color_RGBA8* dst, Color_RGBA8* src);
-void func_80078884(u16 sfxId);
-void func_800788CC(u16 sfxId);
-void func_80078914(Vec3f* arg0, u16 sfxId);
+void Sfx_PlaySfxCentered(u16 sfxId);
+void Sfx_PlaySfxCentered2(u16 sfxId);
+void Sfx_PlaySfxAtPos(Vec3f* projectedPos, u16 sfxId);
 void Health_InitMeter(PlayState* play);
 void Health_UpdateMeter(PlayState* play);
 void Health_DrawMeter(PlayState* play);
@@ -1396,18 +1396,6 @@ void ListAlloc_Free(ListAlloc* this, void* data);
 void ListAlloc_FreeAll(ListAlloc* this);
 void Main_LogSystemHeap(void);
 void Main(void* arg);
-
-#ifdef ENABLE_SPEEDMETER
-void SpeedMeter_InitImpl(SpeedMeter* this, u32 arg1, u32 y);
-void SpeedMeter_Init(SpeedMeter* this);
-void SpeedMeter_Destroy(SpeedMeter* this);
-void SpeedMeter_DrawTimeEntries(SpeedMeter* this, GraphicsContext* gfxCtx);
-void SpeedMeter_InitAllocEntry(SpeedMeterAllocEntry* this, u32 maxval, u32 val, u16 backColor, u16 foreColor, u32 ulx,
-                               u32 lrx, u32 uly, u32 lry);
-void SpeedMeter_DrawAllocEntry(SpeedMeterAllocEntry* this, GraphicsContext* gfxCtx);
-void SpeedMeter_DrawAllocEntries(SpeedMeter* meter, GraphicsContext* gfxCtx, GameState* state);
-#endif
-
 void SysCfb_Init(s32 n64dd);
 void* SysCfb_GetFbPtr(s32 idx);
 void* SysCfb_GetFbEnd(void);
