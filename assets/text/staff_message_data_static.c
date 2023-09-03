@@ -2,6 +2,8 @@
 
 #include "message_data_fmt.h"
 
+#include "config.h"
+
 #define DEFINE_MESSAGE(textId, type, yPos, staffMessage) \
     const char _message_##textId##_staff[sizeof(staffMessage)] = { staffMessage END };
 
