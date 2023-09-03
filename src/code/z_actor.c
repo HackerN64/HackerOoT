@@ -2996,6 +2996,12 @@ Actor* Actor_Delete(ActorContext* actorCtx, Actor* actor, PlayState* play) {
         Actor_FreeOverlay(overlayEntry);
     }
 
+#ifdef FIX_SRM
+    // this is required to avoid having actor data still loaded in RAM after it's supposed to be deleted
+    // see func_80031B14
+    Actor_Kill(actor);
+#endif
+
     return newHead;
 }
 
