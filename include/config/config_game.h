@@ -53,9 +53,14 @@
 // Increase the size of small elements (improves readability on N64)
 #define WIDESCREEN_N64_MODE true
 
+/**
+ * Automatic GI Object Allocation
+*/
+// #define ENABLE_AUTO_GI_ALLOC
+
 /*
  * Motion Blur
 */
-#define ENABLE_MOTION_BLUR
+// #define ENABLE_MOTION_BLUR
 
 #endif
