@@ -10,7 +10,7 @@
 
 #include "config.h"
 
-#ifdef DEBUG_ROM
+#ifndef RELEASE_ROM
 void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
     Gfx* g;
     GfxPrint* printer;
@@ -159,7 +159,7 @@ void ConsoleLogo_Main(GameState* thisx) {
     ConsoleLogo_Update(this);
     ConsoleLogo_Draw(this);
 
-#ifdef DEBUG_ROM
+#ifndef RELEASE_ROM
     ConsoleLogo_PrintBuildInfo(&POLY_OPA_DISP);
 #endif
 

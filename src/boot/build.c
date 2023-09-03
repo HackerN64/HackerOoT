@@ -13,7 +13,7 @@ char const gBuildDate[] = __DATE__ " " __TIME__;
 char const gBuildDate[] = "???";
 #endif
 
-#ifdef DEBUG_ROM
+#ifndef RELEASE_ROM
 char const gBuildMakeOption[] = "DEBUG";
 #else
 char const gBuildMakeOption[] = "RELEASE";
