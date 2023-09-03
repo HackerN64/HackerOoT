@@ -1448,7 +1448,7 @@ void FileSelect_LoadGame(GameState* thisx) {
 #else
     gSaveContext.nextCutsceneIndex = 0xFFEF;
     gSaveContext.cutsceneTrigger = 0;
-    gSaveContext.chamberCutsceneNum = 0;
+    gSaveContext.chamberCutsceneNum = CHAMBER_CS_FOREST;
     gSaveContext.nextDayTime = NEXT_TIME_NONE;
 #endif
     gSaveContext.retainWeatherMode = false;
@@ -1658,7 +1658,7 @@ void FileSelect_Main(GameState* thisx) {
 
     if (this->stickAdjY < -30) {
         if (this->stickYDir == -1) {
-            this->inputTimerY -= 1;
+            this->inputTimerY--;
             if (this->inputTimerY < 0) {
                 this->inputTimerY = 2;
             } else {
@@ -1670,7 +1670,7 @@ void FileSelect_Main(GameState* thisx) {
         }
     } else if (this->stickAdjY > 30) {
         if (this->stickYDir == 1) {
-            this->inputTimerY -= 1;
+            this->inputTimerY--;
             if (this->inputTimerY < 0) {
                 this->inputTimerY = 2;
             } else {
@@ -1701,7 +1701,7 @@ void FileSelect_Main(GameState* thisx) {
         gDPLoadTextureBlock(POLY_OPA_DISP++, controlsTextures[gSaveContext.language], G_IM_FMT_IA, G_IM_SIZ_8b, 144, 16,
                             0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
                             G_TX_NOLOD, G_TX_NOLOD);
-        gSPTextureRectangle(POLY_OPA_DISP++, 90 << 2, 204 << 2, 234 << 2, 220 << 2, G_TX_RENDERTILE, 0, 0, 1 << 10,
+        gSPTextureRectangle(POLY_OPA_DISP++, WIDE_INCR(90, 10) << 2, 204 << 2, 234 << 2, 220 << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO),
                             1 << 10);
     }
 

@@ -13,7 +13,7 @@
 /*****************
  * config_debug.h
  */
-#ifndef DEBUG_ROM
+#ifdef RELEASE_ROM
     #define DISABLE_DEBUG_FEATURES
     #undef DETERMINISTIC_BUILD
     #undef SKIP_N64_BOOT_LOGO
@@ -72,5 +72,15 @@
 /*****************
  * config_game.h
  */
+
+#ifdef ENABLE_WIDESCREEN
+    #ifdef FORCE_WIDESCREEN
+        #define USE_WIDESCREEN true
+    #else
+        #define USE_WIDESCREEN (gIsUsingWidescreen == true)
+    #endif
+#else
+    #define USE_WIDESCREEN false
+#endif
 
 #endif

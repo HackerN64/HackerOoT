@@ -118,28 +118,15 @@ void Graph_InitTHGA(GraphicsContext* gfxCtx) {
 GameStateOverlay* Graph_GetNextGameState(GameState* gameState) {
     void* gameStateInitFunc = GameState_GetInit(gameState);
 
-    if (gameStateInitFunc == Setup_Init) {
-        return &gGameStateOverlayTable[0];
+    // Generates code to match gameStateInitFunc to a gamestate entry and returns it if found
+#define DEFINE_GAMESTATE_INTERNAL(typeName, enumName) \
+    if (gameStateInitFunc == typeName##_Init) {       \
+        return &gGameStateOverlayTable[enumName];     \
     }
-
-#ifdef ENABLE_MAP_SELECT
-    if (gameStateInitFunc == MapSelect_Init) {
-        return &gGameStateOverlayTable[1];
-    }
-#endif
-
-    if (gameStateInitFunc == ConsoleLogo_Init) {
-        return &gGameStateOverlayTable[2];
-    }
-    if (gameStateInitFunc == Play_Init) {
-        return &gGameStateOverlayTable[3];
-    }
-    if (gameStateInitFunc == TitleSetup_Init) {
-        return &gGameStateOverlayTable[4];
-    }
-    if (gameStateInitFunc == FileSelect_Init) {
-        return &gGameStateOverlayTable[5];
-    }
+#define DEFINE_GAMESTATE(typeName, enumName, name) DEFINE_GAMESTATE_INTERNAL(typeName, enumName)
+#include "tables/gamestate_table.h"
+#undef DEFINE_GAMESTATE
+#undef DEFINE_GAMESTATE_INTERNAL
 
     LOG_ADDRESS("game_init_func", gameStateInitFunc, "../graph.c", 696);
     return NULL;
@@ -429,22 +416,31 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
         SET_NEXT_GAMESTATE(gameState, PreNMI_Init, PreNMIState);
         gameState->running = false;
     }
+
+#ifdef ENABLE_WIDESCREEN
+    if (CHECK_BTN_ALL(gameState->input[0].press.button, BTN_DUP) &&
+        CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_Z | BTN_R)) {
+        gIsUsingWidescreen ^= 1;
+    }
+#endif
 }
 
 void Graph_ThreadEntry(void* arg0) {
     GraphicsContext gfxCtx;
     GameState* gameState;
     u32 size;
-    GameStateOverlay* nextOvl;
+    GameStateOverlay* nextOvl = &gGameStateOverlayTable[GAMESTATE_SETUP];
     GameStateOverlay* ovl;
     char faultMsg[0x50];
-
-    nextOvl = &gGameStateOverlayTable[0];
 
     osSyncPrintf("グラフィックスレッド実行開始\n"); // "Start graphic thread execution"
     Graph_Init(&gfxCtx);
 
-    while (nextOvl) {
+#ifdef ENABLE_WIDESCREEN
+    gIsUsingWidescreen = true;
+#endif
+
+    while (nextOvl != NULL) {
         ovl = nextOvl;
         Overlay_LoadGameState(ovl);
 

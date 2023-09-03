@@ -4433,7 +4433,7 @@ s32 func_80839034(PlayState* play, Player* this, CollisionPoly* poly, u32 bgId) 
                 if (play->nextEntranceIndex == ENTR_RETURN_GROTTO) {
 #ifdef FIX_GROTTO_CRASH
                     gSaveContext.respawnFlag = 0;
-                    play->nextEntranceIndex = ENTR_SPOT00_0;
+                    play->nextEntranceIndex = ENTR_HYRULE_FIELD_0;
 #else
                     gSaveContext.respawnFlag = 2;
                     play->nextEntranceIndex = gSaveContext.respawn[RESPAWN_MODE_RETURN].entranceIndex;
@@ -9693,8 +9693,15 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     Player_SetEquipmentData(play, this);
     this->prevBoots = this->currentBoots;
     Player_InitCommon(this, play, gPlayerSkelHeaders[((void)0, gSaveContext.linkAge)]);
+
+#ifdef ENABLE_AUTO_GI_ALLOC
     this->giObjectSegment =
-        (void*)ALIGN16((uintptr_t)ZeldaArena_MallocDebug(Player_GetGIAllocSize(), __FILE__, __LINE__));
+        (void*)ALIGN16((uintptr_t)ZeldaArena_MallocDebug(Player_GetGIAllocSize(), __BASE_FILE__, __LINE__));
+#else
+    ASSERT(Player_GetGIAllocSize() < 0x3008,
+            "[HackerOoT:ERROR]: GI Object larger than the allocated size.", __BASE_FILE__, __LINE__);
+    this->giObjectSegment = (void*)(((uintptr_t)ZeldaArena_MallocDebug(0x3008, __BASE_FILE__, __LINE__) + 8) & ~0xF);
+#endif
 
     respawnFlag = gSaveContext.respawnFlag;
 
@@ -11972,9 +11979,9 @@ void func_8084CBF4(Player* this, f32 arg1, f32 arg2) {
     if ((this->unk_878 != 0.0f) && (arg2 <= this->skelAnime.curFrame)) {
         if (arg1 < fabsf(this->unk_878)) {
             if (this->unk_878 >= 0.0f) {
-                dir = 1;
+                dir = 1.0f;
             } else {
-                dir = -1;
+                dir = -1.0f;
             }
             temp = dir * arg1;
         } else {
@@ -13102,7 +13109,7 @@ void func_8084F698(Player* this, PlayState* play) {
 void func_8084F710(Player* this, PlayState* play) {
     s32 pad;
 
-    if ((this->unk_84F != 0) && (play->csCtx.curFrame < 0x131)) {
+    if ((this->unk_84F != 0) && (play->csCtx.curFrame < 305)) {
         this->actor.gravity = 0.0f;
         this->actor.velocity.y = 0.0f;
     } else if (D_80853600 < 150.0f) {

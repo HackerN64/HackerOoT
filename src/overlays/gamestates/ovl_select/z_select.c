@@ -57,7 +57,7 @@ void MapSelect_Init(GameState* thisx) {
     }
     R_UPDATE_RATE = 1;
 
-    gSaveContext.linkAge = LINK_AGE_CHILD;
+    gSaveContext.linkAge = BOOT_AGE;
     gSaveContext.cutsceneIndex = 0xFFEF;
 
     // turning the sfx volume back on
