@@ -251,12 +251,12 @@ void EnMag_Update(Actor* thisx, PlayState* play) {
     }
 
     if (this->globalState == MAG_STATE_INITIAL) {
-        if (Flags_GetEnv(play, 3)) {
+        if (CutsceneFlags_Get(play, 3)) {
             this->effectFadeInTimer = 40;
             this->globalState = MAG_STATE_FADE_IN;
         }
     } else if (this->globalState == MAG_STATE_DISPLAY) {
-        if (Flags_GetEnv(play, 4)) {
+        if (CutsceneFlags_Get(play, 4)) {
             this->globalState = MAG_STATE_FADE_OUT;
         }
     }
@@ -269,8 +269,8 @@ void EnMag_DrawTextureI8(Gfx** gfxp, void* texture, s16 texWidth, s16 texHeight,
     gDPLoadTextureBlock(gfx++, texture, G_IM_FMT_I, G_IM_SIZ_8b, texWidth, texHeight, 0, G_TX_NOMIRROR | G_TX_WRAP,
                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
-    gSPTextureRectangle(gfx++, rectLeft << 2, rectTop << 2, (rectLeft + rectWidth) << 2, (rectTop + rectHeight) << 2,
-                        G_TX_RENDERTILE, 0, 0, dsdx, dtdy);
+    gSPTextureRectangle(gfx++, WIDE_INCR(rectLeft, (u16)WIDE_GET_4_3) << 2, rectTop << 2, (rectLeft + rectWidth) << 2, (rectTop + rectHeight) << 2,
+                        G_TX_RENDERTILE, 0, 0, WIDE_DIV(dsdx, WIDE_GET_RATIO), dtdy);
 
     *gfxp = gfx;
 }
@@ -292,8 +292,8 @@ void EnMag_DrawEffectTextures(Gfx** gfxp, void* maskTex, void* effectTex, s16 ma
         gDPSetTileSize(gfx++, 1, 0, this->effectScroll & 0x7F, 31 << 2, (31 << 2) + (this->effectScroll & 0x7F));
     }
 
-    gSPTextureRectangle(gfx++, rectLeft << 2, rectTop << 2, (rectLeft + rectWidth) << 2, (rectTop + rectHeight) << 2,
-                        G_TX_RENDERTILE, 0, 0, dsdx, dtdy);
+    gSPTextureRectangle(gfx++, WIDE_INCR(rectLeft, (u16)(WIDE_GET_16_9 * 10.0f)) << 2, rectTop << 2, (rectLeft + rectWidth) << 2, (rectTop + rectHeight) << 2,
+                        G_TX_RENDERTILE, 0, 0, WIDE_DIV(dsdx, WIDE_GET_RATIO), dtdy);
 
     *gfxp = gfx;
 }
@@ -335,7 +335,7 @@ void EnMag_DrawImageRGBA32(Gfx** gfxp, s16 centerX, s16 centerY, u8* source, u32
         gDPLoadTile(gfx++, G_TX_LOADTILE, 0, 0, (width - 1) << 2, (textureHeight - 1) << 2);
 
         gSPTextureRectangle(gfx++, rectLeft << 2, rectTop << 2, (rectLeft + (s32)width) << 2,
-                            (rectTop + textureHeight) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
+                            (rectTop + textureHeight) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
         gDPLoadSync(gfx++);
 
         curTexture += textureSize;
@@ -369,7 +369,7 @@ void EnMag_DrawCharTexture(Gfx** gfxp, u8* texture, s32 rectLeft, s32 rectTop) {
                            G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
     gSPTextureRectangle(gfx++, rectLeft << 2, rectTop << 2, (rectLeft + YREG(2)) << 2, (rectTop + YREG(2)) << 2,
-                        G_TX_RENDERTILE, 0, 0, YREG(0), YREG(0));
+                        G_TX_RENDERTILE, 0, 0, WIDE_DIV(YREG(0), WIDE_GET_RATIO), YREG(0));
 
     *gfxp = gfx;
 }
@@ -416,9 +416,9 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxp) {
 
     if ((s16)this->effectPrimLodFrac != 0) {
         for (k = 0, i = 0, rectTop = 0; i < 3; i++, rectTop += 64) {
-            for (j = 0, rectLeft = 56; j < 3; j++, k++, rectLeft += 64) {
-                EnMag_DrawEffectTextures(&gfx, effectMaskTextures[k], gTitleFlameEffectTex, 64, 64, 32, 32, rectLeft,
-                                         rectTop, 64, 64, 1024, 1024, 1, 1, k, this);
+            for (j = 0, rectLeft = WIDE_INCR(56, (u16)(WIDE_GET_RATIO * 10.0f)); j < 3; j++, k++, rectLeft += WIDE_INCR(64, -(u16)(WIDE_GET_16_9 * 10.0f))) {
+                EnMag_DrawEffectTextures(&gfx, effectMaskTextures[k], gTitleFlameEffectTex, 64, 64, 32, 32,
+                    rectLeft, rectTop, 64, 64, 1024, 1024, 1, 1, k, this);
             }
         }
     }
@@ -426,7 +426,7 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxp) {
     gDPSetPrimColor(gfx++, 0, 0, 255, 255, 255, (s16)this->mainAlpha);
 
     if ((s16)this->mainAlpha != 0) {
-        EnMag_DrawImageRGBA32(&gfx, 152, 100, (u8*)gTitleZeldaShieldLogoMQTex, 160, 160);
+        EnMag_DrawImageRGBA32(&gfx, WIDE_INCR(152, 20), 100, (u8*)gTitleZeldaShieldLogoMQTex, 160, 160);
     }
 
     Gfx_SetupDL_39Ptr(&gfx);
@@ -461,7 +461,7 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxp) {
         gDPPipeSync(gfx++);
         gDPSetPrimColor(gfx++, 0, 0, 255, 255, 255, (s16)this->subAlpha);
 
-        EnMag_DrawImageRGBA32(&gfx, 174, 145, (u8*)gTitleMasterQuestSubtitleTex, 128, 32);
+        EnMag_DrawImageRGBA32(&gfx, WIDE_INCR(174, 10), 145, (u8*)gTitleMasterQuestSubtitleTex, 128, 32);
     }
 
     Gfx_SetupDL_39Ptr(&gfx);
@@ -477,7 +477,7 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxp) {
                             G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
                             G_TX_NOLOD, G_TX_NOLOD);
 
-        gSPTextureRectangle(gfx++, 78 << 2, 198 << 2, 238 << 2, 214 << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
+        gSPTextureRectangle(gfx++, WIDE_INCR((78 << 2), (u16)(WIDE_GET_RATIO * 100.0f)), 198 << 2, 238 << 2, 214 << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
     }
 
     if (gSaveContext.fileNum == 0xFEDC) {
@@ -493,13 +493,13 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxp) {
                           0);
         gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, textAlpha);
 
-        rectLeft = VREG(19) + 1;
+        rectLeft = WIDE_INCR(VREG(19) + 1, (WIDE_GET_16_9 * 10.0f));
         for (i = 0; i < ARRAY_COUNT(noControllerFontIndices); i++) {
             EnMag_DrawCharTexture(&gfx, font->fontBuf + noControllerFontIndices[i] * FONT_CHAR_TEX_SIZE, rectLeft,
                                   YREG(10) + 172);
-            rectLeft += VREG(21);
+            rectLeft += WIDE_MULT(VREG(21), WIDE_GET_RATIO);
             if (i == 1) {
-                rectLeft += VREG(23);
+                rectLeft += WIDE_MULT(VREG(23), WIDE_GET_RATIO);
             }
         }
 
@@ -507,13 +507,13 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxp) {
         gDPPipeSync(gfx++);
         gDPSetPrimColor(gfx++, 0, 0, 100, 255, 255, textAlpha);
 
-        rectLeft = VREG(19);
+        rectLeft = WIDE_INCR(VREG(19) + 1, (WIDE_GET_16_9 * 10.0f));
         for (i = 0; i < ARRAY_COUNT(noControllerFontIndices); i++) {
             EnMag_DrawCharTexture(&gfx, font->fontBuf + noControllerFontIndices[i] * FONT_CHAR_TEX_SIZE, rectLeft,
                                   YREG(10) + 171);
-            rectLeft += VREG(21);
+            rectLeft += WIDE_MULT(VREG(21), WIDE_GET_RATIO);
             if (i == 1) {
-                rectLeft += VREG(23);
+                rectLeft += WIDE_MULT(VREG(23), WIDE_GET_RATIO);
             }
         }
     } else if (this->copyrightAlpha >= 200.0f) {
@@ -529,13 +529,13 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxp) {
                           0);
         gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, textAlpha);
 
-        rectLeft = YREG(7) + 1;
+        rectLeft = WIDE_INCR(YREG(7) + 1, (WIDE_GET_4_3 * 10.0f));
         for (i = 0; i < ARRAY_COUNT(pressStartFontIndices); i++) {
             EnMag_DrawCharTexture(&gfx, font->fontBuf + pressStartFontIndices[i] * FONT_CHAR_TEX_SIZE, rectLeft,
                                   YREG(10) + 172);
-            rectLeft += YREG(8);
+            rectLeft += WIDE_MULT(YREG(8), WIDE_GET_RATIO);
             if (i == 4) {
-                rectLeft += YREG(9);
+                rectLeft += WIDE_MULT(YREG(9), WIDE_GET_RATIO);
             }
         }
 
@@ -543,13 +543,13 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxp) {
         gDPPipeSync(gfx++);
         gDPSetPrimColor(gfx++, 0, 0, YREG(4), YREG(5), YREG(6), textAlpha);
 
-        rectLeft = YREG(7);
+        rectLeft = WIDE_INCR(YREG(7) + 1, (WIDE_GET_4_3 * 10.0f));
         for (i = 0; i < ARRAY_COUNT(pressStartFontIndices); i++) {
             EnMag_DrawCharTexture(&gfx, font->fontBuf + pressStartFontIndices[i] * FONT_CHAR_TEX_SIZE, rectLeft,
                                   YREG(10) + 171);
-            rectLeft += YREG(8);
+            rectLeft += WIDE_MULT(YREG(8), WIDE_GET_RATIO);
             if (i == 4) {
-                rectLeft += YREG(9);
+                rectLeft += WIDE_MULT(YREG(9), WIDE_GET_RATIO);
             }
         }
     }

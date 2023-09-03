@@ -25,8 +25,8 @@ s32 FrameAdvance_Update(FrameAdvanceContext* frameAdvCtx, Input* input) {
         frameAdvCtx->enabled = !frameAdvCtx->enabled;
     }
 
-    if (!frameAdvCtx->enabled || ((checkR && CHECK_BTN_ALL(input->press.button, FA_CONTROL)) ||
-                                (checkR && (++frameAdvCtx->timer >= 9)))) {
+    if (!frameAdvCtx->enabled ||
+        ((checkR && CHECK_BTN_ALL(input->press.button, FA_CONTROL)) || (checkR && (++frameAdvCtx->timer >= 9)))) {
         frameAdvCtx->timer = 0;
         return true;
     }

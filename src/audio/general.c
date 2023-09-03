@@ -1230,10 +1230,14 @@ f32 D_8016B7D8;
 s8 D_8016B7DC;
 f32 D_8016B7E0;
 u16 D_8016B7E4;
+
+#ifdef ENABLE_AUDIO_DEBUGGER
 struct {
     char str[5];
     u16 num;
 } sAudioScrPrtBuf[SCROLL_PRINT_BUF_SIZE];
+#endif
+
 u8 sRiverSoundMainBgmVol;
 u8 sRiverSoundMainBgmCurrentVol;
 u8 sRiverSoundMainBgmLower;
@@ -2263,7 +2267,7 @@ void AudioOcarina_Update(void) {
     AudioOcarina_UpdateRecordingStaff();
 }
 
-void AudioOcarina_PlayLongScarecrowAfterCredits(void) {
+void AudioOcarina_PlayLongScarecrowSong(void) {
     static u8 sScarecrowAfterCreditsState = 0;
     static u8 sScarecrowAfterCreditsIntrumentId = OCARINA_INSTRUMENT_DEFAULT;
     static u16 sScarecrowAfterCreditsTimer = 1200;

@@ -1133,7 +1133,7 @@ s32 EnOssan_HasPlayerSelectedItem(PlayState* play, EnOssan* this, Input* input) 
                 case SI_MILK_BOTTLE:
                     func_80078884(NA_SE_SY_DECIDE);
                     this->drawCursor = 0;
-                    this->stateFlag = OSSAN_STATE_SELECT_ITEM_MILK_BOTTLE;
+                    this->stateFlag = OSSAN_STATE_SELECT_ITEM_BOTTLE_MILK_FULL;
                     return true;
                 case SI_WEIRD_EGG:
                     func_80078884(NA_SE_SY_DECIDE);
@@ -1318,7 +1318,7 @@ void EnOssan_GiveItemWithFanfare(PlayState* play, EnOssan* this) {
     Player* player = GET_PLAYER(play);
 
     osSyncPrintf("\n" VT_FGCOL(YELLOW) "初めて手にいれた！！" VT_RST "\n\n");
-    func_8002F434(&this->actor, play, this->shelfSlots[this->cursorIndex]->getItemId, 120.0f, 120.0f);
+    Actor_OfferGetItem(&this->actor, play, this->shelfSlots[this->cursorIndex]->getItemId, 120.0f, 120.0f);
     play->msgCtx.msgMode = MSGMODE_TEXT_CLOSING;
     play->msgCtx.stateTimer = 4;
     player->stateFlags2 &= ~PLAYER_STATE2_29;
@@ -1649,7 +1649,7 @@ void EnOssan_State_GiveItemWithFanfare(EnOssan* this, PlayState* play, Player* p
         this->stateFlag = OSSAN_STATE_ITEM_PURCHASED;
         return;
     }
-    func_8002F434(&this->actor, play, this->shelfSlots[this->cursorIndex]->getItemId, 120.0f, 120.0f);
+    Actor_OfferGetItem(&this->actor, play, this->shelfSlots[this->cursorIndex]->getItemId, 120.0f, 120.0f);
 }
 
 void EnOssan_State_ItemPurchased(EnOssan* this, PlayState* play, Player* player) {
@@ -1840,7 +1840,8 @@ void EnOssan_UpdateItemSelectedProperty(EnOssan* this) {
 
     for (i = 0; i < 8; i++) {
         if (temp_a1[0] != NULL) {
-            if (this->stateFlag != OSSAN_STATE_SELECT_ITEM && this->stateFlag != OSSAN_STATE_SELECT_ITEM_MILK_BOTTLE &&
+            if (this->stateFlag != OSSAN_STATE_SELECT_ITEM &&
+                this->stateFlag != OSSAN_STATE_SELECT_ITEM_BOTTLE_MILK_FULL &&
                 this->stateFlag != OSSAN_STATE_SELECT_ITEM_WEIRD_EGG &&
                 this->stateFlag != OSSAN_STATE_SELECT_ITEM_UNIMPLEMENTED &&
                 this->stateFlag != OSSAN_STATE_SELECT_ITEM_BOMBS && this->stateFlag != OSSAN_STATE_SELECT_ITEM_MASK &&
@@ -2209,7 +2210,7 @@ void EnOssan_MainActionFunc(EnOssan* this, PlayState* play) {
         sStateFunc[this->stateFlag](this, play, player);
     }
 
-    Actor_MoveForward(&this->actor);
+    Actor_MoveXZGravity(&this->actor);
     Actor_UpdateBgCheckInfo(play, &this->actor, 26.0f, 10.0f, 0.0f, UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2);
     Actor_SetFocus(&this->actor, 90.0f);
     Actor_SetScale(&this->actor, sShopkeeperScale[this->actor.params]);
@@ -2252,12 +2253,12 @@ void EnOssan_DrawCursor(PlayState* play, EnOssan* this, f32 x, f32 y, f32 z, u8 
         gDPLoadTextureBlock_4b(OVERLAY_DISP++, gSelectionCursorTex, G_IM_FMT_IA, 16, 16, 0, G_TX_MIRROR | G_TX_WRAP,
                                G_TX_MIRROR | G_TX_WRAP, 4, 4, G_TX_NOLOD, G_TX_NOLOD);
         w = 16.0f * z;
-        ulx = (x - w) * 4.0f;
+        ulx = WIDE_INCR(((x - w) * 4.0f), 25);
         uly = (y - w) * 4.0f;
-        lrx = (x + w) * 4.0f;
+        lrx = WIDE_INCR(((x + w) * 4.0f), -22);
         lry = (y + w) * 4.0f;
         dsdx = (1.0f / z) * 1024.0f;
-        gSPTextureRectangle(OVERLAY_DISP++, ulx, uly, lrx, lry, G_TX_RENDERTILE, 0, 0, dsdx, dsdx);
+        gSPTextureRectangle(OVERLAY_DISP++, ulx, uly, lrx, lry, G_TX_RENDERTILE, 0, 0, WIDE_DIV(dsdx, WIDE_GET_RATIO), dsdx);
     }
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4215);
 }

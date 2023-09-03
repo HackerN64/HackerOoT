@@ -5,6 +5,11 @@
  * GAME SETTINGS *
  *****************/
 
+/**
+ * Enable mempak-related code
+ */
+// #define ENABLE_MEMPAK
+
 // Configure dialogue print speed (1 is vanilla)
 #define DIALOGUE_PRINT_SPEED 2
 
@@ -30,8 +35,27 @@
  */
 // #define FW_SPLIT_AGE
 
-/* Apply the anti-aliasing filter for the background of the pause menu. This adds a delay when pausing. */
-//#define VANILLA_PAUSE_DELAY
+/**
+ * Applies the anti-aliasing filter for the background of the pause menu.
+ * Note: this adds a significant delay when pausing.
+*/
+// #define ENABLE_PAUSE_BG_AA
 
+/**
+ * Widescreen mode
+ * Note: pre-rendered scenes with the fixed camera mode won't re-scale properly
+*/
+#define ENABLE_WIDESCREEN
+
+// Force widescreen mode regardless of SaveContext
+// #define FORCE_WIDESCREEN
+
+// Increase the size of small elements (improves readability on N64)
+#define WIDESCREEN_N64_MODE true
+
+/**
+ * Automatic GI Object Allocation
+*/
+// #define ENABLE_AUTO_GI_ALLOC
 
 #endif
