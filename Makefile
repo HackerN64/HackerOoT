@@ -127,6 +127,9 @@ FADO       := tools/fado/fado.elf
 
 ifeq ($(COMPILER),gcc)
   OPTFLAGS := -Os -ffast-math -fno-unsafe-math-optimizations
+  ifeq ($(DEBUG_BUILD),1)
+    OPTFLAGS := -Og -g -g3 -ffast-math -fno-unsafe-math-optimizations
+  endif
 else
   OPTFLAGS := -O2
 endif

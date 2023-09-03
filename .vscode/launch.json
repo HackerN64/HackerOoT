@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Ares GDB (Linux)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/HackerOoT.elf",
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+            "miDebuggerServerAddress": "tcp:172.20.176.1:9123",
+        },
+        {
+            "name": "Ares GDB (Windows)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "C:\\Users\\Yanis\\Desktop\\HackerOoT.elf",
+            "cwd": "C:\\Users\\Yanis\\Desktop\\",
+            "stopAtEntry": true,
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/mnt/c/msys64/mingw64/bin/gdb-multiarch.exe",
+            "miDebuggerServerAddress": "[::1]:9123",
+        }
+    ]
+}

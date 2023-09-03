@@ -4,7 +4,6 @@ __pycache__/
 .DS_Store
 
 # Text editor remnants
-.vscode/
 .vs/
 .idea/
 CMakeLists.txt
@@ -56,3 +55,5 @@ graphs/
 
 # Per-user configuration
 .python-version
+*.bs1
+*.ram
