@@ -2519,7 +2519,7 @@ void KaleidoScope_Update(PlayState* play) {
             pauseCtx->stickAdjX = input->rel.stick_x;
             pauseCtx->stickAdjY = input->rel.stick_y;
             KaleidoScope_UpdateCursorSize(play);
-            KaleidoScope_HandlePageToggles(pauseCtx, input, &play->state.input[INV_EDITOR_CONTORLLER_PORT]);
+            KaleidoScope_HandlePageToggles(pauseCtx, input, &play->state.input[INV_EDITOR_CONTROLLER_PORT]);
         } else if ((pauseCtx->pageIndex == PAUSE_QUEST) && ((pauseCtx->unk_1E4 < 3) || (pauseCtx->unk_1E4 == 5))) {
             KaleidoScope_UpdateCursorSize(play);
         }

@@ -40,7 +40,7 @@ void FlagSet_Update(PlayState* play) {
     };
 
     GraphicsContext* gfxCtx = play->state.gfxCtx;
-    Input* input = &play->state.input[EVENT_EDITOR_CONTORLLER_PORT];
+    Input* input = &play->state.input[EVENT_EDITOR_CONTROLLER_PORT];
     Gfx* gfx;
     Gfx* polyOpa;
 

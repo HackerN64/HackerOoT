@@ -13,7 +13,7 @@ void KaleidoSetup_Update(PlayState* play) {
     Input* input = &play->state.input[0];
 
 #ifdef ENABLE_EVENT_EDITOR
-    Input* evEditorInput = &play->state.input[EVENT_EDITOR_CONTORLLER_PORT];
+    Input* evEditorInput = &play->state.input[EVENT_EDITOR_CONTROLLER_PORT];
 #endif
 
     u8 canUpdate =

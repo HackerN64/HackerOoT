@@ -73,7 +73,7 @@
 
 /**** [MAP SELECT CONTROLS] ****/
 // Controller port to use
-#define MAP_SELECT_CONTORLLER_PORT CONTROLLER_PORT_1
+#define MAP_SELECT_CONTROLLER_PORT CONTROLLER_PORT_1
 
 // Set to true to use a button combo
 #define MAP_SELECT_BTN_COMBO true
@@ -86,7 +86,7 @@
 
 /**** [INVENTORY EDITOR CONTROLS] ****/
 // Controller port to use
-#define INV_EDITOR_CONTORLLER_PORT CONTROLLER_PORT_1
+#define INV_EDITOR_CONTROLLER_PORT CONTROLLER_PORT_1
 
 // Set to true to use a button combo
 #define INV_EDITOR_BTN_COMBO false
@@ -99,7 +99,7 @@
 
 /**** [EVENT EDITOR CONTROLS] ****/
 // Controller port to use
-#define EVENT_EDITOR_CONTORLLER_PORT CONTROLLER_PORT_1
+#define EVENT_EDITOR_CONTROLLER_PORT CONTROLLER_PORT_1
 
 // Set to true to use a button combo
 #define EVENT_EDITOR_BTN_COMBO true
