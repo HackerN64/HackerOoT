@@ -1816,9 +1816,12 @@ u8 Item_Give(PlayState* play, u8 item) {
             }
         }
     } else if ((item >= ITEM_WEIRD_EGG) && (item <= ITEM_CLAIM_CHECK)) {
+#ifndef FIX_ANNOYING_GLITCH
+        // this conflicts with the flag used for the deku nut upgrade from the theater
         if (item == ITEM_POACHERS_SAW) {
             SET_ITEMGETINF(ITEMGETINF_1F);
         }
+#endif
 
         temp = INV_CONTENT(item);
         INV_CONTENT(item) = item;
