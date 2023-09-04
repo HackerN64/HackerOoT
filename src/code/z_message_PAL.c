@@ -3037,7 +3037,7 @@ void Message_Draw(PlayState* play) {
 #ifdef ENABLE_MSG_DEBUGGER
     watchVar = gSaveContext.save.info.scarecrowLongSongSet;
     Message_DrawDebugVariableChanged(&watchVar, play->state.gfxCtx);
-    if (BREG(0) != 0 && play->msgCtx.textId != 0) {
+    if (play->enableMsgDbg && play->msgCtx.textId != 0) {
         plusOne = Graph_GfxPlusOne(polyOpaP = POLY_OPA_DISP);
         gSPDisplayList(OVERLAY_DISP++, plusOne);
         Message_DrawDebugText(play, &plusOne);
@@ -3094,8 +3094,8 @@ void Message_Update(PlayState* play) {
 #endif
 
 #ifdef ENABLE_MSG_DEBUGGER
-    if (BREG(0) != 0) {
-        if (CHECK_BTN_ALL(input->press.button, BTN_DDOWN) && CHECK_BTN_ALL(input->cur.button, BTN_L)) {
+    if (play->enableMsgDbg) {
+        if (CHECK_BTN_COMBO(MSGDBG_BTN_COMBO, &play->state.input[MSGDBG_CONTROLLER_PORT], MSGDBG_BTN_HOLD_FOR_COMBO, MSGDBG_OPEN_TEXTBOX)) {
             osSyncPrintf("msgno=%d\n", D_80153D78);
             Message_StartTextbox(play, R_MESSAGE_DEBUGGER_TEXTID, NULL);
             D_80153D78 = (D_80153D78 + 1) % 10;

@@ -45,7 +45,7 @@
 // #define ENABLE_FRAMERATE_OPTIONS
 
 /**** [MAP SELECT] ****/
-// #define ENABLE_MAP_SELECT
+#define ENABLE_MAP_SELECT
 
 /**** [DEBUG FILE 1] ****/
 #define ENABLE_DEBUG_SAVE
@@ -79,13 +79,13 @@
 // #define ENABLE_CAMERA_DEBUGGER
 
 /**** [AUDIO DEBUGGER] ****/
-// #define ENABLE_AUDIO_DEBUGGER
+// #define ENABLE_AUDIO_DEBUGGER // TODO: controls
 
 /**** [ACTOR DEBUGGER] ****/
 // #define ENABLE_ACTOR_DEBUGGER
 
 /**** [MESSAGES DEBUGGER] ****/
-// #define ENABLE_MSG_DEBUGGER
+// #define ENABLE_MSG_DEBUGGER // TODO: a better debugger, for now use the regs editor to change the text id (YREG(79))
 
 /**** [SPEEDMETER] ****/
 // This looks like a profiler

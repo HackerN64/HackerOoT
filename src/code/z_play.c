@@ -457,6 +457,10 @@ void Play_Init(GameState* thisx) {
         // Presumably the ROM was larger at a previous point in development when this debug feature was used.
         DmaMgr_DmaRomToRam(0x03FEB000, gDebugCutsceneScript, sizeof(sDebugCutsceneScriptBuf));
     }
+
+#ifdef ENABLE_MSG_DEBUGGER
+    this->enableMsgDbg = false;
+#endif
 }
 
 void Play_Update(PlayState* this) {
@@ -1065,6 +1069,36 @@ skip:
     PLAY_LOG(3816);
     Environment_Update(this, &this->envCtx, &this->lightCtx, &this->pauseCtx, &this->msgCtx, &this->gameOverCtx,
                        this->state.gfxCtx);
+
+#ifdef ENABLE_ACTOR_DEBUGGER
+    if (CHECK_BTN_COMBO(ACTORDBG_BTN_COMBO,
+        &this->state.input[ACTORDBG_CONTROLLER_PORT], ACTORDBG_BTN_HOLD_FOR_COMBO, ACTORDBG_TOGGLE)) {
+        BREG(0) ^= 1;
+    }
+
+    if (CHECK_BTN_COMBO(ACTORDBG_BTN_COMBO,
+        &this->state.input[ACTORDBG_CONTROLLER_PORT], ACTORDBG_BTN_HOLD_FOR_COMBO, ACTORDBG_DECR_PATH_IDX) && BREG(1) > 0) {
+        BREG(1)--;
+    }
+
+    if (CHECK_BTN_COMBO(ACTORDBG_BTN_COMBO,
+        &this->state.input[ACTORDBG_CONTROLLER_PORT], ACTORDBG_BTN_HOLD_FOR_COMBO, ACTORDBG_INCR_PATH_IDX)) {
+        BREG(1)++;
+    }
+
+    if (ACTORDBG_PRINT_INFOS) {
+        BREG(5) = 1;
+    } else {
+        BREG(5) = 0;
+    }
+#endif
+
+#ifdef ENABLE_MSG_DEBUGGER
+    if (CHECK_BTN_COMBO(MSGDBG_BTN_COMBO,
+        &this->state.input[MSGDBG_CONTROLLER_PORT], MSGDBG_BTN_HOLD_FOR_COMBO, MSGDBG_OPEN_TEXTBOX)) {
+        this->enableMsgDbg ^= 1;
+    }
+#endif
 }
 
 void Play_DrawOverlayElements(PlayState* this) {

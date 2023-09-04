@@ -393,9 +393,10 @@ void KaleidoScope_SwitchPage(PauseContext* pauseCtx, u8 pt) {
     Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_ALL);
 }
 
-void KaleidoScope_HandlePageToggles(PauseContext* pauseCtx, Input* input) {
+void KaleidoScope_HandlePageToggles(PauseContext* pauseCtx, Input* input, Input* invEditorInput) {
 #ifdef ENABLE_INV_EDITOR
-    if ((pauseCtx->debugState == 0) && CHECK_BTN_ALL(input->press.button, BTN_L)) {
+    if ((pauseCtx->debugState == 0) &&
+        CHECK_BTN_COMBO(INV_EDITOR_BTN_COMBO, invEditorInput, INV_EDITOR_BTN_HOLD_FOR_COMBO, BTN_L)) {
         pauseCtx->debugState = 1;
         return;
     }
@@ -2518,7 +2519,7 @@ void KaleidoScope_Update(PlayState* play) {
             pauseCtx->stickAdjX = input->rel.stick_x;
             pauseCtx->stickAdjY = input->rel.stick_y;
             KaleidoScope_UpdateCursorSize(play);
-            KaleidoScope_HandlePageToggles(pauseCtx, input);
+            KaleidoScope_HandlePageToggles(pauseCtx, input, &play->state.input[INV_EDITOR_CONTROLLER_PORT]);
         } else if ((pauseCtx->pageIndex == PAUSE_QUEST) && ((pauseCtx->unk_1E4 < 3) || (pauseCtx->unk_1E4 == 5))) {
             KaleidoScope_UpdateCursorSize(play);
         }

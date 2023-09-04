@@ -12,14 +12,16 @@ void KaleidoSetup_Update(PlayState* play) {
     PauseContext* pauseCtx = &play->pauseCtx;
     Input* input = &play->state.input[0];
 
-    u8 canUpdate = (
-        play->gameOverCtx.state == GAMEOVER_INACTIVE &&
-        play->transitionTrigger == TRANS_TRIGGER_OFF && play->transitionMode == TRANS_MODE_OFF &&
-        gSaveContext.save.cutsceneIndex < 0xFFF0 && gSaveContext.nextCutsceneIndex < 0xFFF0 && !Play_InCsMode(play) &&
-        play->shootingGalleryStatus <= 1 && gSaveContext.magicState != MAGIC_STATE_STEP_CAPACITY &&
-        gSaveContext.magicState != MAGIC_STATE_FILL &&
-        (play->sceneId != SCENE_BOMBCHU_BOWLING_ALLEY || !Flags_GetSwitch(play, 0x38))
-    );
+#ifdef ENABLE_EVENT_EDITOR
+    Input* evEditorInput = &play->state.input[EVENT_EDITOR_CONTROLLER_PORT];
+#endif
+
+    u8 canUpdate =
+        (play->gameOverCtx.state == GAMEOVER_INACTIVE && play->transitionTrigger == TRANS_TRIGGER_OFF &&
+         play->transitionMode == TRANS_MODE_OFF && gSaveContext.save.cutsceneIndex < 0xFFF0 &&
+         gSaveContext.nextCutsceneIndex < 0xFFF0 && !Play_InCsMode(play) && play->shootingGalleryStatus <= 1 &&
+         gSaveContext.magicState != MAGIC_STATE_STEP_CAPACITY && gSaveContext.magicState != MAGIC_STATE_FILL &&
+         (play->sceneId != SCENE_BOMBCHU_BOWLING_ALLEY || !Flags_GetSwitch(play, 0x38)));
 
 #ifdef ENABLE_INV_EDITOR
     canUpdate = (pauseCtx->state == 0 && pauseCtx->debugState == 0) && canUpdate;
@@ -30,10 +32,8 @@ void KaleidoSetup_Update(PlayState* play) {
     if (canUpdate) {
 
 #ifdef ENABLE_EVENT_EDITOR
-        if (CHECK_BTN_ALL(input->cur.button, BTN_L) && CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
-            if (BREG(0)) {
-                pauseCtx->debugState = 3;
-            }
+        if (CHECK_BTN_COMBO(EVENT_EDITOR_BTN_COMBO, evEditorInput, EVENT_EDITOR_BTN_HOLD_FOR_COMBO, EVENT_EDITOR_OPEN)) {
+            pauseCtx->debugState = 3;
         } else if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
 #else
         if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
