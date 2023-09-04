@@ -246,7 +246,7 @@ void Message_DrawTextChar(PlayState* play, void* textureImage, Gfx** p) {
                             sCharTexScale);
     }
 
-    gDPPipeSync(gfx++);
+    //gDPPipeSync(gfx++);
     gDPSetPrimColor(gfx++, 0, 0, msgCtx->textColorR, msgCtx->textColorG, msgCtx->textColorB, msgCtx->textColorAlpha);
     gSPTextureRectangle(gfx++, x << 2, y << 2, (x + WIDE_MULT(sCharTexSize, WIDE_GET_RATIO)) << 2, (y + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0,
                         WIDE_DIV(sCharTexScale, WIDE_GET_RATIO), sCharTexScale);
@@ -1022,6 +1022,7 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
                     (R_TEXTBOX_BG_YPOS + sTextboxBackgroundYOffsets[msgCtx->textboxBackgroundYOffsetIdx] + 48) << 2,
                     G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
 
+                gDPLoadSync(gfx++);
                 gDPLoadTextureBlock_4b(gfx++, msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + 0x900, G_IM_FMT_I, 96,
                                        48, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
                                        G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -1044,6 +1045,7 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
                 gSPTextureRectangle(gfx++, msgCtx->textPosX << 2, R_TEXTBOX_BG_YPOS << 2, (msgCtx->textPosX + 96) << 2,
                                     (R_TEXTBOX_BG_YPOS + 48) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
 
+                gDPLoadSync(gfx++);
                 gDPLoadTextureBlock_4b(gfx++, (msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + 0x900), G_IM_FMT_I,
                                        96, 48, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
                                        G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -1250,15 +1252,16 @@ void Message_Decode(PlayState* play) {
             break;
         } else if (curChar == MESSAGE_NAME) {
             // Substitute the player name control character for the file's player name.
-            for (playerNameLen = ARRAY_COUNT(gSaveContext.playerName); playerNameLen > 0; playerNameLen--) {
-                if (gSaveContext.playerName[playerNameLen - 1] != 0x3E) {
+            for (playerNameLen = ARRAY_COUNT(gSaveContext.save.info.playerData.playerName); playerNameLen > 0;
+                 playerNameLen--) {
+                if (gSaveContext.save.info.playerData.playerName[playerNameLen - 1] != 0x3E) {
                     break;
                 }
             }
             // "Name"
             osSyncPrintf("\n名前 ＝ ");
             for (i = 0; i < playerNameLen; i++) {
-                curChar2 = gSaveContext.playerName[i];
+                curChar2 = gSaveContext.save.info.playerData.playerName[i];
                 if (curChar2 == 0x3E) {
                     curChar2 = ' ';
                 } else if (curChar2 == 0x40) {
@@ -1363,9 +1366,9 @@ void Message_Decode(PlayState* play) {
             // Convert the current number of collected gold skulltula tokens to digits and
             //  add the digits to the decoded buffer in place of the control character.
             // "Total number of gold stars"
-            osSyncPrintf("\n金スタ合計数 ＝ %d", gSaveContext.inventory.gsTokens);
+            osSyncPrintf("\n金スタ合計数 ＝ %d", gSaveContext.save.info.inventory.gsTokens);
             digits[0] = digits[1] = 0;
-            digits[2] = gSaveContext.inventory.gsTokens;
+            digits[2] = gSaveContext.save.info.inventory.gsTokens;
 
             while (digits[2] >= 100) {
                 digits[0]++;
@@ -1504,7 +1507,7 @@ void Message_Decode(PlayState* play) {
             // "Zelda time"
             osSyncPrintf("\nゼルダ時間 ＝ ");
             digits[0] = 0;
-            timeInSeconds = gSaveContext.dayTime * (24.0f * 60.0f / 0x10000);
+            timeInSeconds = gSaveContext.save.dayTime * (24.0f * 60.0f / 0x10000);
 
             digits[1] = timeInSeconds / 60.0f;
             while (digits[1] >= 10) {
@@ -1618,7 +1621,7 @@ void Message_OpenText(PlayState* play, u16 textId) {
     if (textId == 0xC2 || textId == 0xFA) {
         // Increments text id based on piece of heart count, assumes the piece of heart text is all
         // in order and that you don't have more than the intended amount of heart pieces.
-        textId += (gSaveContext.inventory.questItems & 0xF0000000 & 0xF0000000) >> QUEST_HEART_PIECE_COUNT;
+        textId += (gSaveContext.save.info.inventory.questItems & 0xF0000000 & 0xF0000000) >> QUEST_HEART_PIECE_COUNT;
     } else if (msgCtx->textId == 0xC && CHECK_OWNED_EQUIP(EQUIP_TYPE_SWORD, EQUIP_INV_SWORD_BIGGORON)) {
         textId = 0xB; // Traded Giant's Knife for Biggoron Sword
     } else if (msgCtx->textId == 0xB4 && GET_EVENTCHKINF(EVENTCHKINF_96)) {
@@ -1776,7 +1779,7 @@ void Message_StartOcarinaImpl(PlayState* play, u16 ocarinaActionId) {
             sOcarinaSongBitFlags |= sOcarinaSongFlagsMap[i];
         }
     }
-    if (gSaveContext.scarecrowSpawnSongSet) {
+    if (gSaveContext.save.info.scarecrowSpawnSongSet) {
         sOcarinaSongBitFlags |= (1 << OCARINA_SONG_SCARECROW_SPAWN);
     }
     osSyncPrintf("ocarina_bit = %x\n", sOcarinaSongBitFlags);
@@ -2499,7 +2502,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                     } else {
                         Message_CloseTextbox(play);
                         if (msgCtx->lastPlayedSong == OCARINA_SONG_EPONAS) {
-                            DREG(53) = 1;
+                            R_EPONAS_SONG_PLAYED = true;
                         }
                         osSyncPrintf(VT_FGCOL(YELLOW));
                         osSyncPrintf("☆☆☆ocarina=%d   message->ocarina_no=%d  ", msgCtx->lastPlayedSong,
@@ -2636,7 +2639,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                         // "Recording complete！！！！！！！！！"
                         osSyncPrintf("録音終了！！！！！！！！！  message->info->status=%d \n",
                                      msgCtx->ocarinaStaff->state);
-                        gSaveContext.scarecrowLongSongSet = true;
+                        gSaveContext.save.info.scarecrowLongSongSet = true;
                     }
                     Audio_PlaySfxGeneral(NA_SE_SY_OCARINA_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
@@ -2649,10 +2652,10 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                     osSyncPrintf("録音終了！！！！！！！！！録音終了\n");
                     osSyncPrintf(VT_FGCOL(YELLOW));
                     osSyncPrintf("\n====================================================================\n");
-                    MemCpy(gSaveContext.scarecrowLongSong, gScarecrowLongSongPtr,
-                           sizeof(gSaveContext.scarecrowLongSong));
-                    for (i = 0; i < ARRAY_COUNT(gSaveContext.scarecrowLongSong); i++) {
-                        osSyncPrintf("%d, ", gSaveContext.scarecrowLongSong[i]);
+                    MemCpy(gSaveContext.save.info.scarecrowLongSong, gScarecrowLongSongPtr,
+                           sizeof(gSaveContext.save.info.scarecrowLongSong));
+                    for (i = 0; i < ARRAY_COUNT(gSaveContext.save.info.scarecrowLongSong); i++) {
+                        osSyncPrintf("%d, ", gSaveContext.save.info.scarecrowLongSong[i]);
                     }
                     osSyncPrintf(VT_RST);
                     osSyncPrintf("\n====================================================================\n");
@@ -2709,16 +2712,16 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                     // "8 Note Recording ＯＫ！"
                     osSyncPrintf("８音録音ＯＫ！\n");
                     msgCtx->stateTimer = 20;
-                    gSaveContext.scarecrowSpawnSongSet = true;
+                    gSaveContext.save.info.scarecrowSpawnSongSet = true;
                     msgCtx->msgMode = MSGMODE_SCARECROW_SPAWN_RECORDING_DONE;
                     Audio_PlaySfxGeneral(NA_SE_SY_TRE_BOX_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     osSyncPrintf(VT_FGCOL(YELLOW));
                     osSyncPrintf("\n====================================================================\n");
-                    MemCpy(gSaveContext.scarecrowSpawnSong, gScarecrowSpawnSongPtr,
-                           sizeof(gSaveContext.scarecrowSpawnSong));
-                    for (i = 0; i < ARRAY_COUNT(gSaveContext.scarecrowSpawnSong); i++) {
-                        osSyncPrintf("%d, ", gSaveContext.scarecrowSpawnSong[i]);
+                    MemCpy(gSaveContext.save.info.scarecrowSpawnSong, gScarecrowSpawnSongPtr,
+                           sizeof(gSaveContext.save.info.scarecrowSpawnSong));
+                    for (i = 0; i < ARRAY_COUNT(gSaveContext.save.info.scarecrowSpawnSong); i++) {
+                        osSyncPrintf("%d, ", gSaveContext.save.info.scarecrowSpawnSong[i]);
                     }
                     osSyncPrintf(VT_RST);
                     osSyncPrintf("\n====================================================================\n");
@@ -2743,7 +2746,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
             case MSGMODE_MEMORY_GAME_START:
                 AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_DEFAULT);
                 AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_FLUTE);
-                AudioOcarina_MemoryGameInit(gSaveContext.ocarinaGameRoundNum);
+                AudioOcarina_MemoryGameInit(gSaveContext.save.info.playerData.ocarinaGameRoundNum);
                 msgCtx->ocarinaStaff = AudioOcarina_GetPlaybackStaff();
                 msgCtx->ocarinaStaff->pos = sOcarinaButtonIndexBufPos = 0;
                 Message_ResetOcarinaNoteState();
@@ -2983,7 +2986,7 @@ void Message_DrawDebugVariableChanged(s16* var, GraphicsContext* gfxCtx) {
     static s16 sFillTimer = 0;
     s32 pad;
 
-    OPEN_DISPS(gfxCtx, "../z_message_PAL.c", 3485);
+    OPEN_DISPS(gfxCtx);
 
     if (sVarLastValue != *var) {
         sVarLastValue = *var;
@@ -3004,7 +3007,7 @@ void Message_DrawDebugVariableChanged(s16* var, GraphicsContext* gfxCtx) {
         gDPFillRectangle(POLY_OPA_DISP++, 40, 120, 60, 140); // 20x20 white box
         gDPPipeSync(POLY_OPA_DISP++);
     }
-    CLOSE_DISPS(gfxCtx, "../z_message_PAL.c", 3513);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void Message_DrawDebugText(PlayState* play, Gfx** p) {
@@ -3031,12 +3034,12 @@ void Message_Draw(PlayState* play) {
     Gfx* polyOpaP;
     s16 watchVar;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_message_PAL.c", 3554);
+    OPEN_DISPS(play->state.gfxCtx);
 
 #ifdef ENABLE_MSG_DEBUGGER
-    watchVar = gSaveContext.scarecrowLongSongSet;
+    watchVar = gSaveContext.save.info.scarecrowLongSongSet;
     Message_DrawDebugVariableChanged(&watchVar, play->state.gfxCtx);
-    if (BREG(0) != 0 && play->msgCtx.textId != 0) {
+    if (play->enableMsgDbg && play->msgCtx.textId != 0) {
         plusOne = Graph_GfxPlusOne(polyOpaP = POLY_OPA_DISP);
         gSPDisplayList(OVERLAY_DISP++, plusOne);
         Message_DrawDebugText(play, &plusOne);
@@ -3052,7 +3055,7 @@ void Message_Draw(PlayState* play) {
     gSPEndDisplayList(plusOne++);
     Graph_BranchDlist(polyOpaP, plusOne);
     POLY_OPA_DISP = plusOne;
-    CLOSE_DISPS(play->state.gfxCtx, "../z_message_PAL.c", 3582);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Message_Update(PlayState* play) {
@@ -3093,8 +3096,8 @@ void Message_Update(PlayState* play) {
 #endif
 
 #ifdef ENABLE_MSG_DEBUGGER
-    if (BREG(0) != 0) {
-        if (CHECK_BTN_ALL(input->press.button, BTN_DDOWN) && CHECK_BTN_ALL(input->cur.button, BTN_L)) {
+    if (play->enableMsgDbg) {
+        if (CHECK_BTN_COMBO(MSGDBG_BTN_COMBO, &play->state.input[MSGDBG_CONTROLLER_PORT], MSGDBG_BTN_HOLD_FOR_COMBO, MSGDBG_OPEN_TEXTBOX)) {
             osSyncPrintf("msgno=%d\n", D_80153D78);
             Message_StartTextbox(play, R_MESSAGE_DEBUGGER_TEXTID, NULL);
             D_80153D78 = (D_80153D78 + 1) % 10;
@@ -3314,12 +3317,12 @@ void Message_Update(PlayState* play) {
             }
             if (play->csCtx.state == 0) {
                 osSyncPrintf(VT_FGCOL(GREEN));
-                osSyncPrintf("day_time=%x  active_camera=%d  ", gSaveContext.cutsceneIndex, play->activeCamId);
+                osSyncPrintf("day_time=%x  active_camera=%d  ", gSaveContext.save.cutsceneIndex, play->activeCamId);
 
                 if (msgCtx->textId != 0x2061 && msgCtx->textId != 0x2025 && msgCtx->textId != 0x208C &&
                     ((msgCtx->textId < 0x88D || msgCtx->textId >= 0x893) || msgCtx->choiceIndex != 0) &&
-                    (msgCtx->textId != 0x3055 && gSaveContext.cutsceneIndex < 0xFFF0)) {
-                    osSyncPrintf("=== day_time=%x ", ((void)0, gSaveContext.cutsceneIndex));
+                    (msgCtx->textId != 0x3055 && gSaveContext.save.cutsceneIndex < 0xFFF0)) {
+                    osSyncPrintf("=== day_time=%x ", ((void)0, gSaveContext.save.cutsceneIndex));
                     if (play->activeCamId == CAM_ID_MAIN) {
                         if (gSaveContext.prevHudVisibilityMode == HUD_VISIBILITY_NO_CHANGE ||
                             gSaveContext.prevHudVisibilityMode == HUD_VISIBILITY_NOTHING ||
@@ -3343,10 +3346,10 @@ void Message_Update(PlayState* play) {
             } else {
                 msgCtx->textboxEndType = TEXTBOX_ENDTYPE_DEFAULT;
             }
-            if ((s32)(gSaveContext.inventory.questItems & 0xF0000000) == (4 << QUEST_HEART_PIECE_COUNT)) {
-                gSaveContext.inventory.questItems ^= (4 << QUEST_HEART_PIECE_COUNT);
-                gSaveContext.healthCapacity += 0x10;
-                gSaveContext.health += 0x10;
+            if ((s32)(gSaveContext.save.info.inventory.questItems & 0xF0000000) == (4 << QUEST_HEART_PIECE_COUNT)) {
+                gSaveContext.save.info.inventory.questItems ^= (4 << QUEST_HEART_PIECE_COUNT);
+                gSaveContext.save.info.playerData.healthCapacity += 0x10;
+                gSaveContext.save.info.playerData.health += 0x10;
             }
             if (msgCtx->ocarinaAction != OCARINA_ACTION_CHECK_NOWARP_DONE) {
                 if (sLastPlayedSong == OCARINA_SONG_SARIAS) {

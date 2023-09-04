@@ -32,6 +32,10 @@ UCodeInfo D_8012D248[3] = {
     { UCODE_S2DEX, gspS2DEX2d_fifoTextStart },
 };
 
+#ifdef ENABLE_MOTION_BLUR
+u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT]; // pointer-to-array, array itself is allocated (see below)
+#endif
+
 void Graph_FaultClient(void) {
     void* nextFb = osViGetNextFramebuffer();
     void* newFb = (SysCfb_GetFbPtr(0) != nextFb) ? SysCfb_GetFbPtr(0) : SysCfb_GetFbPtr(1);
@@ -229,9 +233,9 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
     task->output_buff_size = gGfxSPTaskOutputBuffer + ARRAY_COUNT(gGfxSPTaskOutputBuffer);
     task->data_ptr = (u64*)gfxCtx->workBuffer;
 
-    OPEN_DISPS(gfxCtx, "../graph.c", 828);
+    OPEN_DISPS(gfxCtx);
     task->data_size = (uintptr_t)WORK_DISP - (uintptr_t)gfxCtx->workBuffer;
-    CLOSE_DISPS(gfxCtx, "../graph.c", 830);
+    CLOSE_DISPS(gfxCtx);
 
     { s32 pad2; } // Necessary to match stack usage
 
@@ -276,28 +280,28 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gameState->inPreNMIState = false;
     Graph_InitTHGA(gfxCtx);
 
-    OPEN_DISPS(gfxCtx, "../graph.c", 966);
+    OPEN_DISPS(gfxCtx);
 
     gDPNoOpString(WORK_DISP++, "WORK_DISP 開始", 0);
     gDPNoOpString(POLY_OPA_DISP++, "POLY_OPA_DISP 開始", 0);
     gDPNoOpString(POLY_XLU_DISP++, "POLY_XLU_DISP 開始", 0);
     gDPNoOpString(OVERLAY_DISP++, "OVERLAY_DISP 開始", 0);
 
-    CLOSE_DISPS(gfxCtx, "../graph.c", 975);
+    CLOSE_DISPS(gfxCtx);
 
     GameState_ReqPadData(gameState);
     GameState_Update(gameState);
 
-    OPEN_DISPS(gfxCtx, "../graph.c", 987);
+    OPEN_DISPS(gfxCtx);
 
     gDPNoOpString(WORK_DISP++, "WORK_DISP 終了", 0);
     gDPNoOpString(POLY_OPA_DISP++, "POLY_OPA_DISP 終了", 0);
     gDPNoOpString(POLY_XLU_DISP++, "POLY_XLU_DISP 終了", 0);
     gDPNoOpString(OVERLAY_DISP++, "OVERLAY_DISP 終了", 0);
 
-    CLOSE_DISPS(gfxCtx, "../graph.c", 996);
+    CLOSE_DISPS(gfxCtx);
 
-    OPEN_DISPS(gfxCtx, "../graph.c", 999);
+    OPEN_DISPS(gfxCtx);
 
     gSPBranchList(WORK_DISP++, gfxCtx->polyOpaBuffer);
     gSPBranchList(POLY_OPA_DISP++, gfxCtx->polyXluBuffer);
@@ -306,7 +310,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gDPFullSync(OVERLAY_DISP++);
     gSPEndDisplayList(OVERLAY_DISP++);
 
-    CLOSE_DISPS(gfxCtx, "../graph.c", 1028);
+    CLOSE_DISPS(gfxCtx);
 
     if (R_HREG_MODE == HREG_MODE_PLAY && R_PLAY_ENABLE_UCODE_DISAS == 2) {
         R_HREG_MODE = HREG_MODE_UCODE_DISAS;
@@ -403,8 +407,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     }
 
 #ifdef ENABLE_MAP_SELECT
-    if (CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&
-        CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_L | BTN_R)) {
+    if(CHECK_BTN_COMBO(MAP_SELECT_BTN_COMBO, &gameState->input[MAP_SELECT_CONTROLLER_PORT], MAP_SELECT_BTN_HOLD_FOR_COMBO, MAP_SELECT_OPEN)) {
         gSaveContext.gameMode = GAMEMODE_NORMAL;
         SET_NEXT_GAMESTATE(gameState, MapSelect_Init, MapSelectState);
         gameState->running = false;
@@ -433,6 +436,11 @@ void Graph_ThreadEntry(void* arg0) {
     GameStateOverlay* nextOvl = &gGameStateOverlayTable[GAMESTATE_SETUP];
     GameStateOverlay* ovl;
     char faultMsg[0x50];
+
+#ifdef ENABLE_MOTION_BLUR
+    gWorkBuf = SystemArena_MallocDebug(sizeof(*gWorkBuf) + 64 - 1, __FILE__, __LINE__);
+    gWorkBuf = (void*)ALIGN64((u32)gWorkBuf);
+#endif
 
     osSyncPrintf("グラフィックスレッド実行開始\n"); // "Start graphic thread execution"
     Graph_Init(&gfxCtx);
@@ -492,6 +500,7 @@ void* Graph_Alloc2(GraphicsContext* gfxCtx, size_t size) {
     return THGA_AllocTail(&gfxCtx->polyOpa, ALIGN16(size));
 }
 
+#ifndef DISABLE_DEBUG_FEATURES
 void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, s32 line) {
     if (R_HREG_MODE == HREG_MODE_UCODE_DISAS && R_UCODE_DISAS_LOG_MODE != 4) {
         dispRefs[0] = gfxCtx->polyOpa.p;
@@ -525,6 +534,7 @@ void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file,
         }
     }
 }
+#endif
 
 Gfx* Graph_GfxPlusOne(Gfx* gfx) {
     return gfx + 1;

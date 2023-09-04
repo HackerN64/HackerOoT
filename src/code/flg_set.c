@@ -4,6 +4,11 @@
 
 #include "global.h"
 
+typedef struct {
+    /* 0x00 */ u16* value;
+    /* 0x04 */ const char* name;
+} FlagSetEntry; // size = 0x08
+
 void FlagSet_Update(PlayState* play) {
     static s32 entryIdx = 0;
     static u32 curBit = 0;
@@ -11,40 +16,66 @@ void FlagSet_Update(PlayState* play) {
     static s32 bitIdx; // ? this doesn't need to be static
 
     FlagSetEntry entries[53] = {
-        { &gSaveContext.eventChkInf[0], "event_chk_inf[0]" },   { &gSaveContext.eventChkInf[1], "event_chk_inf[1]" },
-        { &gSaveContext.eventChkInf[2], "event_chk_inf[2]" },   { &gSaveContext.eventChkInf[3], "event_chk_inf[3]" },
-        { &gSaveContext.eventChkInf[4], "event_chk_inf[4]" },   { &gSaveContext.eventChkInf[5], "event_chk_inf[5]" },
-        { &gSaveContext.eventChkInf[6], "event_chk_inf[6]" },   { &gSaveContext.eventChkInf[7], "event_chk_inf[7]" },
-        { &gSaveContext.eventChkInf[8], "event_chk_inf[8]" },   { &gSaveContext.eventChkInf[9], "event_chk_inf[9]" },
-        { &gSaveContext.eventChkInf[10], "event_chk_inf[10]" }, { &gSaveContext.eventChkInf[11], "event_chk_inf[11]" },
-        { &gSaveContext.eventChkInf[12], "event_chk_inf[12]" }, { &gSaveContext.eventChkInf[13], "event_chk_inf[13]" },
-        { &gSaveContext.itemGetInf[0], "item_get_inf[0]" },     { &gSaveContext.itemGetInf[1], "item_get_inf[1]" },
-        { &gSaveContext.itemGetInf[2], "item_get_inf[2]" },     { &gSaveContext.itemGetInf[3], "item_get_inf[3]" },
-        { &gSaveContext.infTable[0], "inf_table[0]" },          { &gSaveContext.infTable[1], "inf_table[1]" },
-        { &gSaveContext.infTable[2], "inf_table[2]" },          { &gSaveContext.infTable[3], "inf_table[3]" },
-        { &gSaveContext.infTable[4], "inf_table[4]" },          { &gSaveContext.infTable[5], "inf_table[5]" },
-        { &gSaveContext.infTable[6], "inf_table[6]" },          { &gSaveContext.infTable[7], "inf_table[7]" },
-        { &gSaveContext.infTable[8], "inf_table[8]" },          { &gSaveContext.infTable[9], "inf_table[9]" },
-        { &gSaveContext.infTable[10], "inf_table[10]" },        { &gSaveContext.infTable[11], "inf_table[11]" },
-        { &gSaveContext.infTable[12], "inf_table[12]" },        { &gSaveContext.infTable[13], "inf_table[13]" },
-        { &gSaveContext.infTable[14], "inf_table[14]" },        { &gSaveContext.infTable[15], "inf_table[15]" },
-        { &gSaveContext.infTable[16], "inf_table[16]" },        { &gSaveContext.infTable[17], "inf_table[17]" },
-        { &gSaveContext.infTable[18], "inf_table[18]" },        { &gSaveContext.infTable[19], "inf_table[19]" },
-        { &gSaveContext.infTable[20], "inf_table[20]" },        { &gSaveContext.infTable[21], "inf_table[21]" },
-        { &gSaveContext.infTable[22], "inf_table[22]" },        { &gSaveContext.infTable[23], "inf_table[23]" },
-        { &gSaveContext.infTable[24], "inf_table[24]" },        { &gSaveContext.infTable[25], "inf_table[25]" },
-        { &gSaveContext.infTable[26], "inf_table[26]" },        { &gSaveContext.infTable[27], "inf_table[27]" },
-        { &gSaveContext.infTable[28], "inf_table[28]" },        { &gSaveContext.infTable[29], "inf_table[29]" },
-        { &gSaveContext.eventInf[0], "event_inf[0]" },          { &gSaveContext.eventInf[1], "event_inf[1]" },
-        { &gSaveContext.eventInf[2], "event_inf[2]" },          { &gSaveContext.eventInf[3], "event_inf[3]" },
+        { &gSaveContext.save.info.eventChkInf[0], "event_chk_inf[0]" },
+        { &gSaveContext.save.info.eventChkInf[1], "event_chk_inf[1]" },
+        { &gSaveContext.save.info.eventChkInf[2], "event_chk_inf[2]" },
+        { &gSaveContext.save.info.eventChkInf[3], "event_chk_inf[3]" },
+        { &gSaveContext.save.info.eventChkInf[4], "event_chk_inf[4]" },
+        { &gSaveContext.save.info.eventChkInf[5], "event_chk_inf[5]" },
+        { &gSaveContext.save.info.eventChkInf[6], "event_chk_inf[6]" },
+        { &gSaveContext.save.info.eventChkInf[7], "event_chk_inf[7]" },
+        { &gSaveContext.save.info.eventChkInf[8], "event_chk_inf[8]" },
+        { &gSaveContext.save.info.eventChkInf[9], "event_chk_inf[9]" },
+        { &gSaveContext.save.info.eventChkInf[10], "event_chk_inf[10]" },
+        { &gSaveContext.save.info.eventChkInf[11], "event_chk_inf[11]" },
+        { &gSaveContext.save.info.eventChkInf[12], "event_chk_inf[12]" },
+        { &gSaveContext.save.info.eventChkInf[13], "event_chk_inf[13]" },
+        { &gSaveContext.save.info.itemGetInf[0], "item_get_inf[0]" },
+        { &gSaveContext.save.info.itemGetInf[1], "item_get_inf[1]" },
+        { &gSaveContext.save.info.itemGetInf[2], "item_get_inf[2]" },
+        { &gSaveContext.save.info.itemGetInf[3], "item_get_inf[3]" },
+        { &gSaveContext.save.info.infTable[0], "inf_table[0]" },
+        { &gSaveContext.save.info.infTable[1], "inf_table[1]" },
+        { &gSaveContext.save.info.infTable[2], "inf_table[2]" },
+        { &gSaveContext.save.info.infTable[3], "inf_table[3]" },
+        { &gSaveContext.save.info.infTable[4], "inf_table[4]" },
+        { &gSaveContext.save.info.infTable[5], "inf_table[5]" },
+        { &gSaveContext.save.info.infTable[6], "inf_table[6]" },
+        { &gSaveContext.save.info.infTable[7], "inf_table[7]" },
+        { &gSaveContext.save.info.infTable[8], "inf_table[8]" },
+        { &gSaveContext.save.info.infTable[9], "inf_table[9]" },
+        { &gSaveContext.save.info.infTable[10], "inf_table[10]" },
+        { &gSaveContext.save.info.infTable[11], "inf_table[11]" },
+        { &gSaveContext.save.info.infTable[12], "inf_table[12]" },
+        { &gSaveContext.save.info.infTable[13], "inf_table[13]" },
+        { &gSaveContext.save.info.infTable[14], "inf_table[14]" },
+        { &gSaveContext.save.info.infTable[15], "inf_table[15]" },
+        { &gSaveContext.save.info.infTable[16], "inf_table[16]" },
+        { &gSaveContext.save.info.infTable[17], "inf_table[17]" },
+        { &gSaveContext.save.info.infTable[18], "inf_table[18]" },
+        { &gSaveContext.save.info.infTable[19], "inf_table[19]" },
+        { &gSaveContext.save.info.infTable[20], "inf_table[20]" },
+        { &gSaveContext.save.info.infTable[21], "inf_table[21]" },
+        { &gSaveContext.save.info.infTable[22], "inf_table[22]" },
+        { &gSaveContext.save.info.infTable[23], "inf_table[23]" },
+        { &gSaveContext.save.info.infTable[24], "inf_table[24]" },
+        { &gSaveContext.save.info.infTable[25], "inf_table[25]" },
+        { &gSaveContext.save.info.infTable[26], "inf_table[26]" },
+        { &gSaveContext.save.info.infTable[27], "inf_table[27]" },
+        { &gSaveContext.save.info.infTable[28], "inf_table[28]" },
+        { &gSaveContext.save.info.infTable[29], "inf_table[29]" },
+        { &gSaveContext.eventInf[0], "event_inf[0]" },
+        { &gSaveContext.eventInf[1], "event_inf[1]" },
+        { &gSaveContext.eventInf[2], "event_inf[2]" },
+        { &gSaveContext.eventInf[3], "event_inf[3]" },
     };
 
     GraphicsContext* gfxCtx = play->state.gfxCtx;
-    Input* input = &play->state.input[0];
+    Input* input = &play->state.input[EVENT_EDITOR_CONTROLLER_PORT];
     Gfx* gfx;
     Gfx* polyOpa;
 
-    OPEN_DISPS(gfxCtx, "../flg_set.c", 131);
+    OPEN_DISPS(gfxCtx);
 
     {
         GfxPrint printer;
@@ -79,35 +110,35 @@ void FlagSet_Update(PlayState* play) {
             }
         }
 
-        if (CHECK_BTN_ALL(input->press.button, BTN_DLEFT)) {
+        if (CHECK_BTN_ALL(input->press.button, EVENT_EDITOR_GO_LEFT)) {
             timer = 10;
             curBit++;
         }
-        if (CHECK_BTN_ALL(input->press.button, BTN_DRIGHT)) {
+        if (CHECK_BTN_ALL(input->press.button, EVENT_EDITOR_GO_RIGHT)) {
             curBit--;
             timer = 10;
         }
 
         if (timer == 0) {
-            if (CHECK_BTN_ALL(input->cur.button, BTN_DLEFT)) {
+            if (CHECK_BTN_ALL(input->cur.button, EVENT_EDITOR_GO_LEFT)) {
                 curBit++;
                 timer = 2;
             }
-            if (CHECK_BTN_ALL(input->cur.button, BTN_DRIGHT)) {
+            if (CHECK_BTN_ALL(input->cur.button, EVENT_EDITOR_GO_RIGHT)) {
                 curBit--;
                 timer = 2;
             }
         }
 
         curBit %= 16;
-        if (CHECK_BTN_ALL(input->press.button, BTN_DUP)) {
+        if (CHECK_BTN_ALL(input->press.button, EVENT_EDITOR_PREV)) {
             entryIdx--;
             if (entryIdx < 0) {
                 entryIdx = 0;
             }
             timer = 10;
         }
-        if (CHECK_BTN_ALL(input->press.button, BTN_DDOWN)) {
+        if (CHECK_BTN_ALL(input->press.button, EVENT_EDITOR_NEXT)) {
             timer = 10;
             entryIdx++;
             if (!entries[entryIdx].value) {
@@ -116,14 +147,14 @@ void FlagSet_Update(PlayState* play) {
         }
 
         if (timer == 0) {
-            if (CHECK_BTN_ALL(input->cur.button, BTN_DUP)) {
+            if (CHECK_BTN_ALL(input->cur.button, EVENT_EDITOR_PREV)) {
                 entryIdx--;
                 timer = 2;
                 if (entryIdx < 0) {
                     entryIdx = 0;
                 }
             }
-            if (CHECK_BTN_ALL(input->cur.button, BTN_DDOWN)) {
+            if (CHECK_BTN_ALL(input->cur.button, EVENT_EDITOR_NEXT)) {
                 timer = 2;
                 entryIdx++;
                 if (!entries[entryIdx].value) {
@@ -132,7 +163,7 @@ void FlagSet_Update(PlayState* play) {
             }
         }
 
-        if (CHECK_BTN_ALL(input->press.button, BTN_A)) {
+        if (CHECK_BTN_ALL(input->press.button, EVENT_EDITOR_CHANGE_VAL)) {
             *entries[entryIdx].value ^= (1 << curBit);
         }
 
@@ -148,11 +179,11 @@ void FlagSet_Update(PlayState* play) {
         POLY_OPA_DISP = gfx;
     }
 
-    if (CHECK_BTN_ALL(input->press.button, BTN_L)) {
+    if (CHECK_BTN_COMBO(EVENT_EDITOR_BTN_COMBO, input, EVENT_EDITOR_BTN_HOLD_FOR_COMBO, EVENT_EDITOR_CLOSE)) {
         play->pauseCtx.debugState = 0;
     }
 
-    CLOSE_DISPS(gfxCtx, "../flg_set.c", 241);
+    CLOSE_DISPS(gfxCtx);
 }
 
 #endif

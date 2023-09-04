@@ -97,7 +97,7 @@ void ConsoleLogo_Draw(ConsoleLogoState* this) {
     Vec3f v2;
     s32 pad2[2];
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_title.c", 395);
+    OPEN_DISPS(this->state.gfxCtx);
 
     v3.x = 69;
     v3.y = 69;
@@ -132,6 +132,7 @@ void ConsoleLogo_Draw(ConsoleLogoState* this) {
                       G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 5, 5, 2, 11);
 
     for (idx = 0, y = 94; idx < 16; idx++, y += 2) {
+        gDPLoadSync(POLY_OPA_DISP++);
         gDPLoadTextureBlock(POLY_OPA_DISP++, &((u8*)nintendo_rogo_static_Tex_000000)[0x180 * idx], G_IM_FMT_I,
                             G_IM_SIZ_8b, 192, 2, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
                             G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -145,13 +146,13 @@ void ConsoleLogo_Draw(ConsoleLogoState* this) {
 
     sTitleRotY += 300;
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_title.c", 483);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 void ConsoleLogo_Main(GameState* thisx) {
     ConsoleLogoState* this = (ConsoleLogoState*)thisx;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_title.c", 494);
+    OPEN_DISPS(this->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0, NULL);
     gSPSegment(POLY_OPA_DISP++, 1, this->staticSegment);
@@ -171,7 +172,7 @@ void ConsoleLogo_Main(GameState* thisx) {
         SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, TitleSetupState);
     }
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_title.c", 541);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 void ConsoleLogo_Destroy(GameState* thisx) {

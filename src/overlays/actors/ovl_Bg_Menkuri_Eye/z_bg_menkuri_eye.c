@@ -108,7 +108,7 @@ void BgMenkuriEye_Update(Actor* thisx, PlayState* play) {
         this->framesUntilDisable = 416;
         if (D_8089C1A0 == 4) {
             Flags_SetSwitch(play, this->actor.params);
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
         }
     }
     if (this->framesUntilDisable == -1) {
@@ -121,7 +121,7 @@ void BgMenkuriEye_Draw(Actor* thisx, PlayState* play) {
     BgMenkuriEye* this = (BgMenkuriEye*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_menkuri_eye.c", 292);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     if (Flags_GetSwitch(play, this->actor.params)) {
         gDPSetEnvColor(POLY_XLU_DISP++, 200, 0, 0, 255);
@@ -137,5 +137,5 @@ void BgMenkuriEye_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     gSPDisplayList(POLY_XLU_DISP++, gGTGEyeStatueEyeDL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_menkuri_eye.c", 335);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

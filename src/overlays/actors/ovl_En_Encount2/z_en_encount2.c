@@ -344,7 +344,7 @@ void EnEncount2_DrawEffects(Actor* thisx, PlayState* play) {
     s16 i;
     s32 objBankIndex;
 
-    OPEN_DISPS(gfxCtx, "../z_en_encount2.c", 642);
+    OPEN_DISPS(gfxCtx);
 
     objBankIndex = Object_GetIndex(&play->objectCtx, OBJECT_EFC_STAR_FIELD);
 
@@ -368,5 +368,5 @@ void EnEncount2_DrawEffects(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_en_encount2.c", 678);
+    CLOSE_DISPS(gfxCtx);
 }

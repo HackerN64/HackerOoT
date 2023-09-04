@@ -62,13 +62,14 @@ void Moji_SetPosition(s32 gridX, s32 gridY) {
 void Moji_DrawChar(GraphicsContext* gfxCtx, char c) {
     s32 pad[2];
 
-    OPEN_DISPS(gfxCtx, "../z_moji.c", 86);
+    OPEN_DISPS(gfxCtx);
 
     if ((uintptr_t)gMojiFontTLUTs & 0xF) {
         osSyncPrintf("moji_tlut --> %X\n", gMojiFontTLUTs);
     }
 
     if (sCurTLUTIndex != GET_CHAR_TLUT_INDEX(c)) {
+        gDPLoadSync(POLY_OPA_DISP++);
         gDPLoadTLUT(POLY_OPA_DISP++, 16, 256, gMojiFontTLUTs[GET_CHAR_TLUT_INDEX(c)]);
         sCurTLUTIndex = GET_CHAR_TLUT_INDEX(c);
     }
@@ -76,7 +77,7 @@ void Moji_DrawChar(GraphicsContext* gfxCtx, char c) {
                         (sScreenPosY + DISP_CHAR_HEIGHT) << 2, G_TX_RENDERTILE, GET_TEX_CHAR_S(c), GET_TEX_CHAR_T(c),
                         (1 << 10) * TEX_CHAR_WIDTH / DISP_CHAR_WIDTH, (1 << 10) * TEX_CHAR_HEIGHT / DISP_CHAR_HEIGHT);
 
-    CLOSE_DISPS(gfxCtx, "../z_moji.c", 123);
+    CLOSE_DISPS(gfxCtx);
 }
 
 /**
@@ -88,7 +89,7 @@ void Moji_DrawChar(GraphicsContext* gfxCtx, char c) {
 void Moji_DrawString(GraphicsContext* gfxCtx, const char* str) {
     s32 i;
 
-    OPEN_DISPS(gfxCtx, "../z_moji.c", 137);
+    OPEN_DISPS(gfxCtx);
 
     if ((uintptr_t)gMojiFontTex & 0xF) {
         osSyncPrintf("font_ff --> %X\n", gMojiFontTex);
@@ -129,5 +130,5 @@ void Moji_DrawString(GraphicsContext* gfxCtx, const char* str) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_moji.c", 181);
+    CLOSE_DISPS(gfxCtx);
 }

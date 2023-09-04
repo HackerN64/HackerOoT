@@ -722,7 +722,7 @@ void EnVali_DrawBody(EnVali* this, PlayState* play) {
     f32 curFrame;
     Vec3f scale = { 1.0f, 1.0f, 1.0f };
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_vali.c", 1428);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Get(&mtx);
     curFrame = this->skelAnime.curFrame;
@@ -768,7 +768,7 @@ void EnVali_DrawBody(EnVali* this, PlayState* play) {
 
     Matrix_Put(&mtx);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_vali.c", 1477);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 static Gfx D_80B28998[] = {
@@ -787,7 +787,7 @@ void EnVali_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnVali* this = (EnVali*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_vali.c", 1505);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     gSPSegment(POLY_XLU_DISP++, 0x08,
@@ -804,5 +804,5 @@ void EnVali_Draw(Actor* thisx, PlayState* play) {
     POLY_XLU_DISP = SkelAnime_Draw(play, this->skelAnime.skeleton, this->skelAnime.jointTable, EnVali_OverrideLimbDraw,
                                    EnVali_PostLimbDraw, this, POLY_XLU_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_vali.c", 1538);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

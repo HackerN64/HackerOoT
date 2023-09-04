@@ -484,7 +484,7 @@ void EnBombf_Draw(Actor* thisx, PlayState* play) {
 
     if (1) {}
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_bombf.c", 1034);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (thisx->params <= BOMBFLOWER_BODY) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -510,5 +510,5 @@ void EnBombf_Draw(Actor* thisx, PlayState* play) {
         Collider_UpdateSpheres(0, &this->explosionCollider);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bombf.c", 1063);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

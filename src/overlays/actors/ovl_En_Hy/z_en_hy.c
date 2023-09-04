@@ -917,7 +917,7 @@ void EnHy_InitImpl(EnHy* this, PlayState* play) {
         }
 
         if (play->sceneId == SCENE_KAKARIKO_CENTER_GUEST_HOUSE) {
-            this->unk_330 = gSaveContext.eventChkInf[EVENTCHKINF_TALON_RETURNED_FROM_KAKARIKO_INDEX];
+            this->unk_330 = gSaveContext.save.info.eventChkInf[EVENTCHKINF_TALON_RETURNED_FROM_KAKARIKO_INDEX];
         }
 
         EnHy_InitSetProperties(this);
@@ -1107,7 +1107,7 @@ s32 EnHy_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* po
 
     if (1) {}
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_hy.c", 2170);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limbIndex == 15) {
         gSPSegment(POLY_OPA_DISP++, 0x06, play->objectCtx.status[this->objBankIndexHead].segment);
@@ -1142,7 +1142,7 @@ s32 EnHy_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* po
         rot->z += Math_CosS(this->unk_23C[limbIndex]) * 200.0f;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_hy.c", 2228);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     return false;
 }
@@ -1152,7 +1152,7 @@ void EnHy_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, 
     s32 pad;
     Vec3f sp3C = { 400.0f, 0.0f, 0.0f };
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_hy.c", 2255);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limbIndex == 7) {
         gSPSegment(POLY_OPA_DISP++, 0x06, play->objectCtx.status[this->objBankIndexSkel2].segment);
@@ -1167,7 +1167,7 @@ void EnHy_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, 
         Matrix_MultVec3f(&sp3C, &this->actor.focus.pos);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_hy.c", 2281);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 Gfx* EnHy_SetEnvColor(GraphicsContext* play, u8 envR, u8 envG, u8 envB, u8 envA) {
@@ -1186,7 +1186,7 @@ void EnHy_Draw(Actor* thisx, PlayState* play) {
     Color_RGBA8 envColorSeg9;
     Color_RGBA8 envColorSeg10;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_hy.c", 2318);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->actionFunc != EnHy_InitImpl) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -1242,5 +1242,5 @@ void EnHy_Draw(Actor* thisx, PlayState* play) {
                               EnHy_OverrideLimbDraw, EnHy_PostLimbDraw, &this->actor);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_hy.c", 2388);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

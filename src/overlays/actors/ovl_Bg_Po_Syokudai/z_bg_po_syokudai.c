@@ -147,7 +147,7 @@ void BgPoSyokudai_Draw(Actor* thisx, PlayState* play) {
     u8 green;
     u8 blue;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_po_syokudai.c", 315);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_po_syokudai.c", 319),
@@ -184,5 +184,5 @@ void BgPoSyokudai_Draw(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_po_syokudai.c", 373);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

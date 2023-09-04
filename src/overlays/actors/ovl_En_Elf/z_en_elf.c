@@ -346,8 +346,9 @@ void EnElf_Init(Actor* thisx, PlayState* play) {
             this->elfMsg = NULL;
             this->unk_2C7 = 0x14;
 
-            if ((gSaveContext.naviTimer >= 25800) || (gSaveContext.naviTimer < 3000)) {
-                gSaveContext.naviTimer = 0;
+            if ((gSaveContext.save.info.playerData.naviTimer >= 25800) ||
+                (gSaveContext.save.info.playerData.naviTimer < 3000)) {
+                gSaveContext.save.info.playerData.naviTimer = 0;
             }
             break;
         case FAIRY_REVIVE_BOTTLE:
@@ -1378,7 +1379,9 @@ void func_80A053F0(Actor* thisx, PlayState* play) {
 
     if (player->naviTextId == 0) {
         if (player->unk_664 == NULL) {
-            if (((gSaveContext.naviTimer >= 600) && (gSaveContext.naviTimer <= 3000)) || (nREG(89) != 0)) {
+            if (((gSaveContext.save.info.playerData.naviTimer >= 600) &&
+                 (gSaveContext.save.info.playerData.naviTimer <= 3000)) ||
+                (nREG(89) != 0)) {
                 player->naviTextId = QuestHint_GetNaviTextId(play);
 
                 if (player->naviTextId == 0x15F) {
@@ -1397,7 +1400,7 @@ void func_80A053F0(Actor* thisx, PlayState* play) {
 
         if (thisx->textId == QuestHint_GetNaviTextId(play)) {
             this->fairyFlags |= 0x80;
-            gSaveContext.naviTimer = 3001;
+            gSaveContext.save.info.playerData.naviTimer = 3001;
         }
 
         this->fairyFlags |= 0x10;
@@ -1414,22 +1417,21 @@ void func_80A053F0(Actor* thisx, PlayState* play) {
         this->actionFunc(this, play);
         thisx->shape.rot.y = this->unk_2BC;
 
-        // `gSaveContext.sceneFlags[127].chest` (like in the debug string) instead of `HIGH_SCORE(HS_HBA)` matches too,
-        // but, with how the `SaveContext` struct is currently defined, it is an out-of-bounds read in the `sceneFlags`
-        // array.
-        // It is theorized the original `room_inf` (currently `sceneFlags`) was an array of length 128, not broken up
-        // like currently into structs. Structs are currently used because they're easier to work with and still match.
-        // There is another occurrence of this elsewhere.
+        // `gSaveContext.save.info.sceneFlags[127].chest` (like in the debug string) instead of `HIGH_SCORE(HS_HBA)`
+        // matches too, but, with how the `SaveContext` struct is currently defined, it is an out-of-bounds read in the
+        // `sceneFlags` array. It is theorized the original `room_inf` (currently `sceneFlags`) was an array of length
+        // 128, not broken up like currently into structs. Structs are currently used because they're easier to work
+        // with and still match. There is another occurrence of this elsewhere.
         nREG(80) = HIGH_SCORE(HS_HBA);
         if ((nREG(81) != 0) && (HIGH_SCORE(HS_HBA) != 0)) {
             LOG_NUM("z_common_data.memory.information.room_inf[127][ 0 ]", HIGH_SCORE(HS_HBA), "../z_en_elf.c", 2595);
         }
 
         if (!Play_InCsMode(play)) {
-            if (gSaveContext.naviTimer < 25800) {
-                gSaveContext.naviTimer++;
+            if (gSaveContext.save.info.playerData.naviTimer < 25800) {
+                gSaveContext.save.info.playerData.naviTimer++;
             } else if (!(this->fairyFlags & 0x80)) {
-                gSaveContext.naviTimer = 0;
+                gSaveContext.save.info.playerData.naviTimer = 0;
             }
         }
     }
@@ -1513,7 +1515,7 @@ void EnElf_Draw(Actor* thisx, PlayState* play) {
         if (!(player->stateFlags1 & PLAYER_STATE1_20) || (kREG(90) < this->actor.projectedPos.z)) {
             dListHead = Graph_Alloc(play->state.gfxCtx, sizeof(Gfx) * 4);
 
-            OPEN_DISPS(play->state.gfxCtx, "../z_en_elf.c", 2730);
+            OPEN_DISPS(play->state.gfxCtx);
 
             Gfx_SetupDL_27Xlu(play->state.gfxCtx);
 
@@ -1539,7 +1541,7 @@ void EnElf_Draw(Actor* thisx, PlayState* play) {
             POLY_XLU_DISP = SkelAnime_Draw(play, this->skelAnime.skeleton, this->skelAnime.jointTable,
                                            EnElf_OverrideLimbDraw, NULL, this, POLY_XLU_DISP);
 
-            CLOSE_DISPS(play->state.gfxCtx, "../z_en_elf.c", 2793);
+            CLOSE_DISPS(play->state.gfxCtx);
         }
     }
 }

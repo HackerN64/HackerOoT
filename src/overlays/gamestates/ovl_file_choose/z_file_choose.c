@@ -45,6 +45,7 @@ void FileSelect_SetView(FileSelectState* this, f32 eyeX, f32 eyeY, f32 eyeZ) {
 }
 
 Gfx* FileSelect_QuadTextureIA8(Gfx* gfx, void* texture, s16 width, s16 height, s16 point) {
+    gDPLoadSync(gfx++);
     gDPLoadTextureBlock(gfx++, texture, G_IM_FMT_IA, G_IM_SIZ_8b, width, height, 0, G_TX_NOMIRROR | G_TX_WRAP,
                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
@@ -766,7 +767,7 @@ void FileSelect_DrawFileInfo(GameState* thisx, s16 fileIndex, s16 isActive) {
     s16 j;
     s16 deathCountSplit[3];
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 1709);
+    OPEN_DISPS(this->state.gfxCtx);
 
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetCombineLERP(POLY_OPA_DISP++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0,
@@ -844,7 +845,7 @@ void FileSelect_DrawFileInfo(GameState* thisx, s16 fileIndex, s16 isActive) {
         }
     }
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", 1797);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 static void* sFileInfoBoxTextures[] = {
@@ -904,7 +905,7 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
     s16 isActive;
     s16 pad;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 1940);
+    OPEN_DISPS(this->state.gfxCtx);
 
     // draw title label
     gDPPipeSync(POLY_OPA_DISP++);
@@ -938,6 +939,7 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
         gSPVertex(POLY_OPA_DISP++, &this->windowContentVtx[temp], 20, 0);
 
         for (quadVtxIndex = 0, i = 0; i < 5; i++, quadVtxIndex += 4) {
+            gDPLoadSync(POLY_OPA_DISP++);
             gDPLoadTextureBlock(POLY_OPA_DISP++, sFileInfoBoxTextures[i], G_IM_FMT_IA, G_IM_SIZ_16b,
                                 sFileInfoBoxPartWidths[i], 56, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
                                 G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -953,6 +955,7 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
 
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, sWindowContentColors[isActive][0], sWindowContentColors[isActive][1],
                         sWindowContentColors[isActive][2], this->fileButtonAlpha[i]);
+        gDPLoadSync(POLY_OPA_DISP++);
         gDPLoadTextureBlock(POLY_OPA_DISP++, sFileButtonTextures[gSaveContext.language][i], G_IM_FMT_IA, G_IM_SIZ_16b,
                             64, 16, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
                             G_TX_NOLOD, G_TX_NOLOD);
@@ -961,6 +964,7 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
         // draw file name box
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, sWindowContentColors[isActive][0], sWindowContentColors[isActive][1],
                         sWindowContentColors[isActive][2], this->nameBoxAlpha[i]);
+        gDPLoadSync(POLY_OPA_DISP++);
         gDPLoadTextureBlock(POLY_OPA_DISP++, gFileSelNameBoxTex, G_IM_FMT_IA, G_IM_SIZ_16b, 108, 16, 0,
                             G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
                             G_TX_NOLOD);
@@ -970,6 +974,7 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
         if (this->n64ddFlags[i]) {
             gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, sWindowContentColors[isActive][0], sWindowContentColors[isActive][1],
                             sWindowContentColors[isActive][2], this->nameAlpha[i]);
+            gDPLoadSync(POLY_OPA_DISP++);
             gDPLoadTextureBlock(POLY_OPA_DISP++, gFileSelDISKButtonTex, G_IM_FMT_IA, G_IM_SIZ_16b, 44, 16, 0,
                                 G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
                                 G_TX_NOLOD, G_TX_NOLOD);
@@ -979,6 +984,7 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
         // draw connectors
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, sWindowContentColors[isActive][0], sWindowContentColors[isActive][1],
                         sWindowContentColors[isActive][2], this->connectorAlpha[i]);
+        gDPLoadSync(POLY_OPA_DISP++);
         gDPLoadTextureBlock(POLY_OPA_DISP++, gFileSelConnectorTex, G_IM_FMT_IA, G_IM_SIZ_8b, 24, 16, 0,
                             G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
                             G_TX_NOLOD);
@@ -1020,6 +1026,7 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
 
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, this->windowColor[0], this->windowColor[1], this->windowColor[2],
                         this->confirmButtonAlpha[i]);
+        gDPLoadSync(POLY_OPA_DISP++);
         gDPLoadTextureBlock(POLY_OPA_DISP++, sActionButtonTextures[gSaveContext.language][temp], G_IM_FMT_IA,
                             G_IM_SIZ_16b, 64, 16, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
                             G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -1068,7 +1075,7 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetCombineMode(POLY_OPA_DISP++, G_CC_MODULATEIDECALA, G_CC_MODULATEIDECALA);
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", 2198);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 void FileSelect_ConfigModeDraw(GameState* thisx) {
@@ -1077,7 +1084,7 @@ void FileSelect_ConfigModeDraw(GameState* thisx) {
     f32 eyeY;
     f32 eyeZ;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 2218);
+    OPEN_DISPS(this->state.gfxCtx);
     gDPPipeSync(POLY_OPA_DISP++);
 
     eyeX = 1000.0f * Math_CosS(ZREG(11)) - 1000.0f * Math_SinS(ZREG(11));
@@ -1186,7 +1193,7 @@ void FileSelect_ConfigModeDraw(GameState* thisx) {
     gDPPipeSync(POLY_OPA_DISP++);
     FileSelect_SetView(this, 0.0f, 0.0f, 64.0f);
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", 2352);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 /**
@@ -1460,26 +1467,28 @@ void FileSelect_LoadGame(GameState* thisx) {
         gSaveContext.hudVisibilityModeTimer = gSaveContext.magicCapacity = 0; // false, HUD_VISIBILITY_NO_CHANGE
 
     // Set the fill target to be the saved magic amount
-    gSaveContext.magicFillTarget = gSaveContext.magic;
+    gSaveContext.magicFillTarget = gSaveContext.save.info.playerData.magic;
     // Set `magicLevel` and `magic` to 0 so `magicCapacity` then `magic` grows from nothing to respectively the full
     // capacity and `magicFillTarget`
-    gSaveContext.magicLevel = gSaveContext.magic = 0;
+    gSaveContext.save.info.playerData.magicLevel = gSaveContext.save.info.playerData.magic = 0;
 
     osSyncPrintf(VT_FGCOL(GREEN));
-    osSyncPrintf("Z_MAGIC_NOW_NOW=%d  MAGIC_NOW=%d\n", ((void)0, gSaveContext.magicFillTarget), gSaveContext.magic);
+    osSyncPrintf("Z_MAGIC_NOW_NOW=%d  MAGIC_NOW=%d\n", ((void)0, gSaveContext.magicFillTarget),
+                 gSaveContext.save.info.playerData.magic);
     osSyncPrintf(VT_RST);
 
-    gSaveContext.naviTimer = 0;
+    gSaveContext.save.info.playerData.naviTimer = 0;
 
-    if ((gSaveContext.equips.buttonItems[0] != ITEM_SWORD_KOKIRI) &&
-        (gSaveContext.equips.buttonItems[0] != ITEM_SWORD_MASTER) &&
-        (gSaveContext.equips.buttonItems[0] != ITEM_SWORD_BIGGORON) &&
-        (gSaveContext.equips.buttonItems[0] != ITEM_GIANTS_KNIFE)) {
+    if ((gSaveContext.save.info.equips.buttonItems[0] != ITEM_SWORD_KOKIRI) &&
+        (gSaveContext.save.info.equips.buttonItems[0] != ITEM_SWORD_MASTER) &&
+        (gSaveContext.save.info.equips.buttonItems[0] != ITEM_SWORD_BIGGORON) &&
+        (gSaveContext.save.info.equips.buttonItems[0] != ITEM_GIANTS_KNIFE)) {
 
-        gSaveContext.equips.buttonItems[0] = ITEM_NONE;
-        swordEquipValue = (gEquipMasks[EQUIP_TYPE_SWORD] & gSaveContext.equips.equipment) >> (EQUIP_TYPE_SWORD * 4);
-        gSaveContext.equips.equipment &= gEquipNegMasks[EQUIP_TYPE_SWORD];
-        gSaveContext.inventory.equipment ^= OWNED_EQUIP_FLAG(EQUIP_TYPE_SWORD, swordEquipValue - 1);
+        gSaveContext.save.info.equips.buttonItems[0] = ITEM_NONE;
+        swordEquipValue =
+            (gEquipMasks[EQUIP_TYPE_SWORD] & gSaveContext.save.info.equips.equipment) >> (EQUIP_TYPE_SWORD * 4);
+        gSaveContext.save.info.equips.equipment &= gEquipNegMasks[EQUIP_TYPE_SWORD];
+        gSaveContext.save.info.inventory.equipment ^= OWNED_EQUIP_FLAG(EQUIP_TYPE_SWORD, swordEquipValue - 1);
     }
 
 #ifdef BOOT_TO_SCENE
@@ -1490,8 +1499,8 @@ void FileSelect_LoadGame(GameState* thisx) {
         Sram_InitSave(this, &this->sramCtx);
     }
 #ifndef BOOT_TO_SCENE_NEW_GAME_ONLY
-    gSaveContext.entranceIndex = BOOT_ENTRANCE;
-    gSaveContext.linkAge = BOOT_AGE;
+    gSaveContext.save.entranceIndex = BOOT_ENTRANCE;
+    gSaveContext.save.linkAge = BOOT_AGE;
 #endif
 #endif
 }
@@ -1513,7 +1522,7 @@ void FileSelect_SelectModeDraw(GameState* thisx) {
     f32 eyeY;
     f32 eyeZ;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 2753);
+    OPEN_DISPS(this->state.gfxCtx);
 
     gDPPipeSync(POLY_OPA_DISP++);
 
@@ -1556,7 +1565,7 @@ void FileSelect_SelectModeDraw(GameState* thisx) {
     gDPPipeSync(POLY_OPA_DISP++);
     FileSelect_SetView(this, 0.0f, 0.0f, 64.0f);
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", 2834);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 static void (*sFileSelectDrawFuncs[])(GameState*) = {
@@ -1615,7 +1624,7 @@ void FileSelect_Main(GameState* thisx) {
     osSyncPrintf("Language: %s\n", languageName);
 #endif
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 2898);
+    OPEN_DISPS(this->state.gfxCtx);
 
     this->n64ddFlag = 0;
 
@@ -1710,7 +1719,7 @@ void FileSelect_Main(GameState* thisx) {
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 0, 0, 0, sScreenFillAlpha);
     gDPFillRectangle(POLY_OPA_DISP++, 0, 0, gScreenWidth - 1, gScreenHeight - 1);
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", 3035);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 void FileSelect_InitContext(GameState* thisx) {
@@ -1845,7 +1854,7 @@ void FileSelect_InitContext(GameState* thisx) {
     Letterbox_SetSizeTarget(0);
 
     gSaveContext.skyboxTime = CLOCK_TIME(0, 0);
-    gSaveContext.dayTime = CLOCK_TIME(0, 0);
+    gSaveContext.save.dayTime = CLOCK_TIME(0, 0);
 
     Skybox_Init(&this->state, &this->skyboxCtx, SKYBOX_NORMAL_SKY);
 

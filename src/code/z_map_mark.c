@@ -96,7 +96,7 @@ void MapMark_DrawForDungeon(PlayState* play) {
 
     mapMarkIconData = &sLoadedMarkDataTable[dungeon][interfaceCtx->mapRoomNum][0];
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_map_mark.c", 303);
+    OPEN_DISPS(play->state.gfxCtx);
 
     while (true) {
         if (mapMarkIconData->markType == MAP_MARK_NONE) {
@@ -113,7 +113,7 @@ void MapMark_DrawForDungeon(PlayState* play) {
             if ((mapMarkIconData->markType != MAP_MARK_CHEST) || !Flags_GetTreasure(play, markPoint->chestFlag)) {
                 markInfo = &sMapMarkInfoTable[mapMarkIconData->markType];
 
-                gDPPipeSync(OVERLAY_DISP++);
+                gDPLoadSync(OVERLAY_DISP++);
                 gDPLoadTextureBlock(OVERLAY_DISP++, markInfo->texture, markInfo->imageFormat, G_IM_SIZ_MARK,
                                     markInfo->textureWidth, markInfo->textureHeight, 0, G_TX_NOMIRROR | G_TX_WRAP,
                                     G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -129,7 +129,7 @@ void MapMark_DrawForDungeon(PlayState* play) {
         mapMarkIconData++;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_map_mark.c", 339);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void MapMark_Draw(PlayState* play) {

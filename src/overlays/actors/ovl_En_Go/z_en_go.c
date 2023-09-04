@@ -93,7 +93,7 @@ u16 EnGo_GetTextID(PlayState* play, Actor* thisx) {
 
     switch (thisx->params & 0xF0) {
         case 0x90:
-            if (gSaveContext.bgsFlag) {
+            if (gSaveContext.save.info.playerData.bgsFlag) {
                 return 0x305E;
             } else if (INV_CONTENT(ITEM_TRADE_ADULT) >= ITEM_CLAIM_CHECK) {
                 if (Environment_GetBgsDayCount() >= 3) {
@@ -857,7 +857,7 @@ void func_80A405CC(EnGo* this, PlayState* play) {
 
 void EnGo_BiggoronActionFunc(EnGo* this, PlayState* play) {
     if (((this->actor.params & 0xF0) == 0x90) && (this->interactInfo.talkState == NPC_TALK_STATE_ACTION)) {
-        if (gSaveContext.bgsFlag) {
+        if (gSaveContext.save.info.playerData.bgsFlag) {
             this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
         } else {
             if (INV_CONTENT(ITEM_TRADE_ADULT) == ITEM_EYE_DROPS) {
@@ -983,7 +983,7 @@ void func_80A40C78(EnGo* this, PlayState* play) {
             this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
         } else if (this->unk_20C) {
             this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
-            gSaveContext.bgsFlag = true;
+            gSaveContext.save.info.playerData.bgsFlag = true;
         } else if (INV_CONTENT(ITEM_TRADE_ADULT) == ITEM_PRESCRIPTION) {
             this->actor.textId = 0x3058;
             Message_ContinueTextbox(play, this->actor.textId);
@@ -1045,7 +1045,7 @@ void EnGo_Update(Actor* thisx, PlayState* play) {
 void EnGo_DrawCurledUp(EnGo* this, PlayState* play) {
     Vec3f D_80A41BB4 = { 0.0f, 0.0f, 0.0f };
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_go.c", 2320);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -1058,13 +1058,13 @@ void EnGo_DrawCurledUp(EnGo* this, PlayState* play) {
     Matrix_MultVec3f(&D_80A41BB4, &this->actor.focus.pos);
     Matrix_Pop();
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_go.c", 2341);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnGo_DrawRolling(EnGo* this, PlayState* play) {
     Vec3f D_80A41BC0 = { 0.0f, 0.0f, 0.0f };
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_go.c", 2355);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -1076,7 +1076,7 @@ void EnGo_DrawRolling(EnGo* this, PlayState* play) {
     Matrix_MultVec3f(&D_80A41BC0, &this->actor.focus.pos);
     Matrix_Pop();
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_go.c", 2383);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 EnGo_OverrideLimbDraw(PlayState* play, s32 limb, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
@@ -1117,7 +1117,7 @@ void EnGo_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, 
 void EnGo_Draw(Actor* thisx, PlayState* play) {
     EnGo* this = (EnGo*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_go.c", 2479);
+    OPEN_DISPS(play->state.gfxCtx);
 
     EnGo_UpdateEffects(this);
     Matrix_Push();
@@ -1139,7 +1139,7 @@ void EnGo_Draw(Actor* thisx, PlayState* play) {
 
         SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                               EnGo_OverrideLimbDraw, EnGo_PostLimbDraw, &this->actor);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_go.c", 2525);
+        CLOSE_DISPS(play->state.gfxCtx);
         EnGo_DrawEffects(this, play);
     }
 }
@@ -1197,7 +1197,7 @@ void EnGo_DrawEffects(EnGo* this, PlayState* play) {
     s16 index;
     s16 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_go.c", 2626);
+    OPEN_DISPS(play->state.gfxCtx);
     materialFlag = false;
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     if (1) {}
@@ -1224,5 +1224,5 @@ void EnGo_DrawEffects(EnGo* this, PlayState* play) {
             gSPDisplayList(POLY_XLU_DISP++, gGoronDL_00FD50);
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_go.c", 2678);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

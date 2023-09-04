@@ -187,9 +187,9 @@ void EffectSs_Insert(PlayState* play, EffectSs* effectSs);
 void EffectSs_Spawn(PlayState* play, s32 type, s32 priority, void* initParams);
 void EffectSs_UpdateAll(PlayState* play);
 void EffectSs_DrawAll(PlayState* play);
-s16 func_80027DD4(s16 arg0, s16 arg1, s32 arg2);
-s16 func_80027E34(s16 arg0, s16 arg1, f32 arg2);
-u8 func_80027E84(u8 arg0, u8 arg1, f32 arg2);
+s16 EffectSs_LerpInv(s16 a, s16 b, s32 weightInv);
+s16 EffectSs_LerpS16(s16 a, s16 b, f32 weight);
+u8 EffectSs_LerpU8(u8 a, u8 b, f32 weight);
 void EffectSs_DrawGEffect(PlayState* play, EffectSs* this, void* texture);
 void EffectSsDust_Spawn(PlayState* play, u16 drawFlags, Vec3f* pos, Vec3f* velocity, Vec3f* accel,
                         Color_RGBA8* primColor, Color_RGBA8* envColor, s16 scale, s16 scaleStep, s16 life,
@@ -233,12 +233,12 @@ void EffectSsBomb_Spawn(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* acc
 void EffectSsBomb2_SpawnFade(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel);
 void EffectSsBomb2_SpawnLayered(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel, s16 scale,
                                 s16 scaleStep);
-void EffectSsBlast_Spawn(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel, Color_RGBA8* primColor,
-                         Color_RGBA8* envColor, s16 scale, s16 scaleStep, s16 scaleStepDecay, s16 life);
-void EffectSsBlast_SpawnWhiteCustomScale(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel, s16 scale,
+void EffectSsBlast_Spawn(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel, Color_RGBA8* innerColor,
+                         Color_RGBA8* outerColor, s16 scale, s16 scaleStep, s16 scaleStepDecay, s16 life);
+void EffectSsBlast_SpawnWhiteShockwaveSetScale(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel, s16 scale,
                                          s16 scaleStep, s16 life);
-void EffectSsBlast_SpawnShockwave(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel,
-                                  Color_RGBA8* primColor, Color_RGBA8* envColor, s16 life);
+void EffectSsBlast_SpawnShockwaveSetColor(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel,
+                                          Color_RGBA8* innerColor, Color_RGBA8* outerColor, s16 life);
 void EffectSsBlast_SpawnWhiteShockwave(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel);
 void EffectSsGSpk_SpawnAccel(PlayState* play, Actor* actor, Vec3f* pos, Vec3f* velocity, Vec3f* accel,
                              Color_RGBA8* primColor, Color_RGBA8* envColor, s16 scale, s16 scaleStep);
@@ -892,9 +892,9 @@ f32 Math_SmoothStepToDegF(f32* pValue, f32 target, f32 fraction, f32 step, f32 m
 s16 Math_SmoothStepToS(s16* pValue, s16 target, s16 scale, s16 step, s16 minStep);
 void Math_ApproachS(s16* pValue, s16 target, s16 scale, s16 step);
 void Color_RGBA8_Copy(Color_RGBA8* dst, Color_RGBA8* src);
-void func_80078884(u16 sfxId);
-void func_800788CC(u16 sfxId);
-void func_80078914(Vec3f* arg0, u16 sfxId);
+void Sfx_PlaySfxCentered(u16 sfxId);
+void Sfx_PlaySfxCentered2(u16 sfxId);
+void Sfx_PlaySfxAtPos(Vec3f* projectedPos, u16 sfxId);
 void Health_InitMeter(PlayState* play);
 void Health_UpdateMeter(PlayState* play);
 void Health_DrawMeter(PlayState* play);
@@ -1322,6 +1322,18 @@ void Play_TriggerVoidOut(PlayState* this);
 void Play_TriggerRespawn(PlayState* this);
 s32 Play_CamIsNotFixed(PlayState* this);
 
+#ifdef ENABLE_MOTION_BLUR
+void Play_DrawMotionBlur(PlayState* this);
+void Play_InitMotionBlur(PlayState* this);
+void Play_DestroyMotionBlur(void);
+void Play_SetMotionBlurAlpha(u32 alpha);
+void Play_EnableMotionBlur(u32 alpha);
+void Play_DisableMotionBlur(void);
+void Play_SetMotionBlurPriorityAlpha(u32 alpha);
+void Play_EnableMotionBlurPriority(u32 alpha);
+void Play_DisableMotionBlurPriority(void);
+#endif
+
 #ifdef ENABLE_FRAMERATE_OPTIONS
 s32 FrameAdvance_IsEnabled(PlayState* this);
 #endif
@@ -1385,8 +1397,12 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState);
 void Graph_ThreadEntry(void*);
 void* Graph_Alloc(GraphicsContext* gfxCtx, size_t size);
 void* Graph_Alloc2(GraphicsContext* gfxCtx, size_t size);
+
+#ifndef DISABLE_DEBUG_FEATURES
 void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, s32 line);
 void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, s32 line);
+#endif
+
 Gfx* Graph_GfxPlusOne(Gfx* gfx);
 Gfx* Graph_BranchDlist(Gfx* gfx, Gfx* dst);
 void* Graph_DlistAlloc(Gfx** gfx, u32 size);
@@ -1396,18 +1412,6 @@ void ListAlloc_Free(ListAlloc* this, void* data);
 void ListAlloc_FreeAll(ListAlloc* this);
 void Main_LogSystemHeap(void);
 void Main(void* arg);
-
-#ifdef ENABLE_SPEEDMETER
-void SpeedMeter_InitImpl(SpeedMeter* this, u32 arg1, u32 y);
-void SpeedMeter_Init(SpeedMeter* this);
-void SpeedMeter_Destroy(SpeedMeter* this);
-void SpeedMeter_DrawTimeEntries(SpeedMeter* this, GraphicsContext* gfxCtx);
-void SpeedMeter_InitAllocEntry(SpeedMeterAllocEntry* this, u32 maxval, u32 val, u16 backColor, u16 foreColor, u32 ulx,
-                               u32 lrx, u32 uly, u32 lry);
-void SpeedMeter_DrawAllocEntry(SpeedMeterAllocEntry* this, GraphicsContext* gfxCtx);
-void SpeedMeter_DrawAllocEntries(SpeedMeter* meter, GraphicsContext* gfxCtx, GameState* state);
-#endif
-
 void SysCfb_Init(s32 n64dd);
 void* SysCfb_GetFbPtr(s32 idx);
 void* SysCfb_GetFbEnd(void);

@@ -220,7 +220,7 @@ void EnJj_BeginCutscene(EnJj* this, PlayState* play) {
         DynaPoly_DisableCollision(play, &play->colCtx.dyna, bodyCollisionActor->bgId);
         func_8005B1A4(GET_ACTIVE_CAM(play));
         SET_EVENTCHKINF(EVENTCHKINF_3A);
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
     }
 }
 
@@ -309,7 +309,7 @@ void EnJj_Draw(Actor* thisx, PlayState* play2) {
     PlayState* play = play2;
     EnJj* this = (EnJj*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_jj.c", 879);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
     Matrix_Translate(0.0f, (cosf(this->skelAnime.curFrame * (M_PI / 41.0f)) * 10.0f) - 10.0f, 0.0f, MTXMODE_APPLY);
@@ -318,5 +318,5 @@ void EnJj_Draw(Actor* thisx, PlayState* play2) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount, NULL,
                           NULL, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_jj.c", 898);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

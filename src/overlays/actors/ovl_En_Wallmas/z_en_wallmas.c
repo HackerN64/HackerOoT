@@ -470,7 +470,7 @@ void EnWallmas_TakePlayer(EnWallmas* this, PlayState* play) {
     Math_StepToF(&this->actor.world.pos.z, player->actor.world.pos.z, 3.0f);
 
     if (this->timer == 0x1E) {
-        func_80078884(NA_SE_OC_ABYSS);
+        Sfx_PlaySfxCentered(NA_SE_OC_ABYSS);
         Play_TriggerRespawn(play);
     }
 }
@@ -589,7 +589,7 @@ void EnWallmas_DrawXlu(EnWallmas* this, PlayState* play) {
         return;
     }
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_wallmas.c", 1386);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_44Xlu(play->state.gfxCtx);
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 0, 0, 0, 255);
@@ -609,7 +609,7 @@ void EnWallmas_DrawXlu(EnWallmas* this, PlayState* play) {
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_wallmas.c", 1421), G_MTX_LOAD);
     gSPDisplayList(POLY_XLU_DISP++, gCircleShadowDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_wallmas.c", 1426);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 EnWallMas_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
@@ -627,7 +627,7 @@ s32 EnWallMas_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3
 
 void EnWallMas_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
     if (limbIndex == 2) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_wallmas.c", 1478);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Matrix_Push();
         Matrix_Translate(1600.0f, -700.0f, -1700.0f, MTXMODE_APPLY);
@@ -640,7 +640,7 @@ void EnWallMas_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* 
 
         Matrix_Pop();
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_wallmas.c", 1495);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 

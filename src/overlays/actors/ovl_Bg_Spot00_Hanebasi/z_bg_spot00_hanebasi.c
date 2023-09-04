@@ -236,14 +236,14 @@ void BgSpot00Hanebasi_Update(Actor* thisx, PlayState* play) {
             if (gTimeSpeed == 50) {
                 tmp = CLOCK_TIME(20, 0) + 1;
 
-                if (gSaveContext.dayTime > CLOCK_TIME(20, 0) + 1) {
+                if (gSaveContext.save.dayTime > CLOCK_TIME(20, 0) + 1) {
                     tmp = CLOCK_TIME(20, 0) + 1 + 0x10000;
                 }
 
-                gTimeSpeed = (tmp - gSaveContext.dayTime) * (1.0f / 350.0f);
+                gTimeSpeed = (tmp - gSaveContext.save.dayTime) * (1.0f / 350.0f);
             }
 
-            dayTime = gSaveContext.dayTime;
+            dayTime = gSaveContext.save.dayTime;
 
             if ((dayTime > CLOCK_TIME(4, 0)) && (dayTime < CLOCK_TIME(4, 30)) && (gSaveContext.sceneLayer == 5)) {
                 gTimeSpeed = 0;
@@ -257,7 +257,7 @@ void BgSpot00Hanebasi_DrawTorches(Actor* thisx, PlayState* play2) {
     f32 angle;
     s32 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot00_hanebasi.c", 633);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -285,14 +285,14 @@ void BgSpot00Hanebasi_DrawTorches(Actor* thisx, PlayState* play2) {
         gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot00_hanebasi.c", 681);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BgSpot00Hanebasi_Draw(Actor* thisx, PlayState* play) {
     Vec3f basePos = { 158.0f, 10.0f, 400.0f };
     Vec3f newPos;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot00_hanebasi.c", 698);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -324,5 +324,5 @@ void BgSpot00Hanebasi_Draw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_OPA_DISP++, gHyruleFieldCastleDrawbridgeChainsDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot00_hanebasi.c", 733);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

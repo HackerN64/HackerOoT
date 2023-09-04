@@ -2558,7 +2558,7 @@ s32 sInitRegs = 1;
 
 #ifdef ENABLE_CAMERA_DEBUGGER
 s32 gDebugCamEnabled = false;
-s32 sDbgModeIdx = -1;
+u8 sDbgModeIdx = 0;
 #endif
 
 s16 sNextUID = 0;

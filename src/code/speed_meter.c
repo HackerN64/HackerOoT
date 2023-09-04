@@ -60,6 +60,13 @@ volatile OSTime D_8016A578;
 // Accumulator for `gRDPTimeTotal`
 volatile OSTime gRDPTimeAcc;
 
+typedef struct {
+    /* 0x00 */ volatile OSTime* time;
+    /* 0x04 */ u8 x;
+    /* 0x05 */ u8 y;
+    /* 0x06 */ u16 color;
+} SpeedMeterTimeEntry; // size = 0x08
+
 SpeedMeterTimeEntry* sSpeedMeterTimeEntryPtr;
 
 SpeedMeterTimeEntry sSpeedMeterTimeEntryArray[] = {
@@ -104,7 +111,7 @@ void SpeedMeter_DrawTimeEntries(SpeedMeter* this, GraphicsContext* gfxCtx) {
     uly = this->y;
     lry = this->y + 2;
 
-    OPEN_DISPS(gfxCtx, "../speed_meter.c", 225);
+    OPEN_DISPS(gfxCtx);
 
     /*! @bug if gIrqMgrRetraceTime is 0, CLOSE_DISPS will never be reached */
     if (gIrqMgrRetraceTime == 0) {
@@ -147,7 +154,7 @@ void SpeedMeter_DrawTimeEntries(SpeedMeter* this, GraphicsContext* gfxCtx) {
 
     OVERLAY_DISP = gfx;
 
-    CLOSE_DISPS(gfxCtx, "../speed_meter.c", 276);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void SpeedMeter_InitAllocEntry(SpeedMeterAllocEntry* this, u32 maxval, u32 val, u16 backColor, u16 foreColor, u32 ulx,
@@ -172,7 +179,7 @@ void SpeedMeter_DrawAllocEntry(SpeedMeterAllocEntry* this, GraphicsContext* gfxC
         LOG_NUM("this->maxval", this->maxval, "../speed_meter.c", 313);
         osSyncPrintf(VT_RST);
     } else {
-        OPEN_DISPS(gfxCtx, "../speed_meter.c", 318);
+        OPEN_DISPS(gfxCtx);
 
         View_Init(&view, gfxCtx);
         view.flags = VIEW_VIEWPORT | VIEW_PROJECTION_ORTHO;
@@ -195,7 +202,7 @@ void SpeedMeter_DrawAllocEntry(SpeedMeterAllocEntry* this, GraphicsContext* gfxC
         gDPPipeSync(gfx++);
 
         OVERLAY_DISP = gfx;
-        CLOSE_DISPS(gfxCtx, "../speed_meter.c", 339);
+        CLOSE_DISPS(gfxCtx);
     }
 }
 

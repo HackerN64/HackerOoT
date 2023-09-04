@@ -881,7 +881,7 @@ s32 BossTw_CheckBeamReflection(BossTw* this, PlayState* play) {
                 BossTw_AddShieldDeflectEffect(play, 10.0f, this->actor.params);
                 play->envCtx.lightBlend = 1.0f;
                 this->timers[0] = 10;
-                func_80078884(NA_SE_IT_SHIELD_REFLECT_MG2);
+                Sfx_PlaySfxCentered(NA_SE_IT_SHIELD_REFLECT_MG2);
             }
 
             sBeamDivertTimer++;
@@ -1108,7 +1108,7 @@ void BossTw_ShootBeam(BossTw* this, PlayState* play) {
                         }
 
                         this->beamShootState = 1;
-                        func_80078914(&player->actor.projectedPos, NA_SE_IT_SHIELD_REFLECT_MG);
+                        Sfx_PlaySfxAtPos(&player->actor.projectedPos, NA_SE_IT_SHIELD_REFLECT_MG);
                         Matrix_MtxFToYXZRotS(&player->shieldMf, &sp128, 0);
                         sp128.y += 0x8000;
                         sp128.x = -sp128.x;
@@ -1698,7 +1698,7 @@ void BossTw_TwinrovaMergeCS(BossTw* this, PlayState* play) {
 
             if (this->timers[1] == 8) {
                 this->work[TW_BLINK_IDX] = 8;
-                func_80078884(NA_SE_EN_TWINROBA_YOUNG_WINK);
+                Sfx_PlaySfxCentered(NA_SE_EN_TWINROBA_YOUNG_WINK);
             }
             if (this->timers[2] == 4) {
                 sEnvType = 0;
@@ -1776,12 +1776,12 @@ void BossTw_TwinrovaIntroCS(BossTw* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (this->csSfxTimer > 220 && this->csSfxTimer < 630) {
-        func_80078884(NA_SE_EN_TWINROBA_UNARI - SFX_FLAG);
+        Sfx_PlaySfxCentered(NA_SE_EN_TWINROBA_UNARI - SFX_FLAG);
     }
 
     if (this->csSfxTimer == 180) {
-        func_80078914(&D_8094A7D0, NA_SE_EN_TWINROBA_LAUGH);
-        func_80078914(&D_8094A7D0, NA_SE_EN_TWINROBA_LAUGH2);
+        Sfx_PlaySfxAtPos(&D_8094A7D0, NA_SE_EN_TWINROBA_LAUGH);
+        Sfx_PlaySfxAtPos(&D_8094A7D0, NA_SE_EN_TWINROBA_LAUGH2);
         SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_KOTAKE_KOUME);
     }
 
@@ -1842,7 +1842,7 @@ void BossTw_TwinrovaIntroCS(BossTw* this, PlayState* play) {
             }
 
             if (this->work[CS_TIMER_1] == 180) {
-                func_80078884(NA_SE_EN_TWINROBA_APPEAR_MS);
+                Sfx_PlaySfxCentered(NA_SE_EN_TWINROBA_APPEAR_MS);
             }
 
             if (this->work[CS_TIMER_1] > 180) {
@@ -2455,7 +2455,7 @@ void BossTw_DeathCSMsgSfx(BossTw* this, PlayState* play) {
     }
 
     if (this->work[CS_TIMER_2] > 440 && this->work[CS_TIMER_2] < 860) {
-        func_80078884(NA_SE_EN_TWINROBA_FIGHT - SFX_FLAG);
+        Sfx_PlaySfxCentered(NA_SE_EN_TWINROBA_FIGHT - SFX_FLAG);
     }
 
     if (this->work[CS_TIMER_2] == 430) {
@@ -2650,7 +2650,7 @@ void BossTw_TwinrovaDeathCS(BossTw* this, PlayState* play) {
                     Vec3f spBC;
                     Vec3f spB0;
                     Vec3f spA4 = { 0.0f, 0.0f, 0.0f };
-                    func_80078884(NA_SE_EN_TWINROBA_TRANSFORM);
+                    Sfx_PlaySfxCentered(NA_SE_EN_TWINROBA_TRANSFORM);
                     for (i = 0; i < 100; i++) {
                         spB0.x = Rand_CenteredFloat(5.0f);
                         spB0.y = Rand_CenteredFloat(5.0f);
@@ -2762,7 +2762,7 @@ void BossTw_TwinrovaDeathCS(BossTw* this, PlayState* play) {
                 Actor_SetScale(&sKotakePtr->actor, 0.0f);
                 sKoumePtr->visible = 1;
                 sKotakePtr->visible = 1;
-                func_80078884(NA_SE_EN_TWINROBA_TRANSFORM);
+                Sfx_PlaySfxCentered(NA_SE_EN_TWINROBA_TRANSFORM);
                 SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_KOTAKE_KOUME);
                 this->csState2 = 3;
                 this->work[CS_TIMER_2] = 0;
@@ -3162,8 +3162,8 @@ void BossTw_TwinrovaUpdate(Actor* thisx, PlayState* play2) {
     if (sFreezeState == 1) {
         sFreezeState = 2;
         BossTw_AddPlayerFreezeEffect(play, NULL);
-        func_80078914(&player->actor.projectedPos, NA_SE_VO_LI_FREEZE);
-        func_80078914(&player->actor.projectedPos, NA_SE_PL_FREEZE);
+        Sfx_PlaySfxAtPos(&player->actor.projectedPos, NA_SE_VO_LI_FREEZE);
+        Sfx_PlaySfxAtPos(&player->actor.projectedPos, NA_SE_PL_FREEZE);
 
         if (sShieldFireCharge != 0) {
             sShieldFireCharge = 4;
@@ -3212,7 +3212,7 @@ void BossTw_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot
     };
     BossTw* this = (BossTw*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 6168);
+    OPEN_DISPS(play->state.gfxCtx);
 
     switch (limbIndex) {
         case TWINROVA_KOTAKE_KOUME_LIMB_HEAD:
@@ -3255,13 +3255,13 @@ void BossTw_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot
             break;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 6236);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_80941BC0(BossTw* this, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 6341);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -3299,13 +3299,13 @@ void func_80941BC0(BossTw* this, PlayState* play) {
     gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(gTwinrovaEffectHaloDL));
     Matrix_Pop();
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 6461);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_80942180(BossTw* this, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 6468);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
 
@@ -3347,14 +3347,14 @@ void func_80942180(BossTw* this, PlayState* play) {
 
     Matrix_Pop();
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 6579);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_809426F0(BossTw* this, PlayState* play) {
     s32 pad;
     s16 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 6587);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSPSegment(POLY_XLU_DISP++, 8,
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, 0, (u8)(-this->work[CS_TIMER_2] * 15), 0x20, 0x40,
@@ -3402,14 +3402,14 @@ void func_809426F0(BossTw* this, PlayState* play) {
         Matrix_Pop();
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 6756);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_80942C70(Actor* thisx, PlayState* play) {
     BossTw* this = (BossTw*)thisx;
     s16 alpha;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 6765);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->beamDist != 0.0f) {
         Matrix_Push();
@@ -3450,13 +3450,13 @@ void func_80942C70(Actor* thisx, PlayState* play) {
         Matrix_Pop();
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 6878);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_80943028(Actor* thisx, PlayState* play) {
     BossTw* this = (BossTw*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 6885);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
     Matrix_Translate(this->actor.world.pos.x, this->actor.world.pos.y + 57.0f, this->actor.world.pos.z, MTXMODE_NEW);
@@ -3475,7 +3475,7 @@ void func_80943028(Actor* thisx, PlayState* play) {
     gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(gCircleShadowDL));
     Matrix_Pop();
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 6933);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 static void* sEyeTextures[] = {
@@ -3490,7 +3490,7 @@ void BossTw_Draw(Actor* thisx, PlayState* play2) {
     BossTw* this = (BossTw*)thisx;
     Player* player = GET_PLAYER(play);
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 6947);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->visible) {
         gSPSegment(POLY_OPA_DISP++, 10, SEGMENTED_TO_VIRTUAL(sEyeTextures[this->eyeTexIdx]));
@@ -3562,7 +3562,7 @@ void BossTw_Draw(Actor* thisx, PlayState* play2) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 7123);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void* sTwinrovaEyeTextures[] = {
@@ -3574,7 +3574,7 @@ void* sTwinrovaEyeTextures[] = {
 s32 BossTw_TwinrovaOverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
     BossTw* this = (BossTw*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 7139);
+    OPEN_DISPS(play->state.gfxCtx);
 
     switch (limbIndex) {
         case TWINROVA_LIMB_HEAD:
@@ -3627,7 +3627,7 @@ s32 BossTw_TwinrovaOverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList,
         *dList = NULL;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 7251);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     return false;
 }
@@ -3640,7 +3640,7 @@ void BossTw_TwinrovaPostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Ve
 
     BossTw* this = (BossTw*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 7262);
+    OPEN_DISPS(play->state.gfxCtx);
 
     switch (limbIndex) {
         case TWINROVA_LIMB_LEFT_BROOM:
@@ -3670,7 +3670,7 @@ void BossTw_TwinrovaPostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Ve
             break;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 7301);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossTw_ShieldChargeDraw(BossTw* this, PlayState* play) {
@@ -3679,18 +3679,18 @@ void BossTw_ShieldChargeDraw(BossTw* this, PlayState* play) {
     s16 temp_t0;
     s16 temp_a0;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 7311);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
 
     temp_t0 = sShieldFireCharge | sShieldIceCharge;
 
     if (temp_t0 == 1) {
-        func_80078884(NA_SE_IT_SHIELD_CHARGE_LV1 & ~SFX_FLAG);
+        Sfx_PlaySfxCentered(NA_SE_IT_SHIELD_CHARGE_LV1 & ~SFX_FLAG);
     } else if (temp_t0 == 2) {
-        func_80078884(NA_SE_IT_SHIELD_CHARGE_LV2 & ~SFX_FLAG);
+        Sfx_PlaySfxCentered(NA_SE_IT_SHIELD_CHARGE_LV2 & ~SFX_FLAG);
     } else if (temp_t0 == 3) {
-        func_80078884(NA_SE_IT_SHIELD_CHARGE_LV3 & ~SFX_FLAG);
+        Sfx_PlaySfxCentered(NA_SE_IT_SHIELD_CHARGE_LV3 & ~SFX_FLAG);
     }
 
     if (temp_t0 != 0 && temp_t0 < 4) {
@@ -3773,13 +3773,13 @@ void BossTw_ShieldChargeDraw(BossTw* this, PlayState* play) {
 
     Matrix_Pop();
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 7531);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossTw_SpawnPortalDraw(BossTw* this, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 7546);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gSPSegment(POLY_XLU_DISP++, 8,
@@ -3818,14 +3818,14 @@ void BossTw_SpawnPortalDraw(BossTw* this, PlayState* play) {
 
     Matrix_Pop();
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 7635);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_80944C50(BossTw* this, PlayState* play) {
     s32 pad;
     f32 scale;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 7645);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
     Matrix_Translate(0.0f, 750.0f, 0.0f, MTXMODE_NEW);
@@ -3860,7 +3860,7 @@ void func_80944C50(BossTw* this, PlayState* play) {
     gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(gTwinrovaLightPillarDL));
     Matrix_Pop();
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 7732);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossTw_TwinrovaDraw(Actor* thisx, PlayState* play2) {
@@ -3868,7 +3868,7 @@ void BossTw_TwinrovaDraw(Actor* thisx, PlayState* play2) {
     PlayState* play = play2;
     BossTw* this = (BossTw*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 7748);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->visible) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -3899,7 +3899,7 @@ void BossTw_TwinrovaDraw(Actor* thisx, PlayState* play2) {
         func_80944C50(this, play);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 7804);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossTw_BlastFire(BossTw* this, PlayState* play) {
@@ -4376,7 +4376,7 @@ s32 BossTw_BlastShieldCheck(BossTw* this, PlayState* play) {
                     sEnvType = 0;
                     sShieldIceCharge = 0;
                     sShieldFireCharge = 0;
-                    func_80078884(NA_SE_IT_SHIELD_REFLECT_MG2);
+                    Sfx_PlaySfxCentered(NA_SE_IT_SHIELD_REFLECT_MG2);
                 }
 
                 ret = true;
@@ -4437,7 +4437,7 @@ void BossTw_BlastDraw(Actor* thisx, PlayState* play2) {
     s16 tailIdx;
     s16 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 8818);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -4491,7 +4491,7 @@ void BossTw_BlastDraw(Actor* thisx, PlayState* play2) {
             break;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 9013);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossTw_DrawDeathBall(Actor* thisx, PlayState* play2) {
@@ -4501,7 +4501,7 @@ void BossTw_DrawDeathBall(Actor* thisx, PlayState* play2) {
     s16 tailIdx;
     s16 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 9028);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -4547,7 +4547,7 @@ void BossTw_DrawDeathBall(Actor* thisx, PlayState* play2) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_tw.c", 9111);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossTw_UpdateEffects(PlayState* play) {
@@ -4903,7 +4903,7 @@ void BossTw_DrawEffects(PlayState* play) {
 
     effectHead = currentEffect;
 
-    OPEN_DISPS(gfxCtx, "../z_boss_tw.c", 9592);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -5102,7 +5102,7 @@ void BossTw_DrawEffects(PlayState* play) {
         currentEffect++;
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_boss_tw.c", 9920);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void BossTw_TwinrovaSetupArriveAtTarget(BossTw* this, PlayState* play) {

@@ -86,6 +86,7 @@ void PreRender_CopyImage(PreRender* this, Gfx** gfxp, void* img, void* imgDst) {
         ult = curRow;
         lrt = ult + nRows - 1;
 
+        gDPLoadSync(gfx++);
         // Load a horizontal strip of the source image in RGBA16 format
         gDPLoadTextureTile(gfx++, img, G_IM_FMT_RGBA, G_IM_SIZ_16b, this->width, this->height, uls, ult, lrs, lrt, 0,
                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
@@ -147,6 +148,7 @@ void PreRender_CopyImageRegionImpl(PreRender* this, Gfx** gfxp) {
         lrt = ult + nRows - 1;
         uly = this->uly + curRow;
 
+        gDPLoadSync(gfx++);
         // Load a horizontal strip of the source image in RGBA16 format
         gDPLoadTextureTile(gfx++, this->fbufSave, G_IM_FMT_RGBA, G_IM_SIZ_16b, this->widthSave, this->height - 1,
                            this->ulxSave, ult, this->lrxSave, lrt, 0, G_TX_NOMIRROR | G_TX_WRAP,
@@ -217,6 +219,7 @@ void func_800C170C(PreRender* this, Gfx** gfxp, void* buf, void* bufSave, u32 r,
         ult = curRow;
         lrt = curRow + nRows - 1;
 
+        gDPLoadSync(gfx++);
         // Load a horizontal strip of the source image in RGBA16 format
         gDPLoadTextureTile(gfx++, buf, G_IM_FMT_RGBA, G_IM_SIZ_16b, this->width, this->height, uls, ult, lrs, lrt, 0,
                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
@@ -293,6 +296,8 @@ void PreRender_CoverageRgba16ToI8(PreRender* this, Gfx** gfxp, void* img, void* 
         ult = curRow;
         lrt = curRow + nRows - 1;
 
+        gDPLoadSync(gfx++);
+
         // Load a horizontal strip of the source image in IA16 format. Since the source image is stored in memory as
         // RGBA16, the bits are reinterpreted into IA16:
         //
@@ -361,7 +366,11 @@ void PreRender_FetchFbufCoverage(PreRender* this, Gfx** gfxp) {
     Gfx* gfx = *gfxp;
 
     gDPPipeSync(gfx++);
-    // Set the blend color to full white and set maximum depth
+    // Set the blend color to full white and set maximum depth.
+    // It is important that at least dz is set to full here as the blender will shift memory alpha values based on the
+    // value of dz even if depth compare is disabled. If per-pixel depth was enabled, fill rectangle always uses 0 z/dz,
+    // causing a maximal shift of 4 to be applied to the memory alpha value. Full dz results in no shift, which is
+    // desired here.
     gDPSetBlendColor(gfx++, 255, 255, 255, 8);
     gDPSetPrimDepth(gfx++, 0xFFFF, 0xFFFF);
 
@@ -372,9 +381,10 @@ void PreRender_FetchFbufCoverage(PreRender* this, Gfx** gfxp) {
     //  FORCE_BL : Apply the blender to all pixels rather than just edges, skip the division step of the blend formula
     //  (G_BL_CLR_IN * G_BL_0 + G_BL_CLR_BL * G_BL_A_MEM) = G_BL_CLR_BL * G_BL_A_MEM
     //
-    // G_BL_A_MEM ("memory alpha") is coverage, therefore this blender configuration emits only the coverage (up to a
-    // constant factor determined by blend color) and discards any pixel colors. For an RGBA16 framebuffer, each of the
-    // three color channels r,g,b will receive the coverage value individually.
+    // G_BL_A_MEM ("memory alpha") is coverage (shifted into the most significant 3 bits of the 5-bit blender alpha
+    // input), therefore this blender configuration emits only the coverage (up to a constant factor determined by
+    // blend color) and discards any pixel colors. For an RGBA16 framebuffer, each of the three color channels r,g,b
+    // will receive the coverage value individually.
     //
     // Also disables other modes such as alpha compare and texture perspective correction
     gDPSetOtherMode(gfx++,
@@ -456,6 +466,8 @@ void func_800C213C(PreRender* this, Gfx** gfxp) {
             // Determine the upper and lower bounds of the rect to draw
             ult = curRow;
             lrt = curRow + nRows - 1;
+
+            gDPLoadSync(gfx++);
 
             // Load the frame buffer line
             gDPLoadMultiTile(gfx++, this->fbufSave, 0x0000, G_TX_RENDERTILE, G_IM_FMT_RGBA, G_IM_SIZ_16b, this->width,
@@ -798,5 +810,83 @@ void PreRender_ApplyFilters(PreRender* this) {
             PreRender_DivotFilter(this);
         }
     }
+}
+#endif
+
+#ifdef ENABLE_MOTION_BLUR
+void PreRender_MotionBlurImpl(PreRender* this, Gfx** gfxp, void* buf, void* bufSave, s32 envR, s32 envG, s32 envB, s32 envA) {
+    Gfx* gfx = *gfxp;
+    uObjBg* bg;
+
+    gDPPipeSync(gfx++);
+
+    if (envA == 255) {
+        gDPSetOtherMode(gfx++,
+                        G_AD_DISABLE | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE |
+                            G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE,
+                        G_AC_NONE | G_ZS_PRIM | G_RM_OPA_SURF | G_RM_OPA_SURF2);
+    } else {
+        gDPSetOtherMode(gfx++,
+                        G_AD_NOISE | G_CD_NOISE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE |
+                            G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE,
+                        G_AC_NONE | G_ZS_PRIM | G_RM_CLD_SURF | G_RM_CLD_SURF2);
+    }
+
+    gDPSetEnvColor(gfx++, envR, envG, envB, envA);
+    gDPSetCombineLERP(gfx++, TEXEL0, 0, ENVIRONMENT, 0, 0, 0, 0, ENVIRONMENT, TEXEL0, 0, ENVIRONMENT, 0, 0, 0, 0,
+                      ENVIRONMENT);
+    gDPSetColorImage(gfx++, G_IM_FMT_RGBA, G_IM_SIZ_16b, this->width, bufSave);
+    gDPSetScissor(gfx++, G_SC_NON_INTERLACE, 0, 0, this->width, this->height);
+
+    // Setup BG Obj
+    bg = Graph_DlistAlloc(&gfx, sizeof(uObjBg));
+
+    bg->s.imageX = 0;
+    bg->s.imageW = this->width * 4 + 1;
+    bg->s.frameX = 0;
+
+    bg->s.imageY = 0;
+    bg->s.imageH = this->height * 4 + 1;
+    bg->s.frameY = 0;
+
+    bg->s.imagePtr = buf;
+    bg->s.imageLoad = G_BGLT_LOADTILE;
+    bg->s.imageFmt = G_IM_FMT_RGBA;
+    bg->s.imageSiz = G_IM_SIZ_16b;
+    bg->s.imagePal = 0;
+    bg->s.imageFlip = 0;
+
+    bg->s.frameW = this->width * 4;
+    bg->s.frameH = this->height * 4;
+    bg->s.scaleW = 1024;
+    bg->s.scaleH = 1024;
+    bg->s.imageYorig = bg->s.imageY;
+
+    // Load S2DEX
+    gSPLoadUcodeL(gfx++, gspS2DEX2d_fifo);
+    gDPPipeSync(gfx++);
+
+    gSPObjRenderMode(gfx++, G_OBJRM_ANTIALIAS | G_OBJRM_BILERP);
+    gSPBgRect1Cyc(gfx++, bg);
+    gDPPipeSync(gfx++);
+
+    // Reload F3DZEX
+    gSPLoadUcodeEx(gfx++, SysUcode_GetUCode(), SysUcode_GetUCodeData(), 0x800);
+    gDPPipeSync(gfx++);
+
+    gDPSetColorImage(gfx++, G_IM_FMT_RGBA, G_IM_SIZ_16b, this->width, this->fbuf);
+
+    *gfxp = gfx;
+}
+
+// TODO this could do with a better name but whatever
+void PreRender_MotionBlurOpaque(PreRender* this, Gfx** gfxP) {
+    if (this->fbuf != NULL && this->fbufSave != NULL) {
+        PreRender_MotionBlurImpl(this, gfxP, this->fbuf, this->fbufSave, 255, 255, 255, 255);
+    }
+}
+
+void PreRender_MotionBlur(PreRender* this, Gfx** gfxP, s32 alpha) {
+    PreRender_MotionBlurImpl(this, gfxP, this->fbufSave, this->fbuf, 255, 255, 255, alpha);
 }
 #endif

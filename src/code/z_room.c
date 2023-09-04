@@ -36,7 +36,7 @@ void Room_DrawNormal(PlayState* play, Room* room, u32 flags) {
     RoomShapeNormal* roomShape;
     RoomShapeDListsEntry* entry;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_room.c", 193);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (flags & ROOM_DRAW_OPA) {
         func_800342EC(&D_801270A0, play);
@@ -66,7 +66,7 @@ void Room_DrawNormal(PlayState* play, Room* room, u32 flags) {
         entry++;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_room.c", 239);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 typedef enum {
@@ -110,7 +110,7 @@ void Room_DrawCullable(PlayState* play, Room* room, u32 flags) {
     RoomShapeCullableEntry* roomShapeCullableEntryIter;
     f32 entryBoundsNearZ;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_room.c", 287);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (flags & ROOM_DRAW_OPA) {
         func_800342EC(&D_801270A0, play);
@@ -249,7 +249,7 @@ void Room_DrawCullable(PlayState* play, Room* room, u32 flags) {
 
     R_ROOM_CULL_USED_ENTRIES = i - 1;
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_room.c", 430);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 #define JPEG_MARKER 0xFFD8FFE0
@@ -312,10 +312,9 @@ void Room_DrawBackground2D(Gfx** gfxP, void* tex, void* tlut, u16 width, u16 hei
 
     gfx = (Gfx*)(bg + 1);
 
+    gDPPipeSync(gfx++);
     if (fmt == G_IM_FMT_CI) {
         gDPLoadTLUT(gfx++, tlutCount, 256, tlut);
-    } else {
-        gDPPipeSync(gfx++);
     }
 
     if ((fmt == G_IM_FMT_RGBA) && !R_ROOM_BG2D_FORCE_SCALEBG) {
@@ -362,7 +361,7 @@ void Room_DrawImageSingle(PlayState* play, Room* room, u32 flags) {
     u32 drawOpa;
     u32 drawXlu;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_room.c", 628);
+    OPEN_DISPS(play->state.gfxCtx);
 
     activeCam = GET_ACTIVE_CAM(play);
     isFixedCamera = (activeCam->setting == CAM_SET_PREREND_FIXED);
@@ -408,7 +407,7 @@ void Room_DrawImageSingle(PlayState* play, Room* room, u32 flags) {
         gSPDisplayList(POLY_XLU_DISP++, entry->xlu);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_room.c", 691);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 RoomShapeImageMultiBgEntry* Room_GetImageMultiBgEntry(RoomShapeImageMulti* roomShapeImageMulti, PlayState* play) {
@@ -455,7 +454,7 @@ void Room_DrawImageMulti(PlayState* play, Room* room, u32 flags) {
     u32 drawOpa;
     u32 drawXlu;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_room.c", 752);
+    OPEN_DISPS(play->state.gfxCtx);
 
     activeCam = GET_ACTIVE_CAM(play);
     isFixedCamera = (activeCam->setting == CAM_SET_PREREND_FIXED);
@@ -506,7 +505,7 @@ void Room_DrawImageMulti(PlayState* play, Room* room, u32 flags) {
         gSPDisplayList(POLY_XLU_DISP++, dListsEntry->xlu);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_room.c", 819);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Room_DrawImage(PlayState* play, Room* room, u32 flags) {

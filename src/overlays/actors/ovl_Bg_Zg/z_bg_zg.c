@@ -122,14 +122,14 @@ void BgZg_Init(Actor* thisx, PlayState* play) {
 void func_808C0EEC(BgZg* this, PlayState* play) {
     GraphicsContext* localGfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(localGfxCtx, "../z_bg_zg.c", 311);
+    OPEN_DISPS(localGfxCtx);
 
     Gfx_SetupDL_25Opa(localGfxCtx);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(localGfxCtx, "../z_bg_zg.c", 315),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gTowerCollapseBarsDL);
 
-    CLOSE_DISPS(localGfxCtx, "../z_bg_zg.c", 320);
+    CLOSE_DISPS(localGfxCtx);
 }
 
 void BgZg_Draw(Actor* thisx, PlayState* play) {

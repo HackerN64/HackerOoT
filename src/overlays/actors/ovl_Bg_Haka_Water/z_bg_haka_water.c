@@ -111,7 +111,7 @@ void BgHakaWater_Draw(Actor* thisx, PlayState* play) {
     f32 temp;
     s32 pad2;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_haka_water.c", 287);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     if (this->isLowered) {
@@ -142,5 +142,5 @@ void BgHakaWater_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gBotwWaterFallDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_haka_water.c", 332);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

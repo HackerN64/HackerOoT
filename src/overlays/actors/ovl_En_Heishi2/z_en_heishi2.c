@@ -237,7 +237,7 @@ void func_80A5344C(EnHeishi2* this, PlayState* play) {
         this->unk_300 = TEXT_STATE_EVENT;
         switch (play->msgCtx.choiceIndex) {
             case 0:
-                if (gSaveContext.rupees >= 10) {
+                if (gSaveContext.save.info.playerData.rupees >= 10) {
                     Rupees_ChangeBy(-10);
                     this->actor.textId = 0x7098;
                     this->actionFunc = func_80A53538;
@@ -404,7 +404,7 @@ void func_80A53AD4(EnHeishi2* this, PlayState* play) {
     if (Actor_ProcessTalkRequest(&this->actor, play)) {
         exchangeItemId = func_8002F368(play);
         if (exchangeItemId == EXCH_ITEM_ZELDAS_LETTER) {
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
             player->actor.textId = 0x2010;
             this->unk_300 = TEXT_STATE_EVENT;
             this->actionFunc = func_80A53C0C;
@@ -725,7 +725,7 @@ void func_80A5475C(EnHeishi2* this, PlayState* play) {
 
             if (this->unk_300 == TEXT_STATE_CHOICE) {
                 this->unk_309 = 1;
-                func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+                Sfx_PlaySfxCentered(NA_SE_SY_TRE_BOX_APPEAR);
                 this->actionFunc = func_80A540C0;
             }
             return;
@@ -826,13 +826,13 @@ void EnHeishi2_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* 
 }
 
 void EnHeishi2_DrawKingGuard(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_heishi2.c", 1772);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_heishi2.c", 1774),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gHeishiKingGuardDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_heishi2.c", 1777);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnHeishi2_Draw(Actor* thisx, PlayState* play) {
@@ -840,7 +840,7 @@ void EnHeishi2_Draw(Actor* thisx, PlayState* play) {
     Mtx* mtx;
     s32 linkObjBankIndex;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_heishi2.c", 1792);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -861,5 +861,5 @@ void EnHeishi2_Draw(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_heishi2.c", 1834);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -274,7 +274,7 @@ void EnShopnuts_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s*
     f32 z;
 
     if ((limbIndex == 9) && (this->actionFunc == EnShopnuts_ThrowNut)) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_shopnuts.c", 682);
+        OPEN_DISPS(play->state.gfxCtx);
         curFrame = this->skelAnime.curFrame;
         if (curFrame <= 6.0f) {
             y = 1.0f - (curFrame * 0.0833f);
@@ -295,7 +295,7 @@ void EnShopnuts_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s*
         gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_shopnuts.c", 714),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, gBusinessScrubNoseDL);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_shopnuts.c", 717);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 

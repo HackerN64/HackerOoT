@@ -312,7 +312,7 @@ void BgHidanKowarerukabe_Update(Actor* thisx, PlayState* play) {
             SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 40, NA_SE_EV_WALL_BROKEN);
         }
 
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
         Actor_Kill(&this->dyna.actor);
         return;
     }
@@ -323,7 +323,7 @@ void BgHidanKowarerukabe_Update(Actor* thisx, PlayState* play) {
 void BgHidanKowarerukabe_Draw(Actor* thisx, PlayState* play) {
     BgHidanKowarerukabe* this = (BgHidanKowarerukabe*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_hidan_kowarerukabe.c", 565);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -333,5 +333,5 @@ void BgHidanKowarerukabe_Draw(Actor* thisx, PlayState* play) {
 
     Collider_UpdateSpheres(0, &this->collider);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_hidan_kowarerukabe.c", 573);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
