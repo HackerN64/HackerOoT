@@ -72,7 +72,7 @@ void DemoGeff_Init(Actor* thisx, PlayState* play) {
 void func_80977EA8(PlayState* play, Gfx* dlist) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_demo_geff.c", 181);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Opa(gfxCtx);
 
@@ -81,7 +81,7 @@ void func_80977EA8(PlayState* play, Gfx* dlist) {
     gSPDisplayList(POLY_OPA_DISP++, dlist);
     gSPPopMatrix(POLY_OPA_DISP++, G_MTX_MODELVIEW);
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_geff.c", 188);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_80977F80(DemoGeff* this, PlayState* play) {
@@ -89,7 +89,7 @@ void func_80977F80(DemoGeff* this, PlayState* play) {
     s32 objBankIndex = this->objBankIndex;
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_demo_geff.c", 204);
+    OPEN_DISPS(gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x06, play->objectCtx.status[objBankIndex].segment);
     gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.status[objBankIndex].segment);
@@ -97,7 +97,7 @@ void func_80977F80(DemoGeff* this, PlayState* play) {
     // Necessary to match
     if (!play) {}
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_geff.c", 212);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_80978030(DemoGeff* this, PlayState* play) {

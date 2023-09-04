@@ -892,7 +892,7 @@ static void* sMouthTextures[] = {
 void BgDyYoseizo_Draw(Actor* thisx, PlayState* play) {
     BgDyYoseizo* this = (BgDyYoseizo*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_dy_yoseizo.c", 1609);
+    OPEN_DISPS(play->state.gfxCtx);
     if (this->actionFunc != BgDyYoseizo_Vanish) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -907,7 +907,7 @@ void BgDyYoseizo_Draw(Actor* thisx, PlayState* play) {
         SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                               BgDyYoseizo_OverrideLimbDraw, NULL, this);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_dy_yoseizo.c", 1629);
+    CLOSE_DISPS(play->state.gfxCtx);
     BgDyYoseizo_DrawEffects(this, play);
 }
 
@@ -1008,7 +1008,7 @@ void BgDyYoseizo_DrawEffects(BgDyYoseizo* this, PlayState* play) {
     BgDyYoseizoEffect* effect = this->effects;
     s16 i;
 
-    OPEN_DISPS(gfxCtx, "../z_bg_dy_yoseizo.c", 1767);
+    OPEN_DISPS(gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     for (i = 0; i < BG_DY_YOSEIZO_EFFECT_COUNT; i++, effect++) {
@@ -1035,5 +1035,5 @@ void BgDyYoseizo_DrawEffects(BgDyYoseizo* this, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_bg_dy_yoseizo.c", 1819);
+    CLOSE_DISPS(gfxCtx);
 }

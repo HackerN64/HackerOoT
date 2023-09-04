@@ -630,7 +630,7 @@ s32 EnWeiyer_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f
 void EnWeiyer_Draw(Actor* thisx, PlayState* play) {
     EnWeiyer* this = (EnWeiyer*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_weiyer.c", 1193);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->actionFunc != func_80B33338) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -646,5 +646,5 @@ void EnWeiyer_Draw(Actor* thisx, PlayState* play) {
                                        EnWeiyer_OverrideLimbDraw, NULL, &this->actor, POLY_XLU_DISP);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_weiyer.c", 1240);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

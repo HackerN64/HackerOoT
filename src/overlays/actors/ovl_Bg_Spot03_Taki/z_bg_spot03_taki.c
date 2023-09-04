@@ -118,7 +118,7 @@ void BgSpot03Taki_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     u32 gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot03_taki.c", 321);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gameplayFrames = play->gameplayFrames;
 
@@ -147,7 +147,7 @@ void BgSpot03Taki_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_XLU_DISP++, object_spot03_object_DL_001580);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot03_taki.c", 358);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     this->bufferIndex = this->bufferIndex == 0;
 

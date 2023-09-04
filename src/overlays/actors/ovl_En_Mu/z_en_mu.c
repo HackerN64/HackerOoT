@@ -210,7 +210,7 @@ void EnMu_Draw(Actor* thisx, PlayState* play) {
     u8 segmentId[] = { 0x08, 0x09, 0x0A, 0x0B, 0x0C };
     s32 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_mu.c", 514);
+    OPEN_DISPS(play->state.gfxCtx);
     Matrix_Translate(-1200.0f, 0.0f, -1400.0f, MTXMODE_APPLY);
     for (i = 0; i < 5; i++) {
         gSPSegment(POLY_OPA_DISP++, segmentId[i],
@@ -220,5 +220,5 @@ void EnMu_Draw(Actor* thisx, PlayState* play) {
     }
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnMu_OverrideLimbDraw, EnMu_PostLimbDraw, this);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_mu.c", 534);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

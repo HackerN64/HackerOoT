@@ -567,7 +567,7 @@ void EnMag_Draw(Actor* thisx, PlayState* play) {
     Gfx* gfx;
     Gfx* gfxRef;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_mag.c", 1151);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gfxRef = POLY_OPA_DISP;
     gfx = Graph_GfxPlusOne(gfxRef);
@@ -579,5 +579,5 @@ void EnMag_Draw(Actor* thisx, PlayState* play) {
     Graph_BranchDlist(gfxRef, gfx);
     POLY_OPA_DISP = gfx;
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_mag.c", 1161);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

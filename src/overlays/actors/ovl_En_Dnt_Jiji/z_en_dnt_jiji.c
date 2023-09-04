@@ -437,7 +437,7 @@ void EnDntJiji_Draw(Actor* thisx, PlayState* play) {
     static void* blinkTex[] = { gDntJijiEyeOpenTex, gDntJijiEyeHalfTex, gDntJijiEyeShutTex };
     EnDntJiji* this = (EnDntJiji*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_dnt_jiji.c", 1019);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Matrix_Push();
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(blinkTex[this->eyeState]));
@@ -448,5 +448,5 @@ void EnDntJiji_Draw(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_dnt_jiji.c", 1040),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gDntJijiFlowerDL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_dnt_jiji.c", 1043);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

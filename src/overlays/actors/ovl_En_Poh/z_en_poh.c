@@ -1070,7 +1070,7 @@ void EnPoh_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot,
 void EnPoh_DrawRegular(Actor* thisx, PlayState* play) {
     EnPoh* this = (EnPoh*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_poh.c", 2629);
+    OPEN_DISPS(play->state.gfxCtx);
     func_80AE067C(this);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -1091,7 +1091,7 @@ void EnPoh_DrawRegular(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_poh.c", 2676),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, this->info->lanternDisplayList);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_poh.c", 2681);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnPoh_DrawComposer(Actor* thisx, PlayState* play) {
@@ -1099,7 +1099,7 @@ void EnPoh_DrawComposer(Actor* thisx, PlayState* play) {
     Color_RGBA8* sp90;
     Color_RGBA8* phi_t0;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_poh.c", 2694);
+    OPEN_DISPS(play->state.gfxCtx);
     func_80AE067C(this);
     if (this->actor.params == EN_POH_SHARP) {
         sp90 = &D_80AE1B4C;
@@ -1146,7 +1146,7 @@ void EnPoh_DrawComposer(Actor* thisx, PlayState* play) {
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetEnvColor(POLY_OPA_DISP++, sp90->r, sp90->g, sp90->b, 255);
     gSPDisplayList(POLY_OPA_DISP++, gPoeComposerLanternTopDL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_poh.c", 2802);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnPoh_UpdateDead(Actor* thisx, PlayState* play) {
@@ -1162,7 +1162,7 @@ void EnPoh_UpdateDead(Actor* thisx, PlayState* play) {
 void EnPoh_DrawSoul(Actor* thisx, PlayState* play) {
     EnPoh* this = (EnPoh*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_poh.c", 2833);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->actionFunc == EnPoh_Death) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -1194,5 +1194,5 @@ void EnPoh_DrawSoul(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, this->info->soulDisplayList);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_poh.c", 2916);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

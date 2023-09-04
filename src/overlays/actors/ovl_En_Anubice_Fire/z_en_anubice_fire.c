@@ -221,7 +221,7 @@ void EnAnubiceFire_Draw(Actor* thisx, PlayState* play) {
     s32 pad[2];
     s32 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_anubice_fire.c", 503);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 0, 255);
@@ -255,5 +255,5 @@ void EnAnubiceFire_Draw(Actor* thisx, PlayState* play) {
     }
     Matrix_Pop();
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_anubice_fire.c", 556);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

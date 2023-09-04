@@ -245,7 +245,7 @@ void BgMoriBigst_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     BgMoriBigst* this = (BgMoriBigst*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mori_bigst.c", 541);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, play->objectCtx.status[this->moriTexObjIndex].segment);
@@ -254,5 +254,5 @@ void BgMoriBigst_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     gSPDisplayList(POLY_OPA_DISP++, gMoriBigstDL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mori_bigst.c", 553);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

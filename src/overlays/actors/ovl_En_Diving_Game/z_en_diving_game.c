@@ -570,7 +570,7 @@ void EnDivingGame_Draw(Actor* thisx, PlayState* play) {
     EnDivingGame* this = (EnDivingGame*)thisx;
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_diving_game.c", 1212);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
     gSPSegment(POLY_OPA_DISP++, 0x0C, EnDivingGame_EmptyDList(play->state.gfxCtx));
@@ -578,5 +578,5 @@ void EnDivingGame_Draw(Actor* thisx, PlayState* play) {
 
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnDivingGame_OverrideLimbDraw, NULL, this);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_diving_game.c", 1232);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -341,7 +341,7 @@ void EnAObj_Update(Actor* thisx, PlayState* play) {
 void EnAObj_Draw(Actor* thisx, PlayState* play) {
     s32 type = thisx->params;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_a_keep.c", 701);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -357,5 +357,5 @@ void EnAObj_Draw(Actor* thisx, PlayState* play) {
               G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_OPA_DISP++, sDLists[type]);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_a_keep.c", 715);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

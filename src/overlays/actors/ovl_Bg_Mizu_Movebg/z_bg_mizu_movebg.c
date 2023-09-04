@@ -362,7 +362,7 @@ void BgMizuMovebg_Draw(Actor* thisx, PlayState* play2) {
 
     if (1) {}
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mizu_movebg.c", 754);
+    OPEN_DISPS(play->state.gfxCtx);
 
     frames = play->gameplayFrames;
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -390,5 +390,5 @@ void BgMizuMovebg_Draw(Actor* thisx, PlayState* play2) {
         gSPDisplayList(POLY_OPA_DISP++, this->dlist);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mizu_movebg.c", 795);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
