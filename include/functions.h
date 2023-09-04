@@ -1322,6 +1322,18 @@ void Play_TriggerVoidOut(PlayState* this);
 void Play_TriggerRespawn(PlayState* this);
 s32 Play_CamIsNotFixed(PlayState* this);
 
+#ifdef ENABLE_MOTION_BLUR
+void Play_DrawMotionBlur(PlayState* this);
+void Play_InitMotionBlur(PlayState* this);
+void Play_DestroyMotionBlur(void);
+void Play_SetMotionBlurAlpha(u32 alpha);
+void Play_EnableMotionBlur(u32 alpha);
+void Play_DisableMotionBlur(void);
+void Play_SetMotionBlurPriorityAlpha(u32 alpha);
+void Play_EnableMotionBlurPriority(u32 alpha);
+void Play_DisableMotionBlurPriority(void);
+#endif
+
 #ifdef ENABLE_FRAMERATE_OPTIONS
 s32 FrameAdvance_IsEnabled(PlayState* this);
 #endif

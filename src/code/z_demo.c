@@ -1809,6 +1809,33 @@ void CutsceneCmd_Text(PlayState* play, CutsceneContext* csCtx, CsCmdText* cmd) {
     }
 }
 
+#ifdef ENABLE_MOTION_BLUR
+void CutsceneCmd_MotionBlur(PlayState* play, CutsceneContext* csCtx, CsCmdMotionBlur* cmd) {
+    if ((csCtx->curFrame >= cmd->startFrame) && (cmd->endFrame >= csCtx->curFrame)) {
+        f32 lerp = Environment_LerpWeight(cmd->endFrame, cmd->startFrame, csCtx->curFrame);
+
+#ifdef ENABLE_MOTION_BLUR_DEBUG
+        osSyncPrintf("originalBlurAlpha: 0x%X, lerp: %f\n", play->csCtx.originalBlurAlpha, lerp);
+#endif
+
+        if (cmd->type == CS_MOTION_BLUR_ENABLE) {
+            if (csCtx->originalBlurAlpha == 0) {
+                csCtx->originalBlurAlpha = cmd->alpha;
+            }
+
+            Play_EnableMotionBlur(lerp * cmd->alpha);
+        } else if (cmd->type == CS_MOTION_BLUR_DISABLE) {
+            if (lerp >= 0.9f) {
+                Play_DisableMotionBlur();
+                csCtx->originalBlurAlpha = 0;
+            } else {
+                Play_SetMotionBlurAlpha((1.0f - lerp) * csCtx->originalBlurAlpha);
+            }
+        }
+    }
+}
+#endif
+
 void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script) {
     s16 i;
     s32 totalEntries;
@@ -2236,6 +2263,17 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 script += sizeof(CsCmdTransition);
                 break;
 
+#ifdef ENABLE_MOTION_BLUR
+            case CS_CMD_MOTION_BLUR:
+                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                script += sizeof(cmdEntries);
+
+                for (j = 0; j < cmdEntries; j++) {
+                    CutsceneCmd_MotionBlur(play, csCtx, (CsCmdMotionBlur*)script);
+                    script += sizeof(CsCmdMotionBlur);
+                }
+                break;
+#endif
             default:
                 MemCpy(&cmdEntries, script, 4);
                 script += sizeof(cmdEntries);
@@ -2258,19 +2296,17 @@ void CutsceneHandler_RunScript(PlayState* play, CutsceneContext* csCtx) {
         if (0) {} // Also necessary to match
 
 #ifdef SHOW_CS_INFOS
-        if (BREG(0) != 0) {
-            OPEN_DISPS(play->state.gfxCtx);
+        OPEN_DISPS(play->state.gfxCtx);
 
-            prevDisplayList = POLY_OPA_DISP;
-            displayList = Graph_GfxPlusOne(POLY_OPA_DISP);
-            gSPDisplayList(OVERLAY_DISP++, displayList);
-            Cutscene_DrawDebugInfo(play, &displayList, csCtx);
-            gSPEndDisplayList(displayList++);
-            Graph_BranchDlist(prevDisplayList, displayList);
-            POLY_OPA_DISP = displayList;
+        prevDisplayList = POLY_OPA_DISP;
+        displayList = Graph_GfxPlusOne(POLY_OPA_DISP);
+        gSPDisplayList(OVERLAY_DISP++, displayList);
+        Cutscene_DrawDebugInfo(play, &displayList, csCtx);
+        gSPEndDisplayList(displayList++);
+        Graph_BranchDlist(prevDisplayList, displayList);
+        POLY_OPA_DISP = displayList;
 
-            CLOSE_DISPS(play->state.gfxCtx);
-        }
+        CLOSE_DISPS(play->state.gfxCtx);
 #endif
 
         csCtx->curFrame++;
