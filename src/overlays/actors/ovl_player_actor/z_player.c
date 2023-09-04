@@ -10558,10 +10558,10 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
     sControlInput = input;
 
     if (IS_DAY) {
-        gSaveContext.dayTime -= gTimeSpeed;
+        gSaveContext.save.dayTime -= gTimeSpeed;
     } else {
         // doubled to compensate for time moving twice as fast at night
-        gSaveContext.dayTime -= gTimeSpeed * 2;
+        gSaveContext.save.dayTime -= gTimeSpeed * 2;
     }
 
     if (this->unk_A86 < 0) {

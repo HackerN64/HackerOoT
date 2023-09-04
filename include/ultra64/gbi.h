@@ -4589,7 +4589,7 @@ _DW({                                                               \
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, dram),  \
     gsDPSetTile(0, 0, 0, (256 + (((pal) & 0xF) * 16)),          \
                 G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0),            \
-    gsDPLoadTLUTCmd(G_TX_LOADTILE, 15),                         \
+    gsDPLoadTLUTCmd(G_TX_LOADTILE, 15)                          \
 
 #else /* **** WORKAROUND hardware 1 load_tlut bug ****** */
 
