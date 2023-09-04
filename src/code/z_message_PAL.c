@@ -246,7 +246,7 @@ void Message_DrawTextChar(PlayState* play, void* textureImage, Gfx** p) {
                             sCharTexScale);
     }
 
-    gDPPipeSync(gfx++);
+    //gDPPipeSync(gfx++);
     gDPSetPrimColor(gfx++, 0, 0, msgCtx->textColorR, msgCtx->textColorG, msgCtx->textColorB, msgCtx->textColorAlpha);
     gSPTextureRectangle(gfx++, x << 2, y << 2, (x + WIDE_MULT(sCharTexSize, WIDE_GET_RATIO)) << 2, (y + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0,
                         WIDE_DIV(sCharTexScale, WIDE_GET_RATIO), sCharTexScale);
@@ -1022,6 +1022,7 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
                     (R_TEXTBOX_BG_YPOS + sTextboxBackgroundYOffsets[msgCtx->textboxBackgroundYOffsetIdx] + 48) << 2,
                     G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
 
+                gDPLoadSync(gfx++);
                 gDPLoadTextureBlock_4b(gfx++, msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + 0x900, G_IM_FMT_I, 96,
                                        48, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
                                        G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -1044,6 +1045,7 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
                 gSPTextureRectangle(gfx++, msgCtx->textPosX << 2, R_TEXTBOX_BG_YPOS << 2, (msgCtx->textPosX + 96) << 2,
                                     (R_TEXTBOX_BG_YPOS + 48) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
 
+                gDPLoadSync(gfx++);
                 gDPLoadTextureBlock_4b(gfx++, (msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + 0x900), G_IM_FMT_I,
                                        96, 48, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
                                        G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
