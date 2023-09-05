@@ -1,9 +1,19 @@
 #ifndef CONFIG_GAME_H
 #define CONFIG_GAME_H
 
+
 /*****************
  * GAME SETTINGS *
  *****************/
+ 
+// Disables AA (Improves console performance but causes visible seams between unconnected geometry).
+//#define DISABLE_AA
+
+// Fix annoying glitches (crashes and softlocks)
+#define FIX_ANNOYING_GLITCH
+
+// Add a fix for the Stale Reference Manipulation glitch (OoT's Pandora's Box)
+#define FIX_SRM
 
 /**
  * Enable mempak-related code
@@ -28,12 +38,25 @@
 /**
  * Enable fast text
  */
-#define ENABLE_FAST_TEXT
+// #define ENABLE_FAST_TEXT
 
 /**
  * Splits Farore's Wind warp point across ages. One point for child Link, one point for adult Link.
  */
 // #define FW_SPLIT_AGE
+
+/* Apply the anti-aliasing filter for the background of the pause menu. This adds a delay when pausing. */
+// #define VANILLA_PAUSE_DELAY
+
+/**
+ * Disable Player froze when getting a Gold Skulltula Token
+*/
+#define DISABLE_GS_TOKEN_FREEZE
+
+/**
+ * Add Gold Skulltula count to the textbox
+*/
+#define GS_COUNT_IN_TEXT
 
 /**
  * Applies the anti-aliasing filter for the background of the pause menu.
@@ -52,5 +75,10 @@
 
 // Increase the size of small elements (improves readability on N64)
 #define WIDESCREEN_N64_MODE true
+
+/**
+ * Automatic GI Object Allocation
+*/
+// #define ENABLE_AUTO_GI_ALLOC
 
 #endif
