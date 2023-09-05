@@ -421,7 +421,8 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
 #ifdef ENABLE_WIDESCREEN
     if (CHECK_BTN_ALL(gameState->input[0].press.button, BTN_DUP) &&
         CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_Z | BTN_R)) {
-        gIsUsingWidescreen ^= 1;
+        gSaveContext.save.useWidescreen ^= 1;
+        osSyncPrintf("gSaveContext.save.useWidescreen: %d\n", gSaveContext.save.useWidescreen);
     }
 #endif
 }
@@ -438,7 +439,7 @@ void Graph_ThreadEntry(void* arg0) {
     Graph_Init(&gfxCtx);
 
 #ifdef ENABLE_WIDESCREEN
-    gIsUsingWidescreen = true;
+    gSaveContext.save.useWidescreen = true;
 #endif
 
     while (nextOvl != NULL) {
