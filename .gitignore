@@ -19,7 +19,10 @@ baserom/
 docs/doxygen/
 cache/
 *.elf
+*.ram
+*.sav
 *.sra
+*.srm
 *.z64
 *.n64
 *.v64
