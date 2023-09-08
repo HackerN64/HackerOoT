@@ -93,7 +93,7 @@ void MapSelect_Main(GameState* thisx) {
 void MapSelect_Draw(MapSelectState* this) {
     GraphicsContext* gfxCtx = this->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_select.c", 1013);
+    OPEN_DISPS(gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
     Gfx_SetupFrame(gfxCtx, 0, 0, 0);
@@ -106,7 +106,7 @@ void MapSelect_Draw(MapSelectState* this) {
         MapSelect_DrawMenu(this);
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_select.c", 1037);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void MapSelect_Destroy(GameState* thisx) {
@@ -338,7 +338,7 @@ void MapSelect_DrawMenu(MapSelectState* this) {
     GraphicsContext* gfxCtx = this->state.gfxCtx;
     GfxPrint* printer;
 
-    OPEN_DISPS(gfxCtx, "../z_select.c", 930);
+    OPEN_DISPS(gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
     Gfx_SetupFrame(gfxCtx, 0, 0, 0);
@@ -364,14 +364,14 @@ void MapSelect_DrawMenu(MapSelectState* this) {
     POLY_OPA_DISP = GfxPrint_Close(printer);
     GfxPrint_Destroy(printer);
 
-    CLOSE_DISPS(gfxCtx, "../z_select.c", 966);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void MapSelect_DrawLoadingScreen(MapSelectState* this) {
     GraphicsContext* gfxCtx = this->state.gfxCtx;
     GfxPrint* printer;
 
-    OPEN_DISPS(gfxCtx, "../z_select.c", 977);
+    OPEN_DISPS(gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
     Gfx_SetupFrame(gfxCtx, 0, 0, 0);
@@ -386,7 +386,7 @@ void MapSelect_DrawLoadingScreen(MapSelectState* this) {
     POLY_OPA_DISP = GfxPrint_Close(printer);
     GfxPrint_Destroy(printer);
 
-    CLOSE_DISPS(gfxCtx, "../z_select.c", 1006);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void MapSelect_LoadTitle(MapSelectState* this) {

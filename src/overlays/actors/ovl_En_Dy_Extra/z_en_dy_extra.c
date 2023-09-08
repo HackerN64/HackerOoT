@@ -109,7 +109,7 @@ void EnDyExtra_Draw(Actor* thisx, PlayState* play) {
         }
     }
 
-    OPEN_DISPS(gfxCtx, "../z_en_dy_extra.c", 294);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gSPSegment(POLY_XLU_DISP++, 0x08,
@@ -123,5 +123,5 @@ void EnDyExtra_Draw(Actor* thisx, PlayState* play) {
     gDPSetEnvColor(POLY_XLU_DISP++, envColors[this->type].r, envColors[this->type].g, envColors[this->type].b, 128);
     gSPDisplayList(POLY_XLU_DISP++, gGreatFairySpiralBeamDL);
 
-    CLOSE_DISPS(gfxCtx, "../z_en_dy_extra.c", 325);
+    CLOSE_DISPS(gfxCtx);
 }

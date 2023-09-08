@@ -223,7 +223,7 @@ void BgMoriRakkatenjo_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     BgMoriRakkatenjo* this = (BgMoriRakkatenjo*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mori_rakkatenjo.c", 497);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, play->objectCtx.status[this->moriTexObjIndex].segment);
@@ -233,5 +233,5 @@ void BgMoriRakkatenjo_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_OPA_DISP++, gMoriRakkatenjoDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mori_rakkatenjo.c", 506);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -306,7 +306,7 @@ void Debug_DrawText(GraphicsContext* gfxCtx) {
     GfxPrint printer;
     s32 pad;
 
-    OPEN_DISPS(gfxCtx, "../z_debug.c", 628);
+    OPEN_DISPS(gfxCtx);
 
     GfxPrint_Init(&printer);
     opaStart = POLY_OPA_DISP;
@@ -335,7 +335,7 @@ void Debug_DrawText(GraphicsContext* gfxCtx) {
 
     if (1) {}
 
-    CLOSE_DISPS(gfxCtx, "../z_debug.c", 664);
+    CLOSE_DISPS(gfxCtx);
 
     GfxPrint_Destroy(&printer);
 }

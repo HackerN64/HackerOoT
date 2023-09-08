@@ -704,7 +704,7 @@ void EnFhgFire_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnFhgFire* this = (EnFhgFire*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fhg_fire.c", 1723);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->actor.params == FHGFIRE_LIGHTNING_BURST) {
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -757,5 +757,5 @@ void EnFhgFire_Draw(Actor* thisx, PlayState* play) {
         osSyncPrintf("FF DRAW 2\n");
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fhg_fire.c", 1900);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

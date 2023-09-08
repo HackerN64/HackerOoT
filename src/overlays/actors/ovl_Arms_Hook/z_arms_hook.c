@@ -306,7 +306,7 @@ void ArmsHook_Draw(Actor* thisx, PlayState* play) {
     f32 sp58;
 
     if ((player->actor.draw != NULL) && (player->rightHandType == PLAYER_MODELTYPE_RH_HOOKSHOT)) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_arms_hook.c", 850);
+        OPEN_DISPS(play->state.gfxCtx);
 
         if ((ArmsHook_Shoot != this->actionFunc) || (this->timer <= 0)) {
             Matrix_MultVec3f(&D_80865B70, &this->unk_1E8);
@@ -335,6 +335,6 @@ void ArmsHook_Draw(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, gLinkAdultHookshotChainDL);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_arms_hook.c", 913);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

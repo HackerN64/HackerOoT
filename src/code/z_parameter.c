@@ -2657,7 +2657,7 @@ void Magic_DrawMeter(PlayState* play) {
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
     s16 magicMeterY;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_parameter.c", 2650);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (gSaveContext.save.info.playerData.magicLevel != 0) {
         if (gSaveContext.save.info.playerData.healthCapacity > 0xA0) {
@@ -2746,7 +2746,7 @@ void Magic_DrawMeter(PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_parameter.c", 2731);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Interface_SetSubTimer(s16 seconds) {
@@ -2794,7 +2794,7 @@ void Interface_SetTimer(s16 seconds) {
 }
 
 void Interface_DrawActionLabel(GraphicsContext* gfxCtx, void* texture) {
-    OPEN_DISPS(gfxCtx, "../z_parameter.c", 2820);
+    OPEN_DISPS(gfxCtx);
 
     gDPLoadTextureBlock_4b(OVERLAY_DISP++, texture, G_IM_FMT_IA, DO_ACTION_TEX_WIDTH, DO_ACTION_TEX_HEIGHT, 0,
                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
@@ -2802,7 +2802,7 @@ void Interface_DrawActionLabel(GraphicsContext* gfxCtx, void* texture) {
 
     gSP1Quadrangle(OVERLAY_DISP++, 0, 2, 3, 1, 0);
 
-    CLOSE_DISPS(gfxCtx, "../z_parameter.c", 2829);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void Interface_DrawItemButtons(PlayState* play) {
@@ -2816,7 +2816,7 @@ void Interface_DrawItemButtons(PlayState* play) {
     s16 width;
     s16 height;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_parameter.c", 2900);
+    OPEN_DISPS(play->state.gfxCtx);
 
     // B Button Color & Texture
     // Also loads the Item Button Texture reused by other buttons afterwards
@@ -2956,13 +2956,13 @@ void Interface_DrawItemButtons(PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_parameter.c", 3071);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Interface_DrawItemIconTexture(PlayState* play, void* texture, s16 button) {
     s16 posX = WIDE_INCR(R_ITEM_ICON_X(button), btnPosXShifts[button]);
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_parameter.c", 3079);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gDPLoadTextureBlock(OVERLAY_DISP++, texture, G_IM_FMT_RGBA, G_IM_SIZ_32b, 32, 32, 0, G_TX_NOMIRROR | G_TX_WRAP,
                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -2972,14 +2972,14 @@ void Interface_DrawItemIconTexture(PlayState* play, void* texture, s16 button) {
         (R_ITEM_ICON_Y(button) + R_ITEM_ICON_WIDTH(button)) << 2, G_TX_RENDERTILE, 0, 0,
         WIDE_MULT((R_ITEM_ICON_DD(button) << 1), WIDE_GET_4_3), R_ITEM_ICON_DD(button) << 1);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_parameter.c", 3094);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Interface_DrawAmmoCount(PlayState* play, s16 button, s16 alpha) {
     s16 i;
     s16 ammo;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_parameter.c", 3105);
+    OPEN_DISPS(play->state.gfxCtx);
 
     i = gSaveContext.save.info.equips.buttonItems[button];
 
@@ -3032,13 +3032,13 @@ void Interface_DrawAmmoCount(PlayState* play, s16 button, s16 alpha) {
             R_ITEM_AMMO_Y(button), WIDE_INCR(8, btnPosXShifts[button]), 8, 1 << 10, 1 << 10);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_parameter.c", 3158);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Interface_DrawActionButton(PlayState* play) {
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_parameter.c", 3172);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Translate(0.0f, 0.0f, XREG(18) / 10.0f, MTXMODE_NEW);
     Matrix_Scale(1.0f, 1.0f, 1.0f, MTXMODE_APPLY);
@@ -3054,7 +3054,7 @@ void Interface_DrawActionButton(PlayState* play) {
 
     gSP1Quadrangle(OVERLAY_DISP++, 0, 2, 3, 1, 0);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_parameter.c", 3187);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Interface_InitVertices(PlayState* play) {
@@ -3192,7 +3192,7 @@ void Interface_Draw(PlayState* play) {
     s16 svar5;
     s16 timerId;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_parameter.c", 3405);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSPSegment(OVERLAY_DISP++, 0x02, interfaceCtx->parameterSegment);
     gSPSegment(OVERLAY_DISP++, 0x07, interfaceCtx->doActionSegment);
@@ -4035,7 +4035,7 @@ void Interface_Draw(PlayState* play) {
         gDPFillRectangle(OVERLAY_DISP++, 0, 0, gScreenWidth - 1, gScreenHeight - 1);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_parameter.c", 4269);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Interface_Update(PlayState* play) {

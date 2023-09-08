@@ -29,7 +29,7 @@ void KaleidoScope_DrawEquipmentImage(PlayState* play, void* source, u32 width, u
     s32 pad;
     s32 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_equipment.c", 68);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetCombineMode(POLY_OPA_DISP++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
@@ -80,7 +80,7 @@ void KaleidoScope_DrawEquipmentImage(PlayState* play, void* source, u32 width, u
         vtxIndex += 4;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_equipment.c", 122);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void KaleidoScope_DrawPlayerWork(PlayState* play) {
@@ -137,7 +137,7 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
     s16 cursorY;
     volatile s16 oldCursorPoint;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_equipment.c", 219);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, ZREG(39), ZREG(40), ZREG(41), pauseCtx->alpha);
@@ -612,5 +612,5 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
 
     if (gUpgradeMasks[0]) {}
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_equipment.c", 609);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

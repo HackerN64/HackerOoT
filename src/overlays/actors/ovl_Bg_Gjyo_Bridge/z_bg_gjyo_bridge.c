@@ -98,7 +98,7 @@ void BgGjyoBridge_Update(Actor* thisx, PlayState* play) {
 void BgGjyoBridge_Draw(Actor* thisx, PlayState* play) {
     BgGjyoBridge* this = (BgGjyoBridge*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_gjyo_bridge.c", 260);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -114,5 +114,5 @@ void BgGjyoBridge_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_XLU_DISP++, gRainbowBridgeDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_gjyo_bridge.c", 285);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

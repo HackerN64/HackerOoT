@@ -1097,7 +1097,7 @@ void Play_Draw(PlayState* this) {
     Lights* sp228;
     Vec3f sp21C;
 
-    OPEN_DISPS(gfxCtx, "../z_play.c", 3907);
+    OPEN_DISPS(gfxCtx);
 
     gSegments[4] = VIRTUAL_TO_PHYSICAL(this->objectCtx.status[this->objectCtx.mainKeepIndex].segment);
     gSegments[5] = VIRTUAL_TO_PHYSICAL(this->objectCtx.status[this->objectCtx.subKeepIndex].segment);
@@ -1362,7 +1362,7 @@ Play_Draw_skip:
 
     Camera_Finish(GET_ACTIVE_CAM(this));
 
-    CLOSE_DISPS(gfxCtx, "../z_play.c", 4508);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void Play_Main(GameState* thisx) {

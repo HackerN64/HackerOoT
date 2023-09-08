@@ -501,12 +501,12 @@ void EnKz_Draw(Actor* thisx, PlayState* play) {
     };
     EnKz* this = (EnKz*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_kz.c", 1259);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sEyeSegments[this->eyeIdx]));
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
     SkelAnime_DrawFlexOpa(play, this->skelanime.skeleton, this->skelanime.jointTable, this->skelanime.dListCount,
                           EnKz_OverrideLimbDraw, EnKz_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_kz.c", 1281);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

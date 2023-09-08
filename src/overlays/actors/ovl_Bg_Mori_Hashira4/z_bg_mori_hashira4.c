@@ -160,7 +160,7 @@ void BgMoriHashira4_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     BgMoriHashira4* this = (BgMoriHashira4*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mori_hashira4.c", 339);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, play->objectCtx.status[this->moriTexObjIndex].segment);
@@ -169,5 +169,5 @@ void BgMoriHashira4_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     gSPDisplayList(POLY_OPA_DISP++, sDisplayLists[this->dyna.actor.params]);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mori_hashira4.c", 348);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

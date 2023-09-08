@@ -398,7 +398,7 @@ void ObjLightswitch_DrawOpa(ObjLightswitch* this, PlayState* play) {
     Vec3f pos;
     Vec3s rot;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_obj_lightswitch.c", 809);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gDPSetEnvColor(POLY_OPA_DISP++, (u8)(this->color[0] >> 6), (u8)(this->color[1] >> 6), (u8)(this->color[2] >> 6),
@@ -440,7 +440,7 @@ void ObjLightswitch_DrawOpa(ObjLightswitch* this, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, object_lightswitch_DL_000408);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_obj_lightswitch.c", 878);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void ObjLightswitch_DrawXlu(ObjLightswitch* this, PlayState* play) {
@@ -448,7 +448,7 @@ void ObjLightswitch_DrawXlu(ObjLightswitch* this, PlayState* play) {
     Vec3f sp68;
     Vec3s sp60;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_obj_lightswitch.c", 890);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     gDPSetEnvColor(POLY_XLU_DISP++, (u8)(this->color[0] >> 6), (u8)(this->color[1] >> 6), (u8)(this->color[2] >> 6),
@@ -481,7 +481,7 @@ void ObjLightswitch_DrawXlu(ObjLightswitch* this, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, object_lightswitch_DL_000408);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_obj_lightswitch.c", 949);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void ObjLightswitch_Draw(Actor* thisx, PlayState* play) {

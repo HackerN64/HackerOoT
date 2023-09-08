@@ -237,7 +237,7 @@ void KaleidoScope_SetupPlayerPreRender(PlayState* play) {
 
     fbuf = play->state.gfxCtx->curFrameBuffer;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_scope_PAL.c", 496);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gfxRef = POLY_OPA_DISP;
     gfx = Graph_GfxPlusOne(gfxRef);
@@ -253,7 +253,7 @@ void KaleidoScope_SetupPlayerPreRender(PlayState* play) {
 
     R_GRAPH_TASKSET00_FLAGS |= 1;
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_scope_PAL.c", 509);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void KaleidoScope_ProcessPlayerPreRender(void) {
@@ -322,14 +322,14 @@ void KaleidoScope_MoveCursorToSpecialPos(PlayState* play, u16 specialPos) {
 }
 
 void KaleidoScope_DrawQuadTextureRGBA32(GraphicsContext* gfxCtx, void* texture, u16 width, u16 height, u16 point) {
-    OPEN_DISPS(gfxCtx, "../z_kaleido_scope_PAL.c", 748);
+    OPEN_DISPS(gfxCtx);
 
     gDPLoadTextureBlock(POLY_OPA_DISP++, texture, G_IM_FMT_RGBA, G_IM_SIZ_32b, width, height, 0,
                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
                         G_TX_NOLOD);
     gSP1Quadrangle(POLY_OPA_DISP++, point, point + 2, point + 3, point + 1, 0);
 
-    CLOSE_DISPS(gfxCtx, "../z_kaleido_scope_PAL.c", 758);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void KaleidoScope_SetDefaultCursor(PlayState* play) {
@@ -437,7 +437,7 @@ void KaleidoScope_DrawCursor(PlayState* play, u16 pageIndex) {
     PauseContext* pauseCtx = &play->pauseCtx;
     u16 temp;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_scope_PAL.c", 955);
+    OPEN_DISPS(play->state.gfxCtx);
 
     temp = pauseCtx->unk_1E4;
 
@@ -469,7 +469,7 @@ void KaleidoScope_DrawCursor(PlayState* play, u16 pageIndex) {
         gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_scope_PAL.c", 985);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 Gfx* KaleidoScope_DrawPageSections(Gfx* gfx, Vtx* vertices, void** textures) {
@@ -522,7 +522,7 @@ void KaleidoScope_DrawPages(PlayState* play, GraphicsContext* gfxCtx) {
     s16 stepG;
     s16 stepB;
 
-    OPEN_DISPS(gfxCtx, "../z_kaleido_scope_PAL.c", 1100);
+    OPEN_DISPS(gfxCtx);
 
     if ((pauseCtx->state < 8) || (pauseCtx->state > 0x11)) {
         if (pauseCtx->state != 7) {
@@ -896,7 +896,7 @@ void KaleidoScope_DrawPages(PlayState* play, GraphicsContext* gfxCtx) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_kaleido_scope_PAL.c", 1577);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void KaleidoScope_DrawInfoPanel(PlayState* play) {
@@ -955,7 +955,7 @@ void KaleidoScope_DrawInfoPanel(PlayState* play) {
     s16 i;
     s16 j;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_scope_PAL.c", 1676);
+    OPEN_DISPS(play->state.gfxCtx);
 
     stepR = ABS(D_808321A0 - D_8082ADF0[D_8082AE04][0]) / D_8082AE00;
     stepG = ABS(D_808321A2 - D_8082ADF0[D_8082AE04][1]) / D_8082AE00;
@@ -1337,7 +1337,7 @@ void KaleidoScope_DrawInfoPanel(PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_scope_PAL.c", 2032);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void KaleidoScope_UpdateNamePanel(PlayState* play) {
@@ -2228,7 +2228,7 @@ void KaleidoScope_InitVertices(PlayState* play, GraphicsContext* gfxCtx) {
 void KaleidoScope_DrawGameOver(PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_kaleido_scope_PAL.c", 3122);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_39Opa(gfxCtx);
 
@@ -2267,7 +2267,7 @@ void KaleidoScope_DrawGameOver(PlayState* play) {
     gSPTextureRectangle(POLY_OPA_DISP++, (VREG(87) + 128) << 2, VREG(88) << 2, (VREG(87) + 192) << 2,
                         (VREG(88) + 32) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
 
-    CLOSE_DISPS(gfxCtx, "../z_kaleido_scope_PAL.c", 3169);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void KaleidoScope_Draw(PlayState* play) {
@@ -2275,7 +2275,7 @@ void KaleidoScope_Draw(PlayState* play) {
     PauseContext* pauseCtx = &play->pauseCtx;
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_scope_PAL.c", 3188);
+    OPEN_DISPS(play->state.gfxCtx);
 
     pauseCtx->stickAdjX = input->rel.stick_x;
     pauseCtx->stickAdjY = input->rel.stick_y;
@@ -2320,7 +2320,7 @@ void KaleidoScope_Draw(PlayState* play) {
     }
 #endif
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_scope_PAL.c", 3254);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void KaleidoScope_GrayOutTextureRGBA32(u32* texture, u16 pixelCount) {

@@ -92,7 +92,7 @@ Gfx* func_80A28148(GraphicsContext* gfxCtx, BossGanon* dorf) {
 void EnGanonOrgan_Draw(Actor* thisx, PlayState* play) {
     BossGanon* dorf = (BossGanon*)thisx->parent;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ganon_organ.c", 205);
+    OPEN_DISPS(play->state.gfxCtx);
 
     osSyncPrintf("ORGAN DRAW  1\n");
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -112,5 +112,5 @@ void EnGanonOrgan_Draw(Actor* thisx, PlayState* play) {
 
     osSyncPrintf("ORGAN DRAW  2\n");
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ganon_organ.c", 230);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

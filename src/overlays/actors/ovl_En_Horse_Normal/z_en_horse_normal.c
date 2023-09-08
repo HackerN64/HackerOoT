@@ -652,7 +652,7 @@ void EnHorseNormal_Draw(Actor* thisx, PlayState* play) {
     EnHorseNormal* this = (EnHorseNormal*)thisx;
     Mtx* mtx2;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_horse_normal.c", 2224);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (play->sceneId != SCENE_LON_LON_RANCH || play->sceneId != SCENE_STABLE) {
         func_80A6C8E0(this, play);
@@ -727,5 +727,5 @@ void EnHorseNormal_Draw(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_horse_normal.c", 2339);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -427,7 +427,7 @@ void BgSpot06Objects_DrawLakeHyliaWater(BgSpot06Objects* this, PlayState* play) 
     s32 pad;
     s32 gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot06_objects.c", 844);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -451,7 +451,7 @@ void BgSpot06Objects_DrawLakeHyliaWater(BgSpot06Objects* this, PlayState* play) 
         gSPDisplayList(POLY_XLU_DISP++, gLakeHyliaHighWaterDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot06_objects.c", 879);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BgSpot06Objects_Draw(Actor* thisx, PlayState* play) {

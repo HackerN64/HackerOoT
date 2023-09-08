@@ -715,7 +715,7 @@ void EnfHG_Draw(Actor* thisx, PlayState* play) {
     BossGanondrof* bossGnd = (BossGanondrof*)this->actor.parent;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fhg.c", 2439);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     POLY_OPA_DISP = ((bossGnd->work[GND_INVINC_TIMER] & 4) && (bossGnd->flyMode == GND_FLY_PAINTING))
@@ -725,5 +725,5 @@ void EnfHG_Draw(Actor* thisx, PlayState* play) {
                                      (s32)this->warpColorFilterUnk2 + 1000);
     func_800A6330(&this->actor, play, &this->skin, EnfHG_PostDraw, SKIN_TRANSFORM_IS_FHG);
     POLY_OPA_DISP = Play_SetFog(play, POLY_OPA_DISP);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fhg.c", 2480);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

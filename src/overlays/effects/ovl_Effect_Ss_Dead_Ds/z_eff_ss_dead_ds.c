@@ -55,7 +55,7 @@ void EffectSsDeadDs_Draw(PlayState* play, u32 index, EffectSs* this) {
     Vec3f pos;
     CollisionPoly* groundPoly;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_eff_ss_dead_ds.c", 157);
+    OPEN_DISPS(play->state.gfxCtx);
 
     scale = this->rScale * 0.01f;
     Gfx_SetupDL_60NoCDXlu(play->state.gfxCtx);
@@ -105,7 +105,7 @@ void EffectSsDeadDs_Draw(PlayState* play, u32 index, EffectSs* this) {
                       PRIMITIVE, 0);
     gSPDisplayList(POLY_XLU_DISP++, gLensFlareCircleDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_eff_ss_dead_ds.c", 255);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EffectSsDeadDs_Update(PlayState* play, u32 index, EffectSs* this) {

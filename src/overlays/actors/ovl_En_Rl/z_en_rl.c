@@ -304,7 +304,7 @@ void func_80AE7D94(EnRl* this, PlayState* play) {
     void* tex = D_80AE81A0[temp];
     SkelAnime* skelAnime = &this->skelAnime;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_rl_inKenjyanomaDemo02.c", 304);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -316,7 +316,7 @@ void func_80AE7D94(EnRl* this, PlayState* play) {
     POLY_XLU_DISP = SkelAnime_DrawFlex(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount, NULL,
                                        NULL, NULL, POLY_XLU_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_rl_inKenjyanomaDemo02.c", 331);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 static EnRlActionFunc sActionFuncs[] = {
@@ -353,7 +353,7 @@ void func_80AE7FDC(EnRl* this, PlayState* play) {
     void* tex = D_80AE81A0[temp];
     SkelAnime* skelAnime = &this->skelAnime;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_rl.c", 416);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -364,7 +364,7 @@ void func_80AE7FDC(EnRl* this, PlayState* play) {
 
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount, NULL, NULL,
                           &this->actor);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_rl.c", 437);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 static EnRlDrawFunc sDrawFuncs[] = {

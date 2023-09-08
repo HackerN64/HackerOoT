@@ -179,7 +179,7 @@ Gfx* EnTg_SetColor(GraphicsContext* gfxCtx, u8 r, u8 g, u8 b, u8 a) {
 void EnTg_Draw(Actor* thisx, PlayState* play) {
     EnTg* this = (EnTg*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_tg.c", 462);
+    OPEN_DISPS(play->state.gfxCtx);
     Matrix_Translate(0.0f, 0.0f, -560.0f, MTXMODE_APPLY);
 
     // Set the guy's shoes and shirt to royal blue
@@ -190,5 +190,5 @@ void EnTg_Draw(Actor* thisx, PlayState* play) {
 
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnTg_OverrideLimbDraw, EnTg_PostLimbDraw, this);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_tg.c", 480);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

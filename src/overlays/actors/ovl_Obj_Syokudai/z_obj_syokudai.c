@@ -265,7 +265,7 @@ void ObjSyokudai_Draw(Actor* thisx, PlayState* play) {
 
     timerMax = (((this->actor.params >> 6) & 0xF) * 50) + 100;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_obj_syokudai.c", 707);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_obj_syokudai.c", 714),
@@ -304,5 +304,5 @@ void ObjSyokudai_Draw(Actor* thisx, PlayState* play) {
 
         gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_obj_syokudai.c", 749);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

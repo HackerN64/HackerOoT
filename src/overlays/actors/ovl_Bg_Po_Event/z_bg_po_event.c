@@ -600,7 +600,7 @@ void BgPoEvent_Draw(Actor* thisx, PlayState* play) {
     f32 sp48;
     s32 pad2;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_po_event.c", 1481);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     if ((this->type == 3) || (this->type == 2)) {
         if (this->actionFunc == BgPoEvent_PaintingEmpty) {
@@ -615,7 +615,7 @@ void BgPoEvent_Draw(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_po_event.c", 1501),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, displayLists[this->type]);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_po_event.c", 1508);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     if ((this->type == 0) || (this->type == 1)) {
         sp48 = (833.0f - this->dyna.actor.world.pos.y) * 0.0025f;

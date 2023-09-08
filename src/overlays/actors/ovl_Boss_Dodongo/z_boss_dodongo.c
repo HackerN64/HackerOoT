@@ -1063,7 +1063,7 @@ s32 BossDodongo_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Ve
     Matrix_TranslateRotateZYX(pos, rot);
 
     if (*dList != NULL) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_boss_dodongo.c", 3787);
+        OPEN_DISPS(play->state.gfxCtx);
 
         mtxScaleZ = 1.0f;
         mtxScaleY = 1.0f;
@@ -1090,7 +1090,7 @@ s32 BossDodongo_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Ve
         gSPDisplayList(POLY_OPA_DISP++, *dList);
         Matrix_Pop();
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_boss_dodongo.c", 3826);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
     return true;
 }
@@ -1121,7 +1121,7 @@ void BossDodongo_Draw(Actor* thisx, PlayState* play) {
     BossDodongo* this = (BossDodongo*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_dodongo.c", 3922);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     if ((this->unk_1C0 >= 2) && (this->unk_1C0 & 1)) {
@@ -1139,7 +1139,7 @@ void BossDodongo_Draw(Actor* thisx, PlayState* play) {
 
     POLY_OPA_DISP = Play_SetFog(play, POLY_OPA_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_dodongo.c", 3981);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     BossDodongo_DrawEffects(play);
 }
@@ -1676,7 +1676,7 @@ void BossDodongo_DrawEffects(PlayState* play) {
 
     eff = (BossDodongoEffect*)play->specialEffects;
 
-    OPEN_DISPS(gfxCtx, "../z_boss_dodongo.c", 5228);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -1699,5 +1699,5 @@ void BossDodongo_DrawEffects(PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_boss_dodongo.c", 5258);
+    CLOSE_DISPS(gfxCtx);
 }
