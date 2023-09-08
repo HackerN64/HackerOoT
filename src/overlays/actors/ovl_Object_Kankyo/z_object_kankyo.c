@@ -502,7 +502,7 @@ void ObjectKankyo_DrawFairies(Actor* thisx, PlayState* play2) {
     s16 i;
 
     if (!(play->cameraPtrs[CAM_ID_MAIN]->stateFlags & CAM_STATE_8)) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_object_kankyo.c", 807);
+        OPEN_DISPS(play->state.gfxCtx);
         POLY_XLU_DISP = Gfx_SetupDL(POLY_XLU_DISP, SETUPDL_20);
         gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(gSun1Tex));
         gSPDisplayList(POLY_XLU_DISP++, gKokiriDustMoteMaterialDL);
@@ -574,7 +574,7 @@ void ObjectKankyo_DrawFairies(Actor* thisx, PlayState* play2) {
             gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_object_kankyo.c", 913), G_MTX_LOAD);
             gSPDisplayList(POLY_XLU_DISP++, gKokiriDustMoteModelDL);
         }
-        CLOSE_DISPS(play->state.gfxCtx, "../z_object_kankyo.c", 922);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 
@@ -597,7 +597,7 @@ void ObjectKankyo_DrawSnow(Actor* thisx, PlayState* play2) {
     s32 pad2;
 
     if (!(play->cameraPtrs[CAM_ID_MAIN]->stateFlags & CAM_STATE_8)) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_object_kankyo.c", 958);
+        OPEN_DISPS(play->state.gfxCtx);
         if (play->envCtx.precipitation[PRECIP_SNOW_CUR] < play->envCtx.precipitation[PRECIP_SNOW_MAX]) {
             if (play->state.frames % 16 == 0) {
                 play->envCtx.precipitation[PRECIP_SNOW_CUR] += 2;
@@ -717,7 +717,7 @@ void ObjectKankyo_DrawSnow(Actor* thisx, PlayState* play2) {
             gDPPipeSync(POLY_XLU_DISP++);
         }
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_object_kankyo.c", 1127);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 
@@ -753,7 +753,7 @@ void ObjectKankyo_DrawLightning(Actor* thisx, PlayState* play) {
     s32 pad;
     ObjectKankyo* this = (ObjectKankyo*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_object_kankyo.c", 1182);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->effects[0].state == 1) {
         Matrix_Translate(play->csCtx.actorCues[0]->startPos.x, play->csCtx.actorCues[0]->startPos.y,
@@ -772,7 +772,7 @@ void ObjectKankyo_DrawLightning(Actor* thisx, PlayState* play) {
         gDPPipeSync(POLY_XLU_DISP++);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_object_kankyo.c", 1233);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void ObjectKankyo_SunGraveSparkInit(ObjectKankyo* this, PlayState* play) {
@@ -817,7 +817,7 @@ void ObjectKankyo_DrawSunGraveSpark(Actor* thisx, PlayState* play2) {
     Vec3f end;
     f32 weight;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_object_kankyo.c", 1324);
+    OPEN_DISPS(play->state.gfxCtx);
     if (play->csCtx.state != CS_STATE_IDLE) {
         if (play->csCtx.actorCues[1] != NULL && play->csCtx.actorCues[1]->id == 2 && this->requiredObjectLoaded) {
             // apparently, light waves with larger amplitudes look brighter, so the name 'amplitude' kind of works here
@@ -871,7 +871,7 @@ void ObjectKankyo_DrawSunGraveSpark(Actor* thisx, PlayState* play2) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_object_kankyo.c", 1432);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void ObjectKankyo_InitBeams(ObjectKankyo* this, PlayState* play) {
@@ -925,7 +925,7 @@ void ObjectKankyo_DrawBeams(Actor* thisx, PlayState* play2) {
     f32 beamYaw[] = { 29.9f, 90.0f, 150.0f, 30.0f, 90.0f, -30.1f };
     f32 beamPitch[] = { 103.4f, 103.8f, 103.6f, -103.4f, -103.5f, 103.5f };
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_object_kankyo.c", 1539);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->requiredObjectLoaded) {
         for (i = 0; i < 6; i++) {
@@ -949,5 +949,5 @@ void ObjectKankyo_DrawBeams(Actor* thisx, PlayState* play2) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_object_kankyo.c", 1607);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

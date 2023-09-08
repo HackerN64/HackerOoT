@@ -390,7 +390,7 @@ void EnFireRock_Draw(Actor* thisx, PlayState* play) {
     EnFireRock* this = (EnFireRock*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fire_rock.c", 747);
+    OPEN_DISPS(play->state.gfxCtx);
     Matrix_Translate(thisx->world.pos.x + this->relativePos.x, thisx->world.pos.y + this->relativePos.y,
                      thisx->world.pos.z + this->relativePos.z, MTXMODE_NEW);
     Matrix_RotateX(DEG_TO_RAD(this->rockRotation.x), MTXMODE_APPLY);
@@ -403,5 +403,5 @@ void EnFireRock_Draw(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_fire_rock.c", 768),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, object_efc_star_field_DL_000DE0);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fire_rock.c", 773);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

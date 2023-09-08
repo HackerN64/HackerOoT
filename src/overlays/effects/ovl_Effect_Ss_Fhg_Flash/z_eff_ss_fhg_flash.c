@@ -94,7 +94,7 @@ void EffectSsFhgFlash_DrawLightBall(PlayState* play, u32 index, EffectSs* this) 
     scale = this->rScale / 100.0f;
     object = play->objectCtx.status[this->rObjBankIdx].segment;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_fhg_flash.c", 268);
+    OPEN_DISPS(gfxCtx);
 
     Matrix_Translate(this->pos.x, this->pos.y, this->pos.z, MTXMODE_NEW);
     Matrix_Scale(scale, scale, scale, MTXMODE_APPLY);
@@ -111,7 +111,7 @@ void EffectSsFhgFlash_DrawLightBall(PlayState* play, u32 index, EffectSs* this) 
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, this->gfx);
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_fhg_flash.c", 330);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EffectSsFhgFlash_DrawShock(PlayState* play, u32 index, EffectSs* this) {
@@ -121,7 +121,7 @@ void EffectSsFhgFlash_DrawShock(PlayState* play, u32 index, EffectSs* this) {
 
     scale = this->rScale / 100.0f;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_fhg_flash.c", 346);
+    OPEN_DISPS(gfxCtx);
 
     Matrix_Translate(this->pos.x, this->pos.y, this->pos.z, MTXMODE_NEW);
     Matrix_Scale(scale, scale, scale, MTXMODE_APPLY);
@@ -144,7 +144,7 @@ void EffectSsFhgFlash_DrawShock(PlayState* play, u32 index, EffectSs* this) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, this->gfx);
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_fhg_flash.c", 399);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EffectSsFhgFlash_UpdateLightBall(PlayState* play, u32 index, EffectSs* this) {

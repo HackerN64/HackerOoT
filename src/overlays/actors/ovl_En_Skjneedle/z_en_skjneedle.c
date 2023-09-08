@@ -101,12 +101,12 @@ void EnSkjneedle_Update(Actor* thisx, PlayState* play2) {
 void EnSkjneedle_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_skj_needle.c", 200);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_skj_needle.c", 205),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gSkullKidNeedleDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_skj_needle.c", 210);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

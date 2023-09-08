@@ -63,7 +63,7 @@ void BgJyaBlock_Update(Actor* thisx, PlayState* play) {
 }
 
 void BgJyaBlock_Draw(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_jya_block.c", 145);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -73,5 +73,5 @@ void BgJyaBlock_Draw(Actor* thisx, PlayState* play) {
     gDPSetEnvColor(POLY_OPA_DISP++, 232, 210, 176, 255);
     gSPDisplayList(POLY_OPA_DISP++, gPushBlockDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_jya_block.c", 158);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

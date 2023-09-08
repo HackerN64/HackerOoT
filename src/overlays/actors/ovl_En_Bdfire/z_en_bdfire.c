@@ -193,7 +193,7 @@ void EnBdfire_DrawFire(EnBdfire* this, PlayState* play) {
     s16 texIndex;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_bdfire.c", 612);
+    OPEN_DISPS(play->state.gfxCtx);
     texIndex = this->unk_156 & 7;
     Matrix_ReplaceRotation(&play->billboardMtxF);
     Gfx_SetupDL_60NoCDXlu(play->state.gfxCtx);
@@ -209,7 +209,7 @@ void EnBdfire_DrawFire(EnBdfire* this, PlayState* play) {
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_bdfire.c", 647),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, object_kingdodongo_DL_01D950);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bdfire.c", 651);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnBdfire_Draw(Actor* thisx, PlayState* play) {

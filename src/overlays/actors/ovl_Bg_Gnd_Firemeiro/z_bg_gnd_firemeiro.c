@@ -139,12 +139,12 @@ void BgGndFiremeiro_Update(Actor* thisx, PlayState* play) {
 }
 
 void BgGndFiremeiro_Draw(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_gnd_firemeiro.c", 280);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
 
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_gnd_firemeiro.c", 282),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gFireTrialPlatformDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_gnd_firemeiro.c", 285);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

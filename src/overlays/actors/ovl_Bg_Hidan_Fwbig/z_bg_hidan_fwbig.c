@@ -250,7 +250,7 @@ void BgHidanFwbig_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     f32 height;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_hidan_fwbig.c", 630);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -273,5 +273,5 @@ void BgHidanFwbig_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_XLU_DISP++, gFireTempleBigFireWallDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_hidan_fwbig.c", 664);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

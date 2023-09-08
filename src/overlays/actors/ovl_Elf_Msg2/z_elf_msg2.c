@@ -150,7 +150,7 @@ void ElfMsg2_Update(Actor* thisx, PlayState* play) {
 #include "assets/overlays/ovl_Elf_Msg2/ovl_Elf_Msg2.c"
 
 void ElfMsg2_Draw(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_elf_msg2.c", 355);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (R_NAVI_MSG_REGION_ALPHA == 0) {
         return;
@@ -163,5 +163,5 @@ void ElfMsg2_Draw(Actor* thisx, PlayState* play) {
     gSPDisplayList(POLY_XLU_DISP++, D_809ADC38);
     gSPDisplayList(POLY_XLU_DISP++, sCubeDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_elf_msg2.c", 367);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -74,7 +74,7 @@ void EffectSsFireTail_Draw(PlayState* play, u32 index, EffectSs* this) {
     f32 temp2;
     f32 dist;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_fire_tail.c", 182);
+    OPEN_DISPS(gfxCtx);
 
     scale.x = scale.y = scale.z = 0.0f;
 
@@ -134,7 +134,7 @@ void EffectSsFireTail_Draw(PlayState* play, u32 index, EffectSs* this) {
         gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_fire_tail.c", 273);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EffectSsFireTail_Update(PlayState* play, u32 index, EffectSs* this) {

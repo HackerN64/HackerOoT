@@ -2250,7 +2250,7 @@ void EnZf_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnZf* this = (EnZf*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_zf.c", 3533);
+    OPEN_DISPS(play->state.gfxCtx);
 
     func_8002EBCC(thisx, play, 1);
 
@@ -2286,7 +2286,7 @@ void EnZf_Draw(Actor* thisx, PlayState* play) {
         POLY_XLU_DISP = SkelAnime_Draw(play, this->skelAnime.skeleton, this->skelAnime.jointTable,
                                        EnZf_OverrideLimbDraw, EnZf_PostLimbDraw, this, POLY_XLU_DISP);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_zf.c", 3601);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnZf_SetupCircleAroundPlayer(EnZf* this, f32 speedXZ) {

@@ -77,7 +77,7 @@ void OceffWipe_Draw(Actor* thisx, PlayState* play) {
     eye = GET_ACTIVE_CAM(play)->eye;
     Camera_GetQuakeOffset(&quakeOffset, GET_ACTIVE_CAM(play));
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_oceff_wipe.c", 346);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->timer < 32) {
         z = Math_SinS(this->timer << 9) * 1400;
@@ -124,5 +124,5 @@ void OceffWipe_Draw(Actor* thisx, PlayState* play) {
                                                      32, 1, 0 - scroll, scroll * (-2), 32, 32));
     gSPDisplayList(POLY_XLU_DISP++, sFrustumDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_oceff_wipe.c", 398);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -1348,7 +1348,7 @@ void EnPoSisters_Draw(Actor* thisx, PlayState* play) {
     Color_RGBA8* temp_s7 = &D_80ADD6F0[this->unk_194];
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_po_sisters.c", 2989);
+    OPEN_DISPS(play->state.gfxCtx);
     func_80ADC55C(this);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -1415,5 +1415,5 @@ void EnPoSisters_Draw(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_po_sisters.c", 3139);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

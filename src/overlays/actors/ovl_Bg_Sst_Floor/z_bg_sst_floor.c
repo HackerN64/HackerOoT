@@ -124,7 +124,7 @@ void BgSstFloor_Update(Actor* thisx, PlayState* play) {
 void BgSstFloor_Draw(Actor* thisx, PlayState* play) {
     BgSstFloor* this = (BgSstFloor*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_sst_floor.c", 277);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Matrix_Scale(1.0f, this->drumHeight * -0.0025f, 1.0f, MTXMODE_APPLY);
 
@@ -133,5 +133,5 @@ void BgSstFloor_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_OPA_DISP++, gBongoDrumDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_sst_floor.c", 287);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -240,7 +240,7 @@ s32 EnGe3_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* p
             FALLTHROUGH;
         // This is a hack to fix the color-changing clothes this Gerudo has on N64 versions
         default:
-            OPEN_DISPS(play->state.gfxCtx, "../z_en_ge3.c", 547);
+            OPEN_DISPS(play->state.gfxCtx);
             switch (limbIndex) {
                 case GELDB_LIMB_NECK:
                     break;
@@ -259,7 +259,7 @@ s32 EnGe3_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* p
                     gDPSetEnvColor(POLY_OPA_DISP++, 140, 0, 0, 255);
                     break;
             }
-            CLOSE_DISPS(play->state.gfxCtx, "../z_en_ge3.c", 566);
+            CLOSE_DISPS(play->state.gfxCtx);
             break;
     }
     return false;
@@ -283,7 +283,7 @@ void EnGe3_Draw(Actor* thisx, PlayState* play2) {
     EnGe3* this = (EnGe3*)thisx;
     PlayState* play = play2;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ge3.c", 614);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeIndex]));
@@ -291,5 +291,5 @@ void EnGe3_Draw(Actor* thisx, PlayState* play2) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnGe3_OverrideLimbDraw, EnGe3_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ge3.c", 631);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

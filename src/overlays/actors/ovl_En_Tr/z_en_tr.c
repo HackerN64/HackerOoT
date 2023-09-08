@@ -434,13 +434,13 @@ void EnTr_Draw(Actor* thisx, PlayState* play) {
     } else {
         this->actor.shape.shadowDraw = ActorShadow_DrawCircle;
 
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_tr.c", 840);
+        OPEN_DISPS(play->state.gfxCtx);
         Gfx_SetupDL_37Opa(play->state.gfxCtx);
         gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sEyeTextures[this->eyeIndex]));
         func_8002EBCC(&this->actor, play, 0);
         SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                               EnTr_OverrideLimbDraw, NULL, this);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_tr.c", 854);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 

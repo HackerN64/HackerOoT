@@ -69,7 +69,7 @@ void BgSpot01Idosoko_Update(Actor* thisx, PlayState* play) {
 }
 
 void BgSpot01Idosoko_Draw(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot01_idosoko.c", 162);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -77,5 +77,5 @@ void BgSpot01Idosoko_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gKakarikoBOTWStoneDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot01_idosoko.c", 171);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

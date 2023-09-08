@@ -483,7 +483,7 @@ void EnBomChu_Draw(Actor* thisx, PlayState* play) {
     s32 blinkHalfPeriod;
     s32 blinkTime;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_bom_chu.c", 921);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     func_8002EBCC(&this->actor, play, 0);
@@ -512,5 +512,5 @@ void EnBomChu_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gBombchuDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bom_chu.c", 961);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

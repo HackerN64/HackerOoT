@@ -84,7 +84,7 @@ void KaleidoScope_DrawDebugEditorText(Gfx** gfxp) {
 }
 
 void KaleidoScope_DrawDigit(PlayState* play, s32 digit, s32 rectLeft, s32 rectTop) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_debug.c", 208);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gDPLoadTextureBlock(POLY_OPA_DISP++, ((u8*)gCounterDigit0Tex + (8 * 16 * digit)), G_IM_FMT_I, G_IM_SIZ_8b, 8, 16, 0,
                         G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
@@ -92,7 +92,7 @@ void KaleidoScope_DrawDigit(PlayState* play, s32 digit, s32 rectLeft, s32 rectTo
     gSPTextureRectangle(POLY_OPA_DISP++, rectLeft << 2, rectTop << 2, (rectLeft + 8) << 2, (rectTop + 16) << 2,
                         G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_debug.c", 220);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void KaleidoScope_DrawDebugEditor(PlayState* play) {
@@ -112,7 +112,7 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
     s16 y;
     s32 dBtnInput = input->cur.button & (BTN_DUP | BTN_DDOWN | BTN_DLEFT | BTN_DRIGHT);
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_debug.c", 402);
+    OPEN_DISPS(play->state.gfxCtx);
 
     pauseCtx->stickAdjX = input->rel.stick_x;
     pauseCtx->stickAdjY = input->rel.stick_y;
@@ -651,7 +651,7 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
         pauseCtx->debugState = 0;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_debug.c", 861);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 #endif

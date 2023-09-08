@@ -286,7 +286,7 @@ void DemoKekkai_DrawTrialBarrier(Actor* thisx, PlayState* play2) {
             energyVtx[i].v.cn[3] = alphas[alphaIndex[i]];
         }
         colorIndex = (this->actor.params - 1) * 6;
-        OPEN_DISPS(play->state.gfxCtx, "../z_demo_kekkai.c", 632);
+        OPEN_DISPS(play->state.gfxCtx);
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
         Matrix_Push();
         Matrix_Translate(0.0f, 1200.0f, 0.0f, MTXMODE_APPLY);
@@ -316,7 +316,7 @@ void DemoKekkai_DrawTrialBarrier(Actor* thisx, PlayState* play2) {
                    Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, frames * 5, frames * -10, 0x20, 0x20, 1,
                                     frames * 5, frames * -10, 0x20, 0x40));
         gSPDisplayList(POLY_XLU_DISP++, gTrialBarrierEnergyDL);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_demo_kekkai.c", 696);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 
@@ -326,7 +326,7 @@ void DemoKekkai_DrawTowerBarrier(Actor* thisx, PlayState* play) {
     s32 scroll;
 
     scroll = (s32)this->barrierScroll & 0xFFFF;
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_kekkai.c", 705);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_demo_kekkai.c", 707),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -335,5 +335,5 @@ void DemoKekkai_DrawTowerBarrier(Actor* thisx, PlayState* play) {
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, scroll * 2, scroll * -4, 0x20, 0x40, 1, scroll * 2,
                                 scroll * -4, 0x20, 0x40));
     gSPDisplayList(POLY_XLU_DISP++, gTowerBarrierDL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_kekkai.c", 722);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

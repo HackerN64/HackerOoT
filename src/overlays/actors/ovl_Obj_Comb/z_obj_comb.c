@@ -204,7 +204,7 @@ void ObjComb_Update(Actor* thisx, PlayState* play) {
 void ObjComb_Draw(Actor* thisx, PlayState* play) {
     ObjComb* this = (ObjComb*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_obj_comb.c", 369);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -223,5 +223,5 @@ void ObjComb_Draw(Actor* thisx, PlayState* play) {
 
     Collider_UpdateSpheres(0, &this->collider);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_obj_comb.c", 402);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
