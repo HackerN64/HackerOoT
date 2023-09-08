@@ -63,7 +63,7 @@ void EffectSsExtra_Draw(PlayState* play, u32 index, EffectSs* this) {
     f32 scale = this->rScale / 100.0f;
     void* object = play->objectCtx.status[this->rObjBankIdx].segment;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_eff_ss_extra.c", 168);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSegments[6] = VIRTUAL_TO_PHYSICAL(object);
     gSPSegment(POLY_XLU_DISP++, 0x06, object);
@@ -76,12 +76,12 @@ void EffectSsExtra_Draw(PlayState* play, u32 index, EffectSs* this) {
     gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sTextures[this->rScoreIdx]));
     gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(object_yabusame_point_DL_000DC0));
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_eff_ss_extra.c", 194);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EffectSsExtra_Update(PlayState* play, u32 index, EffectSs* this) {
     if (this->rTimer != 0) {
-        this->rTimer -= 1;
+        this->rTimer--;
     } else {
         this->velocity.y = 0.0f;
     }

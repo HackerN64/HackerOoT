@@ -254,7 +254,7 @@ void BgGanonOtyuka_Draw(Actor* thisx, PlayState* play) {
     BossGanon* ganondorf;
     f32 spBC = -30.0f;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_ganon_otyuka.c", 702);
+    OPEN_DISPS(play->state.gfxCtx);
 
     actor = play->actorCtx.actorLists[ACTORCAT_BOSS].head;
     while (actor != NULL) {
@@ -359,5 +359,5 @@ void BgGanonOtyuka_Draw(Actor* thisx, PlayState* play) {
         actor = actor->next;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_ganon_otyuka.c", 857);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

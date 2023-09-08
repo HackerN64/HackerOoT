@@ -136,11 +136,11 @@ void BgMoriKaitenkabe_Rotate(BgMoriKaitenkabe* this, PlayState* play) {
             thisx->home.rot.y -= 0x2000;
         }
         thisx->world.rot.y = thisx->shape.rot.y = thisx->home.rot.y;
-        func_800788CC(NA_SE_EV_STONEDOOR_STOP);
+        Sfx_PlaySfxCentered2(NA_SE_EV_STONEDOOR_STOP);
     } else {
         rotY = this->rotYdeg * (0x10000 / 360.0f);
         thisx->world.rot.y = thisx->shape.rot.y = thisx->home.rot.y + rotY;
-        func_800788CC(NA_SE_EV_WALL_SLIDE - SFX_FLAG);
+        Sfx_PlaySfxCentered2(NA_SE_EV_WALL_SLIDE - SFX_FLAG);
     }
     if (fabsf(this->dyna.unk_150) > 0.001f) {
         this->dyna.unk_150 = 0.0f;
@@ -160,7 +160,7 @@ void BgMoriKaitenkabe_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     BgMoriKaitenkabe* this = (BgMoriKaitenkabe*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mori_kaitenkabe.c", 347);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, play->objectCtx.status[this->moriTexObjIndex].segment);
@@ -170,5 +170,5 @@ void BgMoriKaitenkabe_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_OPA_DISP++, gMoriKaitenkabeDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mori_kaitenkabe.c", 356);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

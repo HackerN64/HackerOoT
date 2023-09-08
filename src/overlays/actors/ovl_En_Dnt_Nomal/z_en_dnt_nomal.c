@@ -243,7 +243,7 @@ void EnDntNomal_TargetWait(EnDntNomal* this, PlayState* play) {
             scorePos.z = this->actor.world.pos.z;
             EffectSsExtra_Spawn(play, &scorePos, &scoreVel, &scoreAccel, 4, 2);
             Audio_StopSfxById(NA_SE_SY_TRE_BOX_APPEAR);
-            func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+            Sfx_PlaySfxCentered(NA_SE_SY_TRE_BOX_APPEAR);
             // "Big hit"
             osSyncPrintf(VT_FGCOL(CYAN) "☆☆☆☆☆ 大当り ☆☆☆☆☆ %d\n" VT_RST, this->hitCounter);
             if (!LINK_IS_ADULT && !GET_ITEMGETINF(ITEMGETINF_1D)) {
@@ -586,7 +586,7 @@ void EnDntNomal_StageDance(EnDntNomal* this, PlayState* play) {
 void EnDntNomal_SetupStageHide(EnDntNomal* this, PlayState* play) {
     if (this->timer3 != 0) {
         if ((this->timer3 == 1) && (this->ignore == 1)) {
-            func_80078884(NA_SE_SY_ERROR);
+            Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
         }
     } else {
         this->endFrame = (f32)Animation_GetLastFrame(&gDntStageHideAnim);
@@ -627,7 +627,7 @@ void EnDntNomal_StageHide(EnDntNomal* this, PlayState* play) {
                     if (rupee->colorIdx == 2) {
                         rupee->actor.velocity.y = 7.0f;
                     }
-                    func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+                    Sfx_PlaySfxCentered(NA_SE_SY_TRE_BOX_APPEAR);
                 }
                 this->action = DNT_ACTION_NONE;
                 this->actionFunc = EnDntNomal_SetupStageWait;
@@ -824,11 +824,11 @@ s32 EnDntNomal_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec
     EnDntNomal* this = (EnDntNomal*)thisx;
 
     if ((limbIndex == 1) || (limbIndex == 3) || (limbIndex == 4) || (limbIndex == 5) || (limbIndex == 6)) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_dnt_nomal.c", 1733);
+        OPEN_DISPS(play->state.gfxCtx);
         gDPPipeSync(POLY_OPA_DISP++);
         gDPSetEnvColor(POLY_OPA_DISP++, sLeafColors[this->type - ENDNTNOMAL_STAGE].r,
                        sLeafColors[this->type - ENDNTNOMAL_STAGE].g, sLeafColors[this->type - ENDNTNOMAL_STAGE].b, 255);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_dnt_nomal.c", 1743);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
     return false;
 }
@@ -852,7 +852,7 @@ void EnDntNomal_DrawStageScrub(Actor* thisx, PlayState* play) {
     Vec3f dustScale = { 0.25f, 0.25f, 0.25f };
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_dnt_nomal.c", 1790);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(blinkTex[this->eyeState]));
     SkelAnime_DrawOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, EnDntNomal_OverrideLimbDraw,
@@ -865,7 +865,7 @@ void EnDntNomal_DrawStageScrub(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_dnt_nomal.c", 1814),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gDntStageFlowerDL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_dnt_nomal.c", 1817);
+    CLOSE_DISPS(play->state.gfxCtx);
     if (this->actionFunc == EnDntNomal_StageCelebrate) {
         func_80033C30(&this->actor.world.pos, &dustScale, 255, play);
     }
@@ -874,7 +874,7 @@ void EnDntNomal_DrawStageScrub(Actor* thisx, PlayState* play) {
 void EnDntNomal_DrawTargetScrub(Actor* thisx, PlayState* play) {
     EnDntNomal* this = (EnDntNomal*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_dnt_nomal.c", 1833);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     SkelAnime_DrawOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, NULL, EnDntNomal_PostLimbDraw, this);
     Matrix_Translate(this->flowerPos.x, this->flowerPos.y, this->flowerPos.z, MTXMODE_NEW);
@@ -882,5 +882,5 @@ void EnDntNomal_DrawTargetScrub(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_dnt_nomal.c", 1848),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gHintNutsFlowerDL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_dnt_nomal.c", 1851);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

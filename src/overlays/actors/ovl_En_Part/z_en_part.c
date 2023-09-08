@@ -281,7 +281,7 @@ Gfx* func_80ACEAC0(GraphicsContext* gfxCtx, u8 primR, u8 primG, u8 primB, u8 env
 void EnPart_Draw(Actor* thisx, PlayState* play) {
     EnPart* this = (EnPart*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_part.c", 647);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (thisx->params > 0) {
         Matrix_RotateZ(this->rotZ, MTXMODE_APPLY);
@@ -318,5 +318,5 @@ void EnPart_Draw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_OPA_DISP++, this->displayList);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_part.c", 700);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

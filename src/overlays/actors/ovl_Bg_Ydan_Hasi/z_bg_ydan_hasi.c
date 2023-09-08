@@ -176,7 +176,7 @@ void BgYdanHasi_Draw(Actor* thisx, PlayState* play) {
     if (this->dyna.actor.params == HASI_WATER_BLOCK || this->dyna.actor.params == HASI_THREE_BLOCKS) {
         Gfx_DrawDListOpa(play, dLists[this->dyna.actor.params]);
     } else {
-        OPEN_DISPS(play->state.gfxCtx, "../z_bg_ydan_hasi.c", 577);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
         gSPSegment(POLY_XLU_DISP++, 0x08,
@@ -187,6 +187,6 @@ void BgYdanHasi_Draw(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, gDTWaterPlaneDL);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_bg_ydan_hasi.c", 597);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

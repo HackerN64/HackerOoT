@@ -158,7 +158,7 @@ void BgMizuShutter_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     BgMizuShutter* this = (BgMizuShutter*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mizu_shutter.c", 410);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_mizu_shutter.c", 415),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -166,5 +166,5 @@ void BgMizuShutter_Draw(Actor* thisx, PlayState* play) {
     if (this->displayList != NULL) {
         gSPDisplayList(POLY_OPA_DISP++, this->displayList);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mizu_shutter.c", 422);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

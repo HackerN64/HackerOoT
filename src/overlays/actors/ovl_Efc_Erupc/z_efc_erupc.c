@@ -50,11 +50,11 @@ void EfcErupc_UpdateAction(EfcErupc* this, PlayState* play) {
     Vec3f accel;
     s32 i;
 
-    if (play->csCtx.state != 0) {
+    if (play->csCtx.state != CS_STATE_IDLE) {
         if (play->csCtx.actorCues[1] != NULL) {
             if (play->csCtx.actorCues[1]->id == 2) {
                 if (this->unk_150 == 30) {
-                    func_800788CC(NA_SE_IT_EARTHQUAKE);
+                    Sfx_PlaySfxCentered2(NA_SE_IT_EARTHQUAKE);
                 }
                 if (this->unk_150 <= 64) {
                     if (this->unk_154 < 200) {
@@ -73,7 +73,7 @@ void EfcErupc_UpdateAction(EfcErupc* this, PlayState* play) {
             }
         }
     }
-    if (play->csCtx.state != 0) {
+    if (play->csCtx.state != CS_STATE_IDLE) {
         if (play->csCtx.actorCues[2] != NULL) {
             switch (play->csCtx.actorCues[2]->id) {
                 case 2:
@@ -114,7 +114,7 @@ void EfcErupc_Draw(Actor* thisx, PlayState* play) {
     EfcErupc* this = (EfcErupc*)thisx;
     u16 cueId;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_efc_erupc.c", 282);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -135,7 +135,7 @@ void EfcErupc_Draw(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_efc_erupc.c", 321),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
-    if (play->csCtx.state != 0) {
+    if (play->csCtx.state != CS_STATE_IDLE) {
         if ((play->csCtx.actorCues[1] != NULL) && (play->csCtx.actorCues[1]->id == 2)) {
             gSPDisplayList(POLY_XLU_DISP++, object_efc_erupc_DL_002570);
         }
@@ -144,7 +144,7 @@ void EfcErupc_Draw(Actor* thisx, PlayState* play) {
     Matrix_Scale(3.4f, 3.4f, 3.4f, MTXMODE_APPLY);
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_efc_erupc.c", 333),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    if (play->csCtx.state != 0) {
+    if (play->csCtx.state != CS_STATE_IDLE) {
         CsCmdActorCue* cue = play->csCtx.actorCues[2];
 
         if (cue != NULL) {
@@ -157,7 +157,7 @@ void EfcErupc_Draw(Actor* thisx, PlayState* play) {
             }
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_efc_erupc.c", 356);
+    CLOSE_DISPS(play->state.gfxCtx);
     EfcErupc_DrawEffects(this->effects, play);
 }
 
@@ -166,7 +166,7 @@ void EfcErupc_DrawEffects(EfcErupcEffect* effect, PlayState* play) {
     s16 i;
     s32 pad;
 
-    OPEN_DISPS(gfxCtx, "../z_efc_erupc.c", 368);
+    OPEN_DISPS(gfxCtx);
     for (i = 0; i < EFC_ERUPC_EFFECT_COUNT; i++, effect++) {
         if (effect->isActive) {
             Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -182,7 +182,7 @@ void EfcErupc_DrawEffects(EfcErupcEffect* effect, PlayState* play) {
             gSPDisplayList(POLY_XLU_DISP++, object_efc_erupc_DL_0027D8);
         }
     }
-    CLOSE_DISPS(gfxCtx, "../z_efc_erupc.c", 399);
+    CLOSE_DISPS(gfxCtx);
 }
 
 static Color_RGB8 D_8099D770[] = {
@@ -212,7 +212,7 @@ void EfcErupc_UpdateEffects(EfcErupc* this, PlayState* play) {
             cur->vel.x += cur->accel.x;
             cur->vel.y += cur->accel.y;
             cur->vel.z += cur->accel.z;
-            cur->animTimer += 1;
+            cur->animTimer++;
             index = cur->animTimer % 4;
             color = &effectColors[index];
             cur->color.r = color->r;

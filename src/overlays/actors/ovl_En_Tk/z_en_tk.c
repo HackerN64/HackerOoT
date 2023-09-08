@@ -87,7 +87,7 @@ void EnTkEff_Draw(EnTk* this, PlayState* play) {
     s16 alpha;
     s16 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_tk_eff.c", 114);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gfxSetup = 0;
 
@@ -122,7 +122,7 @@ void EnTkEff_Draw(EnTk* this, PlayState* play) {
         eff++;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_tk_eff.c", 154);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 EnTkEff_CreateDflt(EnTk* this, Vec3f* pos, u8 duration, f32 size, f32 growth, f32 yAccelMax) {
@@ -368,7 +368,7 @@ s16 EnTk_UpdateTalkState(PlayState* play, Actor* thisx) {
                 if (play->msgCtx.choiceIndex == 1) {
                     /* "Thanks a lot!" */
                     thisx->textId = 0x0084;
-                } else if (gSaveContext.rupees < 10) {
+                } else if (gSaveContext.save.info.playerData.rupees < 10) {
                     /* "You don't have enough Rupees!" */
                     thisx->textId = 0x0085;
                 } else {
@@ -491,8 +491,8 @@ void EnTk_Init(Actor* thisx, PlayState* play) {
 
     CollisionCheck_SetInfo2(&this->actor.colChkInfo, NULL, &sColChkInfoInit);
 
-    if (gSaveContext.dayTime <= CLOCK_TIME(18, 0) || gSaveContext.dayTime >= CLOCK_TIME(21, 0) || LINK_IS_ADULT ||
-        play->sceneId != SCENE_GRAVEYARD) {
+    if (gSaveContext.save.dayTime <= CLOCK_TIME(18, 0) || gSaveContext.save.dayTime >= CLOCK_TIME(21, 0) ||
+        LINK_IS_ADULT || play->sceneId != SCENE_GRAVEYARD) {
         Actor_Kill(&this->actor);
         return;
     }
@@ -673,11 +673,11 @@ void EnTk_Update(Actor* thisx, PlayState* play) {
 }
 
 void func_80B1D200(PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_tk.c", 1188);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSPDisplayList(POLY_OPA_DISP++, gDampeShovelDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_tk.c", 1190);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 EnTk_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
@@ -727,7 +727,7 @@ void EnTk_Draw(Actor* thisx, PlayState* play) {
     EnTkEff_Draw(this, play);
     Matrix_Pop();
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_tk.c", 1294);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -736,5 +736,5 @@ void EnTk_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnTk_OverrideLimbDraw, EnTk_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_tk.c", 1312);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

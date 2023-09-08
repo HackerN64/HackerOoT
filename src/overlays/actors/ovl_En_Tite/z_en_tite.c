@@ -196,7 +196,7 @@ void EnTite_Init(Actor* thisx, PlayState* play) {
     if (this->actor.params == TEKTITE_BLUE) {
         this->unk_2DC |= UPDBGCHECKINFO_FLAG_6; // Don't use the actor engine's ripple spawning code
         thisx->colChkInfo.health = 4;
-        thisx->naviEnemyId += 1; // NAVI_ENEMY_BLUE_TEKTITE
+        thisx->naviEnemyId += NAVI_ENEMY_BLUE_TEKTITE - NAVI_ENEMY_RED_TEKTITE;
     }
     EnTite_SetupIdle(this);
 }
@@ -986,7 +986,7 @@ void EnTite_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** limbDList, Vec3s*
 void EnTite_Draw(Actor* thisx, PlayState* play) {
     EnTite* this = (EnTite*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_tite.c", 1704);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Collider_UpdateSpheres(0, &this->collider);
     if (this->actor.params == TEKTITE_BLUE) {
@@ -999,7 +999,7 @@ void EnTite_Draw(Actor* thisx, PlayState* play) {
         gSPSegment(POLY_OPA_DISP++, 0x0A, SEGMENTED_TO_VIRTUAL(object_tite_Tex_002100));
     }
     SkelAnime_DrawOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, NULL, EnTite_PostLimbDraw, thisx);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_tite.c", 1735);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     if (this->spawnIceTimer != 0) {
         // Spawn chunks of ice all over the tektite's body

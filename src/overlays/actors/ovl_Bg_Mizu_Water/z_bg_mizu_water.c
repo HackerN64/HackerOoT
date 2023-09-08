@@ -328,7 +328,7 @@ void BgMizuWater_Draw(Actor* thisx, PlayState* play) {
     BgMizuWater* this = (BgMizuWater*)thisx;
     s32 gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mizu_water.c", 738);
+    OPEN_DISPS(play->state.gfxCtx);
     gameplayFrames = play->gameplayFrames;
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -345,5 +345,5 @@ void BgMizuWater_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_XLU_DISP++, gObjectMizuObjectsWaterDL_004B20);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mizu_water.c", 756);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

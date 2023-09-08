@@ -181,7 +181,7 @@ void EnDoor_SetupType(EnDoor* this, PlayState* play) {
         this->actor.objBankIndex = this->requiredObjBankIndex;
         this->actionFunc = EnDoor_Idle;
         if (doorType == DOOR_EVENING) {
-            doorType = (gSaveContext.dayTime > CLOCK_TIME(18, 0) && gSaveContext.dayTime < CLOCK_TIME(21, 0))
+            doorType = (gSaveContext.save.dayTime > CLOCK_TIME(18, 0) && gSaveContext.save.dayTime < CLOCK_TIME(21, 0))
                            ? DOOR_SCENEEXIT
                            : DOOR_CHECKABLE;
         }
@@ -226,7 +226,7 @@ void EnDoor_Idle(EnDoor* this, PlayState* play) {
         Animation_PlayOnceSetSpeed(&this->skelAnime, sDoorAnims[this->openAnim],
                                    (player->stateFlags1 & PLAYER_STATE1_27) ? 0.75f : 1.5f);
         if (this->lockTimer != 0) {
-            gSaveContext.inventory.dungeonKeys[gSaveContext.mapIndex]--;
+            gSaveContext.save.info.inventory.dungeonKeys[gSaveContext.mapIndex] -= 1;
             Flags_SetSwitch(play, ENDOOR_GET_LOCKED_SWITCH_FLAG(&this->actor));
             Actor_PlaySfx(&this->actor, NA_SE_EV_CHAIN_KEY_UNLOCK);
         }
@@ -239,7 +239,7 @@ void EnDoor_Idle(EnDoor* this, PlayState* play) {
             }
             if (ABS(yawDiff) < 0x3000) {
                 if (this->lockTimer != 0) {
-                    if (gSaveContext.inventory.dungeonKeys[gSaveContext.mapIndex] <= 0) {
+                    if (gSaveContext.save.info.inventory.dungeonKeys[gSaveContext.mapIndex] <= 0) {
                         Player* player2 = GET_PLAYER(play);
 
                         player2->naviTextId = -0x203;
@@ -361,7 +361,7 @@ void EnDoor_Draw(Actor* thisx, PlayState* play) {
     EnDoor* this = (EnDoor*)thisx;
 
     if (this->actor.objBankIndex == this->requiredObjBankIndex) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_door.c", 910);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         SkelAnime_DrawOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, EnDoor_OverrideLimbDraw, NULL,
@@ -378,6 +378,6 @@ void EnDoor_Draw(Actor* thisx, PlayState* play) {
             Actor_DrawDoorLock(play, this->lockTimer, DOORLOCK_NORMAL);
         }
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_door.c", 941);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

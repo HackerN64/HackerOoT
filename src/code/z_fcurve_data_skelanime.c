@@ -160,7 +160,7 @@ void SkelCurve_DrawLimb(PlayState* play, s32 limbIndex, SkelCurve* skelCurve, Ov
                         PostCurveLimbDraw postLimbDraw, s32 lod, void* data) {
     SkelCurveLimb* limb = SEGMENTED_TO_VIRTUAL(skelCurve->skeleton[limbIndex]);
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_fcurve_data_skelanime.c", 279);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
 
@@ -231,7 +231,7 @@ void SkelCurve_DrawLimb(PlayState* play, s32 limbIndex, SkelCurve* skelCurve, Ov
         SkelCurve_DrawLimb(play, limb->sibling, skelCurve, overrideLimbDraw, postLimbDraw, lod, data);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_fcurve_data_skelanime.c", 371);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void SkelCurve_Draw(Actor* actor, PlayState* play, SkelCurve* skelCurve, OverrideCurveLimbDraw overrideLimbDraw,

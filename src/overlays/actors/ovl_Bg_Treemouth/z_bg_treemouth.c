@@ -231,7 +231,7 @@ void BgTreemouth_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     u16 alpha = 500;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_treemouth.c", 893);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -251,5 +251,5 @@ void BgTreemouth_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gDekuTreeMouthDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_treemouth.c", 937);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

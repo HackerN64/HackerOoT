@@ -164,7 +164,7 @@ void EnDaiku_Init(Actor* thisx, PlayState* play) {
 
     if (isFree == true && play->sceneId == SCENE_THIEVES_HIDEOUT) {
         noKill = false;
-    } else if (isFree == false && play->sceneId == SCENE_CARPENTERS_TENT) {
+    } else if (!isFree && play->sceneId == SCENE_CARPENTERS_TENT) {
         noKill = false;
     }
 
@@ -270,7 +270,7 @@ void EnDaiku_UpdateText(EnDaiku* this, PlayState* play) {
                 if (this->stateFlags & ENDAIKU_STATEFLAG_GERUDODEFEATED) {
                     freedCount = 0;
                     for (carpenterType = 0; carpenterType < 4; carpenterType++) {
-                        if (gSaveContext.eventChkInf[EVENTCHKINF_CARPENTERS_FREE_INDEX] &
+                        if (gSaveContext.save.info.eventChkInf[EVENTCHKINF_CARPENTERS_FREE_INDEX] &
                             EVENTCHKINF_CARPENTERS_FREE_MASK(carpenterType)) {
                             freedCount++;
                         }
@@ -399,7 +399,7 @@ void EnDaiku_InitEscape(EnDaiku* this, PlayState* play) {
     EnDaiku_ChangeAnim(this, ENDAIKU_ANIM_RUN, &this->currentAnimIndex);
     this->stateFlags &= ~(ENDAIKU_STATEFLAG_1 | ENDAIKU_STATEFLAG_2);
 
-    gSaveContext.eventChkInf[EVENTCHKINF_CARPENTERS_FREE_INDEX] |=
+    gSaveContext.save.info.eventChkInf[EVENTCHKINF_CARPENTERS_FREE_INDEX] |=
         EVENTCHKINF_CARPENTERS_FREE_MASK(this->actor.params & 3);
 
     this->actor.gravity = -1.0f;
@@ -588,7 +588,7 @@ void EnDaiku_Update(Actor* thisx, PlayState* play) {
 void EnDaiku_Draw(Actor* thisx, PlayState* play) {
     EnDaiku* this = (EnDaiku*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_daiku.c", 1227);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -605,7 +605,7 @@ void EnDaiku_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnDaiku_OverrideLimbDraw, EnDaiku_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_daiku.c", 1255);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 EnDaiku_OverrideLimbDraw(PlayState* play, s32 limb, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
@@ -631,12 +631,12 @@ void EnDaiku_PostLimbDraw(PlayState* play, s32 limb, Gfx** dList, Vec3s* rot, vo
     static Vec3f targetPosHeadLocal = { 700, 1100, 0 };
     EnDaiku* this = (EnDaiku*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_daiku.c", 1323);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limb == 15) { // head
         Matrix_MultVec3f(&targetPosHeadLocal, &this->actor.focus.pos);
         gSPDisplayList(POLY_OPA_DISP++, hairDLists[this->actor.params & 3]);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_daiku.c", 1330);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

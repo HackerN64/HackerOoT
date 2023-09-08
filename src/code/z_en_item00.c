@@ -820,7 +820,7 @@ void EnItem00_DrawRupee(EnItem00* this, PlayState* play) {
     s32 pad;
     s32 texIndex;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1546);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     func_8002EBCC(&this->actor, play, 0);
@@ -838,7 +838,7 @@ void EnItem00_DrawRupee(EnItem00* this, PlayState* play) {
 
     gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1568);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -847,7 +847,7 @@ void EnItem00_DrawRupee(EnItem00* this, PlayState* play) {
 void EnItem00_DrawCollectible(EnItem00* this, PlayState* play) {
     s32 texIndex = this->actor.params - 3;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1594);
+    OPEN_DISPS(play->state.gfxCtx);
 
     POLY_OPA_DISP = Play_SetFog(play, POLY_OPA_DISP);
 
@@ -865,7 +865,7 @@ void EnItem00_DrawCollectible(EnItem00* this, PlayState* play) {
               G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_OPA_DISP++, gItemDropDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1611);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -874,7 +874,7 @@ void EnItem00_DrawCollectible(EnItem00* this, PlayState* play) {
 void EnItem00_DrawHeartContainer(EnItem00* this, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1623);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     func_8002EBCC(&this->actor, play, 0);
@@ -888,7 +888,7 @@ void EnItem00_DrawHeartContainer(EnItem00* this, PlayState* play) {
               G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_XLU_DISP++, gHeartContainerInteriorDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1647);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -897,7 +897,7 @@ void EnItem00_DrawHeartContainer(EnItem00* this, PlayState* play) {
 void EnItem00_DrawHeartPiece(EnItem00* this, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1658);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     func_8002ED80(&this->actor, play, 0);
@@ -905,7 +905,7 @@ void EnItem00_DrawHeartPiece(EnItem00* this, PlayState* play) {
               G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_XLU_DISP++, gHeartPieceInteriorDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1673);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -930,12 +930,14 @@ s16 func_8001F404(s16 dropId) {
          INV_CONTENT(ITEM_BOMB) == ITEM_NONE) ||
         ((dropId == ITEM00_ARROWS_SMALL || dropId == ITEM00_ARROWS_MEDIUM || dropId == ITEM00_ARROWS_LARGE) &&
          INV_CONTENT(ITEM_BOW) == ITEM_NONE) ||
-        ((dropId == ITEM00_MAGIC_LARGE || dropId == ITEM00_MAGIC_SMALL) && gSaveContext.magicLevel == 0) ||
+        ((dropId == ITEM00_MAGIC_LARGE || dropId == ITEM00_MAGIC_SMALL) &&
+         gSaveContext.save.info.playerData.magicLevel == 0) ||
         ((dropId == ITEM00_SEEDS) && INV_CONTENT(ITEM_SLINGSHOT) == ITEM_NONE)) {
         return -1;
     }
 
-    if (dropId == ITEM00_RECOVERY_HEART && gSaveContext.healthCapacity == gSaveContext.health) {
+    if (dropId == ITEM00_RECOVERY_HEART &&
+        gSaveContext.save.info.playerData.healthCapacity == gSaveContext.save.info.playerData.health) {
         return ITEM00_RUPEE_GREEN;
     }
 
@@ -1066,25 +1068,27 @@ void Item_DropCollectibleRandom(PlayState* play, Actor* fromActor, Vec3f* spawnP
     }
 
     if (dropId == ITEM00_FLEXIBLE) {
-        if (gSaveContext.health <= 0x10) { // 1 heart or less
+        if (gSaveContext.save.info.playerData.health <= 0x10) { // 1 heart or less
             Actor_Spawn(&play->actorCtx, play, ACTOR_EN_ELF, spawnPos->x, spawnPos->y + 40.0f, spawnPos->z, 0, 0, 0,
                         FAIRY_HEAL_TIMED);
             EffectSsDeadSound_SpawnStationary(play, spawnPos, NA_SE_EV_BUTTERFRY_TO_FAIRY, true,
                                               DEADSOUND_REPEAT_MODE_OFF, 40);
             return;
-        } else if (gSaveContext.health <= 0x30) { // 3 hearts or less
+        } else if (gSaveContext.save.info.playerData.health <= 0x30) { // 3 hearts or less
             params = 0xB * 0x10;
             dropTableIndex = 0x0;
             dropId = ITEM00_RECOVERY_HEART;
-        } else if (gSaveContext.health <= 0x50) { // 5 hearts or less
+        } else if (gSaveContext.save.info.playerData.health <= 0x50) { // 5 hearts or less
             params = 0xA * 0x10;
             dropTableIndex = 0x0;
             dropId = ITEM00_RECOVERY_HEART;
-        } else if ((gSaveContext.magicLevel != 0) && (gSaveContext.magic == 0)) { // Empty magic meter
+        } else if ((gSaveContext.save.info.playerData.magicLevel != 0) &&
+                   (gSaveContext.save.info.playerData.magic == 0)) { // Empty magic meter
             params = 0xA * 0x10;
             dropTableIndex = 0x0;
             dropId = ITEM00_MAGIC_LARGE;
-        } else if ((gSaveContext.magicLevel != 0) && (gSaveContext.magic <= (gSaveContext.magicLevel >> 1))) {
+        } else if ((gSaveContext.save.info.playerData.magicLevel != 0) &&
+                   (gSaveContext.save.info.playerData.magic <= (gSaveContext.save.info.playerData.magicLevel >> 1))) {
             params = 0xA * 0x10;
             dropTableIndex = 0x0;
             dropId = ITEM00_MAGIC_SMALL;
@@ -1100,7 +1104,7 @@ void Item_DropCollectibleRandom(PlayState* play, Actor* fromActor, Vec3f* spawnP
             params = 0xD * 0x10;
             dropTableIndex = 0x0;
             dropId = ITEM00_BOMBS_A;
-        } else if (gSaveContext.rupees < 11) {
+        } else if (gSaveContext.save.info.playerData.rupees < 11) {
             params = 0xA * 0x10;
             dropTableIndex = 0x0;
             dropId = ITEM00_RUPEE_RED;

@@ -133,7 +133,7 @@ void BgMoriRakkatenjo_Wait(BgMoriRakkatenjo* this, PlayState* play) {
         }
     }
     if (this->timer < 20) {
-        func_800788CC(NA_SE_EV_BLOCKSINK - SFX_FLAG);
+        Sfx_PlaySfxCentered2(NA_SE_EV_BLOCKSINK - SFX_FLAG);
     }
 }
 
@@ -156,7 +156,7 @@ void BgMoriRakkatenjo_Fall(BgMoriRakkatenjo* this, PlayState* play) {
         } else {
             if (this->bounceCount == 0) {
                 this->fallCount++;
-                func_800788CC(NA_SE_EV_STONE_BOUND);
+                Sfx_PlaySfxCentered2(NA_SE_EV_STONE_BOUND);
                 Rumble_Request(SQ(thisx->yDistToPlayer), 255, 20, 150);
             }
             thisx->world.pos.y =
@@ -223,7 +223,7 @@ void BgMoriRakkatenjo_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     BgMoriRakkatenjo* this = (BgMoriRakkatenjo*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mori_rakkatenjo.c", 497);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, play->objectCtx.status[this->moriTexObjIndex].segment);
@@ -233,5 +233,5 @@ void BgMoriRakkatenjo_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_OPA_DISP++, gMoriRakkatenjoDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mori_rakkatenjo.c", 506);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

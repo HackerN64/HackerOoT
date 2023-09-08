@@ -404,8 +404,7 @@ void BossDodongo_IntroCutscene(BossDodongo* this, PlayState* play) {
             if (this->unk_198 == 0x5A) {
                 if (!GET_EVENTCHKINF(EVENTCHKINF_71)) {
                     TitleCard_InitBossName(play, &play->actorCtx.titleCtx,
-                                           SEGMENTED_TO_VIRTUAL(&object_kingdodongo_Blob_017410), 0xA0, 0xB4, 0x80,
-                                           0x28);
+                                           SEGMENTED_TO_VIRTUAL(gKingDodongoTitleCardTex), 160, 180, 128, 40);
                 }
                 SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_FIRE_BOSS);
             }
@@ -671,7 +670,7 @@ void BossDodongo_Walk(BossDodongo* this, PlayState* play) {
             }
 
             if (this->unk_1BC != 0) {
-                func_80078884(NA_SE_EN_DODO_K_WALK);
+                Sfx_PlaySfxCentered(NA_SE_EN_DODO_K_WALK);
             } else {
                 Actor_PlaySfx(&this->actor, NA_SE_EN_DODO_K_WALK);
             }
@@ -1064,7 +1063,7 @@ s32 BossDodongo_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Ve
     Matrix_TranslateRotateZYX(pos, rot);
 
     if (*dList != NULL) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_boss_dodongo.c", 3787);
+        OPEN_DISPS(play->state.gfxCtx);
 
         mtxScaleZ = 1.0f;
         mtxScaleY = 1.0f;
@@ -1091,7 +1090,7 @@ s32 BossDodongo_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Ve
         gSPDisplayList(POLY_OPA_DISP++, *dList);
         Matrix_Pop();
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_boss_dodongo.c", 3826);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
     return true;
 }
@@ -1122,7 +1121,7 @@ void BossDodongo_Draw(Actor* thisx, PlayState* play) {
     BossDodongo* this = (BossDodongo*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_dodongo.c", 3922);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     if ((this->unk_1C0 >= 2) && (this->unk_1C0 & 1)) {
@@ -1140,7 +1139,7 @@ void BossDodongo_Draw(Actor* thisx, PlayState* play) {
 
     POLY_OPA_DISP = Play_SetFog(play, POLY_OPA_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_dodongo.c", 3981);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     BossDodongo_DrawEffects(play);
 }
@@ -1226,10 +1225,9 @@ void BossDodongo_SpawnFire(BossDodongo* this, PlayState* play, s16 params) {
 
 void BossDodongo_UpdateDamage(BossDodongo* this, PlayState* play) {
     s32 pad;
-    ColliderInfo* item1;
+    ColliderInfo* item;
     u8 swordDamage;
     s32 damage;
-    ColliderInfo* item2;
     s16 i;
 
     if ((this->health <= 0) && (this->actionFunc != BossDodongo_DeathCutscene)) {
@@ -1242,10 +1240,9 @@ void BossDodongo_UpdateDamage(BossDodongo* this, PlayState* play) {
         if (this->actionFunc == BossDodongo_Inhale) {
             for (i = 0; i < 19; i++) {
                 if (this->collider.elements[i].info.bumperFlags & BUMP_HIT) {
-                    item1 = this->collider.elements[i].info.acHitInfo;
-                    item2 = item1;
+                    item = this->collider.elements[i].info.acHitInfo;
 
-                    if ((item2->toucher.dmgFlags & DMG_BOOMERANG) || (item2->toucher.dmgFlags & DMG_SLINGSHOT)) {
+                    if ((item->toucher.dmgFlags & DMG_BOOMERANG) || (item->toucher.dmgFlags & DMG_SLINGSHOT)) {
                         this->collider.elements[i].info.bumperFlags &= ~BUMP_HIT;
                         this->unk_1C0 = 2;
                         BossDodongo_SetupWalk(this);
@@ -1258,9 +1255,9 @@ void BossDodongo_UpdateDamage(BossDodongo* this, PlayState* play) {
 
         if (this->collider.elements->info.bumperFlags & BUMP_HIT) {
             this->collider.elements->info.bumperFlags &= ~BUMP_HIT;
-            item1 = this->collider.elements[0].info.acHitInfo;
+            item = this->collider.elements[0].info.acHitInfo;
             if ((this->actionFunc == BossDodongo_Vulnerable) || (this->actionFunc == BossDodongo_LayDown)) {
-                swordDamage = damage = CollisionCheck_GetSwordDamage(item1->toucher.dmgFlags);
+                swordDamage = damage = CollisionCheck_GetSwordDamage(item->toucher.dmgFlags);
 
                 if (damage != 0) {
                     Actor_PlaySfx(&this->actor, NA_SE_EN_DODO_K_DAMAGE);
@@ -1679,7 +1676,7 @@ void BossDodongo_DrawEffects(PlayState* play) {
 
     eff = (BossDodongoEffect*)play->specialEffects;
 
-    OPEN_DISPS(gfxCtx, "../z_boss_dodongo.c", 5228);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -1702,5 +1699,5 @@ void BossDodongo_DrawEffects(PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_boss_dodongo.c", 5258);
+    CLOSE_DISPS(gfxCtx);
 }

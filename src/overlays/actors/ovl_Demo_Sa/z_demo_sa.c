@@ -253,7 +253,7 @@ void func_8098E960(DemoSa* this, PlayState* play) {
     s32 pad[2];
     Player* player;
 
-    if ((gSaveContext.chamberCutsceneNum == 0) && !IS_CUTSCENE_LAYER) {
+    if ((gSaveContext.chamberCutsceneNum == CHAMBER_CS_FOREST) && !IS_CUTSCENE_LAYER) {
         player = GET_PLAYER(play);
         this->action = 1;
         play->csCtx.script = D_8099010C;
@@ -376,7 +376,7 @@ void func_8098EDB0(DemoSa* this) {
 }
 
 void func_8098EE08(void) {
-    func_800788CC(NA_SE_SY_WHITE_OUT_T);
+    Sfx_PlaySfxCentered2(NA_SE_SY_WHITE_OUT_T);
 }
 
 void func_8098EE28(DemoSa* this, PlayState* play) {
@@ -467,7 +467,7 @@ void DemoSa_DrawXlu(DemoSa* this, PlayState* play) {
     void* sp6C = sMouthTextures[mouthIndex];
     SkelAnime* skelAnime = &this->skelAnime;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_sa_inKenjyanomaDemo02.c", 296);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -480,7 +480,7 @@ void DemoSa_DrawXlu(DemoSa* this, PlayState* play) {
     POLY_XLU_DISP = SkelAnime_DrawFlex(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount, NULL,
                                        NULL, NULL, POLY_XLU_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_sa_inKenjyanomaDemo02.c", 325);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_8098F390(DemoSa* this, PlayState* play) {
@@ -807,7 +807,7 @@ void DemoSa_DrawOpa(DemoSa* this, PlayState* play) {
     void* mouthTex = sMouthTextures[mouthIndex];
     SkelAnime* skelAnime = &this->skelAnime;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_sa.c", 602);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -820,7 +820,7 @@ void DemoSa_DrawOpa(DemoSa* this, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                           DemoSa_OverrideLimbDraw, NULL, &this->actor);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_sa.c", 626);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoSa_Draw(Actor* thisx, PlayState* play) {

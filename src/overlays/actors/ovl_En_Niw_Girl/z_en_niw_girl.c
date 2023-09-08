@@ -249,7 +249,7 @@ void EnNiwGirl_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     Vec3f sp4C = sConstVec3f;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_niw_girl.c", 573);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeIndex]));
@@ -257,5 +257,5 @@ void EnNiwGirl_Draw(Actor* thisx, PlayState* play) {
                           EnNiwGirlOverrideLimbDraw, NULL, this);
     func_80033C30(&this->actor.world.pos, &sp4C, 255, play);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_niw_girl.c", 592);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

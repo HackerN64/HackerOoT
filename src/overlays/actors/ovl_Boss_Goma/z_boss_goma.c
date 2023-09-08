@@ -921,7 +921,7 @@ void BossGoma_Encounter(BossGoma* this, PlayState* play) {
 
                 if (!GET_EVENTCHKINF(EVENTCHKINF_70)) {
                     TitleCard_InitBossName(play, &play->actorCtx.titleCtx, SEGMENTED_TO_VIRTUAL(gGohmaTitleCardTex),
-                                           0xA0, 0xB4, 0x80, 0x28);
+                                           160, 180, 128, 40);
                 }
 
                 SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
@@ -1953,7 +1953,7 @@ s32 BossGoma_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f
     BossGoma* this = (BossGoma*)thisx;
     s32 doNotDrawLimb = false;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_goma.c", 4685);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetEnvColor(POLY_OPA_DISP++, (s16)this->mainEnvColor[0], (s16)this->mainEnvColor[1], (s16)this->mainEnvColor[2],
@@ -2035,7 +2035,7 @@ s32 BossGoma_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f
             break;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_goma.c", 4858);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     return doNotDrawLimb;
 }
@@ -2118,7 +2118,7 @@ Gfx* BossGoma_NoBackfaceCullingDlist(GraphicsContext* gfxCtx) {
 void BossGoma_Draw(Actor* thisx, PlayState* play) {
     BossGoma* this = (BossGoma*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_goma.c", 4991);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Matrix_Translate(0.0f, -4000.0f, 0.0f, MTXMODE_APPLY);
@@ -2132,7 +2132,7 @@ void BossGoma_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawOpa(play, this->skelanime.skeleton, this->skelanime.jointTable, BossGoma_OverrideLimbDraw,
                       BossGoma_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_goma.c", 5012);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossGoma_SpawnChildGohma(BossGoma* this, PlayState* play, s16 i) {

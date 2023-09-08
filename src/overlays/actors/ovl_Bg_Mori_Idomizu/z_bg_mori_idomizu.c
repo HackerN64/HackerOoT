@@ -133,9 +133,9 @@ void BgMoriIdomizu_Main(BgMoriIdomizu* this, PlayState* play) {
             BgMoriIdomizu_SetWaterLevel(play, thisx->world.pos.y);
             if (this->drainTimer > 0) {
                 if (switchFlagSet) {
-                    func_800788CC(NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
+                    Sfx_PlaySfxCentered2(NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
                 } else {
-                    func_800788CC(NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
+                    Sfx_PlaySfxCentered2(NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
                 }
             }
         }
@@ -162,7 +162,7 @@ void BgMoriIdomizu_Draw(Actor* thisx, PlayState* play) {
     BgMoriIdomizu* this = (BgMoriIdomizu*)thisx;
     u32 gameplayFrames = play->gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mori_idomizu.c", 356);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -180,5 +180,5 @@ void BgMoriIdomizu_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_XLU_DISP++, gMoriIdomizuWaterDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mori_idomizu.c", 382);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

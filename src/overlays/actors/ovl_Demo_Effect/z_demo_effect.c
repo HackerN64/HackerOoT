@@ -315,7 +315,7 @@ void DemoEffect_Init(Actor* thisx, PlayState* play2) {
             break;
 
         case DEMO_EFFECT_GOD_LGT_NAYRU:
-            if (gSaveContext.entranceIndex == ENTR_DEATH_MOUNTAIN_TRAIL_0) {
+            if (gSaveContext.save.entranceIndex == ENTR_DEATH_MOUNTAIN_TRAIL_0) {
                 Actor_SetScale(&this->actor, 1.0f);
             } else {
                 Actor_SetScale(&this->actor, 0.1f);
@@ -336,7 +336,7 @@ void DemoEffect_Init(Actor* thisx, PlayState* play2) {
             break;
 
         case DEMO_EFFECT_GOD_LGT_FARORE:
-            if (gSaveContext.entranceIndex == ENTR_KOKIRI_FOREST_0) {
+            if (gSaveContext.save.entranceIndex == ENTR_KOKIRI_FOREST_0) {
                 Actor_SetScale(&this->actor, 2.4f);
             } else {
                 Actor_SetScale(&this->actor, 0.1f);
@@ -612,7 +612,7 @@ void DemoEffect_UpdateGetItem(DemoEffect* this, PlayState* play) {
 
         Actor_SetScale(thisx, 0.20f);
 
-        if (gSaveContext.entranceIndex == ENTR_TEMPLE_OF_TIME_0) {
+        if (gSaveContext.save.entranceIndex == ENTR_TEMPLE_OF_TIME_0) {
             switch (play->csCtx.actorCues[this->cueChannel]->id) {
                 case 2:
                     DemoEffect_MedalSparkle(this, play, 0);
@@ -624,10 +624,10 @@ void DemoEffect_UpdateGetItem(DemoEffect* this, PlayState* play) {
         }
         switch (play->csCtx.actorCues[this->cueChannel]->id) {
             case 2:
-                if (gSaveContext.entranceIndex == ENTR_TEMPLE_OF_TIME_0) {
+                if (gSaveContext.save.entranceIndex == ENTR_TEMPLE_OF_TIME_0) {
                     Actor_PlaySfx(thisx, NA_SE_EV_MEDAL_APPEAR_L - SFX_FLAG);
                 } else {
-                    func_800788CC(NA_SE_EV_MEDAL_APPEAR_S - SFX_FLAG);
+                    Sfx_PlaySfxCentered2(NA_SE_EV_MEDAL_APPEAR_S - SFX_FLAG);
                 }
                 if (this->getItem.drawId != GID_ARROW_LIGHT) {
                     this->actor.shape.rot.y += 0x3E80;
@@ -639,10 +639,10 @@ void DemoEffect_UpdateGetItem(DemoEffect* this, PlayState* play) {
                 if (this->getItem.drawId != GID_ARROW_LIGHT) {
                     this->actor.shape.rot.y += this->getItem.rotation;
                 }
-                if (gSaveContext.entranceIndex == ENTR_TEMPLE_OF_TIME_0) {
+                if (gSaveContext.save.entranceIndex == ENTR_TEMPLE_OF_TIME_0) {
                     Actor_PlaySfx(thisx, NA_SE_EV_MEDAL_APPEAR_L - SFX_FLAG);
                 } else {
-                    func_800788CC(NA_SE_EV_MEDAL_APPEAR_S - SFX_FLAG);
+                    Sfx_PlaySfxCentered2(NA_SE_EV_MEDAL_APPEAR_S - SFX_FLAG);
                 }
                 break;
             case 4:
@@ -678,7 +678,7 @@ void DemoEffect_InitTimeWarp(DemoEffect* this, PlayState* play) {
             Actor_SetScale(&this->actor, 84 * 0.001f);
         }
     } else if (gSaveContext.sceneLayer == 5 || gSaveContext.sceneLayer == 4 ||
-               (gSaveContext.entranceIndex == ENTR_TEMPLE_OF_TIME_4 && !GET_EVENTCHKINF(EVENTCHKINF_C9))) {
+               (gSaveContext.save.entranceIndex == ENTR_TEMPLE_OF_TIME_4 && !GET_EVENTCHKINF(EVENTCHKINF_C9))) {
         SkelCurve_SetAnim(&this->skelCurve, &gTimeWarpAnim, 1.0f, 59.0f, 59.0f, 0.0f);
         SkelCurve_Update(play, &this->skelCurve);
         this->updateFunc = DemoEffect_UpdateTimeWarpReturnFromChamberOfSages;
@@ -741,7 +741,7 @@ void DemoEffect_UpdateTimeWarpReturnFromChamberOfSages(DemoEffect* this, PlaySta
     this->timeWarp.shrinkTimer++;
 
     if (this->timeWarp.shrinkTimer > 250) {
-        if (gSaveContext.entranceIndex == ENTR_TEMPLE_OF_TIME_4) {
+        if (gSaveContext.save.entranceIndex == ENTR_TEMPLE_OF_TIME_4) {
             SET_EVENTCHKINF(EVENTCHKINF_C9);
         }
 
@@ -833,7 +833,7 @@ void DemoEffect_UpdateTriforceSpot(DemoEffect* this, PlayState* play) {
             }
         }
 
-        if (gSaveContext.entranceIndex == ENTR_CUTSCENE_MAP_0 && gSaveContext.sceneLayer == 6 &&
+        if (gSaveContext.save.entranceIndex == ENTR_CUTSCENE_MAP_0 && gSaveContext.sceneLayer == 6 &&
             play->csCtx.curFrame == 143) {
             Actor_PlaySfx(&this->actor, NA_SE_IT_DM_RING_EXPLOSION);
         }
@@ -946,7 +946,7 @@ void DemoEffect_UpdateCreationFireball(DemoEffect* this, PlayState* play) {
         Actor_SetScale(&effect->actor, 0.2f);
     }
 
-    func_800788CC(NA_SE_IT_DM_RING_EXPLOSION);
+    Sfx_PlaySfxCentered2(NA_SE_IT_DM_RING_EXPLOSION);
     Actor_Kill(&this->actor);
 }
 
@@ -1036,7 +1036,7 @@ void DemoEffect_UpdateLightEffect(DemoEffect* this, PlayState* play) {
                     }
                 }
                 this->light.rotation += 6;
-                this->light.scaleFlag += 1;
+                this->light.scaleFlag++;
                 break;
 
             case 3:
@@ -1131,7 +1131,7 @@ void DemoEffect_UpdateGodLgtDin(DemoEffect* this, PlayState* play) {
             }
         }
 
-        if (gSaveContext.entranceIndex == ENTR_CUTSCENE_MAP_0) {
+        if (gSaveContext.save.entranceIndex == ENTR_CUTSCENE_MAP_0) {
             switch (gSaveContext.sceneLayer) {
                 case 4:
                     if (play->csCtx.curFrame == 288) {
@@ -1186,7 +1186,7 @@ void DemoEffect_UpdateGodLgtNayru(DemoEffect* this, PlayState* play) {
             }
         }
 
-        if (gSaveContext.entranceIndex == ENTR_CUTSCENE_MAP_0) {
+        if (gSaveContext.save.entranceIndex == ENTR_CUTSCENE_MAP_0) {
             switch (gSaveContext.sceneLayer) {
                 case 4:
                     if (play->csCtx.curFrame == 298) {
@@ -1208,7 +1208,7 @@ void DemoEffect_UpdateGodLgtNayru(DemoEffect* this, PlayState* play) {
             }
         }
 
-        if (gSaveContext.entranceIndex == ENTR_DEATH_MOUNTAIN_TRAIL_0 && gSaveContext.sceneLayer == 4) {
+        if (gSaveContext.save.entranceIndex == ENTR_DEATH_MOUNTAIN_TRAIL_0 && gSaveContext.sceneLayer == 4) {
             if (play->csCtx.curFrame == 72) {
                 Actor_PlaySfx(&this->actor, NA_SE_IT_DM_FLYING_GOD_DASH);
             }
@@ -1246,7 +1246,7 @@ void DemoEffect_UpdateGodLgtFarore(DemoEffect* this, PlayState* play) {
             Audio_PlayCutsceneEffectsSequence(SEQ_CS_EFFECTS_FARORE_MAGIC);
         }
 
-        if (gSaveContext.entranceIndex == ENTR_CUTSCENE_MAP_0) {
+        if (gSaveContext.save.entranceIndex == ENTR_CUTSCENE_MAP_0) {
             switch (gSaveContext.sceneLayer) {
                 case 4:
                     if (play->csCtx.curFrame == 315) {
@@ -1556,14 +1556,14 @@ void DemoEffect_UpdateJewelChild(DemoEffect* this, PlayState* play) {
                 return;
             default:
                 DemoEffect_SetPosRotFromCue(this, play, this->cueChannel, 0);
-                if (gSaveContext.entranceIndex == ENTR_TEMPLE_OF_TIME_0) {
+                if (gSaveContext.save.entranceIndex == ENTR_TEMPLE_OF_TIME_0) {
                     DemoEffect_MoveJewelSplit(&thisx->world, this);
                 }
                 break;
         }
     }
 
-    if (gSaveContext.entranceIndex == ENTR_TEMPLE_OF_TIME_0) {
+    if (gSaveContext.save.entranceIndex == ENTR_TEMPLE_OF_TIME_0) {
         if (!GET_EVENTCHKINF(EVENTCHKINF_4B)) {
             hasCue = (play->csCtx.state != CS_STATE_IDLE) && (play->csCtx.actorCues[this->cueChannel] != NULL);
 
@@ -1630,7 +1630,7 @@ void DemoEffect_DrawJewel(Actor* thisx, PlayState* play2) {
     PlayState* play = play2;
     u32 frames = this->jewel.timer;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2543);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (!DemoEffect_CheckForCue(this, play, 1)) {
         if (1) {}
@@ -1681,7 +1681,7 @@ void DemoEffect_DrawJewel(Actor* thisx, PlayState* play2) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2620);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoEffect_DrawCrystalLight(Actor* thisx, PlayState* play) {
@@ -1689,7 +1689,7 @@ void DemoEffect_DrawCrystalLight(Actor* thisx, PlayState* play) {
     DemoEffect* parent = (DemoEffect*)this->actor.parent;
     u32 frames = play->gameplayFrames & 0xFFFF;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2634);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (parent != NULL) {
         gDPSetPrimColor(POLY_XLU_DISP++, 128, 128, 255, 255, 170, parent->triforceSpot.crystalLightOpacity);
@@ -1726,14 +1726,14 @@ void DemoEffect_DrawCrystalLight(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gCrystalLightDL);
     Matrix_Pop();
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2688);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoEffect_DrawFireBall(Actor* thisx, PlayState* play) {
     DemoEffect* this = (DemoEffect*)thisx;
     u32 frames = play->gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2701);
+    OPEN_DISPS(play->state.gfxCtx);
     gDPSetPrimColor(POLY_XLU_DISP++, 64, 64, 255, 200, 0, 255);
     gDPSetEnvColor(POLY_XLU_DISP++, 255, 0, 0, 255);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -1744,7 +1744,7 @@ void DemoEffect_DrawFireBall(Actor* thisx, PlayState* play) {
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, 0, 0, 32, 32, 1, 0,
                                 128 - ((frames * 20) % 128) - 1, 32, 32));
     gSPDisplayList(POLY_XLU_DISP++, gCreationFireBallDL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2723);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -1755,19 +1755,19 @@ void DemoEffect_DrawGodLgt(Actor* thisx, PlayState* play) {
     s32 pad;
     u32 frames = play->gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2737);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (!DemoEffect_CheckForCue(this, play, 2)) {
-        if (gSaveContext.entranceIndex == ENTR_CUTSCENE_MAP_0) {
+        if (gSaveContext.save.entranceIndex == ENTR_CUTSCENE_MAP_0) {
             if (gSaveContext.sceneLayer == 4) {
                 if (play->csCtx.curFrame <= 680) {
-                    func_80078914(&this->actor.projectedPos, NA_SE_EV_GOD_FLYING - SFX_FLAG);
+                    Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_EV_GOD_FLYING - SFX_FLAG);
                 }
             } else {
-                func_80078914(&this->actor.projectedPos, NA_SE_EV_GOD_FLYING - SFX_FLAG);
+                Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_EV_GOD_FLYING - SFX_FLAG);
             }
         } else {
-            func_80078914(&this->actor.projectedPos, NA_SE_EV_GOD_FLYING - SFX_FLAG);
+            Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_EV_GOD_FLYING - SFX_FLAG);
         }
 
         gSPSegment(POLY_XLU_DISP++, 8,
@@ -1803,7 +1803,7 @@ void DemoEffect_DrawGodLgt(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_OPA_DISP++, gGoldenGoddessBodyDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2829);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoEffect_DrawLightEffect(Actor* thisx, PlayState* play) {
@@ -1811,7 +1811,7 @@ void DemoEffect_DrawLightEffect(Actor* thisx, PlayState* play) {
     u8* alpha;
     Gfx* disp;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2842);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (!DemoEffect_CheckForCue(this, play, 1)) {
 
@@ -1842,14 +1842,14 @@ void DemoEffect_DrawLightEffect(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2881);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoEffect_DrawBlueOrb(Actor* thisx, PlayState* play) {
     DemoEffect* this = (DemoEffect*)thisx;
     s32 pad2;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2892);
+    OPEN_DISPS(play->state.gfxCtx);
     gDPSetPrimColor(POLY_XLU_DISP++, 128, 128, 188, 255, 255, this->blueOrb.alpha);
     gDPSetEnvColor(POLY_XLU_DISP++, 0, 100, 255, 255);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -1859,7 +1859,7 @@ void DemoEffect_DrawBlueOrb(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     this->blueOrb.rotation += 0x01F4;
     gSPDisplayList(POLY_XLU_DISP++, gEffFlash1DL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2907);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoEffect_DrawLgtShower(Actor* thisx, PlayState* play) {
@@ -1867,7 +1867,7 @@ void DemoEffect_DrawLgtShower(Actor* thisx, PlayState* play) {
     s32 pad;
     u32 frames = play->gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2921);
+    OPEN_DISPS(play->state.gfxCtx);
     gDPSetPrimColor(POLY_XLU_DISP++, 64, 64, 255, 255, 160, this->lgtShower.alpha);
     gDPSetEnvColor(POLY_XLU_DISP++, 50, 200, 0, 255);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -1877,7 +1877,7 @@ void DemoEffect_DrawLgtShower(Actor* thisx, PlayState* play) {
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, (frames * 5) % 1024, 0, 256, 64, 1,
                                 (frames * 10) % 128, 512 - ((frames * 50) % 512), 32, 16));
     gSPDisplayList(POLY_XLU_DISP++, gEnliveningLightDL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2942);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoEffect_DrawLightRing(Actor* thisx, PlayState* play2) {
@@ -1885,7 +1885,7 @@ void DemoEffect_DrawLightRing(Actor* thisx, PlayState* play2) {
     PlayState* play = play2;
     u32 frames = this->lightRing.timer;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2956);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gDPSetPrimColor(POLY_XLU_DISP++, 128, 128, 170, 255, 255, this->lightRing.alpha);
@@ -1897,7 +1897,7 @@ void DemoEffect_DrawLightRing(Actor* thisx, PlayState* play2) {
                                 16, 128, 1, 0, 0, 8, 1024));
     gSPDisplayList(POLY_XLU_DISP++, gGoldenGoddessLightRingDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2978);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoEffect_DrawTriforceSpot(Actor* thisx, PlayState* play) {
@@ -1906,8 +1906,8 @@ void DemoEffect_DrawTriforceSpot(Actor* thisx, PlayState* play) {
     Vtx* vertices = SEGMENTED_TO_VIRTUAL(gTriforceVtx);
     u32 frames = play->gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 2994);
-    if (gSaveContext.entranceIndex != ENTR_CASTLE_COURTYARD_ZELDA_0 || play->csCtx.curFrame < 885) {
+    OPEN_DISPS(play->state.gfxCtx);
+    if (gSaveContext.save.entranceIndex != ENTR_CASTLE_COURTYARD_ZELDA_0 || play->csCtx.curFrame < 885) {
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
         if (this->triforceSpot.lightColumnOpacity > 0) {
@@ -1959,7 +1959,7 @@ void DemoEffect_DrawTriforceSpot(Actor* thisx, PlayState* play) {
             }
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 3112);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -1983,7 +1983,7 @@ s32 DemoEffect_OverrideLimbDrawTimeWarp(PlayState* play, SkelCurve* skelCurve, s
     DemoEffect* this = (DemoEffect*)thisx;
     u32 frames = play->gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 3154);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 128, 170, 255, 255, 255);
     gDPSetEnvColor(POLY_XLU_DISP++, this->envXluColor[0], this->envXluColor[1], this->envXluColor[2], 255);
@@ -1991,7 +1991,7 @@ s32 DemoEffect_OverrideLimbDrawTimeWarp(PlayState* play, SkelCurve* skelCurve, s
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, (frames * 6) % 1024,
                                 256 - ((frames * 16) % 256) - 1, 256, 64, 1, (frames * 4) % 512,
                                 128 - ((frames * 12) % 128) - 1, 128, 32));
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_effect.c", 3172);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     if (limbIndex == 0) {
         s16* transform = skelCurve->jointTable[0];
@@ -2009,15 +2009,15 @@ void DemoEffect_DrawTimeWarp(Actor* thisx, PlayState* play) {
     u8 effectType = (this->actor.params & 0x00FF);
 
     if (effectType == DEMO_EFFECT_TIMEWARP_TIMEBLOCK_LARGE || effectType == DEMO_EFFECT_TIMEWARP_TIMEBLOCK_SMALL ||
-        CutsceneFlags_Get(play, 1) || IS_CUTSCENE_LAYER || gSaveContext.entranceIndex == ENTR_TEMPLE_OF_TIME_4) {
-        OPEN_DISPS(gfxCtx, "../z_demo_effect.c", 3201);
+        CutsceneFlags_Get(play, 1) || IS_CUTSCENE_LAYER || gSaveContext.save.entranceIndex == ENTR_TEMPLE_OF_TIME_4) {
+        OPEN_DISPS(gfxCtx);
 
         POLY_XLU_DISP = Gfx_SetupDL(POLY_XLU_DISP, SETUPDL_25);
         Matrix_Scale(2.0f, 2.0f, 2.0f, MTXMODE_APPLY);
         SkelCurve_Draw(&this->actor, play, &this->skelCurve, DemoEffect_OverrideLimbDrawTimeWarp, NULL, 1,
                        &this->actor);
 
-        CLOSE_DISPS(gfxCtx, "../z_demo_effect.c", 3216);
+        CLOSE_DISPS(gfxCtx);
     }
 }
 

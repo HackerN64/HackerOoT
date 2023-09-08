@@ -974,7 +974,7 @@ void BossVa_BodyIntro(BossVa* this, PlayState* play) {
 
                 if (!GET_EVENTCHKINF(EVENTCHKINF_76)) {
                     TitleCard_InitBossName(play, &play->actorCtx.titleCtx, SEGMENTED_TO_VIRTUAL(gBarinadeTitleCardTex),
-                                           0xA0, 0xB4, 0x80, 0x28);
+                                           160, 180, 128, 40);
                 }
 
                 if (Rand_ZeroOne() < 0.1f) {
@@ -2820,23 +2820,9 @@ void BossVa_Update(Actor* thisx, PlayState* play2) {
             BossVa_UpdateEffects(play);
 
             for (i = 2; i >= 0; i--) {
-                if ((play->envCtx.adjAmbientColor[i] - 1) > 0) {
-                    play->envCtx.adjAmbientColor[i] -= 1;
-                } else {
-                    play->envCtx.adjAmbientColor[i] = 0;
-                }
-
-                if ((play->envCtx.adjLight1Color[i] - 10) > 0) {
-                    play->envCtx.adjLight1Color[i] -= 10;
-                } else {
-                    play->envCtx.adjLight1Color[i] = 0;
-                }
-
-                if ((play->envCtx.adjFogColor[i] - 10) > 0) {
-                    play->envCtx.adjFogColor[i] -= 10;
-                } else {
-                    play->envCtx.adjFogColor[i] = 0;
-                }
+                play->envCtx.adjAmbientColor[i] = MAX(play->envCtx.adjAmbientColor[i] - 1, 0);
+                play->envCtx.adjLight1Color[i] = MAX(play->envCtx.adjLight1Color[i] - 10, 0);
+                play->envCtx.adjFogColor[i] = MAX(play->envCtx.adjFogColor[i] - 10, 0);
             }
 
             if (this->onCeiling > 0) {
@@ -2867,7 +2853,7 @@ s32 BossVa_BodyOverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec
     BossVa* this = (BossVa*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_va.c", 4156);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limbIndex == 20) {
         gDPPipeSync(POLY_OPA_DISP++);
@@ -2887,7 +2873,7 @@ s32 BossVa_BodyOverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec
         rot->x -= 0xCCC;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_va.c", 4183);
+    CLOSE_DISPS(play->state.gfxCtx);
     return false;
 }
 
@@ -2896,7 +2882,7 @@ void BossVa_BodyPostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s*
     Vec3f sp78 = { 0.0f, 0.0f, 0.0f };
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_va.c", 4192);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limbIndex == 6) {
         if (sFightPhase < PHASE_3) {
@@ -2959,7 +2945,7 @@ void BossVa_BodyPostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s*
         Matrix_MultVec3f(&sp78, &this->unk_274);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_va.c", 4264);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 BossVa_SupportOverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
@@ -3147,7 +3133,7 @@ s32 BossVa_BariOverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec
 void BossVa_BariPostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
     BossVa* this = (BossVa*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_va.c", 4494);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limbIndex == 2) {
         gSPSegment(POLY_XLU_DISP++, 0x0A,
@@ -3162,7 +3148,7 @@ void BossVa_BariPostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s*
         gSPDisplayList(POLY_XLU_DISP++, *dList);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_va.c", 4517);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossVa_Draw(Actor* thisx, PlayState* play) {
@@ -3177,7 +3163,7 @@ void BossVa_Draw(Actor* thisx, PlayState* play) {
     Vec3f sp74 = { -15.0f, 40.0f, 0.0f };
     Color_RGBA8 unused = { 250, 250, 230, 200 };
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_va.c", 4542);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     paramsPtr = &this->actor.params;
@@ -3282,7 +3268,7 @@ void BossVa_Draw(Actor* thisx, PlayState* play) {
         BossVa_DrawDoor(play, sDoorState);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_va.c", 4673);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 static s32 sUnkValue = 0x009B0000; // Unreferenced? Possibly a color
@@ -3510,7 +3496,7 @@ void BossVa_DrawEffects(BossVaEffect* effect, PlayState* play) {
     BossVaEffect* effectHead = effect;
     Camera* subCam = Play_GetCamera(play, sSubCamId);
 
-    OPEN_DISPS(gfxCtx, "../z_boss_va.c", 4953);
+    OPEN_DISPS(gfxCtx);
 
     for (i = 0; i < BOSS_VA_EFFECT_COUNT; i++, effect++) {
         if (effect->type == VA_LARGE_SPARK) {
@@ -3710,7 +3696,7 @@ void BossVa_DrawEffects(BossVaEffect* effect, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_boss_va.c", 5215);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void BossVa_SpawnSpark(PlayState* play, BossVaEffect* effect, BossVa* this, Vec3f* offset, s16 scale, u8 mode) {
@@ -3980,7 +3966,7 @@ void BossVa_DrawDoor(PlayState* play, s16 scale) {
     f32 segAngle = 0.0f;
     s32 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_va.c", 5600);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Translate(0.0f, 80.0f, 400.0f, MTXMODE_NEW);
     Matrix_RotateY(M_PI, MTXMODE_APPLY);
@@ -4005,5 +3991,5 @@ void BossVa_DrawDoor(PlayState* play, s16 scale) {
         gSPDisplayList(POLY_OPA_DISP++, doorPieceDispList[i]);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_va.c", 5629);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

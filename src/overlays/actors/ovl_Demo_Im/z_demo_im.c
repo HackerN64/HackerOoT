@@ -326,7 +326,7 @@ void func_80985430(DemoIm* this, PlayState* play) {
 void func_8098544C(DemoIm* this, PlayState* play) {
     s32 pad[2];
 
-    if ((gSaveContext.chamberCutsceneNum == 4) && !IS_CUTSCENE_LAYER) {
+    if ((gSaveContext.chamberCutsceneNum == CHAMBER_CS_SHADOW) && !IS_CUTSCENE_LAYER) {
         Player* player = GET_PLAYER(play);
 
         this->action = 1;
@@ -431,7 +431,7 @@ void func_80985860(DemoIm* this, PlayState* play) {
 }
 
 void func_809858A8(void) {
-    func_800788CC(NA_SE_SY_WHITE_OUT_T);
+    Sfx_PlaySfxCentered2(NA_SE_SY_WHITE_OUT_T);
 }
 
 void DemoIm_SpawnLightBall(DemoIm* this, PlayState* play) {
@@ -522,7 +522,7 @@ void DemoIm_DrawTranslucent(DemoIm* this, PlayState* play) {
     void* eyeTex = sEyeTextures[eyeIndex];
     SkelAnime* skelAnime = &this->skelAnime;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_im_inKenjyanomaDemo02.c", 281);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -534,7 +534,7 @@ void DemoIm_DrawTranslucent(DemoIm* this, PlayState* play) {
     POLY_XLU_DISP = SkelAnime_DrawFlex(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount, NULL,
                                        NULL, NULL, POLY_XLU_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_im_inKenjyanomaDemo02.c", 308);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_80985E60(DemoIm* this, PlayState* play) {
@@ -1186,7 +1186,7 @@ void DemoIm_DrawSolid(DemoIm* this, PlayState* play) {
     void* eyeTexture = sEyeTextures[eyeIndex];
     SkelAnime* skelAnime = &this->skelAnime;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_im.c", 904);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -1198,7 +1198,7 @@ void DemoIm_DrawSolid(DemoIm* this, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                           DemoIm_OverrideLimbDraw, DemoIm_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_im.c", 925);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DemoIm_Draw(Actor* thisx, PlayState* play) {

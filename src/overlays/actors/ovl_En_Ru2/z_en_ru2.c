@@ -115,7 +115,7 @@ void func_80AF2608(EnRu2* this) {
     s16* unk_2A6 = &this->unk_2A6;
     s16* unk_2A4 = &this->unk_2A4;
 
-    if (!DECR(*unk_2A6)) {
+    if (DECR(*unk_2A6) == 0) {
         *unk_2A6 = Rand_S16Offset(0x3C, 0x3C);
     }
 
@@ -263,7 +263,7 @@ void func_80AF2AB4(EnRu2* this, PlayState* play) {
     Player* player;
     s16 temp;
 
-    if ((gSaveContext.chamberCutsceneNum == 2) && !IS_CUTSCENE_LAYER) {
+    if ((gSaveContext.chamberCutsceneNum == CHAMBER_CS_WATER) && !IS_CUTSCENE_LAYER) {
         player = GET_PLAYER(play);
         this->action = 1;
         play->csCtx.script = D_80AF411C;
@@ -382,7 +382,7 @@ void func_80AF2E1C(EnRu2* this, PlayState* play) {
 }
 
 void func_80AF2E64(void) {
-    func_800788CC(NA_SE_SY_WHITE_OUT_T);
+    Sfx_PlaySfxCentered2(NA_SE_SY_WHITE_OUT_T);
 }
 
 void func_80AF2E84(EnRu2* this, PlayState* play) {
@@ -472,7 +472,7 @@ void func_80AF321C(EnRu2* this, PlayState* play) {
     void* tex = sEyeTextures[temp];
     SkelAnime* skelAnime = &this->skelAnime;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ru2_inKenjyanomaDemo02.c", 264);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -484,7 +484,7 @@ void func_80AF321C(EnRu2* this, PlayState* play) {
     POLY_XLU_DISP = SkelAnime_DrawFlex(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount, NULL,
                                        NULL, NULL, POLY_XLU_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ru2_inKenjyanomaDemo02.c", 291);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_80AF3394(EnRu2* this, PlayState* play) {
@@ -801,7 +801,7 @@ void func_80AF3F20(EnRu2* this, PlayState* play) {
     void* tex = sEyeTextures[temp];
     SkelAnime* skelAnime = &this->skelAnime;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ru2.c", 642);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -812,7 +812,7 @@ void func_80AF3F20(EnRu2* this, PlayState* play) {
 
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount, NULL, NULL, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ru2.c", 663);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnRu2_Draw(Actor* thisx, PlayState* play) {

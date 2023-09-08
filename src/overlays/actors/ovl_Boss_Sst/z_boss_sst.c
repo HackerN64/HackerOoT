@@ -2512,7 +2512,7 @@ void BossSst_HandSetInvulnerable(BossSst* this, s32 isInv) {
 }
 
 void BossSst_HeadSfx(BossSst* this, u16 sfxId) {
-    func_80078914(&this->center, sfxId);
+    Sfx_PlaySfxAtPos(&this->center, sfxId);
 }
 
 void BossSst_HandCollisionCheck(BossSst* this, PlayState* play) {
@@ -2714,7 +2714,7 @@ s32 BossSst_OverrideHandTrailDraw(PlayState* play, s32 limbIndex, Gfx** dList, V
 void BossSst_DrawHand(Actor* thisx, PlayState* play) {
     BossSst* this = (BossSst*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_sst.c", 6563);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -2764,7 +2764,7 @@ void BossSst_DrawHand(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_sst.c", 6654);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     BossSst_DrawEffects(&this->actor, play);
 }
@@ -2866,7 +2866,7 @@ void BossSst_DrawHead(Actor* thisx, PlayState* play) {
     s32 pad;
     BossSst* this = (BossSst*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_sst.c", 6810);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (!CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_7)) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -2931,7 +2931,7 @@ void BossSst_DrawHead(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, sIntroVanishDList);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_sst.c", 6941);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     SkinMatrix_Vec3fMtxFMultXYZ(&play->viewProjectionMtxF, &this->actor.focus.pos, &this->center);
     BossSst_DrawEffects(&this->actor, play);
@@ -3161,7 +3161,7 @@ void BossSst_DrawEffects(Actor* thisx, PlayState* play) {
     BossSstEffect* effect;
 
     if (this->effectMode != BONGO_NULL) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_boss_sst.c", 7302);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
         if (this->effectMode == BONGO_ICE) {
@@ -3230,6 +3230,6 @@ void BossSst_DrawEffects(Actor* thisx, PlayState* play) {
             }
         }
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_boss_sst.c", 7433);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

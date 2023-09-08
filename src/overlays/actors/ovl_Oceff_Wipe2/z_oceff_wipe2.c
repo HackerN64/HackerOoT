@@ -87,7 +87,7 @@ void OceffWipe2_Draw(Actor* thisx, PlayState* play) {
         vtxPtr[11].v.cn[3] = vtxPtr[13].v.cn[3] = vtxPtr[15].v.cn[3] = vtxPtr[16].v.cn[3] = vtxPtr[18].v.cn[3] =
             vtxPtr[20].v.cn[3] = alpha;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_oceff_wipe2.c", 390);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -106,5 +106,5 @@ void OceffWipe2_Draw(Actor* thisx, PlayState* play) {
                                                      64, 1, scroll * (-6), 0, 64, 64));
     gSPDisplayList(POLY_XLU_DISP++, sFrustumDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_oceff_wipe2.c", 417);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

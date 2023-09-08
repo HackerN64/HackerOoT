@@ -101,13 +101,13 @@ void EnSth_Init(Actor* thisx, PlayState* play) {
 
     osSyncPrintf(VT_FGCOL(BLUE) "金スタル屋 no = %d\n" VT_RST, params); // "Gold Skulltula Shop"
     if (this->actor.params == 0) {
-        if (gSaveContext.inventory.gsTokens < 100) {
+        if (gSaveContext.save.info.inventory.gsTokens < 100) {
             Actor_Kill(&this->actor);
             // "Gold Skulltula Shop I still can't be a human"
             osSyncPrintf("金スタル屋 まだ 人間に戻れない \n");
             return;
         }
-    } else if (gSaveContext.inventory.gsTokens < (this->actor.params * 10)) {
+    } else if (gSaveContext.save.info.inventory.gsTokens < (this->actor.params * 10)) {
         Actor_Kill(&this->actor);
         // "Gold Skulltula Shop I still can't be a human"
         osSyncPrintf(VT_FGCOL(BLUE) "金スタル屋 まだ 人間に戻れない \n" VT_RST);
@@ -157,7 +157,7 @@ void EnSth_SetupAfterObjectLoaded(EnSth* this, PlayState* play) {
 
     this->eventFlag = sEventFlags[this->actor.params];
     params = &this->actor.params;
-    if (gSaveContext.eventChkInf[EVENTCHKINF_DA_DB_DC_DD_DE_INDEX] & this->eventFlag) {
+    if (gSaveContext.save.info.eventChkInf[EVENTCHKINF_DA_DB_DC_DD_DE_INDEX] & this->eventFlag) {
         EnSth_SetupAction(this, sRewardObtainedWaitActions[*params]);
     } else {
         EnSth_SetupAction(this, EnSth_RewardUnobtainedWait);
@@ -257,7 +257,7 @@ void EnSth_GiveReward(EnSth* this, PlayState* play) {
     if (Actor_HasParent(&this->actor, play)) {
         this->actor.parent = NULL;
         EnSth_SetupAction(this, EnSth_RewardObtainedTalk);
-        gSaveContext.eventChkInf[EVENTCHKINF_DA_DB_DC_DD_DE_INDEX] |= this->eventFlag;
+        gSaveContext.save.info.eventChkInf[EVENTCHKINF_DA_DB_DC_DD_DE_INDEX] |= this->eventFlag;
     } else {
         EnSth_GivePlayerItem(this, play);
     }
@@ -293,7 +293,7 @@ void EnSth_ChildRewardObtainedWait(EnSth* this, PlayState* play) {
     if (Actor_ProcessTalkRequest(&this->actor, play)) {
         EnSth_SetupAction(this, EnSth_RewardObtainedTalk);
     } else {
-        if (gSaveContext.inventory.gsTokens < 50) {
+        if (gSaveContext.save.info.inventory.gsTokens < 50) {
             this->actor.textId = 0x20;
         } else {
             this->actor.textId = 0x1F;
@@ -364,11 +364,11 @@ void EnSth_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot,
     if (limbIndex == 15) {
         Matrix_MultVec3f(&D_80B0B49C, &this->actor.focus.pos);
         if (this->actor.params != 0) { // Children
-            OPEN_DISPS(play->state.gfxCtx, "../z_en_sth.c", 2079);
+            OPEN_DISPS(play->state.gfxCtx);
 
             gSPDisplayList(POLY_OPA_DISP++, D_80B0A3C0);
 
-            CLOSE_DISPS(play->state.gfxCtx, "../z_en_sth.c", 2081);
+            CLOSE_DISPS(play->state.gfxCtx);
         }
     }
 }
@@ -387,7 +387,7 @@ void EnSth_Draw(Actor* thisx, PlayState* play) {
     EnSth* this = (EnSth*)thisx;
     Color_RGB8* envColor1;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_sth.c", 2133);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.status[this->objectBankIdx].segment);
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
@@ -404,5 +404,5 @@ void EnSth_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnSth_OverrideLimbDraw, EnSth_PostLimbDraw, &this->actor);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_sth.c", 2176);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

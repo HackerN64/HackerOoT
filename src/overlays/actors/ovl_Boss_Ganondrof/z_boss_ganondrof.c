@@ -358,7 +358,7 @@ void BossGanondrof_Intro(BossGanondrof* this, PlayState* play) {
     }
 
     if (this->timers[1] == 30) {
-        func_80078914(&sAudioVec, NA_SE_EN_FANTOM_TRANSFORM);
+        Sfx_PlaySfxAtPos(&sAudioVec, NA_SE_EN_FANTOM_TRANSFORM);
     }
 
     if (horse->bossGndSignal == FHG_LIGHTNING) {
@@ -1487,7 +1487,7 @@ void BossGanondrof_Draw(Actor* thisx, PlayState* play) {
     BossGanondrof* this = (BossGanondrof*)thisx;
     EnfHG* horse;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_ganondrof.c", 3716);
+    OPEN_DISPS(play->state.gfxCtx);
     osSyncPrintf("MOVE P = %x\n", this->actor.update);
     osSyncPrintf("STOP TIMER = %d ==============\n", this->actor.freezeTimer);
     horse = (EnfHG*)this->actor.child;
@@ -1519,6 +1519,6 @@ void BossGanondrof_Draw(Actor* thisx, PlayState* play) {
                       BossGanondrof_PostLimbDraw, this);
     osSyncPrintf("DRAW 22\n");
     POLY_OPA_DISP = Play_SetFog(play, POLY_OPA_DISP);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_ganondrof.c", 3814);
+    CLOSE_DISPS(play->state.gfxCtx);
     osSyncPrintf("DRAW END %d\n", this->actor.params);
 }

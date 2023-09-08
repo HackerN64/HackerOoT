@@ -217,7 +217,7 @@ s16 EnIn_UpdateTalkStateOnChoice(PlayState* play, Actor* thisx) {
         case 0x2031:
             if (play->msgCtx.choiceIndex == 1) {
                 this->actor.textId = 0x2032;
-            } else if (gSaveContext.rupees < 10) {
+            } else if (gSaveContext.save.info.playerData.rupees < 10) {
                 this->actor.textId = 0x2033;
             } else {
                 this->actor.textId = 0x2034;
@@ -244,7 +244,7 @@ s16 EnIn_UpdateTalkStateOnChoice(PlayState* play, Actor* thisx) {
             }
             break;
         case 0x2038:
-            if (play->msgCtx.choiceIndex == 0 && gSaveContext.rupees >= 50) {
+            if (play->msgCtx.choiceIndex == 0 && gSaveContext.save.info.playerData.rupees >= 50) {
                 talkState = NPC_TALK_STATE_ACTION;
             } else {
                 this->actor.textId = 0x2039;
@@ -253,7 +253,7 @@ s16 EnIn_UpdateTalkStateOnChoice(PlayState* play, Actor* thisx) {
             }
             break;
         case 0x205B:
-            if (play->msgCtx.choiceIndex == 0 && gSaveContext.rupees >= 50) {
+            if (play->msgCtx.choiceIndex == 0 && gSaveContext.save.info.playerData.rupees >= 50) {
                 talkState = NPC_TALK_STATE_ACTION;
             } else {
                 Message_ContinueTextbox(play, this->actor.textId = 0x2039);
@@ -264,7 +264,7 @@ s16 EnIn_UpdateTalkStateOnChoice(PlayState* play, Actor* thisx) {
             }
             break;
     }
-    if (!gSaveContext.rupees) {}
+    if (!gSaveContext.save.info.playerData.rupees) {}
 
     return talkState;
 }
@@ -339,7 +339,7 @@ void func_80A795C8(EnIn* this, PlayState* play) {
 
 void func_80A79690(SkelAnime* skelAnime, EnIn* this, PlayState* play) {
     if (skelAnime->baseTransl.y < skelAnime->jointTable[0].y) {
-        skelAnime->moveFlags |= 3;
+        skelAnime->moveFlags |= ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y;
         AnimationContext_SetMoveActor(play, &this->actor, skelAnime, 1.0f);
     }
 }
@@ -665,7 +665,7 @@ void func_80A7A568(EnIn* this, PlayState* play) {
         gSaveContext.timerState = TIMER_STATE_OFF;
     } else if (this->interactInfo.talkState == NPC_TALK_STATE_ACTION) {
         if (play->msgCtx.choiceIndex == 0) {
-            if (gSaveContext.rupees < 50) {
+            if (gSaveContext.save.info.playerData.rupees < 50) {
                 play->msgCtx.stateTimer = 4;
                 play->msgCtx.msgMode = MSGMODE_TEXT_CLOSING;
                 this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
@@ -717,7 +717,8 @@ void func_80A7A770(EnIn* this, PlayState* play) {
 
 void func_80A7A848(EnIn* this, PlayState* play) {
     if (this->interactInfo.talkState == NPC_TALK_STATE_ACTION) {
-        if ((play->msgCtx.choiceIndex == 0 && gSaveContext.rupees < 50) || play->msgCtx.choiceIndex == 1) {
+        if ((play->msgCtx.choiceIndex == 0 && gSaveContext.save.info.playerData.rupees < 50) ||
+            play->msgCtx.choiceIndex == 1) {
             SET_EVENTINF_HORSES_STATE(EVENTINF_HORSES_STATE_0);
             this->actionFunc = func_80A7A4C8;
         } else {
@@ -977,7 +978,7 @@ void EnIn_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, 
     EnIn* this = (EnIn*)thisx;
     Vec3f D_80A7B9A8 = { 1600.0, 0.0f, 0.0f };
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_in.c", 2335);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limbIndex == INGO_HEAD_LIMB) {
         Matrix_MultVec3f(&D_80A7B9A8, &this->actor.focus.pos);
@@ -990,7 +991,7 @@ void EnIn_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, 
         gSPDisplayList(POLY_OPA_DISP++, gIngoChildEraPitchForkDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_in.c", 2365);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnIn_Draw(Actor* thisx, PlayState* play) {
@@ -998,7 +999,7 @@ void EnIn_Draw(Actor* thisx, PlayState* play) {
 
     EnIn* this = (EnIn*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_in.c", 2384);
+    OPEN_DISPS(play->state.gfxCtx);
     if (this->actionFunc != func_80A79FB0) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeIndex]));
@@ -1006,5 +1007,5 @@ void EnIn_Draw(Actor* thisx, PlayState* play) {
         SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                               EnIn_OverrideLimbDraw, EnIn_PostLimbDraw, &this->actor);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_in.c", 2416);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

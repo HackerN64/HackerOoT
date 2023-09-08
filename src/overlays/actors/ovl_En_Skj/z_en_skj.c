@@ -918,7 +918,7 @@ void EnSkj_WaitInRange(EnSkj* this, PlayState* play) {
         player->actor.world.pos.y = sSmallStumpSkullKid.skullkid->actor.world.pos.y;
         player->actor.world.pos.z = sSmallStumpSkullKid.skullkid->actor.world.pos.z;
         if ((Player_GetMask(play) == PLAYER_MASK_SKULL) && !GET_ITEMGETINF(ITEMGETINF_39)) {
-            func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+            Sfx_PlaySfxCentered(NA_SE_SY_TRE_BOX_APPEAR);
             EnSkj_SetupMaskTrade(this);
         } else {
             EnSkj_SetupTalk(this);
@@ -978,7 +978,7 @@ void EnSkj_WaitForSong(EnSkj* this, PlayState* play) {
             if (!GET_ITEMGETINF(ITEMGETINF_16)) {
                 // Saria's song has been played for the first titme
                 play->msgCtx.ocarinaMode = OCARINA_MODE_04;
-                func_80078884(NA_SE_SY_CORRECT_CHIME);
+                Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
                 player->unk_6A8 = &this->actor;
                 func_8002F2CC(&this->actor, play, EnSkj_GetItemXzRange(this));
                 this->textId = 0x10BB;
@@ -1249,7 +1249,7 @@ void EnSkj_Appear(EnSkj* this) {
 void EnSkj_OcarinaGameIdle(EnSkj* this, PlayState* play) {
     EnSkj_Appear(this);
 
-    if ((EnSkj_IsLeavingGame(this) == false) && (this->minigameState != 0)) {
+    if (!EnSkj_IsLeavingGame(this) && (this->minigameState != 0)) {
         EnSkj_SetupPlayOcarinaGame(this);
     }
 }
@@ -1426,7 +1426,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
         this->textId = 0x102D;
         this->actionFunc = EnSkj_FailedMiniGame;
     } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_0F) { // completed the game
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
         Message_CloseTextbox(play);
         play->msgCtx.ocarinaMode = OCARINA_MODE_04;
         player->unk_6A8 = &this->actor;
@@ -1460,7 +1460,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
                 if (this->songFailTimer != 0) {
                     this->songFailTimer--;
                 } else { // took too long, game failed
-                    func_80078884(NA_SE_SY_OCARINA_ERROR);
+                    Sfx_PlaySfxCentered(NA_SE_SY_OCARINA_ERROR);
                     Message_CloseTextbox(play);
                     play->msgCtx.ocarinaMode = OCARINA_MODE_04;
                     player->unk_6A8 = &this->actor;
@@ -1532,7 +1532,8 @@ void EnSkj_WonOcarinaMiniGame(EnSkj* this, PlayState* play) {
 
 void EnSkj_WaitToGiveReward(EnSkj* this, PlayState* play) {
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_DONE) && Message_ShouldAdvance(play)) {
-        Actor_OfferGetItem(&this->actor, play, sOcarinaGameRewards[gSaveContext.ocarinaGameRoundNum], 26.0f, 26.0f);
+        Actor_OfferGetItem(&this->actor, play,
+                           sOcarinaGameRewards[gSaveContext.save.info.playerData.ocarinaGameRoundNum], 26.0f, 26.0f);
         this->actionFunc = EnSkj_GiveOcarinaGameReward;
     }
 }
@@ -1542,16 +1543,17 @@ void EnSkj_GiveOcarinaGameReward(EnSkj* this, PlayState* play) {
         this->actor.parent = NULL;
         this->actionFunc = EnSkj_FinishOcarinaGameRound;
     } else {
-        Actor_OfferGetItem(&this->actor, play, sOcarinaGameRewards[gSaveContext.ocarinaGameRoundNum], 26.0f, 26.0f);
+        Actor_OfferGetItem(&this->actor, play,
+                           sOcarinaGameRewards[gSaveContext.save.info.playerData.ocarinaGameRoundNum], 26.0f, 26.0f);
     }
 }
 
 void EnSkj_FinishOcarinaGameRound(EnSkj* this, PlayState* play) {
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_DONE) && Message_ShouldAdvance(play)) {
-        s32 ocarinaGameRoundNum = gSaveContext.ocarinaGameRoundNum;
+        s32 ocarinaGameRoundNum = gSaveContext.save.info.playerData.ocarinaGameRoundNum;
 
-        if (gSaveContext.ocarinaGameRoundNum < 3) {
-            gSaveContext.ocarinaGameRoundNum++;
+        if (gSaveContext.save.info.playerData.ocarinaGameRoundNum < 3) {
+            gSaveContext.save.info.playerData.ocarinaGameRoundNum++;
         }
 
         if (ocarinaGameRoundNum == 2) {
@@ -1608,7 +1610,7 @@ s32 EnSkj_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* p
 }
 
 void EnSkj_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_skj.c", 2417);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if ((limbIndex == 11) && GET_ITEMGETINF(ITEMGETINF_39)) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -1620,7 +1622,7 @@ void EnSkj_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot,
         Matrix_Pop();
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_skj.c", 2437);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 Gfx* EnSkj_TranslucentDL(GraphicsContext* gfxCtx, u32 alpha) {
@@ -1652,7 +1654,7 @@ void EnSkj_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnSkj* this = (EnSkj*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_skj.c", 2475);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -1665,5 +1667,5 @@ void EnSkj_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnSkj_OverrideLimbDraw, EnSkj_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_skj.c", 2495);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

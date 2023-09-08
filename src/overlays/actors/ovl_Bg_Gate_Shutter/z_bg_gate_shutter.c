@@ -116,13 +116,13 @@ void BgGateShutter_Update(Actor* thisx, PlayState* play) {
     BgGateShutter* this = (BgGateShutter*)thisx;
 
     if (this->unk_178 != 0) {
-        this->unk_178 -= 1;
+        this->unk_178--;
     }
     this->actionFunc(this, play);
 }
 
 void BgGateShutter_Draw(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_gate_shutter.c", 323);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -130,5 +130,5 @@ void BgGateShutter_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gKakarikoGuardGateDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_gate_shutter.c", 333);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

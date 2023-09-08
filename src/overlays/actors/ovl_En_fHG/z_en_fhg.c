@@ -290,11 +290,11 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
                 bossGnd->work[GND_EYE_STATE] = GND_EYESTATE_BRIGHTEN;
             }
             if (this->timers[0] == 35) {
-                func_80078914(&audioVec, NA_SE_EN_FANTOM_EYE);
+                Sfx_PlaySfxAtPos(&audioVec, NA_SE_EN_FANTOM_EYE);
             }
             if (this->timers[0] == 130) {
                 bossGnd->work[GND_EYE_STATE] = GND_EYESTATE_FADE;
-                func_80078914(&audioVec, NA_SE_EN_FANTOM_ST_LAUGH);
+                Sfx_PlaySfxAtPos(&audioVec, NA_SE_EN_FANTOM_ST_LAUGH);
             }
             if (this->timers[0] == 20) {
                 SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
@@ -467,7 +467,7 @@ void EnfHG_Approach(EnfHG* this, PlayState* play) {
         this->hoofSfxPos.y = this->actor.projectedPos.y / (this->actor.scale.x * 100.0f);
         this->hoofSfxPos.z = this->actor.projectedPos.z / (this->actor.scale.x * 100.0f);
         if ((this->gallopTimer % 8) == 0) {
-            func_80078914(&this->hoofSfxPos, NA_SE_EV_HORSE_RUN);
+            Sfx_PlaySfxAtPos(&this->hoofSfxPos, NA_SE_EV_HORSE_RUN);
         }
     }
     SkelAnime_Update(&this->skin.skelAnime);
@@ -636,7 +636,7 @@ void EnfHG_Retreat(EnfHG* this, PlayState* play) {
         this->hoofSfxPos.y = this->actor.projectedPos.y / (this->actor.scale.x * 100.0f);
         this->hoofSfxPos.z = this->actor.projectedPos.z / (this->actor.scale.x * 100.0f);
         if ((this->gallopTimer % 8) == 0) {
-            func_80078914(&this->hoofSfxPos, NA_SE_EV_HORSE_RUN);
+            Sfx_PlaySfxAtPos(&this->hoofSfxPos, NA_SE_EV_HORSE_RUN);
         }
     }
     SkelAnime_Update(&this->skin.skelAnime);
@@ -715,7 +715,7 @@ void EnfHG_Draw(Actor* thisx, PlayState* play) {
     BossGanondrof* bossGnd = (BossGanondrof*)this->actor.parent;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fhg.c", 2439);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     POLY_OPA_DISP = ((bossGnd->work[GND_INVINC_TIMER] & 4) && (bossGnd->flyMode == GND_FLY_PAINTING))
@@ -725,5 +725,5 @@ void EnfHG_Draw(Actor* thisx, PlayState* play) {
                                      (s32)this->warpColorFilterUnk2 + 1000);
     func_800A6330(&this->actor, play, &this->skin, EnfHG_PostDraw, SKIN_TRANSFORM_IS_FHG);
     POLY_OPA_DISP = Play_SetFog(play, POLY_OPA_DISP);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fhg.c", 2480);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -30,7 +30,7 @@ u32 EffectSsStick_Init(PlayState* play, u32 index, EffectSs* this, void* initPar
         { OBJECT_LINK_BOY, gLinkAdultBrokenGiantsKnifeBladeDL }, // adult, broken sword
         { OBJECT_LINK_CHILD, gLinkChildLinkDekuStickDL },        // child, broken stick
     };
-    StickDrawInfo* ageInfoEntry = gSaveContext.linkAge + drawInfo;
+    StickDrawInfo* ageInfoEntry = gSaveContext.save.linkAge + drawInfo;
     EffectSsStickInitParams* initParams = (EffectSsStickInitParams*)initParamsx;
 
     this->rObjBankIdx = Object_GetIndex(&play->objectCtx, ageInfoEntry->objectID);
@@ -52,7 +52,7 @@ void EffectSsStick_Draw(PlayState* play, u32 index, EffectSs* this) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     s32 pad;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_ss_stick.c", 153);
+    OPEN_DISPS(gfxCtx);
 
     Matrix_Translate(this->pos.x, this->pos.y, this->pos.z, MTXMODE_NEW);
 
@@ -71,7 +71,7 @@ void EffectSsStick_Draw(PlayState* play, u32 index, EffectSs* this) {
     gSPSegment(POLY_OPA_DISP++, 0x0C, gCullBackDList);
     gSPDisplayList(POLY_OPA_DISP++, this->gfx);
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_ss_stick.c", 188);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EffectSsStick_Update(PlayState* play, u32 index, EffectSs* this) {

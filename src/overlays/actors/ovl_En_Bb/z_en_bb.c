@@ -1284,7 +1284,7 @@ void EnBb_Draw(Actor* thisx, PlayState* play) {
     Vec3f blureVtx1;
     Vec3f blureVtx2;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_bb.c", 2044);
+    OPEN_DISPS(play->state.gfxCtx);
 
     blureBase1.z = this->maxSpeedXZ * 80.0f;
     blureBase2.z = this->maxSpeedXZ * 80.0f;
@@ -1352,5 +1352,5 @@ void EnBb_Draw(Actor* thisx, PlayState* play) {
             }
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bb.c", 2127);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

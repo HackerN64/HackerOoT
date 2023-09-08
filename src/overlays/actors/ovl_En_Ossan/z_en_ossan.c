@@ -725,7 +725,7 @@ void EnOssan_ChooseTalkToOwner(PlayState* play, EnOssan* this) {
 }
 
 void EnOssan_SetLookToShopkeeperFromShelf(PlayState* play, EnOssan* this) {
-    func_80078884(NA_SE_SY_CURSOR);
+    Sfx_PlaySfxCentered(NA_SE_SY_CURSOR);
     this->drawCursor = 0;
     this->stateFlag = OSSAN_STATE_LOOK_SHOPKEEPER;
 }
@@ -855,7 +855,7 @@ u8 EnOssan_CursorLeft(EnOssan* this, u8 cursorIndex, u8 shelfSlotMax) {
 void EnOssan_TryPaybackMask(EnOssan* this, PlayState* play) {
     s16 price = sMaskPaymentPrice[this->happyMaskShopState];
 
-    if (gSaveContext.rupees < price) {
+    if (gSaveContext.save.info.playerData.rupees < price) {
         Message_ContinueTextbox(play, 0x70A8);
         this->happyMaskShopkeeperEyeIdx = 1;
         this->happyMaskShopState = OSSAN_HAPPY_STATE_ANGRY;
@@ -898,7 +898,7 @@ void EnOssan_State_StartConversation(EnOssan* this, PlayState* play, Player* pla
             }
         }
     } else if (dialogState == TEXT_STATE_EVENT && Message_ShouldAdvance(play)) {
-        func_80078884(NA_SE_SY_MESSAGE_PASS);
+        Sfx_PlaySfxCentered(NA_SE_SY_MESSAGE_PASS);
 
         switch (this->happyMaskShopState) {
             case OSSAN_HAPPY_STATE_ALL_MASKS_SOLD:
@@ -950,7 +950,7 @@ void EnOssan_State_FacingShopkeeper(EnOssan* this, PlayState* play, Player* play
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_CHOICE) &&
         !EnOssan_TestEndInteraction(this, play, &play->state.input[0])) {
         if (Message_ShouldAdvance(play) && EnOssan_FacingShopkeeperDialogResult(this, play)) {
-            func_80078884(NA_SE_SY_DECIDE);
+            Sfx_PlaySfxCentered(NA_SE_SY_DECIDE);
             return;
         }
         // Stick Left
@@ -961,7 +961,7 @@ void EnOssan_State_FacingShopkeeper(EnOssan* this, PlayState* play, Player* play
                 this->stateFlag = OSSAN_STATE_LOOK_SHELF_LEFT;
                 Interface_SetDoAction(play, DO_ACTION_DECIDE);
                 this->stickLeftPrompt.isEnabled = false;
-                func_80078884(NA_SE_SY_CURSOR);
+                Sfx_PlaySfxCentered(NA_SE_SY_CURSOR);
             }
         } else if (this->stickAccumX > 0) {
             nextIndex = EnOssan_SetCursorIndexFromNeutral(this, 0);
@@ -970,7 +970,7 @@ void EnOssan_State_FacingShopkeeper(EnOssan* this, PlayState* play, Player* play
                 this->stateFlag = OSSAN_STATE_LOOK_SHELF_RIGHT;
                 Interface_SetDoAction(play, DO_ACTION_DECIDE);
                 this->stickRightPrompt.isEnabled = false;
-                func_80078884(NA_SE_SY_CURSOR);
+                Sfx_PlaySfxCentered(NA_SE_SY_CURSOR);
             }
         }
     }
@@ -1126,23 +1126,23 @@ s32 EnOssan_HasPlayerSelectedItem(PlayState* play, EnOssan* this, Input* input) 
                 case SI_ZORA_MASK:
                 case SI_GORON_MASK:
                 case SI_GERUDO_MASK:
-                    func_80078884(NA_SE_SY_DECIDE);
+                    Sfx_PlaySfxCentered(NA_SE_SY_DECIDE);
                     this->drawCursor = 0;
                     this->stateFlag = OSSAN_STATE_SELECT_ITEM_MASK;
                     return true;
                 case SI_MILK_BOTTLE:
-                    func_80078884(NA_SE_SY_DECIDE);
+                    Sfx_PlaySfxCentered(NA_SE_SY_DECIDE);
                     this->drawCursor = 0;
                     this->stateFlag = OSSAN_STATE_SELECT_ITEM_BOTTLE_MILK_FULL;
                     return true;
                 case SI_WEIRD_EGG:
-                    func_80078884(NA_SE_SY_DECIDE);
+                    Sfx_PlaySfxCentered(NA_SE_SY_DECIDE);
                     this->drawCursor = 0;
                     this->stateFlag = OSSAN_STATE_SELECT_ITEM_WEIRD_EGG;
                     return true;
                 case SI_19:
                 case SI_20:
-                    func_80078884(NA_SE_SY_ERROR);
+                    Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
                     this->drawCursor = 0;
                     this->stateFlag = OSSAN_STATE_SELECT_ITEM_UNIMPLEMENTED;
                     return true;
@@ -1151,18 +1151,18 @@ s32 EnOssan_HasPlayerSelectedItem(PlayState* play, EnOssan* this, Input* input) 
                 case SI_BOMBS_20:
                 case SI_BOMBS_30:
                 case SI_BOMBS_5_R35:
-                    func_80078884(NA_SE_SY_DECIDE);
+                    Sfx_PlaySfxCentered(NA_SE_SY_DECIDE);
                     this->drawCursor = 0;
                     this->stateFlag = OSSAN_STATE_SELECT_ITEM_BOMBS;
                     return true;
                 default:
-                    func_80078884(NA_SE_SY_DECIDE);
+                    Sfx_PlaySfxCentered(NA_SE_SY_DECIDE);
                     this->drawCursor = 0;
                     this->stateFlag = OSSAN_STATE_SELECT_ITEM;
                     return true;
             }
         }
-        func_80078884(NA_SE_SY_ERROR);
+        Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
         return true;
     }
     return false;
@@ -1223,7 +1223,7 @@ void EnOssan_State_BrowseLeftShelf(EnOssan* this, PlayState* play, Player* playe
         EnOssan_CursorUpDown(this);
         if (this->cursorIndex != prevIndex) {
             Message_ContinueTextbox(play, this->shelfSlots[this->cursorIndex]->actor.textId);
-            func_80078884(NA_SE_SY_CURSOR);
+            Sfx_PlaySfxCentered(NA_SE_SY_CURSOR);
         }
     }
 }
@@ -1282,7 +1282,7 @@ void EnOssan_State_BrowseRightShelf(EnOssan* this, PlayState* play, Player* play
         EnOssan_CursorUpDown(this);
         if (this->cursorIndex != prevIndex) {
             Message_ContinueTextbox(play, this->shelfSlots[this->cursorIndex]->actor.textId);
-            func_80078884(NA_SE_SY_CURSOR);
+            Sfx_PlaySfxCentered(NA_SE_SY_CURSOR);
         }
     }
 }
@@ -1362,19 +1362,19 @@ void EnOssan_HandleCanBuyItem(PlayState* play, EnOssan* this) {
             selectedItem->setOutOfStockFunc(play, selectedItem);
             break;
         case CANBUY_RESULT_CANT_GET_NOW:
-            func_80078884(NA_SE_SY_ERROR);
+            Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
             EnOssan_SetStateCantGetItem(play, this, 0x86);
             break;
         case CANBUY_RESULT_NEED_BOTTLE:
-            func_80078884(NA_SE_SY_ERROR);
+            Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
             EnOssan_SetStateCantGetItem(play, this, 0x96);
             break;
         case CANBUY_RESULT_NEED_RUPEES:
-            func_80078884(NA_SE_SY_ERROR);
+            Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
             EnOssan_SetStateCantGetItem(play, this, 0x85);
             break;
         case CANBUY_RESULT_CANT_GET_NOW_5:
-            func_80078884(NA_SE_SY_ERROR);
+            Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
             EnOssan_SetStateCantGetItem(play, this, 0x86);
             break;
     }
@@ -1423,11 +1423,11 @@ void EnOssan_HandleCanBuyWeirdEgg(PlayState* play, EnOssan* this) {
             item->setOutOfStockFunc(play, item);
             break;
         case CANBUY_RESULT_CANT_GET_NOW:
-            func_80078884(NA_SE_SY_ERROR);
+            Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
             EnOssan_SetStateCantGetItem(play, this, 0x9D);
             break;
         case CANBUY_RESULT_NEED_RUPEES:
-            func_80078884(NA_SE_SY_ERROR);
+            Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
             EnOssan_SetStateCantGetItem(play, this, 0x85);
             break;
     }
@@ -1446,11 +1446,11 @@ void EnOssan_HandleCanBuyBombs(PlayState* play, EnOssan* this) {
             item->setOutOfStockFunc(play, item);
             break;
         case CANBUY_RESULT_CANT_GET_NOW:
-            func_80078884(NA_SE_SY_ERROR);
+            Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
             EnOssan_SetStateCantGetItem(play, this, 0x86);
             break;
         case CANBUY_RESULT_NEED_RUPEES:
-            func_80078884(NA_SE_SY_ERROR);
+            Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
             EnOssan_SetStateCantGetItem(play, this, 0x85);
             break;
     }
@@ -2250,7 +2250,7 @@ void EnOssan_DrawCursor(PlayState* play, EnOssan* this, f32 x, f32 y, f32 z, u8 
     f32 w;
     s32 dsdx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4192);
+    OPEN_DISPS(play->state.gfxCtx);
     if (drawCursor != 0) {
         Gfx_SetupDL_39Overlay(play->state.gfxCtx);
         gDPSetPrimColor(OVERLAY_DISP++, 0, 0, this->cursorColorR, this->cursorColorG, this->cursorColorB,
@@ -2265,7 +2265,7 @@ void EnOssan_DrawCursor(PlayState* play, EnOssan* this, f32 x, f32 y, f32 z, u8 
         dsdx = (1.0f / z) * 1024.0f;
         gSPTextureRectangle(OVERLAY_DISP++, ulx, uly, lrx, lry, G_TX_RENDERTILE, 0, 0, WIDE_DIV(dsdx, WIDE_GET_RATIO), dsdx);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4215);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnOssan_DrawTextRec(PlayState* play, s32 r, s32 g, s32 b, s32 a, f32 x, f32 y, f32 z, s32 s, s32 t, f32 dx,
@@ -2275,7 +2275,7 @@ void EnOssan_DrawTextRec(PlayState* play, s32 r, s32 g, s32 b, s32 a, f32 x, f32
     f32 w, h;
     s32 dsdx, dtdy;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4228);
+    OPEN_DISPS(play->state.gfxCtx);
     gDPPipeSync(OVERLAY_DISP++);
     gDPSetPrimColor(OVERLAY_DISP++, 0, 0, r, g, b, a);
 
@@ -2290,14 +2290,14 @@ void EnOssan_DrawTextRec(PlayState* play, s32 r, s32 g, s32 b, s32 a, f32 x, f32
     lrx = (x + w) * 4.0f;
     lry = (y + h) * 4.0f;
     gSPTextureRectangle(OVERLAY_DISP++, ulx, uly, lrx, lry, G_TX_RENDERTILE, s, t, dsdx, dtdy);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4242);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnOssan_DrawStickDirectionPrompts(PlayState* play, EnOssan* this) {
     s32 drawStickLeftPrompt = this->stickLeftPrompt.isEnabled;
     s32 drawStickRightPrompt = this->stickRightPrompt.isEnabled;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4252);
+    OPEN_DISPS(play->state.gfxCtx);
     if (drawStickLeftPrompt || drawStickRightPrompt) {
         Gfx_SetupDL_39Overlay(play->state.gfxCtx);
         gDPSetCombineMode(OVERLAY_DISP++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
@@ -2332,7 +2332,7 @@ void EnOssan_DrawStickDirectionPrompts(PlayState* play, EnOssan* this) {
                                 this->stickRightPrompt.z, 0, 0, 1.0f, 1.0f);
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4300);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnOssan_DrawBazaarShopkeeper(Actor* thisx, PlayState* play) {
@@ -2340,7 +2340,7 @@ void EnOssan_DrawBazaarShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan* this = (EnOssan*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4320);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sBazaarShopkeeperEyeTextures[this->eyeTextureIdx]));
@@ -2349,7 +2349,7 @@ void EnOssan_DrawBazaarShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan_DrawCursor(play, this, this->cursorX, this->cursorY, this->cursorZ, this->drawCursor);
     EnOssan_DrawStickDirectionPrompts(play, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4340);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 EnOssan_OverrideLimbDrawKokiriShopkeeper(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot,
@@ -2362,7 +2362,7 @@ s32 EnOssan_OverrideLimbDrawKokiriShopkeeper(PlayState* play, s32 limbIndex, Gfx
     EnOssan* this = (EnOssan*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4354);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limbIndex == 15) {
         gSPSegment(POLY_OPA_DISP++, 0x06, play->objectCtx.status[this->objBankIndex2].segment);
@@ -2371,7 +2371,7 @@ s32 EnOssan_OverrideLimbDrawKokiriShopkeeper(PlayState* play, s32 limbIndex, Gfx
         gSPSegment(POLY_OPA_DISP++, 0x0A, SEGMENTED_TO_VIRTUAL(sKokiriShopkeeperEyeTextures[this->eyeTextureIdx]));
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4374);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     return 0;
 }
@@ -2395,7 +2395,7 @@ void EnOssan_DrawKokiriShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan* this = (EnOssan*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4409);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
@@ -2408,7 +2408,7 @@ void EnOssan_DrawKokiriShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan_DrawCursor(play, this, this->cursorX, this->cursorY, this->cursorZ, this->drawCursor);
     EnOssan_DrawStickDirectionPrompts(play, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4434);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnOssan_DrawGoronShopkeeper(Actor* thisx, PlayState* play) {
@@ -2416,7 +2416,7 @@ void EnOssan_DrawGoronShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan* this = (EnOssan*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4455);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sGoronShopkeeperEyeTextures[this->eyeTextureIdx]));
@@ -2426,7 +2426,7 @@ void EnOssan_DrawGoronShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan_DrawCursor(play, this, this->cursorX, this->cursorY, this->cursorZ, this->drawCursor);
     EnOssan_DrawStickDirectionPrompts(play, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4476);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 EnOssan_OverrideLimbDrawZoraShopkeeper(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot,
@@ -2444,7 +2444,7 @@ void EnOssan_DrawZoraShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan* this = (EnOssan*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4506);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
@@ -2456,7 +2456,7 @@ void EnOssan_DrawZoraShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan_DrawCursor(play, this, this->cursorX, this->cursorY, this->cursorZ, this->drawCursor);
     EnOssan_DrawStickDirectionPrompts(play, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4531);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnOssan_DrawPotionShopkeeper(Actor* thisx, PlayState* play) {
@@ -2468,7 +2468,7 @@ void EnOssan_DrawPotionShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan* this = (EnOssan*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4544);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sPotionShopkeeperEyeTextures[this->eyeTextureIdx]));
@@ -2477,7 +2477,7 @@ void EnOssan_DrawPotionShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan_DrawCursor(play, this, this->cursorX, this->cursorY, this->cursorZ, this->drawCursor);
     EnOssan_DrawStickDirectionPrompts(play, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4564);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnOssan_DrawHappyMaskShopkeeper(Actor* thisx, PlayState* play) {
@@ -2485,7 +2485,7 @@ void EnOssan_DrawHappyMaskShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan* this = (EnOssan*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4578);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -2496,7 +2496,7 @@ void EnOssan_DrawHappyMaskShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan_DrawCursor(play, this, this->cursorX, this->cursorY, this->cursorZ, this->drawCursor);
     EnOssan_DrawStickDirectionPrompts(play, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4598);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnOssan_DrawBombchuShopkeeper(Actor* thisx, PlayState* play) {
@@ -2508,7 +2508,7 @@ void EnOssan_DrawBombchuShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan* this = (EnOssan*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4611);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -2518,5 +2518,5 @@ void EnOssan_DrawBombchuShopkeeper(Actor* thisx, PlayState* play) {
     EnOssan_DrawCursor(play, this, this->cursorX, this->cursorY, this->cursorZ, this->drawCursor);
     EnOssan_DrawStickDirectionPrompts(play, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4631);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -203,7 +203,7 @@ void func_808A3E54(BgMoriHineri* this, PlayState* play) {
             this->moriHineriObjIdx = objBankIndex;
             this->dyna.actor.params ^= 1;
             sSubCamId = SUB_CAM_ID_DONE;
-            func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+            Sfx_PlaySfxCentered(NA_SE_SY_TRE_BOX_APPEAR);
         } else {
             this->dyna.actor.draw = NULL;
             this->actionFunc = func_808A3D58;
@@ -226,7 +226,7 @@ void BgMoriHineri_DrawHallAndRoom(Actor* thisx, PlayState* play) {
     s8 objIndex;
     MtxF mtx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mori_hineri.c", 611);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, play->objectCtx.status[this->moriTexObjIdx].segment);
@@ -273,5 +273,5 @@ void BgMoriHineri_DrawHallAndRoom(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_OPA_DISP++, gTreasureChestBossKeyChestSideAndTopDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mori_hineri.c", 709);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

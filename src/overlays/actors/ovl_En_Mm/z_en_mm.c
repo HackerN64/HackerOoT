@@ -202,7 +202,7 @@ void EnMm_Destroy(Actor* thisx, PlayState* play) {
 s32 func_80AADA70(void) {
     s32 isDay = false;
 
-    if ((gSaveContext.dayTime > CLOCK_TIME(5, 0)) && (gSaveContext.dayTime <= CLOCK_TIME(20, 0) + 1)) {
+    if ((gSaveContext.save.dayTime > CLOCK_TIME(5, 0)) && (gSaveContext.save.dayTime <= CLOCK_TIME(20, 0) + 1)) {
         isDay = true;
     }
 
@@ -294,7 +294,7 @@ void func_80AADCD0(EnMm* this, PlayState* play) {
             if (this->curAnimIndex != 5) {
                 if ((this->actor.textId == 0x202A) || (this->actor.textId == 0x202B)) {
                     EnMm_ChangeAnim(this, RM_ANIM_EXCITED, &this->curAnimIndex);
-                    func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+                    Sfx_PlaySfxCentered(NA_SE_SY_TRE_BOX_APPEAR);
                 }
             }
         } else {
@@ -516,7 +516,7 @@ void EnMm_Draw(Actor* thisx, PlayState* play) {
 
     if (0) {}
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_mm.c", 1065);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(mouthTextures[this->mouthTexIndex]));
@@ -562,7 +562,7 @@ void EnMm_Draw(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_mm.c", 1141);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 EnMm_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {

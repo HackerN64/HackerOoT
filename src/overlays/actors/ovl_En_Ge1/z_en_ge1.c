@@ -243,7 +243,7 @@ void EnGe1_SpotPlayer(EnGe1* this, PlayState* play) {
     this->cutsceneTimer = 30;
     this->actionFunc = EnGe1_KickPlayer;
     func_8002DF54(play, &this->actor, PLAYER_CSMODE_95);
-    func_80078884(NA_SE_SY_FOUND);
+    Sfx_PlaySfxCentered(NA_SE_SY_FOUND);
     Message_StartTextbox(play, 0x6000, &this->actor);
 }
 
@@ -362,7 +362,7 @@ void EnGe1_OfferOpen_GTGGuard(EnGe1* this, PlayState* play) {
 
         switch (play->msgCtx.choiceIndex) {
             case 0:
-                if (gSaveContext.rupees < 10) {
+                if (gSaveContext.save.info.playerData.rupees < 10) {
                     Message_ContinueTextbox(play, 0x6016);
                     this->actionFunc = EnGe1_RefuseEntryTooPoor_GTGGuard;
                 } else {
@@ -573,7 +573,7 @@ void EnGe1_BeginGame_Archery(EnGe1* this, PlayState* play) {
 
         switch (play->msgCtx.choiceIndex) {
             case 0:
-                if (gSaveContext.rupees < 20) {
+                if (gSaveContext.save.info.playerData.rupees < 20) {
                     Message_ContinueTextbox(play, 0x85);
                     this->actionFunc = EnGe1_TalkTooPoor_Archery;
                 } else {
@@ -788,26 +788,26 @@ s32 EnGe1_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* p
 void EnGe1_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
     EnGe1* this = (EnGe1*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ge1.c", 1419);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limbIndex == GE1_LIMB_HEAD) {
         gSPDisplayList(POLY_OPA_DISP++, sHairstyleDLists[this->hairstyle]);
         Matrix_MultVec3f(&D_80A327A8, &this->actor.focus.pos);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ge1.c", 1427);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnGe1_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnGe1* this = (EnGe1*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ge1.c", 1442);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sEyeTextures[this->eyeIndex]));
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnGe1_OverrideLimbDraw, EnGe1_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ge1.c", 1459);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

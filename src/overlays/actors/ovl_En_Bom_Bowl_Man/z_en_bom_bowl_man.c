@@ -69,10 +69,10 @@ void EnBomBowlMan_Init(Actor* thisx, PlayState* play2) {
 
     for (i = 0; i < 2; i++) {
         cucco = (EnSyatekiNiw*)Actor_Spawn(&play->actorCtx, play, ACTOR_EN_SYATEKI_NIW, cuccoSpawnPos[i].x,
-                                           cuccoSpawnPos[i].y, cuccoSpawnPos[i].z, 0, 0, 0, 1);
-
+                                           cuccoSpawnPos[i].y, cuccoSpawnPos[i].z, 0, 0, 0, 
+                                           SYATEKI_MINIGAME_ALLEY);
         if (cucco != NULL) {
-            cucco->unk_2F4 = cuccoScales[i];
+            cucco->scale = cuccoScales[i];
             cucco->collider.dim.radius = (s16)cuccoColliderDims[i][0];
             cucco->collider.dim.height = (s16)cuccoColliderDims[i][1];
         }
@@ -290,7 +290,7 @@ void EnBomBowlMan_HandlePlayChoice(EnBomBowlMan* this, PlayState* play) {
 
         switch (play->msgCtx.choiceIndex) {
             case 0: // Yes
-                if (gSaveContext.rupees >= 30) {
+                if (gSaveContext.save.info.playerData.rupees >= 30) {
                     Rupees_ChangeBy(-30);
                     this->minigamePlayStatus = 1;
                     this->wallStatus[0] = this->wallStatus[1] = 0;
@@ -522,12 +522,12 @@ void EnBomBowlMan_Draw(Actor* thisx, PlayState* play) {
     static void* eyeTextures[] = { gChuGirlEyeOpenTex, gChuGirlEyeHalfTex, gChuGirlEyeClosedTex };
     EnBomBowlMan* this = (EnBomBowlMan*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_bom_bowl_man.c", 907);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeTextureIndex]));
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnBomBowlMan_OverrideLimbDraw, NULL, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bom_bowl_man.c", 923);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

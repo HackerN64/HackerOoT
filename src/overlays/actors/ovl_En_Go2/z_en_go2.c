@@ -221,7 +221,7 @@ void EnGo2_DrawEffects(EnGo2* this, PlayState* play) {
     s16 index;
     s16 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_go2_eff.c", 111);
+    OPEN_DISPS(play->state.gfxCtx);
 
     materialFlag = false;
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -250,7 +250,7 @@ void EnGo2_DrawEffects(EnGo2* this, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_go2_eff.c", 151);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 EnGo2_SpawnDust(EnGo2* this, u8 initialTimer, f32 scale, f32 scaleStep, s32 numDustEffects, f32 radius,
@@ -562,7 +562,7 @@ s16 EnGo2_UpdateTalkStateGoronCityLink(PlayState* play, EnGo2* this) {
 u16 EnGo2_GetTextIdGoronDmtBiggoron(PlayState* play, EnGo2* this) {
     Player* player = GET_PLAYER(play);
 
-    if (gSaveContext.bgsFlag) {
+    if (gSaveContext.save.info.playerData.bgsFlag) {
         player->exchangeItemId = EXCH_ITEM_CLAIM_CHECK;
         return 0x305E;
     } else if (INV_CONTENT(ITEM_TRADE_ADULT) >= ITEM_CLAIM_CHECK) {
@@ -584,7 +584,7 @@ s16 EnGo2_UpdateTalkStateGoronDmtBiggoron(PlayState* play, EnGo2* this) {
     switch (EnGo2_GetDialogState(this, play)) {
         case TEXT_STATE_DONE:
             if (this->actor.textId == 0x305E) {
-                if (!gSaveContext.bgsFlag) {
+                if (!gSaveContext.save.info.playerData.bgsFlag) {
                     EnGo2_GetItem(this, play, GI_SWORD_BIGGORON);
                     this->actionFunc = EnGo2_SetupGetItem;
                     return NPC_TALK_STATE_ACTION;
@@ -1028,7 +1028,7 @@ void EnGo2_BiggoronSetTextId(EnGo2* this, PlayState* play, Player* player) {
     u16 textId;
 
     if ((this->actor.params & 0x1F) == GORON_DMT_BIGGORON) {
-        if (gSaveContext.bgsFlag) {
+        if (gSaveContext.save.info.playerData.bgsFlag) {
             if (func_8002F368(play) == EXCH_ITEM_CLAIM_CHECK) {
                 this->actor.textId = 0x3003;
             } else {
@@ -1036,7 +1036,7 @@ void EnGo2_BiggoronSetTextId(EnGo2* this, PlayState* play, Player* player) {
             }
             player->actor.textId = this->actor.textId;
 
-        } else if (!gSaveContext.bgsFlag && (INV_CONTENT(ITEM_TRADE_ADULT) == ITEM_CLAIM_CHECK)) {
+        } else if (!gSaveContext.save.info.playerData.bgsFlag && (INV_CONTENT(ITEM_TRADE_ADULT) == ITEM_CLAIM_CHECK)) {
             if (func_8002F368(play) == EXCH_ITEM_CLAIM_CHECK) {
                 if (Environment_GetBgsDayCount() >= 3) {
                     textId = 0x305E;
@@ -1091,7 +1091,7 @@ void func_80A45288(EnGo2* this, PlayState* play) {
     if (this->actionFunc != EnGo2_GoronFireGenericAction) {
         this->interactInfo.trackPos = player->actor.world.pos;
         this->interactInfo.yOffset =
-            sPlayerTrackingYOffsets[this->actor.params & 0x1F][((void)0, gSaveContext.linkAge)];
+            sPlayerTrackingYOffsets[this->actor.params & 0x1F][((void)0, gSaveContext.save.linkAge)];
         Npc_TrackPoint(&this->actor, &this->interactInfo, 4, this->trackingMode);
     }
     if ((this->actionFunc != EnGo2_SetGetItem) && (this->isAwake == true)) {
@@ -1809,7 +1809,7 @@ void EnGo2_SetGetItem(EnGo2* this, PlayState* play) {
                 EnGo2_GetItemAnimation(this, play);
                 return;
             case GI_SWORD_BIGGORON:
-                gSaveContext.bgsFlag = true;
+                gSaveContext.save.info.playerData.bgsFlag = true;
                 break;
             case GI_BOMB_BAG_30:
             case GI_BOMB_BAG_40:
@@ -1993,12 +1993,12 @@ void EnGo2_Update(Actor* thisx, PlayState* play) {
 s32 EnGo2_DrawCurledUp(EnGo2* this, PlayState* play) {
     Vec3f D_80A48554 = { 0.0f, 0.0f, 0.0f };
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_go2.c", 2881);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_go2.c", 2884),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gGoronDL_00BD80);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_go2.c", 2889);
+    CLOSE_DISPS(play->state.gfxCtx);
     Matrix_MultVec3f(&D_80A48554, &this->actor.focus.pos);
 
     return 1;
@@ -2009,14 +2009,14 @@ s32 EnGo2_DrawRolling(EnGo2* this, PlayState* play) {
     Vec3f D_80A48560 = { 0.0f, 0.0f, 0.0f };
     f32 speedXZ;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_go2.c", 2914);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     speedXZ = this->actionFunc == EnGo2_ReverseRolling ? 0.0f : this->actor.speed;
     Matrix_RotateZYX((play->state.frames * ((s16)speedXZ * 1400)), 0, this->actor.shape.rot.z, MTXMODE_APPLY);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_go2.c", 2926),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gGoronDL_00C140);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_go2.c", 2930);
+    CLOSE_DISPS(play->state.gfxCtx);
     Matrix_MultVec3f(&D_80A48560, &this->actor.focus.pos);
     return 1;
 }
@@ -2071,7 +2071,7 @@ void EnGo2_Draw(Actor* thisx, PlayState* play) {
                this->actionFunc == EnGo2_ContinueRolling) {
         EnGo2_DrawRolling(this, play);
     } else {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_go2.c", 3063);
+        OPEN_DISPS(play->state.gfxCtx);
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
         gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeTexIndex]));
@@ -2079,6 +2079,6 @@ void EnGo2_Draw(Actor* thisx, PlayState* play) {
 
         SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                               EnGo2_OverrideLimbDraw, EnGo2_PostLimbDraw, this);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_go2.c", 3081);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

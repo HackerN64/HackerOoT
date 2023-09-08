@@ -129,7 +129,7 @@ s32 EnDivingGame_HasMinigameFinished(EnDivingGame* this, PlayState* play) {
         // Failed.
         gSaveContext.timerState = TIMER_STATE_OFF;
         func_800F5B58();
-        func_80078884(NA_SE_SY_FOUND);
+        Sfx_PlaySfxCentered(NA_SE_SY_FOUND);
         this->actor.textId = 0x71AD;
         Message_StartTextbox(play, this->actor.textId, NULL);
         this->unk_292 = TEXT_STATE_EVENT;
@@ -235,7 +235,7 @@ void EnDivingGame_HandlePlayChoice(EnDivingGame* this, PlayState* play) {
         Message_ShouldAdvance(play)) { // Did the player select an answer?
         switch (play->msgCtx.choiceIndex) {
             case 0: // Yes
-                if (gSaveContext.rupees >= 20) {
+                if (gSaveContext.save.info.playerData.rupees >= 20) {
                     Rupees_ChangeBy(-20);
                     this->actor.textId = 0x4054;
                 } else {
@@ -570,7 +570,7 @@ void EnDivingGame_Draw(Actor* thisx, PlayState* play) {
     EnDivingGame* this = (EnDivingGame*)thisx;
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_diving_game.c", 1212);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
     gSPSegment(POLY_OPA_DISP++, 0x0C, EnDivingGame_EmptyDList(play->state.gfxCtx));
@@ -578,5 +578,5 @@ void EnDivingGame_Draw(Actor* thisx, PlayState* play) {
 
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnDivingGame_OverrideLimbDraw, NULL, this);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_diving_game.c", 1232);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -110,7 +110,7 @@ void ArrowIce_Hit(ArrowIce* this, PlayState* play) {
 
     timer = this->timer;
     if (timer != 0) {
-        this->timer -= 1;
+        this->timer--;
 
         if (this->timer >= 8) {
             offset = ((this->timer - 8) * (1.0f / 24.0f));
@@ -205,7 +205,7 @@ void ArrowIce_Draw(Actor* thisx, PlayState* play) {
         if (1) {}
         transform = (arrow->hitFlags & 2) ? &this->actor : &arrow->actor;
 
-        OPEN_DISPS(play->state.gfxCtx, "../z_arrow_ice.c", 610);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Matrix_Translate(transform->world.pos.x, transform->world.pos.y, transform->world.pos.z, MTXMODE_NEW);
         Matrix_RotateY(BINANG_TO_RAD(transform->shape.rot.y), MTXMODE_APPLY);
@@ -243,6 +243,6 @@ void ArrowIce_Draw(Actor* thisx, PlayState* play) {
                                         1, 511 - (stateFrames * 10) % 512, 511 - (stateFrames * 10) % 512, 4, 16));
         gSPDisplayList(POLY_XLU_DISP++, sModelDL);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_arrow_ice.c", 676);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

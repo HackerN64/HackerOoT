@@ -36,7 +36,7 @@ void Room_DrawNormal(PlayState* play, Room* room, u32 flags) {
     RoomShapeNormal* roomShape;
     RoomShapeDListsEntry* entry;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_room.c", 193);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (flags & ROOM_DRAW_OPA) {
         func_800342EC(&D_801270A0, play);
@@ -66,7 +66,7 @@ void Room_DrawNormal(PlayState* play, Room* room, u32 flags) {
         entry++;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_room.c", 239);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 typedef enum {
@@ -110,7 +110,7 @@ void Room_DrawCullable(PlayState* play, Room* room, u32 flags) {
     RoomShapeCullableEntry* roomShapeCullableEntryIter;
     f32 entryBoundsNearZ;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_room.c", 287);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (flags & ROOM_DRAW_OPA) {
         func_800342EC(&D_801270A0, play);
@@ -249,7 +249,7 @@ void Room_DrawCullable(PlayState* play, Room* room, u32 flags) {
 
     R_ROOM_CULL_USED_ENTRIES = i - 1;
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_room.c", 430);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 #define JPEG_MARKER 0xFFD8FFE0
@@ -295,7 +295,7 @@ void Room_DrawBackground2D(Gfx** gfxP, void* tex, void* tlut, u16 width, u16 hei
     Room_DecodeJpeg(SEGMENTED_TO_VIRTUAL(tex));
 
     bg = (uObjBg*)(gfx + 1);
-    gSPBranchList(gfx, (u32)bg + sizeof(uObjBg));
+    gSPBranchList(gfx, (Gfx*)(bg + 1));
 
     bg->b.imageX = 0;
     bg->b.imageW = width * (1 << 2);
@@ -310,7 +310,7 @@ void Room_DrawBackground2D(Gfx** gfxP, void* tex, void* tlut, u16 width, u16 hei
     bg->b.imagePal = 0;
     bg->b.imageFlip = 0;
 
-    gfx = (Gfx*)((u32)bg + sizeof(uObjBg));
+    gfx = (Gfx*)(bg + 1);
 
     if (fmt == G_IM_FMT_CI) {
         gDPLoadTLUT(gfx++, tlutCount, 256, tlut);
@@ -362,7 +362,7 @@ void Room_DrawImageSingle(PlayState* play, Room* room, u32 flags) {
     u32 drawOpa;
     u32 drawXlu;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_room.c", 628);
+    OPEN_DISPS(play->state.gfxCtx);
 
     activeCam = GET_ACTIVE_CAM(play);
     isFixedCamera = (activeCam->setting == CAM_SET_PREREND_FIXED);
@@ -408,7 +408,7 @@ void Room_DrawImageSingle(PlayState* play, Room* room, u32 flags) {
         gSPDisplayList(POLY_XLU_DISP++, entry->xlu);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_room.c", 691);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 RoomShapeImageMultiBgEntry* Room_GetImageMultiBgEntry(RoomShapeImageMulti* roomShapeImageMulti, PlayState* play) {
@@ -455,7 +455,7 @@ void Room_DrawImageMulti(PlayState* play, Room* room, u32 flags) {
     u32 drawOpa;
     u32 drawXlu;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_room.c", 752);
+    OPEN_DISPS(play->state.gfxCtx);
 
     activeCam = GET_ACTIVE_CAM(play);
     isFixedCamera = (activeCam->setting == CAM_SET_PREREND_FIXED);
@@ -506,7 +506,7 @@ void Room_DrawImageMulti(PlayState* play, Room* room, u32 flags) {
         gSPDisplayList(POLY_XLU_DISP++, dListsEntry->xlu);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_room.c", 819);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Room_DrawImage(PlayState* play, Room* room, u32 flags) {
@@ -574,7 +574,7 @@ u32 func_80096FE8(PlayState* play, RoomContext* roomCtx) {
     roomCtx->bufPtrs[0] = GameState_Alloc(&play->state, maxRoomSize, "../z_room.c", 946);
     // "Room buffer initial pointer=%08x"
     osSyncPrintf("部屋バッファ開始ポインタ=%08x\n", roomCtx->bufPtrs[0]);
-    roomCtx->bufPtrs[1] = (void*)((s32)roomCtx->bufPtrs[0] + maxRoomSize);
+    roomCtx->bufPtrs[1] = (void*)((uintptr_t)roomCtx->bufPtrs[0] + maxRoomSize);
     // "Room buffer end pointer=%08x"
     osSyncPrintf("部屋バッファ終了ポインタ=%08x\n", roomCtx->bufPtrs[1]);
     osSyncPrintf(VT_RST);
@@ -600,7 +600,8 @@ s32 func_8009728C(PlayState* play, RoomContext* roomCtx, s32 roomNum) {
         ASSERT(roomNum < play->numRooms, "read_room_ID < game_play->room_rom_address.num", "../z_room.c", 1009);
 
         size = play->roomList[roomNum].vromEnd - play->roomList[roomNum].vromStart;
-        roomCtx->unk_34 = (void*)ALIGN16((u32)roomCtx->bufPtrs[roomCtx->unk_30] - ((size + 8) * roomCtx->unk_30 + 7));
+        roomCtx->unk_34 =
+            (void*)ALIGN16((uintptr_t)roomCtx->bufPtrs[roomCtx->unk_30] - ((size + 8) * roomCtx->unk_30 + 7));
 
         osCreateMesgQueue(&roomCtx->loadQueue, &roomCtx->loadMsg, 1);
         DmaMgr_RequestAsync(&roomCtx->dmaRequest, roomCtx->unk_34, play->roomList[roomNum].vromStart, size, 0,

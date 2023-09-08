@@ -98,7 +98,7 @@ void EnBox_Init(Actor* thisx, PlayState* play2) {
     f32 endFrame;
 
     animFrameStart = 0.0f;
-    anim = sAnimations[((void)0, gSaveContext.linkAge)];
+    anim = sAnimations[((void)0, gSaveContext.save.linkAge)];
     colHeader = NULL;
     endFrame = Animation_GetLastFrame(anim);
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
@@ -397,7 +397,7 @@ void EnBox_WaitOpen(EnBox* this, PlayState* play) {
     this->alpha = 255;
     this->movementFlags |= ENBOX_MOVE_IMMOBILE;
     if (this->unk_1F4 != 0) { // unk_1F4 is modified by player code
-        linkAge = gSaveContext.linkAge;
+        linkAge = gSaveContext.save.linkAge;
         anim = sAnimations[(this->unk_1F4 < 0 ? 2 : 0) + linkAge];
         frameCount = Animation_GetLastFrame(anim);
         Animation_Change(&this->skelanime, anim, 1.5f, 0, frameCount, ANIMMODE_ONCE, 0.0f);
@@ -618,7 +618,7 @@ Gfx* func_809CA518(GraphicsContext* gfxCtx) {
 void EnBox_Draw(Actor* thisx, PlayState* play) {
     EnBox* this = (EnBox*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_box.c", 1581);
+    OPEN_DISPS(play->state.gfxCtx);
 
     /*
     this->dyna.actor.flags & ACTOR_FLAG_7 is set by Init (if type is 4 or 6)
@@ -646,5 +646,5 @@ void EnBox_Draw(Actor* thisx, PlayState* play) {
                                        EnBox_PostLimbDraw, this, POLY_XLU_DISP);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_box.c", 1639);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

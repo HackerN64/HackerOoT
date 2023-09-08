@@ -476,7 +476,7 @@ void MirRay_Draw(Actor* thisx, PlayState* play) {
         Matrix_Mult(&player->shieldMf, MTXMODE_NEW);
         MirRay_SetIntensity(this, play);
         if (!(this->reflectIntensity <= 0.0f)) {
-            OPEN_DISPS(play->state.gfxCtx, "../z_mir_ray.c", 966);
+            OPEN_DISPS(play->state.gfxCtx);
 
             Gfx_SetupDL_25Xlu(play->state.gfxCtx);
             Matrix_Scale(1.0f, 1.0f, this->reflectIntensity * 5.0f, MTXMODE_APPLY);
@@ -513,7 +513,7 @@ void MirRay_Draw(Actor* thisx, PlayState* play) {
 
             D_80B8E670 = 1;
 
-            CLOSE_DISPS(play->state.gfxCtx, "../z_mir_ray.c", 1027);
+            CLOSE_DISPS(play->state.gfxCtx);
         }
     }
 }

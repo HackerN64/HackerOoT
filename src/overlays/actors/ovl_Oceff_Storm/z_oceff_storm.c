@@ -126,7 +126,7 @@ void OceffStorm_Draw2(Actor* thisx, PlayState* play) {
     u32 scroll = play->state.frames & 0xFFF;
     OceffStorm* this = (OceffStorm*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_oceff_storm.c", 449);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gDPPipeSync(POLY_XLU_DISP++);
 
@@ -142,7 +142,7 @@ void OceffStorm_Draw2(Actor* thisx, PlayState* play) {
     gSPTextureRectangle(POLY_XLU_DISP++, 0, 0, SCREEN_WIDTH << 2, SCREEN_HEIGHT << 2, G_TX_RENDERTILE, 0, 0,
                         (s32)(0.13671875 * (1 << 10)), (s32)(-0.13671875 * (1 << 10)));
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_oceff_storm.c", 477);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void OceffStorm_Draw(Actor* thisx, PlayState* play) {
@@ -150,7 +150,7 @@ void OceffStorm_Draw(Actor* thisx, PlayState* play) {
     OceffStorm* this = (OceffStorm*)thisx;
     Vtx* vtxPtr = sCylinderVtx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_oceff_storm.c", 486);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -170,7 +170,7 @@ void OceffStorm_Draw(Actor* thisx, PlayState* play) {
                                                      32, 32, 1, scroll * 8, (0 - scroll) * 12, 32, 32));
     gSPDisplayList(POLY_XLU_DISP++, sCylinderModelDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_oceff_storm.c", 512);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     OceffStorm_Draw2(&this->actor, play);
 }

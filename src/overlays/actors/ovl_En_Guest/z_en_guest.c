@@ -113,7 +113,7 @@ void func_80A5046C(EnGuest* this) {
         if (this->unk_2CA != 0) {
             this->unk_2CA--;
         } else {
-            this->unk_30E += 1;
+            this->unk_30E++;
             if (this->unk_30E >= 3) {
                 this->unk_30E = 0;
                 this->unk_30D = 0;
@@ -183,7 +183,7 @@ s32 EnGuest_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f*
     EnGuest* this = (EnGuest*)thisx;
     Vec3s limbRot;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_guest.c", 352);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limbIndex == 15) {
         *dList = object_boj_DL_0059B0;
@@ -205,7 +205,7 @@ s32 EnGuest_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f*
         rot->z += Math_CosS(this->unk_2EC[limbIndex]) * 200.0f;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_guest.c", 388);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     return false;
 }
@@ -219,7 +219,7 @@ void EnGuest_Draw(Actor* thisx, PlayState* play) {
     EnGuest* this = (EnGuest*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_guest.c", 404);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -230,5 +230,5 @@ void EnGuest_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnGuest_OverrideLimbDraw, NULL, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_guest.c", 421);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

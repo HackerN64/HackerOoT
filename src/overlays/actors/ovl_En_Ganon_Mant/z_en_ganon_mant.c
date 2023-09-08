@@ -357,7 +357,7 @@ void EnGanonMant_Update(Actor* thisx, PlayState* play) {
 void EnGanonMant_DrawCloak(PlayState* play, EnGanonMant* this) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ganon_mant.c", 564);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Translate(0.0f, 0.0f, 0.0f, MTXMODE_NEW);
 
@@ -378,7 +378,7 @@ void EnGanonMant_DrawCloak(PlayState* play, EnGanonMant* this) {
     // draw cloak
     gSPDisplayList(POLY_OPA_DISP++, gMantDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ganon_mant.c", 584);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnGanonMant_Draw(Actor* thisx, PlayState* play) {

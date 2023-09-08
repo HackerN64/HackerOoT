@@ -10,7 +10,7 @@
 
 #include "config.h"
 
-#ifdef DEBUG_ROM
+#ifndef RELEASE_ROM
 void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
     Gfx* g;
     GfxPrint* printer;
@@ -97,7 +97,7 @@ void ConsoleLogo_Draw(ConsoleLogoState* this) {
     Vec3f v2;
     s32 pad2[2];
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_title.c", 395);
+    OPEN_DISPS(this->state.gfxCtx);
 
     v3.x = 69;
     v3.y = 69;
@@ -145,13 +145,13 @@ void ConsoleLogo_Draw(ConsoleLogoState* this) {
 
     sTitleRotY += 300;
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_title.c", 483);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 void ConsoleLogo_Main(GameState* thisx) {
     ConsoleLogoState* this = (ConsoleLogoState*)thisx;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_title.c", 494);
+    OPEN_DISPS(this->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0, NULL);
     gSPSegment(POLY_OPA_DISP++, 1, this->staticSegment);
@@ -159,7 +159,7 @@ void ConsoleLogo_Main(GameState* thisx) {
     ConsoleLogo_Update(this);
     ConsoleLogo_Draw(this);
 
-#ifdef DEBUG_ROM
+#ifndef RELEASE_ROM
     ConsoleLogo_PrintBuildInfo(&POLY_OPA_DISP);
 #endif
 
@@ -171,7 +171,7 @@ void ConsoleLogo_Main(GameState* thisx) {
         SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, TitleSetupState);
     }
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_title.c", 541);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 void ConsoleLogo_Destroy(GameState* thisx) {

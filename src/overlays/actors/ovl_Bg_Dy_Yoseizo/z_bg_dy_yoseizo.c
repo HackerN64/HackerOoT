@@ -181,12 +181,12 @@ void BgDyYoseizo_CheckMagicAcquired(BgDyYoseizo* this, PlayState* play) {
     if (Flags_GetSwitch(play, 0x38)) {
         play->msgCtx.ocarinaMode = OCARINA_MODE_04;
         if (play->sceneId == SCENE_GREAT_FAIRYS_FOUNTAIN_MAGIC) {
-            if (!gSaveContext.isMagicAcquired && (this->fountainType != FAIRY_UPGRADE_MAGIC)) {
+            if (!gSaveContext.save.info.playerData.isMagicAcquired && (this->fountainType != FAIRY_UPGRADE_MAGIC)) {
                 Actor_Kill(&this->actor);
                 return;
             }
         } else {
-            if (!gSaveContext.isMagicAcquired) {
+            if (!gSaveContext.save.info.playerData.isMagicAcquired) {
                 Actor_Kill(&this->actor);
                 return;
             }
@@ -225,7 +225,7 @@ void BgDyYoseizo_ChooseType(BgDyYoseizo* this, PlayState* play) {
     } else {
         switch (this->fountainType) {
             case FAIRY_UPGRADE_MAGIC:
-                if (!gSaveContext.isMagicAcquired || BREG(2)) {
+                if (!gSaveContext.save.info.playerData.isMagicAcquired || BREG(2)) {
                     // "Spin Attack speed UP"
                     osSyncPrintf(VT_FGCOL(GREEN) " ☆☆☆☆☆ 回転切り速度ＵＰ ☆☆☆☆☆ \n" VT_RST);
                     this->givingSpell = true;
@@ -233,7 +233,7 @@ void BgDyYoseizo_ChooseType(BgDyYoseizo* this, PlayState* play) {
                 }
                 break;
             case FAIRY_UPGRADE_DOUBLE_MAGIC:
-                if (!gSaveContext.isDoubleMagicAcquired) {
+                if (!gSaveContext.save.info.playerData.isDoubleMagicAcquired) {
                     // "Magic Meter doubled"
                     osSyncPrintf(VT_FGCOL(YELLOW) " ☆☆☆☆☆ 魔法ゲージメーター倍増 ☆☆☆☆☆ \n" VT_RST);
                     this->givingSpell = true;
@@ -241,7 +241,7 @@ void BgDyYoseizo_ChooseType(BgDyYoseizo* this, PlayState* play) {
                 }
                 break;
             case FAIRY_UPGRADE_DOUBLE_DEFENSE:
-                if (!gSaveContext.isDoubleDefenseAcquired) {
+                if (!gSaveContext.save.info.playerData.isDoubleDefenseAcquired) {
                     // "Damage halved"
                     osSyncPrintf(VT_FGCOL(MAGENTA) " ☆☆☆☆☆ ダメージ半減 ☆☆☆☆☆ \n" VT_RST);
                     this->givingSpell = true;
@@ -466,7 +466,8 @@ void BgDyYoseizo_HealPlayer_NoReward(BgDyYoseizo* this, PlayState* play) {
         this->refillTimer = 200;
     }
 
-    if (((gSaveContext.healthCapacity == gSaveContext.health) && (gSaveContext.magic == gSaveContext.magicCapacity)) ||
+    if (((gSaveContext.save.info.playerData.healthCapacity == gSaveContext.save.info.playerData.health) &&
+         (gSaveContext.save.info.playerData.magic == gSaveContext.magicCapacity)) ||
         (this->refillTimer == 1)) {
         this->healingTimer--;
         if (this->healingTimer == 90) {
@@ -710,23 +711,23 @@ void BgDyYoseizo_Give_Reward(BgDyYoseizo* this, PlayState* play) {
 
         switch (cueIdTemp) {
             case FAIRY_UPGRADE_MAGIC:
-                gSaveContext.isMagicAcquired = true;
+                gSaveContext.save.info.playerData.isMagicAcquired = true;
                 gSaveContext.magicFillTarget = MAGIC_NORMAL_METER;
                 // magicLevel is already 0, setting isMagicAcquired to true triggers magicCapacity to grow
                 Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_HEARTS_MAGIC);
                 break;
             case FAIRY_UPGRADE_DOUBLE_MAGIC:
-                if (!gSaveContext.isMagicAcquired) {
-                    gSaveContext.isMagicAcquired = true;
+                if (!gSaveContext.save.info.playerData.isMagicAcquired) {
+                    gSaveContext.save.info.playerData.isMagicAcquired = true;
                 }
-                gSaveContext.isDoubleMagicAcquired = true;
+                gSaveContext.save.info.playerData.isDoubleMagicAcquired = true;
                 gSaveContext.magicFillTarget = MAGIC_DOUBLE_METER;
                 // Setting magicLevel to 0 triggers magicCapacity to grow
-                gSaveContext.magicLevel = 0;
+                gSaveContext.save.info.playerData.magicLevel = 0;
                 Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_HEARTS_MAGIC);
                 break;
             case FAIRY_UPGRADE_DOUBLE_DEFENSE:
-                gSaveContext.isDoubleDefenseAcquired = true;
+                gSaveContext.save.info.playerData.isDoubleDefenseAcquired = true;
                 Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_HEARTS_MAGIC);
                 break;
         }
@@ -753,8 +754,8 @@ void BgDyYoseizo_Give_Reward(BgDyYoseizo* this, PlayState* play) {
                                                        itemPos.y, itemPos.z, 0, 0, 0, sExItemTypes[cueIdTemp]);
 
             if (this->item != NULL) {
-                if (!gSaveContext.isMagicAcquired) {
-                    gSaveContext.isMagicAcquired = true;
+                if (!gSaveContext.save.info.playerData.isMagicAcquired) {
+                    gSaveContext.save.info.playerData.isMagicAcquired = true;
                 } else {
                     Magic_Fill(play);
                 }
@@ -762,7 +763,7 @@ void BgDyYoseizo_Give_Reward(BgDyYoseizo* this, PlayState* play) {
                 this->itemSpawned = true;
                 gSaveContext.healthAccumulator = 0x140;
                 Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_HEARTS_MAGIC);
-                gSaveContext.itemGetInf[ITEMGETINF_18_19_1A_INDEX] |= sItemGetFlags[cueIdTemp];
+                gSaveContext.save.info.itemGetInf[ITEMGETINF_18_19_1A_INDEX] |= sItemGetFlags[cueIdTemp];
                 Item_Give(play, sItemIds[cueIdTemp]);
             }
         } else {
@@ -785,8 +786,8 @@ void BgDyYoseizo_Give_Reward(BgDyYoseizo* this, PlayState* play) {
     }
 
     if (this->giveDefenseHearts) {
-        if (gSaveContext.inventory.defenseHearts < 20) {
-            gSaveContext.inventory.defenseHearts++;
+        if (gSaveContext.save.info.inventory.defenseHearts < 20) {
+            gSaveContext.save.info.inventory.defenseHearts++;
         }
     }
 
@@ -891,7 +892,7 @@ static void* sMouthTextures[] = {
 void BgDyYoseizo_Draw(Actor* thisx, PlayState* play) {
     BgDyYoseizo* this = (BgDyYoseizo*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_dy_yoseizo.c", 1609);
+    OPEN_DISPS(play->state.gfxCtx);
     if (this->actionFunc != BgDyYoseizo_Vanish) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -906,7 +907,7 @@ void BgDyYoseizo_Draw(Actor* thisx, PlayState* play) {
         SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                               BgDyYoseizo_OverrideLimbDraw, NULL, this);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_dy_yoseizo.c", 1629);
+    CLOSE_DISPS(play->state.gfxCtx);
     BgDyYoseizo_DrawEffects(this, play);
 }
 
@@ -1007,7 +1008,7 @@ void BgDyYoseizo_DrawEffects(BgDyYoseizo* this, PlayState* play) {
     BgDyYoseizoEffect* effect = this->effects;
     s16 i;
 
-    OPEN_DISPS(gfxCtx, "../z_bg_dy_yoseizo.c", 1767);
+    OPEN_DISPS(gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     for (i = 0; i < BG_DY_YOSEIZO_EFFECT_COUNT; i++, effect++) {
@@ -1034,5 +1035,5 @@ void BgDyYoseizo_DrawEffects(BgDyYoseizo* this, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_bg_dy_yoseizo.c", 1819);
+    CLOSE_DISPS(gfxCtx);
 }
