@@ -481,7 +481,7 @@ void Message_SetTextColor(MessageContext* msgCtx, u16 colorParameter) {
 }
 
 void Message_DrawTextboxIcon(PlayState* play, Gfx** p, s16 x, s16 y) {
-    #ifdef N64_BTN_COLORS
+#ifdef N64_BTN_COLORS
     static s16 sIconPrimColors[][3] = {
         { 0, 80, 200 },
         { 50, 130, 255 },
@@ -490,7 +490,7 @@ void Message_DrawTextboxIcon(PlayState* play, Gfx** p, s16 x, s16 y) {
         { 0, 0, 0 },
         { 0, 130, 255 },
     };
-    #else
+#else
     static s16 sIconPrimColors[][3] = {
         { 0, 200, 80 },
         { 50, 255, 130 },
@@ -499,7 +499,7 @@ void Message_DrawTextboxIcon(PlayState* play, Gfx** p, s16 x, s16 y) {
         { 0, 0, 0 },
         { 0, 255, 130 },
     };
-    #endif
+#endif
     static s16 sIconPrimR = 0;
     static s16 sIconPrimG = 200;
     static s16 sIconPrimB = 80;

@@ -199,11 +199,11 @@ static void* sCursorTexs[] = {
 static s16 sCursorColors[][3] = {
     { 255, 255, 255 },
     { 255, 255, 0 },
-    #ifdef N64_BTN_COLORS
+#ifdef N64_BTN_COLORS
     { 0, 50, 255 },
-    #else
+#else
     { 0, 255, 50 },
-    #endif
+#endif
 };
 
 static void* sSavePromptTexs[] = {
@@ -845,11 +845,11 @@ void KaleidoScope_DrawPages(PlayState* play, GraphicsContext* gfxCtx) {
 
             gDPSetCombineLERP(POLY_OPA_DISP++, 1, 0, PRIMITIVE, 0, TEXEL0, 0, PRIMITIVE, 0, 1, 0, PRIMITIVE, 0, TEXEL0,
                               0, PRIMITIVE, 0);
-            #ifdef N64_BTN_COLORS
+#ifdef N64_BTN_COLORS
             gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 100, 100, 255, VREG(61));
-            #else
+#else
             gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 100, 255, 100, VREG(61));
-            #endif
+#endif
 
             if (pauseCtx->promptChoice == 0) {
                 gSPDisplayList(POLY_OPA_DISP++, gPromptCursorLeftDL);
@@ -873,11 +873,11 @@ void KaleidoScope_DrawPages(PlayState* play, GraphicsContext* gfxCtx) {
 
                 gDPSetCombineLERP(POLY_OPA_DISP++, 1, 0, PRIMITIVE, 0, TEXEL0, 0, PRIMITIVE, 0, 1, 0, PRIMITIVE, 0,
                                   TEXEL0, 0, PRIMITIVE, 0);
-                #ifdef N64_BTN_COLORS
+#ifdef N64_BTN_COLORS
                 gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 100, 100, 255, VREG(61));
-                #else
+#else
                 gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 100, 255, 100, VREG(61));
-                #endif
+#endif
 
                 if (pauseCtx->promptChoice == 0) {
                     gSPDisplayList(POLY_OPA_DISP++, gPromptCursorLeftDL);
