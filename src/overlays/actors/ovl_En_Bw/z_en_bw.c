@@ -850,7 +850,7 @@ void EnBw_Draw(Actor* thisx, PlayState* play2) {
     Vec3f icePos;
     s32 iceIndex;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_bw.c", 1423);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->color1.a == 0xFF) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -906,5 +906,5 @@ void EnBw_Draw(Actor* thisx, PlayState* play2) {
             EffectSsEnIce_SpawnFlyingVec3f(play, thisx, &icePos, 0x96, 0x96, 0x96, 0xFA, 0xEB, 0xF5, 0xFF, 1.3f);
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bw.c", 1521);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

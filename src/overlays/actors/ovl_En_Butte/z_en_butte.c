@@ -114,7 +114,7 @@ void EnButte_DrawTransformationEffect(EnButte* this, PlayState* play) {
     s32 alpha;
     Vec3s camDir;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_choo.c", 295);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu2(play->state.gfxCtx);
 
@@ -135,7 +135,7 @@ void EnButte_DrawTransformationEffect(EnButte* this, PlayState* play) {
     gDPSetEnvColor(POLY_XLU_DISP++, 200, 200, 210, 255);
     gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(gEffFlash1DL));
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_choo.c", 326);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 static InitChainEntry sInitChain[] = {

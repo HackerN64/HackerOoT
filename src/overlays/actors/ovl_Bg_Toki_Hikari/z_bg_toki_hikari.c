@@ -84,7 +84,7 @@ void BgTokiHikari_Draw(Actor* thisx, PlayState* play) {
 void func_808BA018(BgTokiHikari* this, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_toki_hikari.c", 246);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_toki_hikari.c", 252),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -103,7 +103,7 @@ void func_808BA018(BgTokiHikari* this, PlayState* play) {
 
         gSPDisplayList(POLY_XLU_DISP++, object_toki_objects_DL_007EE0);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_toki_hikari.c", 284);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_808BA204(BgTokiHikari* this, PlayState* play) {
@@ -133,7 +133,7 @@ void func_808BA274(BgTokiHikari* this, PlayState* play) {
 void func_808BA2CC(BgTokiHikari* this, PlayState* play) {
     s32 pad[2];
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_toki_hikari.c", 350);
+    OPEN_DISPS(play->state.gfxCtx);
     Matrix_Translate(0.0f, 276.0f, 1122.0f, MTXMODE_NEW);
     Matrix_Scale(0.32f, 0.32f, this->unk_14C * 7.0f, MTXMODE_APPLY);
     Matrix_RotateZ(M_PI, MTXMODE_APPLY);
@@ -178,5 +178,5 @@ void func_808BA2CC(BgTokiHikari* this, PlayState* play) {
 
     gSPDisplayList(POLY_XLU_DISP++, &object_toki_objects_DL_0009C0[10]);
     Matrix_Pop();
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_toki_hikari.c", 443);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

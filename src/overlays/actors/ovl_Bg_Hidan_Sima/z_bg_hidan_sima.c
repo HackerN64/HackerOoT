@@ -278,7 +278,7 @@ Gfx* func_8088EB54(PlayState* play, BgHidanSima* this, Gfx* gfx) {
 void BgHidanSima_Draw(Actor* thisx, PlayState* play) {
     BgHidanSima* this = (BgHidanSima*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_hidan_sima.c", 641);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_hidan_sima.c", 645),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -293,5 +293,5 @@ void BgHidanSima_Draw(Actor* thisx, PlayState* play) {
             POLY_XLU_DISP = func_8088EB54(play, this, POLY_XLU_DISP);
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_hidan_sima.c", 668);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

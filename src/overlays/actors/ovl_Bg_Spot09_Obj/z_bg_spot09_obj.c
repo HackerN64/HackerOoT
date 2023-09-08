@@ -169,7 +169,7 @@ void BgSpot09Obj_Draw(Actor* thisx, PlayState* play) {
     Gfx_DrawDListOpa(play, sDLists[thisx->params]);
 
     if (thisx->params == 3) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot09_obj.c", 388);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -177,6 +177,6 @@ void BgSpot09Obj_Draw(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, gCarpentersTentEntranceDL);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot09_obj.c", 396);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

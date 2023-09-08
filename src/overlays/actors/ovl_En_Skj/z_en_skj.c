@@ -1610,7 +1610,7 @@ s32 EnSkj_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* p
 }
 
 void EnSkj_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_skj.c", 2417);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if ((limbIndex == 11) && GET_ITEMGETINF(ITEMGETINF_39)) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -1622,7 +1622,7 @@ void EnSkj_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot,
         Matrix_Pop();
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_skj.c", 2437);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 Gfx* EnSkj_TranslucentDL(GraphicsContext* gfxCtx, u32 alpha) {
@@ -1654,7 +1654,7 @@ void EnSkj_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnSkj* this = (EnSkj*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_skj.c", 2475);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -1667,5 +1667,5 @@ void EnSkj_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnSkj_OverrideLimbDraw, EnSkj_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_skj.c", 2495);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

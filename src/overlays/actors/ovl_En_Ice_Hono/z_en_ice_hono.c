@@ -373,7 +373,7 @@ void EnIceHono_Draw(Actor* thisx, PlayState* play) {
     EnIceHono* this = (EnIceHono*)thisx;
     u32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ice_hono.c", 695);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     gSPSegment(POLY_XLU_DISP++, 0x08,
@@ -391,5 +391,5 @@ void EnIceHono_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ice_hono.c", 722);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

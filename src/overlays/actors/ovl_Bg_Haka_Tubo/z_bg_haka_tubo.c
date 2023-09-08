@@ -221,7 +221,7 @@ void BgHakaTubo_Update(Actor* thisx, PlayState* play) {
 void BgHakaTubo_DrawFlameCircle(BgHakaTubo* this, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_haka_tubo.c", 476);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     Matrix_Translate(this->dyna.actor.world.pos.x, this->dyna.actor.world.pos.y + 235.0f, this->dyna.actor.world.pos.z,
@@ -238,7 +238,7 @@ void BgHakaTubo_DrawFlameCircle(BgHakaTubo* this, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gEffFireCircleDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_haka_tubo.c", 501);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BgHakaTubo_Draw(Actor* thisx, PlayState* play) {

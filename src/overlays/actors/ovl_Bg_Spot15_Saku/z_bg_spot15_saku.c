@@ -94,7 +94,7 @@ void BgSpot15Saku_Update(Actor* thisx, PlayState* play) {
 }
 
 void BgSpot15Saku_Draw(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot15_saku.c", 259);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -102,5 +102,5 @@ void BgSpot15Saku_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gLonLonCorralFenceDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot15_saku.c", 268);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -201,7 +201,7 @@ static void* sFireballTexs[] = {
 void BgHidanFirewall_Draw(Actor* thisx, PlayState* play) {
     BgHidanFirewall* this = (BgHidanFirewall*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_hidan_firewall.c", 448);
+    OPEN_DISPS(play->state.gfxCtx);
 
     POLY_XLU_DISP = Gfx_SetupDL(POLY_XLU_DISP, SETUPDL_20);
 
@@ -212,5 +212,5 @@ void BgHidanFirewall_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gFireTempleFireballUpperHalfDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_hidan_firewall.c", 463);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

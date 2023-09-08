@@ -550,7 +550,7 @@ void EnDh_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnDh* this = (EnDh*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_dh.c", 1099);
+    OPEN_DISPS(play->state.gfxCtx);
     if (this->alpha == 255) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, this->alpha);
@@ -581,5 +581,5 @@ void EnDh_Draw(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, object_dh_DL_007FC0);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_dh.c", 1166);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -76,7 +76,7 @@ void EffectSsDFire_Draw(PlayState* play, u32 index, EffectSs* this) {
 
     object = play->objectCtx.status[this->rObjBankIdx].segment;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_ss_d_fire.c", 276);
+    OPEN_DISPS(gfxCtx);
 
     if (Object_GetIndex(&play->objectCtx, OBJECT_DODONGO) > -1) {
         gSegments[6] = VIRTUAL_TO_PHYSICAL(object);
@@ -101,7 +101,7 @@ void EffectSsDFire_Draw(PlayState* play, u32 index, EffectSs* this) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_ss_d_fire.c", 330);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EffectSsDFire_Update(PlayState* play, u32 index, EffectSs* this) {

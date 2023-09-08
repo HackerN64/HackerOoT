@@ -78,7 +78,7 @@ void EndTitle_DrawFull(Actor* thisx, PlayState* play) {
 
     mf = &player->mf_9E0;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_end_title.c", 403);
+    OPEN_DISPS(play->state.gfxCtx);
 
     // Draw the Triforce on Link's left hand
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -91,9 +91,9 @@ void EndTitle_DrawFull(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_end_title.c", 412), G_MTX_LOAD);
     gSPDisplayList(POLY_XLU_DISP++, sTriforceDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_end_title.c", 417);
+    CLOSE_DISPS(play->state.gfxCtx);
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_end_title.c", 419);
+    OPEN_DISPS(play->state.gfxCtx);
 
     // Draw title cards on the screen
     if ((csCurFrame > 890) && (this->endAlpha < 200)) {
@@ -131,7 +131,7 @@ void EndTitle_DrawFull(Actor* thisx, PlayState* play) {
     gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((104 << 2), 50), 177 << 2, 216 << 2, 192 << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO),
                         1 << 10);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_end_title.c", 515);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 // Used in the Temple of Time
@@ -144,7 +144,7 @@ void EndTitle_DrawNintendoLogo(Actor* thisx, PlayState* play) {
         this->endAlpha += 3;
     }
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_end_title.c", 594);
+    OPEN_DISPS(play->state.gfxCtx);
 
     OVERLAY_DISP = Gfx_SetupDL_64(OVERLAY_DISP);
     gDPSetPrimColor(OVERLAY_DISP++, 0, 0x80, 0, 0, 0, this->endAlpha);
@@ -155,5 +155,5 @@ void EndTitle_DrawNintendoLogo(Actor* thisx, PlayState* play) {
     gSPDisplayList(OVERLAY_DISP++, sPresentedByNintendoDL);
 #endif
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_end_title.c", 600);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

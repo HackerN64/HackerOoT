@@ -1059,14 +1059,14 @@ void EnFr_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, 
     EnFr* this = (EnFr*)thisx;
 
     if ((limbIndex == 7) || (limbIndex == 8)) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_fr.c", 1735);
+        OPEN_DISPS(play->state.gfxCtx);
         Matrix_Push();
         Matrix_ReplaceRotation(&play->billboardMtxF);
         gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_fr.c", 1738),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, *dList);
         Matrix_Pop();
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_fr.c", 1741);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 
@@ -1079,7 +1079,7 @@ void EnFr_Draw(Actor* thisx, PlayState* play) {
     EnFr* this = (EnFr*)thisx;
     s16 frogIndex = this->actor.params - 1;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fr.c", 1754);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     // For the frogs 2 HP, the frog with the next note and the butterfly lights up
     lightRadius = this->isButterflyDrawn ? 95 : -1;
@@ -1099,5 +1099,5 @@ void EnFr_Draw(Actor* thisx, PlayState* play) {
         SkelAnime_DrawOpa(play, this->skelAnimeButterfly.skeleton, this->skelAnimeButterfly.jointTable, NULL, NULL,
                           NULL);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fr.c", 1816);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

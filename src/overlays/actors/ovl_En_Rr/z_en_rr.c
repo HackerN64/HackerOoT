@@ -851,7 +851,7 @@ void EnRr_Draw(Actor* thisx, PlayState* play) {
     s32 i;
     Mtx* segMtx = Graph_Alloc(play->state.gfxCtx, 4 * sizeof(Mtx));
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_rr.c", 1478);
+    OPEN_DISPS(play->state.gfxCtx);
     if (1) {}
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gSPSegment(POLY_XLU_DISP++, 0x0C, segMtx);
@@ -887,7 +887,7 @@ void EnRr_Draw(Actor* thisx, PlayState* play) {
     Matrix_MultVec3f(&zeroVec, &this->mouthPos);
     gSPDisplayList(POLY_XLU_DISP++, gLikeLikeDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_rr.c", 1551);
+    CLOSE_DISPS(play->state.gfxCtx);
     if (this->effectTimer != 0) {
         Vec3f effectPos;
         s16 effectTimer = this->effectTimer - 1;

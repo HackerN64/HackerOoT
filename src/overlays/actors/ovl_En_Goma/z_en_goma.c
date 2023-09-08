@@ -750,7 +750,7 @@ void EnGoma_Update(Actor* thisx, PlayState* play) {
 s32 EnGoma_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
     EnGoma* this = (EnGoma*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_goma.c", 1976);
+    OPEN_DISPS(play->state.gfxCtx);
     gDPSetEnvColor(POLY_OPA_DISP++, (s16)this->eyeEnvColor[0], (s16)this->eyeEnvColor[1], (s16)this->eyeEnvColor[2],
                    255);
 
@@ -762,7 +762,7 @@ s32 EnGoma_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* 
                        (s16)(Rand_ZeroOne() * 255.0f), 255);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_goma.c", 2011);
+    CLOSE_DISPS(play->state.gfxCtx);
     return 0;
 }
 
@@ -783,7 +783,7 @@ void EnGoma_Draw(Actor* thisx, PlayState* play) {
     s32 y;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_goma.c", 2040);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     switch (this->gomaType) {
@@ -839,7 +839,7 @@ void EnGoma_Draw(Actor* thisx, PlayState* play) {
             }
             break;
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_goma.c", 2119);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnGoma_Debris(EnGoma* this, PlayState* play) {

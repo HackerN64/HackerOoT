@@ -522,12 +522,12 @@ void EnBomBowlMan_Draw(Actor* thisx, PlayState* play) {
     static void* eyeTextures[] = { gChuGirlEyeOpenTex, gChuGirlEyeHalfTex, gChuGirlEyeClosedTex };
     EnBomBowlMan* this = (EnBomBowlMan*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_bom_bowl_man.c", 907);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeTextureIndex]));
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnBomBowlMan_OverrideLimbDraw, NULL, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bom_bowl_man.c", 923);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

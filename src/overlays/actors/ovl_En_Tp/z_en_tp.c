@@ -738,7 +738,7 @@ void EnTp_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnTp* this = (EnTp*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_tp.c", 1451);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->unk_150 != 2) {
         if ((thisx->params <= TAILPASARAN_HEAD) || (thisx->params == TAILPASARAN_HEAD_DYING)) {
@@ -767,7 +767,7 @@ void EnTp_Draw(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_tp.c", 1495);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     if ((thisx->params <= TAILPASARAN_TAIL) || (thisx->params == TAILPASARAN_TAIL_DYING)) {
         Collider_UpdateSpheres(0, &this->collider);

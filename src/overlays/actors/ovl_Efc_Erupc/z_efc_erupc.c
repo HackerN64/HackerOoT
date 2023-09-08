@@ -114,7 +114,7 @@ void EfcErupc_Draw(Actor* thisx, PlayState* play) {
     EfcErupc* this = (EfcErupc*)thisx;
     u16 cueId;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_efc_erupc.c", 282);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -157,7 +157,7 @@ void EfcErupc_Draw(Actor* thisx, PlayState* play) {
             }
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_efc_erupc.c", 356);
+    CLOSE_DISPS(play->state.gfxCtx);
     EfcErupc_DrawEffects(this->effects, play);
 }
 
@@ -166,7 +166,7 @@ void EfcErupc_DrawEffects(EfcErupcEffect* effect, PlayState* play) {
     s16 i;
     s32 pad;
 
-    OPEN_DISPS(gfxCtx, "../z_efc_erupc.c", 368);
+    OPEN_DISPS(gfxCtx);
     for (i = 0; i < EFC_ERUPC_EFFECT_COUNT; i++, effect++) {
         if (effect->isActive) {
             Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -182,7 +182,7 @@ void EfcErupc_DrawEffects(EfcErupcEffect* effect, PlayState* play) {
             gSPDisplayList(POLY_XLU_DISP++, object_efc_erupc_DL_0027D8);
         }
     }
-    CLOSE_DISPS(gfxCtx, "../z_efc_erupc.c", 399);
+    CLOSE_DISPS(gfxCtx);
 }
 
 static Color_RGB8 D_8099D770[] = {

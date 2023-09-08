@@ -409,7 +409,7 @@ void EnBubble_Draw(Actor* thisx, PlayState* play) {
     EnBubble* this = (EnBubble*)thisx;
     u32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_bubble.c", 1175);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->actionFunc != EnBubble_Disappear) {
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -427,7 +427,7 @@ void EnBubble_Draw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, gBubbleDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bubble.c", 1226);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     if (this->actionFunc != EnBubble_Disappear) {
         this->actor.shape.shadowScale = (f32)((this->expansionWidth + 1.0f) * 0.2f);

@@ -255,7 +255,7 @@ void DemoEc_DrawSkeleton(DemoEc* this, PlayState* play, void* eyeTexture, void* 
     SkelAnime* skelAnime = &this->skelAnime;
     s32 pad;
 
-    OPEN_DISPS(gfxCtx, "../z_demo_ec.c", 565);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Opa(gfxCtx);
 
@@ -272,7 +272,7 @@ void DemoEc_DrawSkeleton(DemoEc* this, PlayState* play, void* eyeTexture, void* 
     gSPSegment(POLY_OPA_DISP++, 0x0C, &D_80116280[2]);
     POLY_OPA_DISP = SkelAnime_DrawFlex(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                                        overrideLimbDraw, postLimbDraw, &this->actor, POLY_OPA_DISP);
-    CLOSE_DISPS(gfxCtx, "../z_demo_ec.c", 595);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void DemoEc_DrawSkeletonCustomColor(DemoEc* this, PlayState* play, Gfx* arg2, Gfx* arg3, u8* color1, u8* color2,
@@ -281,7 +281,7 @@ void DemoEc_DrawSkeletonCustomColor(DemoEc* this, PlayState* play, Gfx* arg2, Gf
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     SkelAnime* skelAnime = &this->skelAnime;
 
-    OPEN_DISPS(gfxCtx, "../z_demo_ec.c", 609);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Opa(gfxCtx);
 
@@ -309,7 +309,7 @@ void DemoEc_DrawSkeletonCustomColor(DemoEc* this, PlayState* play, Gfx* arg2, Gf
     POLY_OPA_DISP = SkelAnime_DrawFlex(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                                        overrideLimbDraw, postLimbDraw, &this->actor, POLY_OPA_DISP);
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_ec.c", 646);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void DemoEc_UseDrawObject(DemoEc* this, PlayState* play) {
@@ -317,13 +317,13 @@ void DemoEc_UseDrawObject(DemoEc* this, PlayState* play) {
     s32 drawObjBankIndex = this->drawObjBankIndex;
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_demo_ec.c", 662);
+    OPEN_DISPS(gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x06, play->objectCtx.status[drawObjBankIndex].segment);
     gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.status[drawObjBankIndex].segment);
     if (!play) {}
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_ec.c", 670);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void DemoEc_UseAnimationObject(DemoEc* this, PlayState* play) {

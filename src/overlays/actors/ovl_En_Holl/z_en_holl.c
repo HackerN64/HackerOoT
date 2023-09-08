@@ -424,7 +424,7 @@ void EnHoll_Draw(Actor* thisx, PlayState* play) {
 
     // Only draw the plane if not invisible
     if (this->planeAlpha != 0) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_holl.c", 805);
+        OPEN_DISPS(play->state.gfxCtx);
 
         if (this->planeAlpha == 255) {
             gfxP = POLY_OPA_DISP;
@@ -449,6 +449,6 @@ void EnHoll_Draw(Actor* thisx, PlayState* play) {
             POLY_XLU_DISP = gfxP;
         }
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_holl.c", 831);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

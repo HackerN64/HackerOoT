@@ -59,7 +59,7 @@ void EffectSsIceSmoke_Draw(PlayState* play, u32 index, EffectSs* this) {
 
     object = play->objectCtx.status[this->rObjBankIdx].segment;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_eff_ss_ice_smoke.c", 155);
+    OPEN_DISPS(play->state.gfxCtx);
 
     objBankIdx = Object_GetIndex(&play->objectCtx, OBJECT_FZ);
 
@@ -89,7 +89,7 @@ void EffectSsIceSmoke_Draw(PlayState* play, u32 index, EffectSs* this) {
         this->life = -1;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_eff_ss_ice_smoke.c", 210);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EffectSsIceSmoke_Update(PlayState* play, u32 index, EffectSs* this) {

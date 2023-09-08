@@ -103,7 +103,7 @@ void DemoShd_Draw(Actor* thisx, PlayState* play) {
 
     if (1) {} // Necessary to match, can be anywhere in the function
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_shd.c", 726);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -123,5 +123,5 @@ void DemoShd_Draw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, D_809934B8);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_shd.c", 762);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
