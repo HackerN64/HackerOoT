@@ -3,6 +3,8 @@
 
 #include "ultra64.h"
 
+#include "config.h"
+
 /**
  * Special type for blocks of cutscene data, asm-processor checks
  * arrays for CutsceneData type and converts floats within the array
@@ -161,6 +163,9 @@ typedef enum {
     /* 0x008F */ CS_CMD_ACTOR_CUE_9_0,
     /* 0x0090 */ CS_CMD_ACTOR_CUE_0_17,
     /* 0x03E8 */ CS_CMD_DESTINATION = 0x03E8,
+#ifdef ENABLE_MOTION_BLUR
+                 CS_CMD_MOTION_BLUR,
+#endif
     /* 0xFFFF */ CS_CMD_END = 0xFFFF
 } CutsceneCmd;
 
@@ -513,6 +518,23 @@ typedef struct {
     /* 0x8 */ s16 relativeToPlayer;
 } CutsceneCameraMove; // size = 0xC
 
+#ifdef ENABLE_MOTION_BLUR
+typedef union {
+    struct {
+        /* 0x0 */ u16 type;
+        /* 0x2 */ u16 alpha;
+        /* 0x4 */ u16 startFrame;
+        /* 0x6 */ u16 endFrame;
+    };
+    s32 _words[2];
+} CsCmdMotionBlur; // size = 0x8
+
+typedef enum {
+    /* 1 */ CS_MOTION_BLUR_ENABLE = 1,
+    /* 2 */ CS_MOTION_BLUR_DISABLE
+} CsMotionBlurType;
+#endif
+
 typedef struct {
     /* 0x00 */ char  unk_00[0x4];
     /* 0x04 */ void* script;
@@ -528,6 +550,9 @@ typedef struct {
     /* 0x20 */ CutsceneCameraPoint* camEyePoints;
     /* 0x24 */ CsCmdActorCue* playerCue;
     /* 0x28 */ CsCmdActorCue* actorCues[10]; // "npcdemopnt"
+#ifdef ENABLE_MOTION_BLUR
+               u16 originalBlurAlpha;
+#endif
 } CutsceneContext; // size = 0x50
 
 #endif

@@ -71,7 +71,7 @@ void FlagSet_Update(PlayState* play) {
     };
 
     GraphicsContext* gfxCtx = play->state.gfxCtx;
-    Input* input = &play->state.input[0];
+    Input* input = &play->state.input[EVENT_EDITOR_CONTROLLER_PORT];
     Gfx* gfx;
     Gfx* polyOpa;
 
@@ -110,35 +110,35 @@ void FlagSet_Update(PlayState* play) {
             }
         }
 
-        if (CHECK_BTN_ALL(input->press.button, BTN_DLEFT)) {
+        if (CHECK_BTN_ALL(input->press.button, EVENT_EDITOR_GO_LEFT)) {
             timer = 10;
             curBit++;
         }
-        if (CHECK_BTN_ALL(input->press.button, BTN_DRIGHT)) {
+        if (CHECK_BTN_ALL(input->press.button, EVENT_EDITOR_GO_RIGHT)) {
             curBit--;
             timer = 10;
         }
 
         if (timer == 0) {
-            if (CHECK_BTN_ALL(input->cur.button, BTN_DLEFT)) {
+            if (CHECK_BTN_ALL(input->cur.button, EVENT_EDITOR_GO_LEFT)) {
                 curBit++;
                 timer = 2;
             }
-            if (CHECK_BTN_ALL(input->cur.button, BTN_DRIGHT)) {
+            if (CHECK_BTN_ALL(input->cur.button, EVENT_EDITOR_GO_RIGHT)) {
                 curBit--;
                 timer = 2;
             }
         }
 
         curBit %= 16;
-        if (CHECK_BTN_ALL(input->press.button, BTN_DUP)) {
+        if (CHECK_BTN_ALL(input->press.button, EVENT_EDITOR_PREV)) {
             entryIdx--;
             if (entryIdx < 0) {
                 entryIdx = 0;
             }
             timer = 10;
         }
-        if (CHECK_BTN_ALL(input->press.button, BTN_DDOWN)) {
+        if (CHECK_BTN_ALL(input->press.button, EVENT_EDITOR_NEXT)) {
             timer = 10;
             entryIdx++;
             if (!entries[entryIdx].value) {
@@ -147,14 +147,14 @@ void FlagSet_Update(PlayState* play) {
         }
 
         if (timer == 0) {
-            if (CHECK_BTN_ALL(input->cur.button, BTN_DUP)) {
+            if (CHECK_BTN_ALL(input->cur.button, EVENT_EDITOR_PREV)) {
                 entryIdx--;
                 timer = 2;
                 if (entryIdx < 0) {
                     entryIdx = 0;
                 }
             }
-            if (CHECK_BTN_ALL(input->cur.button, BTN_DDOWN)) {
+            if (CHECK_BTN_ALL(input->cur.button, EVENT_EDITOR_NEXT)) {
                 timer = 2;
                 entryIdx++;
                 if (!entries[entryIdx].value) {
@@ -163,7 +163,7 @@ void FlagSet_Update(PlayState* play) {
             }
         }
 
-        if (CHECK_BTN_ALL(input->press.button, BTN_A)) {
+        if (CHECK_BTN_ALL(input->press.button, EVENT_EDITOR_CHANGE_VAL)) {
             *entries[entryIdx].value ^= (1 << curBit);
         }
 
@@ -179,7 +179,7 @@ void FlagSet_Update(PlayState* play) {
         POLY_OPA_DISP = gfx;
     }
 
-    if (CHECK_BTN_ALL(input->press.button, BTN_L)) {
+    if (CHECK_BTN_COMBO(EVENT_EDITOR_BTN_COMBO, input, EVENT_EDITOR_BTN_HOLD_FOR_COMBO, EVENT_EDITOR_CLOSE)) {
         play->pauseCtx.debugState = 0;
     }
 
