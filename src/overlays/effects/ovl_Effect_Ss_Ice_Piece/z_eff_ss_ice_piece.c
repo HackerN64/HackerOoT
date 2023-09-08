@@ -52,7 +52,7 @@ void EffectSsIcePiece_Draw(PlayState* play, u32 index, EffectSs* this) {
     scale = this->rScale * 0.01f;
     frames = play->state.frames;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_ice_piece.c", 161);
+    OPEN_DISPS(gfxCtx);
 
     if ((this->rLifespan > 0) && (this->life < (this->rLifespan >> 1))) {
         alpha = ((this->life * 2.0f) / this->rLifespan);
@@ -75,7 +75,7 @@ void EffectSsIcePiece_Draw(PlayState* play, u32 index, EffectSs* this) {
                                 (2 * frames) % 256, 0x40, 0x20));
     gSPDisplayList(POLY_XLU_DISP++, gEffIceFragment1DL);
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_ice_piece.c", 209);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EffectSsIcePiece_Update(PlayState* play, u32 index, EffectSs* this) {

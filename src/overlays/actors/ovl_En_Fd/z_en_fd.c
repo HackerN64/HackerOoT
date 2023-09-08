@@ -764,7 +764,7 @@ void EnFd_Draw(Actor* thisx, PlayState* play) {
 
     frames = play->state.frames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fd.c", 1751);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
     EnFd_DrawEffectsDots(this, play);
@@ -788,7 +788,7 @@ void EnFd_Draw(Actor* thisx, PlayState* play) {
             SkelAnime_DrawFlex(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                                EnFd_OverrideLimbDraw, EnFd_PostLimbDraw, this, POLY_XLU_DISP);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fd.c", 1822);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnFd_SpawnEffect(EnFd* this, u8 type, Vec3f* pos, Vec3f* velocity, Vec3f* accel, u8 timer, f32 scale,
@@ -880,7 +880,7 @@ void EnFd_DrawEffectsFlames(EnFd* this, PlayState* play) {
     s16 idx;
     EnFdEffect* eff = this->effects;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fd.c", 1969);
+    OPEN_DISPS(play->state.gfxCtx);
     materialFlag = false;
     if (1) {}
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -904,7 +904,7 @@ void EnFd_DrawEffectsFlames(EnFd* this, PlayState* play) {
             gSPDisplayList(POLY_XLU_DISP++, gFlareDancerSquareParticleDL);
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fd.c", 2020);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnFd_DrawEffectsDots(EnFd* this, PlayState* play) {
@@ -912,7 +912,7 @@ void EnFd_DrawEffectsDots(EnFd* this, PlayState* play) {
     s16 materialFlag;
     EnFdEffect* eff = this->effects;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fd.c", 2034);
+    OPEN_DISPS(play->state.gfxCtx);
 
     materialFlag = false;
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -937,5 +937,5 @@ void EnFd_DrawEffectsDots(EnFd* this, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fd.c", 2071);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

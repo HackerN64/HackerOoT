@@ -77,7 +77,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
     s16 cursorItem;
     s16 sp208[3];
 
-    OPEN_DISPS(gfxCtx, "../z_kaleido_collect.c", 248);
+    OPEN_DISPS(gfxCtx);
 
     if ((((u32)pauseCtx->unk_1E4 == 0) || (pauseCtx->unk_1E4 == 5) || (pauseCtx->unk_1E4 == 8)) &&
         (pauseCtx->pageIndex == PAUSE_QUEST)) {
@@ -672,7 +672,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_kaleido_collect.c", 863);
+    CLOSE_DISPS(gfxCtx);
 }
 
 s32 KaleidoScope_UpdateQuestStatusPoint(PauseContext* pauseCtx, s32 point) {

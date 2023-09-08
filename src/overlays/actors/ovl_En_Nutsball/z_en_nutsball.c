@@ -167,7 +167,7 @@ void EnNutsball_Update(Actor* thisx, PlayState* play) {
 void EnNutsball_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_nutsball.c", 327);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Matrix_Mult(&play->billboardMtxF, MTXMODE_APPLY);
@@ -176,5 +176,5 @@ void EnNutsball_Draw(Actor* thisx, PlayState* play) {
               G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_OPA_DISP++, sDLists[thisx->params]);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_nutsball.c", 337);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

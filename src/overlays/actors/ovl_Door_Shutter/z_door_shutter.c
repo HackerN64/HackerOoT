@@ -993,7 +993,7 @@ void DoorShutter_Draw(Actor* thisx, PlayState* play) {
         s32 pad[2];
         DoorShutterGfxInfo* gfxInfo = &sGfxInfo[this->gfxType];
 
-        OPEN_DISPS(play->state.gfxCtx, "../z_door_shutter.c", 2048);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -1049,7 +1049,7 @@ void DoorShutter_Draw(Actor* thisx, PlayState* play) {
                     : ((this->gfxType == DOORSHUTTER_GFX_SPIRIT_TEMPLE) ? DOORLOCK_NORMAL_SPIRIT : DOORLOCK_NORMAL));
         }
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_door_shutter.c", 2135);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 

@@ -192,7 +192,7 @@ void ObjIcePoly_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     ObjIcePoly* this = (ObjIcePoly*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_obj_ice_poly.c", 421);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     func_8002ED80(&this->actor, play, 0);
     Matrix_RotateZYX(0x500, 0, -0x500, MTXMODE_APPLY);
@@ -205,5 +205,5 @@ void ObjIcePoly_Draw(Actor* thisx, PlayState* play) {
     gDPSetEnvColor(POLY_XLU_DISP++, 0, 50, 100, this->alpha);
     gSPDisplayList(POLY_XLU_DISP++, gEffIceFragment3DL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_obj_ice_poly.c", 444);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

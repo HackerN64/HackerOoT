@@ -485,7 +485,7 @@ void EnIshi_DrawSmall(EnIshi* this, PlayState* play) {
 }
 
 void EnIshi_DrawLarge(EnIshi* this, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ishi.c", 1050);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_ishi.c", 1055),
@@ -493,7 +493,7 @@ void EnIshi_DrawLarge(EnIshi* this, PlayState* play) {
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, 255);
     gSPDisplayList(POLY_OPA_DISP++, gSilverRockDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ishi.c", 1062);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 static EnIshiDrawFunc sDrawFuncs[] = { EnIshi_DrawSmall, EnIshi_DrawLarge };

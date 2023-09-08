@@ -967,7 +967,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
             Gfx* displayList;
             Gfx* prevDisplayList;
 
-            OPEN_DISPS(play->state.gfxCtx, "../z_kankyo.c", 1682);
+            OPEN_DISPS(play->state.gfxCtx);
 
             prevDisplayList = POLY_OPA_DISP;
             displayList = Graph_GfxPlusOne(POLY_OPA_DISP);
@@ -977,7 +977,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
             Graph_BranchDlist(prevDisplayList, displayList);
             POLY_OPA_DISP = displayList;
             if (1) {}
-            CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 1690);
+            CLOSE_DISPS(play->state.gfxCtx);
         }
 #endif
 
@@ -1390,7 +1390,7 @@ void Environment_DrawSunAndMoon(PlayState* play) {
     f32 scale;
     f32 temp;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_kankyo.c", 2266);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (play->csCtx.state != CS_STATE_IDLE) {
         Math_SmoothStepToF(&play->envCtx.sunPos.x,
@@ -1468,7 +1468,7 @@ void Environment_DrawSunAndMoon(PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 2429);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Environment_DrawSunLensFlare(PlayState* play, EnvironmentContext* envCtx, View* view, GraphicsContext* gfxCtx,
@@ -1538,7 +1538,7 @@ void Environment_DrawLensFlare(PlayState* play, EnvironmentContext* envCtx, View
         LENS_FLARE_CIRCLE1, LENS_FLARE_CIRCLE1, LENS_FLARE_CIRCLE1, LENS_FLARE_CIRCLE1, LENS_FLARE_CIRCLE1,
     };
 
-    OPEN_DISPS(gfxCtx, "../z_kankyo.c", 2516);
+    OPEN_DISPS(gfxCtx);
 
     dist = Math3D_Vec3f_DistXYZ(&pos, &view->eye) / 12.0f;
 
@@ -1690,7 +1690,7 @@ void Environment_DrawLensFlare(PlayState* play, EnvironmentContext* envCtx, View
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_kankyo.c", 2750);
+    CLOSE_DISPS(gfxCtx);
 }
 
 f32 Environment_RandCentered(void) {
@@ -1718,7 +1718,7 @@ void Environment_DrawRain(PlayState* play, View* view, GraphicsContext* gfxCtx) 
 
     if (!(play->cameraPtrs[CAM_ID_MAIN]->stateFlags & CAM_STATE_8) &&
         (play->envCtx.precipitation[PRECIP_SNOW_CUR] == 0)) {
-        OPEN_DISPS(gfxCtx, "../z_kankyo.c", 2799);
+        OPEN_DISPS(gfxCtx);
 
         vec.x = view->at.x - view->eye.x;
         vec.y = view->at.y - view->eye.y;
@@ -1800,7 +1800,7 @@ void Environment_DrawRain(PlayState* play, View* view, GraphicsContext* gfxCtx) 
             }
         }
 
-        CLOSE_DISPS(gfxCtx, "../z_kankyo.c", 2946);
+        CLOSE_DISPS(gfxCtx);
     }
 }
 
@@ -1833,7 +1833,7 @@ void Environment_DrawSkyboxFilters(PlayState* play) {
     if (((play->skyboxId != SKYBOX_NONE) && (play->lightCtx.fogNear < 980)) || (play->skyboxId == SKYBOX_UNSET_1D)) {
         f32 alpha;
 
-        OPEN_DISPS(play->state.gfxCtx, "../z_kankyo.c", 3032);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Gfx_SetupDL_57Opa(play->state.gfxCtx);
 
@@ -1851,29 +1851,29 @@ void Environment_DrawSkyboxFilters(PlayState* play) {
                         play->lightCtx.fogColor[2], 255.0f * alpha);
         gDPFillRectangle(POLY_OPA_DISP++, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 3043);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 
     if (play->envCtx.customSkyboxFilter) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_kankyo.c", 3048);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Gfx_SetupDL_57Opa(play->state.gfxCtx);
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, play->envCtx.skyboxFilterColor[0], play->envCtx.skyboxFilterColor[1],
                         play->envCtx.skyboxFilterColor[2], play->envCtx.skyboxFilterColor[3]);
         gDPFillRectangle(POLY_OPA_DISP++, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 3056);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 
 void Environment_DrawLightningFlash(PlayState* play, u8 red, u8 green, u8 blue, u8 alpha) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_kankyo.c", 3069);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_57Opa(play->state.gfxCtx);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, red, green, blue, alpha);
     gDPFillRectangle(POLY_OPA_DISP++, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 3079);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Environment_UpdateLightningStrike(PlayState* play) {
@@ -1988,7 +1988,7 @@ void Environment_DrawLightning(PlayState* play, s32 unused) {
     Vec3f unused1 = { 0.0f, 0.0f, 0.0f };
     Vec3f unused2 = { 0.0f, 0.0f, 0.0f };
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_kankyo.c", 3253);
+    OPEN_DISPS(play->state.gfxCtx);
 
     for (i = 0; i < ARRAY_COUNT(sLightningBolts); i++) {
         switch (sLightningBolts[i].state) {
@@ -2047,7 +2047,7 @@ void Environment_DrawLightning(PlayState* play, s32 unused) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 3353);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void Environment_PlaySceneSequence(PlayState* play) {
@@ -2329,7 +2329,7 @@ void Environment_UpdateRain(PlayState* play) {
 
 void Environment_FillScreen(GraphicsContext* gfxCtx, u8 red, u8 green, u8 blue, u8 alpha, u8 drawFlags) {
     if (alpha != 0) {
-        OPEN_DISPS(gfxCtx, "../z_kankyo.c", 3835);
+        OPEN_DISPS(gfxCtx);
 
         if (drawFlags & FILL_SCREEN_OPA) {
             POLY_OPA_DISP = Gfx_SetupDL_57(POLY_OPA_DISP);
@@ -2352,7 +2352,7 @@ void Environment_FillScreen(GraphicsContext* gfxCtx, u8 red, u8 green, u8 blue, 
             gDPFillRectangle(POLY_XLU_DISP++, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
         }
 
-        CLOSE_DISPS(gfxCtx, "../z_kankyo.c", 3863);
+        CLOSE_DISPS(gfxCtx);
     }
 }
 
@@ -2492,7 +2492,7 @@ void Environment_DrawSandstorm(PlayState* play, u8 sandstormState) {
     sp94 = (s32)(sSandstormScroll * (9.0f / 6.0f));
     sp92 = (s32)(sSandstormScroll * (6.0f / 6.0f));
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_kankyo.c", 4044);
+    OPEN_DISPS(play->state.gfxCtx);
 
     POLY_XLU_DISP = Gfx_SetupDL_64(POLY_XLU_DISP);
 
@@ -2506,7 +2506,7 @@ void Environment_DrawSandstorm(PlayState* play, u8 sandstormState) {
     gDPSetTextureLUT(POLY_XLU_DISP++, G_TT_NONE);
     gSPDisplayList(POLY_XLU_DISP++, gFieldSandstormDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 4068);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     sSandstormScroll += (s32)sp98;
 }

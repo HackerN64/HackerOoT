@@ -516,7 +516,7 @@ void EnMm_Draw(Actor* thisx, PlayState* play) {
 
     if (0) {}
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_mm.c", 1065);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(mouthTextures[this->mouthTexIndex]));
@@ -562,7 +562,7 @@ void EnMm_Draw(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_mm.c", 1141);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 EnMm_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {

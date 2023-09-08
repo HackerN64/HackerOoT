@@ -710,7 +710,7 @@ void EnOkuta_Draw(Actor* thisx, PlayState* play) {
         SkelAnime_DrawOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, EnOkuta_OverrideLimbDraw, NULL,
                           this);
     } else {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_okuta.c", 1653);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Matrix_Mult(&play->billboardMtxF, MTXMODE_APPLY);
         Matrix_RotateZ(BINANG_TO_RAD(this->actor.home.rot.z), MTXMODE_APPLY);
@@ -718,6 +718,6 @@ void EnOkuta_Draw(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, gOctorokProjectileDL);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_okuta.c", 1662);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

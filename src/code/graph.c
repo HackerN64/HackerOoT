@@ -229,9 +229,9 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
     task->output_buff_size = gGfxSPTaskOutputBuffer + ARRAY_COUNT(gGfxSPTaskOutputBuffer);
     task->data_ptr = (u64*)gfxCtx->workBuffer;
 
-    OPEN_DISPS(gfxCtx, "../graph.c", 828);
+    OPEN_DISPS(gfxCtx);
     task->data_size = (uintptr_t)WORK_DISP - (uintptr_t)gfxCtx->workBuffer;
-    CLOSE_DISPS(gfxCtx, "../graph.c", 830);
+    CLOSE_DISPS(gfxCtx);
 
     { s32 pad2; } // Necessary to match stack usage
 
@@ -276,28 +276,28 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gameState->inPreNMIState = false;
     Graph_InitTHGA(gfxCtx);
 
-    OPEN_DISPS(gfxCtx, "../graph.c", 966);
+    OPEN_DISPS(gfxCtx);
 
     gDPNoOpString(WORK_DISP++, "WORK_DISP 開始", 0);
     gDPNoOpString(POLY_OPA_DISP++, "POLY_OPA_DISP 開始", 0);
     gDPNoOpString(POLY_XLU_DISP++, "POLY_XLU_DISP 開始", 0);
     gDPNoOpString(OVERLAY_DISP++, "OVERLAY_DISP 開始", 0);
 
-    CLOSE_DISPS(gfxCtx, "../graph.c", 975);
+    CLOSE_DISPS(gfxCtx);
 
     GameState_ReqPadData(gameState);
     GameState_Update(gameState);
 
-    OPEN_DISPS(gfxCtx, "../graph.c", 987);
+    OPEN_DISPS(gfxCtx);
 
     gDPNoOpString(WORK_DISP++, "WORK_DISP 終了", 0);
     gDPNoOpString(POLY_OPA_DISP++, "POLY_OPA_DISP 終了", 0);
     gDPNoOpString(POLY_XLU_DISP++, "POLY_XLU_DISP 終了", 0);
     gDPNoOpString(OVERLAY_DISP++, "OVERLAY_DISP 終了", 0);
 
-    CLOSE_DISPS(gfxCtx, "../graph.c", 996);
+    CLOSE_DISPS(gfxCtx);
 
-    OPEN_DISPS(gfxCtx, "../graph.c", 999);
+    OPEN_DISPS(gfxCtx);
 
     gSPBranchList(WORK_DISP++, gfxCtx->polyOpaBuffer);
     gSPBranchList(POLY_OPA_DISP++, gfxCtx->polyXluBuffer);
@@ -306,7 +306,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gDPFullSync(OVERLAY_DISP++);
     gSPEndDisplayList(OVERLAY_DISP++);
 
-    CLOSE_DISPS(gfxCtx, "../graph.c", 1028);
+    CLOSE_DISPS(gfxCtx);
 
     if (R_HREG_MODE == HREG_MODE_PLAY && R_PLAY_ENABLE_UCODE_DISAS == 2) {
         R_HREG_MODE = HREG_MODE_UCODE_DISAS;
@@ -493,6 +493,7 @@ void* Graph_Alloc2(GraphicsContext* gfxCtx, size_t size) {
     return THGA_AllocTail(&gfxCtx->polyOpa, ALIGN16(size));
 }
 
+#ifndef DISABLE_DEBUG_FEATURES
 void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, s32 line) {
     if (R_HREG_MODE == HREG_MODE_UCODE_DISAS && R_UCODE_DISAS_LOG_MODE != 4) {
         dispRefs[0] = gfxCtx->polyOpa.p;
@@ -526,6 +527,7 @@ void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file,
         }
     }
 }
+#endif
 
 Gfx* Graph_GfxPlusOne(Gfx* gfx) {
     return gfx + 1;

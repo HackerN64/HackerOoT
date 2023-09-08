@@ -313,7 +313,7 @@ void BgHakaGate_DrawFlame(BgHakaGate* this, PlayState* play) {
     f32 scale;
 
     if (this->vFlameScale > 0) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_bg_haka_gate.c", 716);
+        OPEN_DISPS(play->state.gfxCtx);
 
         if (1) {}
 
@@ -331,7 +331,7 @@ void BgHakaGate_DrawFlame(BgHakaGate* this, PlayState* play) {
         gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_haka_gate.c", 744),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_bg_haka_gate.c", 749);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 
@@ -350,7 +350,7 @@ void BgHakaGate_Draw(Actor* thisx, PlayState* play) {
     } else {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         if (thisx->params == BGHAKAGATE_FLOOR) {
-            OPEN_DISPS(play->state.gfxCtx, "../z_bg_haka_gate.c", 781);
+            OPEN_DISPS(play->state.gfxCtx);
             Matrix_Get(&currentMtxF);
             Matrix_Translate(0.0f, 0.0f, -2000.0f, MTXMODE_APPLY);
             Matrix_RotateX(BINANG_TO_RAD(this->vOpenAngle), MTXMODE_APPLY);
@@ -365,7 +365,7 @@ void BgHakaGate_Draw(Actor* thisx, PlayState* play) {
             gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_haka_gate.c", 796),
                       G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(POLY_OPA_DISP++, object_haka_objects_DL_010C10);
-            CLOSE_DISPS(play->state.gfxCtx, "../z_bg_haka_gate.c", 800);
+            CLOSE_DISPS(play->state.gfxCtx);
         } else {
             Gfx_DrawDListOpa(play, displayLists[thisx->params]);
         }

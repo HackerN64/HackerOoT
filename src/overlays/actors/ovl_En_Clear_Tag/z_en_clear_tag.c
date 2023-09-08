@@ -682,7 +682,7 @@ void EnClearTag_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnClearTag* this = (EnClearTag*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_clear_tag.c", 983);
+    OPEN_DISPS(play->state.gfxCtx);
     if (this->drawMode != CLEAR_TAG_DRAW_MODE_EFFECT) {
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -762,7 +762,7 @@ void EnClearTag_Draw(Actor* thisx, PlayState* play) {
         EnClearTag_DrawEffects(play);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_clear_tag.c", 1119);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 /**
@@ -892,7 +892,7 @@ void EnClearTag_DrawEffects(PlayState* play) {
     EnClearTagEffect* effect = (EnClearTagEffect*)play->specialEffects;
     EnClearTagEffect* firstEffect = effect;
 
-    OPEN_DISPS(gfxCtx, "../z_en_clear_tag.c", 1288);
+    OPEN_DISPS(gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -1019,5 +1019,5 @@ void EnClearTag_DrawEffects(PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_en_clear_tag.c", 1477);
+    CLOSE_DISPS(gfxCtx);
 }

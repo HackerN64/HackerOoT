@@ -577,7 +577,7 @@ void EnNiwLady_Draw(Actor* thisx, PlayState* play) {
     EnNiwLady* this = (EnNiwLady*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_niw_lady.c", 1347);
+    OPEN_DISPS(play->state.gfxCtx);
     if (this->unk_27E != 0) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
@@ -586,5 +586,5 @@ void EnNiwLady_Draw(Actor* thisx, PlayState* play) {
         SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                               EnNiwLady_OverrideLimbDraw, NULL, this);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_niw_lady.c", 1370);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

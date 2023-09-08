@@ -803,7 +803,7 @@ void EnFirefly_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* 
 void EnFirefly_Draw(Actor* thisx, PlayState* play) {
     EnFirefly* this = (EnFirefly*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_firefly.c", 1733);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     if (this->onFire) {
@@ -814,13 +814,13 @@ void EnFirefly_Draw(Actor* thisx, PlayState* play) {
 
     POLY_OPA_DISP = SkelAnime_Draw(play, this->skelAnime.skeleton, this->skelAnime.jointTable,
                                    EnFirefly_OverrideLimbDraw, EnFirefly_PostLimbDraw, &this->actor, POLY_OPA_DISP);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_firefly.c", 1763);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnFirefly_DrawInvisible(Actor* thisx, PlayState* play) {
     EnFirefly* this = (EnFirefly*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_firefly.c", 1775);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     if (this->onFire) {
@@ -831,5 +831,5 @@ void EnFirefly_DrawInvisible(Actor* thisx, PlayState* play) {
 
     POLY_XLU_DISP = SkelAnime_Draw(play, this->skelAnime.skeleton, this->skelAnime.jointTable,
                                    EnFirefly_OverrideLimbDraw, EnFirefly_PostLimbDraw, this, POLY_XLU_DISP);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_firefly.c", 1805);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

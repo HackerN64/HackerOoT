@@ -961,7 +961,7 @@ void EnRd_Draw(Actor* thisx, PlayState* play) {
     EnRd* this = (EnRd*)thisx;
     Vec3f thisPos = thisx->world.pos;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_rd.c", 1679);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->alpha == 255) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -992,5 +992,5 @@ void EnRd_Draw(Actor* thisx, PlayState* play) {
         func_80033C30(&thisPos, &sShadowScale, this->alpha, play);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_rd.c", 1735);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

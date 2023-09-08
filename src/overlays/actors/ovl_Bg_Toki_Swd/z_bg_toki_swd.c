@@ -163,7 +163,7 @@ void BgTokiSwd_Draw(Actor* thisx, PlayState* play2) {
     BgTokiSwd* this = (BgTokiSwd*)thisx;
     s32 pad[3];
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_toki_swd.c", 727);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -174,5 +174,5 @@ void BgTokiSwd_Draw(Actor* thisx, PlayState* play2) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, object_toki_objects_DL_001BD0);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_toki_swd.c", 776);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

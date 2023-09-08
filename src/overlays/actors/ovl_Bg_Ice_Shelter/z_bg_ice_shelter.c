@@ -449,7 +449,7 @@ void BgIceShelter_Draw(Actor* thisx, PlayState* play2) {
     PlayState* play = play2;
     BgIceShelter* this = (BgIceShelter*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_ice_shelter.c", 748);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -494,5 +494,5 @@ void BgIceShelter_Draw(Actor* thisx, PlayState* play2) {
             break;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_ice_shelter.c", 815);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

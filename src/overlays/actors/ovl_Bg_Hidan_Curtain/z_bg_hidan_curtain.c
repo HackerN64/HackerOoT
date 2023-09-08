@@ -241,7 +241,7 @@ void BgHidanCurtain_Update(Actor* thisx, PlayState* play2) {
 void BgHidanCurtain_Draw(Actor* thisx, PlayState* play) {
     BgHidanCurtain* this = (BgHidanCurtain*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_hidan_curtain.c", 685);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     gDPSetPrimColor(POLY_XLU_DISP++, 0x80, 0x80, 255, 220, 0, this->alpha);
@@ -257,5 +257,5 @@ void BgHidanCurtain_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_XLU_DISP++, gEffFireCircleDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_hidan_curtain.c", 702);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

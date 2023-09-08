@@ -205,7 +205,7 @@ void EnBx_Draw(Actor* thisx, PlayState* play) {
     Mtx* mtx = Graph_Alloc(play->state.gfxCtx, 4 * sizeof(Mtx));
     s16 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_bx.c", 464);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -242,5 +242,5 @@ void EnBx_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_OPA_DISP++, object_bxa_DL_0022F0);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bx.c", 511);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

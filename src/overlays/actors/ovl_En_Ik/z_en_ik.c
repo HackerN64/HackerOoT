@@ -924,7 +924,7 @@ void EnIk_PostLimbDrawEnemy(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* 
     Vec3f spE8;
     EnIk* this = (EnIk*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ik_inFight.c", 1201);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->armorStatusFlag & ARMOR_BROKEN) {
         BodyBreak_SetInfo(&this->bodyBreak, limbIndex, IRON_KNUCKLE_LIMB_CHEST_ARMOR_FRONT,
@@ -998,13 +998,13 @@ void EnIk_PostLimbDrawEnemy(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* 
             break;
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ik_inFight.c", 1294);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnIk_DrawEnemy(Actor* thisx, PlayState* play) {
     EnIk* this = (EnIk*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ik_inFight.c", 1309);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -1030,7 +1030,7 @@ void EnIk_DrawEnemy(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnIk_OverrideLimbDrawEnemy, EnIk_PostLimbDrawEnemy, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ik_inFight.c", 1351);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnIk_StartMinibossBgm(void) {
@@ -1253,7 +1253,7 @@ s32 EnIk_OverrideLimbDrawDefeat(PlayState* play, s32 limbIndex, Gfx** dList, Vec
 void EnIk_PostLimbDrawDefeat(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_en_ik_inAwake.c", 207);
+    OPEN_DISPS(gfxCtx);
 
     switch (limbIndex) {
         case IRON_KNUCKLE_DEFEAT_LIMB_HELMET_ARMOR: {
@@ -1299,7 +1299,7 @@ void EnIk_PostLimbDrawDefeat(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s*
         } break;
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_en_ik_inAwake.c", 304);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EnIk_CsDrawDefeat(EnIk* this, PlayState* play) {
@@ -1307,7 +1307,7 @@ void EnIk_CsDrawDefeat(EnIk* this, PlayState* play) {
     SkelAnime* skelAnime = &this->skelAnime;
     s32 pad[2];
 
-    OPEN_DISPS(gfxCtx, "../z_en_ik_inAwake.c", 322);
+    OPEN_DISPS(gfxCtx);
 
     func_8002EBCC(&this->actor, play, 0);
     Gfx_SetupDL_25Opa(gfxCtx);
@@ -1318,7 +1318,7 @@ void EnIk_CsDrawDefeat(EnIk* this, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                           EnIk_OverrideLimbDrawDefeat, EnIk_PostLimbDrawDefeat, this);
 
-    CLOSE_DISPS(gfxCtx, "../z_en_ik_inAwake.c", 345);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EnIk_HandleCsCues(EnIk* this, PlayState* play) {
@@ -1429,7 +1429,7 @@ s32 EnIk_OverrideLimbDrawIntro(PlayState* play, s32 limbIndex, Gfx** dList, Vec3
 void EnIk_PostLimbDrawIntro(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_en_ik_inConfrontion.c", 571);
+    OPEN_DISPS(gfxCtx);
 
     switch (limbIndex) {
         case IRON_KNUCKLE_LIMB_HELMET_ARMOR:
@@ -1463,7 +1463,7 @@ void EnIk_PostLimbDrawIntro(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* 
             break;
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_en_ik_inConfrontion.c", 604);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EnIk_CsDrawNothing(EnIk* this, PlayState* play) {
@@ -1474,7 +1474,7 @@ void EnIk_CsDrawIntro(EnIk* this, PlayState* play) {
     SkelAnime* skelAnime = &this->skelAnime;
     s32 pad[2];
 
-    OPEN_DISPS(gfxCtx, "../z_en_ik_inConfrontion.c", 630);
+    OPEN_DISPS(gfxCtx);
 
     func_8002EBCC(&this->actor, play, 0);
     Gfx_SetupDL_25Opa(gfxCtx);
@@ -1485,7 +1485,7 @@ void EnIk_CsDrawIntro(EnIk* this, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                           EnIk_OverrideLimbDrawIntro, EnIk_PostLimbDrawIntro, this);
 
-    CLOSE_DISPS(gfxCtx, "../z_en_ik_inConfrontion.c", 653);
+    CLOSE_DISPS(gfxCtx);
 }
 
 static EnIkDrawFunc sCsDrawFuncs[] = { EnIk_CsDrawNothing, EnIk_CsDrawIntro, EnIk_CsDrawDefeat };

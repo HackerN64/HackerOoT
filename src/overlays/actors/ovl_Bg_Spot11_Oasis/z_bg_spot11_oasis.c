@@ -150,7 +150,7 @@ void BgSpot11Oasis_Update(Actor* thisx, PlayState* play) {
 void BgSpot11Oasis_Draw(Actor* thisx, PlayState* play) {
     u32 gameplayFrames = play->gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot11_oasis.c", 327);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_spot11_oasis.c", 331),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -159,5 +159,5 @@ void BgSpot11Oasis_Draw(Actor* thisx, PlayState* play) {
                                 (gameplayFrames * 1) % 128, 32, 32, 1, gameplayFrames % 128, (gameplayFrames * 1) % 128,
                                 32, 32));
     gSPDisplayList(POLY_XLU_DISP++, gDesertColossusOasisDL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot11_oasis.c", 346);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

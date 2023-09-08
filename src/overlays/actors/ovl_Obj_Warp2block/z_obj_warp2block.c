@@ -306,7 +306,7 @@ void ObjWarp2block_Draw(Actor* thisx, PlayState* play) {
 
     sp44 = &sColors[thisx->home.rot.z & 7];
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_obj_warp2block.c", 584);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_obj_warp2block.c", 588),
@@ -314,5 +314,5 @@ void ObjWarp2block_Draw(Actor* thisx, PlayState* play) {
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, sp44->r, sp44->g, sp44->b, 255);
     gSPDisplayList(POLY_OPA_DISP++, gSongOfTimeBlockDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_obj_warp2block.c", 594);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

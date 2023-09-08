@@ -173,14 +173,14 @@ void View_ApplyLetterbox(View* view) {
     ASSERT(lrx <= SCREEN_WIDTH, "lrx <= SCREEN_WD", "../z_view.c", 456);
     ASSERT(lry <= SCREEN_HEIGHT, "lry <= SCREEN_HT", "../z_view.c", 457);
 
-    OPEN_DISPS(gfxCtx, "../z_view.c", 459);
+    OPEN_DISPS(gfxCtx);
 
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
     gDPPipeSync(POLY_XLU_DISP++);
     gDPSetScissor(POLY_XLU_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
 
-    CLOSE_DISPS(gfxCtx, "../z_view.c", 472);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void View_SetDistortionOrientation(View* view, f32 rotX, f32 rotY, f32 rotZ) {
@@ -288,7 +288,7 @@ s32 View_ApplyPerspective(View* view) {
     Mtx* viewing;
     GraphicsContext* gfxCtx = view->gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_view.c", 596);
+    OPEN_DISPS(gfxCtx);
 
     // Viewport
     vp = Graph_Alloc(gfxCtx, sizeof(Vp));
@@ -382,7 +382,7 @@ s32 View_ApplyPerspective(View* view) {
     gSPMatrix(POLY_OPA_DISP++, viewing, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_PROJECTION);
     gSPMatrix(POLY_XLU_DISP++, viewing, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_PROJECTION);
 
-    CLOSE_DISPS(gfxCtx, "../z_view.c", 711);
+    CLOSE_DISPS(gfxCtx);
 
     return 1;
 }
@@ -392,7 +392,7 @@ s32 View_ApplyOrtho(View* view) {
     Mtx* projection;
     GraphicsContext* gfxCtx = view->gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_view.c", 726);
+    OPEN_DISPS(gfxCtx);
 
     vp = Graph_Alloc(gfxCtx, sizeof(Vp));
     LogUtils_CheckNullPointer("vp", vp, "../z_view.c", 730);
@@ -417,7 +417,7 @@ s32 View_ApplyOrtho(View* view) {
     gSPMatrix(POLY_OPA_DISP++, projection, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
     gSPMatrix(POLY_XLU_DISP++, projection, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
 
-    CLOSE_DISPS(gfxCtx, "../z_view.c", 762);
+    CLOSE_DISPS(gfxCtx);
 
     return 1;
 }
@@ -433,7 +433,7 @@ s32 View_ApplyOrthoToOverlay(View* view) {
 
     gfxCtx = view->gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_view.c", 777);
+    OPEN_DISPS(gfxCtx);
 
     vp = Graph_Alloc(gfxCtx, sizeof(Vp));
     LogUtils_CheckNullPointer("vp", vp, "../z_view.c", 781);
@@ -458,7 +458,7 @@ s32 View_ApplyOrthoToOverlay(View* view) {
 
     gSPMatrix(OVERLAY_DISP++, projection, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
 
-    CLOSE_DISPS(gfxCtx, "../z_view.c", 801);
+    CLOSE_DISPS(gfxCtx);
 
     return 1;
 }
@@ -476,7 +476,7 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
     Mtx* viewing;
     GraphicsContext* gfxCtx = view->gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_view.c", 816);
+    OPEN_DISPS(gfxCtx);
 
     vp = Graph_Alloc(gfxCtx, sizeof(Vp));
     LogUtils_CheckNullPointer("vp", vp, "../z_view.c", 821);
@@ -523,7 +523,7 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
 
     gSPMatrix(OVERLAY_DISP++, viewing, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_PROJECTION);
 
-    CLOSE_DISPS(gfxCtx, "../z_view.c", 871);
+    CLOSE_DISPS(gfxCtx);
 
     return 1;
 }
@@ -532,13 +532,13 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
  * Just updates view's view matrix from its eye/at/up vectors. Opens disps but doesn't use them.
  */
 s32 View_UpdateViewingMatrix(View* view) {
-    OPEN_DISPS(view->gfxCtx, "../z_view.c", 878);
+    OPEN_DISPS(view->gfxCtx);
 
     View_ErrorCheckEyePosition(view->eye.x, view->eye.y, view->eye.z);
     guLookAt(view->viewingPtr, view->eye.x, view->eye.y, view->eye.z, view->at.x, view->at.y, view->at.z, view->up.x,
              view->up.y, view->up.z);
 
-    CLOSE_DISPS(view->gfxCtx, "../z_view.c", 886);
+    CLOSE_DISPS(view->gfxCtx);
 
     return 1;
 }

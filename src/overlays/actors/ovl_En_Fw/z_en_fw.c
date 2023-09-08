@@ -457,7 +457,7 @@ void EnFw_DrawEffects(EnFw* this, PlayState* play) {
     s16 i;
     s16 idx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fw.c", 1191);
+    OPEN_DISPS(play->state.gfxCtx);
 
     materialFlag = false;
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -486,5 +486,5 @@ void EnFw_DrawEffects(EnFw* this, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fw.c", 1243);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -158,7 +158,7 @@ void EnLight_Draw(Actor* thisx, PlayState* play) {
 
     flameParams = &D_80A9E840[this->actor.params & 0xF];
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_light.c", 441);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -193,5 +193,5 @@ void EnLight_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, dList);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_light.c", 491);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

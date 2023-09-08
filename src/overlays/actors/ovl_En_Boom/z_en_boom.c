@@ -253,7 +253,7 @@ void EnBoom_Draw(Actor* thisx, PlayState* play) {
     Vec3f vec1;
     Vec3f vec2;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_boom.c", 567);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_RotateY(BINANG_TO_RAD(this->actor.world.rot.y), MTXMODE_APPLY);
     Matrix_RotateZ(BINANG_TO_RAD(0x1F40), MTXMODE_APPLY);
@@ -272,5 +272,5 @@ void EnBoom_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gBoomerangRefDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_boom.c", 604);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -766,7 +766,7 @@ void FileSelect_DrawFileInfo(GameState* thisx, s16 fileIndex, s16 isActive) {
     s16 j;
     s16 deathCountSplit[3];
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 1709);
+    OPEN_DISPS(this->state.gfxCtx);
 
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetCombineLERP(POLY_OPA_DISP++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0,
@@ -844,7 +844,7 @@ void FileSelect_DrawFileInfo(GameState* thisx, s16 fileIndex, s16 isActive) {
         }
     }
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", 1797);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 static void* sFileInfoBoxTextures[] = {
@@ -904,7 +904,7 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
     s16 isActive;
     s16 pad;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 1940);
+    OPEN_DISPS(this->state.gfxCtx);
 
     // draw title label
     gDPPipeSync(POLY_OPA_DISP++);
@@ -1068,7 +1068,7 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetCombineMode(POLY_OPA_DISP++, G_CC_MODULATEIDECALA, G_CC_MODULATEIDECALA);
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", 2198);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 void FileSelect_ConfigModeDraw(GameState* thisx) {
@@ -1077,7 +1077,7 @@ void FileSelect_ConfigModeDraw(GameState* thisx) {
     f32 eyeY;
     f32 eyeZ;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 2218);
+    OPEN_DISPS(this->state.gfxCtx);
     gDPPipeSync(POLY_OPA_DISP++);
 
     eyeX = 1000.0f * Math_CosS(ZREG(11)) - 1000.0f * Math_SinS(ZREG(11));
@@ -1186,7 +1186,7 @@ void FileSelect_ConfigModeDraw(GameState* thisx) {
     gDPPipeSync(POLY_OPA_DISP++);
     FileSelect_SetView(this, 0.0f, 0.0f, 64.0f);
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", 2352);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 /**
@@ -1515,7 +1515,7 @@ void FileSelect_SelectModeDraw(GameState* thisx) {
     f32 eyeY;
     f32 eyeZ;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 2753);
+    OPEN_DISPS(this->state.gfxCtx);
 
     gDPPipeSync(POLY_OPA_DISP++);
 
@@ -1558,7 +1558,7 @@ void FileSelect_SelectModeDraw(GameState* thisx) {
     gDPPipeSync(POLY_OPA_DISP++);
     FileSelect_SetView(this, 0.0f, 0.0f, 64.0f);
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", 2834);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 static void (*sFileSelectDrawFuncs[])(GameState*) = {
@@ -1617,7 +1617,7 @@ void FileSelect_Main(GameState* thisx) {
     osSyncPrintf("Language: %s\n", languageName);
 #endif
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 2898);
+    OPEN_DISPS(this->state.gfxCtx);
 
     this->n64ddFlag = 0;
 
@@ -1712,7 +1712,7 @@ void FileSelect_Main(GameState* thisx) {
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 0, 0, 0, sScreenFillAlpha);
     gDPFillRectangle(POLY_OPA_DISP++, 0, 0, gScreenWidth - 1, gScreenHeight - 1);
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", 3035);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 void FileSelect_InitContext(GameState* thisx) {
