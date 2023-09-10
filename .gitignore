@@ -29,6 +29,7 @@ cache/
 *.map
 *.dump
 *.wad
+*.bs*
 out.txt
 
 # Tool artifacts
