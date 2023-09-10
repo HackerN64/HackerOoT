@@ -478,7 +478,7 @@ void EnBa_Draw(Actor* thisx, PlayState* play) {
     Mtx* mtx = Graph_Alloc(play->state.gfxCtx, sizeof(Mtx) * 14);
     Vec3f unused = { 0.0f, 0.0f, 448.0f };
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ba.c", 933);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     if (this->actor.params < EN_BA_DEAD_BLOB) {
         Matrix_Push();
@@ -518,5 +518,5 @@ void EnBa_Draw(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, object_bxa_DL_001D80);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ba.c", 995);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

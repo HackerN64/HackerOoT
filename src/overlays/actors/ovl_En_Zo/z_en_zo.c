@@ -175,7 +175,7 @@ void EnZo_DrawEffectsRipples(EnZo* this, PlayState* play) {
     u8 materialFlag;
 
     effect = this->effects;
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_zo_eff.c", 217);
+    OPEN_DISPS(play->state.gfxCtx);
     materialFlag = false;
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     for (i = 0; i < EN_ZO_EFFECT_COUNT; i++) {
@@ -197,7 +197,7 @@ void EnZo_DrawEffectsRipples(EnZo* this, PlayState* play) {
         }
         effect++;
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_zo_eff.c", 248);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnZo_DrawEffectsBubbles(EnZo* this, PlayState* play) {
@@ -205,7 +205,7 @@ void EnZo_DrawEffectsBubbles(EnZo* this, PlayState* play) {
     s16 i;
     u8 materialFlag;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_zo_eff.c", 260);
+    OPEN_DISPS(play->state.gfxCtx);
     materialFlag = false;
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     for (i = 0; i < EN_ZO_EFFECT_COUNT; i++) {
@@ -230,7 +230,7 @@ void EnZo_DrawEffectsBubbles(EnZo* this, PlayState* play) {
         }
         effect++;
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_zo_eff.c", 286);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnZo_DrawEffectsSplashes(EnZo* this, PlayState* play) {
@@ -239,7 +239,7 @@ void EnZo_DrawEffectsSplashes(EnZo* this, PlayState* play) {
     u8 materialFlag;
 
     effect = this->effects;
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_zo_eff.c", 298);
+    OPEN_DISPS(play->state.gfxCtx);
     materialFlag = false;
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     for (i = 0; i < EN_ZO_EFFECT_COUNT; i++) {
@@ -263,7 +263,7 @@ void EnZo_DrawEffectsSplashes(EnZo* this, PlayState* play) {
         }
         effect++;
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_zo_eff.c", 331);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnZo_TreadWaterRipples(EnZo* this, f32 scale, f32 targetScale, u8 alpha) {
@@ -799,7 +799,7 @@ void EnZo_Draw(Actor* thisx, PlayState* play) {
     Matrix_Pop();
 
     if ((s32)this->alpha != 0) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_zo.c", 1008);
+        OPEN_DISPS(play->state.gfxCtx);
 
         if (this->alpha == 255.0f) {
             gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeTexture]));
@@ -809,6 +809,6 @@ void EnZo_Draw(Actor* thisx, PlayState* play) {
             func_80034CC4(play, &this->skelAnime, EnZo_OverrideLimbDraw, EnZo_PostLimbDraw, thisx, this->alpha);
         }
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_zo.c", 1025);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

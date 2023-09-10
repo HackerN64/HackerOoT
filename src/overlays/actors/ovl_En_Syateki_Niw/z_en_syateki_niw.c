@@ -764,7 +764,7 @@ void EnSyatekiNiw_DrawEffects(EnSyatekiNiw* this, PlayState* play) {
     EnSyatekiNiwEffect* effect = &this->effects[0];
     u8 materialFlag = 0;
 
-    OPEN_DISPS(gfxCtx, "../z_en_syateki_niw.c", 1234);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -787,5 +787,5 @@ void EnSyatekiNiw_DrawEffects(EnSyatekiNiw* this, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_en_syateki_niw.c", 1257);
+    CLOSE_DISPS(gfxCtx);
 }

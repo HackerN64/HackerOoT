@@ -502,7 +502,7 @@ void BgMizuBwall_Draw(Actor* thisx, PlayState* play2) {
     PlayState* play = play2;
     u32 frames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mizu_bwall.c", 1095);
+    OPEN_DISPS(play->state.gfxCtx);
     if (1) {}
     frames = play->gameplayFrames;
 
@@ -524,5 +524,5 @@ void BgMizuBwall_Draw(Actor* thisx, PlayState* play2) {
     if (this->dList != NULL) {
         gSPDisplayList(POLY_OPA_DISP++, this->dList);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mizu_bwall.c", 1136);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

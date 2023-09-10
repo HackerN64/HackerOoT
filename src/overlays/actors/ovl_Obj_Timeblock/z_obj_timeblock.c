@@ -334,7 +334,7 @@ void ObjTimeblock_Draw(Actor* thisx, PlayState* play) {
     if (((ObjTimeblock*)thisx)->isVisible) {
         Color_RGB8* primColor = &sPrimColors[thisx->home.rot.z & 7];
 
-        OPEN_DISPS(play->state.gfxCtx, "../z_obj_timeblock.c", 762);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_obj_timeblock.c", 766),
@@ -342,6 +342,6 @@ void ObjTimeblock_Draw(Actor* thisx, PlayState* play) {
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, primColor->r, primColor->g, primColor->b, 255);
         gSPDisplayList(POLY_OPA_DISP++, gSongOfTimeBlockDL);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_obj_timeblock.c", 772);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

@@ -146,7 +146,7 @@ void MagicWind_Update(Actor* thisx, PlayState* play) {
 s32 MagicWind_OverrideLimbDraw(PlayState* play, SkelCurve* skelCurve, s32 limbIndex, void* thisx) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_magic_wind.c", 615);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limbIndex == 1) {
         gSPSegment(POLY_XLU_DISP++, 8,
@@ -163,7 +163,7 @@ s32 MagicWind_OverrideLimbDraw(PlayState* play, SkelCurve* skelCurve, s32 limbIn
                                     0x40));
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_magic_wind.c", 646);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     return true;
 }
@@ -172,12 +172,12 @@ void MagicWind_Draw(Actor* thisx, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     MagicWind* this = (MagicWind*)thisx;
 
-    OPEN_DISPS(gfxCtx, "../z_magic_wind.c", 661);
+    OPEN_DISPS(gfxCtx);
 
     if (this->actionFunc != MagicWind_WaitForTimer) {
         POLY_XLU_DISP = Gfx_SetupDL(POLY_XLU_DISP, SETUPDL_25);
         SkelCurve_Draw(&this->actor, play, &this->skelCurve, MagicWind_OverrideLimbDraw, NULL, 1, NULL);
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_magic_wind.c", 673);
+    CLOSE_DISPS(gfxCtx);
 }

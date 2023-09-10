@@ -212,7 +212,7 @@ void BgJyaBigmirror_DrawLightBeam(Actor* thisx, PlayState* play) {
     BgJyaBigmirror* this = (BgJyaBigmirror*)thisx;
     Actor* lift;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_jya_bigmirror.c", 435);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     lift = Actor_Find(&play->actorCtx, ACTOR_BG_JYA_LIFT, ACTORCAT_BG);
     if (lift != NULL) {
@@ -234,7 +234,7 @@ void BgJyaBigmirror_DrawLightBeam(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, gBigMirror2DL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_jya_bigmirror.c", 476);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BgJyaBigmirror_Draw(Actor* thisx, PlayState* play) {

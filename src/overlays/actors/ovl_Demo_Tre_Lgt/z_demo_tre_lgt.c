@@ -137,7 +137,7 @@ s32 DemoTreLgt_OverrideLimbDraw(PlayState* play, SkelCurve* skelCurve, s32 limbI
     s32 pad;
     DemoTreLgt* this = (DemoTreLgt*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_tre_lgt.c", 423);
+    OPEN_DISPS(play->state.gfxCtx);
     gSPSegment(POLY_XLU_DISP++, 0x08,
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, (play->state.frames * 2) % 256, 0, 64, 32, 1,
                                 (play->state.frames * -2) % 256, 0, 64, 32));
@@ -148,7 +148,7 @@ s32 DemoTreLgt_OverrideLimbDraw(PlayState* play, SkelCurve* skelCurve, s32 limbI
         gDPSetPrimColor(POLY_XLU_DISP++, 0, 0x80, 255, 255, 180, this->unk_174);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_tre_lgt.c", 448);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     //! @bug missing return
     //! If the returned value (i.e. the contents of v0) ends up being false (0), the limb won't draw. Therefore what
@@ -165,7 +165,7 @@ void DemoTreLgt_Draw(Actor* thisx, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     DemoTreLgt* this = (DemoTreLgt*)thisx;
 
-    OPEN_DISPS(gfxCtx, "../z_demo_tre_lgt.c", 461);
+    OPEN_DISPS(gfxCtx);
 
     if (this->action != DEMO_TRE_LGT_ACTION_ANIMATE) {
         return;
@@ -175,5 +175,5 @@ void DemoTreLgt_Draw(Actor* thisx, PlayState* play) {
     gDPSetEnvColor(POLY_XLU_DISP++, 200, 255, 0, 0);
     SkelCurve_Draw(&this->actor, play, &this->skelCurve, DemoTreLgt_OverrideLimbDraw, NULL, 1, &this->actor);
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_tre_lgt.c", 476);
+    CLOSE_DISPS(gfxCtx);
 }

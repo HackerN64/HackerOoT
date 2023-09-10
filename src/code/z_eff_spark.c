@@ -152,7 +152,7 @@ void EffectSpark_Draw(void* thisx, GraphicsContext* gfxCtx) {
     u8 sp1C4;
     f32 ratio;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_spark.c", 293);
+    OPEN_DISPS(gfxCtx);
 
     if (this != NULL) {
         gSPMatrix(POLY_XLU_DISP++, &gMtxClear, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -273,5 +273,5 @@ void EffectSpark_Draw(void* thisx, GraphicsContext* gfxCtx) {
     }
 
 end:
-    CLOSE_DISPS(gfxCtx, "../z_eff_spark.c", 498);
+    CLOSE_DISPS(gfxCtx);
 }

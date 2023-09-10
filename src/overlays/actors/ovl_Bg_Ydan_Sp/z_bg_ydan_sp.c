@@ -421,7 +421,7 @@ void BgYdanSp_Draw(Actor* thisx, PlayState* play) {
     s32 i;
     MtxF mtxF;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_ydan_sp.c", 781);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     if (thisx->params == WEB_WALL) {
         gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_ydan_sp.c", 787),
@@ -453,5 +453,5 @@ void BgYdanSp_Draw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, gDTWebFloorDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_ydan_sp.c", 856);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

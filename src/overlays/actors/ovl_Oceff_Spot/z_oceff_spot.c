@@ -150,7 +150,7 @@ void OceffSpot_Draw(Actor* thisx, PlayState* play) {
     OceffSpot* this = (OceffSpot*)thisx;
     u32 scroll = play->state.frames & 0xFFFF;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_oceff_spot.c", 466);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -161,5 +161,5 @@ void OceffSpot_Draw(Actor* thisx, PlayState* play) {
                                                      32, 1, 0, scroll * (-8), 32, 32));
     gSPDisplayList(POLY_XLU_DISP++, sCylinderModelDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_oceff_spot.c", 485);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

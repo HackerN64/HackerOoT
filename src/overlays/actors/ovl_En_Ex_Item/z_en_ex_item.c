@@ -500,7 +500,7 @@ void EnExItem_DrawMagic(EnExItem* this, PlayState* play, s16 magicIndex) {
 void EnExItem_DrawKey(EnExItem* this, PlayState* play, s32 index) {
     static void* keySegments[] = { gDropKeySmallTex };
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ex_item.c", 880);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_41Opa(play->state.gfxCtx);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_ex_item.c", 887),
@@ -508,7 +508,7 @@ void EnExItem_DrawKey(EnExItem* this, PlayState* play, s32 index) {
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(keySegments[index]));
     gSPDisplayList(POLY_OPA_DISP++, gItemDropDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ex_item.c", 893);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnExItem_DrawRupee(EnExItem* this, PlayState* play) {

@@ -294,7 +294,7 @@ void BgBreakwall_Draw(Actor* thisx, PlayState* play) {
     BgBreakwall* this = (BgBreakwall*)thisx;
 
     if (this->bombableWallDList != NULL) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_bg_breakwall.c", 767);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_breakwall.c", 771),
@@ -315,6 +315,6 @@ void BgBreakwall_Draw(Actor* thisx, PlayState* play) {
             CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
         }
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_bg_breakwall.c", 822);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

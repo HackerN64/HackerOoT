@@ -146,7 +146,7 @@ void BgHaka_Update(Actor* thisx, PlayState* play) {
 }
 
 void BgHaka_Draw(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_haka.c", 401);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -159,5 +159,5 @@ void BgHaka_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gGravestoneEarthDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_haka.c", 421);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

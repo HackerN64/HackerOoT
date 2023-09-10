@@ -459,12 +459,12 @@ void EnGSwitch_DrawPot(Actor* thisx, PlayState* play) {
     EnGSwitch* this = (EnGSwitch*)thisx;
 
     if (!this->broken) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_g_switch.c", 918);
+        OPEN_DISPS(play->state.gfxCtx);
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_g_switch.c", 925),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, object_tsubo_DL_0017C0);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_g_switch.c", 928);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 
@@ -478,14 +478,14 @@ void EnGSwitch_DrawRupee(Actor* thisx, PlayState* play) {
 
     if (1) {}
     if (!this->broken) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_g_switch.c", 951);
+        OPEN_DISPS(play->state.gfxCtx);
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         func_8002EBCC(&this->actor, play, 0);
         gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_g_switch.c", 957),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sRupeeTextures[this->colorIdx]));
         gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_g_switch.c", 961);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
     if (this->type == ENGSWITCH_TARGET_RUPEE) {
         EnGSwitch_DrawEffects(this, play);
@@ -555,7 +555,7 @@ void EnGSwitch_DrawEffects(EnGSwitch* this, PlayState* play) {
     f32 scale;
     s32 pad;
 
-    OPEN_DISPS(gfxCtx, "../z_en_g_switch.c", 1073);
+    OPEN_DISPS(gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     for (i = 0; i < this->numEffects; i++, effect++) {
         if (effect->flag) {
@@ -571,5 +571,5 @@ void EnGSwitch_DrawEffects(EnGSwitch* this, PlayState* play) {
             gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
         }
     }
-    CLOSE_DISPS(gfxCtx, "../z_en_g_switch.c", 1095);
+    CLOSE_DISPS(gfxCtx);
 }

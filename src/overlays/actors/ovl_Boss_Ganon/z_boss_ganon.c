@@ -3262,14 +3262,14 @@ void BossGanon_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* 
     } else if (limbIndex == GANONDORF_LIMB_PELVIS) {
         Matrix_MultVec3f(&D_808E4DB8, &this->actor.focus.pos);
     } else if (limbIndex == GANONDORF_LIMB_JEWEL) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 7191);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Matrix_MultVec3f(&D_808E4DB8, &this->unk_208);
         gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_boss_ganon.c", 7196),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(gGanondorfEyesDL));
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 7198);
+        CLOSE_DISPS(play->state.gfxCtx);
     } else if (limbIndex == GANONDORF_LIMB_LEFT_HAND) {
         Matrix_MultVec3f(&D_808E4DC4, &this->unk_238);
     } else if (limbIndex == GANONDORF_LIMB_RIGHT_HAND) {
@@ -3342,7 +3342,7 @@ void BossGanon_DrawShock(BossGanon* this, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     s16 i;
 
-    OPEN_DISPS(gfxCtx, "../z_boss_ganon.c", 7350);
+    OPEN_DISPS(gfxCtx);
 
     if ((this->unk_2E8 != 0) || (this->unk_2E6 != 0)) {
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -3390,7 +3390,7 @@ void BossGanon_DrawShock(BossGanon* this, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_boss_ganon.c", 7465);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void BossGanon_DrawHandLightBall(BossGanon* this, PlayState* play) {
@@ -3398,7 +3398,7 @@ void BossGanon_DrawHandLightBall(BossGanon* this, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     s32 alpha;
 
-    OPEN_DISPS(gfxCtx, "../z_boss_ganon.c", 7476);
+    OPEN_DISPS(gfxCtx);
 
     if (this->handLightBallScale > 0.0f) {
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -3429,7 +3429,7 @@ void BossGanon_DrawHandLightBall(BossGanon* this, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, gGanondorfLightCoreDL);
 
-        CLOSE_DISPS(gfxCtx, "../z_boss_ganon.c", 7534);
+        CLOSE_DISPS(gfxCtx);
     }
 }
 
@@ -3439,7 +3439,7 @@ void BossGanon_DrawBigMagicCharge(BossGanon* this, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     s16 i;
 
-    OPEN_DISPS(gfxCtx, "../z_boss_ganon.c", 7548);
+    OPEN_DISPS(gfxCtx);
 
     if (this->unk_284 > 0.0f) {
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -3514,7 +3514,7 @@ void BossGanon_DrawBigMagicCharge(BossGanon* this, PlayState* play) {
             Matrix_Pop();
         }
 
-        CLOSE_DISPS(gfxCtx, "../z_boss_ganon.c", 7721);
+        CLOSE_DISPS(gfxCtx);
     }
 }
 
@@ -3522,7 +3522,7 @@ void BossGanon_DrawTriforce(BossGanon* this, PlayState* play) {
     s32 pad;
 
     if (this->fwork[GDF_TRIFORCE_PRIM_A] > 0.0f) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 7732);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Matrix_Push();
 
@@ -3566,7 +3566,7 @@ void BossGanon_DrawTriforce(BossGanon* this, PlayState* play) {
 
         Matrix_Pop();
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 7782);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 
@@ -3574,7 +3574,7 @@ void BossGanon_DrawDarkVortex(BossGanon* this, PlayState* play) {
     s32 pad;
 
     if (this->fwork[GDF_VORTEX_ALPHA] > 0.0f) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 7792);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Matrix_Push();
         gDPPipeSync(POLY_XLU_DISP++);
@@ -3601,7 +3601,7 @@ void BossGanon_DrawDarkVortex(BossGanon* this, PlayState* play) {
 
         Matrix_Pop();
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 7844);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 
@@ -3755,7 +3755,7 @@ void BossGanon_DrawShadowTexture(void* tex, BossGanon* this, PlayState* play) {
     f32 zOffset;
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_boss_ganon.c", 8372);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 0, 0, 0, 50);
@@ -3777,7 +3777,7 @@ void BossGanon_DrawShadowTexture(void* tex, BossGanon* this, PlayState* play) {
                         G_TX_NOMIRROR | G_TX_CLAMP, 6, 6, G_TX_NOLOD, G_TX_NOLOD);
     gSPDisplayList(POLY_OPA_DISP++, gGanondorfShadowModelDL);
 
-    CLOSE_DISPS(gfxCtx, "../z_boss_ganon.c", 8426);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void BossGanon_Draw(Actor* thisx, PlayState* play) {
@@ -3787,7 +3787,7 @@ void BossGanon_Draw(Actor* thisx, PlayState* play) {
 
     shadowTex = Graph_Alloc(play->state.gfxCtx, 64 * 64);
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 9138);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -3826,7 +3826,7 @@ void BossGanon_Draw(Actor* thisx, PlayState* play) {
     BossGanon_GenShadowTexture(shadowTex, this, play);
     BossGanon_DrawShadowTexture(shadowTex, this, play);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 9393);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 BossGanon_CheckFallingPlatforms(BossGanon* this, PlayState* play, Vec3f* checkPos) {
@@ -4128,7 +4128,7 @@ void BossGanon_LightBall_Draw(Actor* thisx, PlayState* play) {
     f32 alpha;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 9849);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -4168,7 +4168,7 @@ void BossGanon_LightBall_Draw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, gGanondorfSquareDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 9911);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_808E1EB4(Actor* thisx, PlayState* play2) {
@@ -4275,7 +4275,7 @@ void func_808E229C(Actor* thisx, PlayState* play2) {
     s16 i;
     s32 temp;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 10081);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 255, 255);
     gDPSetEnvColor(POLY_XLU_DISP++, 255, 255, 0, 0);
@@ -4293,7 +4293,7 @@ void func_808E229C(Actor* thisx, PlayState* play2) {
         gSPDisplayList(POLY_XLU_DISP++, gGanondorfSquareDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 10113);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_808E2544(Actor* thisx, PlayState* play) {
@@ -4557,7 +4557,7 @@ void func_808E324C(Actor* thisx, PlayState* play) {
 
     mtx = Graph_Alloc(play->state.gfxCtx, 12 * sizeof(Mtx));
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 10489);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0x80, 255, 255, 255, (s8)this->fwork[GDF_FWORK_1]);
@@ -4587,7 +4587,7 @@ void func_808E324C(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_XLU_DISP++, gGanondorfSquareDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_ganon.c", 10541);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BossGanon_UpdateEffects(PlayState* play) {
@@ -4814,7 +4814,7 @@ void BossGanon_DrawEffects(PlayState* play) {
     GanondorfEffect* eff = play->specialEffects;
     GanondorfEffect* effFirst = eff;
 
-    OPEN_DISPS(gfxCtx, "../z_boss_ganon.c", 10865);
+    OPEN_DISPS(gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     for (i = 0; i < 200; i++, eff++) {
@@ -5007,7 +5007,7 @@ void BossGanon_DrawEffects(PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_boss_ganon.c", 11255);
+    CLOSE_DISPS(gfxCtx);
 }
 
 #include "assets/overlays/ovl_Boss_Ganon/ovl_Boss_Ganon.c"

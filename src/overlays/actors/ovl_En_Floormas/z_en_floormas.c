@@ -1103,7 +1103,7 @@ static Color_RGBA8 sMergeColor = { 0, 255, 0, 0 };
 void EnFloormas_Draw(Actor* thisx, PlayState* play) {
     EnFloormas* this = (EnFloormas*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_floormas.c", 2318);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     if (this->collider.base.colType == COLTYPE_HARD) {
@@ -1117,13 +1117,13 @@ void EnFloormas_Draw(Actor* thisx, PlayState* play) {
         func_80026608(play);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_floormas.c", 2340);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnFloormas_DrawHighlighted(Actor* thisx, PlayState* play) {
     EnFloormas* this = (EnFloormas*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_floormas.c", 2352);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     if (this->collider.base.colType == COLTYPE_HARD) {
@@ -1136,5 +1136,5 @@ void EnFloormas_DrawHighlighted(Actor* thisx, PlayState* play) {
         func_80026A6C(play);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_floormas.c", 2374);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

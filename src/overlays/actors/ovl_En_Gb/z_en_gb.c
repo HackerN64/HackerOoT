@@ -422,7 +422,7 @@ void EnGb_Draw(Actor* thisx, PlayState* play) {
     EnGb* this = (EnGb*)thisx;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_gb.c", 763);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -435,7 +435,7 @@ void EnGb_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount, NULL,
                           NULL, &this->dyna.actor);
     EnGb_DrawCagedSouls(this, play);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_gb.c", 796);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnGb_UpdateCagedSouls(EnGb* this, PlayState* play) {
@@ -516,7 +516,7 @@ void EnGb_DrawCagedSouls(EnGb* this, PlayState* play) {
     s32 pad;
     s32 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_gb.c", 914);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -549,5 +549,5 @@ void EnGb_DrawCagedSouls(EnGb* this, PlayState* play) {
         Matrix_Pop();
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_gb.c", 962);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

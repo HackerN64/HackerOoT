@@ -18,7 +18,7 @@ void KaleidoScope_DrawAmmoCount(PauseContext* pauseCtx, GraphicsContext* gfxCtx,
     s16 ammo;
     s16 i;
 
-    OPEN_DISPS(gfxCtx, "../z_kaleido_item.c", 69);
+    OPEN_DISPS(gfxCtx);
 
     ammo = AMMO(item);
 
@@ -66,7 +66,7 @@ void KaleidoScope_DrawAmmoCount(PauseContext* pauseCtx, GraphicsContext* gfxCtx,
 
     gSP1Quadrangle(POLY_OPA_DISP++, 0, 2, 3, 1, 0);
 
-    CLOSE_DISPS(gfxCtx, "../z_kaleido_item.c", 116);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void KaleidoScope_SetCursorVtx(PauseContext* pauseCtx, u16 index, Vtx* vtx) {
@@ -95,7 +95,7 @@ void KaleidoScope_DrawItemSelect(PlayState* play) {
     s16 oldCursorPoint;
     s16 moveCursorResult;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_item.c", 234);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_42Opa(play->state.gfxCtx);
 
@@ -497,7 +497,7 @@ void KaleidoScope_DrawItemSelect(PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_item.c", 516);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 static s16 sCButtonPosX[] = { 660, 900, 1140 };
