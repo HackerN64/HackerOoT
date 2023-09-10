@@ -226,9 +226,9 @@ void Regs_UpdateEditor(Input* input) {
                     gRegEditor->dPadInputPrev = dPadInputCur;
                 }
 
-                incrementBy1000 = CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_1000)
-                incrementBy100 = CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_100)
-                incrementBy10 = CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_10)
+                incrementBy1000 = CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_1000);
+                incrementBy100 = CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_100);
+                incrementBy10 = CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_10);
 
                 increment =
                     CHECK_BTN_ANY(dPadInputCur, BTN_DRIGHT)  ? (incrementBy1000     ? 1000
