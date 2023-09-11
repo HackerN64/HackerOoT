@@ -214,3 +214,11 @@ extern struct GraphicsContext* __gfxCtx;
     } while (0)
 
 #endif
+
+#ifdef DISABLE_LOOKUP_TABLE
+
+#define ONE 1.0f
+#define SECOND_ORDER_COEFFICIENT 0.0000000010911122665310369f
+#define quasi_cos_2(x) (ONE - SECOND_ORDER_COEFFICIENT * x * x)
+
+#endif

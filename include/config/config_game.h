@@ -9,6 +9,9 @@
 // Disables AA (Improves console performance but causes visible seams between unconnected geometry).
 //#define DISABLE_AA
 
+// Use a folded polynomial instead of a lookup table
+#define DISABLE_LOOKUP_TABLE
+
 // Fix annoying glitches (crashes and softlocks)
 #define FIX_ANNOYING_GLITCH
 

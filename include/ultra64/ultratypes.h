@@ -1,8 +1,16 @@
+#include "config.h"
+
 #ifndef ULTRA64_ULTRATYPES_H
 #define ULTRA64_ULTRATYPES_H
 
 #ifdef _LANGUAGE_C
 
+#ifdef DISABLE_LOOKUP_TABLE
+typedef _Complex float f32x2;
+#define F32X2_NEW(x, y) __builtin_complex((float) (x), (float) (y))
+#define F32X2_AT(pair, idx)                                                                            \
+    __builtin_choose_expr(idx / (_idx == 0 || idx == 1), __real__(pair), __imag__(pair))
+#endif
 typedef signed char            s8;
 typedef unsigned char          u8;
 typedef signed short int       s16;

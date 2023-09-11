@@ -1,5 +1,7 @@
 #include "global.h"
 
+#include "config.h"
+
 /**
  * memset: sets `len` bytes to `val` starting at address `dest`.
  *
@@ -23,12 +25,44 @@ void Lib_MemSet(u8* dest, size_t len, u8 val) {
     // clang-format on
 }
 
+#ifdef DISABLE_LOOKUP_TABLE
+/**
+ * @param angle binang
+ * @return sinecos(sine, cosine)
+ */
+
+f32x2 sincos(s16 angle) {
+    s32 shifter = (angle ^ (angle << 1)) & 0xC000;
+    f32 x = (f32) (((angle + shifter) << 17) >> 16);
+    float cosx = quasi_cos_2(x);
+    float sinx = sqrtf(ONE - cosx * cosx);
+
+    if (shifter & 0x4000) {
+        float temp = cosx;
+        cosx = sinx;
+        sinx = temp;
+    }
+    if (angle < 0) {
+        sinx = -sinx;
+    }
+    if (shifter & 0x8000) {
+        cosx = -cosx;
+    }
+        return F32X2_NEW(sinx, cosx);
+
+}
+#endif
+
 /**
  * @param angle binang
  * @return cos(angle)
  */
 f32 Math_CosS(s16 angle) {
+#ifdef DISABLE_LOOKUP_TABLE
+    return  __imag__(sincos(angle));
+#else
     return coss(angle) * SHT_MINV;
+#endif
 }
 
 /**
@@ -36,7 +70,11 @@ f32 Math_CosS(s16 angle) {
  * @return sin(angle)
  */
 f32 Math_SinS(s16 angle) {
+#ifdef DISABLE_LOOKUP_TABLE
+    return  __real__(sincos(angle));
+#else
     return sins(angle) * SHT_MINV;
+#endif
 }
 
 /**
