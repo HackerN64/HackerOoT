@@ -215,7 +215,7 @@ extern struct GraphicsContext* __gfxCtx;
 
 #endif
 
-#ifdef DISABLE_LOOKUP_TABLE
+#ifdef DISABLE_SIN_COS_LOOKUP_TABLE
 
 #define ONE 1.0f
 #define SECOND_ORDER_COEFFICIENT 0.0000000010911122665310369f

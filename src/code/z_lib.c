@@ -25,17 +25,16 @@ void Lib_MemSet(u8* dest, size_t len, u8 val) {
     // clang-format on
 }
 
-#ifdef DISABLE_LOOKUP_TABLE
+#ifdef DISABLE_SIN_COS_LOOKUP_TABLE
 /**
  * @param angle binang
  * @return sinecos(sine, cosine)
  */
-
 f32x2 sincos(s16 angle) {
     s32 shifter = (angle ^ (angle << 1)) & 0xC000;
     f32 x = (f32) (((angle + shifter) << 17) >> 16);
     float cosx = quasi_cos_2(x);
-    float sinx = sqrtf(ONE - cosx * cosx);
+    float sinx = sqrtf(1.0f - cosx * cosx);
 
     if (shifter & 0x4000) {
         float temp = cosx;
@@ -49,7 +48,6 @@ f32x2 sincos(s16 angle) {
         cosx = -cosx;
     }
         return F32X2_NEW(sinx, cosx);
-
 }
 #endif
 
@@ -58,7 +56,7 @@ f32x2 sincos(s16 angle) {
  * @return cos(angle)
  */
 f32 Math_CosS(s16 angle) {
-#ifdef DISABLE_LOOKUP_TABLE
+#ifdef DISABLE_SIN_COS_LOOKUP_TABLE
     return  __imag__(sincos(angle));
 #else
     return coss(angle) * SHT_MINV;
@@ -70,7 +68,7 @@ f32 Math_CosS(s16 angle) {
  * @return sin(angle)
  */
 f32 Math_SinS(s16 angle) {
-#ifdef DISABLE_LOOKUP_TABLE
+#ifdef DISABLE_SIN_COS_LOOKUP_TABLE
     return  __real__(sincos(angle));
 #else
     return sins(angle) * SHT_MINV;

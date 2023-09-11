@@ -1966,7 +1966,7 @@ s32 osPfsDeleteFile(OSPfs* pfs, u16 companyCode, u32 gameCode, u8* gameName, u8*
 s32 __osPfsReleasePages(OSPfs* pfs, __OSInode* inode, u8 initialPage, u8 bank, __OSInodeUnit* finalPage);
 void guOrthoF(f32[4][4], f32, f32, f32, f32, f32, f32, f32);
 void guOrtho(Mtx*, f32, f32, f32, f32, f32, f32, f32);
-#ifdef DISABLE_LOOKUP_TABLE
+#ifdef DISABLE_SIN_COS_LOOKUP_TABLE
 f32x2 sincos(s16 angle);
 #endif
 f32 cosf(f32 angle);

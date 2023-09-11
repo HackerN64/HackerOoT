@@ -5,7 +5,7 @@
 
 #ifdef _LANGUAGE_C
 
-#ifdef DISABLE_LOOKUP_TABLE
+#ifdef DISABLE_SIN_COS_LOOKUP_TABLE
 typedef _Complex float f32x2;
 #define F32X2_NEW(x, y) __builtin_complex((float) (x), (float) (y))
 #define F32X2_AT(pair, idx)                                                                            \
