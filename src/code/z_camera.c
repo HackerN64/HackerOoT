@@ -7119,7 +7119,7 @@ void Camera_Init(Camera* camera, View* view, CollisionContext* colCtx, PlayState
     sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_IGNORE, CAM_HUD_VISIBILITY_IGNORE, 0);
 
 #ifdef ENABLE_CAMERA_DEBUGGER
-    sDbgModeIdx = -1;
+    sDbgModeIdx = 0;
 #endif
 
     D_8011D3F0 = 3;
@@ -7261,7 +7261,7 @@ void Camera_PrintSettings(Camera* camera) {
     char sp48[8];
     s32 i;
 
-    if ((OREG(0) & 1) && (camera->play->activeCamId == camera->camId) && !gDebugCamEnabled) {
+    if ((camera->play->activeCamId == camera->camId) && !gDebugCamEnabled) {
         for (i = 0; i < NUM_CAMS; i++) {
             if (camera->play->cameraPtrs[i] == NULL) {
                 sp58[i] = '-';
@@ -7469,31 +7469,37 @@ s32 Camera_UpdateHotRoom(Camera* camera) {
 // doesn't seem to work properly
 s32 Camera_DbgChangeMode(Camera* camera) {
     s32 changeDir = 0;
+    Input* input = &D_8015BD7C->state.input[CAMDBG_CONTROLLER_PORT];
 
     if (!gDebugCamEnabled && camera->play->activeCamId == CAM_ID_MAIN) {
-        if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CUP)) {
+        if (CHECK_BTN_COMBO(CAMDBG_BTN_COMBO, input, CAMDBG_BTN_HOLD_FOR_COMBO, CAMDBG_TESTER_PLAY_DUNGEON_TARGET_SOUND)) {
             osSyncPrintf("attention sound URGENCY\n");
             Sfx_PlaySfxCentered(NA_SE_SY_ATTENTION_URGENCY);
         }
-        if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CDOWN)) {
+        if (CHECK_BTN_COMBO(CAMDBG_BTN_COMBO, input, CAMDBG_BTN_HOLD_FOR_COMBO, CAMDBG_TESTER_PLAY_OVERWORLD_TARGET_SOUND)) {
             osSyncPrintf("attention sound NORMAL\n");
             Sfx_PlaySfxCentered(NA_SE_SY_ATTENTION_ON);
         }
 
-        if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CRIGHT)) {
-            changeDir = 1;
+        if (CHECK_BTN_COMBO(CAMDBG_BTN_COMBO, input, CAMDBG_BTN_HOLD_FOR_COMBO, CAMDBG_TESTER_INCREASE_DISTANCE)) {
+            sDbgModeIdx += 1;
         }
-        if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CLEFT)) {
-            changeDir = -1;
+        if (CHECK_BTN_COMBO(CAMDBG_BTN_COMBO, input, CAMDBG_BTN_HOLD_FOR_COMBO, CAMDBG_TESTER_DECREASE_SETTING)) {
+            sDbgModeIdx -= 1;
         }
-        if (changeDir != 0) {
-            sDbgModeIdx = (sDbgModeIdx + changeDir) % 6;
-            if (Camera_ChangeSetting(camera, D_8011DAFC[sDbgModeIdx]) > 0) {
+
+        if (sDbgModeIdx > ARRAY_COUNT(D_8011DAFC) - 1) {
+            sDbgModeIdx = ARRAY_COUNT(D_8011DAFC) - 1;
+        }
+
+        if (Camera_ChangeSetting(camera, D_8011DAFC[sDbgModeIdx]) > 0) {
+            if (R_DEBUG_CAM_UPDATE) {
                 osSyncPrintf("camera: force change SET to %s!\n", sCameraSettingNames[D_8011DAFC[sDbgModeIdx]]);
             }
+            return true;
         }
     }
-    return true;
+    return false;
 }
 #endif
 
@@ -7598,6 +7604,11 @@ Vec3s Camera_Update(Camera* camera) {
     PosRot curPlayerPosRot;
     ShakeInfo camShake;
     Player* player;
+    u8 changeBgCamCond;
+
+#ifdef ENABLE_CAMERA_DEBUGGER
+    s32 camDbgChangeSettings;
+#endif
 
     player = camera->play->cameraPtrs[CAM_ID_MAIN]->player;
 
@@ -7617,6 +7628,11 @@ Vec3s Camera_Update(Camera* camera) {
     }
 
     sUpdateCameraDirection = false;
+
+#ifdef ENABLE_CAMERA_DEBUGGER
+    Camera_PrintSettings(camera);
+    camDbgChangeSettings = Camera_DbgChangeMode(camera);
+#endif
 
     if (camera->player != NULL) {
         Actor_GetWorldPosShapeRot(&curPlayerPosRot, &camera->player->actor);
@@ -7673,19 +7689,18 @@ Vec3s Camera_Update(Camera* camera) {
                 }
             }
 
-            if (camera->nextBgCamIndex != -1 && (fabsf(curPlayerPosRot.pos.y - playerGroundY) < 2.0f) &&
-                (!(camera->stateFlags & CAM_STATE_9) || (player->currentBoots == PLAYER_BOOTS_IRON))) {
+    changeBgCamCond = ((camera->nextBgCamIndex != -1) && (fabsf(curPlayerPosRot.pos.y - playerGroundY) < 2.0f) &&
+                        (!(camera->stateFlags & CAM_STATE_9) || (player->currentBoots == PLAYER_BOOTS_IRON)));
+#ifdef ENABLE_CAMERA_DEBUGGER
+            changeBgCamCond = !camDbgChangeSettings && changeBgCamCond;
+#endif
+            if (changeBgCamCond) {
                 camera->bgId = camera->nextBgId;
                 Camera_ChangeBgCamIndex(camera, camera->nextBgCamIndex);
                 camera->nextBgCamIndex = -1;
             }
         }
     }
-
-#ifdef ENABLE_CAMERA_DEBUGGER
-    Camera_PrintSettings(camera);
-    Camera_DbgChangeMode(camera);
-#endif
 
     if (camera->status == CAM_STAT_WAIT) {
 #ifdef ENABLE_CAMERA_DEBUGGER
@@ -7736,23 +7751,23 @@ Vec3s Camera_Update(Camera* camera) {
 #ifdef ENABLE_CAMERA_DEBUGGER
     if (R_DEBUG_CAM_UPDATE) {
         osSyncPrintf("camera: shrink_and_bitem %x(%d)\n", sCameraInterfaceField, camera->play->transitionMode);
-    }
 
-    if (R_DEBUG_CAM_UPDATE) {
         osSyncPrintf("camera: engine (%s(%d) %s(%d) %s(%d)) ok!\n", &sCameraSettingNames[camera->setting],
-                     camera->setting, &sCameraModeNames[camera->mode], camera->mode,
-                     &sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx],
-                     sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx);
+                        camera->setting, &sCameraModeNames[camera->mode], camera->mode,
+                        &sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx],
+                        sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx);
     }
 
     // enable/disable debug cam
-    if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_START)) {
+    if (CHECK_BTN_COMBO(CAMDBG_BTN_COMBO, &D_8015BD7C->state.input[CAMDBG_CONTROLLER_PORT], CAMDBG_BTN_HOLD_FOR_COMBO, CAMDBG_TOGGLE)) {
         gDebugCamEnabled ^= 1;
         if (gDebugCamEnabled) {
             DebugCamera_Enable(&D_8015BD80, camera);
         } else if (camera->play->csCtx.state != CS_STATE_IDLE) {
             Cutscene_StopManual(camera->play, &camera->play->csCtx);
         }
+
+        osSyncPrintf("gDebugCamEnabled: %X\n", gDebugCamEnabled);
     }
 
     // Debug cam update
@@ -7840,13 +7855,13 @@ Vec3s Camera_Update(Camera* camera) {
 #ifdef ENABLE_CAMERA_DEBUGGER
     if (R_DEBUG_CAM_UPDATE) {
         osSyncPrintf("camera: out (%f %f %f) (%f %f %f)\n", camera->at.x, camera->at.y, camera->at.z, camera->eye.x,
-                     camera->eye.y, camera->eye.z);
+                        camera->eye.y, camera->eye.z);
         osSyncPrintf("camera: dir (%f %d(%f) %d(%f)) (%f)\n", eyeAtAngle.r, eyeAtAngle.pitch,
-                     CAM_BINANG_TO_DEG(eyeAtAngle.pitch), eyeAtAngle.yaw, CAM_BINANG_TO_DEG(eyeAtAngle.yaw),
-                     camera->fov);
+                        CAM_BINANG_TO_DEG(eyeAtAngle.pitch), eyeAtAngle.yaw, CAM_BINANG_TO_DEG(eyeAtAngle.yaw),
+                        camera->fov);
         if (camera->player != NULL) {
             osSyncPrintf("camera: foot(%f %f %f) dist (%f)\n", curPlayerPosRot.pos.x, curPlayerPosRot.pos.y,
-                         curPlayerPosRot.pos.z, camera->dist);
+                            curPlayerPosRot.pos.z, camera->dist);
         }
     }
 #endif

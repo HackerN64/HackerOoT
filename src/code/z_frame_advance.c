@@ -19,14 +19,15 @@ void FrameAdvance_Init(FrameAdvanceContext* frameAdvCtx) {
  */
 s32 FrameAdvance_Update(FrameAdvanceContext* frameAdvCtx, Input* input) {
     // if the macro is set to true check R input, else simply return true
-    u8 checkR = FA_USE_BTN_COMBO ? CHECK_BTN_ALL(input->cur.button, FA_BTN_HOLD_FOR_COMBO) : true;
 
-    if (checkR && CHECK_BTN_ALL(input->press.button, FA_PAUSE_CONTROL)) {
+    if (CHECK_BTN_COMBO(FA_USE_BTN_COMBO, input, FA_BTN_HOLD_FOR_COMBO, FA_PAUSE_CONTROL)) {
         frameAdvCtx->enabled = !frameAdvCtx->enabled;
     }
 
+
     if (!frameAdvCtx->enabled ||
-        ((checkR && CHECK_BTN_ALL(input->press.button, FA_CONTROL)) || (checkR && (++frameAdvCtx->timer >= 9)))) {
+        (CHECK_BTN_COMBO(FA_USE_BTN_COMBO, input, FA_BTN_HOLD_FOR_COMBO, FA_CONTROL) ||
+            (USE_BTN_COMBO(FA_USE_BTN_COMBO, input, FA_BTN_HOLD_FOR_COMBO) && (++frameAdvCtx->timer >= 9)))) {
         frameAdvCtx->timer = 0;
         return true;
     }

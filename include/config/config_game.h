@@ -84,4 +84,9 @@
 */
 // #define ENABLE_AUTO_GI_ALLOC
 
+/*
+ * Motion Blur
+*/
+// #define ENABLE_MOTION_BLUR
+
 #endif

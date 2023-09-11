@@ -107,6 +107,10 @@
 #define CHECK_BTN_ALL(state, combo) (~((state) | ~(combo)) == 0)
 #define CHECK_BTN_ANY(state, combo) (((state) & (combo)) != 0)
 
+#define USE_BTN_COMBO(isUsingCombo, input, btnToHold) ((isUsingCombo) ? CHECK_BTN_ALL((input)->cur.button, (btnToHold)) : true)
+#define CHECK_BTN_COMBO(isUsingCombo, input, btnToHold, btnsToPress) \
+    USE_BTN_COMBO(isUsingCombo, input, btnToHold) && CHECK_BTN_ALL((input)->press.button, btnsToPress)
+
 #define CHECK_FLAG_ALL(flags, mask) (((flags) & (mask)) == (mask))
 
 

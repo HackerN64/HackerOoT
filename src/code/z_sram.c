@@ -188,7 +188,7 @@ static SavePlayerData sDebugSavePlayerData = {
 };
 
 static ItemEquips sDebugSaveEquips = {
-    { ITEM_SWORD_MASTER, ITEM_BOW, ITEM_BOMB, ITEM_OCARINA_FAIRY }, // buttonItems
+    { ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE }, // buttonItems
     { SLOT_BOW, SLOT_BOMB, SLOT_OCARINA },                          // cButtonSlots
     // equipment
     (EQUIP_VALUE_SWORD_MASTER << (EQUIP_TYPE_SWORD * 4)) | (EQUIP_VALUE_SHIELD_HYLIAN << (EQUIP_TYPE_SHIELD * 4)) |
@@ -297,10 +297,10 @@ void Sram_InitDebugSave(void) {
     SET_EVENTCHKINF(EVENTCHKINF_C4);
 
     if (LINK_AGE_IN_YEARS == YEARS_CHILD) {
-        gSaveContext.save.info.equips.buttonItems[0] = ITEM_SWORD_KOKIRI;
+        gSaveContext.save.info.equips.buttonItems[0] = ITEM_NONE;
         Inventory_ChangeEquipment(EQUIP_TYPE_SWORD, EQUIP_VALUE_SWORD_KOKIRI);
         if (gSaveContext.fileNum == 0xFF) {
-            gSaveContext.save.info.equips.buttonItems[1] = ITEM_SLINGSHOT;
+            gSaveContext.save.info.equips.buttonItems[1] = ITEM_NONE;
             gSaveContext.save.info.equips.cButtonSlots[0] = SLOT_SLINGSHOT;
             Inventory_ChangeEquipment(EQUIP_TYPE_SHIELD, EQUIP_VALUE_SHIELD_DEKU);
         }
