@@ -1,12 +1,17 @@
 #include "ultra64.h"
 
+#include "config.h"
+#ifndef DISABLE_SIN_COS_LOOKUP_TABLE
 #include "sintable.inc.c"
-
+#endif
 /**
  * @param angle binang
  * @return sin(angle)*0x7FFF
  */
 s16 sins(u16 angle) {
+#ifdef DISABLE_SIN_COS_LOOKUP_TABLE
+return Math_SinS(angle) * 0x7FFF;
+#else
     s16 value;
 
     angle >>= 4;
@@ -22,4 +27,5 @@ s16 sins(u16 angle) {
     } else {
         return value;
     }
+#endif
 }
