@@ -3,10 +3,6 @@
 
 #include "config.h"
 
-#ifdef ENABLE_WIDESCREEN
-u8 gIsUsingWidescreen = false;
-#endif
-
 s32 gScreenWidth = SCREEN_WIDTH;
 s32 gScreenHeight = SCREEN_HEIGHT;
 u32 gSystemHeapSize = 0;
