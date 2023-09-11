@@ -121,9 +121,15 @@ void Message_ResetOcarinaNoteState(void) {
     sOcarinaButtonAlphaValues[0] = sOcarinaButtonAlphaValues[1] = sOcarinaButtonAlphaValues[2] =
         sOcarinaButtonAlphaValues[3] = sOcarinaButtonAlphaValues[4] = sOcarinaButtonAlphaValues[5] =
             sOcarinaButtonAlphaValues[6] = sOcarinaButtonAlphaValues[7] = sOcarinaButtonAlphaValues[8] = 0;
+#ifdef N64_BTN_COLORS
+    sOcarinaButtonAPrimR = 80;
+    sOcarinaButtonAPrimG = 150;
+    sOcarinaButtonAPrimB = 255;
+#else
     sOcarinaButtonAPrimR = 80;
     sOcarinaButtonAPrimG = 255;
     sOcarinaButtonAPrimB = 150;
+#endif
     sOcarinaButtonAEnvR = 10;
     sOcarinaButtonAEnvG = 10;
     sOcarinaButtonAEnvB = 10;
@@ -481,6 +487,16 @@ void Message_SetTextColor(MessageContext* msgCtx, u16 colorParameter) {
 }
 
 void Message_DrawTextboxIcon(PlayState* play, Gfx** p, s16 x, s16 y) {
+#ifdef N64_BTN_COLORS
+    static s16 sIconPrimColors[][3] = {
+        { 0, 80, 200 },
+        { 50, 130, 255 },
+    };
+    static s16 sIconEnvColors[][3] = {
+        { 0, 0, 0 },
+        { 0, 130, 255 },
+    };
+#else
     static s16 sIconPrimColors[][3] = {
         { 0, 200, 80 },
         { 50, 255, 130 },
@@ -489,6 +505,7 @@ void Message_DrawTextboxIcon(PlayState* play, Gfx** p, s16 x, s16 y) {
         { 0, 0, 0 },
         { 0, 255, 130 },
     };
+#endif
     static s16 sIconPrimR = 0;
     static s16 sIconPrimG = 200;
     static s16 sIconPrimB = 80;
@@ -1994,6 +2011,16 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
         gOcarinaBtnIconCLeftTex,  // OCARINA_BTN_C_LEFT
         gOcarinaBtnIconCUpTex,    // OCARINA_BTN_C_UP
     };
+#ifdef N64_BTN_COLORS
+    static s16 sOcarinaButtonAPrimColors[][3] = {
+        { 80, 150, 255 },
+        { 100, 200, 255 },
+    };
+    static s16 sOcarinaButtonAEnvColors[][3] = {
+        { 10, 10, 10 },
+        { 50, 50, 255 },
+    };
+#else
     static s16 sOcarinaButtonAPrimColors[][3] = {
         { 80, 255, 150 },
         { 100, 255, 200 },
@@ -2002,6 +2029,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
         { 10, 10, 10 },
         { 50, 255, 50 },
     };
+#endif
     static s16 sOcarinaButtonCPrimColors[][3] = {
         { 255, 255, 50 },
         { 255, 255, 180 },
