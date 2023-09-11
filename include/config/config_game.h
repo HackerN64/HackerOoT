@@ -81,6 +81,9 @@
 */
 // #define ENABLE_AUTO_GI_ALLOC
 
+// Use the button colors of the N64 version instead of GameCube
+#define N64_BTN_COLORS
+
 /*
  * Motion Blur
 */
