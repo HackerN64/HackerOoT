@@ -886,6 +886,11 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
     EnvLightSettings* lightSettingsList = play->envCtx.lightSettingsList;
     s32 adjustment;
 
+#ifdef SHOW_TIME_INFOS
+        Gfx* displayList;
+        Gfx* prevDisplayList;
+#endif
+
     if ((((void)0, gSaveContext.gameMode) != GAMEMODE_NORMAL) &&
         (((void)0, gSaveContext.gameMode) != GAMEMODE_END_CREDITS)) {
         Rumble_ClearRequests();
@@ -963,22 +968,17 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
         }
 
 #ifdef SHOW_TIME_INFOS
-        if (R_ENABLE_ARENA_DBG != 0 || CREG(2) != 0) {
-            Gfx* displayList;
-            Gfx* prevDisplayList;
+        OPEN_DISPS(play->state.gfxCtx);
 
-            OPEN_DISPS(play->state.gfxCtx);
-
-            prevDisplayList = POLY_OPA_DISP;
-            displayList = Graph_GfxPlusOne(POLY_OPA_DISP);
-            gSPDisplayList(OVERLAY_DISP++, displayList);
-            Environment_PrintDebugInfo(play, &displayList);
-            gSPEndDisplayList(displayList++);
-            Graph_BranchDlist(prevDisplayList, displayList);
-            POLY_OPA_DISP = displayList;
-            if (1) {}
-            CLOSE_DISPS(play->state.gfxCtx);
-        }
+        prevDisplayList = POLY_OPA_DISP;
+        displayList = Graph_GfxPlusOne(POLY_OPA_DISP);
+        gSPDisplayList(OVERLAY_DISP++, displayList);
+        Environment_PrintDebugInfo(play, &displayList);
+        gSPEndDisplayList(displayList++);
+        Graph_BranchDlist(prevDisplayList, displayList);
+        POLY_OPA_DISP = displayList;
+        if (1) {}
+        CLOSE_DISPS(play->state.gfxCtx);
 #endif
 
         if ((envCtx->lightSettingOverride != LIGHT_SETTING_OVERRIDE_NONE) &&

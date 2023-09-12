@@ -181,17 +181,14 @@ void Cutscene_UpdateScripted(PlayState* play, CutsceneContext* csCtx) {
 #ifdef ENABLE_CS_CONTROL
     Input* input = &play->state.input[0];
 
-    // if using button combo check for the input, else simply return true
-    u8 buttonCombo = CS_CTRL_USE_BTN_COMBO ? CHECK_BTN_ALL(input->cur.button, CS_CTRL_BTN_HOLD_FOR_COMBO) : true;
-
     // if the scene layer is a cutscene one, we're not playing a cutscene
     // and we pressed D-Pad Up: restart the cutscene
-    u8 canStartCutscene = buttonCombo && (CHECK_BTN_ALL(input->press.button, CS_CTRL_RESTART_CONTROL) &&
-                                          (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER);
+    u8 canStartCutscene = (CHECK_BTN_COMBO(CS_CTRL_USE_BTN_COMBO, input, CS_CTRL_BTN_HOLD_FOR_COMBO, CS_CTRL_RESTART_CONTROL) &&
+                            (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER);
 
     // restart the cutscene without using the camera points,
     // instead simply follow the player
-    if (buttonCombo && CHECK_BTN_ALL(input->press.button, CS_CTRL_RESTART_NO_CAMERA_CONTROL) &&
+    if (CHECK_BTN_COMBO(CS_CTRL_USE_BTN_COMBO, input, CS_CTRL_BTN_HOLD_FOR_COMBO, CS_CTRL_RESTART_NO_CAMERA_CONTROL) &&
         (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER) {
         gUseCutsceneCam = false;
         gSaveContext.save.cutsceneIndex = 0xFFFD;
@@ -573,12 +570,6 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
     u8 runCmdDestination = false;
 
 #ifdef ENABLE_CS_CONTROL
-    Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
-
-    // if using button combo check for the input, else simply return true
-    u8 buttonCombo = CS_CTRL_USE_BTN_COMBO ? CHECK_BTN_ALL(input->cur.button, CS_CTRL_BTN_HOLD_FOR_COMBO) : true;
-
-    // same thing for the "skip title screen cs" feature
     u8 skipTitleScreenCS = (gSaveContext.gameMode == GAMEMODE_TITLE_SCREEN) ? CS_CTRL_SKIP_TITLE_SCREEN : true;
 #endif
 
@@ -601,11 +592,9 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
     runCmdDestination = ((csCtx->curFrame == cmd->startFrame) || titleDemoSkipped);
 
 #ifdef ENABLE_CS_CONTROL
-    runCmdDestination =
-        skipTitleScreenCS &&
-        (runCmdDestination ||
-         ((csCtx->curFrame > 20) && (buttonCombo && CHECK_BTN_ALL(input->press.button, CS_CTRL_RUN_DEST_CONTROL)) &&
-          (gSaveContext.fileNum != 0xFEDC)));
+    runCmdDestination = skipTitleScreenCS && (runCmdDestination || ((csCtx->curFrame > 20) &&
+        CHECK_BTN_COMBO(CS_CTRL_USE_BTN_COMBO, &play->state.input[CS_CTRL_CONTROLLER_PORT], CS_CTRL_BTN_HOLD_FOR_COMBO, CS_CTRL_RUN_DEST_CONTROL) &&
+        (gSaveContext.fileNum != 0xFEDC)));
 #endif
 
     if (runCmdDestination) {
@@ -1809,6 +1798,33 @@ void CutsceneCmd_Text(PlayState* play, CutsceneContext* csCtx, CsCmdText* cmd) {
     }
 }
 
+#ifdef ENABLE_MOTION_BLUR
+void CutsceneCmd_MotionBlur(PlayState* play, CutsceneContext* csCtx, CsCmdMotionBlur* cmd) {
+    if ((csCtx->curFrame >= cmd->startFrame) && (cmd->endFrame >= csCtx->curFrame)) {
+        f32 lerp = Environment_LerpWeight(cmd->endFrame, cmd->startFrame, csCtx->curFrame);
+
+#ifdef ENABLE_MOTION_BLUR_DEBUG
+        osSyncPrintf("originalBlurAlpha: 0x%X, lerp: %f\n", play->csCtx.originalBlurAlpha, lerp);
+#endif
+
+        if (cmd->type == CS_MOTION_BLUR_ENABLE) {
+            if (csCtx->originalBlurAlpha == 0) {
+                csCtx->originalBlurAlpha = cmd->alpha;
+            }
+
+            Play_EnableMotionBlur(lerp * cmd->alpha);
+        } else if (cmd->type == CS_MOTION_BLUR_DISABLE) {
+            if (lerp >= 0.9f) {
+                Play_DisableMotionBlur();
+                csCtx->originalBlurAlpha = 0;
+            } else {
+                Play_SetMotionBlurAlpha((1.0f - lerp) * csCtx->originalBlurAlpha);
+            }
+        }
+    }
+}
+#endif
+
 void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script) {
     s16 i;
     s32 totalEntries;
@@ -1817,13 +1833,6 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
     void* cmd;
     s32 csFrameCount;
     s16 j;
-
-#ifdef ENABLE_CS_CONTROL
-    Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
-
-    // if using button combo check for the input, else simply return true
-    u8 buttonCombo = CS_CTRL_USE_BTN_COMBO ? CHECK_BTN_ALL(input->cur.button, CS_CTRL_BTN_HOLD_FOR_COMBO) : true;
-#endif
 
     MemCpy(&totalEntries, script, sizeof(totalEntries));
     script += sizeof(totalEntries);
@@ -1838,7 +1847,9 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
 
 #ifdef ENABLE_CS_CONTROL
     // interrupt cutscene
-    if (buttonCombo && CHECK_BTN_ALL(input->press.button, CS_CTRL_STOP_CONTROL)) {
+
+    if (CHECK_BTN_COMBO(CS_CTRL_USE_BTN_COMBO, &play->state.input[CS_CTRL_CONTROLLER_PORT],
+        CS_CTRL_BTN_HOLD_FOR_COMBO, CS_CTRL_STOP_CONTROL)) {
         csCtx->state = CS_STATE_STOP;
         return;
     }
@@ -2236,6 +2247,17 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 script += sizeof(CsCmdTransition);
                 break;
 
+#ifdef ENABLE_MOTION_BLUR
+            case CS_CMD_MOTION_BLUR:
+                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                script += sizeof(cmdEntries);
+
+                for (j = 0; j < cmdEntries; j++) {
+                    CutsceneCmd_MotionBlur(play, csCtx, (CsCmdMotionBlur*)script);
+                    script += sizeof(CsCmdMotionBlur);
+                }
+                break;
+#endif
             default:
                 MemCpy(&cmdEntries, script, 4);
                 script += sizeof(cmdEntries);
@@ -2258,19 +2280,17 @@ void CutsceneHandler_RunScript(PlayState* play, CutsceneContext* csCtx) {
         if (0) {} // Also necessary to match
 
 #ifdef SHOW_CS_INFOS
-        if (BREG(0) != 0) {
-            OPEN_DISPS(play->state.gfxCtx);
+    OPEN_DISPS(play->state.gfxCtx);
 
-            prevDisplayList = POLY_OPA_DISP;
-            displayList = Graph_GfxPlusOne(POLY_OPA_DISP);
-            gSPDisplayList(OVERLAY_DISP++, displayList);
-            Cutscene_DrawDebugInfo(play, &displayList, csCtx);
-            gSPEndDisplayList(displayList++);
-            Graph_BranchDlist(prevDisplayList, displayList);
-            POLY_OPA_DISP = displayList;
+    prevDisplayList = POLY_OPA_DISP;
+    displayList = Graph_GfxPlusOne(POLY_OPA_DISP);
+    gSPDisplayList(OVERLAY_DISP++, displayList);
+    Cutscene_DrawDebugInfo(play, &displayList, csCtx);
+    gSPEndDisplayList(displayList++);
+    Graph_BranchDlist(prevDisplayList, displayList);
+    POLY_OPA_DISP = displayList;
 
-            CLOSE_DISPS(play->state.gfxCtx);
-        }
+    CLOSE_DISPS(play->state.gfxCtx);
 #endif
 
         csCtx->curFrame++;

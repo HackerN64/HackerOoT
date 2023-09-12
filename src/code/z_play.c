@@ -180,6 +180,10 @@ void Play_Destroy(GameState* thisx) {
     this->state.gfxCtx->callback = NULL;
     this->state.gfxCtx->callbackParam = NULL;
 
+#ifdef ENABLE_MOTION_BLUR
+    Play_DestroyMotionBlur();
+#endif
+
     SREG(91) = 0;
     R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_OFF;
 
@@ -341,6 +345,10 @@ void Play_Init(GameState* thisx) {
     KaleidoScopeCall_Init(this);
     Interface_Init(this);
 
+#ifdef ENABLE_MOTION_BLUR
+    Play_InitMotionBlur(this);
+#endif
+
     if (gSaveContext.nextDayTime != NEXT_TIME_NONE) {
         if (gSaveContext.nextDayTime == NEXT_TIME_DAY) {
             gSaveContext.save.totalDays++;
@@ -449,6 +457,10 @@ void Play_Init(GameState* thisx) {
         // Presumably the ROM was larger at a previous point in development when this debug feature was used.
         DmaMgr_DmaRomToRam(0x03FEB000, gDebugCutsceneScript, sizeof(sDebugCutsceneScriptBuf));
     }
+
+#ifdef ENABLE_MSG_DEBUGGER
+    this->enableMsgDbg = false;
+#endif
 }
 
 void Play_Update(PlayState* this) {
@@ -1009,6 +1021,27 @@ void Play_Update(PlayState* this) {
 skip:
     PLAY_LOG(3801);
 
+#ifdef ENABLE_MOTION_BLUR_DEBUG
+    {   // motion blur testing controls
+        if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_DUP)) {
+            R_MOTION_BLUR_ENABLED ^= 1;
+        }
+        if (R_MOTION_BLUR_ENABLED != 0) {
+            if (CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_DRIGHT)) {
+                R_MOTION_BLUR_ALPHA++;
+                if (R_MOTION_BLUR_ALPHA > 255) {
+                    R_MOTION_BLUR_ALPHA = 255;
+                }
+            } else if (CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_DLEFT)) {
+                R_MOTION_BLUR_ALPHA--;
+                if (R_MOTION_BLUR_ALPHA < 0) {
+                    R_MOTION_BLUR_ALPHA = 0;
+                }
+            }
+        }
+    }
+#endif
+
 #ifdef ENABLE_CAMERA_DEBUGGER
     if ((sp80 == 0) || gDebugCamEnabled) {
 #else
@@ -1036,6 +1069,36 @@ skip:
     PLAY_LOG(3816);
     Environment_Update(this, &this->envCtx, &this->lightCtx, &this->pauseCtx, &this->msgCtx, &this->gameOverCtx,
                        this->state.gfxCtx);
+
+#ifdef ENABLE_ACTOR_DEBUGGER
+    if (CHECK_BTN_COMBO(ACTORDBG_BTN_COMBO,
+        &this->state.input[ACTORDBG_CONTROLLER_PORT], ACTORDBG_BTN_HOLD_FOR_COMBO, ACTORDBG_TOGGLE)) {
+        BREG(0) ^= 1;
+    }
+
+    if (CHECK_BTN_COMBO(ACTORDBG_BTN_COMBO,
+        &this->state.input[ACTORDBG_CONTROLLER_PORT], ACTORDBG_BTN_HOLD_FOR_COMBO, ACTORDBG_DECR_PATH_IDX) && BREG(1) > 0) {
+        BREG(1)--;
+    }
+
+    if (CHECK_BTN_COMBO(ACTORDBG_BTN_COMBO,
+        &this->state.input[ACTORDBG_CONTROLLER_PORT], ACTORDBG_BTN_HOLD_FOR_COMBO, ACTORDBG_INCR_PATH_IDX)) {
+        BREG(1)++;
+    }
+
+    if (ACTORDBG_PRINT_INFOS) {
+        BREG(5) = 1;
+    } else {
+        BREG(5) = 0;
+    }
+#endif
+
+#ifdef ENABLE_MSG_DEBUGGER
+    if (CHECK_BTN_COMBO(MSGDBG_BTN_COMBO,
+        &this->state.input[MSGDBG_CONTROLLER_PORT], MSGDBG_BTN_HOLD_FOR_COMBO, MSGDBG_OPEN_TEXTBOX)) {
+        this->enableMsgDbg ^= 1;
+    }
+#endif
 }
 
 void Play_DrawOverlayElements(PlayState* this) {
@@ -1057,6 +1120,109 @@ void Play_DrawOverlayElements(PlayState* this) {
         GameOver_FadeInLights(this);
     }
 }
+
+#ifdef ENABLE_MOTION_BLUR
+void PreRender_MotionBlurOpaque(PreRender* this, Gfx** gfxP);
+void PreRender_MotionBlur(PreRender* this, Gfx** gfxp, s32 alpha);
+
+extern u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT];
+
+static u8 sMotionBlurStatus;
+
+typedef enum {
+    /* 0 */ MOTION_BLUR_OFF,
+    /* 1 */ MOTION_BLUR_SETUP,
+    /* 2 */ MOTION_BLUR_PROCESS
+} MotionBlurStatus;
+
+void Play_DrawMotionBlur(PlayState* this) {
+    GraphicsContext* gfxCtx = this->state.gfxCtx;
+    s32 alpha;
+    Gfx* gfx;
+    Gfx* gfxHead;
+
+    if (R_MOTION_BLUR_PRIORITY_ENABLED) {
+        alpha = R_MOTION_BLUR_PRIORITY_ALPHA;
+
+        if (sMotionBlurStatus == MOTION_BLUR_OFF) {
+            sMotionBlurStatus = MOTION_BLUR_SETUP;
+        }
+    } else if (R_MOTION_BLUR_ENABLED) {
+        alpha = R_MOTION_BLUR_ALPHA;
+
+        if (sMotionBlurStatus == MOTION_BLUR_OFF) {
+            sMotionBlurStatus = MOTION_BLUR_SETUP;
+        }
+    } else {
+        alpha = 0;
+        sMotionBlurStatus = MOTION_BLUR_OFF;
+    }
+
+    if (sMotionBlurStatus != MOTION_BLUR_OFF) {
+        OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
+
+        gfxHead = POLY_OPA_DISP;
+        gfx = Graph_GfxPlusOne(gfxHead);
+        gSPDisplayList(OVERLAY_DISP++, gfx);
+
+        this->pauseBgPreRender.fbuf = gfxCtx->curFrameBuffer;
+        this->pauseBgPreRender.fbufSave = (u16*)gWorkBuf;
+
+        if (sMotionBlurStatus == MOTION_BLUR_PROCESS) {
+            PreRender_MotionBlur(&this->pauseBgPreRender, &gfx, alpha);
+        } else {
+            sMotionBlurStatus = MOTION_BLUR_PROCESS;
+        }
+
+        PreRender_MotionBlurOpaque(&this->pauseBgPreRender, &gfx);
+
+        gSPEndDisplayList(gfx++);
+        Graph_BranchDlist(gfxHead, gfx);
+        POLY_OPA_DISP = gfx;
+
+        CLOSE_DISPS(gfxCtx, __FILE__, __LINE__);
+    }
+}
+
+void Play_InitMotionBlur(PlayState* this) {
+    R_MOTION_BLUR_ENABLED = false;
+    R_MOTION_BLUR_PRIORITY_ENABLED = false;
+    sMotionBlurStatus = MOTION_BLUR_OFF;
+    this->csCtx.originalBlurAlpha = R_MOTION_BLUR_ALPHA = 0;
+}
+
+void Play_DestroyMotionBlur(void) {
+    R_MOTION_BLUR_ENABLED = false;
+    R_MOTION_BLUR_PRIORITY_ENABLED = false;
+    sMotionBlurStatus = MOTION_BLUR_OFF;
+}
+
+void Play_SetMotionBlurAlpha(u32 alpha) {
+    R_MOTION_BLUR_ALPHA = alpha;
+}
+
+void Play_EnableMotionBlur(u32 alpha) {
+    R_MOTION_BLUR_ALPHA = alpha;
+    R_MOTION_BLUR_ENABLED = true;
+}
+
+void Play_DisableMotionBlur(void) {
+    R_MOTION_BLUR_ENABLED = false;
+}
+
+void Play_SetMotionBlurPriorityAlpha(u32 alpha) {
+    R_MOTION_BLUR_PRIORITY_ALPHA = alpha;
+}
+
+void Play_EnableMotionBlurPriority(u32 alpha) {
+    R_MOTION_BLUR_PRIORITY_ALPHA = alpha;
+    R_MOTION_BLUR_PRIORITY_ENABLED = true;
+}
+
+void Play_DisableMotionBlurPriority(void) {
+    R_MOTION_BLUR_PRIORITY_ENABLED = false;
+}
+#endif
 
 void Play_Draw(PlayState* this) {
     GraphicsContext* gfxCtx = this->state.gfxCtx;
@@ -1166,6 +1332,10 @@ void Play_Draw(PlayState* this) {
         } else if (R_PAUSE_BG_PRERENDER_STATE >= PAUSE_BG_PRERENDER_MAX) {
             R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_OFF;
         }
+
+#ifdef ENABLE_MOTION_BLUR
+            Play_DrawMotionBlur(this);
+#endif
 
         if (R_PAUSE_BG_PRERENDER_STATE == PAUSE_BG_PRERENDER_READY) {
             Gfx* gfxP = POLY_OPA_DISP;
@@ -1316,6 +1486,34 @@ void Play_Draw(PlayState* this) {
     }
 
 Play_Draw_skip:
+#ifdef ENABLE_MOTION_BLUR_DEBUG
+    {   // motion blur testing display
+        GfxPrint printer;
+        Gfx* gfxRef;
+        Gfx* gfx;
+
+        gfxRef = POLY_OPA_DISP;
+        gfx = Graph_GfxPlusOne(POLY_OPA_DISP);
+        gSPDisplayList(OVERLAY_DISP++, gfx);
+
+        GfxPrint_Init(&printer);
+        GfxPrint_Open(&printer, gfx);
+
+        GfxPrint_SetColor(&printer, 255, 255, 55, 32);
+
+        GfxPrint_SetPos(&printer, 6, 18);
+        GfxPrint_Printf(&printer, "Motion Blur Enabled: %x", R_MOTION_BLUR_ENABLED);
+        GfxPrint_SetPos(&printer, 6, 20);
+        GfxPrint_Printf(&printer, "Motion Blur Alpha: %x", R_MOTION_BLUR_ALPHA);
+
+        gfx = GfxPrint_Close(&printer);
+        GfxPrint_Destroy(&printer);
+
+        gSPEndDisplayList(gfx++);
+        Graph_BranchDlist(gfxRef, gfx);
+        POLY_OPA_DISP = gfx;
+    }
+#endif
 
     if (this->view.unk_124 != 0) {
         Camera_Update(GET_ACTIVE_CAM(this));
