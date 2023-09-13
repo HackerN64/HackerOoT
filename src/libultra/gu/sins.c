@@ -1,4 +1,5 @@
 #include "ultra64.h"
+#include "functions.h"
 
 #include "config.h"
 #ifndef DISABLE_SIN_COS_LOOKUP_TABLE
@@ -10,7 +11,7 @@
  */
 s16 sins(u16 angle) {
 #ifdef DISABLE_SIN_COS_LOOKUP_TABLE
-return Math_SinS(angle) * 0x7FFF;
+    return Math_SinS(TRUNCF_BINANG((s16)angle))*0x7FFF;
 #else
     s16 value;
 

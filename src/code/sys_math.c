@@ -1,5 +1,7 @@
 #include "global.h"
 
+#include "config.h"
+
 f32 sFactorialTbl[] = { 1.0f,    1.0f,     2.0f,      6.0f,       24.0f,       120.0f,      720.0f,
                         5040.0f, 40320.0f, 362880.0f, 3628800.0f, 39916800.0f, 479001600.0f };
 
@@ -43,7 +45,11 @@ f32 Math_PowF(f32 base, s32 exp) {
  * @return sin(angle)
  */
 f32 Math_SinF(f32 angle) {
+#ifdef DISABLE_SIN_COS_LOOKUP_TABLE
+    return (f32)(Math_SinS(RAD_TO_BINANG(angle)));
+#else
     return sins((s16)(angle * (0x7FFF / M_PI))) * SHT_MINV;
+#endif
 }
 
 /**
@@ -51,5 +57,9 @@ f32 Math_SinF(f32 angle) {
  * @return cos(angle)
  */
 f32 Math_CosF(f32 angle) {
+#ifdef DISABLE_SIN_COS_LOOKUP_TABLE
+    return (f32)(Math_CosS(RAD_TO_BINANG(angle)));
+#else
     return coss((s16)(angle * (0x7FFF / M_PI))) * SHT_MINV;
+#endif
 }

@@ -1,6 +1,9 @@
 #include "global.h"
 #include "ultra64.h"
+#include "functions.h"
 
+#include "config.h"
+#ifndef DISABLE_SIN_COS_LOOKUP_TABLE
 static const du P[] = {
     { 0x3FF00000, 0x00000000 }, { 0xBFC55554, 0xBC83656D }, { 0x3F8110ED, 0x3804C2A0 },
     { 0xBF29F6FF, 0xEEA56814 }, { 0x3EC5DBDF, 0x0E314BFE },
@@ -13,12 +16,15 @@ static const du pihi = { 0x400921FB, 0x50000000 };
 static const du pilo = { 0x3E6110B4, 0x611A6263 };
 
 static const fu zero = { 0x00000000 };
-
+#endif
 /**
  * @param angle radians
  * @return sin(angle)
  */
 f32 sinf(f32 angle) {
+#ifdef DISABLE_SIN_COS_LOOKUP_TABLE
+    return Math_SinF(angle);
+#else
     f64 dx;
     f64 xSq;
     f64 polyApprox;
@@ -65,4 +71,5 @@ f32 sinf(f32 angle) {
         return __libm_qnan_f;
     }
     return zero.f;
+#endif
 }
