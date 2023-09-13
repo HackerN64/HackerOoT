@@ -10,7 +10,7 @@
 //#define DISABLE_AA
 
 // Use a folded polynomial instead of a lookup table. This has a speed boost and makes the calculation more precise.
-// causes minor physics and camera inconsistancies
+// Note: Causes minor physics and camera inconsistancies.
 #define DISABLE_SIN_COS_LOOKUP_TABLE
 
 // Fix annoying glitches (crashes and softlocks)
