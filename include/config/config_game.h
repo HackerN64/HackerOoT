@@ -86,4 +86,14 @@
 */
 // #define ENABLE_MOTION_BLUR
 
+/**
+ * Skips the N64 logo and boots directly into the game if defined (may already be skipped by the options in config_debug.h)
+ */
+// #define SKIP_N64_BOOT_LOGO
+
+/**
+ * Use Majora's Masks' N64 Logo logic
+*/
+// #define MM_N64_BOOT_LOGO
+
 #endif

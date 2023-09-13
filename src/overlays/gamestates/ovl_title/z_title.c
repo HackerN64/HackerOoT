@@ -55,7 +55,11 @@ void ConsoleLogo_Update(ConsoleLogoState* this) {
         this->coverAlpha += this->addAlpha;
         if (this->coverAlpha <= 0) {
             this->coverAlpha = 0;
+#ifdef MM_N64_BOOT_LOGO
+            this->addAlpha = 12;
+#else
             this->addAlpha = 3;
+#endif
         } else if (this->coverAlpha >= 255) {
             this->coverAlpha = 255;
             this->exit = true;
@@ -197,6 +201,10 @@ void ConsoleLogo_Init(GameState* thisx) {
     this->ult = 0;
     this->timer = 20;
     this->coverAlpha = 255;
+#ifdef MM_N64_BOOT_LOGO
+    this->addAlpha = -12;
+#else
     this->addAlpha = -3;
+#endif
     this->visibleDuration = 0x3C;
 }
