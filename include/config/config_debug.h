@@ -16,11 +16,6 @@
 // #define DETERMINISTIC_BUILD
 
 /**
- * Skips the N64 logo and boots directly into the game if defined (may already be skipped by the options below)
- */
-// #define SKIP_N64_BOOT_LOGO
-
-/**
  * Options for booting directly into a scene, the map select or the file select, instead of the title screen.
  */
 // #define BOOT_TO_SCENE
