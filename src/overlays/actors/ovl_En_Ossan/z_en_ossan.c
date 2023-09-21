@@ -2316,6 +2316,7 @@ void EnOssan_DrawStickDirectionPrompts(PlayState* play, EnOssan* this) {
                                 this->stickRightPrompt.arrowTexX, this->stickRightPrompt.arrowTexY,
                                 this->stickRightPrompt.z, 0, 0, 1.0f, 1.0f);
         }
+        gDPLoadSync(OVERLAY_DISP++);
         gDPLoadTextureBlock(OVERLAY_DISP++, gControlStickTex, G_IM_FMT_IA, G_IM_SIZ_8b, 16, 16, 0,
                             G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 4, G_TX_NOMASK, G_TX_NOLOD,
                             G_TX_NOLOD);

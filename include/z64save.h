@@ -237,6 +237,9 @@ typedef struct {
     /* 0x10 */ s32 nightFlag;
     /* 0x14 */ s32 totalDays;
     /* 0x18 */ s32 bgsDayCount; // increments with totalDays, can be cleared with `Environment_ClearBgsDayCount`
+#ifdef ENABLE_WIDESCREEN
+               u8 useWidescreen;
+#endif
     /* 0x1C */ SaveInfo info; // "information"
 } Save;
 

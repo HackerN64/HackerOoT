@@ -10557,6 +10557,13 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
 
     sControlInput = input;
 
+    if (IS_DAY) {
+        gSaveContext.save.dayTime -= gTimeSpeed;
+    } else {
+        // doubled to compensate for time moving twice as fast at night
+        gSaveContext.save.dayTime -= gTimeSpeed * 2;
+    }
+
     if (this->unk_A86 < 0) {
         this->unk_A86++;
         if (this->unk_A86 == 0) {
@@ -13268,12 +13275,9 @@ void func_8084FBF4(Player* this, PlayState* play) {
 #ifdef ENABLE_NO_CLIP
 // handles no clip mode, returns 0 when it's in no clip mode
 s32 func_8084FCAC(Player* this, PlayState* play) {
-    u8 buttonCombo;
     sControlInput = &play->state.input[NOCLIP_CONTROLLER_PORT];
 
-    buttonCombo = NOCLIP_USE_BTN_COMBO ? CHECK_BTN_ALL(sControlInput->cur.button, NOCLIP_BTN_HOLD_FOR_COMBO) : true;
-
-    if ((buttonCombo && CHECK_BTN_ALL(sControlInput->press.button, NOCLIP_TOGGLE_BTN))) {
+    if (CHECK_BTN_COMBO(NOCLIP_USE_BTN_COMBO, sControlInput, NOCLIP_BTN_HOLD_FOR_COMBO, NOCLIP_TOGGLE_BTN)) {
         isNoClipEnabled ^= 1;
     }
 

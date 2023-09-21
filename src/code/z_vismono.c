@@ -81,6 +81,7 @@ Gfx* VisMono_DesaturateDList(VisMono* this, Gfx* gfx) {
                       0, 0, PRIMITIVE);
 
     for (y = 0; y <= SCREEN_HEIGHT - height; y += height) {
+        gDPLoadSync(gfx++);
         // Load a few lines of the color frame buffer
         gDPLoadTextureBlock(gfx++, cfbFrag, G_IM_FMT_CI, G_IM_SIZ_8b, SCREEN_WIDTH * 2, height, 0,
                             G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,

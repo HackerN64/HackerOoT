@@ -312,10 +312,9 @@ void Room_DrawBackground2D(Gfx** gfxP, void* tex, void* tlut, u16 width, u16 hei
 
     gfx = (Gfx*)(bg + 1);
 
+    gDPPipeSync(gfx++);
     if (fmt == G_IM_FMT_CI) {
         gDPLoadTLUT(gfx++, tlutCount, 256, tlut);
-    } else {
-        gDPPipeSync(gfx++);
     }
 
     if ((fmt == G_IM_FMT_RGBA) && !R_ROOM_BG2D_FORCE_SCALEBG) {

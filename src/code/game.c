@@ -91,9 +91,7 @@ void func_800C4344(GameState* gameState) {
     }
 
 #ifdef ENABLE_REG_EDITOR
-    if (gIsCtrlr2Valid) {
-        Regs_UpdateEditor(&gameState->input[1]);
-    }
+    Regs_UpdateEditor(&gameState->input[REGS_EDITOR_CONTROLLER_PORT]);
 #endif
 
     gDmaMgrVerbose = HREG(60);
@@ -156,6 +154,10 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     Gfx* newDList;
     Gfx* polyOpaP;
 
+#ifdef ENABLE_AUDIO_DEBUGGER
+    GfxPrint printer;
+#endif
+
     OPEN_DISPS(gfxCtx);
 
     newDList = Graph_GfxPlusOne(polyOpaP = POLY_OPA_DISP);
@@ -168,22 +170,15 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     sLastButtonPressed = gameState->input[0].press.button | gameState->input[0].cur.button;
 
 #ifdef SHOW_INPUT_DISPLAY
-    if (R_DISABLE_INPUT_DISPLAY == 0) {
-        GameState_DrawInputDisplay(sLastButtonPressed, &newDList);
-    }
+    GameState_DrawInputDisplay(sLastButtonPressed, &newDList);
 #endif
 
 #ifdef ENABLE_AUDIO_DEBUGGER
-    if (R_ENABLE_AUDIO_DBG & 1) {
-        s32 pad;
-        GfxPrint printer;
-
         GfxPrint_Init(&printer);
         GfxPrint_Open(&printer, newDList);
         AudioDebug_Draw(&printer);
         newDList = GfxPrint_Close(&printer);
         GfxPrint_Destroy(&printer);
-    }
 #endif
 
 #ifdef ENABLE_SPEEDMETER

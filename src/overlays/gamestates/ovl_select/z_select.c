@@ -399,7 +399,7 @@ void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex) {
     osSyncPrintf("\n\n\nＦＩＬＥ＿ＮＯ＝%x\n\n\n", gSaveContext.fileNum);
     osSyncPrintf(VT_RST);
     if (gSaveContext.fileNum == 0xFF) {
-        Sram_InitDebugSave();
+        Sram_InitNewSave();
         // Set the fill target to be the saved magic amount
         gSaveContext.magicFillTarget = gSaveContext.save.info.playerData.magic;
         // Set `magicLevel` and `magic` to 0 so `magicCapacity` then `magic` grows from nothing

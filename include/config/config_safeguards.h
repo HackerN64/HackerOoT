@@ -40,6 +40,7 @@
     #undef ENABLE_MSG_DEBUGGER
     #undef ENABLE_DEBUG_SAVE
     #undef MAP_SELECT_ON_FILE_1
+    #undef ENABLE_MOTION_BLUR_DEBUG
 #endif
 
 
@@ -68,6 +69,10 @@
     #define ENABLE_DEBUG_HEAP
 #endif
 
+#if (defined ENABLE_MOTION_BLUR_DEBUG) && !(defined ENABLE_MOTION_BLUR)
+    #define ENABLE_MOTION_BLUR
+#endif
+
 
 /*****************
  * config_game.h
@@ -77,7 +82,7 @@
     #ifdef FORCE_WIDESCREEN
         #define USE_WIDESCREEN true
     #else
-        #define USE_WIDESCREEN (gIsUsingWidescreen == true)
+        #define USE_WIDESCREEN (gSaveContext.save.useWidescreen == true)
     #endif
 #else
     #define USE_WIDESCREEN false

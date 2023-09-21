@@ -49,6 +49,11 @@
 // #define FIX_GROTTO_CRASH
 
 /**
+ * Enable motion blur debug
+*/
+// #define ENABLE_MOTION_BLUR_DEBUG
+
+/**
  * Disable every debug feature
  * This will enable Jumper pak compatibility
  */
