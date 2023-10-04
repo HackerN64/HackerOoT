@@ -426,6 +426,8 @@ static struct fldr_item *folder_findNameNoExt(
 /* retrieve encoder from name */
 static const struct encoder *encoder(const char *name)
 {
+	int len = strcspn(name, "/");
+
 	if (!strcmp(name, "yaz"))
 	{
 		static const struct encoder yaz = {
@@ -469,6 +471,25 @@ static const struct encoder *encoder(const char *name)
 		};
 		
 		return &zlib;
+	}
+	else if (!strncmp(name, "lz4hc", len))
+	{
+		static const struct encoder lz4hc = {
+			.encfunc = lz4hcenc
+		};
+
+		// block-based approach
+		/*
+		extern int gLz4hcBlockSize;
+		if (sscanf(name + len, "/%d", &gLz4hcBlockSize) != 1)
+			die("lz4hc no block size defined: example: try 'lz4hc/16kib' for 16 kib");
+		if (gLz4hcBlockSize < 1 || gLz4hcBlockSize > 1024)
+			die("lz4hc bad block size defined: use values 1 <= n <= 1024\n"
+				"(higher values have diminishing returns; 16 or 64 is plenty!)"
+			);
+		*/
+
+		return &lz4hc;
 	}
 	else if (!strcmp(name, "aplib"))
 	{
@@ -1009,7 +1030,10 @@ void rom_compress(struct rom *rom, int mb, int numThreads, bool matching)
 		dot_codec = malloc_safe(strlen(codec) + 1/*'.'*/ + 1/*'\0'*/);
 		strcpy(dot_codec, ".");
 		strcat(dot_codec, codec);
-		
+
+		/* make sure lz4hc/16kib -> lz4hc */
+		dot_codec[strcspn(dot_codec, "/")] = '\0';
+
 		/* get list of all files in current working directory */
 		list = folder_new();
 	}
@@ -1625,7 +1649,7 @@ int rom_dma_num(struct rom *rom)
 }
 
 /* set rom compression codec
- * valid options: "yaz", "lzo", "ucl", "aplib"
+ * valid options: "yaz", "lzo", "ucl", "aplib", "zlib", "lz4hc"
  * NOTE: to use codecs besides yaz, get patches from the z64enc repo
  */
 void rom_set_codec(struct rom *rom, const char *codec)

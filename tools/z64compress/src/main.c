@@ -169,6 +169,7 @@ static void usage(void)
 	fprintf(printer, "                      ucl\n");
 	fprintf(printer, "                      lzo\n");
 	fprintf(printer, "                      zlib\n");
+	fprintf(printer, "                      lz4hc\n");
 	fprintf(printer, "                      aplib\n");
 	fprintf(printer, "                 * to use non-yaz codecs, find patches\n");
 	fprintf(printer, "                   and code on my z64enc repo\n");
@@ -226,7 +227,7 @@ wow_main
 		}
 	}
 	
-	fprintf(printer, "welcome to z64compress 1.0.2 <z64.me>\n");
+	fprintf(printer, "welcome to z64compress 1.0.3 <z64.me>\n");
 	
 	if (argc <= 1)
 	{

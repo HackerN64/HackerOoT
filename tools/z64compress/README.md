@@ -60,6 +60,7 @@ This is a command line application. Learn from these common examples and adapt t
                       ucl
                       lzo
                       zlib
+                      lz4hc
                       aplib
                  * to use non-yaz codecs, find patches
                    and code on my z64enc repo

@@ -47,6 +47,15 @@ zlibenc(
 	, void *_ctx
 );
 
+int
+lz4hcenc(
+	void *_src
+	, unsigned src_sz
+	, void *_dst
+	, unsigned *dst_sz
+	, void *_ctx
+);
+
 int aplenc(
 	void *_src
 	, unsigned src_sz

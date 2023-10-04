@@ -4,7 +4,7 @@ mkdir -p o
 mv *.o o
 
 # build everything else
-i686-w64-mingw32.static-gcc -o z64compress.exe -DNDEBUG src/*.c o/*.o src/enc/libdeflate/lib/deflate_compress.c src/enc/libdeflate/lib/utils.c -Isrc/enc/libdeflate -Wall -Wextra -s -Os -flto -lpthread -lz -mconsole -municode
+i686-w64-mingw32.static-gcc -o z64compress.exe -DNDEBUG src/*.c o/*.o src/enc/libdeflate/lib/deflate_compress.c src/enc/libdeflate/lib/utils.c -Isrc/enc/libdeflate -Wall -Wextra -s -Os -flto -lpthread -lz -llz4 -mconsole -municode
 
 # move to bin directory
 mkdir -p bin/win32
