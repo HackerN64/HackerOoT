@@ -17,24 +17,26 @@ lz4hcenc(
 	uint8_t *outStart = _dst;
 	uint8_t *outAt = outStart;
 	int compSz;
+	unsigned src_sz_rounded = ((src_sz + 15) >> 4) << 4;
 	
 	// optional 'lz4hc' header
 	extern int g_hlen;
 	if (g_hlen != 0)
 	{
+		g_hlen = 4;
 		memcpy(outAt, "LZ4HC", 5);
 		outAt += 5;
 	}
 	else
 	{
-		outAt[0] = (src_sz >> 24);
+		outAt[0] = (src_sz_rounded >> 24);
 		outAt += 1;
 	}
 	
 	// 24-bit filesize
-	outAt[0] = (src_sz >> 16);
-	outAt[1] = (src_sz >>  8);
-	outAt[2] = (src_sz >>  0);
+	outAt[0] = (src_sz_rounded >> 16);
+	outAt[1] = (src_sz_rounded >>  8);
+	outAt[2] = (src_sz_rounded >>  0);
 	outAt += 3;
 	
 	if ((compSz = LZ4_compress_HC(
@@ -47,7 +49,13 @@ lz4hcenc(
 	)
 		return 1;
 	
-	*dst_sz = compSz;
+	// size of compressed file
+	*dst_sz = compSz + g_hlen + 4;
+
+	// this nybble is used to derive *actual* compressed size when decompressing
+	*(outAt - 1) |= 16 - (*dst_sz & 15);
+
+	// success
 	return 0;
 }
 
