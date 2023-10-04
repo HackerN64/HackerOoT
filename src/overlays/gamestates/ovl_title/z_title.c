@@ -10,16 +10,16 @@
 
 #include "config.h"
 
-#ifdef DEBUG_ROM
-void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
-    Gfx* g;
+#ifndef RELEASE_ROM
+void ConsoleLogo_PrintBuildInfo(Gfx** gfxP) {
+    Gfx* gfx;
     GfxPrint* printer;
 
-    g = *gfxp;
-    g = Gfx_SetupDL_28(g);
+    gfx = *gfxP;
+    gfx = Gfx_SetupDL_28(gfx);
     printer = alloca(sizeof(GfxPrint));
     GfxPrint_Init(printer);
-    GfxPrint_Open(printer, g);
+    GfxPrint_Open(printer, gfx);
 
     GfxPrint_SetColor(printer, 255, 255, 255, 255);
 
@@ -35,9 +35,9 @@ void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
     GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 25);
     GfxPrint_Printf(printer, "[Build Option:%s]", gBuildMakeOption);
 
-    g = GfxPrint_Close(printer);
+    gfx = GfxPrint_Close(printer);
     GfxPrint_Destroy(printer);
-    *gfxp = g;
+    *gfxP = gfx;
 }
 #endif
 
@@ -55,7 +55,11 @@ void ConsoleLogo_Update(ConsoleLogoState* this) {
         this->coverAlpha += this->addAlpha;
         if (this->coverAlpha <= 0) {
             this->coverAlpha = 0;
+#ifdef MM_N64_BOOT_LOGO
+            this->addAlpha = 12;
+#else
             this->addAlpha = 3;
+#endif
         } else if (this->coverAlpha >= 255) {
             this->coverAlpha = 255;
             this->exit = true;
@@ -97,7 +101,7 @@ void ConsoleLogo_Draw(ConsoleLogoState* this) {
     Vec3f v2;
     s32 pad2[2];
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_title.c", 395);
+    OPEN_DISPS(this->state.gfxCtx);
 
     v3.x = 69;
     v3.y = 69;
@@ -145,13 +149,13 @@ void ConsoleLogo_Draw(ConsoleLogoState* this) {
 
     sTitleRotY += 300;
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_title.c", 483);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 void ConsoleLogo_Main(GameState* thisx) {
     ConsoleLogoState* this = (ConsoleLogoState*)thisx;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_title.c", 494);
+    OPEN_DISPS(this->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0, NULL);
     gSPSegment(POLY_OPA_DISP++, 1, this->staticSegment);
@@ -159,7 +163,7 @@ void ConsoleLogo_Main(GameState* thisx) {
     ConsoleLogo_Update(this);
     ConsoleLogo_Draw(this);
 
-#ifdef DEBUG_ROM
+#ifndef RELEASE_ROM
     ConsoleLogo_PrintBuildInfo(&POLY_OPA_DISP);
 #endif
 
@@ -171,7 +175,7 @@ void ConsoleLogo_Main(GameState* thisx) {
         SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, TitleSetupState);
     }
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_title.c", 541);
+    CLOSE_DISPS(this->state.gfxCtx);
 }
 
 void ConsoleLogo_Destroy(GameState* thisx) {
@@ -196,6 +200,10 @@ void ConsoleLogo_Init(GameState* thisx) {
     this->ult = 0;
     this->timer = 20;
     this->coverAlpha = 255;
+#ifdef MM_N64_BOOT_LOGO
+    this->addAlpha = -12;
+#else
     this->addAlpha = -3;
+#endif
     this->visibleDuration = 0x3C;
 }

@@ -169,7 +169,7 @@ void func_80A1DBD4(EnFu* this, PlayState* play) {
         play->msgCtx.ocarinaMode = OCARINA_MODE_04;
         this->actor.flags &= ~ACTOR_FLAG_16;
     } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_03) {
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
         this->actionFunc = func_80A1DB60;
         this->actor.flags &= ~ACTOR_FLAG_16;
         play->csCtx.script = SEGMENTED_TO_VIRTUAL(gSongOfStormsCs);
@@ -298,7 +298,7 @@ void EnFu_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnFu* this = (EnFu*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fu.c", 773);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sEyesSegments[this->facialExpression]));
@@ -306,5 +306,5 @@ void EnFu_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelanime.skeleton, this->skelanime.jointTable, this->skelanime.dListCount,
                           EnFu_OverrideLimbDraw, EnFu_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fu.c", 791);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

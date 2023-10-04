@@ -161,11 +161,11 @@ void DoorWarp1_SetupWarp(DoorWarp1* this, PlayState* play) {
             DoorWarp1_SetupAction(this, DoorWarp1_AwaitClearFlag);
             break;
         case WARP_DESTINATION:
-            if ((!(gSaveContext.entranceIndex == ENTR_SACRED_FOREST_MEADOW_3 ||
-                   gSaveContext.entranceIndex == ENTR_DEATH_MOUNTAIN_CRATER_5 ||
-                   gSaveContext.entranceIndex == ENTR_LAKE_HYLIA_9 ||
-                   gSaveContext.entranceIndex == ENTR_DESERT_COLOSSUS_8 ||
-                   gSaveContext.entranceIndex == ENTR_GRAVEYARD_8) &&
+            if ((!(gSaveContext.save.entranceIndex == ENTR_SACRED_FOREST_MEADOW_3 ||
+                   gSaveContext.save.entranceIndex == ENTR_DEATH_MOUNTAIN_CRATER_5 ||
+                   gSaveContext.save.entranceIndex == ENTR_LAKE_HYLIA_9 ||
+                   gSaveContext.save.entranceIndex == ENTR_DESERT_COLOSSUS_8 ||
+                   gSaveContext.save.entranceIndex == ENTR_GRAVEYARD_8) &&
                  !IS_CUTSCENE_LAYER) ||
                 (GET_PLAYER(play)->actor.params & 0xF00) != 0x200) {
                 Actor_Kill(&this->actor);
@@ -261,7 +261,7 @@ void DoorWarp1_SetupPurpleCrystal(DoorWarp1* this, PlayState* play) {
     this->unk_1BC = 1.f;
     this->actor.shape.yOffset = 800.0f;
 
-    if (gSaveContext.entranceIndex != ENTR_TEMPLE_OF_TIME_0) {
+    if (gSaveContext.save.entranceIndex != ENTR_TEMPLE_OF_TIME_0) {
         this->actor.scale.x = 0.0499f;
         this->actor.scale.y = 0.077f;
         this->actor.scale.z = 0.09f;
@@ -466,7 +466,7 @@ void DoorWarp1_ChildWarpIdle(DoorWarp1* this, PlayState* play) {
         Audio_PlaySfxGeneral(NA_SE_EV_LINK_WARP, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         OnePointCutscene_Init(play, 0x25E7, 999, &this->actor, CAM_ID_MAIN);
-        func_8002DF54(play, &this->actor, PLAYER_CSMODE_10);
+        func_8002DF54(play, &this->actor, PLAYER_CSACTION_10);
 
         player->unk_450.x = this->actor.world.pos.x;
         player->unk_450.z = this->actor.world.pos.z;
@@ -542,7 +542,7 @@ void DoorWarp1_RutoWarpIdle(DoorWarp1* this, PlayState* play) {
 
     if (this->rutoWarpState != WARP_BLUE_RUTO_STATE_INITIAL && DoorWarp1_PlayerInRange(this, play)) {
         this->rutoWarpState = WARP_BLUE_RUTO_STATE_ENTERED;
-        func_8002DF54(play, &this->actor, PLAYER_CSMODE_10);
+        func_8002DF54(play, &this->actor, PLAYER_CSACTION_10);
         this->unk_1B2 = 1;
         DoorWarp1_SetupAction(this, func_80999EE0);
     }
@@ -650,7 +650,7 @@ void DoorWarp1_AdultWarpIdle(DoorWarp1* this, PlayState* play) {
         player = GET_PLAYER(play);
 
         OnePointCutscene_Init(play, 0x25E8, 999, &this->actor, CAM_ID_MAIN);
-        func_8002DF54(play, &this->actor, PLAYER_CSMODE_10);
+        func_8002DF54(play, &this->actor, PLAYER_CSACTION_10);
         player->unk_450.x = this->actor.world.pos.x;
         player->unk_450.z = this->actor.world.pos.z;
         this->unk_1B2 = 20;
@@ -879,7 +879,7 @@ void DoorWarp1_Update(Actor* thisx, PlayState* play) {
 void DoorWarp1_DrawBlueCrystal(DoorWarp1* this, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_door_warp1.c", 2078);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -889,7 +889,7 @@ void DoorWarp1_DrawBlueCrystal(DoorWarp1* this, PlayState* play) {
     POLY_XLU_DISP = SkelAnime_Draw(play, this->skelAnime.skeleton, this->skelAnime.jointTable, NULL, NULL, &this->actor,
                                    POLY_XLU_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_door_warp1.c", 2098);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     SkelAnime_Update(&this->skelAnime);
 }
@@ -902,7 +902,7 @@ void DoorWarp1_DrawPurpleCrystal(DoorWarp1* this, PlayState* play) {
     eye.y = (Math_CosS(play->state.frames * 200) * 120.0f) * 80.0f;
     eye.z = (Math_CosS(play->state.frames * 200) * 120.0f) * 80.0f;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_door_warp1.c", 2122);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     func_8002EB44(&this->actor.world.pos, &eye, &eye, play->state.gfxCtx);
@@ -913,7 +913,7 @@ void DoorWarp1_DrawPurpleCrystal(DoorWarp1* this, PlayState* play) {
     POLY_XLU_DISP = SkelAnime_Draw(play, this->skelAnime.skeleton, this->skelAnime.jointTable, NULL, NULL, &this->actor,
                                    POLY_XLU_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_door_warp1.c", 2152);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     SkelAnime_Update(&this->skelAnime);
 }
@@ -927,7 +927,7 @@ void DoorWarp1_DrawWarp(DoorWarp1* this, PlayState* play) {
     f32 xzScale;
     f32 temp_f0;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_door_warp1.c", 2173);
+    OPEN_DISPS(play->state.gfxCtx);
 
     temp_f0 = 1.0f - (2.0f - this->unk_194) / 1.7f;
     if (this->actor.params != WARP_YELLOW && this->actor.params != WARP_DESTINATION &&
@@ -1018,7 +1018,7 @@ void DoorWarp1_DrawWarp(DoorWarp1* this, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, gWarpPortalDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_door_warp1.c", 2340);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DoorWarp1_Draw(Actor* thisx, PlayState* play) {

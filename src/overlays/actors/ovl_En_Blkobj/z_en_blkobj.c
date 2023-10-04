@@ -129,7 +129,7 @@ void EnBlkobj_Update(Actor* thisx, PlayState* play) {
 void EnBlkobj_DrawAlpha(PlayState* play, Gfx* dList, s32 alpha) {
     Gfx* segment;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_blkobj.c", 322);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (alpha == 255) {
         segment = sSetupOpaDL;
@@ -141,7 +141,7 @@ void EnBlkobj_DrawAlpha(PlayState* play, Gfx* dList, s32 alpha) {
     gDPSetEnvColor(POLY_XLU_DISP++, 0, 0, 0, alpha);
     gSPDisplayList(POLY_XLU_DISP++, dList);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_blkobj.c", 330);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnBlkobj_Draw(Actor* thisx, PlayState* play) {
@@ -150,7 +150,7 @@ void EnBlkobj_Draw(Actor* thisx, PlayState* play) {
     s32 illusionAlpha;
     u32 gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_blkobj.c", 349);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -170,5 +170,5 @@ void EnBlkobj_Draw(Actor* thisx, PlayState* play) {
         EnBlkobj_DrawAlpha(play, gIllusionRoomIllusionDL, illusionAlpha);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_blkobj.c", 375);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

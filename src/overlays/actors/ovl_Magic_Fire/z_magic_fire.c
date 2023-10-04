@@ -225,7 +225,7 @@ void MagicFire_Draw(Actor* thisx, PlayState* play) {
     u8 alpha;
 
     if (this->action > 0) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_magic_fire.c", 682);
+        OPEN_DISPS(play->state.gfxCtx);
         POLY_XLU_DISP = Gfx_SetupDL_57(POLY_XLU_DISP);
         gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, (u8)(s32)(60 * this->screenTintIntensity),
                         (u8)(s32)(20 * this->screenTintIntensity), (u8)(s32)(0 * this->screenTintIntensity),
@@ -253,7 +253,7 @@ void MagicFire_Draw(Actor* thisx, PlayState* play) {
                                         511 - ((gameplayFrames * 5) % 512), 64, 64, 1, (gameplayFrames * 2) % 256,
                                         255 - ((gameplayFrames * 20) % 256), 32, 32));
         gSPDisplayList(POLY_XLU_DISP++, sModelDL);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_magic_fire.c", 750);
+        CLOSE_DISPS(play->state.gfxCtx);
 
         alpha = (s32)(this->alphaMultiplier * 255);
         for (i = 0; i < 36; i++) {

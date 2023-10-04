@@ -215,14 +215,15 @@ void func_80AAF3C0(EnMm2* this, PlayState* play) {
                         Message_ContinueTextbox(play, 0x6080);
                         this->actor.textId = 0x6080;
                         break;
-                };
+                }
+
                 if (this->unk_1F4 & 4) {
-                    if (1) {}
                     this->unk_1F4 &= ~4;
                     HIGH_SCORE(HS_MARATHON)++;
                 }
             }
-            return;
+            break;
+
         case 0x6081:
             if ((Message_GetState(&play->msgCtx) == TEXT_STATE_EVENT) && Message_ShouldAdvance(play)) {
                 this->unk_1F4 |= 4;
@@ -230,18 +231,20 @@ void func_80AAF3C0(EnMm2* this, PlayState* play) {
                 Message_ContinueTextbox(play, 0x607E);
                 this->actor.textId = 0x607E;
             }
-            return;
-    }
+            break;
 
-    if (Actor_TextboxIsClosing(&this->actor, play)) {
-        if (this->actor.textId == 0x607F) {
-            Interface_SetSubTimer(0);
-            this->actionFunc = func_80AAF57C;
-        } else {
-            this->actionFunc = func_80AAF57C;
-        }
-        this->actionFunc = func_80AAF57C;
-        func_80AAEF70(this, play);
+        default:
+            if (Actor_TextboxIsClosing(&this->actor, play)) {
+                if (this->actor.textId == 0x607F) {
+                    Interface_SetSubTimer(0);
+                    this->actionFunc = func_80AAF57C;
+                } else {
+                    this->actionFunc = func_80AAF57C;
+                }
+                this->actionFunc = func_80AAF57C;
+                func_80AAEF70(this, play);
+            }
+            break;
     }
 }
 
@@ -311,12 +314,12 @@ void EnMm2_Draw(Actor* thisx, PlayState* play) {
     static void* mouthTextures[] = { gRunningManMouthOpenTex, gRunningManMouthClosedTex };
     EnMm2* this = (EnMm2*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_mm2.c", 634);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(mouthTextures[this->mouthTexIndex]));
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnMm2_OverrideLimbDraw, EnMm2_PostLimbDraw, this);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_mm2.c", 654);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 EnMm2_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {

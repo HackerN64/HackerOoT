@@ -121,7 +121,7 @@ void EnDntJiji_Wait(EnDntJiji* this, PlayState* play) {
         !(player->stateFlags1 & PLAYER_STATE1_11)) {
         OnePointCutscene_Init(play, 2230, -99, &this->actor, CAM_ID_MAIN);
         this->timer = 0;
-        func_8002DF54(play, NULL, PLAYER_CSMODE_8);
+        func_8002DF54(play, NULL, PLAYER_CSACTION_8);
         this->actionFunc = EnDntJiji_SetupUnburrow;
     }
 }
@@ -255,7 +255,7 @@ void EnDntJiji_Talk(EnDntJiji* this, PlayState* play) {
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_EVENT) && Message_ShouldAdvance(play)) {
         func_8005B1A4(GET_ACTIVE_CAM(play));
         Message_CloseTextbox(play);
-        func_8002DF54(play, NULL, PLAYER_CSMODE_7);
+        func_8002DF54(play, NULL, PLAYER_CSACTION_7);
         this->actor.parent = NULL;
         Actor_OfferGetItem(&this->actor, play, this->getItemId, 400.0f, 200.0f);
         this->actionFunc = EnDntJiji_SetupGivePrize;
@@ -437,7 +437,7 @@ void EnDntJiji_Draw(Actor* thisx, PlayState* play) {
     static void* blinkTex[] = { gDntJijiEyeOpenTex, gDntJijiEyeHalfTex, gDntJijiEyeShutTex };
     EnDntJiji* this = (EnDntJiji*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_dnt_jiji.c", 1019);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Matrix_Push();
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(blinkTex[this->eyeState]));
@@ -448,5 +448,5 @@ void EnDntJiji_Draw(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_dnt_jiji.c", 1040),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gDntJijiFlowerDL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_dnt_jiji.c", 1043);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -1,4 +1,5 @@
 #include "mbi.h"
+#include "config.h"
 
 #ifndef ULTRA64_GBI_H
 #define ULTRA64_GBI_H
@@ -613,217 +614,225 @@
 #define G_BL_1          2
 #define G_BL_0          3
 
-#define GBL_c1(m1a, m1b, m2a, m2b)  \
-    (m1a) << 30 | (m1b) << 26 | (m2a) << 22 | (m2b) << 18
-#define GBL_c2(m1a, m1b, m2a, m2b)  \
-    (m1a) << 28 | (m1b) << 24 | (m2a) << 20 | (m2b) << 16
+#ifdef DISABLE_AA
+#define AA_DEF 0
+#define RD_DEF 0
+#else
+#define AA_DEF AA_EN
+#define RD_DEF IM_RD
+#endif
 
-#define RM_AA_ZB_OPA_SURF(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
-    ZMODE_OPA | ALPHA_CVG_SEL |                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+#define	GBL_c1(m1a, m1b, m2a, m2b)	\
+	(m1a) << 30 | (m1b) << 26 | (m2a) << 22 | (m2b) << 18
+#define	GBL_c2(m1a, m1b, m2a, m2b)	\
+	(m1a) << 28 | (m1b) << 24 | (m2a) << 20 | (m2b) << 16
 
-#define RM_RA_ZB_OPA_SURF(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | CVG_DST_CLAMP |                     \
-    ZMODE_OPA | ALPHA_CVG_SEL |                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+#define	RM_AA_ZB_OPA_SURF(clk)					\
+	AA_DEF | Z_CMP | Z_UPD | RD_DEF | CVG_DST_CLAMP |		\
+	ZMODE_OPA | ALPHA_CVG_SEL |				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
-#define RM_AA_ZB_XLU_SURF(clk)                                  \
-    AA_EN | Z_CMP | IM_RD | CVG_DST_WRAP | CLR_ON_CVG |         \
-    FORCE_BL | ZMODE_XLU |                                      \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_RA_ZB_OPA_SURF(clk)					\
+	AA_DEF | Z_CMP | Z_UPD | CVG_DST_CLAMP |			\
+	ZMODE_OPA | ALPHA_CVG_SEL |				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
-#define RM_AA_ZB_OPA_DECAL(clk)                                 \
-    AA_EN | Z_CMP | IM_RD | CVG_DST_WRAP | ALPHA_CVG_SEL |      \
-    ZMODE_DEC |                                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+#define	RM_AA_ZB_XLU_SURF(clk)					\
+	AA_DEF | Z_CMP | IM_RD | CVG_DST_WRAP | CLR_ON_CVG |	\
+	FORCE_BL | ZMODE_XLU |					\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_RA_ZB_OPA_DECAL(clk)                                 \
-    AA_EN | Z_CMP | CVG_DST_WRAP | ALPHA_CVG_SEL |              \
-    ZMODE_DEC |                                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+#define	RM_AA_ZB_OPA_DECAL(clk)					\
+	AA_DEF | Z_CMP | RD_DEF | CVG_DST_WRAP | ALPHA_CVG_SEL |	\
+	ZMODE_DEC |						\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
-#define RM_AA_ZB_XLU_DECAL(clk)                                 \
-    AA_EN | Z_CMP | IM_RD | CVG_DST_WRAP | CLR_ON_CVG |         \
-    FORCE_BL | ZMODE_DEC |                                      \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_RA_ZB_OPA_DECAL(clk)					\
+	AA_DEF | Z_CMP | CVG_DST_WRAP | ALPHA_CVG_SEL |		\
+	ZMODE_DEC |						\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
-#define RM_AA_ZB_OPA_INTER(clk)                                 \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
-    ALPHA_CVG_SEL | ZMODE_INTER |                               \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+#define	RM_AA_ZB_XLU_DECAL(clk)					\
+	AA_DEF | Z_CMP | IM_RD | CVG_DST_WRAP | CLR_ON_CVG |	\
+	FORCE_BL | ZMODE_DEC |					\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_RA_ZB_OPA_INTER(clk)                                 \
-    AA_EN | Z_CMP | Z_UPD | CVG_DST_CLAMP |                     \
-    ALPHA_CVG_SEL | ZMODE_INTER |                               \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+#define	RM_AA_ZB_OPA_INTER(clk)					\
+	AA_DEF | Z_CMP | Z_UPD | RD_DEF | CVG_DST_CLAMP |		\
+	ALPHA_CVG_SEL |	ZMODE_INTER |				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
-#define RM_AA_ZB_XLU_INTER(clk)                                 \
-    AA_EN | Z_CMP | IM_RD | CVG_DST_WRAP | CLR_ON_CVG |         \
-    FORCE_BL | ZMODE_INTER |                                    \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_RA_ZB_OPA_INTER(clk)					\
+	AA_DEF | Z_CMP | Z_UPD | CVG_DST_CLAMP |			\
+	ALPHA_CVG_SEL |	ZMODE_INTER |				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
-#define RM_AA_ZB_XLU_LINE(clk)                                  \
-    AA_EN | Z_CMP | IM_RD | CVG_DST_CLAMP | CVG_X_ALPHA |       \
-    ALPHA_CVG_SEL | FORCE_BL | ZMODE_XLU |                      \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_AA_ZB_XLU_INTER(clk)					\
+	AA_DEF | Z_CMP | IM_RD | CVG_DST_WRAP | CLR_ON_CVG |	\
+	FORCE_BL | ZMODE_INTER |				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_AA_ZB_DEC_LINE(clk)                                  \
-    AA_EN | Z_CMP | IM_RD | CVG_DST_SAVE | CVG_X_ALPHA |        \
-    ALPHA_CVG_SEL | FORCE_BL | ZMODE_DEC |                      \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_AA_ZB_XLU_LINE(clk)					\
+	AA_DEF | Z_CMP | IM_RD | CVG_DST_CLAMP | CVG_X_ALPHA |	\
+	ALPHA_CVG_SEL | FORCE_BL | ZMODE_XLU |			\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_AA_ZB_TEX_EDGE(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
-    CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_OPA | TEX_EDGE |        \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+#define	RM_AA_ZB_DEC_LINE(clk)					\
+	AA_DEF | Z_CMP | IM_RD | CVG_DST_SAVE | CVG_X_ALPHA |	\
+	ALPHA_CVG_SEL | FORCE_BL | ZMODE_DEC |			\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_AA_ZB_TEX_INTER(clk)                                 \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
-    CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_INTER | TEX_EDGE |      \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+#define	RM_AA_ZB_TEX_EDGE(clk)					\
+	AA_EN | Z_CMP | Z_UPD | RD_DEF | CVG_DST_CLAMP |		\
+	CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_OPA | TEX_EDGE |	\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
-#define RM_AA_ZB_SUB_SURF(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_FULL |              \
-    ZMODE_OPA | ALPHA_CVG_SEL |                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+#define	RM_AA_ZB_TEX_INTER(clk)					\
+	AA_DEF | Z_CMP | Z_UPD | RD_DEF | CVG_DST_CLAMP |		\
+	CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_INTER | TEX_EDGE |	\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
-#define RM_AA_ZB_PCL_SURF(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
-    ZMODE_OPA | G_AC_DITHER |                                   \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_AA_ZB_SUB_SURF(clk)					\
+	AA_DEF | Z_CMP | Z_UPD | IM_RD | CVG_DST_FULL |		\
+	ZMODE_OPA | ALPHA_CVG_SEL |				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
-#define RM_AA_ZB_OPA_TERR(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
-    ZMODE_OPA | ALPHA_CVG_SEL |                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_AA_ZB_PCL_SURF(clk)					\
+	AA_DEF | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |		\
+	ZMODE_OPA | G_AC_DITHER | 				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_AA_ZB_TEX_TERR(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
-    CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_OPA | TEX_EDGE |        \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_AA_ZB_OPA_TERR(clk)					\
+	AA_DEF | Z_CMP | Z_UPD | RD_DEF | CVG_DST_CLAMP |		\
+	ZMODE_OPA | ALPHA_CVG_SEL |				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_AA_ZB_SUB_TERR(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_FULL |              \
-    ZMODE_OPA | ALPHA_CVG_SEL |                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_AA_ZB_TEX_TERR(clk)					\
+	AA_DEF | Z_CMP | Z_UPD | RD_DEF | CVG_DST_CLAMP |		\
+	CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_OPA | TEX_EDGE |	\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-
-#define RM_AA_OPA_SURF(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_CLAMP |                             \
-    ZMODE_OPA | ALPHA_CVG_SEL |                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
-
-#define RM_RA_OPA_SURF(clk)                                     \
-    AA_EN | CVG_DST_CLAMP |                                     \
-    ZMODE_OPA | ALPHA_CVG_SEL |                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
-
-#define RM_AA_XLU_SURF(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_WRAP | CLR_ON_CVG | FORCE_BL |      \
-    ZMODE_OPA |                                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
-
-#define RM_AA_XLU_LINE(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_CLAMP | CVG_X_ALPHA |               \
-    ALPHA_CVG_SEL | FORCE_BL | ZMODE_OPA |                      \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
-
-#define RM_AA_DEC_LINE(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_FULL | CVG_X_ALPHA |                \
-    ALPHA_CVG_SEL | FORCE_BL | ZMODE_OPA |                      \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
-
-#define RM_AA_TEX_EDGE(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_CLAMP |                             \
-    CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_OPA | TEX_EDGE |        \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
-
-#define RM_AA_SUB_SURF(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_FULL |                              \
-    ZMODE_OPA | ALPHA_CVG_SEL |                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
-
-#define RM_AA_PCL_SURF(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_CLAMP |                             \
-    ZMODE_OPA | G_AC_DITHER |                                   \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
-
-#define RM_AA_OPA_TERR(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_CLAMP |                             \
-    ZMODE_OPA | ALPHA_CVG_SEL |                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
-
-#define RM_AA_TEX_TERR(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_CLAMP |                             \
-    CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_OPA | TEX_EDGE |        \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
-
-#define RM_AA_SUB_TERR(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_FULL |                              \
-    ZMODE_OPA | ALPHA_CVG_SEL |                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_AA_ZB_SUB_TERR(clk)					\
+	AA_DEF | Z_CMP | Z_UPD | IM_RD | CVG_DST_FULL |		\
+	ZMODE_OPA | ALPHA_CVG_SEL |				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 
-#define RM_ZB_OPA_SURF(clk)                                     \
-    Z_CMP | Z_UPD | CVG_DST_FULL | ALPHA_CVG_SEL |              \
-    ZMODE_OPA |                                                 \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+#define	RM_AA_OPA_SURF(clk)					\
+	AA_DEF | RD_DEF | CVG_DST_CLAMP |				\
+	ZMODE_OPA | ALPHA_CVG_SEL |				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
-#define RM_ZB_XLU_SURF(clk)                                     \
-    Z_CMP | IM_RD | CVG_DST_FULL | FORCE_BL | ZMODE_XLU |       \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_RA_OPA_SURF(clk)					\
+	AA_DEF | CVG_DST_CLAMP |				\
+	ZMODE_OPA | ALPHA_CVG_SEL |				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
-#define RM_ZB_OPA_DECAL(clk)                                    \
-    Z_CMP | CVG_DST_FULL | ALPHA_CVG_SEL | ZMODE_DEC |          \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+#define	RM_AA_XLU_SURF(clk)					\
+	AA_DEF | IM_RD | CVG_DST_WRAP | CLR_ON_CVG | FORCE_BL |	\
+	ZMODE_OPA |						\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_ZB_XLU_DECAL(clk)                                    \
-    Z_CMP | IM_RD | CVG_DST_FULL | FORCE_BL | ZMODE_DEC |       \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_AA_XLU_LINE(clk)					\
+	AA_DEF | IM_RD | CVG_DST_CLAMP | CVG_X_ALPHA |		\
+	ALPHA_CVG_SEL | FORCE_BL | ZMODE_OPA |			\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_ZB_CLD_SURF(clk)                                     \
-    Z_CMP | IM_RD | CVG_DST_SAVE | FORCE_BL | ZMODE_XLU |       \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_AA_DEC_LINE(clk)					\
+	AA_DEF | IM_RD | CVG_DST_FULL | CVG_X_ALPHA |		\
+	ALPHA_CVG_SEL | FORCE_BL | ZMODE_OPA |			\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_ZB_OVL_SURF(clk)                                     \
-    Z_CMP | IM_RD | CVG_DST_SAVE | FORCE_BL | ZMODE_DEC |       \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_AA_TEX_EDGE(clk)					\
+	AA_EN | RD_DEF | CVG_DST_CLAMP |				\
+	CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_OPA | TEX_EDGE |	\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
-#define RM_ZB_PCL_SURF(clk)                                     \
-    Z_CMP | Z_UPD | CVG_DST_FULL | ZMODE_OPA |                  \
-    G_AC_DITHER |                                               \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_0, G_BL_CLR_IN, G_BL_1)
+#define	RM_AA_SUB_SURF(clk)					\
+	AA_DEF | IM_RD | CVG_DST_FULL |				\
+	ZMODE_OPA | ALPHA_CVG_SEL |				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+
+#define	RM_AA_PCL_SURF(clk)					\
+	AA_DEF | IM_RD | CVG_DST_CLAMP |				\
+	ZMODE_OPA | G_AC_DITHER | 				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+
+#define	RM_AA_OPA_TERR(clk)					\
+	AA_DEF | RD_DEF | CVG_DST_CLAMP |				\
+	ZMODE_OPA | ALPHA_CVG_SEL |				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+
+#define	RM_AA_TEX_TERR(clk)					\
+	AA_DEF | RD_DEF | CVG_DST_CLAMP |				\
+	CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_OPA | TEX_EDGE |	\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+
+#define	RM_AA_SUB_TERR(clk)					\
+	AA_DEF | IM_RD | CVG_DST_FULL |				\
+	ZMODE_OPA | ALPHA_CVG_SEL |				\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 
-#define RM_OPA_SURF(clk)                                        \
-    CVG_DST_CLAMP | FORCE_BL | ZMODE_OPA |                      \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_0, G_BL_CLR_IN, G_BL_1)
+#define	RM_ZB_OPA_SURF(clk)					\
+	Z_CMP | Z_UPD | CVG_DST_FULL | ALPHA_CVG_SEL |		\
+	ZMODE_OPA |						\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
-#define RM_XLU_SURF(clk)                                        \
-    IM_RD | CVG_DST_FULL | FORCE_BL | ZMODE_OPA |               \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_ZB_XLU_SURF(clk)					\
+	Z_CMP | IM_RD | CVG_DST_FULL | FORCE_BL | ZMODE_XLU |	\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_TEX_EDGE(clk)                                        \
-    CVG_DST_CLAMP | CVG_X_ALPHA | ALPHA_CVG_SEL | FORCE_BL |    \
-    ZMODE_OPA | TEX_EDGE | AA_EN |                              \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_0, G_BL_CLR_IN, G_BL_1)
+#define	RM_ZB_OPA_DECAL(clk)					\
+	Z_CMP | CVG_DST_FULL | ALPHA_CVG_SEL | ZMODE_DEC |	\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
+	
+#define	RM_ZB_XLU_DECAL(clk)					\
+	Z_CMP | IM_RD | CVG_DST_FULL | FORCE_BL | ZMODE_DEC |	\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_CLD_SURF(clk)                                        \
-    IM_RD | CVG_DST_SAVE | FORCE_BL | ZMODE_OPA |               \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+#define	RM_ZB_CLD_SURF(clk)					\
+	Z_CMP | IM_RD | CVG_DST_SAVE | FORCE_BL | ZMODE_XLU |	\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_PCL_SURF(clk)                                        \
-    CVG_DST_FULL | FORCE_BL | ZMODE_OPA |                       \
-    G_AC_DITHER |                                               \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_0, G_BL_CLR_IN, G_BL_1)
+#define	RM_ZB_OVL_SURF(clk)					\
+	Z_CMP | IM_RD | CVG_DST_SAVE | FORCE_BL | ZMODE_DEC |	\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
-#define RM_ADD(clk)                                             \
-    IM_RD | CVG_DST_SAVE | FORCE_BL | ZMODE_OPA |               \
-    GBL_c##clk(G_BL_CLR_IN, G_BL_A_FOG, G_BL_CLR_MEM, G_BL_1)
+#define	RM_ZB_PCL_SURF(clk)					\
+	Z_CMP | Z_UPD | CVG_DST_FULL | ZMODE_OPA |		\
+	G_AC_DITHER | 						\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_0, G_BL_CLR_IN, G_BL_1)
 
-#define RM_NOOP(clk)    \
-    GBL_c##clk(0, 0, 0, 0)
+
+#define	RM_OPA_SURF(clk)					\
+	CVG_DST_CLAMP | FORCE_BL | ZMODE_OPA |			\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_0, G_BL_CLR_IN, G_BL_1)
+
+#define	RM_XLU_SURF(clk)					\
+	IM_RD | CVG_DST_FULL | FORCE_BL | ZMODE_OPA |		\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+
+#define	RM_TEX_EDGE(clk)					\
+	CVG_DST_CLAMP | CVG_X_ALPHA | ALPHA_CVG_SEL | FORCE_BL |\
+	ZMODE_OPA | TEX_EDGE | AA_EN |					\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_0, G_BL_CLR_IN, G_BL_1)
+
+#define	RM_CLD_SURF(clk)					\
+	IM_RD | CVG_DST_SAVE | FORCE_BL | ZMODE_OPA |		\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+
+#define	RM_PCL_SURF(clk)					\
+	CVG_DST_FULL | FORCE_BL | ZMODE_OPA | 			\
+	G_AC_DITHER | 						\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_0, G_BL_CLR_IN, G_BL_1)
+
+#define	RM_ADD(clk)					\
+	IM_RD | CVG_DST_SAVE | FORCE_BL | ZMODE_OPA |	\
+	GBL_c##clk(G_BL_CLR_IN, G_BL_A_FOG, G_BL_CLR_MEM, G_BL_1)
+
+#define	RM_NOOP(clk)	\
+	GBL_c##clk(0, 0, 0, 0)
 
 #define RM_VISCVG(clk)                                          \
     IM_RD | FORCE_BL |                                          \
@@ -835,6 +844,7 @@
     GBL_c##clk(G_BL_CLR_IN, G_BL_0, G_BL_CLR_IN, G_BL_1)
 
 
+#ifdef DISABLE_AA
 
 #define G_RM_AA_ZB_OPA_SURF     RM_AA_ZB_OPA_SURF(1)
 #define G_RM_AA_ZB_OPA_SURF2    RM_AA_ZB_OPA_SURF(2)
@@ -874,26 +884,89 @@
 #define G_RM_RA_ZB_OPA_INTER    RM_RA_ZB_OPA_INTER(1)
 #define G_RM_RA_ZB_OPA_INTER2   RM_RA_ZB_OPA_INTER(2)
 
-#define G_RM_AA_OPA_SURF    RM_AA_OPA_SURF(1)
-#define G_RM_AA_OPA_SURF2   RM_AA_OPA_SURF(2)
-#define G_RM_AA_XLU_SURF    RM_AA_XLU_SURF(1)
-#define G_RM_AA_XLU_SURF2   RM_AA_XLU_SURF(2)
-#define G_RM_AA_XLU_LINE    RM_AA_XLU_LINE(1)
-#define G_RM_AA_XLU_LINE2   RM_AA_XLU_LINE(2)
-#define G_RM_AA_DEC_LINE    RM_AA_DEC_LINE(1)
-#define G_RM_AA_DEC_LINE2   RM_AA_DEC_LINE(2)
-#define G_RM_AA_TEX_EDGE    RM_AA_TEX_EDGE(1)
-#define G_RM_AA_TEX_EDGE2   RM_AA_TEX_EDGE(2)
-#define G_RM_AA_SUB_SURF    RM_AA_SUB_SURF(1)
-#define G_RM_AA_SUB_SURF2   RM_AA_SUB_SURF(2)
-#define G_RM_AA_PCL_SURF    RM_AA_PCL_SURF(1)
-#define G_RM_AA_PCL_SURF2   RM_AA_PCL_SURF(2)
-#define G_RM_AA_OPA_TERR    RM_AA_OPA_TERR(1)
-#define G_RM_AA_OPA_TERR2   RM_AA_OPA_TERR(2)
-#define G_RM_AA_TEX_TERR    RM_AA_TEX_TERR(1)
-#define G_RM_AA_TEX_TERR2   RM_AA_TEX_TERR(2)
-#define G_RM_AA_SUB_TERR    RM_AA_SUB_TERR(1)
-#define G_RM_AA_SUB_TERR2   RM_AA_SUB_TERR(2)
+#define	G_RM_AA_OPA_SURF		RM_OPA_SURF(1)
+#define	G_RM_AA_OPA_SURF2		RM_OPA_SURF(2)
+#define	G_RM_AA_XLU_SURF		RM_XLU_SURF(1)
+#define	G_RM_AA_XLU_SURF2		RM_XLU_SURF(2)
+#define	G_RM_AA_XLU_LINE		RM_AA_XLU_LINE(1)
+#define	G_RM_AA_XLU_LINE2		RM_AA_XLU_LINE(2)
+#define	G_RM_AA_DEC_LINE		RM_AA_DEC_LINE(1)
+#define	G_RM_AA_DEC_LINE2		RM_AA_DEC_LINE(2)
+#define	G_RM_AA_TEX_EDGE		RM_TEX_EDGE(1)
+#define	G_RM_AA_TEX_EDGE2		RM_TEX_EDGE(2)
+#define	G_RM_AA_SUB_SURF		RM_AA_SUB_SURF(1)
+#define	G_RM_AA_SUB_SURF2		RM_AA_SUB_SURF(2)
+#define	G_RM_AA_PCL_SURF		RM_PCL_SURF(1)
+#define	G_RM_AA_PCL_SURF2		RM_PCL_SURF(2)
+#define	G_RM_AA_OPA_TERR		RM_AA_OPA_TERR(1)
+#define	G_RM_AA_OPA_TERR2		RM_AA_OPA_TERR(2)
+#define	G_RM_AA_TEX_TERR		RM_AA_TEX_TERR(1)
+#define	G_RM_AA_TEX_TERR2		RM_AA_TEX_TERR(2)
+#define	G_RM_AA_SUB_TERR		RM_AA_SUB_TERR(1)
+#define	G_RM_AA_SUB_TERR2		RM_AA_SUB_TERR(2)
+
+#else
+
+#define	G_RM_AA_ZB_OPA_SURF		RM_AA_ZB_OPA_SURF(1)
+#define	G_RM_AA_ZB_OPA_SURF2	RM_AA_ZB_OPA_SURF(2)
+#define	G_RM_AA_ZB_XLU_SURF		RM_AA_ZB_XLU_SURF(1)
+#define	G_RM_AA_ZB_XLU_SURF2	RM_AA_ZB_XLU_SURF(2)
+#define	G_RM_AA_ZB_OPA_DECAL	RM_AA_ZB_OPA_DECAL(1)
+#define	G_RM_AA_ZB_OPA_DECAL2	RM_AA_ZB_OPA_DECAL(2)
+#define	G_RM_AA_ZB_XLU_DECAL	RM_AA_ZB_XLU_DECAL(1)
+#define	G_RM_AA_ZB_XLU_DECAL2	RM_AA_ZB_XLU_DECAL(2)
+#define	G_RM_AA_ZB_OPA_INTER	RM_AA_ZB_OPA_INTER(1)
+#define	G_RM_AA_ZB_OPA_INTER2	RM_AA_ZB_OPA_INTER(2)
+#define	G_RM_AA_ZB_XLU_INTER	RM_AA_ZB_XLU_INTER(1)
+#define	G_RM_AA_ZB_XLU_INTER2	RM_AA_ZB_XLU_INTER(2)
+#define	G_RM_AA_ZB_XLU_LINE		RM_AA_ZB_XLU_LINE(1)
+#define	G_RM_AA_ZB_XLU_LINE2	RM_AA_ZB_XLU_LINE(2)
+#define	G_RM_AA_ZB_DEC_LINE		RM_AA_ZB_DEC_LINE(1)
+#define	G_RM_AA_ZB_DEC_LINE2	RM_AA_ZB_DEC_LINE(2)
+#define	G_RM_AA_ZB_TEX_EDGE		RM_AA_ZB_TEX_EDGE(1)
+#define	G_RM_AA_ZB_TEX_EDGE2	RM_AA_ZB_TEX_EDGE(2)
+#define	G_RM_AA_ZB_TEX_INTER	RM_AA_ZB_TEX_INTER(1)
+#define	G_RM_AA_ZB_TEX_INTER2	RM_AA_ZB_TEX_INTER(2)
+#define	G_RM_AA_ZB_SUB_SURF		RM_AA_ZB_SUB_SURF(1)
+#define	G_RM_AA_ZB_SUB_SURF2	RM_AA_ZB_SUB_SURF(2)
+#define	G_RM_AA_ZB_PCL_SURF		RM_AA_ZB_PCL_SURF(1)
+#define	G_RM_AA_ZB_PCL_SURF2	RM_AA_ZB_PCL_SURF(2)
+#define	G_RM_AA_ZB_OPA_TERR		RM_AA_ZB_OPA_TERR(1)
+#define	G_RM_AA_ZB_OPA_TERR2	RM_AA_ZB_OPA_TERR(2)
+#define	G_RM_AA_ZB_TEX_TERR		RM_AA_ZB_TEX_TERR(1)
+#define	G_RM_AA_ZB_TEX_TERR2	RM_AA_ZB_TEX_TERR(2)
+#define	G_RM_AA_ZB_SUB_TERR		RM_AA_ZB_SUB_TERR(1)
+#define	G_RM_AA_ZB_SUB_TERR2	RM_AA_ZB_SUB_TERR(2)
+
+#define	G_RM_RA_ZB_OPA_SURF		RM_RA_ZB_OPA_SURF(1)
+#define	G_RM_RA_ZB_OPA_SURF2	RM_RA_ZB_OPA_SURF(2)
+#define	G_RM_RA_ZB_OPA_DECAL	RM_RA_ZB_OPA_DECAL(1)
+#define	G_RM_RA_ZB_OPA_DECAL2	RM_RA_ZB_OPA_DECAL(2)
+#define	G_RM_RA_ZB_OPA_INTER	RM_RA_ZB_OPA_INTER(1)
+#define	G_RM_RA_ZB_OPA_INTER2	RM_RA_ZB_OPA_INTER(2)
+
+#define	G_RM_AA_OPA_SURF	RM_AA_OPA_SURF(1)
+#define	G_RM_AA_OPA_SURF2	RM_AA_OPA_SURF(2)
+#define	G_RM_AA_XLU_SURF	RM_AA_XLU_SURF(1)
+#define	G_RM_AA_XLU_SURF2	RM_AA_XLU_SURF(2)
+#define	G_RM_AA_XLU_LINE	RM_AA_XLU_LINE(1)
+#define	G_RM_AA_XLU_LINE2	RM_AA_XLU_LINE(2)
+#define	G_RM_AA_DEC_LINE	RM_AA_DEC_LINE(1)
+#define	G_RM_AA_DEC_LINE2	RM_AA_DEC_LINE(2)
+#define	G_RM_AA_TEX_EDGE	RM_AA_TEX_EDGE(1)
+#define	G_RM_AA_TEX_EDGE2	RM_AA_TEX_EDGE(2)
+#define	G_RM_AA_SUB_SURF	RM_AA_SUB_SURF(1)
+#define	G_RM_AA_SUB_SURF2	RM_AA_SUB_SURF(2)
+#define	G_RM_AA_PCL_SURF	RM_AA_PCL_SURF(1)
+#define	G_RM_AA_PCL_SURF2	RM_AA_PCL_SURF(2)
+#define	G_RM_AA_OPA_TERR	RM_AA_OPA_TERR(1)
+#define	G_RM_AA_OPA_TERR2	RM_AA_OPA_TERR(2)
+#define	G_RM_AA_TEX_TERR	RM_AA_TEX_TERR(1)
+#define	G_RM_AA_TEX_TERR2	RM_AA_TEX_TERR(2)
+#define	G_RM_AA_SUB_TERR	RM_AA_SUB_TERR(1)
+#define	G_RM_AA_SUB_TERR2	RM_AA_SUB_TERR(2)
+
+#endif
 
 #define G_RM_RA_OPA_SURF    RM_RA_OPA_SURF(1)
 #define G_RM_RA_OPA_SURF2   RM_RA_OPA_SURF(2)

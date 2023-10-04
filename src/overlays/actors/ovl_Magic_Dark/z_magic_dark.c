@@ -206,7 +206,7 @@ void MagicDark_DiamondDraw(Actor* thisx, PlayState* play) {
     s32 pad;
     u16 gameplayFrames = play->gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_magic_dark.c", 525);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -236,7 +236,7 @@ void MagicDark_DiamondDraw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, sDiamondModelDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_magic_dark.c", 570);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void MagicDark_OrbDraw(Actor* thisx, PlayState* play) {
@@ -269,7 +269,7 @@ void MagicDark_OrbDraw(Actor* thisx, PlayState* play) {
     pos.z -= (this->actor.scale.x * 300.0f * Math_CosS(Camera_GetCamDirYaw(GET_ACTIVE_CAM(play))) *
               Math_CosS(Camera_GetCamDirPitch(GET_ACTIVE_CAM(play))));
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_magic_dark.c", 619);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0x80, 170, 255, 255, 255);
@@ -288,5 +288,5 @@ void MagicDark_OrbDraw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gEffFlash1DL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_magic_dark.c", 643);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

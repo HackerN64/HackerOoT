@@ -57,15 +57,15 @@ void MapSelect_Init(GameState* thisx) {
     }
     R_UPDATE_RATE = 1;
 
-    gSaveContext.linkAge = BOOT_AGE;
-    gSaveContext.cutsceneIndex = 0xFFEF;
+    gSaveContext.save.linkAge = BOOT_AGE;
+    gSaveContext.save.cutsceneIndex = 0xFFEF;
 
     // turning the sfx volume back on
     SEQCMD_SET_PLAYER_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 10);
 
 #ifdef BOOT_TO_MAP_SELECT
     gSaveContext.fileNum = 0xFF;
-    gSaveContext.linkAge = BOOT_AGE;
+    gSaveContext.save.linkAge = BOOT_AGE;
     this->sceneLayer = (BOOT_CUTSCENE > 1) ? (BOOT_CUTSCENE & 0x000F) + 2 : BOOT_CUTSCENE;
     for (i = 1; i < this->sceneTotal; i++) {
         if (this->scenes[i].entranceIndex == BOOT_ENTRANCE) {
@@ -93,7 +93,7 @@ void MapSelect_Main(GameState* thisx) {
 void MapSelect_Draw(MapSelectState* this) {
     GraphicsContext* gfxCtx = this->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_select.c", 1013);
+    OPEN_DISPS(gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
     Gfx_SetupFrame(gfxCtx, 0, 0, 0);
@@ -106,7 +106,7 @@ void MapSelect_Draw(MapSelectState* this) {
         MapSelect_DrawMenu(this);
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_select.c", 1037);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void MapSelect_Destroy(GameState* thisx) {
@@ -182,7 +182,7 @@ void MapSelect_UpdateMenu(MapSelectState* this) {
 
         // change age
         if (CHECK_BTN_ALL(input->press.button, BTN_B)) {
-            gSaveContext.linkAge = !gSaveContext.linkAge;
+            gSaveContext.save.linkAge = !gSaveContext.save.linkAge;
             if (LINK_IS_CHILD) {
                 sfxIndex = ((u16)(Rand_ZeroOne() * 100) % ARRAY_COUNT(childLinkSfx));
                 sfxIndex = (sfxIndex < ARRAY_COUNT(childLinkSfx)) ? sfxIndex : 0;
@@ -338,7 +338,7 @@ void MapSelect_DrawMenu(MapSelectState* this) {
     GraphicsContext* gfxCtx = this->state.gfxCtx;
     GfxPrint* printer;
 
-    OPEN_DISPS(gfxCtx, "../z_select.c", 930);
+    OPEN_DISPS(gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
     Gfx_SetupFrame(gfxCtx, 0, 0, 0);
@@ -356,7 +356,7 @@ void MapSelect_DrawMenu(MapSelectState* this) {
 
     if (!this->showControls) {
         MapSelect_PrintMenu(this, printer);
-        MapSelect_PrintAgeSetting(this, printer, ((void)0, gSaveContext.linkAge));
+        MapSelect_PrintAgeSetting(this, printer, ((void)0, gSaveContext.save.linkAge));
         MapSelect_PrintSceneLayerSetting(this, printer);
     }
     MapSelect_PrintControls(this, printer);
@@ -364,14 +364,14 @@ void MapSelect_DrawMenu(MapSelectState* this) {
     POLY_OPA_DISP = GfxPrint_Close(printer);
     GfxPrint_Destroy(printer);
 
-    CLOSE_DISPS(gfxCtx, "../z_select.c", 966);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void MapSelect_DrawLoadingScreen(MapSelectState* this) {
     GraphicsContext* gfxCtx = this->state.gfxCtx;
     GfxPrint* printer;
 
-    OPEN_DISPS(gfxCtx, "../z_select.c", 977);
+    OPEN_DISPS(gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
     Gfx_SetupFrame(gfxCtx, 0, 0, 0);
@@ -386,7 +386,7 @@ void MapSelect_DrawLoadingScreen(MapSelectState* this) {
     POLY_OPA_DISP = GfxPrint_Close(printer);
     GfxPrint_Destroy(printer);
 
-    CLOSE_DISPS(gfxCtx, "../z_select.c", 1006);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void MapSelect_LoadTitle(MapSelectState* this) {
@@ -401,18 +401,18 @@ void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex) {
     if (gSaveContext.fileNum == 0xFF) {
         Sram_InitDebugSave();
         // Set the fill target to be the saved magic amount
-        gSaveContext.magicFillTarget = gSaveContext.magic;
+        gSaveContext.magicFillTarget = gSaveContext.save.info.playerData.magic;
         // Set `magicLevel` and `magic` to 0 so `magicCapacity` then `magic` grows from nothing
         // to respectively the full capacity and `magicFillTarget`
         gSaveContext.magicCapacity = 0;
-        gSaveContext.magicLevel = gSaveContext.magic = 0;
+        gSaveContext.save.info.playerData.magicLevel = gSaveContext.save.info.playerData.magic = 0;
     }
     gSaveContext.buttonStatus[0] = gSaveContext.buttonStatus[1] = gSaveContext.buttonStatus[2] =
         gSaveContext.buttonStatus[3] = gSaveContext.buttonStatus[4] = BTN_ENABLED;
     gSaveContext.forceRisingButtonAlphas = gSaveContext.nextHudVisibilityMode = gSaveContext.hudVisibilityMode =
         gSaveContext.hudVisibilityModeTimer = 0; // false, HUD_VISIBILITY_NO_CHANGE
     SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0);
-    gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = gSaveContext.entranceIndex = entranceIndex;
+    gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = gSaveContext.save.entranceIndex = entranceIndex;
     gSaveContext.respawnFlag = 0;
     gSaveContext.seqId = (u8)NA_BGM_DISABLED;
     gSaveContext.natureAmbienceId = 0xFF;
@@ -478,72 +478,72 @@ void MapSelect_PrintSceneLayerSetting(MapSelectState* this, GfxPrint* printer) {
     GfxPrint_SetPos(printer, 4, 26);
     GfxPrint_SetColor(printer, 127, 255, 55, 255);
 
-    gSaveContext.nightFlag = 0;
+    gSaveContext.save.nightFlag = 0;
 
     switch (this->sceneLayer) {
         case 0:
             label = "Daytime";
-            gSaveContext.dayTime = CLOCK_TIME(12, 0);
-            gSaveContext.cutsceneIndex = 0xFFEF;
+            gSaveContext.save.dayTime = CLOCK_TIME(12, 0);
+            gSaveContext.save.cutsceneIndex = 0xFFEF;
             break;
         case 1:
             label = "Nighttime";
-            gSaveContext.dayTime = CLOCK_TIME(0, 0);
-            gSaveContext.nightFlag = 1;
-            gSaveContext.cutsceneIndex = 0xFFEF;
+            gSaveContext.save.dayTime = CLOCK_TIME(0, 0);
+            gSaveContext.save.nightFlag = 1;
+            gSaveContext.save.cutsceneIndex = 0xFFEF;
             break;
         case 2:
             label = "Cutscene 0";
-            gSaveContext.dayTime = CLOCK_TIME(12, 0);
-            gSaveContext.cutsceneIndex = 0xFFF0;
+            gSaveContext.save.dayTime = CLOCK_TIME(12, 0);
+            gSaveContext.save.cutsceneIndex = 0xFFF0;
             break;
         case 3:
             label = "Cutscene 1";
-            gSaveContext.cutsceneIndex = 0xFFF1;
+            gSaveContext.save.cutsceneIndex = 0xFFF1;
             break;
         case 4:
             label = "Cutscene 2";
-            gSaveContext.cutsceneIndex = 0xFFF2;
+            gSaveContext.save.cutsceneIndex = 0xFFF2;
             break;
         case 5:
             label = "Cutscene 3";
-            gSaveContext.cutsceneIndex = 0xFFF3;
+            gSaveContext.save.cutsceneIndex = 0xFFF3;
             break;
         case 6:
             label = "Cutscene 4";
-            gSaveContext.cutsceneIndex = 0xFFF4;
+            gSaveContext.save.cutsceneIndex = 0xFFF4;
             break;
         case 7:
             label = "Cutscene 5";
-            gSaveContext.cutsceneIndex = 0xFFF5;
+            gSaveContext.save.cutsceneIndex = 0xFFF5;
             break;
         case 8:
             label = "Cutscene 6";
-            gSaveContext.cutsceneIndex = 0xFFF6;
+            gSaveContext.save.cutsceneIndex = 0xFFF6;
             break;
         case 9:
             label = "Cutscene 7";
-            gSaveContext.cutsceneIndex = 0xFFF7;
+            gSaveContext.save.cutsceneIndex = 0xFFF7;
             break;
         case 10:
             label = "Cutscene 8";
-            gSaveContext.cutsceneIndex = 0xFFF8;
+            gSaveContext.save.cutsceneIndex = 0xFFF8;
             break;
         case 11:
             label = "Cutscene 9";
-            gSaveContext.cutsceneIndex = 0xFFF9;
+            gSaveContext.save.cutsceneIndex = 0xFFF9;
             break;
         case 12:
             label = "Cutscene 10";
-            gSaveContext.cutsceneIndex = 0xFFFA;
+            gSaveContext.save.cutsceneIndex = 0xFFFA;
             break;
         default:
             label = "Unknown Layer";
-            gSaveContext.cutsceneIndex = 0xFFEF;
+            gSaveContext.save.cutsceneIndex = 0xFFEF;
             break;
     };
 
-    gSaveContext.skyboxTime = gSaveContext.dayTime;
+    gSaveContext.skyboxTime = gSaveContext.save.dayTime;
     GfxPrint_SetColor(printer, 155, 55, 150, 255);
     GfxPrint_Printf(printer, "Scene Layer: %s", label);
 }

@@ -228,7 +228,7 @@ void BgHidanRsekizou_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     MtxF mf;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_hidan_rsekizou.c", 564);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -257,5 +257,5 @@ void BgHidanRsekizou_Draw(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_hidan_rsekizou.c", 600);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

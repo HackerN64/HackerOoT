@@ -80,7 +80,7 @@ void ItemBHeart_Draw(Actor* thisx, PlayState* play) {
     Actor* actorIt;
     u8 flag = false;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_item_b_heart.c", 506);
+    OPEN_DISPS(play->state.gfxCtx);
 
     actorIt = play->actorCtx.actorLists[ACTORCAT_ITEMACTION].head;
 
@@ -106,5 +106,5 @@ void ItemBHeart_Draw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_OPA_DISP++, gGiHeartContainerDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_item_b_heart.c", 561);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

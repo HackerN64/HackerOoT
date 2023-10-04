@@ -56,7 +56,7 @@ void EffectSsStone1_Draw(PlayState* play, u32 index, EffectSs* this) {
     f32 mfW;
     f32 scale;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_ss_stone1.c", 154);
+    OPEN_DISPS(gfxCtx);
 
     SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &this->pos, &mfVec, &mfW);
     scale = (mfW < 1500.0f) ? 3.0f : (mfW / 1500.0f) * 3.0f;
@@ -71,7 +71,7 @@ void EffectSsStone1_Draw(PlayState* play, u32 index, EffectSs* this) {
     gDPSetEnvColor(POLY_XLU_DISP++, drawParams->envColor.r, drawParams->envColor.g, drawParams->envColor.b, 255);
     gSPDisplayList(POLY_XLU_DISP++, gUnknownEffStoneDL);
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_ss_stone1.c", 183);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EffectSsStone1_Update(PlayState* play, u32 index, EffectSs* this) {

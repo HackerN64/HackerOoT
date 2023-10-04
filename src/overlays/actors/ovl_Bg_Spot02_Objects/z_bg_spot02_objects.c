@@ -208,7 +208,7 @@ void func_808ACC34(BgSpot02Objects* this, PlayState* play) {
     }
 
     if (play->csCtx.curFrame == 245 || play->csCtx.curFrame == 351) {
-        func_800788CC(NA_SE_EV_LIGHTNING);
+        Sfx_PlaySfxCentered2(NA_SE_EV_LIGHTNING);
     }
 }
 
@@ -223,7 +223,7 @@ void func_808ACCB8(Actor* thisx, PlayState* play) {
     u8 greenEnv;
     u8 blueEnv;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot02_objects.c", 600);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (play->csCtx.state != CS_STATE_IDLE && play->csCtx.actorCues[0] != NULL && play->csCtx.actorCues[0]->id == 2) {
         if (this->unk_16A < 5) {
@@ -261,7 +261,7 @@ void func_808ACCB8(Actor* thisx, PlayState* play) {
         gDPPipeSync(POLY_XLU_DISP++);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot02_objects.c", 692);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_808AD3D4(BgSpot02Objects* this, PlayState* play) {
@@ -283,7 +283,7 @@ void func_808AD450(Actor* thisx, PlayState* play) {
     s32 pad;
     f32 lerp;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot02_objects.c", 736);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (play->csCtx.state != CS_STATE_IDLE && play->csCtx.actorCues[2] != NULL) {
         u16 temp_v1 = CAM_BINANG_TO_DEG(play->csCtx.actorCues[2]->rot.z);
@@ -324,5 +324,5 @@ void func_808AD450(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot02_objects.c", 818);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

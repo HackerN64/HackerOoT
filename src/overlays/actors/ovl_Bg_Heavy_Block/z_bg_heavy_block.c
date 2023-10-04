@@ -367,7 +367,7 @@ void BgHeavyBlock_LiftedUp(BgHeavyBlock* this, PlayState* play) {
 
     this->timer++;
 
-    func_8002DF54(play, &player->actor, PLAYER_CSMODE_8);
+    func_8002DF54(play, &player->actor, PLAYER_CSACTION_8);
 
     // if parent is NULL, link threw it
     if (Actor_HasNoParent(&this->dyna.actor, play)) {
@@ -488,7 +488,7 @@ void BgHeavyBlock_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     Player* player = GET_PLAYER(play);
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_heavy_block.c", 904);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (BgHeavyBlock_LiftedUp == this->actionFunc) {
         Matrix_SetTranslateRotateYXZ(player->leftHandPos.x, player->leftHandPos.y, player->leftHandPos.z,
@@ -507,7 +507,7 @@ void BgHeavyBlock_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gHeavyBlockEntirePillarDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_heavy_block.c", 935);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BgHeavyBlock_DrawPiece(Actor* thisx, PlayState* play) {

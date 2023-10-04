@@ -246,7 +246,7 @@ void EnFdFire_Draw(Actor* thisx, PlayState* play) {
     f32 sp84;
     f32 sp80;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fd_fire.c", 572);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Translate(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z, MTXMODE_NEW);
     sp8E = Math_Vec3f_Yaw(&scale, &this->actor.velocity) - Camera_GetCamDirYaw(GET_ACTIVE_CAM(play));
@@ -282,5 +282,5 @@ void EnFdFire_Draw(Actor* thisx, PlayState* play) {
     gDPPipeSync(POLY_XLU_DISP++);
     gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fd_fire.c", 672);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

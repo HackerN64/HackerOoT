@@ -2,6 +2,8 @@
 
 #include "message_data_fmt.h"
 
+#include "config.h"
+
 #define DEFINE_MESSAGE(textId, type, yPos, nesMessage, gerMessage, fraMessage) \
     const char _message_##textId##_nes[sizeof(nesMessage)] = { nesMessage END };
 

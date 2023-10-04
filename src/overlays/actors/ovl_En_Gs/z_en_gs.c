@@ -563,7 +563,7 @@ void EnGs_Draw(Actor* thisx, PlayState* play) {
     u32 frames;
 
     if (!(this->unk_19E & 8)) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_gs.c", 1046);
+        OPEN_DISPS(play->state.gfxCtx);
 
         frames = play->gameplayFrames;
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -608,6 +608,6 @@ void EnGs_Draw(Actor* thisx, PlayState* play) {
             gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
         }
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_gs.c", 1101);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

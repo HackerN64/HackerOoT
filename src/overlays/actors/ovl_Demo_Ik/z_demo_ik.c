@@ -51,12 +51,12 @@ s32 DemoIk_CheckForCue(PlayState* play, u16 cueId, s32 cueChannel) {
 }
 
 void DemoIk_SetMove(DemoIk* this, PlayState* play) {
-    this->skelAnime.moveFlags |= 1;
+    this->skelAnime.moveFlags |= ANIM_FLAG_0;
     AnimationContext_SetMoveActor(play, &this->actor, &this->skelAnime, 1.0f);
 }
 
 void DemoIk_EndMove(DemoIk* this) {
-    this->skelAnime.moveFlags &= ~1;
+    this->skelAnime.moveFlags &= ~ANIM_FLAG_0;
 }
 
 f32 DemoIk_GetCurFrame(DemoIk* this) {
@@ -259,7 +259,7 @@ void DemoIk_Type1PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s
     DemoIk* this = (DemoIk*)thisx;
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_demo_ik_inArmer.c", 385);
+    OPEN_DISPS(gfxCtx);
     if (limbIndex == 1) {
         switch (this->actor.params) {
             case 0:
@@ -274,7 +274,7 @@ void DemoIk_Type1PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s
                 break;
         }
     }
-    CLOSE_DISPS(gfxCtx, "../z_demo_ik_inArmer.c", 404);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void DemoIk_Type1Draw(DemoIk* this, PlayState* play) {
@@ -282,7 +282,7 @@ void DemoIk_Type1Draw(DemoIk* this, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     SkelAnime* skelAnime = &this->skelAnime;
 
-    OPEN_DISPS(gfxCtx, "../z_demo_ik_inArmer.c", 422);
+    OPEN_DISPS(gfxCtx);
     func_8002EBCC(&this->actor, play, 0);
     Gfx_SetupDL_25Opa(gfxCtx);
     Gfx_SetupDL_25Xlu(gfxCtx);
@@ -290,7 +290,7 @@ void DemoIk_Type1Draw(DemoIk* this, PlayState* play) {
     gSPSegment(POLY_OPA_DISP++, 0x09, DemoIk_SetColors(gfxCtx, 255, 40, 0, 40, 0, 0));
     gSPSegment(POLY_OPA_DISP++, 0x0A, DemoIk_SetColors(gfxCtx, 255, 255, 255, 20, 40, 30));
     SkelAnime_DrawOpa(play, skelAnime->skeleton, skelAnime->jointTable, NULL, DemoIk_Type1PostLimbDraw, this);
-    CLOSE_DISPS(gfxCtx, "../z_demo_ik_inArmer.c", 444);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void DemoIk_Type2Init(DemoIk* this, PlayState* play) {
@@ -416,7 +416,7 @@ void DemoIk_Type2PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     f32 frame = DemoIk_GetCurFrame(this);
 
-    OPEN_DISPS(gfxCtx, "../z_demo_ik_inFace.c", 268);
+    OPEN_DISPS(gfxCtx);
     if (limbIndex == 1 && (frame >= 30.0f)) {
         switch (this->actor.params) {
             case 3:
@@ -441,7 +441,7 @@ void DemoIk_Type2PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s
                 break;
         }
     }
-    CLOSE_DISPS(gfxCtx, "../z_demo_ik_inFace.c", 300);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void DemoIk_Type2Draw(DemoIk* this, PlayState* play) {
@@ -449,7 +449,7 @@ void DemoIk_Type2Draw(DemoIk* this, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     SkelAnime* skelAnime = &this->skelAnime;
 
-    OPEN_DISPS(gfxCtx, "../z_demo_ik_inFace.c", 318);
+    OPEN_DISPS(gfxCtx);
     func_8002EBCC(&this->actor, play, 0);
     Gfx_SetupDL_25Opa(gfxCtx);
     Gfx_SetupDL_25Xlu(gfxCtx);
@@ -458,7 +458,7 @@ void DemoIk_Type2Draw(DemoIk* this, PlayState* play) {
     gSPSegment(POLY_OPA_DISP++, 0x0A, DemoIk_SetColors(gfxCtx, 255, 255, 255, 20, 40, 30));
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                           DemoIk_Type2OverrideLimbDraw, DemoIk_Type2PostLimbDraw, this);
-    CLOSE_DISPS(gfxCtx, "../z_demo_ik_inFace.c", 341);
+    CLOSE_DISPS(gfxCtx);
 }
 
 static DemoIkActionFunc sActionFuncs[] = {

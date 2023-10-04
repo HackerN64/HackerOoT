@@ -75,7 +75,7 @@ void BgSpot01Fusya_Update(Actor* thisx, PlayState* play) {
 }
 
 void BgSpot01Fusya_Draw(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot01_fusya.c", 210);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -83,5 +83,5 @@ void BgSpot01Fusya_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gKakarikoWindmillSailsDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot01_fusya.c", 219);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

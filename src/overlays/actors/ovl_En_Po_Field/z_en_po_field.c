@@ -324,7 +324,7 @@ void func_80AD42B0(EnPoField* this) {
     this->actor.scale.y = 0.0f;
     Actor_PlaySfx(&this->actor, NA_SE_EV_METAL_BOX_BOUND);
     if (this->actor.params == EN_PO_FIELD_BIG) {
-        func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+        Sfx_PlaySfxCentered(NA_SE_SY_TRE_BOX_APPEAR);
     }
     this->actionFunc = func_80AD587C;
 }
@@ -775,7 +775,7 @@ void EnPoField_DrawFlame(EnPoField* this, PlayState* play) {
     s32 pad;
 
     if (this->flameTimer != 0) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_po_field.c", 1669);
+        OPEN_DISPS(play->state.gfxCtx);
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
         gSPSegment(POLY_XLU_DISP++, 0x08,
                    Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, 0, 0, 32, 64, 1, 0,
@@ -795,7 +795,7 @@ void EnPoField_DrawFlame(EnPoField* this, PlayState* play) {
         gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_po_field.c", 1709),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_po_field.c", 1712);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 
@@ -921,7 +921,7 @@ void EnPoField_Draw(Actor* thisx, PlayState* play) {
     EnPoFieldInfo* info = &sPoFieldInfo[this->actor.params];
 
     if (this->actionFunc != EnPoField_WaitForSpawn) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_po_field.c", 1976);
+        OPEN_DISPS(play->state.gfxCtx);
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
         gSPSegment(POLY_OPA_DISP++, 0x0A,
@@ -950,7 +950,7 @@ void EnPoField_Draw(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, gPoeFieldLanternDL);
         gSPDisplayList(POLY_OPA_DISP++, gPoeFieldLanternTopDL);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_po_field.c", 2039);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
     EnPoField_DrawFlame(this, play);
 }
@@ -970,7 +970,7 @@ void EnPoField_DrawSoul(Actor* thisx, PlayState* play) {
     s32 pad;
     EnPoFieldInfo* info = &sPoFieldInfo[this->actor.params];
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_po_field.c", 2077);
+    OPEN_DISPS(play->state.gfxCtx);
     if (this->actionFunc == EnPoField_SoulIdle) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         gSPSegment(POLY_OPA_DISP++, 0x0A,
@@ -996,6 +996,6 @@ void EnPoField_DrawSoul(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, gPoeFieldSoulDL);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_po_field.c", 2149);
+    CLOSE_DISPS(play->state.gfxCtx);
     EnPoField_DrawFlame(this, play);
 }

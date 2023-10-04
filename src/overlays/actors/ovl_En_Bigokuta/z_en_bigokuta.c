@@ -815,7 +815,7 @@ s32 EnBigokuta_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec
 
     if (limbIndex == 15) {
         if (this->actionFunc == func_809BE058 || this->actionFunc == func_809BE180) {
-            OPEN_DISPS(play->state.gfxCtx, "../z_en_bigokuta.c", 1914);
+            OPEN_DISPS(play->state.gfxCtx);
 
             if (this->actionFunc == func_809BE058) {
                 temp_hi = this->unk_196 % 12;
@@ -837,10 +837,10 @@ s32 EnBigokuta_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec
             gDPPipeSync(POLY_OPA_DISP++);
 
             gDPSetEnvColor(POLY_OPA_DISP++, temp_f0, temp_f0, temp_f0, 255);
-            CLOSE_DISPS(play->state.gfxCtx, "../z_en_bigokuta.c", 1945);
+            CLOSE_DISPS(play->state.gfxCtx);
         }
     } else if (limbIndex == 10) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_bigokuta.c", 1950);
+        OPEN_DISPS(play->state.gfxCtx);
         if (this->actionFunc == func_809BE26C) {
             intensity = this->unk_196 * (255.0f / 38);
         } else {
@@ -849,7 +849,7 @@ s32 EnBigokuta_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec
         gDPPipeSync(POLY_OPA_DISP++);
         gDPSetEnvColor(POLY_OPA_DISP++, intensity, intensity, intensity, intensity);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_bigokuta.c", 1972);
+        CLOSE_DISPS(play->state.gfxCtx);
     } else if (limbIndex == 17 && this->actionFunc == func_809BE26C) {
         if (this->unk_198 < 5) {
             Matrix_Scale((this->unk_198 * 0.2f * 0.25f) + 1.0f, 1.0f, 1.0f, MTXMODE_APPLY);
@@ -867,7 +867,7 @@ s32 EnBigokuta_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec
 void EnBigokuta_Draw(Actor* thisx, PlayState* play) {
     EnBigokuta* this = (EnBigokuta*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_bigokuta.c", 2017);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if ((this->actionFunc != func_809BE26C) || (this->unk_196 != 0) || (this->unk_198 != 0)) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -895,5 +895,5 @@ void EnBigokuta_Draw(Actor* thisx, PlayState* play) {
         POLY_XLU_DISP = SkelAnime_DrawFlex(play, this->skelAnime.skeleton, this->skelAnime.jointTable,
                                            this->skelAnime.dListCount, NULL, NULL, NULL, POLY_XLU_DISP);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bigokuta.c", 2076);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

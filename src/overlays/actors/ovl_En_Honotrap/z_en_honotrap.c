@@ -501,7 +501,7 @@ void EnHonotrap_DrawEye(Actor* thisx, PlayState* play) {
     };
     EnHonotrap* this = (EnHonotrap*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_honotrap.c", 982);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeState]));
@@ -509,14 +509,14 @@ void EnHonotrap_DrawEye(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gEyeSwitch2DL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_honotrap.c", 991);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnHonotrap_DrawFlame(Actor* thisx, PlayState* play) {
     s32 pad;
     EnHonotrap* this = (EnHonotrap*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_honotrap.c", 1000);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     this->flameScroll -= 20;
@@ -532,7 +532,7 @@ void EnHonotrap_DrawFlame(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_honotrap.c", 1028);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnHonotrap_Draw(Actor* thisx, PlayState* play) {

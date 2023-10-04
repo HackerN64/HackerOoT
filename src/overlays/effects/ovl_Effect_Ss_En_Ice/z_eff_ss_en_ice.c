@@ -96,7 +96,7 @@ void EffectSsEnIce_Draw(PlayState* play, u32 index, EffectSs* this) {
     scale = this->rScale * 0.01f;
     gameplayFrames = play->gameplayFrames;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_en_ice.c", 235);
+    OPEN_DISPS(gfxCtx);
 
     if (this->rAlphaMode != 0) {
         alpha = this->life * 12;
@@ -130,7 +130,7 @@ void EffectSsEnIce_Draw(PlayState* play, u32 index, EffectSs* this) {
     gDPSetEnvColor(POLY_XLU_DISP++, this->rEnvColorR, this->rEnvColorG, this->rEnvColorB, (u32)alpha);
     gSPDisplayList(POLY_XLU_DISP++, gEffIceFragment2DL);
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_en_ice.c", 294);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EffectSsEnIce_UpdateFlying(PlayState* play, u32 index, EffectSs* this) {

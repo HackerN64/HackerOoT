@@ -266,7 +266,7 @@ void DemoGj_DrawCommon(DemoGj* this, PlayState* play, Gfx* displayList) {
     if (kREG(0) == 0) {
         GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-        OPEN_DISPS(gfxCtx, "../z_demo_gj.c", 1163);
+        OPEN_DISPS(gfxCtx);
 
         Gfx_SetupDL_25Opa(gfxCtx);
 
@@ -276,7 +276,7 @@ void DemoGj_DrawCommon(DemoGj* this, PlayState* play, Gfx* displayList) {
         gSPDisplayList(POLY_OPA_DISP++, displayList);
         gSPPopMatrix(POLY_OPA_DISP++, G_MTX_MODELVIEW);
 
-        CLOSE_DISPS(gfxCtx, "../z_demo_gj.c", 1169);
+        CLOSE_DISPS(gfxCtx);
     }
 }
 
@@ -292,7 +292,7 @@ void DemoGj_DrawRotated(DemoGj* this, PlayState* play, Gfx* displayList) {
     gfxCtx = play->state.gfxCtx;
     matrix = Graph_Alloc(gfxCtx, sizeof(Mtx));
 
-    OPEN_DISPS(gfxCtx, "../z_demo_gj.c", 1187);
+    OPEN_DISPS(gfxCtx);
 
     Matrix_Push();
     Matrix_RotateZYX(x, y, z, MTXMODE_APPLY);
@@ -305,7 +305,7 @@ void DemoGj_DrawRotated(DemoGj* this, PlayState* play, Gfx* displayList) {
     gSPDisplayList(POLY_OPA_DISP++, displayList);
     gSPPopMatrix(POLY_OPA_DISP++, G_MTX_MODELVIEW);
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_gj.c", 1201);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void DemoGj_SetupRotation(DemoGj* this, PlayState* play) {

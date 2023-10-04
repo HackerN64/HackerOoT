@@ -298,15 +298,16 @@ void BgJyaCobra_UpdateShadowFromSide(BgJyaCobra* this) {
             z = (88.0f - spBC.z) * 0.64f + 0.5f;
             for (k = 0; k < 11; k++) {
                 temp_z = z - 5 + k;
-                if (!(temp_z & ~0x3F)) {
-                    temp_z *= 0x40;
-                    for (l = 0; l < 11; l++) {
-                        temp_x = x - 5 + l;
-                        if (!(temp_x & ~0x3F)) {
-                            shadowTex[temp_z + temp_x] |= D_8089731C[k][l];
-                        }
-                        if (1) {}
+                if (temp_z & ~0x3F) {
+                    continue;
+                }
+                temp_z *= 0x40;
+                for (l = 0; l < 11; l++) {
+                    temp_x = x - 5 + l;
+                    if (temp_x & ~0x3F) {
+                        continue;
                     }
+                    shadowTex[temp_z + temp_x] |= D_8089731C[k][l];
                 }
             }
         }
@@ -326,14 +327,16 @@ void BgJyaCobra_UpdateShadowFromSide(BgJyaCobra* this) {
             z = (s32)(((88.0f - spBC.z) * 0.64f) + 0.5f);
             for (k = 0; k < 3; k++) {
                 temp_z = z - 1 + k;
-                if (!(temp_z & ~0x3F)) {
-                    temp_z *= 0x40;
-                    for (l = 0; l < 3; l++) {
-                        temp_x = x - 1 + l;
-                        if (!(temp_x & ~0x3F)) {
-                            shadowTex[temp_z + temp_x] |= D_80897398[k][l];
-                        }
+                if (temp_z & ~0x3F) {
+                    continue;
+                }
+                temp_z *= 0x40;
+                for (l = 0; l < 3; l++) {
+                    temp_x = x - 1 + l;
+                    if (temp_x & ~0x3F) {
+                        continue;
                     }
+                    shadowTex[temp_z + temp_x] |= D_80897398[k][l];
                 }
             }
         }
@@ -348,7 +351,6 @@ void BgJyaCobra_UpdateShadowFromSide(BgJyaCobra* this) {
         shadowTex[j * 0x40 + 0] = 0;
         shadowTex[j * 0x40 + 0x3F] = 0;
     }
-    if (D_80897398[0][0]) {}
 }
 
 /*
@@ -525,21 +527,21 @@ void BgJyaCobra_Update(Actor* thisx, PlayState* play2) {
 }
 
 void func_80896CB4(PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_jya_cobra.c", 864);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_jya_cobra.c", 867),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gCobra2DL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_jya_cobra.c", 872);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_80896D78(BgJyaCobra* this, PlayState* play) {
     s32 pad;
     Vec3s sp44;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_jya_cobra.c", 924);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     sp44.x = D_80897308[this->dyna.actor.params & 3] + this->dyna.actor.shape.rot.x;
@@ -553,7 +555,7 @@ void func_80896D78(BgJyaCobra* this, PlayState* play) {
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 255, (s32)(this->unk_18C * 140.0f));
     gSPDisplayList(POLY_XLU_DISP++, gCobra3DL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_jya_cobra.c", 947);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BgJyaCobra_DrawShadow(BgJyaCobra* this, PlayState* play) {
@@ -562,7 +564,7 @@ void BgJyaCobra_DrawShadow(BgJyaCobra* this, PlayState* play) {
     Vec3f sp64;
     Vec3s* phi_a3;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_jya_cobra.c", 966);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_44Xlu(play->state.gfxCtx);
 
@@ -596,7 +598,7 @@ void BgJyaCobra_DrawShadow(BgJyaCobra* this, PlayState* play) {
 
     gSPDisplayList(POLY_XLU_DISP++, sShadowDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_jya_cobra.c", 1006);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BgJyaCobra_Draw(Actor* thisx, PlayState* play) {

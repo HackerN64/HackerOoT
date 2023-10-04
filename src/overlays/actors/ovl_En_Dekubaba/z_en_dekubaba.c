@@ -1149,7 +1149,7 @@ void EnDekubaba_Update(Actor* thisx, PlayState* play) {
 void EnDekubaba_DrawStemRetracted(EnDekubaba* this, PlayState* play) {
     f32 horizontalScale;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_dekubaba.c", 2445);
+    OPEN_DISPS(play->state.gfxCtx);
 
     horizontalScale = this->size * 0.01f;
 
@@ -1163,7 +1163,7 @@ void EnDekubaba_DrawStemRetracted(EnDekubaba* this, PlayState* play) {
 
     Actor_SetFocus(&this->actor, 0.0f);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_dekubaba.c", 2468);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnDekubaba_DrawStemExtended(EnDekubaba* this, PlayState* play) {
@@ -1175,7 +1175,7 @@ void EnDekubaba_DrawStemExtended(EnDekubaba* this, PlayState* play) {
     f32 scale;
     s32 stemSections;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_dekubaba.c", 2487);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->actionFunc == EnDekubaba_PrunedSomersault) {
         stemSections = 2;
@@ -1230,11 +1230,11 @@ void EnDekubaba_DrawStemExtended(EnDekubaba* this, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_dekubaba.c", 2569);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnDekubaba_DrawStemBasePruned(EnDekubaba* this, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_dekubaba.c", 2579);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_RotateZYX(this->stemSectionAngle[2], this->actor.shape.rot.y, 0, MTXMODE_APPLY);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_dekubaba.c", 2586),
@@ -1243,14 +1243,14 @@ void EnDekubaba_DrawStemBasePruned(EnDekubaba* this, PlayState* play) {
 
     Collider_UpdateSpheres(55, &this->collider);
     Collider_UpdateSpheres(56, &this->collider);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_dekubaba.c", 2596);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnDekubaba_DrawBaseShadow(EnDekubaba* this, PlayState* play) {
     MtxF mtx;
     f32 horizontalScale;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_dekubaba.c", 2692);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_44Xlu(play->state.gfxCtx);
 
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 0, 0, 0, 255);
@@ -1263,7 +1263,7 @@ void EnDekubaba_DrawBaseShadow(EnDekubaba* this, PlayState* play) {
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_dekubaba.c", 2710),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gCircleShadowDL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_dekubaba.c", 2715);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnDekubaba_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
@@ -1279,7 +1279,7 @@ void EnDekubaba_Draw(Actor* thisx, PlayState* play) {
     f32 scale;
 
     if (1) {}
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_dekubaba.c", 2752);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     if (this->actionFunc != EnDekubaba_DeadStickDrop) {
@@ -1316,5 +1316,5 @@ void EnDekubaba_Draw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_OPA_DISP++, gDekuBabaStickDropDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_dekubaba.c", 2804);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -751,7 +751,7 @@ static void* sTentaclesTextures[] = {
 void EnBili_Draw(Actor* thisx, PlayState* play) {
     EnBili* this = (EnBili*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_bili.c", 1521);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     this->tentaclesTexIndex = CLAMP_MAX(this->tentaclesTexIndex, 7);
@@ -766,5 +766,5 @@ void EnBili_Draw(Actor* thisx, PlayState* play) {
 
     POLY_XLU_DISP = SkelAnime_Draw(play, this->skelAnime.skeleton, this->skelAnime.jointTable, EnBili_OverrideLimbDraw,
                                    NULL, this, POLY_XLU_DISP);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bili.c", 1552);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

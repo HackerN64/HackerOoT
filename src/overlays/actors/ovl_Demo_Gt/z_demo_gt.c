@@ -21,7 +21,7 @@ void DemoGt_Destroy(Actor* thisx, PlayState* play) {
 }
 
 void DemoGt_PlayEarthquakeSfx(void) {
-    func_800788CC(NA_SE_EV_EARTHQUAKE - SFX_FLAG);
+    Sfx_PlaySfxCentered2(NA_SE_EV_EARTHQUAKE - SFX_FLAG);
 }
 
 void DemoGt_PlayExplosion1Sfx(PlayState* play, Vec3f* pos) {
@@ -657,7 +657,7 @@ void DemoGt_Draw1(DemoGt* this, PlayState* play) {
     spB4 = Graph_Alloc(gfxCtx, sizeof(Mtx));
     sp98 = 1.0f - Math_CosS(spC6);
 
-    OPEN_DISPS(gfxCtx, "../z_demo_gt_part1.c", 458);
+    OPEN_DISPS(gfxCtx);
 
     spA8.x = Math_CosS(spB8);
     spA8.y = 0.0f;
@@ -695,7 +695,7 @@ void DemoGt_Draw1(DemoGt* this, PlayState* play) {
     gSPMatrix(POLY_XLU_DISP++, spB4, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gTowerCollapseCsFlameSmokeDL);
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_gt_part1.c", 557);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_8097F904_Init1(DemoGt* this, PlayState* play) {
@@ -860,7 +860,7 @@ void DemoGt_Draw2(DemoGt* this, PlayState* play) {
     s32* unk178;
     s32 pad;
 
-    OPEN_DISPS(gfxCtx, "../z_demo_gt_part2.c", 470);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Opa(gfxCtx);
     unk198 = this->unk_198;
@@ -873,7 +873,7 @@ void DemoGt_Draw2(DemoGt* this, PlayState* play) {
     gSPDisplayList(POLY_OPA_DISP++, gTowerCollapseCsCollapsedStructureInnerDL);
     gSPPopMatrix(POLY_OPA_DISP++, G_MTX_MODELVIEW);
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_gt_part2.c", 489);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_80980110_Init2(DemoGt* this, PlayState* play) {
@@ -1175,7 +1175,7 @@ void DemoGt_Update10(DemoGt* this, PlayState* play) {
 void DemoGt_Draw3(DemoGt* this, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_demo_gt_part3.c", 1026);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Opa(gfxCtx);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(gfxCtx, "../z_demo_gt_part3.c", 1028),
@@ -1183,7 +1183,7 @@ void DemoGt_Draw3(DemoGt* this, PlayState* play) {
     gSPDisplayList(POLY_OPA_DISP++, gTowerCollapseCsCollapsedStructureOuterDL);
     gSPPopMatrix(POLY_OPA_DISP++, G_MTX_MODELVIEW);
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_gt_part3.c", 1032);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_80980F00_Init5(DemoGt* this, PlayState* play) {
@@ -1198,7 +1198,7 @@ void func_80980F58(DemoGt* this, PlayState* play) {
     u16 csCurFrame = play->csCtx.curFrame;
 
     if (csCurFrame == 244) {
-        func_80078914(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
+        Sfx_PlaySfxAtPos(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
     }
 }
 
@@ -1278,7 +1278,7 @@ void DemoGt_Draw4(DemoGt* this, PlayState* play2) {
         sp60 = Graph_Alloc(gfxCtx, sizeof(Mtx));
         sp44 = 1.0f - Math_CosS(sp76);
 
-        OPEN_DISPS(gfxCtx, "../z_demo_gt_part4_1.c", 217);
+        OPEN_DISPS(gfxCtx);
 
         sp54.x = Math_CosS(sp68);
         sp54.y = 0.0f;
@@ -1308,7 +1308,7 @@ void DemoGt_Draw4(DemoGt* this, PlayState* play2) {
         gSPDisplayList(POLY_OPA_DISP++, gTowerCollapseCsStandalonePillarDL);
         gSPPopMatrix(POLY_OPA_DISP++, G_MTX_MODELVIEW);
 
-        CLOSE_DISPS(gfxCtx, "../z_demo_gt_part4_1.c", 246);
+        CLOSE_DISPS(gfxCtx);
     }
 }
 
@@ -1324,7 +1324,7 @@ void func_80981424(DemoGt* this, PlayState* play) {
     u16 csCurFrame = play->csCtx.curFrame;
 
     if (csCurFrame == 789) {
-        func_80078914(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
+        Sfx_PlaySfxAtPos(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
     }
 }
 
@@ -1400,7 +1400,7 @@ void DemoGt_Draw5(DemoGt* this, PlayState* play) {
     sp60 = Graph_Alloc(gfxCtx, sizeof(Mtx));
     sp44 = 1 - Math_CosS(sp76);
 
-    OPEN_DISPS(gfxCtx, "../z_demo_gt_part4_2.c", 212);
+    OPEN_DISPS(gfxCtx);
 
     sp54.x = Math_CosS(sp68);
     sp54.y = 0.0f;
@@ -1431,7 +1431,7 @@ void DemoGt_Draw5(DemoGt* this, PlayState* play) {
     gSPDisplayList(POLY_OPA_DISP++, gTowerCollapseCsStandalonePillarDL);
     gSPPopMatrix(POLY_OPA_DISP++, G_MTX_MODELVIEW);
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_gt_part4_2.c", 241);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_809818A4_Init7(DemoGt* this, PlayState* play) {
@@ -1446,7 +1446,7 @@ void func_809818FC(DemoGt* this, PlayState* play) {
     u16 csCurFrame = play->csCtx.curFrame;
 
     if (csCurFrame == 845) {
-        func_80078914(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
+        Sfx_PlaySfxAtPos(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
     }
 }
 void func_80981930(DemoGt* this, PlayState* play) {
@@ -1500,7 +1500,7 @@ void DemoGt_Draw6(DemoGt* this, PlayState* play) {
     sp64 = Graph_Alloc(gfxCtx, sizeof(Mtx));
     sp48 = 1.0f - Math_CosS(sp78);
 
-    OPEN_DISPS(gfxCtx, "../z_demo_gt_part4_3.c", 276);
+    OPEN_DISPS(gfxCtx);
 
     sp58.x = Math_CosS(sp6C);
     sp58.y = 0.0f;
@@ -1523,7 +1523,7 @@ void DemoGt_Draw6(DemoGt* this, PlayState* play) {
     gSPDisplayList(POLY_OPA_DISP++, gTowerCollapseCsStandalonePillarDL);
     gSPPopMatrix(POLY_OPA_DISP++, G_MTX_MODELVIEW);
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_gt_part4_3.c", 307);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_80981C94_Init23(DemoGt* this, PlayState* play) {
@@ -1537,7 +1537,7 @@ void func_80981CEC(DemoGt* this, PlayState* play) {
     u16 csCurFrame = play->csCtx.curFrame;
 
     if (csCurFrame == 183) {
-        func_80078914(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
+        Sfx_PlaySfxAtPos(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
     }
 }
 
@@ -1592,7 +1592,7 @@ void DemoGt_Draw7(DemoGt* this, PlayState* play) {
     sp5C = Graph_Alloc(gfxCtx, sizeof(Mtx));
     sp40 = 1.0f - Math_CosS(sp6E);
 
-    OPEN_DISPS(gfxCtx, "../z_demo_gt_part5.c", 136);
+    OPEN_DISPS(gfxCtx);
 
     sp50.x = Math_CosS(sp60);
     sp50.y = 0.0f;
@@ -1614,7 +1614,7 @@ void DemoGt_Draw7(DemoGt* this, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, sp5C, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gTowerCollapseCsWalkwayDL);
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_gt_part5.c", 160);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_80982054_Init24(DemoGt* this, PlayState* play) {
@@ -1628,7 +1628,7 @@ void func_809820AC(DemoGt* this, PlayState* play) {
     u16 csCurFrame = play->csCtx.curFrame;
 
     if (csCurFrame == 154) {
-        func_80078914(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
+        Sfx_PlaySfxAtPos(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
     }
 }
 
@@ -1683,7 +1683,7 @@ void DemoGt_Draw8(DemoGt* this, PlayState* play) {
     sp5C = Graph_Alloc(gfxCtx, sizeof(Mtx));
     sp40 = 1.0f - Math_CosS(sp6E);
 
-    OPEN_DISPS(gfxCtx, "../z_demo_gt_part6.c", 137);
+    OPEN_DISPS(gfxCtx);
 
     sp50.x = Math_CosS(sp60);
     sp50.y = 0.0f;
@@ -1705,7 +1705,7 @@ void DemoGt_Draw8(DemoGt* this, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, sp5C, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gTowerCollapseCsAlternativeWalkwayDL);
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_gt_part6.c", 163);
+    CLOSE_DISPS(gfxCtx);
 }
 
 static DemoGtUpdateFunc sUpdateFuncs[] = {

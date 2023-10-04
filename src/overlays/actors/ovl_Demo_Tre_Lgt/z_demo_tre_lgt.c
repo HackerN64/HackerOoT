@@ -85,8 +85,9 @@ void func_809937B4(DemoTreLgt* this, PlayState* play, f32 currentFrame) {
 
     this->action = DEMO_TRE_LGT_ACTION_ANIMATE;
 
-    SkelCurve_SetAnim(skelCurve, sAnimations[gSaveContext.linkAge], 1.0f,
-                      sDemoTreLgtInfo[gSaveContext.linkAge].endFrame + sDemoTreLgtInfo[gSaveContext.linkAge].unk_08,
+    SkelCurve_SetAnim(skelCurve, sAnimations[gSaveContext.save.linkAge], 1.0f,
+                      sDemoTreLgtInfo[gSaveContext.save.linkAge].endFrame +
+                          sDemoTreLgtInfo[gSaveContext.save.linkAge].unk_08,
                       currentFrame, 1.0f);
     SkelCurve_Update(play, skelCurve);
 }
@@ -94,24 +95,25 @@ void func_809937B4(DemoTreLgt* this, PlayState* play, f32 currentFrame) {
 void func_80993848(DemoTreLgt* this, PlayState* play) {
     f32 currentFrame = this->skelCurve.curFrame;
 
-    if (currentFrame < sDemoTreLgtInfo[((void)0, gSaveContext.linkAge)].endFrame) {
+    if (currentFrame < sDemoTreLgtInfo[((void)0, gSaveContext.save.linkAge)].endFrame) {
         this->unk_170 = 255;
     } else {
-        if (currentFrame <= (sDemoTreLgtInfo[((void)0, gSaveContext.linkAge)].endFrame +
-                             sDemoTreLgtInfo[((void)0, gSaveContext.linkAge)].unk_08)) {
-            this->unk_170 = ((((sDemoTreLgtInfo[((void)0, gSaveContext.linkAge)].endFrame - currentFrame) /
-                               sDemoTreLgtInfo[((void)0, gSaveContext.linkAge)].unk_08) *
+        if (currentFrame <= (sDemoTreLgtInfo[((void)0, gSaveContext.save.linkAge)].endFrame +
+                             sDemoTreLgtInfo[((void)0, gSaveContext.save.linkAge)].unk_08)) {
+            this->unk_170 = ((((sDemoTreLgtInfo[((void)0, gSaveContext.save.linkAge)].endFrame - currentFrame) /
+                               sDemoTreLgtInfo[((void)0, gSaveContext.save.linkAge)].unk_08) *
                               255.0f) +
                              255.0f);
         } else {
             this->unk_170 = 0;
         }
     }
-    if (currentFrame < sDemoTreLgtInfo[((void)0, gSaveContext.linkAge)].unk_0C) {
+    if (currentFrame < sDemoTreLgtInfo[((void)0, gSaveContext.save.linkAge)].unk_0C) {
         this->unk_174 = 255;
-    } else if (currentFrame < (sDemoTreLgtInfo[((void)0, gSaveContext.linkAge)].unk_0C + 10.0f)) {
+    } else if (currentFrame < (sDemoTreLgtInfo[((void)0, gSaveContext.save.linkAge)].unk_0C + 10.0f)) {
         this->unk_174 =
-            ((((sDemoTreLgtInfo[((void)0, gSaveContext.linkAge)].unk_0C - currentFrame) / 10.0f) * 255.0f) + 255.0f);
+            ((((sDemoTreLgtInfo[((void)0, gSaveContext.save.linkAge)].unk_0C - currentFrame) / 10.0f) * 255.0f) +
+             255.0f);
     } else {
         this->unk_174 = 0;
     }
@@ -135,7 +137,7 @@ s32 DemoTreLgt_OverrideLimbDraw(PlayState* play, SkelCurve* skelCurve, s32 limbI
     s32 pad;
     DemoTreLgt* this = (DemoTreLgt*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_tre_lgt.c", 423);
+    OPEN_DISPS(play->state.gfxCtx);
     gSPSegment(POLY_XLU_DISP++, 0x08,
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, (play->state.frames * 2) % 256, 0, 64, 32, 1,
                                 (play->state.frames * -2) % 256, 0, 64, 32));
@@ -146,7 +148,7 @@ s32 DemoTreLgt_OverrideLimbDraw(PlayState* play, SkelCurve* skelCurve, s32 limbI
         gDPSetPrimColor(POLY_XLU_DISP++, 0, 0x80, 255, 255, 180, this->unk_174);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_tre_lgt.c", 448);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     //! @bug missing return
     //! If the returned value (i.e. the contents of v0) ends up being false (0), the limb won't draw. Therefore what
@@ -163,7 +165,7 @@ void DemoTreLgt_Draw(Actor* thisx, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     DemoTreLgt* this = (DemoTreLgt*)thisx;
 
-    OPEN_DISPS(gfxCtx, "../z_demo_tre_lgt.c", 461);
+    OPEN_DISPS(gfxCtx);
 
     if (this->action != DEMO_TRE_LGT_ACTION_ANIMATE) {
         return;
@@ -173,5 +175,5 @@ void DemoTreLgt_Draw(Actor* thisx, PlayState* play) {
     gDPSetEnvColor(POLY_XLU_DISP++, 200, 255, 0, 0);
     SkelCurve_Draw(&this->actor, play, &this->skelCurve, DemoTreLgt_OverrideLimbDraw, NULL, 1, &this->actor);
 
-    CLOSE_DISPS(gfxCtx, "../z_demo_tre_lgt.c", 476);
+    CLOSE_DISPS(gfxCtx);
 }

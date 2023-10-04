@@ -78,12 +78,12 @@ void BgPushbox_Update(Actor* thisx, PlayState* play) {
 void BgPushbox_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_pushbox.c", 263);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_pushbox.c", 269),
               G_MTX_NOPUSH | G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_OPA_DISP++, gBlockSmallDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_pushbox.c", 272);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

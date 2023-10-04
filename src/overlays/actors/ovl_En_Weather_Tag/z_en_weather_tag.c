@@ -162,7 +162,7 @@ u8 WeatherTag_CheckEnableWeatherEffect(EnWeatherTag* this, PlayState* play, u8 s
             }
         } else {
             if (gTimeSpeed != 0) {
-                gSaveContext.dayTime += 20;
+                gSaveContext.save.dayTime += 20;
             }
         }
     }
@@ -199,7 +199,7 @@ u8 WeatherTag_CheckRestoreWeather(EnWeatherTag* this, PlayState* play, u8 skybox
                 ret = true;
             }
         } else if (gTimeSpeed != 0) {
-            gSaveContext.dayTime += 20;
+            gSaveContext.save.dayTime += 20;
         }
     }
     return ret;

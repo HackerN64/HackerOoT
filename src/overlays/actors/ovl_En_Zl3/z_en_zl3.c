@@ -757,9 +757,9 @@ s32 func_80B54DD4(EnZl3* this) {
 }
 
 void func_80B54DE0(EnZl3* this, PlayState* play) {
-    s32 idx = this->unk_318;
+    s32 objectSlot = this->zl2Anime2ObjectSlot;
 
-    gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.status[idx].segment);
+    gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[objectSlot].segment);
 }
 
 void func_80B54E14(EnZl3* this, AnimationHeader* animation, u8 arg2, f32 morphFrames, s32 arg4) {
@@ -790,7 +790,7 @@ void func_80B54EA4(EnZl3* this, PlayState* play) {
 }
 
 void func_80B54EF4(EnZl3* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
+    Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
 }
 
 void func_80B54F18(EnZl3* this, PlayState* play) {
@@ -1028,7 +1028,7 @@ void func_80B55780(EnZl3* this, PlayState* play) {
 }
 
 void func_80B55808(EnZl3* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
+    Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
 }
 
 static Vec3f D_80B5A488 = { 0.0f, 0.0f, 0.0f };
@@ -1041,7 +1041,7 @@ void func_80B5585C(EnZl3* this) {
     SkelAnime* skelAnime = &this->skelAnime;
 
     if ((skelAnime->mode == 2) && Animation_OnFrame(skelAnime, 4.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
+        Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
     }
 }
 
@@ -1550,18 +1550,18 @@ void func_80B56D44(EnZl3* this, PlayState* play) {
 }
 
 void func_80B56DA4(EnZl3* this) {
-    func_800788CC(NA_SE_EV_ZELDA_POWER);
+    Sfx_PlaySfxCentered2(NA_SE_EV_ZELDA_POWER);
 }
 
 void func_80B56DC8(EnZl3* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
+    Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
 }
 
 void func_80B56DEC(EnZl3* this) {
     SkelAnime* skelAnime = &this->skelAnime;
 
     if ((skelAnime->mode == 2) && Animation_OnFrame(skelAnime, 9.0f) != 0) {
-        func_80078914(&this->actor.projectedPos, NA_SE_VO_Z1_OPENDOOR);
+        Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_VO_Z1_OPENDOOR);
     }
 }
 
@@ -1574,7 +1574,7 @@ void func_80B56E38(EnZl3* this, PlayState* play) {
         (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
         sfxId = NA_SE_PL_WALK_GROUND;
         sfxId += SurfaceType_GetSfxOffset(&play->colCtx, this->actor.floorPoly, this->actor.floorBgId);
-        func_80078914(&this->actor.projectedPos, sfxId);
+        Sfx_PlaySfxAtPos(&this->actor.projectedPos, sfxId);
     }
 }
 
@@ -2643,17 +2643,17 @@ void func_80B59B6C(EnZl3* this, PlayState* play) {
 
 void func_80B59DB8(EnZl3* this, PlayState* play) {
     s32 pad;
-    ObjectContext* objCtx = &play->objectCtx;
-    s32 objIndex = Object_GetIndex(objCtx, OBJECT_ZL2_ANIME2);
+    ObjectContext* objectCtx = &play->objectCtx;
+    s32 objectSlot = Object_GetSlot(objectCtx, OBJECT_ZL2_ANIME2);
     s32 pad2;
 
-    if (objIndex < 0) {
+    if (objectSlot < 0) {
         osSyncPrintf(VT_FGCOL(RED) "En_Zl3_main_bankアニメーションのバンクを読めない!!!!!!!!!!!!\n" VT_RST);
         return;
     }
 
-    if (Object_IsLoaded(objCtx, objIndex)) {
-        this->unk_318 = objIndex;
+    if (Object_IsLoaded(objectCtx, objectSlot)) {
+        this->zl2Anime2ObjectSlot = objectSlot;
         func_80B54DE0(this, play);
         func_80B59B6C(this, play);
     }
@@ -2730,7 +2730,7 @@ void func_80B59FF4(EnZl3* this, PlayState* play) {
     void* mouthTex = sMouthTextures[mouthTexIndex];
     s32 pad2;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_zl3.c", 2165);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -2743,7 +2743,7 @@ void func_80B59FF4(EnZl3* this, PlayState* play) {
     POLY_OPA_DISP = SkelAnime_DrawFlex(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                                        EnZl3_OverrideLimbDraw, EnZl3_PostLimbDraw, this, POLY_OPA_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_zl3.c", 2190);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_80B5A1D0(EnZl3* this, PlayState* play) {
@@ -2755,7 +2755,7 @@ void func_80B5A1D0(EnZl3* this, PlayState* play) {
     void* mouthTex = sMouthTextures[mouthTexIndex];
     s32 pad2;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_zl3.c", 2205);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -2768,7 +2768,7 @@ void func_80B5A1D0(EnZl3* this, PlayState* play) {
     POLY_XLU_DISP = SkelAnime_DrawFlex(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                                        EnZl3_OverrideLimbDraw, NULL, this, POLY_XLU_DISP);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_zl3.c", 2234);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 static EnZl3DrawFunc sDrawFuncs[] = {

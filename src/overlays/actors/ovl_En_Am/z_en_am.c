@@ -947,7 +947,7 @@ void EnAm_Draw(Actor* thisx, PlayState* play) {
     Vec3f sp68;
     EnAm* this = (EnAm*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_am.c", 1580);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, this->textureBlend);
@@ -971,5 +971,5 @@ void EnAm_Draw(Actor* thisx, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_am.c", 1605);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -382,7 +382,7 @@ void EnKz_SetupMweep(EnKz* this, PlayState* play) {
     subCamEye.y += -100.0f;
     subCamEye.z += 260.0f;
     Play_SetCameraAtEye(play, this->subCamId, &subCamAt, &subCamEye);
-    func_8002DF54(play, &this->actor, PLAYER_CSMODE_8);
+    func_8002DF54(play, &this->actor, PLAYER_CSACTION_8);
     this->actor.speed = 0.1f;
     this->actionFunc = EnKz_Mweep;
 }
@@ -414,7 +414,7 @@ void EnKz_Mweep(EnKz* this, PlayState* play) {
 void EnKz_StopMweep(EnKz* this, PlayState* play) {
     Play_ChangeCameraStatus(play, this->returnToCamId, CAM_STAT_ACTIVE);
     Play_ClearCamera(play, this->subCamId);
-    func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
+    func_8002DF54(play, &this->actor, PLAYER_CSACTION_7);
     this->actionFunc = EnKz_Wait;
 }
 
@@ -501,12 +501,12 @@ void EnKz_Draw(Actor* thisx, PlayState* play) {
     };
     EnKz* this = (EnKz*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_kz.c", 1259);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sEyeSegments[this->eyeIdx]));
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
     SkelAnime_DrawFlexOpa(play, this->skelanime.skeleton, this->skelanime.jointTable, this->skelanime.dListCount,
                           EnKz_OverrideLimbDraw, EnKz_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_kz.c", 1281);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

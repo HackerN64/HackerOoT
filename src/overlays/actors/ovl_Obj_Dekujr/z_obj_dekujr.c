@@ -44,7 +44,7 @@ void ObjDekujr_Init(Actor* thisx, PlayState* play) {
     ObjDekujr* this = (ObjDekujr*)thisx;
     s32 pad;
 
-    if (gSaveContext.cutsceneIndex < 0xFFF0) {
+    if (gSaveContext.save.cutsceneIndex < 0xFFF0) {
         if (!LINK_IS_ADULT) {
             Actor_Kill(thisx);
             return;
@@ -140,7 +140,7 @@ void ObjDekujr_Update(Actor* thisx, PlayState* play) {
 
     Collider_UpdateCylinder(&this->actor, &this->collider);
     CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
-    if ((gSaveContext.cutsceneIndex >= 0xFFF0) && (this->unk_19B == 0)) {
+    if ((gSaveContext.save.cutsceneIndex >= 0xFFF0) && (this->unk_19B == 0)) {
         this->unk_19C = 0;
         this->unk_19B = 1;
     }
@@ -158,7 +158,7 @@ void ObjDekujr_Update(Actor* thisx, PlayState* play) {
 void ObjDekujr_Draw(Actor* thisx, PlayState* play) {
     u32 frameCount;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_obj_dekujr.c", 370);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -175,5 +175,5 @@ void ObjDekujr_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, object_dekujr_DL_0032D8);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_obj_dekujr.c", 409);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -300,7 +300,7 @@ void EnVbBall_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnVbBall* this = (EnVbBall*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_vb_ball.c", 604);
+    OPEN_DISPS(play->state.gfxCtx);
     if (1) {} // needed for match
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_vb_ball.c", 607),
@@ -320,5 +320,5 @@ void EnVbBall_Draw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(gCircleShadowDL));
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_vb_ball.c", 632);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

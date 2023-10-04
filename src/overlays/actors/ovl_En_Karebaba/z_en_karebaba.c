@@ -442,7 +442,7 @@ void EnKarebaba_Update(Actor* thisx, PlayState* play) {
 void EnKarebaba_DrawBaseShadow(EnKarebaba* this, PlayState* play) {
     MtxF mf;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_karebaba.c", 1013);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_44Xlu(play->state.gfxCtx);
 
@@ -454,7 +454,7 @@ void EnKarebaba_DrawBaseShadow(EnKarebaba* this, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gCircleShadowDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_karebaba.c", 1034);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnKarebaba_Draw(Actor* thisx, PlayState* play) {
@@ -466,7 +466,7 @@ void EnKarebaba_Draw(Actor* thisx, PlayState* play) {
     s32 stemSections;
     f32 scale;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_karebaba.c", 1056);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -533,7 +533,7 @@ void EnKarebaba_Draw(Actor* thisx, PlayState* play) {
 
     func_80026608(play);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_karebaba.c", 1163);
+    CLOSE_DISPS(play->state.gfxCtx);
 
     if (this->boundFloor != NULL) {
         EnKarebaba_DrawBaseShadow(this, play);

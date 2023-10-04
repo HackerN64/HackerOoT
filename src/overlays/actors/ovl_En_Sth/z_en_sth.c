@@ -17,7 +17,7 @@ void EnSth_Update(Actor* thisx, PlayState* play);
 void EnSth_Update2(Actor* thisx, PlayState* play);
 void EnSth_Draw(Actor* thisx, PlayState* play);
 
-void EnSth_WaitForObjectLoaded(EnSth* this, PlayState* play);
+void EnSth_WaitForObject(EnSth* this, PlayState* play);
 void EnSth_ParentRewardObtainedWait(EnSth* this, PlayState* play);
 void EnSth_RewardUnobtainedWait(EnSth* this, PlayState* play);
 void EnSth_ChildRewardObtainedWait(EnSth* this, PlayState* play);
@@ -97,17 +97,17 @@ void EnSth_Init(Actor* thisx, PlayState* play) {
 
     s16 objectId;
     s32 params = this->actor.params;
-    s32 objectBankIdx;
+    s32 objectSlot;
 
     osSyncPrintf(VT_FGCOL(BLUE) "金スタル屋 no = %d\n" VT_RST, params); // "Gold Skulltula Shop"
     if (this->actor.params == 0) {
-        if (gSaveContext.inventory.gsTokens < 100) {
+        if (gSaveContext.save.info.inventory.gsTokens < 100) {
             Actor_Kill(&this->actor);
             // "Gold Skulltula Shop I still can't be a human"
             osSyncPrintf("金スタル屋 まだ 人間に戻れない \n");
             return;
         }
-    } else if (gSaveContext.inventory.gsTokens < (this->actor.params * 10)) {
+    } else if (gSaveContext.save.info.inventory.gsTokens < (this->actor.params * 10)) {
         Actor_Kill(&this->actor);
         // "Gold Skulltula Shop I still can't be a human"
         osSyncPrintf(VT_FGCOL(BLUE) "金スタル屋 まだ 人間に戻れない \n" VT_RST);
@@ -116,19 +116,19 @@ void EnSth_Init(Actor* thisx, PlayState* play) {
 
     objectId = sObjectIds[params];
     if (objectId != 1) {
-        objectBankIdx = Object_GetIndex(&play->objectCtx, objectId);
+        objectSlot = Object_GetSlot(&play->objectCtx, objectId);
     } else {
-        objectBankIdx = 0;
+        objectSlot = 0;
     }
 
-    osSyncPrintf("bank_ID = %d\n", objectBankIdx);
-    if (objectBankIdx < 0) {
+    osSyncPrintf("bank_ID = %d\n", objectSlot);
+    if (objectSlot < 0) {
         ASSERT(0, "0", "../z_en_sth.c", 1564);
     }
-    this->objectBankIdx = objectBankIdx;
+    this->requiredObjectSlot = objectSlot;
     this->drawFunc = EnSth_Draw;
     Actor_SetScale(&this->actor, 0.01f);
-    EnSth_SetupAction(this, EnSth_WaitForObjectLoaded);
+    EnSth_SetupAction(this, EnSth_WaitForObject);
     this->actor.draw = NULL;
     this->unk_2B2 = 0;
     this->actor.targetMode = 6;
@@ -150,14 +150,14 @@ void EnSth_SetupAfterObjectLoaded(EnSth* this, PlayState* play) {
     s16* params;
 
     EnSth_SetupShapeColliderUpdate2AndDraw(this, play);
-    gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.status[this->objectBankIdx].segment);
+    gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[this->requiredObjectSlot].segment);
     SkelAnime_InitFlex(play, &this->skelAnime, sSkeletons[this->actor.params], NULL, this->jointTable, this->morphTable,
                        16);
     Animation_PlayLoop(&this->skelAnime, sAnimations[this->actor.params]);
 
     this->eventFlag = sEventFlags[this->actor.params];
     params = &this->actor.params;
-    if (gSaveContext.eventChkInf[EVENTCHKINF_DA_DB_DC_DD_DE_INDEX] & this->eventFlag) {
+    if (gSaveContext.save.info.eventChkInf[EVENTCHKINF_DA_DB_DC_DD_DE_INDEX] & this->eventFlag) {
         EnSth_SetupAction(this, sRewardObtainedWaitActions[*params]);
     } else {
         EnSth_SetupAction(this, EnSth_RewardUnobtainedWait);
@@ -170,9 +170,9 @@ void EnSth_Destroy(Actor* thisx, PlayState* play) {
     Collider_DestroyCylinder(play, &this->collider);
 }
 
-void EnSth_WaitForObjectLoaded(EnSth* this, PlayState* play) {
-    if (Object_IsLoaded(&play->objectCtx, this->objectBankIdx)) {
-        this->actor.objBankIndex = this->objectBankIdx;
+void EnSth_WaitForObject(EnSth* this, PlayState* play) {
+    if (Object_IsLoaded(&play->objectCtx, this->requiredObjectSlot)) {
+        this->actor.objectSlot = this->requiredObjectSlot;
         this->actionFunc = EnSth_SetupAfterObjectLoaded;
     }
 }
@@ -257,7 +257,7 @@ void EnSth_GiveReward(EnSth* this, PlayState* play) {
     if (Actor_HasParent(&this->actor, play)) {
         this->actor.parent = NULL;
         EnSth_SetupAction(this, EnSth_RewardObtainedTalk);
-        gSaveContext.eventChkInf[EVENTCHKINF_DA_DB_DC_DD_DE_INDEX] |= this->eventFlag;
+        gSaveContext.save.info.eventChkInf[EVENTCHKINF_DA_DB_DC_DD_DE_INDEX] |= this->eventFlag;
     } else {
         EnSth_GivePlayerItem(this, play);
     }
@@ -293,7 +293,7 @@ void EnSth_ChildRewardObtainedWait(EnSth* this, PlayState* play) {
     if (Actor_ProcessTalkRequest(&this->actor, play)) {
         EnSth_SetupAction(this, EnSth_RewardObtainedTalk);
     } else {
-        if (gSaveContext.inventory.gsTokens < 50) {
+        if (gSaveContext.save.info.inventory.gsTokens < 50) {
             this->actor.textId = 0x20;
         } else {
             this->actor.textId = 0x1F;
@@ -364,11 +364,11 @@ void EnSth_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot,
     if (limbIndex == 15) {
         Matrix_MultVec3f(&D_80B0B49C, &this->actor.focus.pos);
         if (this->actor.params != 0) { // Children
-            OPEN_DISPS(play->state.gfxCtx, "../z_en_sth.c", 2079);
+            OPEN_DISPS(play->state.gfxCtx);
 
             gSPDisplayList(POLY_OPA_DISP++, D_80B0A3C0);
 
-            CLOSE_DISPS(play->state.gfxCtx, "../z_en_sth.c", 2081);
+            CLOSE_DISPS(play->state.gfxCtx);
         }
     }
 }
@@ -387,9 +387,9 @@ void EnSth_Draw(Actor* thisx, PlayState* play) {
     EnSth* this = (EnSth*)thisx;
     Color_RGB8* envColor1;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_sth.c", 2133);
+    OPEN_DISPS(play->state.gfxCtx);
 
-    gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.status[this->objectBankIdx].segment);
+    gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[this->requiredObjectSlot].segment);
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x08,
@@ -404,5 +404,5 @@ void EnSth_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnSth_OverrideLimbDraw, EnSth_PostLimbDraw, &this->actor);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_sth.c", 2176);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

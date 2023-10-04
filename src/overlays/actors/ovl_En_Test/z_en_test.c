@@ -1592,7 +1592,7 @@ void func_8086318C(EnTest* this, PlayState* play) {
 
 void EnTest_SetupRecoil(EnTest* this) {
     this->swordState = 0;
-    this->skelAnime.moveFlags = 2;
+    this->skelAnime.moveFlags = ANIM_FLAG_UPDATE_Y;
     this->unk_7C8 = 0x13;
     this->skelAnime.playSpeed = -1.0f;
     this->skelAnime.startFrame = this->skelAnime.curFrame;
@@ -1828,12 +1828,12 @@ s32 EnTest_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* 
         rot->y -= this->headRot.x;
         rot->z += this->headRot.z;
     } else if (limbIndex == STALFOS_LIMB_HEAD) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_test.c", 3582);
+        OPEN_DISPS(play->state.gfxCtx);
 
         gDPPipeSync(POLY_OPA_DISP++);
         gDPSetEnvColor(POLY_OPA_DISP++, 80 + ABS((s16)(Math_SinS(play->gameplayFrames * 2000) * 175.0f)), 0, 0, 255);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_test.c", 3587);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 
     if ((this->actor.params == STALFOS_TYPE_INVISIBLE) && !CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_7)) {
@@ -1865,7 +1865,7 @@ void EnTest_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot
     s32 pad;
     Vec3f sp50;
 
-    BodyBreak_SetInfo(&this->bodyBreak, limbIndex, 0, 60, 60, dList, BODYBREAK_OBJECT_DEFAULT);
+    BodyBreak_SetInfo(&this->bodyBreak, limbIndex, 0, 60, 60, dList, BODYBREAK_OBJECT_SLOT_DEFAULT);
 
     if (limbIndex == STALFOS_LIMB_SWORD) {
         Matrix_MultVec3f(&D_8086467C, &this->swordCollider.dim.quad[1]);

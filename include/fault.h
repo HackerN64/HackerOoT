@@ -4,6 +4,8 @@
 #include "ultra64.h"
 #include "padmgr.h"
 
+#include "config.h"
+
 // These are the same as the 3-bit ansi color codes
 #define FAULT_COLOR_BLACK      0
 #define FAULT_COLOR_RED        1
@@ -42,8 +44,8 @@ void Fault_Init(void);
 
 // Fatal Errors
 
-void Fault_AddHungupAndCrashImpl(const char* exp1, const char* exp2);
-void Fault_AddHungupAndCrash(const char* file, s32 line);
+NORETURN void Fault_AddHungupAndCrashImpl(const char* exp1, const char* exp2);
+NORETURN void Fault_AddHungupAndCrash(const char* file, s32 line);
 
 // Client Registration
 
@@ -76,7 +78,9 @@ typedef struct FaultMgr {
     /* 0x7CC */ u8 exit;
     /* 0x7CD */ u8 msgId;
     /* 0x7CE */ u8 faultHandlerEnabled;
+#ifndef DISABLE_CRASH_DBG_AUTOSCROLL
     /* 0x7CF */ u8 autoScroll;
+#endif
     /* 0x7D0 */ OSThread* faultedThread;
     /* 0x7D4 */ void (*padCallback)(Input* inputs);
     /* 0x7D8 */ FaultClient* clients;

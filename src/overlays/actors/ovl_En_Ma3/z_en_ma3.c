@@ -87,7 +87,7 @@ u16 EnMa3_GetTextId(PlayState* play, Actor* thisx) {
             HIGH_SCORE(HS_HORSE_RACE) = 180;
         }
 
-        if (!GET_EVENTCHKINF(EVENTCHKINF_1E) && (((void)0, gSaveContext.timerSeconds) < 50)) {
+        if (!GET_EVENTCHKINF(EVENTCHKINF_HORSE_RACE_COW_UNLOCK) && (((void)0, gSaveContext.timerSeconds) < 50)) {
             return 0x208F;
         }
 
@@ -128,7 +128,7 @@ s16 EnMa3_UpdateTalkState(PlayState* play, Actor* thisx) {
             if (Message_ShouldAdvance(play)) {
                 SET_INFTABLE(INFTABLE_B9);
                 if (play->msgCtx.choiceIndex == 0) {
-                    if (GET_EVENTCHKINF(EVENTCHKINF_1E)) {
+                    if (GET_EVENTCHKINF(EVENTCHKINF_HORSE_RACE_COW_UNLOCK)) {
                         Message_ContinueTextbox(play, 0x2091);
                     } else if (HIGH_SCORE(HS_HORSE_RACE) == 0) {
                         Message_ContinueTextbox(play, 0x2092);
@@ -145,7 +145,7 @@ s16 EnMa3_UpdateTalkState(PlayState* play, Actor* thisx) {
                     talkState = NPC_TALK_STATE_IDLE;
                     break;
                 case 0x208F:
-                    SET_EVENTCHKINF(EVENTCHKINF_1E);
+                    SET_EVENTCHKINF(EVENTCHKINF_HORSE_RACE_COW_UNLOCK);
                     FALLTHROUGH;
                 case 0x2004:
                 case 0x2012:
@@ -343,7 +343,7 @@ void EnMa3_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot,
     EnMa3* this = (EnMa3*)thisx;
     Vec3f vec = { 900.0f, 0.0f, 0.0f };
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ma3.c", 927);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (limbIndex == MALON_ADULT_LIMB_HEAD) {
         Matrix_MultVec3f(&vec, &this->actor.focus.pos);
@@ -353,7 +353,7 @@ void EnMa3_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot,
         gSPDisplayList(POLY_OPA_DISP++, gMalonAdultBasketDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ma3.c", 950);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnMa3_Draw(Actor* thisx, PlayState* play) {
@@ -364,7 +364,7 @@ void EnMa3_Draw(Actor* thisx, PlayState* play) {
     f32 distFromCamEye;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ma3.c", 978);
+    OPEN_DISPS(play->state.gfxCtx);
 
     activeCam = GET_ACTIVE_CAM(play);
     distFromCamEye = Math_Vec3f_DistXZ(&this->actor.world.pos, &activeCam->eye);
@@ -377,5 +377,5 @@ void EnMa3_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnMa3_OverrideLimbDraw, EnMa3_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ma3.c", 1013);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

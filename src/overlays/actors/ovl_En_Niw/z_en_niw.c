@@ -161,7 +161,8 @@ void EnNiw_Init(Actor* thisx, PlayState* play) {
                 fabsf(this->actor.world.pos.z - sKakarikoPosList[i].z) < 40.0f) {
                 this->unk_2AA = i;
                 osSyncPrintf(VT_FGCOL(YELLOW) " 通常鶏index %d\n" VT_RST, this->unk_2AA);
-                if (gSaveContext.infTable[INFTABLE_199_19A_19B_19C_19D_19E_19F_INDEX] & sKakarikoFlagList[i]) {
+                if (gSaveContext.save.info.infTable[INFTABLE_199_19A_19B_19C_19D_19E_19F_INDEX] &
+                    sKakarikoFlagList[i]) {
                     this->actor.world.pos.x = 300.0f;
                     this->actor.world.pos.y = 100.0f;
                     this->actor.world.pos.z = 1530.0f;
@@ -228,7 +229,7 @@ void EnNiw_Init(Actor* thisx, PlayState* play) {
         case 0xD:
         case 0xE:
             Collider_SetCylinder(play, &this->collider, &this->actor, &sCylinderInit2);
-            if (play->sceneId == SCENE_LINKS_HOUSE && !GET_EVENTCHKINF(EVENTCHKINF_1E)) {
+            if (play->sceneId == SCENE_LINKS_HOUSE && !GET_EVENTCHKINF(EVENTCHKINF_HORSE_RACE_COW_UNLOCK)) {
                 Actor_Kill(&this->actor);
             }
             break;
@@ -1208,7 +1209,7 @@ void EnNiw_DrawEffects(EnNiw* this, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     EnNiwEffect* effect = &this->effects[0];
 
-    OPEN_DISPS(gfxCtx, "../z_en_niw.c", 1897);
+    OPEN_DISPS(gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -1229,5 +1230,5 @@ void EnNiw_DrawEffects(EnNiw* this, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_en_niw.c", 1919);
+    CLOSE_DISPS(gfxCtx);
 }

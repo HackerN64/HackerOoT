@@ -53,7 +53,7 @@ void PauseMapMark_DrawForDungeon(PlayState* play) {
 
     mapMarkData = &gLoadedPauseMarkDataTable[R_MAP_TEX_INDEX >> 1][i];
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_lmap_mark.c", 182);
+    OPEN_DISPS(play->state.gfxCtx);
 
     while (true) {
         if (mapMarkData->markType == PAUSE_MAP_MARK_NONE) {
@@ -80,7 +80,7 @@ void PauseMapMark_DrawForDungeon(PlayState* play) {
 
         Matrix_Push();
 
-        if ((play->pauseCtx.state == 4) || (play->pauseCtx.state >= 0x12)) {
+        if ((play->pauseCtx.state == PAUSE_STATE_OPENING_1) || (play->pauseCtx.state >= PAUSE_STATE_CLOSING)) {
             Matrix_Translate(-36.0f, 101.0f, 0.0f, MTXMODE_APPLY);
         } else {
             Matrix_Translate(-36.0f, 21.0f, 0.0f, MTXMODE_APPLY);
@@ -144,7 +144,7 @@ void PauseMapMark_DrawForDungeon(PlayState* play) {
         Matrix_Pop();
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_lmap_mark.c", 286);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void PauseMapMark_Draw(PlayState* play) {

@@ -278,7 +278,7 @@ void BgJyaMegami_Explode(BgJyaMegami* this, PlayState* play) {
         func_80033480(play, &sp8C, 100.0f, 1, 150, 100, 1);
     }
     if (this->explosionTimer == 60) {
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
     }
     if (this->explosionTimer >= 100) {
         Actor_Kill(&this->dyna.actor);
@@ -302,7 +302,7 @@ static void* sLeftSideCrumbles[] = {
 };
 
 void BgJyaMegami_DrawFace(BgJyaMegami* this, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_jya_megami.c", 706);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sRightSideCrumbles[this->crumbleIndex]));
@@ -311,7 +311,7 @@ void BgJyaMegami_DrawFace(BgJyaMegami* this, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gMegami1DL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_jya_megami.c", 720);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 static Gfx* sDLists[] = {
@@ -325,7 +325,7 @@ void BgJyaMegami_DrawExplode(BgJyaMegami* this, PlayState* play) {
     BgJyaMegamiPiece* piece;
     u32 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_jya_megami.c", 746);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -344,7 +344,7 @@ void BgJyaMegami_DrawExplode(BgJyaMegami* this, PlayState* play) {
         gSPDisplayList(POLY_OPA_DISP++, sDLists[i]);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_jya_megami.c", 783);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BgJyaMegami_Draw(Actor* thisx, PlayState* play) {

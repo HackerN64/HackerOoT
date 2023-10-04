@@ -84,7 +84,7 @@ void EnMThunder_Init(Actor* thisx, PlayState* play2) {
     this->unk_1CA = 0;
 
     if (player->stateFlags2 & PLAYER_STATE2_17) {
-        if (!gSaveContext.isMagicAcquired || (gSaveContext.magicState != MAGIC_STATE_IDLE) ||
+        if (!gSaveContext.save.info.playerData.isMagicAcquired || (gSaveContext.magicState != MAGIC_STATE_IDLE) ||
             (((this->actor.params & 0xFF00) >> 8) &&
              !(Magic_RequestChange(play, (this->actor.params & 0xFF00) >> 8, MAGIC_CONSUME_NOW)))) {
             Audio_PlaySfxGeneral(NA_SE_IT_ROLLING_CUT, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
@@ -323,7 +323,7 @@ void EnMThunder_Draw(Actor* thisx, PlayState* play2) {
     f32 phi_f14;
     s32 phi_t1;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_m_thunder.c", 844);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     Matrix_Scale(0.02f, 0.02f, 0.02f, MTXMODE_APPLY);
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_m_thunder.c", 853),
@@ -393,5 +393,5 @@ void EnMThunder_Draw(Actor* thisx, PlayState* play2) {
 
     gSPDisplayList(POLY_XLU_DISP++, gSpinAttackChargingDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_m_thunder.c", 1031);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

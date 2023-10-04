@@ -764,7 +764,7 @@ void EnFd_Draw(Actor* thisx, PlayState* play) {
 
     frames = play->state.frames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fd.c", 1751);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Push();
     EnFd_DrawEffectsDots(this, play);
@@ -788,7 +788,7 @@ void EnFd_Draw(Actor* thisx, PlayState* play) {
             SkelAnime_DrawFlex(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                                EnFd_OverrideLimbDraw, EnFd_PostLimbDraw, this, POLY_XLU_DISP);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fd.c", 1822);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnFd_SpawnEffect(EnFd* this, u8 type, Vec3f* pos, Vec3f* velocity, Vec3f* accel, u8 timer, f32 scale,
@@ -880,31 +880,36 @@ void EnFd_DrawEffectsFlames(EnFd* this, PlayState* play) {
     s16 idx;
     EnFdEffect* eff = this->effects;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fd.c", 1969);
+    OPEN_DISPS(play->state.gfxCtx);
+
     materialFlag = false;
-    if (1) {}
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
+
     for (i = 0; i < EN_FD_EFFECT_COUNT; i++, eff++) {
-        if (eff->type == FD_EFFECT_FLAME) {
-            if (!materialFlag) {
-                POLY_XLU_DISP = Gfx_SetupDL(POLY_XLU_DISP, SETUPDL_0);
-                gSPDisplayList(POLY_XLU_DISP++, gFlareDancerDL_7928);
-                gDPSetEnvColor(POLY_XLU_DISP++, 255, 10, 0, (u8)((this->fadeAlpha / 255.0f) * 255));
-                materialFlag = true;
-            }
-            gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 0, (u8)((this->fadeAlpha / 255.0f) * 255));
-            gDPPipeSync(POLY_XLU_DISP++);
-            Matrix_Translate(eff->pos.x, eff->pos.y, eff->pos.z, MTXMODE_NEW);
-            Matrix_ReplaceRotation(&play->billboardMtxF);
-            Matrix_Scale(eff->scale, eff->scale, 1.0f, MTXMODE_APPLY);
-            gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_fd.c", 2006),
-                      G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-            idx = eff->timer * (8.0f / eff->initialTimer);
-            gSPSegment(POLY_XLU_DISP++, 0x8, SEGMENTED_TO_VIRTUAL(dustTextures[idx]));
-            gSPDisplayList(POLY_XLU_DISP++, gFlareDancerSquareParticleDL);
+        if (eff->type != FD_EFFECT_FLAME) {
+            continue;
         }
+
+        if (!materialFlag) {
+            POLY_XLU_DISP = Gfx_SetupDL(POLY_XLU_DISP, SETUPDL_0);
+            gSPDisplayList(POLY_XLU_DISP++, gFlareDancerDL_7928);
+            gDPSetEnvColor(POLY_XLU_DISP++, 255, 10, 0, (u8)((this->fadeAlpha / 255.0f) * 255));
+            materialFlag = true;
+        }
+
+        gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 0, (u8)((this->fadeAlpha / 255.0f) * 255));
+        gDPPipeSync(POLY_XLU_DISP++);
+        Matrix_Translate(eff->pos.x, eff->pos.y, eff->pos.z, MTXMODE_NEW);
+        Matrix_ReplaceRotation(&play->billboardMtxF);
+        Matrix_Scale(eff->scale, eff->scale, 1.0f, MTXMODE_APPLY);
+        gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_fd.c", 2006),
+                  G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        idx = eff->timer * (8.0f / eff->initialTimer);
+        gSPSegment(POLY_XLU_DISP++, 0x8, SEGMENTED_TO_VIRTUAL(dustTextures[idx]));
+        gSPDisplayList(POLY_XLU_DISP++, gFlareDancerSquareParticleDL);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fd.c", 2020);
+
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnFd_DrawEffectsDots(EnFd* this, PlayState* play) {
@@ -912,30 +917,32 @@ void EnFd_DrawEffectsDots(EnFd* this, PlayState* play) {
     s16 materialFlag;
     EnFdEffect* eff = this->effects;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_fd.c", 2034);
+    OPEN_DISPS(play->state.gfxCtx);
 
     materialFlag = false;
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     for (i = 0; i < EN_FD_EFFECT_COUNT; i++, eff++) {
-        if (eff->type == FD_EFFECT_DOT) {
-            if (!materialFlag) {
-                Gfx_SetupDL_25Xlu(play->state.gfxCtx);
-                gSPDisplayList(POLY_XLU_DISP++, gFlareDancerDL_79F8);
-                materialFlag = true;
-            }
-            gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, eff->color.r, eff->color.g, eff->color.b,
-                            (u8)(eff->color.a * (this->fadeAlpha / 255.0f)));
-            gDPPipeSync(POLY_XLU_DISP++);
-            if (1) {}
-            Matrix_Translate(eff->pos.x, eff->pos.y, eff->pos.z, MTXMODE_NEW);
-            Matrix_ReplaceRotation(&play->billboardMtxF);
-            Matrix_Scale(eff->scale, eff->scale, 1.0f, MTXMODE_APPLY);
-            gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_fd.c", 2064),
-                      G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-            gSPDisplayList(POLY_XLU_DISP++, gFlareDancerTriangleParticleDL);
+        if (eff->type != FD_EFFECT_DOT) {
+            continue;
         }
+
+        if (!materialFlag) {
+            Gfx_SetupDL_25Xlu(play->state.gfxCtx);
+            gSPDisplayList(POLY_XLU_DISP++, gFlareDancerDL_79F8);
+            materialFlag = true;
+        }
+
+        gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, eff->color.r, eff->color.g, eff->color.b,
+                        (u8)(eff->color.a * (this->fadeAlpha / 255.0f)));
+        gDPPipeSync(POLY_XLU_DISP++);
+        Matrix_Translate(eff->pos.x, eff->pos.y, eff->pos.z, MTXMODE_NEW);
+        Matrix_ReplaceRotation(&play->billboardMtxF);
+        Matrix_Scale(eff->scale, eff->scale, 1.0f, MTXMODE_APPLY);
+        gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_fd.c", 2064),
+                  G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPDisplayList(POLY_XLU_DISP++, gFlareDancerTriangleParticleDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_fd.c", 2071);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

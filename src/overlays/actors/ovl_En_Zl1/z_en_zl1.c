@@ -345,7 +345,7 @@ void func_80B4B834(CsCmdActorCue* cue, Vec3f* dest) {
 }
 
 void func_80B4B874(EnZl1* this, PlayState* play) {
-    this->skelAnime.moveFlags |= 1;
+    this->skelAnime.moveFlags |= ANIM_FLAG_0;
     AnimationContext_SetMoveActor(play, &this->actor, &this->skelAnime, 1.0f);
 }
 
@@ -429,7 +429,7 @@ void func_80B4BBC4(EnZl1* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     Animation_Change(&this->skelAnime, &gChildZelda1Anim_00438, 1.0f, 0.0f, frameCount, ANIMMODE_LOOP, 0.0f);
-    func_8002DF54(play, &this->actor, PLAYER_CSMODE_1);
+    func_8002DF54(play, &this->actor, PLAYER_CSACTION_1);
     Player_PlaySfx(player, NA_SE_VO_LI_SURPRISE_KID);
     this->actor.textId = 0x7039;
     Message_StartTextbox(play, this->actor.textId, NULL);
@@ -570,7 +570,7 @@ void func_80B4BF2C(EnZl1* this, PlayState* play) {
             break;
         case 6:
             if (Actor_TextboxIsClosing(&this->actor, play)) {
-                func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
+                func_8002DF54(play, &this->actor, PLAYER_CSACTION_7);
                 Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_ALL);
                 this->actor.flags &= ~ACTOR_FLAG_8;
                 this->unk_1E2 = 4;
@@ -632,7 +632,7 @@ void EnZl1_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot,
 void EnZl1_Draw(Actor* thisx, PlayState* play) {
     EnZl1* this = (EnZl1*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_girlB.c", 2011);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(this->unk_1F4));
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(this->unk_1F8));
@@ -642,5 +642,5 @@ void EnZl1_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnZl1_OverrideLimbDraw, EnZl1_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_girlB.c", 2046);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

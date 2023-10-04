@@ -230,16 +230,16 @@ void EnPoh_Init(Actor* thisx, PlayState* play) {
         }
     }
     if (this->actor.params < EN_POH_SHARP) {
-        this->objectIdx = Object_GetIndex(&play->objectCtx, OBJECT_POH);
+        this->requiredObjectSlot = Object_GetSlot(&play->objectCtx, OBJECT_POH);
         this->infoIdx = EN_POH_INFO_NORMAL;
         this->actor.naviEnemyId = NAVI_ENEMY_POE;
     } else {
-        this->objectIdx = Object_GetIndex(&play->objectCtx, OBJECT_PO_COMPOSER);
+        this->requiredObjectSlot = Object_GetSlot(&play->objectCtx, OBJECT_PO_COMPOSER);
         this->infoIdx = EN_POH_INFO_COMPOSER;
         this->actor.naviEnemyId = NAVI_ENEMY_POE_COMPOSER;
     }
     this->info = &sPoeInfo[this->infoIdx];
-    if (this->objectIdx < 0) {
+    if (this->requiredObjectSlot < 0) {
         Actor_Kill(&this->actor);
     }
 }
@@ -712,14 +712,14 @@ void func_80ADF894(EnPoh* this, PlayState* play) {
 }
 
 void EnPoh_Death(EnPoh* this, PlayState* play) {
-    s32 objId;
+    s32 objectId;
 
     if (this->unk_198 != 0) {
         this->unk_198--;
     }
     if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
-        objId = (this->infoIdx == EN_POH_INFO_COMPOSER) ? OBJECT_PO_COMPOSER : OBJECT_POH;
-        EffectSsHahen_SpawnBurst(play, &this->actor.world.pos, 6.0f, 0, 1, 1, 15, objId, 10,
+        objectId = (this->infoIdx == EN_POH_INFO_COMPOSER) ? OBJECT_PO_COMPOSER : OBJECT_POH;
+        EffectSsHahen_SpawnBurst(play, &this->actor.world.pos, 6.0f, 0, 1, 1, 15, objectId, 10,
                                  this->info->lanternDisplayList);
         func_80ADE6D4(this);
     } else if (this->unk_198 == 0) {
@@ -906,8 +906,8 @@ void EnPoh_UpdateVisibility(EnPoh* this) {
 void EnPoh_Update(Actor* thisx, PlayState* play) {
     EnPoh* this = (EnPoh*)thisx;
 
-    if (Object_IsLoaded(&play->objectCtx, this->objectIdx)) {
-        this->actor.objBankIndex = this->objectIdx;
+    if (Object_IsLoaded(&play->objectCtx, this->requiredObjectSlot)) {
+        this->actor.objectSlot = this->requiredObjectSlot;
         this->actor.update = EnPoh_UpdateLiving;
         Actor_SetObjectDependency(play, &this->actor);
         if (this->infoIdx == EN_POH_INFO_NORMAL) {
@@ -1070,7 +1070,7 @@ void EnPoh_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot,
 void EnPoh_DrawRegular(Actor* thisx, PlayState* play) {
     EnPoh* this = (EnPoh*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_poh.c", 2629);
+    OPEN_DISPS(play->state.gfxCtx);
     func_80AE067C(this);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -1091,7 +1091,7 @@ void EnPoh_DrawRegular(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_poh.c", 2676),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, this->info->lanternDisplayList);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_poh.c", 2681);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnPoh_DrawComposer(Actor* thisx, PlayState* play) {
@@ -1099,7 +1099,7 @@ void EnPoh_DrawComposer(Actor* thisx, PlayState* play) {
     Color_RGBA8* sp90;
     Color_RGBA8* phi_t0;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_poh.c", 2694);
+    OPEN_DISPS(play->state.gfxCtx);
     func_80AE067C(this);
     if (this->actor.params == EN_POH_SHARP) {
         sp90 = &D_80AE1B4C;
@@ -1146,7 +1146,7 @@ void EnPoh_DrawComposer(Actor* thisx, PlayState* play) {
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetEnvColor(POLY_OPA_DISP++, sp90->r, sp90->g, sp90->b, 255);
     gSPDisplayList(POLY_OPA_DISP++, gPoeComposerLanternTopDL);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_poh.c", 2802);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnPoh_UpdateDead(Actor* thisx, PlayState* play) {
@@ -1162,7 +1162,7 @@ void EnPoh_UpdateDead(Actor* thisx, PlayState* play) {
 void EnPoh_DrawSoul(Actor* thisx, PlayState* play) {
     EnPoh* this = (EnPoh*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_poh.c", 2833);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (this->actionFunc == EnPoh_Death) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -1194,5 +1194,5 @@ void EnPoh_DrawSoul(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, this->info->soulDisplayList);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_poh.c", 2916);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

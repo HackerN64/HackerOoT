@@ -71,7 +71,7 @@ void DebugDisplay_DrawObjects(PlayState* play) {
 }
 
 void DebugDisplay_DrawSpriteI8(DebugDispObject* dispObj, void* texture, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_debug_display.c", 169);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_47Xlu(play->state.gfxCtx);
 
@@ -89,11 +89,11 @@ void DebugDisplay_DrawSpriteI8(DebugDispObject* dispObj, void* texture, PlayStat
               G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_XLU_DISP++, gDebugSpriteDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_debug_display.c", 192);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void DebugDisplay_DrawPolygon(DebugDispObject* dispObj, void* dlist, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_debug_display.c", 211);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_4Xlu(play->state.gfxCtx);
 
@@ -108,7 +108,7 @@ void DebugDisplay_DrawPolygon(DebugDispObject* dispObj, void* dlist, PlayState* 
               G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_XLU_DISP++, dlist);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_debug_display.c", 231);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 #endif

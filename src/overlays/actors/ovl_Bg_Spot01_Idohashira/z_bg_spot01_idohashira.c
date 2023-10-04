@@ -49,7 +49,7 @@ ActorInit Bg_Spot01_Idohashira_InitVars = {
 };
 
 void BgSpot01Idohashira_PlayBreakSfx1(BgSpot01Idohashira* this) {
-    func_80078914(&this->dyna.actor.projectedPos, NA_SE_EV_BOX_BREAK);
+    Sfx_PlaySfxAtPos(&this->dyna.actor.projectedPos, NA_SE_EV_BOX_BREAK);
 }
 
 void BgSpot01Idohashira_PlayBreakSfx2(BgSpot01Idohashira* this, PlayState* play) {
@@ -321,7 +321,7 @@ void BgSpot01Idohashira_Init(Actor* thisx, PlayState* play) {
 void func_808AB700(BgSpot01Idohashira* this, PlayState* play) {
     GraphicsContext* localGfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(localGfxCtx, "../z_bg_spot01_idohashira.c", 689);
+    OPEN_DISPS(localGfxCtx);
 
     Gfx_SetupDL_25Opa(localGfxCtx);
 
@@ -330,7 +330,7 @@ void func_808AB700(BgSpot01Idohashira* this, PlayState* play) {
     func_808AAF34(this, play);
     gSPDisplayList(POLY_OPA_DISP++, gKakarikoWellArchDL);
 
-    CLOSE_DISPS(localGfxCtx, "../z_bg_spot01_idohashira.c", 708);
+    CLOSE_DISPS(localGfxCtx);
 }
 
 void BgSpot01Idohashira_Draw(Actor* thisx, PlayState* play) {
