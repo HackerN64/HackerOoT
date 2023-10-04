@@ -13,7 +13,7 @@ COMPILER ?= gcc
 DEBUG_BUILD ?= 1
 
 # Valid compression algorithms are yaz, lzo and aplib
-COMPRESSION ?= yaz
+COMPRESSION ?= lz4
 LZ4_BLOCK_SIZE ?= 64
 
 ifeq ($(COMPRESSION),lzo)
@@ -29,8 +29,8 @@ else ifeq ($(COMPRESSION),aplib)
   CPPFLAGS += -DCOMPRESSION_APLIB
 
 else ifeq ($(COMPRESSION),lz4)
-  CFLAGS += -DCOMPRESSION_LZ4 -DLZ4_BLOCK_SIZE=$(LZ4_BLOCK_SIZE)
-  CPPFLAGS += -DCOMPRESSION_LZ4 -DLZ4_BLOCK_SIZE=$(LZ4_BLOCK_SIZE)
+  CFLAGS += -DCOMPRESSION_LZ4 -DLZ4_BLOCK_SIZE_KIB=$(LZ4_BLOCK_SIZE) -llz4
+  CPPFLAGS += -DCOMPRESSION_LZ4 -DLZ4_BLOCK_SIZE_KIB=$(LZ4_BLOCK_SIZE) -llz4
 endif
 
 CFLAGS ?=
@@ -129,7 +129,8 @@ ZAPD       := tools/ZAPD/ZAPD.out
 FADO       := tools/fado/fado.elf
 
 ifeq ($(COMPILER),gcc)
-  OPTFLAGS := -Os -ffast-math -fno-unsafe-math-optimizations
+#   OPTFLAGS := -Os -ffast-math -fno-unsafe-math-optimizations
+  OPTFLAGS := -Og -g -g3 -ffast-math -fno-unsafe-math-optimizations
 else
   OPTFLAGS := -O2
 endif
@@ -235,9 +236,14 @@ setup:
 	python3 fixbaserom.py
 	python3 extract_baserom.py
 	python3 extract_assets.py -j$(N_THREADS)
-	python3 tools/daf/daf.py -a -p ./
 
 run: $(ROM)
+ifeq ($(EMULATOR),)
+	$(error Emulator path not set. Set EMULATOR in the Makefile or define it as an environment variable)
+endif
+	$(EMULATOR) $(EMU_FLAGS) $<
+
+runc: $(ROMC)
 ifeq ($(EMULATOR),)
 	$(error Emulator path not set. Set EMULATOR in the Makefile or define it as an environment variable)
 endif
@@ -247,7 +253,7 @@ test_compress:
 	$(MAKE) compress ROM_NAME=HackerOoT_YAZ COMPRESSION=yaz
 	$(MAKE) compress ROM_NAME=HackerOoT_LZ4 COMPRESSION=lz4
 
-.PHONY: all clean setup run distclean assetclean compress wad rebuildtools test_compress
+.PHONY: all clean setup run distclean assetclean compress wad rebuildtools test_compress runc
 
 #### Various Recipes ####
 

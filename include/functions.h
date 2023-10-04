@@ -28,6 +28,9 @@ void* Yaz0_FirstDMA(void);
 void* Yaz0_NextDMA(u8* curSrcPos);
 void Yaz0_DecompressImpl(Yaz0Header* hdr, u8* dst);
 void Yaz0_Decompress(uintptr_t romStart, u8* dst, size_t size);
+#ifdef COMPRESSION_LZ4
+size_t LZ4_Decompress(uintptr_t *src, void *dst, size_t sz, size_t dstSz);
+#endif
 void Locale_Init(void);
 void Locale_ResetRegion(void);
 u32 func_80001F48(void);
