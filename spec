@@ -29,6 +29,9 @@ beginseg
 #ifdef COMPRESSION_APLIB
     include "build/src/boot/aplib.o"
 #endif
+#ifdef COMPRESSION_LZ4
+    include "build/src/boot/lz4.o"
+#endif
     include "build/src/boot/z_locale.o"
     include "build/src/boot/assert.o"
     include "build/src/boot/is_debug.o"

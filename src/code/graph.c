@@ -438,7 +438,7 @@ void Graph_ThreadEntry(void* arg0) {
     Graph_Init(&gfxCtx);
 
 #ifdef ENABLE_WIDESCREEN
-    gIsUsingWidescreen = true;
+    gIsUsingWidescreen = false;
 #endif
 
     while (nextOvl != NULL) {

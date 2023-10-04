@@ -14,20 +14,23 @@ DEBUG_BUILD ?= 1
 
 # Valid compression algorithms are yaz, lzo and aplib
 COMPRESSION ?= yaz
+LZ4_BLOCK_SIZE ?= 64
 
 ifeq ($(COMPRESSION),lzo)
   CFLAGS += -DCOMPRESSION_LZO
   CPPFLAGS += -DCOMPRESSION_LZO
-endif
 
-ifeq ($(COMPRESSION),yaz)
+else ifeq ($(COMPRESSION),yaz)
   CFLAGS += -DCOMPRESSION_YAZ
   CPPFLAGS += -DCOMPRESSION_YAZ
-endif
 
-ifeq ($(COMPRESSION),aplib)
+else ifeq ($(COMPRESSION),aplib)
   CFLAGS += -DCOMPRESSION_APLIB
   CPPFLAGS += -DCOMPRESSION_APLIB
+
+else ifeq ($(COMPRESSION),lz4)
+  CFLAGS += -DCOMPRESSION_LZ4 -DLZ4_BLOCK_SIZE=$(LZ4_BLOCK_SIZE)
+  CPPFLAGS += -DCOMPRESSION_LZ4 -DLZ4_BLOCK_SIZE=$(LZ4_BLOCK_SIZE)
 endif
 
 CFLAGS ?=
@@ -110,7 +113,7 @@ AS         := $(MIPS_BINUTILS_PREFIX)as
 LD         := $(MIPS_BINUTILS_PREFIX)ld
 OBJCOPY    := $(MIPS_BINUTILS_PREFIX)objcopy
 OBJDUMP    := $(MIPS_BINUTILS_PREFIX)objdump
-EMULATOR   ?= 
+EMULATOR   ?= $(ARES)
 EMU_FLAGS  ?= 
 
 INC        := -Iinclude -Isrc -Ibuild -I.
@@ -149,7 +152,8 @@ OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
 #### Files ####
 
 # ROM image
-ROM  := HackerOoT.z64
+ROM_NAME ?= HackerOoT
+ROM  := $(ROM_NAME).z64
 ELF  := $(ROM:.z64=.elf)
 ROMC := $(ROM:.z64=_compressed.z64)
 WAD  := $(ROM:.z64=.wad)
@@ -239,8 +243,11 @@ ifeq ($(EMULATOR),)
 endif
 	$(EMULATOR) $(EMU_FLAGS) $<
 
+test_compress:
+	$(MAKE) compress ROM_NAME=HackerOoT_YAZ COMPRESSION=yaz
+	$(MAKE) compress ROM_NAME=HackerOoT_LZ4 COMPRESSION=lz4
 
-.PHONY: all clean setup run distclean assetclean compress wad rebuildtools
+.PHONY: all clean setup run distclean assetclean compress wad rebuildtools test_compress
 
 #### Various Recipes ####
 
