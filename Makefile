@@ -12,8 +12,8 @@ COMPILER ?= gcc
 # If DEBUG_BUILD is 0, compile with ``RELEASE_ROM`` defined
 DEBUG_BUILD ?= 1
 
-# Valid compression algorithms are yaz, lzo and aplib
-COMPRESSION ?= lz4
+# Valid compression algorithms are yaz, lz4, lzo and aplib
+COMPRESSION ?= yaz
 LZ4_BLOCK_SIZE ?= 64
 
 ifeq ($(COMPRESSION),lzo)

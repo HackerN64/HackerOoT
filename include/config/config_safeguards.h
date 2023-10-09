@@ -28,6 +28,7 @@
     #undef SHOW_TIME_INFOS
     #undef INCLUDE_TEST_SCENES
     #undef ENABLE_NO_CLIP
+    #undef ENABLE_L_TO_LEVITATE
     #undef ENABLE_CS_CONTROL
     #undef ENABLE_FRAMERATE_OPTIONS
     #undef ENABLE_MAP_SELECT

@@ -25,6 +25,9 @@
 #define DEBUG_HEAP_SIZE 0x600000
 
 /**** [NO CLIP] ****/
+#define ENABLE_L_TO_LEVITATE
+
+/**** [NO CLIP] ****/
 #define ENABLE_NO_CLIP
 
 /**** [INPUT DISPLAY] ****/
@@ -45,7 +48,7 @@
 // #define ENABLE_FRAMERATE_OPTIONS
 
 /**** [MAP SELECT] ****/
-// #define ENABLE_MAP_SELECT
+#define ENABLE_MAP_SELECT
 
 /**** [DEBUG FILE 1] ****/
 #define ENABLE_DEBUG_SAVE

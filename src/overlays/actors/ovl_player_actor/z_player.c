@@ -10853,6 +10853,12 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
 
     sControlInput = input;
 
+#ifdef ENABLE_L_TO_LEVITATE
+    if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L)) {
+        this->actor.velocity.y = 6.0f;
+    }
+#endif
+
     if (this->unk_A86 < 0) {
         this->unk_A86++;
         if (this->unk_A86 == 0) {
