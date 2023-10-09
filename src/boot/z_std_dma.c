@@ -381,7 +381,7 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
 #ifdef COMPRESSION_LZ4
                 // osSyncPrintf("\nstart: 0x%08X, dst: 0x%08X, size: %d\n", romStart, ram, romSize);
                 osSyncPrintf("DECOMPRESSION START %X\n", romStart);
-                LZ4_Decompress(&romStart, ram, romSize, (size_t)(iter->vromEnd - iter->vromStart));
+                LZ4_Decompress(romStart, ram, romSize, (size_t)(iter->vromEnd - iter->vromStart));
                 osSyncPrintf("DECOMPRESSION END\n");
 #else
                 Yaz0_Decompress(romStart, ram, romSize);

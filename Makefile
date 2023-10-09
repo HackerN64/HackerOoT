@@ -29,8 +29,8 @@ else ifeq ($(COMPRESSION),aplib)
   CPPFLAGS += -DCOMPRESSION_APLIB
 
 else ifeq ($(COMPRESSION),lz4)
-  CFLAGS += -DCOMPRESSION_LZ4 -DLZ4_BLOCK_SIZE_KIB=$(LZ4_BLOCK_SIZE) -llz4
-  CPPFLAGS += -DCOMPRESSION_LZ4 -DLZ4_BLOCK_SIZE_KIB=$(LZ4_BLOCK_SIZE) -llz4
+  CFLAGS += -DCOMPRESSION_LZ4 -DLZ4_BLOCK_SIZE_KIB=$(LZ4_BLOCK_SIZE)
+  CPPFLAGS += -DCOMPRESSION_LZ4 -DLZ4_BLOCK_SIZE_KIB=$(LZ4_BLOCK_SIZE)
 endif
 
 CFLAGS ?=
@@ -129,8 +129,8 @@ ZAPD       := tools/ZAPD/ZAPD.out
 FADO       := tools/fado/fado.elf
 
 ifeq ($(COMPILER),gcc)
-#   OPTFLAGS := -Os -ffast-math -fno-unsafe-math-optimizations
-  OPTFLAGS := -Og -g -g3 -ffast-math -fno-unsafe-math-optimizations
+  OPTFLAGS := -Os -ffast-math -fno-unsafe-math-optimizations
+#   OPTFLAGS := -Og -g -g3 -ffast-math -fno-unsafe-math-optimizations
 else
   OPTFLAGS := -O2
 endif
