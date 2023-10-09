@@ -48,7 +48,7 @@
 // #define ENABLE_FRAMERATE_OPTIONS
 
 /**** [MAP SELECT] ****/
-#define ENABLE_MAP_SELECT
+// #define ENABLE_MAP_SELECT
 
 /**** [DEBUG FILE 1] ****/
 #define ENABLE_DEBUG_SAVE

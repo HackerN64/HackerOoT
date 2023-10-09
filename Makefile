@@ -249,11 +249,7 @@ ifeq ($(EMULATOR),)
 endif
 	$(EMULATOR) $(EMU_FLAGS) $<
 
-test_compress:
-	$(MAKE) compress ROM_NAME=HackerOoT_YAZ COMPRESSION=yaz
-	$(MAKE) compress ROM_NAME=HackerOoT_LZ4 COMPRESSION=lz4
-
-.PHONY: all clean setup run distclean assetclean compress wad rebuildtools test_compress runc
+.PHONY: all clean setup run distclean assetclean compress wad rebuildtools runc
 
 #### Various Recipes ####
 
