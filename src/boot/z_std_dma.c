@@ -328,7 +328,6 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
 
     // Iterate through the DMA data table until the region containing the vrom address for this request is found
     iter = gDmaDataTable;
-    osSyncPrintf("\nDMA TABLE @ 0x%08X\n", gDmaDataTable);
     while (iter->vromEnd != 0) {
         if (vrom >= iter->vromStart && vrom < iter->vromEnd) {
             // Found the region this request falls into
@@ -379,10 +378,7 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
                 // in chunks. Restores the thread priority when done.
                 osSetThreadPri(NULL, THREAD_PRI_DMAMGR_LOW);
 #ifdef COMPRESSION_LZ4
-                // osSyncPrintf("\nstart: 0x%08X, dst: 0x%08X, size: %d\n", romStart, ram, romSize);
-                osSyncPrintf("DECOMPRESSION START %X\n", romStart);
                 LZ4_Decompress(romStart, ram, romSize, (size_t)(iter->vromEnd - iter->vromStart));
-                osSyncPrintf("DECOMPRESSION END\n");
 #else
                 Yaz0_Decompress(romStart, ram, romSize);
 #endif
