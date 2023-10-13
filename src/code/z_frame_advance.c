@@ -24,10 +24,9 @@ s32 FrameAdvance_Update(FrameAdvanceContext* frameAdvCtx, Input* input) {
         frameAdvCtx->enabled = !frameAdvCtx->enabled;
     }
 
-
     if (!frameAdvCtx->enabled ||
         (CHECK_BTN_COMBO(FA_USE_BTN_COMBO, input, FA_BTN_HOLD_FOR_COMBO, FA_CONTROL) ||
-            (USE_BTN_COMBO(FA_USE_BTN_COMBO, input, FA_BTN_HOLD_FOR_COMBO) && (++frameAdvCtx->timer >= 9)))) {
+         (USE_BTN_COMBO(FA_USE_BTN_COMBO, input, FA_BTN_HOLD_FOR_COMBO) && (++frameAdvCtx->timer >= 9)))) {
         frameAdvCtx->timer = 0;
         return true;
     }

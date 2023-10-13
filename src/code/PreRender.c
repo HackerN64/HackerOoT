@@ -814,7 +814,8 @@ void PreRender_ApplyFilters(PreRender* this) {
 #endif
 
 #ifdef ENABLE_MOTION_BLUR
-void PreRender_MotionBlurImpl(PreRender* this, Gfx** gfxp, void* buf, void* bufSave, s32 envR, s32 envG, s32 envB, s32 envA) {
+void PreRender_MotionBlurImpl(PreRender* this, Gfx** gfxp, void* buf, void* bufSave, s32 envR, s32 envG, s32 envB,
+                              s32 envA) {
     Gfx* gfx = *gfxp;
     uObjBg* bg;
 

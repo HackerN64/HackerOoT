@@ -7478,11 +7478,13 @@ s32 Camera_DbgChangeMode(Camera* camera) {
     Input* input = &D_8015BD7C->state.input[CAMDBG_CONTROLLER_PORT];
 
     if (!gDebugCamEnabled && camera->play->activeCamId == CAM_ID_MAIN) {
-        if (CHECK_BTN_COMBO(CAMDBG_BTN_COMBO, input, CAMDBG_BTN_HOLD_FOR_COMBO, CAMDBG_TESTER_PLAY_DUNGEON_TARGET_SOUND)) {
+        if (CHECK_BTN_COMBO(CAMDBG_BTN_COMBO, input, CAMDBG_BTN_HOLD_FOR_COMBO,
+                            CAMDBG_TESTER_PLAY_DUNGEON_TARGET_SOUND)) {
             osSyncPrintf("attention sound URGENCY\n");
             Sfx_PlaySfxCentered(NA_SE_SY_ATTENTION_URGENCY);
         }
-        if (CHECK_BTN_COMBO(CAMDBG_BTN_COMBO, input, CAMDBG_BTN_HOLD_FOR_COMBO, CAMDBG_TESTER_PLAY_OVERWORLD_TARGET_SOUND)) {
+        if (CHECK_BTN_COMBO(CAMDBG_BTN_COMBO, input, CAMDBG_BTN_HOLD_FOR_COMBO,
+                            CAMDBG_TESTER_PLAY_OVERWORLD_TARGET_SOUND)) {
             osSyncPrintf("attention sound NORMAL\n");
             Sfx_PlaySfxCentered(NA_SE_SY_ATTENTION_ON);
         }
@@ -7695,8 +7697,9 @@ Vec3s Camera_Update(Camera* camera) {
                 }
             }
 
-    changeBgCamCond = ((camera->nextBgCamIndex != -1) && (fabsf(curPlayerPosRot.pos.y - playerGroundY) < 2.0f) &&
-                        (!(camera->stateFlags & CAM_STATE_9) || (player->currentBoots == PLAYER_BOOTS_IRON)));
+            changeBgCamCond =
+                ((camera->nextBgCamIndex != -1) && (fabsf(curPlayerPosRot.pos.y - playerGroundY) < 2.0f) &&
+                 (!(camera->stateFlags & CAM_STATE_9) || (player->currentBoots == PLAYER_BOOTS_IRON)));
 #ifdef ENABLE_CAMERA_DEBUGGER
             changeBgCamCond = !camDbgChangeSettings && changeBgCamCond;
 #endif
@@ -7759,13 +7762,14 @@ Vec3s Camera_Update(Camera* camera) {
         osSyncPrintf("camera: shrink_and_bitem %x(%d)\n", sCameraInterfaceField, camera->play->transitionMode);
 
         osSyncPrintf("camera: engine (%s(%d) %s(%d) %s(%d)) ok!\n", &sCameraSettingNames[camera->setting],
-                        camera->setting, &sCameraModeNames[camera->mode], camera->mode,
-                        &sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx],
-                        sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx);
+                     camera->setting, &sCameraModeNames[camera->mode], camera->mode,
+                     &sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx],
+                     sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx);
     }
 
     // enable/disable debug cam
-    if (CHECK_BTN_COMBO(CAMDBG_BTN_COMBO, &D_8015BD7C->state.input[CAMDBG_CONTROLLER_PORT], CAMDBG_BTN_HOLD_FOR_COMBO, CAMDBG_TOGGLE)) {
+    if (CHECK_BTN_COMBO(CAMDBG_BTN_COMBO, &D_8015BD7C->state.input[CAMDBG_CONTROLLER_PORT], CAMDBG_BTN_HOLD_FOR_COMBO,
+                        CAMDBG_TOGGLE)) {
         gDebugCamEnabled ^= 1;
         if (gDebugCamEnabled) {
             DebugCamera_Enable(&D_8015BD80, camera);
@@ -7861,13 +7865,13 @@ Vec3s Camera_Update(Camera* camera) {
 #ifdef ENABLE_CAMERA_DEBUGGER
     if (R_DEBUG_CAM_UPDATE) {
         osSyncPrintf("camera: out (%f %f %f) (%f %f %f)\n", camera->at.x, camera->at.y, camera->at.z, camera->eye.x,
-                        camera->eye.y, camera->eye.z);
+                     camera->eye.y, camera->eye.z);
         osSyncPrintf("camera: dir (%f %d(%f) %d(%f)) (%f)\n", eyeAtAngle.r, eyeAtAngle.pitch,
-                        CAM_BINANG_TO_DEG(eyeAtAngle.pitch), eyeAtAngle.yaw, CAM_BINANG_TO_DEG(eyeAtAngle.yaw),
-                        camera->fov);
+                     CAM_BINANG_TO_DEG(eyeAtAngle.pitch), eyeAtAngle.yaw, CAM_BINANG_TO_DEG(eyeAtAngle.yaw),
+                     camera->fov);
         if (camera->player != NULL) {
             osSyncPrintf("camera: foot(%f %f %f) dist (%f)\n", curPlayerPosRot.pos.x, curPlayerPosRot.pos.y,
-                            curPlayerPosRot.pos.z, camera->dist);
+                         curPlayerPosRot.pos.z, camera->dist);
         }
     }
 #endif

@@ -177,11 +177,11 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 #endif
 
 #ifdef ENABLE_AUDIO_DEBUGGER
-        GfxPrint_Init(&printer);
-        GfxPrint_Open(&printer, newDList);
-        AudioDebug_Draw(&printer);
-        newDList = GfxPrint_Close(&printer);
-        GfxPrint_Destroy(&printer);
+    GfxPrint_Init(&printer);
+    GfxPrint_Open(&printer, newDList);
+    AudioDebug_Draw(&printer);
+    newDList = GfxPrint_Close(&printer);
+    GfxPrint_Destroy(&printer);
 #endif
 
 #ifdef ENABLE_SPEEDMETER

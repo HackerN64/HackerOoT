@@ -887,8 +887,8 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
     s32 adjustment;
 
 #ifdef SHOW_TIME_INFOS
-        Gfx* displayList;
-        Gfx* prevDisplayList;
+    Gfx* displayList;
+    Gfx* prevDisplayList;
 #endif
 
     if ((((void)0, gSaveContext.gameMode) != GAMEMODE_NORMAL) &&
