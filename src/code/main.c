@@ -3,6 +3,10 @@
 
 #include "config.h"
 
+#ifdef ENABLE_RAINBOW
+#include "rainbow.h"
+#endif
+
 s32 gScreenWidth = SCREEN_WIDTH;
 s32 gScreenHeight = SCREEN_HEIGHT;
 u32 gSystemHeapSize = 0;
@@ -26,6 +30,10 @@ StackEntry sIrqMgrStackInfo;
 AudioMgr gAudioMgr;
 OSMesgQueue sSerialEventQueue;
 OSMesg sSerialMsgBuf[1];
+
+#ifdef ENABLE_RAINBOW
+Rainbow gRainbow;
+#endif
 
 void Main_LogSystemHeap(void) {
     osSyncPrintf(VT_FGCOL(GREEN));
@@ -69,6 +77,10 @@ void Main(void* arg) {
     }
     osSyncPrintf("debug_InitArena(%08x, %08x)\n", debugHeapStart, debugHeapSize);
     DebugArena_Init(debugHeapStart, debugHeapSize);
+#endif
+
+#ifdef ENABLE_RAINBOW
+    Rainbow_Init(&gRainbow);
 #endif
 
     Regs_Init();

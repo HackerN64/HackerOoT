@@ -58,6 +58,7 @@
 #include "prerender.h"
 
 #include "widescreen.h"
+#include "rainbow.h"
 #include "config.h"
 
 #define SCREEN_WIDTH  320
