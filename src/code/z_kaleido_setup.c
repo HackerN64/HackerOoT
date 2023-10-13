@@ -16,20 +16,13 @@ void KaleidoSetup_Update(PlayState* play) {
     Input* evEditorInput = &play->state.input[EVENT_EDITOR_CONTROLLER_PORT];
 #endif
 
-    u8 canUpdate =
-        (play->gameOverCtx.state == GAMEOVER_INACTIVE && play->transitionTrigger == TRANS_TRIGGER_OFF &&
-         play->transitionMode == TRANS_MODE_OFF && gSaveContext.save.cutsceneIndex < 0xFFF0 &&
-         gSaveContext.nextCutsceneIndex < 0xFFF0 && !Play_InCsMode(play) && play->shootingGalleryStatus <= 1 &&
-         gSaveContext.magicState != MAGIC_STATE_STEP_CAPACITY && gSaveContext.magicState != MAGIC_STATE_FILL &&
-         (play->sceneId != SCENE_BOMBCHU_BOWLING_ALLEY || !Flags_GetSwitch(play, 0x38)));
-
-#ifdef ENABLE_INV_EDITOR
-    canUpdate = (pauseCtx->state == 0 && pauseCtx->debugState == 0) && canUpdate;
-#else
-    canUpdate = (pauseCtx->state == 0) && canUpdate;
-#endif
-
-    if (canUpdate) {
+    if (!IS_PAUSED(pauseCtx) && play->gameOverCtx.state == GAMEOVER_INACTIVE &&
+        play->transitionTrigger == TRANS_TRIGGER_OFF && play->transitionMode == TRANS_MODE_OFF &&
+        gSaveContext.save.cutsceneIndex < 0xFFF0 && gSaveContext.nextCutsceneIndex < 0xFFF0 && !Play_InCsMode(play) &&
+        play->shootingGalleryStatus <= 1 && gSaveContext.magicState != MAGIC_STATE_STEP_CAPACITY &&
+        gSaveContext.magicState != MAGIC_STATE_FILL &&
+        (play->sceneId != SCENE_BOMBCHU_BOWLING_ALLEY || !Flags_GetSwitch(play, 0x38))
+    ) {
 
 #ifdef ENABLE_EVENT_EDITOR
         if (CHECK_BTN_COMBO(EVENT_EDITOR_BTN_COMBO, evEditorInput, EVENT_EDITOR_BTN_HOLD_FOR_COMBO, EVENT_EDITOR_OPEN)) {
@@ -38,13 +31,14 @@ void KaleidoSetup_Update(PlayState* play) {
 #else
         if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
 #endif
+            // The start button was pressed, pause
             gSaveContext.prevHudVisibilityMode = gSaveContext.hudVisibilityMode;
 
             WREG(16) = -175;
             WREG(17) = 155;
 
             pauseCtx->unk_1EA = 0;
-            pauseCtx->unk_1E4 = 1;
+            pauseCtx->mainState = PAUSE_MAIN_STATE_1;
 
             if (ZREG(48) == 0) {
                 pauseCtx->eye.x = sKaleidoSetupEyeX0[pauseCtx->pageIndex];
@@ -57,13 +51,13 @@ void KaleidoSetup_Update(PlayState* play) {
             }
 
             pauseCtx->mode = (u16)(pauseCtx->pageIndex * 2) + 1;
-            pauseCtx->state = 1;
+            pauseCtx->state = PAUSE_STATE_WAIT_LETTERBOX;
 
             osSyncPrintf("Ｍｏｄｅ=%d  eye.x=%f,  eye.z=%f  kscp_pos=%d\n", pauseCtx->mode, pauseCtx->eye.x,
                          pauseCtx->eye.z, pauseCtx->pageIndex);
         }
 
-        if (pauseCtx->state == 1) {
+        if (pauseCtx->state == PAUSE_STATE_WAIT_LETTERBOX) {
             WREG(2) = -6240;
             R_UPDATE_RATE = 2;
 
@@ -80,13 +74,13 @@ void KaleidoSetup_Init(PlayState* play) {
     PauseContext* pauseCtx = &play->pauseCtx;
     u64 temp = 0; // Necessary to match
 
-    pauseCtx->state = 0;
+    pauseCtx->state = PAUSE_STATE_OFF;
 #if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
     pauseCtx->debugState = 0;
 #endif
     pauseCtx->alpha = 0;
     pauseCtx->unk_1EA = 0;
-    pauseCtx->unk_1E4 = 0;
+    pauseCtx->mainState = PAUSE_MAIN_STATE_IDLE;
     pauseCtx->mode = 0;
     pauseCtx->pageIndex = PAUSE_ITEM;
 

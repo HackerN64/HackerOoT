@@ -74,7 +74,7 @@ void EnOkarinaEffect_TriggerStorm(EnOkarinaEffect* this, PlayState* play) {
 void EnOkarinaEffect_ManageStorm(EnOkarinaEffect* this, PlayState* play) {
     CutsceneFlags_Unset(play, 5);
 
-    if (((play->pauseCtx.state == 0) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
+    if (((play->pauseCtx.state == PAUSE_STATE_OFF) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
          (play->msgCtx.msgLength == 0) &&
 #ifdef ENABLE_FRAMERATE_OPTIONS
          (!FrameAdvance_IsEnabled(play)) &&

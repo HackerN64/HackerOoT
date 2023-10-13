@@ -367,7 +367,7 @@ void Minimap_Draw(PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx);
 
-    if (play->pauseCtx.state < 3) {
+    if (play->pauseCtx.state < PAUSE_STATE_INIT) {
         switch (play->sceneId) {
             case SCENE_DEKU_TREE:
             case SCENE_DODONGOS_CAVERN:
@@ -527,11 +527,7 @@ void Map_Update(PlayState* play) {
     s16 floor;
     s16 i;
 
-#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
-    if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0)) {
-#else
-    if (play->pauseCtx.state == 0) {
-#endif
+    if (!IS_PAUSED(&play->pauseCtx)) {
         switch (play->sceneId) {
             case SCENE_DEKU_TREE:
             case SCENE_DODONGOS_CAVERN:

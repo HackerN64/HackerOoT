@@ -62,7 +62,7 @@ extern s32 gMaxActorId; // original name: "MaxProfile"
 extern s32 gDebugCamEnabled;
 #endif
 
-extern GameStateOverlay gGameStateOverlayTable[6];
+extern GameStateOverlay gGameStateOverlayTable[GAMESTATE_ID_MAX];
 extern u8 gWeatherMode;
 extern u8 gLightConfigAfterUnderwater;
 extern u8 gInterruptSongOfStorms;
