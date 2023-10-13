@@ -1,6 +1,7 @@
 #include "global.h"
 #include "quake.h"
 #include "z64camera.h"
+
 #include "config.h"
 
 #include "assets/scenes/indoors/tokinoma/tokinoma_scene.h"
@@ -30,8 +31,6 @@
 #include "assets/scenes/dungeons/ice_doukutu/ice_doukutu_scene.h"
 
 #include "assets/scenes/misc/hakaana_ouke/hakaana_ouke_scene.h"
-
-#include "config.h"
 
 u16 sCurTextId = 0;
 u16 sCurOcarinaAction = 0;

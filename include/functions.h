@@ -3,7 +3,6 @@
 
 #include "z64.h"
 #include "macros.h"
-#include "config.h"
 
 #include "config.h"
 

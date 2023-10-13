@@ -31,6 +31,7 @@ ActorInit End_Title_InitVars = {
 #include "assets/overlays/ovl_End_Title/ovl_End_Title.c"
 
 #ifdef ENABLE_WIDESCREEN
+// TODO: move this to the assets whenever they're committed
 static Gfx sWidePresentedByNintendoDL[] = {
     gsDPPipeSync(),
     gsDPSetTextureLUT(G_TT_NONE),

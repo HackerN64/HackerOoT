@@ -2,7 +2,6 @@
 #include "message_data_static.h"
 #include "terminal.h"
 #include "assets/textures/parameter_static/parameter_static.h"
-#include "config.h"
 
 #include "config.h"
 

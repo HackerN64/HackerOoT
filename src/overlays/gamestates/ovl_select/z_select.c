@@ -8,7 +8,6 @@
 #include "terminal.h"
 #include "alloca.h"
 
-#include "config.h"
 #include "z_select.h"
 
 #ifdef ENABLE_MAP_SELECT
