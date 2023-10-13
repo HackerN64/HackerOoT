@@ -11,15 +11,15 @@
 #include "config.h"
 
 #ifndef RELEASE_ROM
-void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
-    Gfx* g;
+void ConsoleLogo_PrintBuildInfo(Gfx** gfxP) {
+    Gfx* gfx;
     GfxPrint* printer;
 
-    g = *gfxp;
-    g = Gfx_SetupDL_28(g);
+    gfx = *gfxP;
+    gfx = Gfx_SetupDL_28(gfx);
     printer = alloca(sizeof(GfxPrint));
     GfxPrint_Init(printer);
-    GfxPrint_Open(printer, g);
+    GfxPrint_Open(printer, gfx);
 
     GfxPrint_SetColor(printer, 255, 255, 255, 255);
 
@@ -35,9 +35,9 @@ void ConsoleLogo_PrintBuildInfo(Gfx** gfxp) {
     GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 25);
     GfxPrint_Printf(printer, "[Build Option:%s]", gBuildMakeOption);
 
-    g = GfxPrint_Close(printer);
+    gfx = GfxPrint_Close(printer);
     GfxPrint_Destroy(printer);
-    *gfxp = g;
+    *gfxP = gfx;
 }
 #endif
 
@@ -55,7 +55,11 @@ void ConsoleLogo_Update(ConsoleLogoState* this) {
         this->coverAlpha += this->addAlpha;
         if (this->coverAlpha <= 0) {
             this->coverAlpha = 0;
+#ifdef MM_N64_BOOT_LOGO
+            this->addAlpha = 12;
+#else
             this->addAlpha = 3;
+#endif
         } else if (this->coverAlpha >= 255) {
             this->coverAlpha = 255;
             this->exit = true;
@@ -197,6 +201,10 @@ void ConsoleLogo_Init(GameState* thisx) {
     this->ult = 0;
     this->timer = 20;
     this->coverAlpha = 255;
+#ifdef MM_N64_BOOT_LOGO
+    this->addAlpha = -12;
+#else
     this->addAlpha = -3;
+#endif
     this->visibleDuration = 0x3C;
 }
