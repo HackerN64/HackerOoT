@@ -1,3 +1,5 @@
+#include "mbi.h"
+
 #ifndef ULTRA64_GBI_H
 #define ULTRA64_GBI_H
 
@@ -7,7 +9,6 @@
 #include "gbi_no_syncs.h"
 #else
 
-#include "mbi.h"
 
 /* To enable Fast3DEX grucode support, define F3DEX_GBI. */
 

@@ -5,8 +5,6 @@
 
 #ifdef DISABLE_SYNCS
 
-#include "mbi.h"
-
 /* To enable Fast3DEX grucode support, define F3DEX_GBI. */
 
 /* Types */
