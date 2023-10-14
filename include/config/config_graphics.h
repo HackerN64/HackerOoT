@@ -18,9 +18,9 @@
 // #define ENABLE_PAUSE_BG_AA
 
 /**
- * Enable No-Syncs 
- * Note: mostly works but there's still visual issues with this
+ * Disable Syncs (improves performance)
+ * Note: broken on real hardware
 */
-#define DISABLE_SYNCS
+// #define DISABLE_SYNCS
 
 #endif
