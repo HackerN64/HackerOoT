@@ -3,6 +3,7 @@
 
 #include "ultra64.h"
 #include "global.h"
+
 #include "config.h"
 
 extern u8 gAmmoItems[];

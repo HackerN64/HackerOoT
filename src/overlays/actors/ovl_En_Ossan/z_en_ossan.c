@@ -14,6 +14,8 @@
 #include "assets/objects/object_masterzoora/object_masterzoora.h"
 #include "assets/objects/object_masterkokirihead/object_masterkokirihead.h"
 
+#include "config.h"
+
 #define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4)
 
 void EnOssan_Init(Actor* thisx, PlayState* play);
@@ -2316,7 +2318,9 @@ void EnOssan_DrawStickDirectionPrompts(PlayState* play, EnOssan* this) {
                                 this->stickRightPrompt.arrowTexX, this->stickRightPrompt.arrowTexY,
                                 this->stickRightPrompt.z, 0, 0, 1.0f, 1.0f);
         }
+#ifdef DISABLE_SYNCS
         gDPLoadSync(OVERLAY_DISP++);
+#endif
         gDPLoadTextureBlock(OVERLAY_DISP++, gControlStickTex, G_IM_FMT_IA, G_IM_SIZ_8b, 16, 16, 0,
                             G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 4, G_TX_NOMASK, G_TX_NOLOD,
                             G_TX_NOLOD);

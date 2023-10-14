@@ -3,6 +3,8 @@
 #include "assets/textures/title_static/title_static.h"
 #include "assets/overlays/ovl_File_Choose/ovl_file_choose.h"
 
+#include "config.h"
+
 static s16 D_808124C0[] = {
     0x0002, 0x0003, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0001, 0x0002, 0x0000, 0x0001,
     0x0001, 0x0002, 0x0001, 0x0001, 0x0004, 0x0002, 0x0002, 0x0002, 0x0001, 0x0001, 0x0000, 0x0002, 0x0000, 0x0001,
@@ -22,7 +24,9 @@ static s16 D_80812544[] = {
 void FileSelect_DrawCharacter(GraphicsContext* gfxCtx, void* texture, s16 vtx) {
     OPEN_DISPS(gfxCtx);
 
+#ifdef DISABLE_SYNCS
     gDPLoadSync(POLY_OPA_DISP++);
+#endif
     gDPLoadTextureBlock_4b(POLY_OPA_DISP++, texture, G_IM_FMT_I, 16, 16, 0, G_TX_NOMIRROR | G_TX_CLAMP,
                            G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
     gSP1Quadrangle(POLY_OPA_DISP++, vtx, vtx + 2, vtx + 3, vtx + 1, 0);
@@ -135,8 +139,11 @@ void FileSelect_SetNameEntryVtx(GameState* thisx) {
     phi_s0 = 0x10;
     for (phi_t1 = 0; phi_t1 < 2; phi_t1++, phi_s0 += 4) {
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, this->windowColor[0], this->windowColor[1], this->windowColor[2], 255);
-        //gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 0);
+#ifdef DISABLE_SYNCS
         gDPLoadSync(POLY_OPA_DISP++);
+#else
+        gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 0);
+#endif
         gDPLoadTextureBlock(POLY_OPA_DISP++, sBackspaceEndTextures[gSaveContext.language][phi_t1], G_IM_FMT_IA,
                             G_IM_SIZ_16b, sBackspaceEndWidths[phi_t1], 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
                             G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -323,7 +330,11 @@ void FileSelect_DrawNameEntry(GameState* thisx) {
                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
                         G_TX_NOLOD);
     gSP1Quadrangle(POLY_OPA_DISP++, 0, 2, 3, 1, 0);
+
+#ifdef DISABLE_SYNCS
     gDPLoadSync(POLY_OPA_DISP++);
+#endif
+
     if ((this->kbdButton == FS_KBD_BTN_HIRA) || (this->kbdButton == FS_KBD_BTN_KATA) ||
         (this->kbdButton == FS_KBD_BTN_END)) {
         gDPLoadTextureBlock(POLY_OPA_DISP++, gFileSelMediumButtonHighlightTex, G_IM_FMT_I, G_IM_SIZ_8b, 56, 24, 0,
@@ -890,7 +901,9 @@ void FileSelect_DrawOptionsImpl(GameState* thisx) {
     gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
 
     for (i = 0, vtx = 0; i < 4; i++, vtx += 4) {
+#ifdef DISABLE_SYNCS
         gDPLoadSync(POLY_OPA_DISP++);
+#endif
         gDPLoadTextureBlock(POLY_OPA_DISP++, sOptionsMenuHeaders[i].texture[gSaveContext.language], G_IM_FMT_IA,
                             G_IM_SIZ_8b, sOptionsMenuHeaders[i].width[gSaveContext.language],
                             sOptionsMenuHeaders[i].height, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
