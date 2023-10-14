@@ -146,14 +146,16 @@ Note that you can use the Wii Classic Controller too.
 
 ## Using GDB
 ### How to setup
-You will need [a special version of Ares](https://github.com/HailToDodongo/ares-wasm/actions), you can find the download in the latest "N64 gdb" run.
+You will need a nightly build of [Ares](https://github.com/ares-emulator/ares)
 
-- For Linux/WSL you need to install ``gdb-multiarch`` (and probably [this](https://pypi.org/project/gdb-tools/) Python module), then use the launch configuration ``Ares GDB (Linux)``. If using WSL, you might need to disable the IP change for WSL and update it in the launch configuration, also you might need to add a rule in the firewall to allow traffic. If you're on native Linux simply make the address ``localhost:PORT`` and it should work.
-- For Windows for now copy paste the ``HackerOoT.elf`` file somewhere in a Windows directory then edit the launch configuration ``Ares GDB (Windows)`` to make the path correct, then launch it.
+- For Linux/WSL you need to install ``gdb-multiarch`` and [this](https://pypi.org/project/gdb-tools/) Python module, then use the launch configuration ``Ares GDB (Linux)``. If using WSL, you might need to disable the IP change for WSL and update it in the launch configuration, also you might need to add a rule in the firewall to allow traffic. If you're on native Linux simply make the address ``localhost:PORT`` and it should work (port being the one shown on Ares).
+- For Windows for now copy/paste ``HackerOoT.elf`` somewhere in a Windows directory then edit the launch configuration ``Ares GDB (Windows)`` to make the path correct, then launch it.
 
 Follow the instructions [there](https://github.com/fig02/gdb-load-ovl), the ``.gdbinit`` file already exists in this repository so ignore this step.
 
 To debug an overlay, pause (with the debug toolbar for Visual Studio Code) and execute the following: ``-exec ovl ENUM_NAME``(see the script's readme for more informations).
+
+To display call stack variables as hexadecimal, add ``set output-radix 16`` inside ``.gdbinit``, note that this will make everything hexadecimal.
 
 Note: If you want to load everything automatically you will need [this script](https://github.com/HailToDodongo/oot/blob/gdb_python/gdb_script.py). Note: this currently affects performance (frame drops at each load/unload), that's why we are using the manual option.
 
