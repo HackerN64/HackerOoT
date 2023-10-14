@@ -1,6 +1,8 @@
 #include "global.h"
 #include "terminal.h"
 
+#include "config.h"
+
 Vec3f D_801270A0 = { 0.0f, 0.0f, 0.0f };
 
 // unused
@@ -312,7 +314,9 @@ void Room_DrawBackground2D(Gfx** gfxP, void* tex, void* tlut, u16 width, u16 hei
 
     gfx = (Gfx*)(bg + 1);
 
+#ifdef DISABLE_SYNCS
     gDPPipeSync(gfx++);
+#endif
     if (fmt == G_IM_FMT_CI) {
         gDPLoadTLUT(gfx++, tlutCount, 256, tlut);
     }

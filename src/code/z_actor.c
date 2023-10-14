@@ -744,7 +744,9 @@ void TitleCard_Draw(PlayState* play, TitleCardContext* titleCtx) {
 
         // If texture is bigger than 0x1000, display the rest
         if (height > 0) {
+#ifdef DISABLE_SYNCS
             gDPLoadSync(OVERLAY_DISP++);
+#endif
             gDPLoadTextureBlock(OVERLAY_DISP++, (u8*)titleCtx->texture + textureLanguageOffset + 0x1000, G_IM_FMT_IA,
                                 G_IM_SIZ_8b, width, height, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
                                 G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -2340,7 +2342,10 @@ void func_80030ED8(Actor* actor) {
 void Actor_DrawLensOverlay(GraphicsContext* gfxCtx) {
     OPEN_DISPS(gfxCtx);
 
+#ifdef DISABLE_SYNCS
     gDPLoadSync(POLY_XLU_DISP++);
+#endif
+
     gDPLoadTextureBlock(POLY_XLU_DISP++, gLensOfTruthMaskTex, G_IM_FMT_I, G_IM_SIZ_8b, LENS_MASK_WIDTH,
                         LENS_MASK_HEIGHT, 0, G_TX_MIRROR | G_TX_CLAMP, G_TX_MIRROR | G_TX_CLAMP, 6, 6, G_TX_NOLOD,
                         G_TX_NOLOD);

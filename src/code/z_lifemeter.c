@@ -425,7 +425,9 @@ void Health_DrawMeter(PlayState* play) {
 
         if (curBgImgLoaded != heartBgImg) {
             curBgImgLoaded = heartBgImg;
+#ifdef DISABLE_SYNCS
             gDPLoadSync(OVERLAY_DISP++);
+#endif
             gDPLoadTextureBlock(OVERLAY_DISP++, heartBgImg, G_IM_FMT_IA, G_IM_SIZ_8b, 16, 16, 0,
                                 G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
                                 G_TX_NOLOD, G_TX_NOLOD);

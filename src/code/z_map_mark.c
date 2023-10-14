@@ -2,6 +2,8 @@
 #include "terminal.h"
 #include "assets/textures/parameter_static/parameter_static.h"
 
+#include "config.h"
+
 typedef struct {
     /* 0x00 */ void* texture;
     /* 0x04 */ u32 imageFormat;
@@ -113,7 +115,9 @@ void MapMark_DrawForDungeon(PlayState* play) {
             if ((mapMarkIconData->markType != MAP_MARK_CHEST) || !Flags_GetTreasure(play, markPoint->chestFlag)) {
                 markInfo = &sMapMarkInfoTable[mapMarkIconData->markType];
 
+#ifdef DISABLE_SYNCS
                 gDPLoadSync(OVERLAY_DISP++);
+#endif
                 gDPLoadTextureBlock(OVERLAY_DISP++, markInfo->texture, markInfo->imageFormat, G_IM_SIZ_MARK,
                                     markInfo->textureWidth, markInfo->textureHeight, 0, G_TX_NOMIRROR | G_TX_WRAP,
                                     G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);

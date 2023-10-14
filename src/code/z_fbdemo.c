@@ -11,6 +11,8 @@
  */
 #include "global.h"
 
+#include "config.h"
+
 // color framebuffer
 extern u16 D_0F000000[];
 
@@ -91,8 +93,9 @@ void TransitionTile_InitGraphics(TransitionTile* this) {
         col2 = 0;
         col = 0;
         while (col < this->cols) {
+#ifdef DISABLE_SYNCS
             gDPLoadSync(gfx++);
-
+#endif
             gDPLoadTextureTile(gfx++, SEGMENT_ADDR(0xB, 0), G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, SCREEN_HEIGHT,
                                colTex, rowTex, colTex + 0x20, rowTex + 0x20, 0, G_TX_NOMIRROR | G_TX_WRAP,
                                G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
