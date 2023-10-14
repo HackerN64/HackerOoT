@@ -4,7 +4,6 @@ __pycache__/
 .DS_Store
 
 # Text editor remnants
-.vscode/
 .vs/
 .idea/
 CMakeLists.txt

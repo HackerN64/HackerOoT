@@ -46,7 +46,8 @@ void KaleidoScope_DrawDungeonMap(PlayState* play, GraphicsContext* gfxCtx) {
 
     OPEN_DISPS(gfxCtx);
 
-    if ((pauseCtx->state == 6) && (pauseCtx->unk_1E4 == 0) && (pauseCtx->pageIndex == PAUSE_MAP)) {
+    if ((pauseCtx->state == PAUSE_STATE_MAIN) && (pauseCtx->mainState == PAUSE_MAIN_STATE_IDLE) &&
+        (pauseCtx->pageIndex == PAUSE_MAP)) {
         pauseCtx->cursorColorSet = 0;
         oldCursorPoint = pauseCtx->cursorPoint[PAUSE_MAP];
 
@@ -413,7 +414,8 @@ void KaleidoScope_DrawWorldMap(PlayState* play, GraphicsContext* gfxCtx) {
 
     OPEN_DISPS(gfxCtx);
 
-    if ((pauseCtx->state == 6) && (pauseCtx->unk_1E4 == 0) && (pauseCtx->pageIndex == PAUSE_MAP)) {
+    if ((pauseCtx->state == PAUSE_STATE_MAIN) && (pauseCtx->mainState == PAUSE_MAIN_STATE_IDLE) &&
+        (pauseCtx->pageIndex == PAUSE_MAP)) {
         pauseCtx->cursorColorSet = 0;
         oldCursorPoint = pauseCtx->cursorPoint[PAUSE_WORLD_MAP];
 
