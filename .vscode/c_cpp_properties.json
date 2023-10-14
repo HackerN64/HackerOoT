@@ -6,7 +6,7 @@
             "compilerArgs": [
                 "-m32" // Removes integer truncation warnings with gbi macros
             ],
-            "intelliSenseMode": "gcc-x86", // Shouldn't matter
+            "intelliSenseMode": "gcc-x86",
             "includePath": [ // Matches makefile's includes
                 "${workspaceFolder}/**",
                 "src",
