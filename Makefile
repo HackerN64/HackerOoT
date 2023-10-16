@@ -190,7 +190,7 @@ TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),build/$f) \
 $(shell mkdir -p build/baserom build/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS) $(ASSET_BIN_DIRS),build/$(dir)))
 
 build/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
-build/src/%.o: CC := $(CC) -fexec-charset=euc-jp
+build/src/%.o: CC := $(CC) -fexec-charset=utf-8
 
 build/src/overlays/actors/ovl_Item_Shield/%.o: OPTFLAGS := -O2
 build/src/overlays/actors/ovl_En_Part/%.o: OPTFLAGS := -O2

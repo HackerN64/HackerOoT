@@ -14928,8 +14928,7 @@ void func_80852648(PlayState* play, Player* this, CsCmdActorCue* cue) {
     if (LinkAnimation_OnFrame(&this->skelAnime, 10.0f)) {
         this->heldItemAction = this->itemAction = PLAYER_IA_NONE;
         this->heldItemId = ITEM_NONE;
-        this->modelGroup = this->nextModelGroup = Player_ActionToModelGroup(this, PLAYER_IA_NONE);
-        this->leftHandDLists = gPlayerLeftHandOpenDLs;
+        Player_SetModelGroup(this, Player_ActionToModelGroup(this, PLAYER_IA_NONE));
         Inventory_ChangeEquipment(EQUIP_TYPE_SWORD, EQUIP_VALUE_SWORD_MASTER);
         gSaveContext.save.info.equips.buttonItems[0] = ITEM_SWORD_MASTER;
         Inventory_DeleteEquipment(play, EQUIP_TYPE_SWORD);
