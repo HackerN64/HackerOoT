@@ -541,7 +541,9 @@ void KaleidoScope_UpdateItemEquip(PlayState* play) {
         offsetX = ABS(pauseCtx->equipAnimX - bowItemVtx->v.ob[0] * 10) / sEquipMoveTimer;
         offsetY = ABS(pauseCtx->equipAnimY - bowItemVtx->v.ob[1] * 10) / sEquipMoveTimer;
     } else {
-        offsetX = ABS(pauseCtx->equipAnimX - WIDE_C_VAL(sCButtonPosX[pauseCtx->equipTargetCBtn], pauseCtx->equipTargetCBtn)) / sEquipMoveTimer;
+        offsetX =
+            ABS(pauseCtx->equipAnimX - WIDE_C_VAL(sCButtonPosX[pauseCtx->equipTargetCBtn], pauseCtx->equipTargetCBtn)) /
+            sEquipMoveTimer;
         offsetY = ABS(pauseCtx->equipAnimY - sCButtonPosY[pauseCtx->equipTargetCBtn]) / sEquipMoveTimer;
     }
 
@@ -571,7 +573,8 @@ void KaleidoScope_UpdateItemEquip(PlayState* play) {
                 pauseCtx->equipAnimY += offsetY;
             }
         } else {
-            if (pauseCtx->equipAnimX >= WIDE_C_VAL(sCButtonPosX[pauseCtx->equipTargetCBtn], pauseCtx->equipTargetCBtn)) {
+            if (pauseCtx->equipAnimX >=
+                WIDE_C_VAL(sCButtonPosX[pauseCtx->equipTargetCBtn], pauseCtx->equipTargetCBtn)) {
                 pauseCtx->equipAnimX -= offsetX;
             } else {
                 pauseCtx->equipAnimX += offsetX;

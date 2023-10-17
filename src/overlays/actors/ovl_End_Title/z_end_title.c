@@ -42,13 +42,16 @@ static Gfx sWidePresentedByNintendoDL[] = {
     gsDPSetEnvColor(200, 230, 225, 255),
     gsDPLoadTextureTile(sNintendoLeftTex, G_IM_FMT_IA, G_IM_SIZ_8b, 64, 0, 0, 0, 63, 47, 0, G_TX_NOMIRROR | G_TX_WRAP,
                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD),
-    gsSPTextureRectangle(0x0184 + 20 + 30, 0x0168, 0x0280 - 0x40 + 19 + 30, 0x0224, G_TX_RENDERTILE, 0, 0, (1 << 10) / WIDE_GET_RATIO, 0x0400),
+    gsSPTextureRectangle(0x0184 + 20 + 30, 0x0168, 0x0280 - 0x40 + 19 + 30, 0x0224, G_TX_RENDERTILE, 0, 0,
+                         (1 << 10) / WIDE_GET_RATIO, 0x0400),
     gsDPLoadTextureTile(sNintendoRightTex, G_IM_FMT_IA, G_IM_SIZ_8b, 64, 0, 0, 0, 63, 47, 0, G_TX_NOMIRROR | G_TX_WRAP,
                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD),
-    gsSPTextureRectangle(0x0280 - 0x40 + 19 + 30, 0x0168, 0x037C - 76, 0x0224, G_TX_RENDERTILE, 0, 0, (1 << 10) / WIDE_GET_RATIO, 0x0400),
+    gsSPTextureRectangle(0x0280 - 0x40 + 19 + 30, 0x0168, 0x037C - 76, 0x0224, G_TX_RENDERTILE, 0, 0,
+                         (1 << 10) / WIDE_GET_RATIO, 0x0400),
     gsDPLoadTextureTile(sPresentedByTex, G_IM_FMT_IA, G_IM_SIZ_8b, 96, 0, 0, 0, 95, 15, 0, G_TX_NOMIRROR | G_TX_WRAP,
                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD),
-    gsSPTextureRectangle(0x01C4 + 30, 0x0140, 0x0340, 0x017C, G_TX_RENDERTILE, 0, 0, (1 << 10) / WIDE_GET_RATIO, 0x0400),
+    gsSPTextureRectangle(0x01C4 + 30, 0x0140, 0x0340, 0x017C, G_TX_RENDERTILE, 0, 0, (1 << 10) / WIDE_GET_RATIO,
+                         0x0400),
     gsSPEndDisplayList(),
 };
 #endif
@@ -118,19 +121,20 @@ void EndTitle_DrawFull(Actor* thisx, PlayState* play) {
     gDPSetPrimColor(OVERLAY_DISP++, 0x00, 0x80, 0, 0, 0, this->endAlpha);
     gDPLoadTextureTile(OVERLAY_DISP++, sTheEndTex, G_IM_FMT_IA, G_IM_SIZ_8b, 80, 24, 0, 0, 80, 24, 0,
                        G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 0, 0, 0, 0);
-    gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((120 << 2), 33), 90 << 2, 200 << 2, 113 << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
+    gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((120 << 2), 33), 90 << 2, 200 << 2, 113 << 2, G_TX_RENDERTILE, 0, 0,
+                        WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
     gDPPipeSync(OVERLAY_DISP++);
     gDPSetPrimColor(OVERLAY_DISP++, 0x00, 0x80, 0, 0, 0, this->tlozAlpha);
     gDPLoadTextureTile(OVERLAY_DISP++, sTheLegendOfZeldaTex, G_IM_FMT_IA, G_IM_SIZ_8b, 120, 24, 0, 0, 120, 24, 0,
                        G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 0, 0, 0, 0);
-    gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((100 << 2), 50), 160 << 2, WIDE_INCR((220 << 2), -68), 183 << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO),
-                        1 << 10);
+    gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((100 << 2), 50), 160 << 2, WIDE_INCR((220 << 2), -68), 183 << 2,
+                        G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
     gDPPipeSync(OVERLAY_DISP++);
     gDPSetPrimColor(OVERLAY_DISP++, 0x00, 0x80, 0, 0, 0, this->ootAlpha);
     gDPLoadTextureTile(OVERLAY_DISP++, sOcarinaOfTimeTex, G_IM_FMT_IA, G_IM_SIZ_8b, 112, 16, 0, 0, 112, 16, 0,
                        G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 0, 0, 0, 0);
-    gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((104 << 2), 50), 177 << 2, 216 << 2, 192 << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO),
-                        1 << 10);
+    gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((104 << 2), 50), 177 << 2, 216 << 2, 192 << 2, G_TX_RENDERTILE, 0, 0,
+                        WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
 
     CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -269,8 +269,8 @@ void EnMag_DrawTextureI8(Gfx** gfxP, void* texture, s16 texWidth, s16 texHeight,
     gDPLoadTextureBlock(gfx++, texture, G_IM_FMT_I, G_IM_SIZ_8b, texWidth, texHeight, 0, G_TX_NOMIRROR | G_TX_WRAP,
                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
-    gSPTextureRectangle(gfx++, WIDE_INCR(rectLeft, (u16)WIDE_GET_4_3) << 2, rectTop << 2, (rectLeft + rectWidth) << 2, (rectTop + rectHeight) << 2,
-                        G_TX_RENDERTILE, 0, 0, WIDE_DIV(dsdx, WIDE_GET_RATIO), dtdy);
+    gSPTextureRectangle(gfx++, WIDE_INCR(rectLeft, (u16)WIDE_GET_4_3) << 2, rectTop << 2, (rectLeft + rectWidth) << 2,
+                        (rectTop + rectHeight) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV(dsdx, WIDE_GET_RATIO), dtdy);
 
     *gfxP = gfx;
 }
@@ -292,8 +292,9 @@ void EnMag_DrawEffectTextures(Gfx** gfxP, void* maskTex, void* effectTex, s16 ma
         gDPSetTileSize(gfx++, 1, 0, this->effectScroll & 0x7F, 31 << 2, (31 << 2) + (this->effectScroll & 0x7F));
     }
 
-    gSPTextureRectangle(gfx++, WIDE_INCR(rectLeft, (u16)(WIDE_GET_16_9 * 10.0f)) << 2, rectTop << 2, (rectLeft + rectWidth) << 2, (rectTop + rectHeight) << 2,
-                        G_TX_RENDERTILE, 0, 0, WIDE_DIV(dsdx, WIDE_GET_RATIO), dtdy);
+    gSPTextureRectangle(gfx++, WIDE_INCR(rectLeft, (u16)(WIDE_GET_16_9 * 10.0f)) << 2, rectTop << 2,
+                        (rectLeft + rectWidth) << 2, (rectTop + rectHeight) << 2, G_TX_RENDERTILE, 0, 0,
+                        WIDE_DIV(dsdx, WIDE_GET_RATIO), dtdy);
 
     *gfxP = gfx;
 }
@@ -335,7 +336,8 @@ void EnMag_DrawImageRGBA32(Gfx** gfxP, s16 centerX, s16 centerY, u8* source, u32
         gDPLoadTile(gfx++, G_TX_LOADTILE, 0, 0, (width - 1) << 2, (textureHeight - 1) << 2);
 
         gSPTextureRectangle(gfx++, rectLeft << 2, rectTop << 2, (rectLeft + (s32)width) << 2,
-                            (rectTop + textureHeight) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
+                            (rectTop + textureHeight) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO),
+                            1 << 10);
         gDPLoadSync(gfx++);
 
         curTexture += textureSize;
@@ -416,9 +418,10 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
 
     if ((s16)this->effectPrimLodFrac != 0) {
         for (k = 0, i = 0, rectTop = 0; i < 3; i++, rectTop += 64) {
-            for (j = 0, rectLeft = WIDE_INCR(56, (u16)(WIDE_GET_RATIO * 10.0f)); j < 3; j++, k++, rectLeft += WIDE_INCR(64, -(u16)(WIDE_GET_16_9 * 10.0f))) {
-                EnMag_DrawEffectTextures(&gfx, effectMaskTextures[k], gTitleFlameEffectTex, 64, 64, 32, 32,
-                    rectLeft, rectTop, 64, 64, 1024, 1024, 1, 1, k, this);
+            for (j = 0, rectLeft = WIDE_INCR(56, (u16)(WIDE_GET_RATIO * 10.0f)); j < 3;
+                 j++, k++, rectLeft += WIDE_INCR(64, -(u16)(WIDE_GET_16_9 * 10.0f))) {
+                EnMag_DrawEffectTextures(&gfx, effectMaskTextures[k], gTitleFlameEffectTex, 64, 64, 32, 32, rectLeft,
+                                         rectTop, 64, 64, 1024, 1024, 1, 1, k, this);
             }
         }
     }
@@ -477,7 +480,8 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
                             G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
                             G_TX_NOLOD, G_TX_NOLOD);
 
-        gSPTextureRectangle(gfx++, WIDE_INCR((78 << 2), (u16)(WIDE_GET_RATIO * 100.0f)), 198 << 2, 238 << 2, 214 << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
+        gSPTextureRectangle(gfx++, WIDE_INCR((78 << 2), (u16)(WIDE_GET_RATIO * 100.0f)), 198 << 2, 238 << 2, 214 << 2,
+                            G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
     }
 
     if (gSaveContext.fileNum == 0xFEDC) {

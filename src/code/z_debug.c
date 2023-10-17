@@ -38,7 +38,7 @@ Color_RGBA8 sDebugCamTextColors[] = {
 
 #ifdef ENABLE_REG_EDITOR
 InputCombo sRegGroupInputCombos[REG_GROUPS] = {
-    { REGS_EDITOR_REG_COMBO  }, //  REG
+    { REGS_EDITOR_REG_COMBO },  //  REG
     { REGS_EDITOR_SREG_COMBO }, // SREG
     { REGS_EDITOR_OREG_COMBO }, // OREG
     { REGS_EDITOR_PREG_COMBO }, // PREG
@@ -226,20 +226,19 @@ void Regs_UpdateEditor(Input* input) {
                     gRegEditor->dPadInputPrev = dPadInputCur;
                 }
 
-                incrementBy1000 = CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_1000)
-                incrementBy100 = CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_100)
-                incrementBy10 = CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_10)
+                incrementBy1000 = CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_1000) incrementBy100 =
+                    CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_100) incrementBy10 =
+                        CHECK_BTN_ALL(input->cur.button, REGS_EDITOR_INCDEC_10)
 
-                increment =
-                    CHECK_BTN_ANY(dPadInputCur, BTN_DRIGHT)  ? (incrementBy1000     ? 1000
-                                                                : incrementBy100    ? 100
-                                                                : incrementBy10     ? 10
-                                                                : 1)
-                    : CHECK_BTN_ANY(dPadInputCur, BTN_DLEFT) ? (incrementBy1000     ? -1000
-                                                                : incrementBy100    ? -100
-                                                                : incrementBy10     ? -10
-                                                                : -1)
-                                                             : 0;
+                            increment = CHECK_BTN_ANY(dPadInputCur, BTN_DRIGHT)  ? (incrementBy1000  ? 1000
+                                                                                    : incrementBy100 ? 100
+                                                                                    : incrementBy10  ? 10
+                                                                                                     : 1)
+                                        : CHECK_BTN_ANY(dPadInputCur, BTN_DLEFT) ? (incrementBy1000  ? -1000
+                                                                                    : incrementBy100 ? -100
+                                                                                    : incrementBy10  ? -10
+                                                                                                     : -1)
+                                                                                 : 0;
 
                 gRegEditor->data[gRegEditor->regCur + pageDataStart] += increment;
 

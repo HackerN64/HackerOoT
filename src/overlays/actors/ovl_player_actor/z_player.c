@@ -9980,8 +9980,8 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     this->giObjectSegment =
         (void*)ALIGN16((uintptr_t)ZeldaArena_MallocDebug(Player_GetGIAllocSize(), __BASE_FILE__, __LINE__));
 #else
-    ASSERT(Player_GetGIAllocSize() < 0x3008,
-            "[HackerOoT:ERROR]: GI Object larger than the allocated size.", __BASE_FILE__, __LINE__);
+    ASSERT(Player_GetGIAllocSize() < 0x3008, "[HackerOoT:ERROR]: GI Object larger than the allocated size.",
+           __BASE_FILE__, __LINE__);
     this->giObjectSegment = (void*)(((uintptr_t)ZeldaArena_MallocDebug(0x3008, __BASE_FILE__, __LINE__) + 8) & ~0xF);
 #endif
 
@@ -13944,7 +13944,8 @@ void Player_Action_808507F4(Player* this, PlayState* play) {
                 gSaveContext.save.info.fwMain.entranceIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex;
                 gSaveContext.save.info.fwMain.roomIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].roomIndex;
                 gSaveContext.save.info.fwMain.tempSwchFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempSwchFlags;
-                gSaveContext.save.info.fwMain.tempCollectFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags;
+                gSaveContext.save.info.fwMain.tempCollectFlags =
+                    gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags;
                 this->actionVar2 = 2;
             }
         } else if (this->actionVar1 >= 0) {

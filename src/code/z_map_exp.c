@@ -165,7 +165,8 @@ void Map_InitData(PlayState* play, s16 room) {
                                     (uintptr_t)_map_i_staticSegmentRomStart +
                                         ((gMapData->dgnMinimapTexIndexOffset[mapIndex] + room) * MAP_I_TEX_SIZE),
                                     MAP_I_TEX_SIZE, "../z_map_exp.c", 346);
-            R_COMPASS_OFFSET_X = WIDE_MULT(WIDE_MULT(gMapData->roomCompassOffsetX[mapIndex][room], WIDE_GET_16_9), WIDE_GET_RATIO);
+            R_COMPASS_OFFSET_X =
+                WIDE_MULT(WIDE_MULT(gMapData->roomCompassOffsetX[mapIndex][room], WIDE_GET_16_9), WIDE_GET_RATIO);
             R_COMPASS_OFFSET_Y = gMapData->roomCompassOffsetY[mapIndex][room];
             Map_SetFloorPalettesData(play, VREG(30));
             osSyncPrintf("ＭＡＰ 各階ＯＮチェック\n"); // "MAP Individual Floor ON Check"
@@ -393,7 +394,7 @@ void Minimap_Draw(PlayState* play) {
                                                G_TX_NOLOD);
 
                         gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((R_DGN_MINIMAP_X << 2), WIDE_MINIMAP_SHIFT),
-                            R_DGN_MINIMAP_Y << 2, WIDE_INCR(R_DGN_MINIMAP_X + MAP_I_TEX_WIDTH, 4) << 2,
+                                            R_DGN_MINIMAP_Y << 2, WIDE_INCR(R_DGN_MINIMAP_X + MAP_I_TEX_WIDTH, 4) << 2,
                                             (R_DGN_MINIMAP_Y + MAP_I_TEX_HEIGHT) << 2, G_TX_RENDERTILE, 0, 0,
                                             WIDE_INCR((1 << 10), (u16)((WIDE_GET_4_3 - 1.0f) * 1000.0f)), 1 << 10);
                     }
@@ -453,8 +454,9 @@ void Minimap_Draw(PlayState* play) {
                                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
                                            G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
-                    gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((R_OW_MINIMAP_X << 2), WIDE_MINIMAP_SHIFT), R_OW_MINIMAP_Y << 2,
-                                WIDE_INCR(R_OW_MINIMAP_X + gMapData->owMinimapWidth[mapIndex], 10) << 2,
+                    gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((R_OW_MINIMAP_X << 2), WIDE_MINIMAP_SHIFT),
+                                        R_OW_MINIMAP_Y << 2,
+                                        WIDE_INCR(R_OW_MINIMAP_X + gMapData->owMinimapWidth[mapIndex], 10) << 2,
                                         (R_OW_MINIMAP_Y + gMapData->owMinimapHeight[mapIndex]) << 2, G_TX_RENDERTILE, 0,
                                         0, WIDE_INCR((1 << 10), (u16)((WIDE_GET_4_3 - 1.0f) * 1000.0f)), 1 << 10);
 
@@ -470,12 +472,15 @@ void Minimap_Draw(PlayState* play) {
                                                 8, 8, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
                                                 G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
-                            gSPTextureRectangle(OVERLAY_DISP++,
-                                WIDE_INCR((gMapData->owEntranceIconPosX[sEntranceIconMapIndex] << 2), (WIDE_MINIMAP_SHIFT / 2)),
-                                                gMapData->owEntranceIconPosY[sEntranceIconMapIndex] << 2,
-                                WIDE_INCR(((gMapData->owEntranceIconPosX[sEntranceIconMapIndex] + 8) << 2), (WIDE_MINIMAP_SHIFT / 2)),
-                                                (gMapData->owEntranceIconPosY[sEntranceIconMapIndex] + 8) << 2,
-                                                G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
+                            gSPTextureRectangle(
+                                OVERLAY_DISP++,
+                                WIDE_INCR((gMapData->owEntranceIconPosX[sEntranceIconMapIndex] << 2),
+                                          (WIDE_MINIMAP_SHIFT / 2)),
+                                gMapData->owEntranceIconPosY[sEntranceIconMapIndex] << 2,
+                                WIDE_INCR(((gMapData->owEntranceIconPosX[sEntranceIconMapIndex] + 8) << 2),
+                                          (WIDE_MINIMAP_SHIFT / 2)),
+                                (gMapData->owEntranceIconPosY[sEntranceIconMapIndex] + 8) << 2, G_TX_RENDERTILE, 0, 0,
+                                WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
                         }
                     }
 
@@ -485,10 +490,9 @@ void Minimap_Draw(PlayState* play) {
                                             8, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
                                             G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
-                        gSPTextureRectangle(OVERLAY_DISP++,
-                                            WIDE_INCR((270 << 2), (WIDE_MINIMAP_SHIFT / 2)), 154 << 2,
-                                            WIDE_INCR((278 << 2), (WIDE_MINIMAP_SHIFT / 2)), 162 << 2, G_TX_RENDERTILE, 0,
-                                            0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
+                        gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((270 << 2), (WIDE_MINIMAP_SHIFT / 2)), 154 << 2,
+                                            WIDE_INCR((278 << 2), (WIDE_MINIMAP_SHIFT / 2)), 162 << 2, G_TX_RENDERTILE,
+                                            0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
                     }
 
                     Minimap_DrawCompassIcons(play); // Draw icons for the player spawn and current position

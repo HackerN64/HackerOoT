@@ -451,8 +451,8 @@ s32 View_ApplyOrthoToOverlay(View* view) {
 
     // scales beating heart, inventory item change and minimap arrows properly
     width = WIDE_MULT(gScreenWidth, WIDE_GET_4_3);
-    guOrtho(projection, -(f32)width * 0.5f, (f32)width * 0.5f, -(f32)gScreenHeight * 0.5f,
-            (f32)gScreenHeight * 0.5f, view->zNear, view->zFar, view->scale);
+    guOrtho(projection, -(f32)width * 0.5f, (f32)width * 0.5f, -(f32)gScreenHeight * 0.5f, (f32)gScreenHeight * 0.5f,
+            view->zNear, view->zFar, view->scale);
 
     view->projection = *projection;
 
@@ -493,7 +493,8 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
     view->projectionPtr = projection;
 
     // rescale the A button/icon properly
-    width = WIDE_MULT((view->viewport.rightX - view->viewport.leftX), WIDE_GET_4_3);;
+    width = WIDE_MULT((view->viewport.rightX - view->viewport.leftX), WIDE_GET_4_3);
+    ;
     height = view->viewport.bottomY - view->viewport.topY;
 
     aspect = (f32)width / (f32)height;
