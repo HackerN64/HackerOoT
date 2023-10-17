@@ -2,7 +2,7 @@
     "configurations": [
         {
             "name": "Linux",
-            "compilerPath": "${default}", // Needs to not be "" for -m32 to work
+            "compilerPath": "/usr/bin/gcc", // Needs to not be "" for -m32 to work
             "compilerArgs": [
                 "-m32" // Removes integer truncation warnings with gbi macros
             ],

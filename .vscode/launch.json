@@ -14,19 +14,19 @@
             "externalConsole": false,
             "MIMode": "gdb",
             "miDebuggerPath": "/usr/bin/gdb-multiarch",
-            "miDebuggerServerAddress": "tcp:172.20.176.1:9123",
+            "miDebuggerServerAddress": "tcp:172.20.176.1:9123", // change this to your Linux/WSL IP address
         },
-        {
-            "name": "Ares GDB (Windows)",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "C:\\Users\\Yanis\\Desktop\\HackerOoT.elf",
-            "cwd": "C:\\Users\\Yanis\\Desktop\\",
-            "stopAtEntry": true,
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "miDebuggerPath": "/mnt/c/msys64/mingw64/bin/gdb-multiarch.exe",
-            "miDebuggerServerAddress": "[::1]:9123",
-        }
+        // {
+        //     "name": "Ares GDB (Windows)",
+        //     "type": "cppdbg",
+        //     "request": "launch",
+        //     "program": "windows_path_to_HackerOoT.elf",
+        //     "cwd": "windows_path_to_folder_containing_HackerOoT.elf",
+        //     "stopAtEntry": true,
+        //     "externalConsole": false,
+        //     "MIMode": "gdb",
+        //     "miDebuggerPath": "/mnt/c/msys64/mingw64/bin/gdb-multiarch.exe",
+        //     "miDebuggerServerAddress": "[::1]:9123",
+        // }
     ]
 }
