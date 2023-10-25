@@ -1003,15 +1003,15 @@ f32 func_8002DCE4(Player* player) {
     }
 }
 
-s32 func_8002DD6C(Player* player) {
+int func_8002DD6C(Player* player) {
     return player->stateFlags1 & PLAYER_STATE1_3;
 }
 
-s32 func_8002DD78(Player* player) {
+int func_8002DD78(Player* player) {
     return func_8002DD6C(player) && player->unk_834;
 }
 
-s32 func_8002DDA8(PlayState* play) {
+int func_8002DDA8(PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     return (player->stateFlags1 & PLAYER_STATE1_11) || func_8002DD78(player);
@@ -1052,7 +1052,7 @@ void Actor_MountHorse(PlayState* play, Player* player, Actor* horse) {
     horse->child = &player->actor;
 }
 
-s32 func_8002DEEC(Player* player) {
+int func_8002DEEC(Player* player) {
     return (player->stateFlags1 & (PLAYER_STATE1_7 | PLAYER_STATE1_29)) || (player->csAction != PLAYER_CSACTION_NONE);
 }
 
@@ -1065,7 +1065,7 @@ s32 func_8002DF38(PlayState* play, Actor* actor, u8 csAction) {
 
     player->csAction = csAction;
     player->unk_448 = actor;
-    player->doorBgCamIndex = 0;
+    player->cv.haltActorsDuringCsAction = false;
 
     return true;
 }
@@ -1074,7 +1074,7 @@ s32 func_8002DF54(PlayState* play, Actor* actor, u8 csAction) {
     Player* player = GET_PLAYER(play);
 
     func_8002DF38(play, actor, csAction);
-    player->doorBgCamIndex = 1;
+    player->cv.haltActorsDuringCsAction = true;
 
     return true;
 }
@@ -3005,7 +3005,7 @@ Actor* Actor_Delete(ActorContext* actorCtx, Actor* actor, PlayState* play) {
     return newHead;
 }
 
-s32 func_80032880(PlayState* play, Actor* actor) {
+int func_80032880(PlayState* play, Actor* actor) {
     s16 sp1E;
     s16 sp1C;
 

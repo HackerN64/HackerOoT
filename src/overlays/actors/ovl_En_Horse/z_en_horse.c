@@ -409,7 +409,8 @@ typedef struct {
 } CsActionEntry; // size = 0x8
 
 static CsActionEntry sCsActionTable[] = {
-    { 36, 1 }, { 37, 2 }, { 38, 3 }, { 64, 4 }, { 65, 5 },
+    { PLAYER_CUEID_36, 1 }, { PLAYER_CUEID_37, 2 }, { PLAYER_CUEID_38, 3 },
+    { PLAYER_CUEID_64, 4 }, { PLAYER_CUEID_65, 5 },
 };
 
 static RaceWaypoint sHbaWaypoints[] = {
@@ -632,7 +633,7 @@ void func_80A5BB90(PlayState* play, Vec3f* vec, Vec3f* arg2, f32* arg3) {
     SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, vec, arg2, arg3);
 }
 
-s32 func_80A5BBBC(PlayState* play, EnHorse* this, Vec3f* pos) {
+int func_80A5BBBC(PlayState* play, EnHorse* this, Vec3f* pos) {
     Vec3f sp24;
     f32 sp20;
     f32 eyeDist;

@@ -406,7 +406,7 @@ void Play_Init(GameState* thisx) {
     zAllocAligned = (zAlloc + 8) & ~0xF;
     ZeldaArena_Init((void*)zAllocAligned, zAllocSize - (zAllocAligned - zAlloc));
     // "Zelda Heap"
-    osSyncPrintf("ゼルダヒープ %08x-%08x\n", zAllocAligned, zAllocAligned + zAllocSize - (s32)(zAllocAligned - zAlloc));
+    osSyncPrintf("ゼルダヒープ %08x-%08x\n", zAllocAligned, (u8*)zAllocAligned + zAllocSize - (s32)(zAllocAligned - zAlloc));
 
     Fault_AddClient(&D_801614B8, ZeldaArena_Display, NULL, NULL);
     Actor_InitContext(this, &this->actorCtx, this->playerEntry);
@@ -1356,7 +1356,7 @@ void Play_Main(GameState* thisx) {
 }
 
 // original name: "Game_play_demo_mode_check"
-s32 Play_InCsMode(PlayState* this) {
+int Play_InCsMode(PlayState* this) {
     return (this->csCtx.state != CS_STATE_IDLE) || Player_InCsMode(this);
 }
 
@@ -1793,7 +1793,7 @@ void Play_TriggerRespawn(PlayState* this) {
     Play_LoadToLastEntrance(this);
 }
 
-s32 Play_CamIsNotFixed(PlayState* this) {
+int Play_CamIsNotFixed(PlayState* this) {
     // SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT was probably intended to be in this condition,
     // but the room shape type check handles all shop cases regardless
     return (this->roomCtx.curRoom.roomShape->base.type != ROOM_SHAPE_TYPE_IMAGE) &&
@@ -1802,7 +1802,7 @@ s32 Play_CamIsNotFixed(PlayState* this) {
 }
 
 #ifdef ENABLE_FRAMERATE_OPTIONS
-s32 FrameAdvance_IsEnabled(PlayState* this) {
+int FrameAdvance_IsEnabled(PlayState* this) {
     return !!this->frameAdvCtx.enabled;
 }
 #endif
