@@ -231,7 +231,6 @@ setup:
 	python3 fixbaserom.py
 	python3 extract_baserom.py
 	python3 extract_assets.py -j$(N_THREADS)
-	python3 tools/daf/daf.py -a -p ./
 
 run: $(ROM)
 ifeq ($(EMULATOR),)
