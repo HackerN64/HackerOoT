@@ -1712,7 +1712,7 @@ void Environment_DrawRain(PlayState* play, View* view, GraphicsContext* gfxCtx) 
     Vec3f windDirection = { 0.0f, 0.0f, 0.0f };
     Player* player = GET_PLAYER(play);
 
-    if (!(play->cameraPtrs[CAM_ID_MAIN]->stateFlags & CAM_STATE_8) &&
+    if (!(play->cameraPtrs[CAM_ID_MAIN]->stateFlags & CAM_STATE_CAMERA_IN_WATER) &&
         (play->envCtx.precipitation[PRECIP_SNOW_CUR] == 0)) {
         OPEN_DISPS(gfxCtx);
 
@@ -2428,17 +2428,17 @@ void Environment_DrawSandstorm(PlayState* play, u8 sandstormState) {
     if (ABS(primA - primA1) < 9) {
         primA = primA1;
     } else if (primA1 < primA) {
-        primA = primA - 9;
+        primA -= 9;
     } else {
-        primA = primA + 9;
+        primA += 9;
     }
 
     if (ABS(envA - envA1) < 9) {
         envA = envA1;
     } else if (envA1 < envA) {
-        envA = envA - 9;
+        envA -= 9;
     } else {
-        envA = envA + 9;
+        envA += 9;
     }
 
     play->envCtx.sandstormPrimA = primA;

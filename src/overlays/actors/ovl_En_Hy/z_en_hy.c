@@ -33,15 +33,15 @@ void EnHy_DoNothing(EnHy* this, PlayState* play);
 void func_80A714C4(EnHy* this, PlayState* play);
 
 ActorInit En_Hy_InitVars = {
-    ACTOR_EN_HY,
-    ACTORCAT_NPC,
-    FLAGS,
-    OBJECT_GAMEPLAY_KEEP,
-    sizeof(EnHy),
-    (ActorFunc)EnHy_Init,
-    (ActorFunc)EnHy_Destroy,
-    (ActorFunc)EnHy_Update,
-    (ActorFunc)EnHy_Draw,
+    /**/ ACTOR_EN_HY,
+    /**/ ACTORCAT_NPC,
+    /**/ FLAGS,
+    /**/ OBJECT_GAMEPLAY_KEEP,
+    /**/ sizeof(EnHy),
+    /**/ EnHy_Init,
+    /**/ EnHy_Destroy,
+    /**/ EnHy_Update,
+    /**/ EnHy_Draw,
 };
 
 static ColliderCylinderInit sColCylInit = {
@@ -461,7 +461,7 @@ u16 EnHy_GetTextId(PlayState* play, Actor* thisx) {
                 return GET_INFTABLE(INFTABLE_C3) ? 0x701A : 0x7047;
             } else if (GET_EVENTCHKINF(EVENTCHKINF_TALON_RETURNED_FROM_CASTLE)) {
                 return 0x701A;
-            } else if (GET_EVENTCHKINF(EVENTCHKINF_10)) {
+            } else if (GET_EVENTCHKINF(EVENTCHKINF_TALKED_TO_MALON_FIRST_TIME)) {
                 return 0x701B;
             } else if (GET_INFTABLE(INFTABLE_C2)) {
                 return 0x701C;
@@ -508,7 +508,7 @@ u16 EnHy_GetTextId(PlayState* play, Actor* thisx) {
                 return GET_EVENTCHKINF(EVENTCHKINF_80) ? 0x7046 : (GET_INFTABLE(INFTABLE_CD) ? 0x7019 : 0x7018);
             }
         case ENHY_TYPE_CNE_11:
-            return GET_INFTABLE(INFTABLE_8B) ? (GET_INFTABLE(INFTABLE_CC) ? 0x7014 : 0x70A4) : 0x7014;
+            return GET_INFTABLE(INFTABLE_MALON_SPAWNED_AT_HYRULE_CASTLE) ? (GET_INFTABLE(INFTABLE_CC) ? 0x7014 : 0x70A4) : 0x7014;
         case ENHY_TYPE_BOJ_12:
             if (play->sceneId == SCENE_KAKARIKO_VILLAGE) {
                 return !IS_DAY ? 0x5084 : 0x5083;

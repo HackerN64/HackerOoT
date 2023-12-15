@@ -29,15 +29,15 @@ void BgMoriRakkatenjo_Rise(BgMoriRakkatenjo* this, PlayState* play);
 static s16 sCamSetting = CAM_SET_NONE;
 
 ActorInit Bg_Mori_Rakkatenjo_InitVars = {
-    ACTOR_BG_MORI_RAKKATENJO,
-    ACTORCAT_BG,
-    FLAGS,
-    OBJECT_MORI_OBJECTS,
-    sizeof(BgMoriRakkatenjo),
-    (ActorFunc)BgMoriRakkatenjo_Init,
-    (ActorFunc)BgMoriRakkatenjo_Destroy,
-    (ActorFunc)BgMoriRakkatenjo_Update,
-    NULL,
+    /**/ ACTOR_BG_MORI_RAKKATENJO,
+    /**/ ACTORCAT_BG,
+    /**/ FLAGS,
+    /**/ OBJECT_MORI_OBJECTS,
+    /**/ sizeof(BgMoriRakkatenjo),
+    /**/ BgMoriRakkatenjo_Init,
+    /**/ BgMoriRakkatenjo_Destroy,
+    /**/ BgMoriRakkatenjo_Update,
+    /**/ NULL,
 };
 
 static InitChainEntry sInitChain[] = {
@@ -210,11 +210,11 @@ void BgMoriRakkatenjo_Update(Actor* thisx, PlayState* play) {
             osSyncPrintf("camera changed (mori rakka tenjyo) ... \n");
             sCamSetting = play->cameraPtrs[CAM_ID_MAIN]->setting;
             Camera_SetCameraData(play->cameraPtrs[CAM_ID_MAIN], 1, &this->dyna.actor, NULL, 0, 0, 0);
-            Camera_ChangeSetting(play->cameraPtrs[CAM_ID_MAIN], CAM_SET_FOREST_BIRDS_EYE);
+            Camera_RequestSetting(play->cameraPtrs[CAM_ID_MAIN], CAM_SET_FOREST_BIRDS_EYE);
         }
     } else if (sCamSetting != CAM_SET_NONE) {
         osSyncPrintf("camera changed (previous) ... \n");
-        Camera_ChangeSetting(play->cameraPtrs[CAM_ID_MAIN], CAM_SET_DUNGEON1);
+        Camera_RequestSetting(play->cameraPtrs[CAM_ID_MAIN], CAM_SET_DUNGEON1);
         sCamSetting = CAM_SET_NONE;
     }
 }

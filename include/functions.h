@@ -8,15 +8,21 @@
 #include "config.h"
 
 f32 fabsf(f32 f);
-#ifndef __sgi
-#define fabsf(f) __builtin_fabsf((f32)(f))
-#else
+#ifdef __sgi
 #pragma intrinsic(fabsf)
+#else
+#define fabsf(f) __builtin_fabsf((f32)(f))
 #endif
+
 f32 sqrtf(f32 f);
+#ifdef __sgi
 #pragma intrinsic(sqrtf)
+#endif
+
 f64 sqrt(f64 f);
+#ifdef __sgi
 #pragma intrinsic(sqrt)
+#endif
 
 void cleararena(void);
 void bootproc(void);
@@ -33,12 +39,9 @@ void Locale_ResetRegion(void);
 u32 func_80001F48(void);
 u32 func_80001F8C(void);
 u32 Locale_IsRegionNative(void);
-NORETURN void __assert(const char* exp, const char* file, s32 line);
 void isPrintfInit(void);
-void osSyncPrintfUnused(const char* fmt, ...);
-void osSyncPrintf(const char* fmt, ...);
 void rmonPrintf(const char* fmt, ...);
-void* is_proutSyncPrintf(void* arg, const char* str, u32 count);
+void* is_proutSyncPrintf(void* arg, const char* str, size_t count);
 NORETURN void func_80002384(const char* exp, const char* file, u32 line);
 OSPiHandle* osDriveRomInit(void);
 void Mio0_Decompress(Yaz0Header* hdr, u8* dst);
@@ -60,8 +63,6 @@ void LogUtils_CheckValidPointer(const char* exp, void* ptr, const char* file, s3
 void LogUtils_LogThreadId(const char* name, s32 line);
 void LogUtils_HungupThread(const char* name, s32 line);
 void LogUtils_ResetHungup(void);
-s32 vsprintf(char* dst, const char* fmt, va_list args);
-s32 sprintf(char* dst, const char* fmt, ...);
 void __osPiCreateAccessQueue(void);
 void __osPiGetAccess(void);
 void __osPiRelAccess(void);
@@ -78,7 +79,6 @@ void __osDispatchThread(void);
 void __osCleanupThread(void);
 void __osDequeueThread(OSThread** queue, OSThread* thread);
 void osDestroyThread(OSThread* thread);
-void bzero(void* __s, s32 __n);
 void osCreateThread(OSThread* thread, OSId id, void (*entry)(void*), void* arg, void* sp, OSPri pri);
 void __osSetSR(u32);
 u32 __osGetSR(void);
@@ -95,12 +95,8 @@ void osViSetMode(OSViMode* mode);
 u32 __osProbeTLB(void*);
 u32 osGetMemSize(void);
 void osSetEventMesg(OSEvent e, OSMesgQueue* mq, OSMesg msg);
-s32 _Printf(PrintCallback, void* arg, const char* fmt, va_list ap);
 void osUnmapTLBAll(void);
 s32 osEPiStartDma(OSPiHandle* handle, OSIoMesg* mb, s32 direction);
-const char* strchr(const char* str, s32 ch);
-u32 strlen(const char* str);
-void* memcpy(void* dst, const void* src, size_t size);
 void osInvalICache(void* vaddr, s32 nbytes);
 void osCreateMesgQueue(OSMesgQueue* mq, OSMesg* msg, s32 count);
 void osInvalDCache(void* vaddr, s32 nbytes);
@@ -111,7 +107,6 @@ OSPri osGetThreadPri(OSThread* thread);
 s32 __osEPiRawReadIo(OSPiHandle* handle, u32 devAddr, u32* data);
 void osViSwapBuffer(void* frameBufPtr);
 s32 __osEPiRawStartDma(OSPiHandle* handle, s32 direction, u32 cartAddr, void* dramAddr, size_t size);
-u32 bcmp(void* __sl, void* __s2, u32 __n);
 OSTime osGetTime(void);
 void __osTimerServicesInit(void);
 void __osTimerInterrupt(void);
@@ -119,7 +114,6 @@ void __osSetTimerIntr(OSTime time);
 OSTime __osInsertTimer(OSTimer* timer);
 u32 osGetCount(void);
 void __osSetCompare(u32);
-void* bcopy(void* __src, void* __dest, u32 __n);
 s32 __osDisableInt(void);
 void __osRestoreInt(s32);
 void __osViInit(void);
@@ -135,10 +129,6 @@ void osMapTLBRdb(void);
 void osYieldThread(void);
 u32 __osGetCause(void);
 s32 __osEPiRawWriteIo(OSPiHandle* handle, u32 devAddr, u32 data);
-void _Litob(_Pft* args, u8 type);
-ldiv_t ldiv(s32 num, s32 denom);
-lldiv_t lldiv(s64 num, s64 denom);
-void _Ldtob(_Pft* args, u8 type);
 s32 __osSiRawWriteIo(void* devAddr, u32 val);
 void osCreateViManager(OSPri pri);
 OSViContext* __osViGetCurrentContext(void);
@@ -392,8 +382,8 @@ void func_8002DE74(PlayState* play, Player* player);
 void Actor_MountHorse(PlayState* play, Player* player, Actor* horse);
 int func_8002DEEC(Player* player);
 void func_8002DF18(PlayState* play, Player* player);
-s32 func_8002DF38(PlayState* play, Actor* actor, u8 csAction);
-s32 func_8002DF54(PlayState* play, Actor* actor, u8 csAction);
+s32 Player_SetCsAction(PlayState* play, Actor* csActor, u8 csAction);
+s32 Player_SetCsActionWithHaltedActors(PlayState* play, Actor* csActor, u8 csAction);
 void func_8002DF90(DynaPolyActor* dynaActor);
 void func_8002DFA4(DynaPolyActor* dynaActor, f32 arg1, s16 arg2);
 s32 Player_IsFacingActor(Actor* actor, s16 maxAngle, PlayState* play);
@@ -408,15 +398,15 @@ Hilite* func_8002EABC(Vec3f* object, Vec3f* eye, Vec3f* lightDir, GraphicsContex
 Hilite* func_8002EB44(Vec3f* object, Vec3f* eye, Vec3f* lightDir, GraphicsContext* gfxCtx);
 void func_8002EBCC(Actor* actor, PlayState* play, s32 flag);
 void func_8002ED80(Actor* actor, PlayState* play, s32 flag);
-PosRot* Actor_GetFocus(PosRot* dest, Actor* actor);
-PosRot* Actor_GetWorld(PosRot* dest, Actor* actor);
-PosRot* Actor_GetWorldPosShapeRot(PosRot* arg0, Actor* actor);
+PosRot Actor_GetFocus(Actor* actor);
+PosRot Actor_GetWorld(Actor* actor);
+PosRot Actor_GetWorldPosShapeRot(Actor* actor);
 s32 func_8002F0C8(Actor* actor, Player* player, s32 flag);
-u32 Actor_ProcessTalkRequest(Actor* actor, PlayState* play);
-s32 func_8002F1C4(Actor* actor, PlayState* play, f32 arg2, f32 arg3, u32 exchangeItemId);
-s32 func_8002F298(Actor* actor, PlayState* play, f32 arg2, u32 exchangeItemId);
-s32 func_8002F2CC(Actor* actor, PlayState* play, f32 arg2);
-s32 func_8002F2F4(Actor* actor, PlayState* play);
+s32 Actor_TalkOfferAccepted(Actor* actor, PlayState* play);
+s32 Actor_OfferTalkExchange(Actor* actor, PlayState* play, f32 xzRange, f32 yRange, u32 exchangeItemId);
+s32 Actor_OfferTalkExchangeEquiCylinder(Actor* actor, PlayState* play, f32 radius, u32 exchangeItemId);
+s32 Actor_OfferTalk(Actor* actor, PlayState* play, f32 radius);
+s32 Actor_OfferTalkNearColChkInfoCylinder(Actor* actor, PlayState* play);
 u32 Actor_TextboxIsClosing(Actor* actor, PlayState* play);
 s8 func_8002F368(PlayState* play);
 void Actor_GetScreenPos(PlayState* play, Actor* actor, s16* x, s16* y);
@@ -651,12 +641,12 @@ void Camera_InitDataUsingPlayer(Camera* camera, Player* player);
 s16 Camera_ChangeStatus(Camera* camera, s16 status);
 Vec3s Camera_Update(Camera* camera);
 void Camera_Finish(Camera* camera);
-s32 Camera_ChangeMode(Camera* camera, s16 mode);
+s32 Camera_RequestMode(Camera* camera, s16 mode);
 s32 Camera_CheckValidMode(Camera* camera, s16 mode);
-s32 Camera_ChangeSetting(Camera* camera, s16 setting);
-s32 Camera_ChangeBgCamIndex(Camera* camera, s32 bgCamIndex);
+s32 Camera_RequestSetting(Camera* camera, s16 setting);
+s32 Camera_RequestBgCam(Camera* camera, s32 requestedBgCamIndex);
 s16 Camera_GetInputDirYaw(Camera* camera);
-Vec3s* Camera_GetCamDir(Vec3s* dst, Camera* camera);
+Vec3s Camera_GetCamDir(Camera* camera);
 s16 Camera_GetCamDirPitch(Camera* camera);
 s16 Camera_GetCamDirYaw(Camera* camera);
 s32 Camera_RequestQuake(Camera* camera, s32 unused, s16 y, s32 duration);
@@ -670,11 +660,11 @@ s32 Camera_SetCSParams(Camera* camera, CutsceneCameraPoint* atPoints, CutsceneCa
 s32 Camera_ChangeDoorCam(Camera* camera, Actor* doorActor, s16 bgCamIndex, f32 arg3, s16 timer1, s16 timer2,
                          s16 timer3);
 s32 Camera_Copy(Camera* dstCamera, Camera* srcCamera);
-Vec3f* Camera_GetQuakeOffset(Vec3f* quakeOffset, Camera* camera);
+Vec3f Camera_GetQuakeOffset(Camera* camera);
 void Camera_SetCameraData(Camera* camera, s16 setDataFlags, void* data0, void* data1, s16 data2, s16 data3,
                           UNK_TYPE arg6);
 s32 func_8005B198(void);
-s16 func_8005B1A4(Camera* camera);
+s16 Camera_SetFinishedFlag(Camera* camera);
 DamageTable* DamageTable_Get(s32 index);
 void DamageTable_Clear(DamageTable* table);
 void Collider_DrawRedPoly(GraphicsContext* gfxCtx, Vec3f* vA, Vec3f* vB, Vec3f* vC);
@@ -948,12 +938,12 @@ f32 OLib_Vec3fDist(Vec3f* a, Vec3f* b);
 f32 OLib_Vec3fDistXZ(Vec3f* a, Vec3f* b);
 f32 OLib_ClampMinDist(f32 val, f32 min);
 f32 OLib_ClampMaxDist(f32 val, f32 max);
-Vec3f* OLib_Vec3fDistNormalize(Vec3f* dest, Vec3f* a, Vec3f* b);
-Vec3f* OLib_VecGeoToVec3f(Vec3f* dest, VecGeo* geo);
-VecSph* OLib_Vec3fToVecSph(VecSph* dest, Vec3f* vec);
-VecGeo* OLib_Vec3fToVecGeo(VecGeo* dest, Vec3f* vec);
-VecGeo* OLib_Vec3fDiffToVecGeo(VecGeo* dest, Vec3f* a, Vec3f* b);
-Vec3f* OLib_Vec3fDiffRad(Vec3f* dest, Vec3f* a, Vec3f* b);
+Vec3f OLib_Vec3fDistNormalize(Vec3f* a, Vec3f* b);
+Vec3f OLib_VecGeoToVec3f(VecGeo* geo);
+VecSph OLib_Vec3fToVecSph(Vec3f* vec);
+VecGeo OLib_Vec3fToVecGeo(Vec3f* vec);
+VecGeo OLib_Vec3fDiffToVecGeo(Vec3f* a, Vec3f* b);
+Vec3f OLib_Vec3fDiffRad(Vec3f* a, Vec3f* b);
 s16 OnePointCutscene_Init(PlayState* play, s16 csId, s16 timer, Actor* actor, s16 parentCamId);
 s16 OnePointCutscene_EndCutscene(PlayState* play, s16 subCamId);
 s32 OnePointCutscene_Attention(PlayState* play, Actor* actor);
@@ -1304,7 +1294,7 @@ s32 Play_SetCameraFov(PlayState* this, s16 camId, f32 fov);
 s32 Play_SetCameraRoll(PlayState* this, s16 camId, s16 roll);
 void Play_CopyCamera(PlayState* this, s16 destCamId, s16 srcCamId);
 s32 Play_InitCameraDataUsingPlayer(PlayState* this, s16 camId, Player* player, s16 setting);
-s32 Play_ChangeCameraSetting(PlayState* this, s16 camId, s16 setting);
+s32 Play_RequestCameraSetting(PlayState* this, s16 camId, s16 setting);
 void Play_ReturnToMainCam(PlayState* this, s16 camId, s16 duration);
 void Play_SaveSceneFlags(PlayState* this);
 void Play_SetupRespawnPoint(PlayState* this, s32 respawnMode, s32 playerParams);
@@ -1334,13 +1324,6 @@ void PreRender_RestoreFramebuffer(PreRender* this, Gfx** gfxP);
 void PreRender_CopyImageRegion(PreRender* this, Gfx** gfxP);
 void PreRender_ApplyFilters(PreRender* this);
 #endif
-void AudioMgr_StopAllSfx(void);
-void func_800C3C80(AudioMgr* audioMgr);
-void AudioMgr_HandleRetrace(AudioMgr* audioMgr);
-void AudioMgr_HandlePreNMI(AudioMgr* audioMgr);
-void AudioMgr_ThreadEntry(void* arg0);
-void AudioMgr_Unlock(AudioMgr* audioMgr);
-void AudioMgr_Init(AudioMgr* audioMgr, void* stack, OSPri pri, OSId id, Scheduler* sched, IrqMgr* irqMgr);
 void GameState_FaultPrint(void);
 void GameState_SetFBFilter(Gfx** gfxP);
 #ifdef SHOW_INPUT_DISPLAY

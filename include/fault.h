@@ -2,6 +2,7 @@
 #define FAULT_H
 
 #include "ultra64.h"
+#include "attributes.h"
 #include "padmgr.h"
 
 #include "config.h"

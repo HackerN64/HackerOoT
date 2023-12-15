@@ -135,15 +135,15 @@ static s32 sSongToFrog[] = {
 };
 
 ActorInit En_Fr_InitVars = {
-    ACTOR_EN_FR,
-    ACTORCAT_NPC,
-    FLAGS,
-    OBJECT_FR,
-    sizeof(EnFr),
-    (ActorFunc)EnFr_Init,
-    (ActorFunc)EnFr_Destroy,
-    (ActorFunc)EnFr_Update,
-    NULL,
+    /**/ ACTOR_EN_FR,
+    /**/ ACTORCAT_NPC,
+    /**/ FLAGS,
+    /**/ OBJECT_FR,
+    /**/ sizeof(EnFr),
+    /**/ EnFr_Init,
+    /**/ EnFr_Destroy,
+    /**/ EnFr_Update,
+    /**/ NULL,
 };
 
 static Color_RGBA8 sEnFrColor[] = {
@@ -777,19 +777,19 @@ void EnFr_CheckOcarinaInputFrogSong(u8 ocarinaNote) {
     s32 frogIndex;
 
     switch (ocarinaNote) {
-        case 0:
+        case OCARINA_BTN_A:
             frogIndexButterfly = FROG_BLUE;
             break;
-        case 1:
+        case OCARINA_BTN_C_DOWN:
             frogIndexButterfly = FROG_YELLOW;
             break;
-        case 2:
+        case OCARINA_BTN_C_RIGHT:
             frogIndexButterfly = FROG_RED;
             break;
-        case 3:
+        case OCARINA_BTN_C_LEFT:
             frogIndexButterfly = FROG_PURPLE;
             break;
-        case 4:
+        case OCARINA_BTN_C_UP:
             frogIndexButterfly = FROG_WHITE;
     }
     // Turn on or off butterfly above frog
