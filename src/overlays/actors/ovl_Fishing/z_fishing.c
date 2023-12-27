@@ -10,6 +10,8 @@
 #include "assets/objects/object_fish/object_fish.h"
 #include "terminal.h"
 
+#include "config.h"
+
 #define FLAGS ACTOR_FLAG_4
 
 #define WATER_SURFACE_Y(play) play->colCtx.colHeader->waterBoxes->ySurface
@@ -2074,7 +2076,9 @@ void Fishing_DrawRod(PlayState* play) {
         gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_fishing.c", 3809),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
+#ifdef DISABLE_SYNCS
         gDPLoadSync(POLY_OPA_DISP++);
+#endif
         if (i < 5) {
             gDPLoadTextureBlock(POLY_OPA_DISP++, gFishingRodSegmentBlackTex, G_IM_FMT_RGBA, G_IM_SIZ_16b, 16, 8, 0,
                                 G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 4, 3, G_TX_NOLOD, G_TX_NOLOD);

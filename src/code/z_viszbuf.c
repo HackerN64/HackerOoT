@@ -34,6 +34,8 @@
 
 #include "global.h"
 
+#include "config.h"
+
 // Height of the fragments the z-buffer is split into.
 // It is the maximum amount of lines such that all rgba16 SCREEN_WIDTH-long lines fit into TMEM.
 #define VISZBUF_ZBUFFRAG_HEIGHT (TMEM_SIZE / (SCREEN_WIDTH * G_IM_SIZ_16b_BYTES))
@@ -96,8 +98,9 @@ void VisZBuf_Draw(VisZBuf* this, Gfx** gfxP) {
     gDPSetColor(gfx++, G_SETENVCOLOR, this->vis.envColor.rgba);
 
     for (y = 0; y <= SCREEN_HEIGHT - height; y += height) {
+#ifdef DISABLE_SYNCS
         gDPLoadSync(gfx++);
-
+#endif
         // Load a few lines of the z-buffer, as many as can fit in TMEM at once.
         gDPLoadTextureBlock(gfx++, zbufFrag, fmt, G_IM_SIZ_16b, SCREEN_WIDTH, height, 0, G_TX_NOMIRROR | G_TX_CLAMP,
                             G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);

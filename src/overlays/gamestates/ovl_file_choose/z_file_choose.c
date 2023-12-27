@@ -2,6 +2,7 @@
 #include "terminal.h"
 #include "assets/textures/title_static/title_static.h"
 #include "assets/textures/parameter_static/parameter_static.h"
+
 #include "config.h"
 
 static s16 sUnused = 106;
@@ -45,7 +46,9 @@ void FileSelect_SetView(FileSelectState* this, f32 eyeX, f32 eyeY, f32 eyeZ) {
 }
 
 Gfx* FileSelect_QuadTextureIA8(Gfx* gfx, void* texture, s16 width, s16 height, s16 point) {
+#ifdef DISABLE_SYNCS
     gDPLoadSync(gfx++);
+#endif
     gDPLoadTextureBlock(gfx++, texture, G_IM_FMT_IA, G_IM_SIZ_8b, width, height, 0, G_TX_NOMIRROR | G_TX_WRAP,
                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
@@ -939,7 +942,9 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
         gSPVertex(POLY_OPA_DISP++, &this->windowContentVtx[temp], 20, 0);
 
         for (quadVtxIndex = 0, i = 0; i < 5; i++, quadVtxIndex += 4) {
+#ifdef DISABLE_SYNCS
             gDPLoadSync(POLY_OPA_DISP++);
+#endif
             gDPLoadTextureBlock(POLY_OPA_DISP++, sFileInfoBoxTextures[i], G_IM_FMT_IA, G_IM_SIZ_16b,
                                 sFileInfoBoxPartWidths[i], 56, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
                                 G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -955,7 +960,9 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
 
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, sWindowContentColors[isActive][0], sWindowContentColors[isActive][1],
                         sWindowContentColors[isActive][2], this->fileButtonAlpha[i]);
+#ifdef DISABLE_SYNCS
         gDPLoadSync(POLY_OPA_DISP++);
+#endif
         gDPLoadTextureBlock(POLY_OPA_DISP++, sFileButtonTextures[gSaveContext.language][i], G_IM_FMT_IA, G_IM_SIZ_16b,
                             64, 16, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
                             G_TX_NOLOD, G_TX_NOLOD);
@@ -964,7 +971,9 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
         // draw file name box
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, sWindowContentColors[isActive][0], sWindowContentColors[isActive][1],
                         sWindowContentColors[isActive][2], this->nameBoxAlpha[i]);
+#ifdef DISABLE_SYNCS
         gDPLoadSync(POLY_OPA_DISP++);
+#endif
         gDPLoadTextureBlock(POLY_OPA_DISP++, gFileSelNameBoxTex, G_IM_FMT_IA, G_IM_SIZ_16b, 108, 16, 0,
                             G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
                             G_TX_NOLOD);
@@ -974,7 +983,9 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
         if (this->n64ddFlags[i]) {
             gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, sWindowContentColors[isActive][0], sWindowContentColors[isActive][1],
                             sWindowContentColors[isActive][2], this->nameAlpha[i]);
+#ifdef DISABLE_SYNCS
             gDPLoadSync(POLY_OPA_DISP++);
+#endif
             gDPLoadTextureBlock(POLY_OPA_DISP++, gFileSelDISKButtonTex, G_IM_FMT_IA, G_IM_SIZ_16b, 44, 16, 0,
                                 G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
                                 G_TX_NOLOD, G_TX_NOLOD);
@@ -984,7 +995,9 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
         // draw connectors
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, sWindowContentColors[isActive][0], sWindowContentColors[isActive][1],
                         sWindowContentColors[isActive][2], this->connectorAlpha[i]);
+#ifdef DISABLE_SYNCS
         gDPLoadSync(POLY_OPA_DISP++);
+#endif
         gDPLoadTextureBlock(POLY_OPA_DISP++, gFileSelConnectorTex, G_IM_FMT_IA, G_IM_SIZ_8b, 24, 16, 0,
                             G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
                             G_TX_NOLOD);
@@ -1026,7 +1039,9 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
 
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, this->windowColor[0], this->windowColor[1], this->windowColor[2],
                         this->confirmButtonAlpha[i]);
+#ifdef DISABLE_SYNCS
         gDPLoadSync(POLY_OPA_DISP++);
+#endif
         gDPLoadTextureBlock(POLY_OPA_DISP++, sActionButtonTextures[gSaveContext.language][temp], G_IM_FMT_IA,
                             G_IM_SIZ_16b, 64, 16, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
                             G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);

@@ -4,6 +4,8 @@
 
 #include "global.h"
 
+#include "config.h"
+
 // how big to draw the characters on screen
 #define DISP_CHAR_WIDTH 8
 #define DISP_CHAR_HEIGHT 8
@@ -69,7 +71,9 @@ void Moji_DrawChar(GraphicsContext* gfxCtx, char c) {
     }
 
     if (sCurTLUTIndex != GET_CHAR_TLUT_INDEX(c)) {
+#ifdef DISABLE_SYNCS
         gDPLoadSync(POLY_OPA_DISP++);
+#endif
         gDPLoadTLUT(POLY_OPA_DISP++, 16, 256, gMojiFontTLUTs[GET_CHAR_TLUT_INDEX(c)]);
         sCurTLUTIndex = GET_CHAR_TLUT_INDEX(c);
     }

@@ -8,6 +8,8 @@
 #include "global.h"
 #include "alloca.h"
 
+#include "config.h"
+
 void PreRender_SetValuesSave(PreRender* this, u32 width, u32 height, void* fbuf, void* zbuf, void* cvg) {
     this->widthSave = width;
     this->heightSave = height;
@@ -86,7 +88,9 @@ void PreRender_CopyImage(PreRender* this, Gfx** gfxP, void* img, void* imgDst) {
         ult = curRow;
         lrt = ult + nRows - 1;
 
+#ifdef DISABLE_SYNCS
         gDPLoadSync(gfx++);
+#endif
         // Load a horizontal strip of the source image in RGBA16 format
         gDPLoadTextureTile(gfx++, img, G_IM_FMT_RGBA, G_IM_SIZ_16b, this->width, this->height, uls, ult, lrs, lrt, 0,
                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
@@ -148,7 +152,9 @@ void PreRender_CopyImageRegionImpl(PreRender* this, Gfx** gfxP) {
         lrt = ult + nRows - 1;
         uly = this->uly + curRow;
 
+#ifdef DISABLE_SYNCS
         gDPLoadSync(gfx++);
+#endif
         // Load a horizontal strip of the source image in RGBA16 format
         gDPLoadTextureTile(gfx++, this->fbufSave, G_IM_FMT_RGBA, G_IM_SIZ_16b, this->widthSave, this->height - 1,
                            this->ulxSave, ult, this->lrxSave, lrt, 0, G_TX_NOMIRROR | G_TX_WRAP,
@@ -219,7 +225,9 @@ void func_800C170C(PreRender* this, Gfx** gfxP, void* buf, void* bufSave, u32 r,
         ult = curRow;
         lrt = curRow + nRows - 1;
 
+#ifdef DISABLE_SYNCS
         gDPLoadSync(gfx++);
+#endif
         // Load a horizontal strip of the source image in RGBA16 format
         gDPLoadTextureTile(gfx++, buf, G_IM_FMT_RGBA, G_IM_SIZ_16b, this->width, this->height, uls, ult, lrs, lrt, 0,
                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
@@ -296,8 +304,9 @@ void PreRender_CoverageRgba16ToI8(PreRender* this, Gfx** gfxP, void* img, void* 
         ult = curRow;
         lrt = curRow + nRows - 1;
 
+#ifdef DISABLE_SYNCS
         gDPLoadSync(gfx++);
-
+#endif
         // Load a horizontal strip of the source image in IA16 format. Since the source image is stored in memory as
         // RGBA16, the bits are reinterpreted into IA16:
         //
@@ -467,8 +476,9 @@ void func_800C213C(PreRender* this, Gfx** gfxP) {
             ult = curRow;
             lrt = curRow + nRows - 1;
 
+#ifdef DISABLE_SYNCS
             gDPLoadSync(gfx++);
-
+#endif
             // Load the frame buffer line
             gDPLoadMultiTile(gfx++, this->fbufSave, 0x0000, G_TX_RENDERTILE, G_IM_FMT_RGBA, G_IM_SIZ_16b, this->width,
                              this->height, uls, ult, lrs, lrt, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,

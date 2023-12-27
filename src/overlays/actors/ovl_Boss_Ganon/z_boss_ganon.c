@@ -9,6 +9,8 @@
 #include "assets/objects/object_ganon_anime2/object_ganon_anime2.h"
 #include "assets/scenes/dungeons/ganon_boss/ganon_boss_scene.h"
 
+#include "config.h"
+
 #define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4 | ACTOR_FLAG_5)
 
 void BossGanon_Init(Actor* thisx, PlayState* play2);
@@ -3772,7 +3774,9 @@ void BossGanon_DrawShadowTexture(void* tex, BossGanon* this, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_boss_ganon.c", 8396),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gGanondorfShadowSetupDL);
+#ifdef DISABLE_SYNCS
     gDPLoadSync(POLY_OPA_DISP++);
+#endif
     gDPLoadTextureBlock(POLY_OPA_DISP++, tex, G_IM_FMT_I, G_IM_SIZ_8b, 64, 64, 0, G_TX_NOMIRROR | G_TX_CLAMP,
                         G_TX_NOMIRROR | G_TX_CLAMP, 6, 6, G_TX_NOLOD, G_TX_NOLOD);
     gSPDisplayList(POLY_OPA_DISP++, gGanondorfShadowModelDL);

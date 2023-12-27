@@ -2,6 +2,8 @@
 #include "terminal.h"
 #include "z64environment.h"
 
+#include "config.h"
+
 typedef struct {
     /* 0x000 */ s32 xStart;
     /* 0x004 */ s32 yStart;
@@ -171,7 +173,9 @@ s32 Skybox_CalculateFace256(SkyboxContext* skyboxCtx, Vtx* roomVtx, s32 roomVtxS
         // Draw face, load the texture in several tiles to work around TMEM size limitations
         for (vtxIdx = 0, l = 0; l < 4; l++, ult += 31) {
             for (uls = 0, m = 0; m < 4; m++, uls += 63, vtxIdx += 4) {
+#ifdef DISABLE_SYNCS
                 gDPLoadSync(skyboxCtx->gfx++);
+#endif
                 gDPLoadTextureTile(skyboxCtx->gfx++, (u8*)skyboxCtx->staticSegments[0] + sSkybox256TexOffsets[faceNum],
                                    G_IM_FMT_CI, G_IM_SIZ_8b, 256, 0, uls, ult, uls + 63, ult + 31, 0,
                                    G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP,
@@ -335,11 +339,16 @@ s32 Skybox_CalculateFace128(SkyboxContext* skyboxCtx, Vtx* roomVtx, s32 roomVtxS
         ult = 0;
         for (vtxIdx = 0, l = 0; l < 4; l++, ult += 31) {
             for (uls = 0, m = 0; m < 4; m++, uls += 31, vtxIdx += 4) {
+#ifdef DISABLE_SYNCS
                 gDPLoadSync(skyboxCtx->gfx++);
+#endif
                 gDPLoadMultiTile(skyboxCtx->gfx++, (u8*)skyboxCtx->staticSegments[0] + sSkybox128TexOffsets[faceNum], 0,
                                  G_TX_RENDERTILE, G_IM_FMT_CI, G_IM_SIZ_8b, 128, 0, uls, ult, uls + 31, ult + 31, 0,
                                  G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP,
                                  G_TX_NOMASK, G_TX_NOLOD);
+#ifdef DISABLE_SYNCS
+                gDPLoadSync(skyboxCtx->gfx++);
+#endif
                 gDPLoadMultiTile(skyboxCtx->gfx++, (u8*)skyboxCtx->staticSegments[1] + sSkybox128TexOffsets[faceNum],
                                  0x80, 1, G_IM_FMT_CI, G_IM_SIZ_8b, 128, 0, uls, ult, uls + 31, ult + 31, 0,
                                  G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP,
@@ -354,11 +363,16 @@ s32 Skybox_CalculateFace128(SkyboxContext* skyboxCtx, Vtx* roomVtx, s32 roomVtxS
         ult = 0;
         for (vtxIdx = 0, l = 0; l < 2; l++, ult += 31) {
             for (uls = 0, m = 0; m < 4; m++, uls += 31, vtxIdx += 4) {
+#ifdef DISABLE_SYNCS
                 gDPLoadSync(skyboxCtx->gfx++);
+#endif
                 gDPLoadMultiTile(skyboxCtx->gfx++, (u8*)skyboxCtx->staticSegments[0] + sSkybox128TexOffsets[faceNum], 0,
                                  G_TX_RENDERTILE, G_IM_FMT_CI, G_IM_SIZ_8b, 128, 0, uls, ult, uls + 31, ult + 31, 0,
                                  G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP,
                                  G_TX_NOMASK, G_TX_NOLOD);
+#ifdef DISABLE_SYNCS
+                gDPLoadSync(skyboxCtx->gfx++);
+#endif
                 gDPLoadMultiTile(skyboxCtx->gfx++, (u8*)skyboxCtx->staticSegments[1] + sSkybox128TexOffsets[faceNum],
                                  0x80, 1, G_IM_FMT_CI, G_IM_SIZ_8b, 128, 0, uls, ult, uls + 31, ult + 31, 0,
                                  G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP,
@@ -370,11 +384,16 @@ s32 Skybox_CalculateFace128(SkyboxContext* skyboxCtx, Vtx* roomVtx, s32 roomVtxS
         ult -= 31;
         for (l = 0; l < 2; l++, ult -= 31) {
             for (uls = 0, m = 0; m < 4; m++, uls += 31, vtxIdx += 4) {
+#ifdef DISABLE_SYNCS
                 gDPLoadSync(skyboxCtx->gfx++);
+#endif
                 gDPLoadMultiTile(skyboxCtx->gfx++, (u8*)skyboxCtx->staticSegments[0] + sSkybox128TexOffsets[faceNum], 0,
                                  G_TX_RENDERTILE, G_IM_FMT_CI, G_IM_SIZ_8b, 128, 0, uls, ult, uls + 31, ult + 31, 0,
                                  G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP,
                                  G_TX_NOMASK, G_TX_NOLOD);
+#ifdef DISABLE_SYNCS
+                gDPLoadSync(skyboxCtx->gfx++);
+#endif
                 gDPLoadMultiTile(skyboxCtx->gfx++, (u8*)skyboxCtx->staticSegments[1] + sSkybox128TexOffsets[faceNum],
                                  0x80, 1, G_IM_FMT_CI, G_IM_SIZ_8b, 128, 0, uls, ult, uls + 31, ult + 31, 0,
                                  G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP,

@@ -84,7 +84,9 @@ void KaleidoScope_DrawDebugEditorText(Gfx** gfxP) {
 
 void KaleidoScope_DrawDigit(PlayState* play, s32 digit, s32 rectLeft, s32 rectTop) {
     OPEN_DISPS(play->state.gfxCtx);
+#ifdef DISABLE_SYNCS
     gDPLoadSync(POLY_OPA_DISP++);
+#endif
     gDPLoadTextureBlock(POLY_OPA_DISP++, ((u8*)gCounterDigit0Tex + (8 * 16 * digit)), G_IM_FMT_I, G_IM_SIZ_8b, 8, 16, 0,
                         G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
                         G_TX_NOLOD);
