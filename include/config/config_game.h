@@ -89,4 +89,9 @@
 */
 // #define MM_N64_BOOT_LOGO
 
+/**
+ * Enable Rainbow System
+*/
+#define ENABLE_RAINBOW
+
 #endif

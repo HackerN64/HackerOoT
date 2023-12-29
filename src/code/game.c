@@ -3,6 +3,10 @@
 
 #include "config.h"
 
+#ifdef ENABLE_RAINBOW
+#include "rainbow.h"
+#endif
+
 #ifdef ENABLE_SPEEDMETER
 SpeedMeter D_801664D0;
 #endif
@@ -264,6 +268,10 @@ void GameState_Update(GameState* gameState) {
     GameState_SetFrameBuffer(gfxCtx);
 
     gameState->main(gameState);
+
+#ifdef ENABLE_RAINBOW
+    Rainbow_Update(&gRainbow);
+#endif
 
     func_800C4344(gameState);
 
