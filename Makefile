@@ -9,6 +9,10 @@ SHELL = /bin/bash
 # If COMPILER is "gcc", compile with GCC.
 COMPILER ?= gcc
 
+# Target game version. Currently only the following version is supported:
+#   gc-eu-mq-dbg   GameCube Europe/PAL Master Quest Debug (default)
+VERSION := gc-eu-mq-dbg
+
 # If DEBUG_BUILD is 0, compile with ``RELEASE_ROM`` defined
 DEBUG_BUILD ?= 1
 
@@ -61,7 +65,7 @@ endif
 
 # Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
 # In nearly all cases, not having 'mips-linux-gnu-*' binaries on the PATH is indicative of missing dependencies
-MIPS_BINUTILS_PREFIX ?= mips-linux-gnu-
+MIPS_BINUTILS_PREFIX := mips-linux-gnu-
 
 CFLAGS += -DNON_MATCHING -DAVOID_UB
 CPPFLAGS += -DNON_MATCHING -DAVOID_UB
@@ -73,7 +77,15 @@ CPPFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)'
 # Make sure the build reports the correct version
 $(shell touch src/boot/build.c)
 
+# Version-specific settings
+ifeq ($(VERSION),gc-eu-mq-dbg)
+  OPTFLAGS := -O2
+else
+$(error Unsupported version $(VERSION))
+endif
+
 PROJECT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+BUILD_DIR := build/$(VERSION)
 
 MAKE = make
 CPPFLAGS += -fno-dollars-in-identifiers -P
@@ -92,7 +104,7 @@ else
     endif
 endif
 
-N_THREADS ?= $(shell nproc)
+N_THREADS := $(shell nproc)
 
 #### Tools ####
 ifneq ($(shell type $(MIPS_BINUTILS_PREFIX)ld >/dev/null 2>/dev/null; echo $$?), 0)
@@ -110,10 +122,10 @@ AS         := $(MIPS_BINUTILS_PREFIX)as
 LD         := $(MIPS_BINUTILS_PREFIX)ld
 OBJCOPY    := $(MIPS_BINUTILS_PREFIX)objcopy
 OBJDUMP    := $(MIPS_BINUTILS_PREFIX)objdump
-EMULATOR   ?= 
-EMU_FLAGS  ?= 
+EMULATOR   := 
+EMU_FLAGS  := 
 
-INC := -Iinclude -Iinclude/libc -Isrc -Ibuild -I.
+INC := -Iinclude -Iinclude/libc -Isrc -I$(BUILD_DIR) -I.
 
 # Check code syntax with host compiler
 CHECK_WARNINGS := -Wall -Wextra -Wno-format-security -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-variable -Wno-missing-braces
@@ -125,10 +137,12 @@ ELF2ROM    := tools/elf2rom
 ZAPD       := tools/ZAPD/ZAPD.out
 FADO       := tools/fado/fado.elf
 
+# Command to replace path variables in the spec file. We can't use the C
+# preprocessor for this because it won't substitute inside string literals.
+SPEC_REPLACE_VARS := sed -e 's|$$(BUILD_DIR)|$(BUILD_DIR)|g'
+
 ifeq ($(COMPILER),gcc)
   OPTFLAGS := -Os -ffast-math -fno-unsafe-math-optimizations
-else
-  OPTFLAGS := -O2
 endif
 
 ASFLAGS := -march=vr4300 -32 -no-pad-sections -Iinclude
@@ -149,7 +163,7 @@ OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
 #### Files ####
 
 # ROM image
-ROM  := HackerOoT.z64
+ROM  := HackerOoT-$(VERSION).z64
 ELF  := $(ROM:.z64=.elf)
 ROMC := $(ROM:.z64=_compressed.z64)
 WAD  := $(ROM:.z64=.wad)
@@ -162,19 +176,19 @@ ASSET_BIN_DIRS := $(shell find assets/* -type d -not -path "assets/xml*" -not -p
 ASSET_FILES_XML := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.xml))
 ASSET_FILES_BIN := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.bin))
 ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_XML:.xml=.c),$f) \
-				   $(foreach f,$(ASSET_FILES_BIN:.bin=.bin.inc.c),build/$f) \
-				   $(foreach f,$(wildcard assets/text/*.c),build/$(f:.c=.o))
+				   $(foreach f,$(ASSET_FILES_BIN:.bin=.bin.inc.c),$(BUILD_DIR)/$f) \
+				   $(foreach f,$(wildcard assets/text/*.c),$(BUILD_DIR)/$(f:.c=.o))
 
 UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
 
 # source files
 C_FILES       := $(filter-out %.inc.c,$(foreach dir,$(SRC_DIRS) $(ASSET_BIN_DIRS),$(wildcard $(dir)/*.c)))
 S_FILES       := $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS),$(wildcard $(dir)/*.s))
-O_FILES       := $(foreach f,$(S_FILES:.s=.o),build/$f) \
-                 $(foreach f,$(C_FILES:.c=.o),build/$f) \
-                 $(foreach f,$(wildcard baserom/*),build/$f.o)
+O_FILES       := $(foreach f,$(S_FILES:.s=.o),$(BUILD_DIR)/$f) \
+                 $(foreach f,$(C_FILES:.c=.o),$(BUILD_DIR)/$f) \
+                 $(foreach f,$(wildcard baserom/*),$(BUILD_DIR)/$f.o)
 
-OVL_RELOC_FILES := $(shell $(CPP) $(CPPFLAGS) $(SPEC) | grep -o '[^"]*_reloc.o' )
+OVL_RELOC_FILES := $(shell $(CPP) $(CPPFLAGS) $(SPEC) | $(SPEC_REPLACE_VARS) | grep -o '[^"]*_reloc.o' )
 
 # Automatic dependency files
 # (Only asm_processor dependencies and reloc dependencies are handled for now)
@@ -183,19 +197,19 @@ DEP_FILES := $(O_FILES:.o=.d) $(O_FILES:.o=.asmproc.d) $(OVL_RELOC_FILES:.o=.d)
 
 TEXTURE_FILES_PNG := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.png))
 TEXTURE_FILES_JPG := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.jpg))
-TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),build/$f) \
-					 $(foreach f,$(TEXTURE_FILES_JPG:.jpg=.jpg.inc.c),build/$f) \
+TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),$(BUILD_DIR)/$f) \
+					 $(foreach f,$(TEXTURE_FILES_JPG:.jpg=.jpg.inc.c),$(BUILD_DIR)/$f) \
 
 # create build directories
-$(shell mkdir -p build/baserom build/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS) $(ASSET_BIN_DIRS),build/$(dir)))
+$(shell mkdir -p $(BUILD_DIR)/baserom $(BUILD_DIR)/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS) $(ASSET_BIN_DIRS),$(BUILD_DIR)/$(dir)))
 
-build/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
-build/src/%.o: CC := $(CC) -fexec-charset=euc-jp
+$(BUILD_DIR)/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
+$(BUILD_DIR)/src/%.o: CC := $(CC) -fexec-charset=euc-jp
 
-build/src/overlays/actors/ovl_Item_Shield/%.o: OPTFLAGS := -O2
-build/src/overlays/actors/ovl_En_Part/%.o: OPTFLAGS := -O2
-build/src/overlays/actors/ovl_Item_B_Heart/%.o: OPTFLAGS := -O0
-build/src/overlays/actors/ovl_Bg_Mori_Hineri/%.o: OPTFLAGS := -O0
+$(BUILD_DIR)/src/overlays/actors/ovl_Item_Shield/%.o: OPTFLAGS := -O2
+$(BUILD_DIR)/src/overlays/actors/ovl_En_Part/%.o: OPTFLAGS := -O2
+$(BUILD_DIR)/src/overlays/actors/ovl_Item_B_Heart/%.o: OPTFLAGS := -O0
+$(BUILD_DIR)/src/overlays/actors/ovl_Bg_Mori_Hineri/%.o: OPTFLAGS := -O0
 
 #### Main Targets ###
 
@@ -210,12 +224,12 @@ wad:
 	$(RM) -r wadextract/ common-key.bin
 
 clean:
-	$(RM) -r $(ROM) $(ROMC) $(WAD) $(ELF) build cache
+	$(RM) -r $(ROM) $(ROMC) $(WAD) $(ELF) $(BUILD_DIR) cache
 
 assetclean:
 	$(RM) -r $(ASSET_BIN_DIRS)
 	$(RM) -r assets/text/*.h
-	$(RM) -r build/assets
+	$(RM) -r $(BUILD_DIR)/assets
 	$(RM) -r .extracted-assets.json
 
 rebuildtools:
@@ -247,10 +261,10 @@ $(ROM): $(ELF)
 	$(ELF2ROM) -cic 6105 $< $@
 
 $(ROMC): $(ROM)
-	python3 tools/z64compress_wrapper.py --codec $(COMPRESSION) --cache cache --threads $(N_THREADS) $< $@ $(ELF) build/$(SPEC)
+	python3 tools/z64compress_wrapper.py --codec $(COMPRESSION) --cache cache --threads $(N_THREADS) $< $@ $(ELF) $(BUILD_DIR)/$(SPEC)
 
-$(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) build/ldscript.txt build/undefined_syms.txt
-	$(LD) -T build/undefined_syms.txt -T build/ldscript.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map build/z64.map -o $@
+$(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(BUILD_DIR)/ldscript.txt $(BUILD_DIR)/undefined_syms.txt
+	$(LD) -T $(BUILD_DIR)/undefined_syms.txt -T $(BUILD_DIR)/ldscript.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(BUILD_DIR)/z64.map -o $@
 
 ## Order-only prerequisites
 # These ensure e.g. the O_FILES are built before the OVL_RELOC_FILES.
@@ -264,84 +278,84 @@ $(O_FILES): | asset_files
 
 .PHONY: o_files asset_files
 
-build/$(SPEC): $(SPEC)
-	$(CPP) $(CPPFLAGS) $< > $@
+$(BUILD_DIR)/$(SPEC): $(SPEC)
+	$(CPP) $(CPPFLAGS) $< | $(SPEC_REPLACE_VARS) > $@
 
-build/ldscript.txt: build/$(SPEC)
+$(BUILD_DIR)/ldscript.txt: $(BUILD_DIR)/$(SPEC)
 	$(MKLDSCRIPT) $< $@
 
-build/undefined_syms.txt: undefined_syms.txt
+$(BUILD_DIR)/undefined_syms.txt: undefined_syms.txt
 	$(CPP) $(CPPFLAGS) $< > $@
 
-build/baserom/%.o: baserom/%
+$(BUILD_DIR)/baserom/%.o: baserom/%
 	$(OBJCOPY) -I binary -O elf32-big $< $@
 
-build/data/%.o: data/%.s
+$(BUILD_DIR)/data/%.o: data/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
-build/assets/text/%.enc.h: assets/text/%.h assets/text/charmap.txt
+$(BUILD_DIR)/assets/text/%.enc.h: assets/text/%.h assets/text/charmap.txt
 	python3 tools/msgenc.py assets/text/charmap.txt $< $@
 
 # Dependencies for files including message data headers
 # TODO remove when full header dependencies are used.
-build/assets/text/fra_message_data_static.o: build/assets/text/message_data.enc.h
-build/assets/text/ger_message_data_static.o: build/assets/text/message_data.enc.h
-build/assets/text/nes_message_data_static.o: build/assets/text/message_data.enc.h
-build/assets/text/staff_message_data_static.o: build/assets/text/message_data_staff.enc.h
-build/src/code/z_message_PAL.o: build/assets/text/message_data.enc.h build/assets/text/message_data_staff.enc.h
+$(BUILD_DIR)/assets/text/fra_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.h
+$(BUILD_DIR)/assets/text/ger_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.h
+$(BUILD_DIR)/assets/text/nes_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.h
+$(BUILD_DIR)/assets/text/staff_message_data_static.o: $(BUILD_DIR)/assets/text/message_data_staff.enc.h
+$(BUILD_DIR)/src/code/z_message_PAL.o: $(BUILD_DIR)/assets/text/message_data.enc.h $(BUILD_DIR)/assets/text/message_data_staff.enc.h
 
-build/assets/%.o: assets/%.c
+$(BUILD_DIR)/assets/%.o: assets/%.c
 	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -MMD -MF $(basename $@).d -o $@ $<
 	$(OBJCOPY) -O binary $@ $@.bin
 
-build/src/%.o: src/%.s
+$(BUILD_DIR)/src/%.o: src/%.s
 	$(CPP) $(CPPFLAGS) -Iinclude -MMD -MF $(basename $@).d  $< | $(AS) $(ASFLAGS) -o $@
 
-build/dmadata_table_spec.h: build/$(SPEC)
+$(BUILD_DIR)/dmadata_table_spec.h: $(BUILD_DIR)/$(SPEC)
 	$(MKDMADATA) $< $@
 
 # Dependencies for files that may include the dmadata header automatically generated from the spec file
-build/src/boot/z_std_dma.o: build/dmadata_table_spec.h
-build/src/dmadata/dmadata.o: build/dmadata_table_spec.h
+$(BUILD_DIR)/src/boot/z_std_dma.o: $(BUILD_DIR)/dmadata_table_spec.h
+$(BUILD_DIR)/src/dmadata/dmadata.o: $(BUILD_DIR)/dmadata_table_spec.h
 
 # Dependencies for files including from include/tables/
 # TODO remove when full header dependencies are used.
-build/src/code/graph.o: include/tables/gamestate_table.h
-build/src/code/object_table.o: include/tables/object_table.h
-build/src/code/z_actor.o: include/tables/actor_table.h # so uses of ACTOR_ID_MAX update when the table length changes
-build/src/code/z_actor_dlftbls.o: include/tables/actor_table.h
-build/src/code/z_effect_soft_sprite_dlftbls.o: include/tables/effect_ss_table.h
-build/src/code/z_game_dlftbls.o: include/tables/gamestate_table.h
-build/src/code/z_scene_table.o: include/tables/scene_table.h include/tables/entrance_table.h
+$(BUILD_DIR)/src/code/graph.o: include/tables/gamestate_table.h
+$(BUILD_DIR)/src/code/object_table.o: include/tables/object_table.h
+$(BUILD_DIR)/src/code/z_actor.o: include/tables/actor_table.h # so uses of ACTOR_ID_MAX update when the table length changes
+$(BUILD_DIR)/src/code/z_actor_dlftbls.o: include/tables/actor_table.h
+$(BUILD_DIR)/src/code/z_effect_soft_sprite_dlftbls.o: include/tables/effect_ss_table.h
+$(BUILD_DIR)/src/code/z_game_dlftbls.o: include/tables/gamestate_table.h
+$(BUILD_DIR)/src/code/z_scene_table.o: include/tables/scene_table.h include/tables/entrance_table.h
 
-build/src/%.o: src/%.c
+$(BUILD_DIR)/src/%.o: src/%.c
 	$(CC_CHECK) $<
 	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -MMD -MF $(basename $@).d  -o $@ $<
 	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
-build/src/libultra/libc/ll.o: src/libultra/libc/ll.c
-	$(CC_CHECK) $<
-	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -MMD -MF $(basename $@).d  -o $@ $<
-	python3 tools/set_o32abi_bit.py $@
-	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
-
-build/src/libultra/libc/llcvt.o: src/libultra/libc/llcvt.c
+$(BUILD_DIR)/src/libultra/libc/ll.o: src/libultra/libc/ll.c
 	$(CC_CHECK) $<
 	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -MMD -MF $(basename $@).d  -o $@ $<
 	python3 tools/set_o32abi_bit.py $@
 	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
-build/src/overlays/%_reloc.o: build/$(SPEC)
+$(BUILD_DIR)/src/libultra/libc/llcvt.o: src/libultra/libc/llcvt.c
+	$(CC_CHECK) $<
+	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -MMD -MF $(basename $@).d  -o $@ $<
+	python3 tools/set_o32abi_bit.py $@
+	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
+
+$(BUILD_DIR)/src/overlays/%_reloc.o: $(BUILD_DIR)/$(SPEC)
 	$(FADO) $$(tools/reloc_prereq $< $(notdir $*)) -n $(notdir $*) -o $(@:.o=.s) -M $(@:.o=.d)
 	$(AS) $(ASFLAGS) $(@:.o=.s) -o $@
 
-build/%.inc.c: %.png
+$(BUILD_DIR)/%.inc.c: %.png
 	$(ZAPD) btex -eh -tt $(subst .,,$(suffix $*)) -i $< -o $@
 
-build/assets/%.bin.inc.c: assets/%.bin
+$(BUILD_DIR)/assets/%.bin.inc.c: assets/%.bin
 	$(ZAPD) bblb -eh -i $< -o $@
 
-build/assets/%.jpg.inc.c: assets/%.jpg
+$(BUILD_DIR)/assets/%.jpg.inc.c: assets/%.jpg
 	$(ZAPD) bren -eh -i $< -o $@
 
 -include $(DEP_FILES)

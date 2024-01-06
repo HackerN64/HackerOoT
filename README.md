@@ -6,7 +6,7 @@ The only build currently supported is Master Quest (Debug), other versions will 
 
 It builds the following ROM:
 
-* zelda_ocarina_mq_dbg.z64
+* oot-gc-eu-mq-dbg.z64
 
 **Note: This repository does not include any of the assets necessary to build the ROM. A prior copy of the game is required to extract the needed assets.**
 
@@ -107,10 +107,10 @@ Make sure your path to the project is not too long, otherwise this process may e
 make
 ```
 
-If all goes well, a new ROM called "zelda_ocarina_mq_debug.z64" should be built and the following text should be printed:
+If all goes well, a new ROM called "oot-gc-eu-mq-dbg.z64" should be built and the following text should be printed:
 
 ```bash
-tools/elf2rom -cic 6105 zelda_ocarina_mq_dbg.elf zelda_ocarina_mq_dbg.z64
+tools/elf2rom -cic 6105 oot-gc-eu-mq-dbg.elf oot-gc-eu-mq-dbg.z64
 ```
 
 **NOTE:** to speed up the build, you can either:
