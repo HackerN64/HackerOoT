@@ -477,7 +477,7 @@ void Health_DrawMeter(PlayState* play) {
             }
 
             {
-                Mtx* matrix = Graph_Alloc(gfxCtx, sizeof(Mtx));
+                Mtx* matrix = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
                 f32 wideOffsetX = USE_WIDESCREEN ? (offsetX - (30.f * WIDE_GET_16_9)) : offsetX;
                 Matrix_SetTranslateScaleMtx2(
                     matrix, 1.0f - (0.32f * beatingHeartPulsingSize), 1.0f - (0.32f * beatingHeartPulsingSize),

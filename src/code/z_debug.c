@@ -106,7 +106,7 @@ char sRegGroupChars[REG_GROUPS] = {
 void Regs_Init(void) {
     s32 i;
 
-    gRegEditor = SystemArena_MallocDebug(sizeof(RegEditor), "../z_debug.c", 260);
+    gRegEditor = SYSTEM_ARENA_MALLOC(sizeof(RegEditor), "../z_debug.c", 260);
 
 #ifdef ENABLE_REG_EDITOR
     gRegEditor->regPage = 0;
