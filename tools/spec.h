@@ -9,6 +9,7 @@ typedef enum {
     STMT_after,
     STMT_align,
     STMT_beginseg,
+    STMT_compress,
     STMT_endseg,
     STMT_entry,
     STMT_flags,

@@ -56,7 +56,7 @@ void View_Init(View* view, GraphicsContext* gfxCtx) {
 
     if (sLogOnNextViewInit) {
         if (sLogOnNextViewInit == false) {}
-        osSyncPrintf("\nview: initialize ---\n");
+        PRINTF("\nview: initialize ---\n");
         sLogOnNextViewInit = false;
     }
 
@@ -292,7 +292,7 @@ s32 View_ApplyPerspective(View* view) {
 
     // Viewport
     vp = GRAPH_ALLOC(gfxCtx, sizeof(Vp));
-    LogUtils_CheckNullPointer("vp", vp, "../z_view.c", 601);
+    LOG_UTILS_CHECK_NULL_POINTER("vp", vp, "../z_view.c", 601);
     View_ViewportToVp(vp, &view->viewport);
     view->vp = *vp;
 
@@ -303,7 +303,7 @@ s32 View_ApplyPerspective(View* view) {
 
     // Perspective projection
     projection = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
-    LogUtils_CheckNullPointer("projection", projection, "../z_view.c", 616);
+    LOG_UTILS_CHECK_NULL_POINTER("projection", projection, "../z_view.c", 616);
     view->projectionPtr = projection;
 
     width = WIDE_MULT((view->viewport.rightX - view->viewport.leftX), WIDE_GET_4_3);
@@ -329,15 +329,15 @@ s32 View_ApplyPerspective(View* view) {
         s32 i;
         MtxF mf;
 
-        osSyncPrintf("fovy %f near %f far %f scale %f aspect %f normal %08x\n", view->fovy, view->zNear, view->zFar,
-                     view->scale, aspect, view->normal);
+        PRINTF("fovy %f near %f far %f scale %f aspect %f normal %08x\n", view->fovy, view->zNear, view->zFar,
+               view->scale, aspect, view->normal);
 
         Matrix_MtxToMtxF(projection, &mf);
-        osSyncPrintf("projection\n");
+        PRINTF("projection\n");
         for (i = 0; i < 4; i++) {
-            osSyncPrintf("\t%f\t%f\t%f\t%f\n", mf.mf[i][0], mf.mf[i][1], mf.mf[i][2], mf.mf[i][3]);
+            PRINTF("\t%f\t%f\t%f\t%f\n", mf.mf[i][0], mf.mf[i][1], mf.mf[i][2], mf.mf[i][3]);
         }
-        osSyncPrintf("\n");
+        PRINTF("\n");
     }
 
     view->projection = *projection;
@@ -351,7 +351,7 @@ s32 View_ApplyPerspective(View* view) {
 
     // View matrix (look-at)
     viewing = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
-    LogUtils_CheckNullPointer("viewing", viewing, "../z_view.c", 667);
+    LOG_UTILS_CHECK_NULL_POINTER("viewing", viewing, "../z_view.c", 667);
     view->viewingPtr = viewing;
 
     if (view->eye.x == view->at.x && view->eye.y == view->at.y && view->eye.z == view->at.z) {
@@ -372,11 +372,11 @@ s32 View_ApplyPerspective(View* view) {
         MtxF mf;
 
         Matrix_MtxToMtxF(view->viewingPtr, &mf);
-        osSyncPrintf("viewing\n");
+        PRINTF("viewing\n");
         for (i = 0; i < 4; i++) {
-            osSyncPrintf("\t%f\t%f\t%f\t%f\n", mf.mf[i][0], mf.mf[i][1], mf.mf[i][2], mf.mf[i][3]);
+            PRINTF("\t%f\t%f\t%f\t%f\n", mf.mf[i][0], mf.mf[i][1], mf.mf[i][2], mf.mf[i][3]);
         }
-        osSyncPrintf("\n");
+        PRINTF("\n");
     }
 
     gSPMatrix(POLY_OPA_DISP++, viewing, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_PROJECTION);
@@ -395,7 +395,7 @@ s32 View_ApplyOrtho(View* view) {
     OPEN_DISPS(gfxCtx);
 
     vp = GRAPH_ALLOC(gfxCtx, sizeof(Vp));
-    LogUtils_CheckNullPointer("vp", vp, "../z_view.c", 730);
+    LOG_UTILS_CHECK_NULL_POINTER("vp", vp, "../z_view.c", 730);
     View_ViewportToVp(vp, &view->viewport);
     view->vp = *vp;
 
@@ -406,7 +406,7 @@ s32 View_ApplyOrtho(View* view) {
     gSPViewport(OVERLAY_DISP++, vp);
 
     projection = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
-    LogUtils_CheckNullPointer("projection", projection, "../z_view.c", 744);
+    LOG_UTILS_CHECK_NULL_POINTER("projection", projection, "../z_view.c", 744);
     view->projectionPtr = projection;
 
     guOrtho(projection, -(f32)gScreenWidth * 0.5f, (f32)gScreenWidth * 0.5f, -(f32)gScreenHeight * 0.5f,
@@ -436,7 +436,7 @@ s32 View_ApplyOrthoToOverlay(View* view) {
     OPEN_DISPS(gfxCtx);
 
     vp = GRAPH_ALLOC(gfxCtx, sizeof(Vp));
-    LogUtils_CheckNullPointer("vp", vp, "../z_view.c", 781);
+    LOG_UTILS_CHECK_NULL_POINTER("vp", vp, "../z_view.c", 781);
     View_ViewportToVp(vp, &view->viewport);
     view->vp = *vp;
 
@@ -446,7 +446,7 @@ s32 View_ApplyOrthoToOverlay(View* view) {
     gSPViewport(OVERLAY_DISP++, vp);
 
     projection = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
-    LogUtils_CheckNullPointer("projection", projection, "../z_view.c", 791);
+    LOG_UTILS_CHECK_NULL_POINTER("projection", projection, "../z_view.c", 791);
     view->projectionPtr = projection;
 
     // scales beating heart, inventory item change and minimap arrows properly
@@ -479,7 +479,7 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
     OPEN_DISPS(gfxCtx);
 
     vp = GRAPH_ALLOC(gfxCtx, sizeof(Vp));
-    LogUtils_CheckNullPointer("vp", vp, "../z_view.c", 821);
+    LOG_UTILS_CHECK_NULL_POINTER("vp", vp, "../z_view.c", 821);
     View_ViewportToVp(vp, &view->viewport);
     view->vp = *vp;
 
@@ -489,7 +489,7 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
     gSPViewport(OVERLAY_DISP++, vp);
 
     projection = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
-    LogUtils_CheckNullPointer("projection", projection, "../z_view.c", 833);
+    LOG_UTILS_CHECK_NULL_POINTER("projection", projection, "../z_view.c", 833);
     view->projectionPtr = projection;
 
     // rescale the A button/icon properly
@@ -505,7 +505,7 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
     gSPMatrix(OVERLAY_DISP++, projection, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
 
     viewing = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
-    LogUtils_CheckNullPointer("viewing", viewing, "../z_view.c", 848);
+    LOG_UTILS_CHECK_NULL_POINTER("viewing", viewing, "../z_view.c", 848);
     view->viewingPtr = viewing;
 
     // This check avoids a divide-by-zero in guLookAt if eye == at
@@ -556,7 +556,7 @@ s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP) {
 
     if (mask & VIEW_VIEWPORT) {
         vp = GRAPH_ALLOC(gfxCtx, sizeof(Vp));
-        LogUtils_CheckNullPointer("vp", vp, "../z_view.c", 910);
+        LOG_UTILS_CHECK_NULL_POINTER("vp", vp, "../z_view.c", 910);
         View_ViewportToVp(vp, &view->viewport);
 
         view->vp = *vp;
@@ -569,7 +569,7 @@ s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP) {
 
     if (mask & VIEW_PROJECTION_ORTHO) {
         projection = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
-        LogUtils_CheckNullPointer("projection", projection, "../z_view.c", 921);
+        LOG_UTILS_CHECK_NULL_POINTER("projection", projection, "../z_view.c", 921);
         view->projectionPtr = projection;
 
         guOrtho(projection, -(f32)gScreenWidth * 0.5f, (f32)gScreenWidth * 0.5f, -(f32)gScreenHeight * 0.5f,
@@ -580,7 +580,7 @@ s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP) {
         gSPMatrix(gfx++, projection, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
     } else if (mask & (VIEW_PROJECTION_PERSPECTIVE | VIEW_VIEWPORT)) {
         projection = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
-        LogUtils_CheckNullPointer("projection", projection, "../z_view.c", 932);
+        LOG_UTILS_CHECK_NULL_POINTER("projection", projection, "../z_view.c", 932);
         view->projectionPtr = projection;
 
         width = view->viewport.rightX - view->viewport.leftX;
@@ -597,7 +597,7 @@ s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP) {
 
     if (mask & VIEW_VIEWING) {
         viewing = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
-        LogUtils_CheckNullPointer("viewing", viewing, "../z_view.c", 948);
+        LOG_UTILS_CHECK_NULL_POINTER("viewing", viewing, "../z_view.c", 948);
         view->viewingPtr = viewing;
 
         View_ErrorCheckEyePosition(view->eye.x, view->eye.y, view->eye.z);
@@ -636,10 +636,10 @@ s32 View_ErrorCheckEyePosition(f32 eyeX, f32 eyeY, f32 eyeZ) {
     }
 
     if (error != 0) {
-        osSyncPrintf(VT_FGCOL(RED));
+        PRINTF(VT_FGCOL(RED));
         // "Is too large"
-        osSyncPrintf("eye が大きすぎます eye=[%8.3f %8.3f %8.3f] error=%d\n", eyeX, eyeY, eyeZ, error);
-        osSyncPrintf(VT_RST);
+        PRINTF("eye が大きすぎます eye=[%8.3f %8.3f %8.3f] error=%d\n", eyeX, eyeY, eyeZ, error);
+        PRINTF(VT_RST);
     }
 
     return error;

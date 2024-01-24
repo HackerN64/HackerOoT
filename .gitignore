@@ -9,12 +9,14 @@ __pycache__/
 CMakeLists.txt
 cmake-build-debug
 venv/
+.venv/
 
 # Project-specific ignores
 build/
 expected/
 notes/
 baserom/
+baseroms/*/segments/
 docs/doxygen/
 cache/
 *.elf
@@ -29,6 +31,7 @@ cache/
 *.dump
 *.wad
 out.txt
+*.ram
 
 # Tool artifacts
 tools/mipspro7.2_compiler/

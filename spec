@@ -577,6 +577,7 @@ endseg
 #ifdef ENABLE_MAP_SELECT
 beginseg
     name "ovl_select"
+    compress
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_select/z_select.o"
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_select/ovl_select_reloc.o"
 endseg
