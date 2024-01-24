@@ -58,3 +58,5 @@ graphs/
 
 # Per-user configuration
 .python-version
+*.bs1
+*.ram

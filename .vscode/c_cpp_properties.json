@@ -2,11 +2,11 @@
     "configurations": [
         {
             "name": "Linux",
-            "compilerPath": "${default}", // Needs to not be "" for -m32 to work
+            "compilerPath": "/usr/bin/gcc", // Needs to not be "" for -m32 to work
             "compilerArgs": [
                 "-m32" // Removes integer truncation warnings with gbi macros
             ],
-            "intelliSenseMode": "${default}", // Shouldn't matter
+            "intelliSenseMode": "gcc-x86",
             "includePath": [ // Matches makefile's includes
                 "${workspaceFolder}/**",
                 "src",

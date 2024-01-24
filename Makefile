@@ -16,47 +16,47 @@ DEBUG_BUILD ?= 1
 COMPRESSION ?= yaz
 
 ifeq ($(COMPRESSION),lzo)
-  CFLAGS += -DCOMPRESSION_LZO
-  CPPFLAGS += -DCOMPRESSION_LZO
+	CFLAGS += -DCOMPRESSION_LZO
+	CPPFLAGS += -DCOMPRESSION_LZO
 endif
 
 ifeq ($(COMPRESSION),yaz)
-  CFLAGS += -DCOMPRESSION_YAZ
-  CPPFLAGS += -DCOMPRESSION_YAZ
+	CFLAGS += -DCOMPRESSION_YAZ
+	CPPFLAGS += -DCOMPRESSION_YAZ
 endif
 
 ifeq ($(COMPRESSION),aplib)
-  CFLAGS += -DCOMPRESSION_APLIB
-  CPPFLAGS += -DCOMPRESSION_APLIB
+	CFLAGS += -DCOMPRESSION_APLIB
+	CPPFLAGS += -DCOMPRESSION_APLIB
 endif
 
 CFLAGS ?=
 CPPFLAGS ?=
 
 ifeq ($(COMPILER),gcc)
-  CFLAGS += -DCOMPILER_GCC
-  CPPFLAGS += -DCOMPILER_GCC
+	CFLAGS += -DCOMPILER_GCC
+	CPPFLAGS += -DCOMPILER_GCC
 endif
 
 ifeq ($(DEBUG_BUILD),0)
-  CFLAGS += -DRELEASE_ROM
-  CPPFLAGS += -DRELEASE_ROM
+	CFLAGS += -DRELEASE_ROM
+	CPPFLAGS += -DRELEASE_ROM
 endif
 
 # Set PACKAGE_VERSION define for printing commit hash
 ifeq ($(origin PACKAGE_VERSION), undefined)
-  PACKAGE_VERSION := $(shell git log -1 --pretty=%h | tr -d '\n')
-  ifeq ('$(PACKAGE_VERSION)', '')
-    PACKAGE_VERSION = Unknown version
-  endif
+	PACKAGE_VERSION := $(shell git log -1 --pretty=%h | tr -d '\n')
+	ifeq ('$(PACKAGE_VERSION)', '')
+		PACKAGE_VERSION = Unknown version
+	endif
 endif
 
 # Set PACKAGE_AUTHOR define for printing author's git name
 ifeq ($(origin PACKAGE_AUTHOR), undefined)
-  PACKAGE_AUTHOR := $(shell git config --get user.name)
-  ifeq ('$(PACKAGE_AUTHOR)', '')
-    PACKAGE_AUTHOR = Unknown author
-  endif
+	PACKAGE_AUTHOR := $(shell git config --get user.name)
+	ifeq ('$(PACKAGE_AUTHOR)', '')
+		PACKAGE_AUTHOR = Unknown author
+	endif
 endif
 
 # Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
@@ -79,29 +79,29 @@ MAKE = make
 CPPFLAGS += -fno-dollars-in-identifiers -P
 
 ifeq ($(OS),Windows_NT)
-    DETECTED_OS=windows
+		DETECTED_OS=windows
 else
-    UNAME_S := $(shell uname -s)
-    ifeq ($(UNAME_S),Linux)
-        DETECTED_OS=linux
-    endif
-    ifeq ($(UNAME_S),Darwin)
-        DETECTED_OS=macos
-        MAKE=gmake
-        CPPFLAGS += -xc++
-    endif
+		UNAME_S := $(shell uname -s)
+		ifeq ($(UNAME_S),Linux)
+				DETECTED_OS=linux
+		endif
+		ifeq ($(UNAME_S),Darwin)
+				DETECTED_OS=macos
+				MAKE=gmake
+				CPPFLAGS += -xc++
+		endif
 endif
 
 N_THREADS ?= $(shell nproc)
 
 #### Tools ####
 ifneq ($(shell type $(MIPS_BINUTILS_PREFIX)ld >/dev/null 2>/dev/null; echo $$?), 0)
-  $(error Unable to find $(MIPS_BINUTILS_PREFIX)ld. Please install or build MIPS binutils, commonly mips-linux-gnu. (or set MIPS_BINUTILS_PREFIX if your MIPS binutils install uses another prefix))
+	$(error Unable to find $(MIPS_BINUTILS_PREFIX)ld. Please install or build MIPS binutils, commonly mips-linux-gnu. (or set MIPS_BINUTILS_PREFIX if your MIPS binutils install uses another prefix))
 endif
 
 # Detect compiler and set variables appropriately.
 ifeq ($(COMPILER),gcc)
-  CC       := $(MIPS_BINUTILS_PREFIX)gcc
+	CC       := $(MIPS_BINUTILS_PREFIX)gcc
 else
 $(error Unsupported compiler. Please use either gcc as the COMPILER variable.)
 endif
@@ -126,20 +126,24 @@ ZAPD       := tools/ZAPD/ZAPD.out
 FADO       := tools/fado/fado.elf
 
 ifeq ($(COMPILER),gcc)
-  OPTFLAGS := -Os -ffast-math -fno-unsafe-math-optimizations
+	ifeq ($(DEBUG_BUILD),1)
+		OPTFLAGS := -Og -g -g3 -ffast-math -fno-unsafe-math-optimizations
+	else
+		OPTFLAGS := -Os -ffast-math -fno-unsafe-math-optimizations
+	endif
 else
-  OPTFLAGS := -O2
+	OPTFLAGS := -O2
 endif
 
 ASFLAGS := -march=vr4300 -32 -no-pad-sections -Iinclude
 
 ifeq ($(COMPILER),gcc)
-  CFLAGS += -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -fno-pic -mno-abicalls -mdivide-breaks -fno-zero-initialized-in-bss -fno-toplevel-reorder -ffreestanding -fno-common -fno-merge-constants -mno-explicit-relocs -mno-split-addresses $(CHECK_WARNINGS) -funsigned-char
-  MIPS_VERSION := -mips3
+	CFLAGS += -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -fno-pic -mno-abicalls -mdivide-breaks -fno-zero-initialized-in-bss -fno-toplevel-reorder -ffreestanding -fno-common -fno-merge-constants -mno-explicit-relocs -mno-split-addresses $(CHECK_WARNINGS) -funsigned-char
+	MIPS_VERSION := -mips3
 else
-  # we support Microsoft extensions such as anonymous structs, which the compiler does support but warns for their usage. Surpress the warnings with -woff.
-  CFLAGS += -G 0 -non_shared -fullwarn -verbose -Xcpluscomm $(INC) -Wab,-r4300_mul -woff 516,649,838,712
-  MIPS_VERSION := -mips2
+	# we support Microsoft extensions such as anonymous structs, which the compiler does support but warns for their usage. Surpress the warnings with -woff.
+	CFLAGS += -G 0 -non_shared -fullwarn -verbose -Xcpluscomm $(INC) -Wab,-r4300_mul -woff 516,649,838,712
+	MIPS_VERSION := -mips2
 endif
 
 CC_CHECK  = @:
@@ -162,8 +166,8 @@ ASSET_BIN_DIRS := $(shell find assets/* -type d -not -path "assets/xml*" -not -p
 ASSET_FILES_XML := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.xml))
 ASSET_FILES_BIN := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.bin))
 ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_XML:.xml=.c),$f) \
-				   $(foreach f,$(ASSET_FILES_BIN:.bin=.bin.inc.c),build/$f) \
-				   $(foreach f,$(wildcard assets/text/*.c),build/$(f:.c=.o))
+					 $(foreach f,$(ASSET_FILES_BIN:.bin=.bin.inc.c),build/$f) \
+					 $(foreach f,$(wildcard assets/text/*.c),build/$(f:.c=.o))
 
 UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
 
@@ -171,8 +175,8 @@ UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
 C_FILES       := $(filter-out %.inc.c,$(foreach dir,$(SRC_DIRS) $(ASSET_BIN_DIRS),$(wildcard $(dir)/*.c)))
 S_FILES       := $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS),$(wildcard $(dir)/*.s))
 O_FILES       := $(foreach f,$(S_FILES:.s=.o),build/$f) \
-                 $(foreach f,$(C_FILES:.c=.o),build/$f) \
-                 $(foreach f,$(wildcard baserom/*),build/$f.o)
+								 $(foreach f,$(C_FILES:.c=.o),build/$f) \
+								 $(foreach f,$(wildcard baserom/*),build/$f.o)
 
 OVL_RELOC_FILES := $(shell $(CPP) $(CPPFLAGS) $(SPEC) | grep -o '[^"]*_reloc.o' )
 
@@ -238,7 +242,6 @@ ifeq ($(EMULATOR),)
 	$(error Emulator path not set. Set EMULATOR in the Makefile or define it as an environment variable)
 endif
 	$(EMULATOR) $(EMU_FLAGS) $<
-
 
 .PHONY: all clean setup run distclean assetclean compress wad rebuildtools
 
