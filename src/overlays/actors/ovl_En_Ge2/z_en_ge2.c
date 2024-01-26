@@ -223,7 +223,7 @@ s32 Ge2_DetectPlayerInUpdate(PlayState* play, EnGe2* this, Vec3f* pos, s16 yRot,
 }
 
 s32 EnGe2_CheckCarpentersFreed(void) {
-    if (CHECK_FLAG_ALL(gSaveContext.eventChkInf[EVENTCHKINF_CARPENTERS_FREE_INDEX] &
+    if (CHECK_FLAG_ALL(gSaveContext.save.info.eventChkInf[EVENTCHKINF_CARPENTERS_FREE_INDEX] &
                            (EVENTCHKINF_CARPENTERS_FREE_MASK_ALL | 0xF0),
                        EVENTCHKINF_CARPENTERS_FREE_MASK_ALL)) {
         return 1;
@@ -480,8 +480,8 @@ void EnGe2_SetupCapturePlayer(EnGe2* this, PlayState* play) {
     this->stateFlags |= GE2_STATE_CAPTURING;
     this->actor.speed = 0.0f;
     EnGe2_ChangeAction(this, GE2_ACTION_CAPTURETURN);
-    func_8002DF54(play, &this->actor, PLAYER_CSMODE_95);
-    func_80078884(NA_SE_SY_FOUND);
+    func_8002DF54(play, &this->actor, PLAYER_CSACTION_95);
+    Sfx_PlaySfxCentered(NA_SE_SY_FOUND);
     Message_StartTextbox(play, 0x6000, &this->actor);
 }
 
@@ -650,7 +650,7 @@ void EnGe2_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnGe2* this = (EnGe2*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ge2.c", 1274);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_37Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeIndex]));
@@ -658,5 +658,5 @@ void EnGe2_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnGe2_OverrideLimbDraw, EnGe2_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ge2.c", 1291);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

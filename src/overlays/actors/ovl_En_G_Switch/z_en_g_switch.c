@@ -137,12 +137,12 @@ void EnGSwitch_Init(Actor* thisx, PlayState* play) {
             this->actor.scale.y = 0.45f;
             this->actor.scale.z = 0.25f;
             this->collider.info.bumper.dmgFlags = DMG_ARROW;
-            this->objId = OBJECT_TSUBO;
-            this->objIndex = Object_GetIndex(&play->objectCtx, this->objId);
-            if (this->objIndex < 0) {
+            this->objectId = OBJECT_TSUBO;
+            this->requiredObjectSlot = Object_GetSlot(&play->objectCtx, this->objectId);
+            if (this->requiredObjectSlot < 0) {
                 Actor_Kill(&this->actor);
                 // "what?"
-                osSyncPrintf(VT_FGCOL(MAGENTA) " なにみの？ %d\n" VT_RST "\n", this->objIndex);
+                osSyncPrintf(VT_FGCOL(MAGENTA) " なにみの？ %d\n" VT_RST "\n", this->requiredObjectSlot);
                 // "bank is funny"
                 osSyncPrintf(VT_FGCOL(CYAN) " バンクおかしいしぞ！%d\n" VT_RST "\n", this->actor.params);
             }
@@ -198,9 +198,9 @@ void EnGSwitch_Break(EnGSwitch* this, PlayState* play) {
 }
 
 void EnGSwitch_WaitForObject(EnGSwitch* this, PlayState* play) {
-    if (Object_IsLoaded(&play->objectCtx, this->objIndex)) {
-        gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.status[this->objIndex].segment);
-        this->actor.objBankIndex = this->objIndex;
+    if (Object_IsLoaded(&play->objectCtx, this->requiredObjectSlot)) {
+        gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[this->requiredObjectSlot].segment);
+        this->actor.objectSlot = this->requiredObjectSlot;
         this->actor.draw = EnGSwitch_DrawPot;
         this->actionFunc = EnGSwitch_ArcheryPot;
     }
@@ -226,10 +226,10 @@ void EnGSwitch_SilverRupeeTracker(EnGSwitch* this, PlayState* play) {
         if ((play->sceneId == SCENE_GERUDO_TRAINING_GROUND) && (this->actor.room == 2)) {
             Flags_SetTempClear(play, this->actor.room);
         } else {
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
             Flags_SetSwitch(play, this->switchFlag);
         }
-        func_80078884(NA_SE_SY_GET_RUPY);
+        Sfx_PlaySfxCentered(NA_SE_SY_GET_RUPY);
         Actor_Kill(&this->actor);
     }
 }
@@ -241,7 +241,7 @@ void EnGSwitch_SilverRupeeIdle(EnGSwitch* this, PlayState* play) {
     if (this->actor.xyzDistToPlayerSq < SQ(30.0f)) {
         Rupees_ChangeBy(5);
         sCollectedCount++;
-        func_80078884(NA_SE_SY_GET_RUPY);
+        Sfx_PlaySfxCentered(NA_SE_SY_GET_RUPY);
         this->actor.world.pos = player->actor.world.pos;
         this->actor.world.pos.y += 40.0f;
         if (LINK_IS_ADULT) {
@@ -343,8 +343,8 @@ void EnGSwitch_GalleryRupee(EnGSwitch* this, PlayState* play) {
             if (gallery->actor.update != NULL) {
                 gallery->hitCount++;
                 gallery->targetState[this->index] = ENSYATEKIHIT_HIT;
-                func_80078884(NA_SE_EV_HIT_SOUND);
-                func_80078884(NA_SE_SY_GET_RUPY);
+                Sfx_PlaySfxCentered(NA_SE_EV_HIT_SOUND);
+                Sfx_PlaySfxCentered(NA_SE_SY_GET_RUPY);
                 // "Yeah !"
                 osSyncPrintf(VT_FGCOL(YELLOW) "☆☆☆☆☆ いぇぇーす！ＨＩＴ！！ ☆☆☆☆☆ %d\n" VT_RST, gallery->hitCount);
                 EnGSwitch_Break(this, play);
@@ -459,12 +459,12 @@ void EnGSwitch_DrawPot(Actor* thisx, PlayState* play) {
     EnGSwitch* this = (EnGSwitch*)thisx;
 
     if (!this->broken) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_g_switch.c", 918);
+        OPEN_DISPS(play->state.gfxCtx);
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_g_switch.c", 925),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, object_tsubo_DL_0017C0);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_g_switch.c", 928);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 
@@ -478,14 +478,14 @@ void EnGSwitch_DrawRupee(Actor* thisx, PlayState* play) {
 
     if (1) {}
     if (!this->broken) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_g_switch.c", 951);
+        OPEN_DISPS(play->state.gfxCtx);
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         func_8002EBCC(&this->actor, play, 0);
         gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_en_g_switch.c", 957),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sRupeeTextures[this->colorIdx]));
         gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_g_switch.c", 961);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
     if (this->type == ENGSWITCH_TARGET_RUPEE) {
         EnGSwitch_DrawEffects(this, play);
@@ -555,7 +555,7 @@ void EnGSwitch_DrawEffects(EnGSwitch* this, PlayState* play) {
     f32 scale;
     s32 pad;
 
-    OPEN_DISPS(gfxCtx, "../z_en_g_switch.c", 1073);
+    OPEN_DISPS(gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     for (i = 0; i < this->numEffects; i++, effect++) {
         if (effect->flag) {
@@ -571,5 +571,5 @@ void EnGSwitch_DrawEffects(EnGSwitch* this, PlayState* play) {
             gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
         }
     }
-    CLOSE_DISPS(gfxCtx, "../z_en_g_switch.c", 1095);
+    CLOSE_DISPS(gfxCtx);
 }

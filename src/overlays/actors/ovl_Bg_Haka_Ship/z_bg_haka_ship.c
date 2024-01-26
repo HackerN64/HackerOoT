@@ -198,7 +198,7 @@ void BgHakaShip_Draw(Actor* thisx, PlayState* play) {
     BgHakaShip* this = (BgHakaShip*)thisx;
     f32 angleTemp;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_haka_ship.c", 528);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     if (this->dyna.actor.params == 0) {
         gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_haka_ship.c", 534),
@@ -220,7 +220,7 @@ void BgHakaShip_Draw(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, object_haka_objects_DL_00E910);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_haka_ship.c", 568);
+    CLOSE_DISPS(play->state.gfxCtx);
     if (this->actionFunc == BgHakaShip_CutsceneStationary || this->actionFunc == BgHakaShip_Move) {
         s32 pad;
         Vec3f sp2C;
@@ -230,6 +230,6 @@ void BgHakaShip_Draw(Actor* thisx, PlayState* play) {
         sp2C.z = this->dyna.actor.world.pos.z;
 
         SkinMatrix_Vec3fMtxFMultXYZ(&play->viewProjectionMtxF, &sp2C, &this->bellSfxPos);
-        func_80078914(&this->bellSfxPos, NA_SE_EV_SHIP_BELL - SFX_FLAG);
+        Sfx_PlaySfxAtPos(&this->bellSfxPos, NA_SE_EV_SHIP_BELL - SFX_FLAG);
     }
 }

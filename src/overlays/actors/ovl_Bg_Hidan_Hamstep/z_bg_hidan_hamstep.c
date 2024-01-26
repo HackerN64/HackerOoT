@@ -378,7 +378,7 @@ void func_80888A58(BgHidanHamstep* this, PlayState* play) {
                 func_808884C8(this, play);
 
                 if ((this->dyna.actor.params & 0xFF) == 5) {
-                    func_80078884(NA_SE_SY_CORRECT_CHIME);
+                    Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
                 }
 
                 osSyncPrintf("B(%d)\n", this->dyna.actor.params);
@@ -397,7 +397,7 @@ void BgHidanHamstep_Update(Actor* thisx, PlayState* play) {
 }
 
 void BgHidanHamstep_Draw(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_hidan_hamstep.c", 782);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -410,5 +410,5 @@ void BgHidanHamstep_Draw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_OPA_DISP++, gFireTempleStoneStep2DL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_hidan_hamstep.c", 796);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

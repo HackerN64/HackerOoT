@@ -172,7 +172,7 @@ typedef enum {
     /* 0x20 */ CAM_SET_START1, // Scene/room door transitions that snap the camera to a fixed location (example: ganon's towers doors climbing up)
     /* 0x21 */ CAM_SET_FREE0, // Full manual control is given over the camera
     /* 0x22 */ CAM_SET_FREE2, // Various OnePoint Cutscenes, 10 total (example: falling chest)
-    /* 0x23 */ CAM_SET_PIVOT_CORNER, // Inside the carpenter jail cells from theives hideout "CIRCLE4"
+    /* 0x23 */ CAM_SET_PIVOT_CORNER, // Inside the carpenter jail cells from thieves hideout "CIRCLE4"
     /* 0x24 */ CAM_SET_PIVOT_WATER_SURFACE, // Player diving from the surface of the water to underwater "CIRCLE5"
     /* 0x25 */ CAM_SET_CS_0, // Various cutscenes "DEMO0"
     /* 0x26 */ CAM_SET_CS_TWISTED_HALLWAY, // Never set to, but checked in twisting hallway (Forest Temple) "DEMO1"
@@ -1256,7 +1256,7 @@ typedef enum {
 #define ONEPOINT_CS_INIT_FIELD_NONE 0xFF
 #define ONEPOINT_CS_INIT_FIELD_ACTORCAT(actorCat) (0x80 | ((actorCat) & 0x0F))
 #define ONEPOINT_CS_INIT_FIELD_HUD_VISIBILITY(camHudVisibility) (0xC0 | ((camHudVisibility) & 0x0F))
-#define ONEPOINT_CS_INIT_FIELD_PLAYER_CS(csMode) ((csMode) & 0x7F)
+#define ONEPOINT_CS_INIT_FIELD_PLAYER_CS(csAction) ((csAction) & 0x7F)
 
 #define ONEPOINT_CS_INIT_FIELD_IS_TYPE_ACTORCAT(field) ((field & 0xF0) == 0x80)
 #define ONEPOINT_CS_INIT_FIELD_IS_TYPE_HUD_VISIBILITY(field) ((field & 0xF0) == 0xC0)

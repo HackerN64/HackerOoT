@@ -230,7 +230,7 @@ void EnNy_Move(EnNy* this, PlayState* play) {
     func_80ABCD40(this);
     stoneTimer = this->stoneTimer;
     this->stoneTimer--;
-    if ((stoneTimer <= 0) || (this->hitPlayer != false)) {
+    if ((stoneTimer <= 0) || this->hitPlayer) {
         EnNy_SetupTurnToStone(this);
     } else {
         Math_SmoothStepToS(&this->actor.shape.rot.y, this->actor.yawTowardsPlayer, 0xA, this->unk_1F4, 0);
@@ -526,7 +526,7 @@ void EnNy_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnNy* this = (EnNy*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ny.c", 837);
+    OPEN_DISPS(play->state.gfxCtx);
     Collider_UpdateSpheres(0, &this->collider);
     func_8002ED80(&this->actor, play, 1);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -548,7 +548,7 @@ void EnNy_Draw(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, gEnNySpikeDL);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ny.c", 872);
+    CLOSE_DISPS(play->state.gfxCtx);
     if (this->unk_1CA != 0) {
         Vec3f tempVec;
         Vec3f* fireOffset;
@@ -572,7 +572,7 @@ void EnNy_DrawDeathEffect(Actor* thisx, PlayState* play) {
     f32 scale;
     s32 i;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ny.c", 900);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
     gDPSetRenderMode(POLY_OPA_DISP++, G_RM_FOG_SHADE_A, G_RM_AA_ZB_OPA_SURF2);
@@ -588,7 +588,7 @@ void EnNy_DrawDeathEffect(Actor* thisx, PlayState* play) {
             gSPDisplayList(POLY_OPA_DISP++, gEnNyRockBodyDL);
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ny.c", 919);
+    CLOSE_DISPS(play->state.gfxCtx);
     if (this->unk_1CA != 0) {
         Vec3f tempVec;
         Vec3f* fireOffset;

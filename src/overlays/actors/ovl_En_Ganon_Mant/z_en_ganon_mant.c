@@ -129,12 +129,12 @@ void EnGanonMant_Tear(EnGanonMant* this) {
     for (i = 0; i < count; i++) {
         if ((0 <= tx && tx < MANT_TEX_WIDTH) && (0 <= ty && ty < MANT_TEX_HEIGHT)) {
             for (areaX = 0; areaX <= tearAreaSizes[i]; areaX++) {
-                if (1) {}
                 for (areaY = 0; areaY <= tearAreaSizes[i]; areaY++) {
                     texIdx = (s16)((s16)tx + ((s16)ty * MANT_TEX_WIDTH)) + ((s16)areaX + ((s16)areaY * MANT_TEX_WIDTH));
-                    if (texIdx < MANT_TEX_WIDTH * MANT_TEX_HEIGHT) {
-                        ((u16*)gMantTex)[texIdx] = 0;
+                    if (texIdx >= MANT_TEX_WIDTH * MANT_TEX_HEIGHT) {
+                        continue;
                     }
+                    ((u16*)gMantTex)[texIdx] = 0;
                 }
             }
         }
@@ -357,7 +357,7 @@ void EnGanonMant_Update(Actor* thisx, PlayState* play) {
 void EnGanonMant_DrawCloak(PlayState* play, EnGanonMant* this) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ganon_mant.c", 564);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Matrix_Translate(0.0f, 0.0f, 0.0f, MTXMODE_NEW);
 
@@ -378,7 +378,7 @@ void EnGanonMant_DrawCloak(PlayState* play, EnGanonMant* this) {
     // draw cloak
     gSPDisplayList(POLY_OPA_DISP++, gMantDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ganon_mant.c", 584);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnGanonMant_Draw(Actor* thisx, PlayState* play) {

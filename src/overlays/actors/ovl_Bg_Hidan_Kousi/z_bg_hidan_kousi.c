@@ -112,7 +112,7 @@ void func_80889B5C(BgHidanKousi* this, PlayState* play) {
 }
 
 void func_80889BC0(BgHidanKousi* this, PlayState* play) {
-    this->unk_168 -= 1;
+    this->unk_168--;
     if (this->dyna.actor.category == func_8005B198() || (this->unk_168 <= 0)) {
         BgHidanKousi_SetupAction(this, func_80889C18);
     }
@@ -150,7 +150,7 @@ void BgHidanKousi_Update(Actor* thisx, PlayState* play) {
 }
 
 void BgHidanKousi_Draw(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_hidan_kousi.c", 350);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -158,5 +158,5 @@ void BgHidanKousi_Draw(Actor* thisx, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, sMetalFencesDLs[thisx->params & 0xFF]);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_hidan_kousi.c", 359);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

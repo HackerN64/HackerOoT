@@ -147,7 +147,7 @@ void func_80A89A6C(EnJsjutan* this, PlayState* play) {
     i = 1;
 
     // Credits scene. The magic carpet man is friends with the bean guy and the lakeside professor.
-    if ((gSaveContext.entranceIndex == ENTR_LON_LON_RANCH_0) && (gSaveContext.sceneLayer == 8)) {
+    if ((gSaveContext.save.entranceIndex == ENTR_LON_LON_RANCH_0) && (gSaveContext.sceneLayer == 8)) {
         isInCreditsScene = true;
 
         actorProfessor = play->actorCtx.actorLists[ACTORCAT_NPC].head;
@@ -297,7 +297,7 @@ void func_80A89A6C(EnJsjutan* this, PlayState* play) {
         this->dyna.actor.velocity.y = 0.0f;
         this->dyna.actor.world.pos.y = this->unk_168;
 
-        dayTime = gSaveContext.dayTime;
+        dayTime = gSaveContext.save.dayTime;
 
         if (dayTime >= CLOCK_TIME(12, 0)) {
             dayTime = 0xFFFF - dayTime;
@@ -370,7 +370,7 @@ void EnJsjutan_Draw(Actor* thisx, PlayState* play2) {
     s16 i;
     Actor* parent = thisx->parent;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_jsjutan.c", 701);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (thisx->params == ENJSJUTAN_TYPE_01) {
         thisx->world.pos.x = parent->world.pos.x;
@@ -442,5 +442,5 @@ void EnJsjutan_Draw(Actor* thisx, PlayState* play2) {
     }
     gSPDisplayList(POLY_OPA_DISP++, sModelDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_jsjutan.c", 823);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

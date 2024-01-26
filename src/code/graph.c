@@ -118,28 +118,15 @@ void Graph_InitTHGA(GraphicsContext* gfxCtx) {
 GameStateOverlay* Graph_GetNextGameState(GameState* gameState) {
     void* gameStateInitFunc = GameState_GetInit(gameState);
 
-    if (gameStateInitFunc == Setup_Init) {
-        return &gGameStateOverlayTable[0];
+    // Generates code to match gameStateInitFunc to a gamestate entry and returns it if found
+#define DEFINE_GAMESTATE_INTERNAL(typeName, enumName) \
+    if (gameStateInitFunc == typeName##_Init) {       \
+        return &gGameStateOverlayTable[enumName];     \
     }
-
-#ifdef ENABLE_MAP_SELECT
-    if (gameStateInitFunc == MapSelect_Init) {
-        return &gGameStateOverlayTable[1];
-    }
-#endif
-
-    if (gameStateInitFunc == ConsoleLogo_Init) {
-        return &gGameStateOverlayTable[2];
-    }
-    if (gameStateInitFunc == Play_Init) {
-        return &gGameStateOverlayTable[3];
-    }
-    if (gameStateInitFunc == TitleSetup_Init) {
-        return &gGameStateOverlayTable[4];
-    }
-    if (gameStateInitFunc == FileSelect_Init) {
-        return &gGameStateOverlayTable[5];
-    }
+#define DEFINE_GAMESTATE(typeName, enumName, name) DEFINE_GAMESTATE_INTERNAL(typeName, enumName)
+#include "tables/gamestate_table.h"
+#undef DEFINE_GAMESTATE
+#undef DEFINE_GAMESTATE_INTERNAL
 
     LOG_ADDRESS("game_init_func", gameStateInitFunc, "../graph.c", 696);
     return NULL;
@@ -242,9 +229,9 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
     task->output_buff_size = gGfxSPTaskOutputBuffer + ARRAY_COUNT(gGfxSPTaskOutputBuffer);
     task->data_ptr = (u64*)gfxCtx->workBuffer;
 
-    OPEN_DISPS(gfxCtx, "../graph.c", 828);
+    OPEN_DISPS(gfxCtx);
     task->data_size = (uintptr_t)WORK_DISP - (uintptr_t)gfxCtx->workBuffer;
-    CLOSE_DISPS(gfxCtx, "../graph.c", 830);
+    CLOSE_DISPS(gfxCtx);
 
     { s32 pad2; } // Necessary to match stack usage
 
@@ -289,28 +276,28 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gameState->inPreNMIState = false;
     Graph_InitTHGA(gfxCtx);
 
-    OPEN_DISPS(gfxCtx, "../graph.c", 966);
+    OPEN_DISPS(gfxCtx);
 
     gDPNoOpString(WORK_DISP++, "WORK_DISP 開始", 0);
     gDPNoOpString(POLY_OPA_DISP++, "POLY_OPA_DISP 開始", 0);
     gDPNoOpString(POLY_XLU_DISP++, "POLY_XLU_DISP 開始", 0);
     gDPNoOpString(OVERLAY_DISP++, "OVERLAY_DISP 開始", 0);
 
-    CLOSE_DISPS(gfxCtx, "../graph.c", 975);
+    CLOSE_DISPS(gfxCtx);
 
     GameState_ReqPadData(gameState);
     GameState_Update(gameState);
 
-    OPEN_DISPS(gfxCtx, "../graph.c", 987);
+    OPEN_DISPS(gfxCtx);
 
     gDPNoOpString(WORK_DISP++, "WORK_DISP 終了", 0);
     gDPNoOpString(POLY_OPA_DISP++, "POLY_OPA_DISP 終了", 0);
     gDPNoOpString(POLY_XLU_DISP++, "POLY_XLU_DISP 終了", 0);
     gDPNoOpString(OVERLAY_DISP++, "OVERLAY_DISP 終了", 0);
 
-    CLOSE_DISPS(gfxCtx, "../graph.c", 996);
+    CLOSE_DISPS(gfxCtx);
 
-    OPEN_DISPS(gfxCtx, "../graph.c", 999);
+    OPEN_DISPS(gfxCtx);
 
     gSPBranchList(WORK_DISP++, gfxCtx->polyOpaBuffer);
     gSPBranchList(POLY_OPA_DISP++, gfxCtx->polyXluBuffer);
@@ -319,7 +306,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gDPFullSync(OVERLAY_DISP++);
     gSPEndDisplayList(OVERLAY_DISP++);
 
-    CLOSE_DISPS(gfxCtx, "../graph.c", 1028);
+    CLOSE_DISPS(gfxCtx);
 
     if (R_HREG_MODE == HREG_MODE_PLAY && R_PLAY_ENABLE_UCODE_DISAS == 2) {
         R_HREG_MODE = HREG_MODE_UCODE_DISAS;
@@ -443,11 +430,9 @@ void Graph_ThreadEntry(void* arg0) {
     GraphicsContext gfxCtx;
     GameState* gameState;
     u32 size;
-    GameStateOverlay* nextOvl;
+    GameStateOverlay* nextOvl = &gGameStateOverlayTable[GAMESTATE_SETUP];
     GameStateOverlay* ovl;
     char faultMsg[0x50];
-
-    nextOvl = &gGameStateOverlayTable[0];
 
     osSyncPrintf("グラフィックスレッド実行開始\n"); // "Start graphic thread execution"
     Graph_Init(&gfxCtx);
@@ -456,7 +441,7 @@ void Graph_ThreadEntry(void* arg0) {
     gIsUsingWidescreen = true;
 #endif
 
-    while (nextOvl) {
+    while (nextOvl != NULL) {
         ovl = nextOvl;
         Overlay_LoadGameState(ovl);
 
@@ -507,6 +492,7 @@ void* Graph_Alloc2(GraphicsContext* gfxCtx, size_t size) {
     return THGA_AllocTail(&gfxCtx->polyOpa, ALIGN16(size));
 }
 
+#ifndef DISABLE_DEBUG_FEATURES
 void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, s32 line) {
     if (R_HREG_MODE == HREG_MODE_UCODE_DISAS && R_UCODE_DISAS_LOG_MODE != 4) {
         dispRefs[0] = gfxCtx->polyOpa.p;
@@ -540,6 +526,7 @@ void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file,
         }
     }
 }
+#endif
 
 Gfx* Graph_GfxPlusOne(Gfx* gfx) {
     return gfx + 1;
@@ -550,17 +537,17 @@ Gfx* Graph_BranchDlist(Gfx* gfx, Gfx* dst) {
     return dst;
 }
 
-void* Graph_DlistAlloc(Gfx** gfx, u32 size) {
+void* Graph_DlistAlloc(Gfx** gfxP, u32 size) {
     u8* ptr;
     Gfx* dst;
 
     size = ALIGN8(size);
 
-    ptr = (u8*)(*gfx + 1);
+    ptr = (u8*)(*gfxP + 1);
 
     dst = (Gfx*)(ptr + size);
-    gSPBranchList(*gfx, dst);
+    gSPBranchList(*gfxP, dst);
 
-    *gfx = dst;
+    *gfxP = dst;
     return ptr;
 }

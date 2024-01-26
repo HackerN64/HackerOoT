@@ -312,7 +312,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
 
                     this->introState = BFD_CS_START;
                     Cutscene_StartManual(play, &play->csCtx);
-                    func_8002DF54(play, &this->actor, PLAYER_CSMODE_8);
+                    func_8002DF54(play, &this->actor, PLAYER_CSACTION_8);
                     this->subCamId = Play_CreateSubCamera(play);
                     Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
                     Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
@@ -389,7 +389,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                     Math_ApproachF(&this->subCamShake, 2.0f, 1.0f, 0.8 * 0.01f);
                 }
                 if (this->timers[0] == 40) {
-                    func_8002DF54(play, &this->actor, PLAYER_CSMODE_19);
+                    func_8002DF54(play, &this->actor, PLAYER_CSACTION_19);
                 }
                 if (this->timers[0] == 0) {
                     this->introState = BFD_CS_LOOK_GROUND;
@@ -418,7 +418,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                     this->timers[0] = 170;
                     this->subCamVelFactor = 0.0f;
                     this->subCamAccel = 0.0f;
-                    func_8002DF54(play, &this->actor, PLAYER_CSMODE_20);
+                    func_8002DF54(play, &this->actor, PLAYER_CSACTION_20);
                 }
                 break;
             case BFD_CS_COLLAPSE:
@@ -468,7 +468,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                 if (this->timers[3] == 190) {
                     this->subCamAtMaxVelFrac.x = this->subCamAtMaxVelFrac.y = this->subCamAtMaxVelFrac.z = 0.05f;
                     this->platformSignal = VBSIMA_KILL;
-                    func_8002DF54(play, &this->actor, PLAYER_CSMODE_1);
+                    func_8002DF54(play, &this->actor, PLAYER_CSACTION_1);
                 }
                 if (this->actor.world.pos.y > 120.0f) {
                     this->subCamAtNext = this->actor.world.pos;
@@ -489,8 +489,8 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                     SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_FIRE_BOSS);
                 }
                 if ((this->timers[3] == 130) && !GET_EVENTCHKINF(EVENTCHKINF_73)) {
-                    TitleCard_InitBossName(play, &play->actorCtx.titleCtx,
-                                           SEGMENTED_TO_VIRTUAL(gVolvagiaBossTitleCardTex), 0xA0, 0xB4, 0x80, 0x28);
+                    TitleCard_InitBossName(play, &play->actorCtx.titleCtx, SEGMENTED_TO_VIRTUAL(gVolvagiaTitleCardTex),
+                                           160, 180, 128, 40);
                 }
                 if (this->timers[3] <= 100) {
                     this->subCamEyeVel.x = this->subCamEyeVel.y = this->subCamEyeVel.z = 2.0f;
@@ -538,7 +538,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                     // BFD_CS_NONE / BOSSFD_FLY_MAIN / SUB_CAM_ID_DONE
                     this->introState = this->introFlyState = this->subCamId = 0;
                     Cutscene_StopManual(play, &play->csCtx);
-                    func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
+                    func_8002DF54(play, &this->actor, PLAYER_CSACTION_7);
                     this->actionFunc = BossFd_Wait;
                     this->handoffSignal = FD2_SIGNAL_GROUND;
                     SET_EVENTCHKINF(EVENTCHKINF_73);
@@ -847,7 +847,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                         Audio_PlaySfxGeneral(NA_SE_EN_VALVAISA_LAND2, &this->actor.projectedPos, 4,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultReverb);
-                        func_8002DF54(play, &this->actor, PLAYER_CSMODE_5);
+                        func_8002DF54(play, &this->actor, PLAYER_CSACTION_5);
                         for (i1 = 0; i1 < 15; i1++) {
                             Vec3f sp144 = { 0.0f, 0.0f, 0.0f };
                             Vec3f sp138 = { 0.0f, 0.0f, 0.0f };
@@ -1476,7 +1476,7 @@ void BossFd_UpdateEffects(BossFd* this, PlayState* play) {
                 if ((this->timers[3] == 0) && (sqrtf(SQ(diff.x) + SQ(diff.y) + SQ(diff.z)) < 20.0f)) {
                     this->timers[3] = 50;
                     func_8002F6D4(play, NULL, 5.0f, effect->kbAngle, 0.0f, 0x30);
-                    if (player->isBurning == false) {
+                    if (!player->isBurning) {
                         for (i2 = 0; i2 < PLAYER_BODYPART_MAX; i2++) {
                             player->flameTimers[i2] = Rand_S16Offset(0, 200);
                         }
@@ -1518,7 +1518,7 @@ void BossFd_DrawEffects(BossFdEffect* effect, PlayState* play) {
     s16 i;
     BossFdEffect* firstEffect = effect;
 
-    OPEN_DISPS(gfxCtx, "../z_boss_fd.c", 4023);
+    OPEN_DISPS(gfxCtx);
 
     for (i = 0; i < BOSSFD_EFFECT_COUNT; i++, effect++) {
         if (effect->type == BFD_FX_EMBER) {
@@ -1627,7 +1627,7 @@ void BossFd_DrawEffects(BossFdEffect* effect, PlayState* play) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_boss_fd.c", 4198);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void BossFd_Draw(Actor* thisx, PlayState* play) {
@@ -1636,7 +1636,7 @@ void BossFd_Draw(Actor* thisx, PlayState* play) {
 
     osSyncPrintf("FD DRAW START\n");
     if (this->actionFunc != BossFd_Wait) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4217);
+        OPEN_DISPS(play->state.gfxCtx);
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         if (this->work[BFD_DAMAGE_FLASH_TIMER] & 2) {
             POLY_OPA_DISP = Gfx_SetFog(POLY_OPA_DISP, 255, 255, 255, 0, 900, 1099);
@@ -1644,7 +1644,7 @@ void BossFd_Draw(Actor* thisx, PlayState* play) {
 
         BossFd_DrawBody(play, this);
         POLY_OPA_DISP = Play_SetFog(play, POLY_OPA_DISP);
-        CLOSE_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4243);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 
     osSyncPrintf("FD DRAW END\n");
@@ -1715,7 +1715,7 @@ void BossFd_DrawMane(PlayState* play, BossFd* this, Vec3f* manePos, Vec3f* maneR
     f32 phi_f20;
     f32 phi_f22;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4419);
+    OPEN_DISPS(play->state.gfxCtx);
 
     maneLength = this->skinSegments;
     maneLength = CLAMP_MAX(maneLength, 10);
@@ -1761,7 +1761,7 @@ void BossFd_DrawMane(PlayState* play, BossFd* this, Vec3f* manePos, Vec3f* maneR
         gSPDisplayList(POLY_XLU_DISP++, gVolvagiaManeModelDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4483);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 s32 BossFd_OverrideHeadDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
@@ -1821,7 +1821,7 @@ void BossFd_DrawBody(PlayState* play, BossFd* this) {
     f32 temp_float;
     Mtx* tempMat = Graph_Alloc(play->state.gfxCtx, 18 * sizeof(Mtx));
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4589);
+    OPEN_DISPS(play->state.gfxCtx);
     if (this->skinSegments != 0) {
         gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(sEyeTextures[this->eyeState]));
     }
@@ -1974,5 +1974,5 @@ void BossFd_DrawBody(PlayState* play, BossFd* this) {
 
     Matrix_Pop();
     osSyncPrintf("END\n");
-    CLOSE_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4987);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

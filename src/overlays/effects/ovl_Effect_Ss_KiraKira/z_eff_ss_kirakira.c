@@ -81,22 +81,22 @@ void EffectSsKiraKira_Draw(PlayState* play, u32 index, EffectSs* this) {
     MtxF mfTrans;
     MtxF mfRotY;
     MtxF mfScale;
-    MtxF mfTrans11DA0;
-    MtxF mfTrans11DA0RotY;
+    MtxF mfTransBillboard;
+    MtxF mfTransBillboardRotY;
     MtxF mfResult;
     Mtx* mtx;
 
     scale = this->rScale / 10000.0f;
     gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_ss_kirakira.c", 257);
+    OPEN_DISPS(gfxCtx);
 
     SkinMatrix_SetTranslate(&mfTrans, this->pos.x, this->pos.y, this->pos.z);
     SkinMatrix_SetRotateZYX(&mfRotY, 0, 0, this->rYaw);
     SkinMatrix_SetScale(&mfScale, scale, scale, 1.0f);
-    SkinMatrix_MtxFMtxFMult(&mfTrans, &play->billboardMtxF, &mfTrans11DA0);
-    SkinMatrix_MtxFMtxFMult(&mfTrans11DA0, &mfRotY, &mfTrans11DA0RotY);
-    SkinMatrix_MtxFMtxFMult(&mfTrans11DA0RotY, &mfScale, &mfResult);
+    SkinMatrix_MtxFMtxFMult(&mfTrans, &play->billboardMtxF, &mfTransBillboard);
+    SkinMatrix_MtxFMtxFMult(&mfTransBillboard, &mfRotY, &mfTransBillboardRotY);
+    SkinMatrix_MtxFMtxFMult(&mfTransBillboardRotY, &mfScale, &mfResult);
     gSPMatrix(POLY_XLU_DISP++, &gMtxClear, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     mtx = SkinMatrix_MtxFToNewMtx(gfxCtx, &mfResult);
@@ -110,7 +110,7 @@ void EffectSsKiraKira_Draw(PlayState* play, u32 index, EffectSs* this) {
         gSPDisplayList(POLY_XLU_DISP++, this->gfx);
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_ss_kirakira.c", 301);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_809AABF0(PlayState* play, u32 index, EffectSs* this) {

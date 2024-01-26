@@ -211,7 +211,7 @@ s32 func_80AA08C4(EnMa1* this, PlayState* play) {
 
 void EnMa1_UpdateEyes(EnMa1* this) {
     if (DECR(this->blinkTimer) == 0) {
-        this->eyeIndex += 1;
+        this->eyeIndex++;
         if (this->eyeIndex >= 3) {
             this->blinkTimer = Rand_S16Offset(30, 30);
             this->eyeIndex = 0;
@@ -450,7 +450,7 @@ void EnMa1_Draw(Actor* thisx, PlayState* play) {
     f32 distFromCamEye;
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_ma1.c", 1226);
+    OPEN_DISPS(play->state.gfxCtx);
 
     activeCam = GET_ACTIVE_CAM(play);
     distFromCamEye = Math_Vec3f_DistXZ(&this->actor.world.pos, &activeCam->eye);
@@ -463,5 +463,5 @@ void EnMa1_Draw(Actor* thisx, PlayState* play) {
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnMa1_OverrideLimbDraw, EnMa1_PostLimbDraw, this);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_ma1.c", 1261);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

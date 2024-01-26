@@ -360,7 +360,7 @@ void EnBom_Draw(Actor* thisx, PlayState* play) {
 
     if (1) {}
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_bom.c", 913);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (thisx->params == BOMB_BODY) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -380,5 +380,5 @@ void EnBom_Draw(Actor* thisx, PlayState* play) {
         Collider_UpdateSpheres(0, &this->explosionCollider);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bom.c", 951);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

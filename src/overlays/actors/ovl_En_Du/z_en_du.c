@@ -294,7 +294,7 @@ void EnDu_Init(Actor* thisx, PlayState* play) {
     this->actor.targetMode = 1;
     this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
 
-    if (gSaveContext.cutsceneIndex >= 0xFFF0) {
+    if (gSaveContext.save.cutsceneIndex >= 0xFFF0) {
         play->csCtx.script = SEGMENTED_TO_VIRTUAL(gGoronCityDarunia01Cs);
         gSaveContext.cutsceneTrigger = 1;
         EnDu_SetupAction(this, func_809FE890);
@@ -328,7 +328,7 @@ void func_809FE3C0(EnDu* this, PlayState* play) {
         return;
     }
     if (this->interactInfo.talkState == NPC_TALK_STATE_ACTION) {
-        func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
+        func_8002DF54(play, &this->actor, PLAYER_CSACTION_7);
         this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
     }
     if (this->actor.xzDistToPlayer < 116.0f + this->collider.dim.radius) {
@@ -423,7 +423,7 @@ void func_809FE890(EnDu* this, PlayState* play) {
     CsCmdActorCue* cue;
 
     if (play->csCtx.state == CS_STATE_IDLE) {
-        func_8002DF54(play, &this->actor, PLAYER_CSMODE_1);
+        func_8002DF54(play, &this->actor, PLAYER_CSACTION_1);
         EnDu_SetupAction(this, func_809FEB08);
         return;
     }
@@ -503,7 +503,7 @@ void func_809FEB08(EnDu* this, PlayState* play) {
     this->unk_1EE = 0;
 
     if (this->unk_1E8 == 1) {
-        func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
+        func_8002DF54(play, &this->actor, PLAYER_CSACTION_7);
         Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, ENDU_ANIM_1);
         EnDu_SetupAction(this, func_809FE3C0);
         return;
@@ -522,7 +522,7 @@ void func_809FEB08(EnDu* this, PlayState* play) {
 
 void func_809FEC14(EnDu* this, PlayState* play) {
     if (this->interactInfo.talkState == NPC_TALK_STATE_ACTION) {
-        func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
+        func_8002DF54(play, &this->actor, PLAYER_CSACTION_7);
         EnDu_SetupAction(this, func_809FEC70);
         func_809FEC70(this, play);
     }
@@ -626,7 +626,7 @@ void EnDu_Draw(Actor* thisx, PlayState* play) {
     };
     EnDu* this = (EnDu*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_du.c", 1470);
+    OPEN_DISPS(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeTexIndex]));
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(mouthTextures[this->mouthTexIndex]));
@@ -634,5 +634,5 @@ void EnDu_Draw(Actor* thisx, PlayState* play) {
 
     func_80034BA0(play, &this->skelAnime, EnDu_OverrideLimbDraw, EnDu_PostLimbDraw, &this->actor, 255);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_du.c", 1487);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

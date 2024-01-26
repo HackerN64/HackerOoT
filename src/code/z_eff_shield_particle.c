@@ -154,7 +154,7 @@ void EffectShieldParticle_Draw(void* thisx, GraphicsContext* gfxCtx) {
     Color_RGBA8 primColor;
     Color_RGBA8 envColor;
 
-    OPEN_DISPS(gfxCtx, "../z_eff_shield_particle.c", 272);
+    OPEN_DISPS(gfxCtx);
 
     if (this != NULL) {
         POLY_XLU_DISP = Gfx_SetupDL(POLY_XLU_DISP, SETUPDL_38);
@@ -212,5 +212,5 @@ void EffectShieldParticle_Draw(void* thisx, GraphicsContext* gfxCtx) {
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_eff_shield_particle.c", 359);
+    CLOSE_DISPS(gfxCtx);
 }

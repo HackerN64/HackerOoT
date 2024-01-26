@@ -161,7 +161,7 @@ void BgHakaTubo_DropCollectible(BgHakaTubo* this, PlayState* play) {
             if (sPotsDestroyed == 3) {
                 // All 3 pots destroyed
                 collectibleParams = -1;
-                func_80078884(NA_SE_SY_CORRECT_CHIME);
+                Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
                 // Drop rupees
                 for (i = 0; i < 9; i++) {
                     collectible = Item_DropCollectible(
@@ -177,7 +177,7 @@ void BgHakaTubo_DropCollectible(BgHakaTubo* this, PlayState* play) {
                 Actor_Spawn(&play->actorCtx, play, ACTOR_EN_FIREFLY, this->dyna.actor.world.pos.x,
                             this->dyna.actor.world.pos.y + 80.0f, this->dyna.actor.world.pos.z, 0,
                             this->dyna.actor.shape.rot.y, 0, 2);
-                func_80078884(NA_SE_SY_ERROR);
+                Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
             } else {
                 // Random rewards
                 if (rnd < 0.4f) {
@@ -189,16 +189,16 @@ void BgHakaTubo_DropCollectible(BgHakaTubo* this, PlayState* play) {
                 } else {
                     collectibleParams = ITEM00_ARROWS_SMALL;
                 }
-                func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+                Sfx_PlaySfxCentered(NA_SE_SY_TRE_BOX_APPEAR);
             }
         } else if (Flags_GetCollectible(play, this->dyna.actor.params) != 0) {
             // If small key already collected, drop recovery heart instead
             collectibleParams = ITEM00_RECOVERY_HEART;
-            func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+            Sfx_PlaySfxCentered(NA_SE_SY_TRE_BOX_APPEAR);
         } else {
             // Drops a small key and sets a collect flag
             collectibleParams = ((this->dyna.actor.params & 0x3F) << 8) | ITEM00_SMALL_KEY;
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
         }
         if (collectibleParams != -1) {
             collectible = Item_DropCollectible(play, &spawnPos, collectibleParams);
@@ -221,7 +221,7 @@ void BgHakaTubo_Update(Actor* thisx, PlayState* play) {
 void BgHakaTubo_DrawFlameCircle(BgHakaTubo* this, PlayState* play) {
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_haka_tubo.c", 476);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     Matrix_Translate(this->dyna.actor.world.pos.x, this->dyna.actor.world.pos.y + 235.0f, this->dyna.actor.world.pos.z,
@@ -238,7 +238,7 @@ void BgHakaTubo_DrawFlameCircle(BgHakaTubo* this, PlayState* play) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gEffFireCircleDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_haka_tubo.c", 501);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void BgHakaTubo_Draw(Actor* thisx, PlayState* play) {

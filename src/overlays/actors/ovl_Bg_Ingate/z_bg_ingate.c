@@ -45,7 +45,7 @@ void BgInGate_Init(Actor* thisx, PlayState* play) {
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
     if ((play->sceneId != SCENE_LON_LON_RANCH || !LINK_IS_ADULT) ||
-        (GET_EVENTCHKINF(EVENTCHKINF_EPONA_OBTAINED) && (gSaveContext.cutsceneIndex != 0xFFF0))) {
+        (GET_EVENTCHKINF(EVENTCHKINF_EPONA_OBTAINED) && (gSaveContext.save.cutsceneIndex != 0xFFF0))) {
         Actor_Kill(&this->dyna.actor);
         return;
     }
@@ -103,7 +103,7 @@ void BgInGate_Update(Actor* thisx, PlayState* play) {
 }
 
 void BgInGate_Draw(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_ingate.c", 240);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -112,5 +112,5 @@ void BgInGate_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_OPA_DISP++, gIngoGateDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_ingate.c", 250);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

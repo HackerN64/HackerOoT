@@ -1267,7 +1267,7 @@ void EnBb_Update(Actor* thisx, PlayState* play2) {
 void EnBb_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
     EnBb* this = (EnBb*)thisx;
 
-    BodyBreak_SetInfo(&this->bodyBreak, limbIndex, 4, 15, 15, dList, BODYBREAK_OBJECT_DEFAULT);
+    BodyBreak_SetInfo(&this->bodyBreak, limbIndex, 4, 15, 15, dList, BODYBREAK_OBJECT_SLOT_DEFAULT);
 }
 
 static Vec3f sFireIceOffsets[] = {
@@ -1284,7 +1284,7 @@ void EnBb_Draw(Actor* thisx, PlayState* play) {
     Vec3f blureVtx1;
     Vec3f blureVtx2;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_bb.c", 2044);
+    OPEN_DISPS(play->state.gfxCtx);
 
     blureBase1.z = this->maxSpeedXZ * 80.0f;
     blureBase2.z = this->maxSpeedXZ * 80.0f;
@@ -1352,5 +1352,5 @@ void EnBb_Draw(Actor* thisx, PlayState* play) {
             }
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_bb.c", 2127);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

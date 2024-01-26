@@ -66,8 +66,8 @@ void BgMoriIdomizu_Init(Actor* thisx, PlayState* play) {
         this->actor.world.pos.y = 184.0f;
         BgMoriIdomizu_SetWaterLevel(play, 184);
     }
-    this->moriTexObjIndex = Object_GetIndex(&play->objectCtx, OBJECT_MORI_TEX);
-    if (this->moriTexObjIndex < 0) {
+    this->moriTexObjectSlot = Object_GetSlot(&play->objectCtx, OBJECT_MORI_TEX);
+    if (this->moriTexObjectSlot < 0) {
         Actor_Kill(&this->actor);
         // "Bank danger!"
         osSyncPrintf("Error : バンク危険！(arg_data 0x%04x)(%s %d)\n", this->actor.params, "../z_bg_mori_idomizu.c",
@@ -96,7 +96,7 @@ void BgMoriIdomizu_SetupWaitForMoriTex(BgMoriIdomizu* this) {
 }
 
 void BgMoriIdomizu_WaitForMoriTex(BgMoriIdomizu* this, PlayState* play) {
-    if (Object_IsLoaded(&play->objectCtx, this->moriTexObjIndex)) {
+    if (Object_IsLoaded(&play->objectCtx, this->moriTexObjectSlot)) {
         BgMoriIdomizu_SetupMain(this);
         this->actor.draw = BgMoriIdomizu_Draw;
     }
@@ -133,9 +133,9 @@ void BgMoriIdomizu_Main(BgMoriIdomizu* this, PlayState* play) {
             BgMoriIdomizu_SetWaterLevel(play, thisx->world.pos.y);
             if (this->drainTimer > 0) {
                 if (switchFlagSet) {
-                    func_800788CC(NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
+                    Sfx_PlaySfxCentered2(NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
                 } else {
-                    func_800788CC(NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
+                    Sfx_PlaySfxCentered2(NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
                 }
             }
         }
@@ -162,14 +162,14 @@ void BgMoriIdomizu_Draw(Actor* thisx, PlayState* play) {
     BgMoriIdomizu* this = (BgMoriIdomizu*)thisx;
     u32 gameplayFrames = play->gameplayFrames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_mori_idomizu.c", 356);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_mori_idomizu.c", 360),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
-    gSPSegment(POLY_XLU_DISP++, 0x08, play->objectCtx.status[this->moriTexObjIndex].segment);
+    gSPSegment(POLY_XLU_DISP++, 0x08, play->objectCtx.slots[this->moriTexObjectSlot].segment);
 
     gDPSetEnvColor(POLY_XLU_DISP++, 0, 0, 0, 128);
 
@@ -180,5 +180,5 @@ void BgMoriIdomizu_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_XLU_DISP++, gMoriIdomizuWaterDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mori_idomizu.c", 382);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

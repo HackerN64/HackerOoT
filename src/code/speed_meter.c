@@ -60,6 +60,13 @@ volatile OSTime D_8016A578;
 // Accumulator for `gRDPTimeTotal`
 volatile OSTime gRDPTimeAcc;
 
+typedef struct {
+    /* 0x00 */ volatile OSTime* time;
+    /* 0x04 */ u8 x;
+    /* 0x05 */ u8 y;
+    /* 0x06 */ u16 color;
+} SpeedMeterTimeEntry; // size = 0x08
+
 SpeedMeterTimeEntry* sSpeedMeterTimeEntryPtr;
 
 SpeedMeterTimeEntry sSpeedMeterTimeEntryArray[] = {
@@ -71,15 +78,26 @@ SpeedMeterTimeEntry sSpeedMeterTimeEntryArray[] = {
     { &gGraphUpdatePeriod, 0, 10, GPACK_RGBA5551(255, 0, 255, 1) },
 };
 
+typedef struct {
+    /* 0x00 */ s32 maxval;
+    /* 0x04 */ s32 val;
+    /* 0x08 */ u16 backColor;
+    /* 0x0A */ u16 foreColor;
+    /* 0x0C */ s32 ulx;
+    /* 0x10 */ s32 lrx;
+    /* 0x14 */ s32 uly;
+    /* 0x18 */ s32 lry;
+} SpeedMeterAllocEntry; // size = 0x1C
+
 #define gDrawRect(gfx, color, ulx, uly, lrx, lry)      \
     gDPPipeSync(gfx);                                  \
     gDPSetFillColor(gfx, ((color) << 16) | (color));   \
     gDPFillRectangle(gfx, (ulx), (uly), (lrx), (lry)); \
     gDPPipeSync(gfx)
 
-void SpeedMeter_InitImpl(SpeedMeter* this, u32 arg1, u32 y) {
+void SpeedMeter_InitImpl(SpeedMeter* this, u32 x, u32 y) {
     LogUtils_CheckNullPointer("this", this, "../speed_meter.c", 181);
-    this->unk_18 = arg1;
+    this->x = x;
     this->y = y;
 }
 
@@ -104,7 +122,7 @@ void SpeedMeter_DrawTimeEntries(SpeedMeter* this, GraphicsContext* gfxCtx) {
     uly = this->y;
     lry = this->y + 2;
 
-    OPEN_DISPS(gfxCtx, "../speed_meter.c", 225);
+    OPEN_DISPS(gfxCtx);
 
     /*! @bug if gIrqMgrRetraceTime is 0, CLOSE_DISPS will never be reached */
     if (gIrqMgrRetraceTime == 0) {
@@ -147,7 +165,7 @@ void SpeedMeter_DrawTimeEntries(SpeedMeter* this, GraphicsContext* gfxCtx) {
 
     OVERLAY_DISP = gfx;
 
-    CLOSE_DISPS(gfxCtx, "../speed_meter.c", 276);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void SpeedMeter_InitAllocEntry(SpeedMeterAllocEntry* this, u32 maxval, u32 val, u16 backColor, u16 foreColor, u32 ulx,
@@ -172,7 +190,7 @@ void SpeedMeter_DrawAllocEntry(SpeedMeterAllocEntry* this, GraphicsContext* gfxC
         LOG_NUM("this->maxval", this->maxval, "../speed_meter.c", 313);
         osSyncPrintf(VT_RST);
     } else {
-        OPEN_DISPS(gfxCtx, "../speed_meter.c", 318);
+        OPEN_DISPS(gfxCtx);
 
         View_Init(&view, gfxCtx);
         view.flags = VIEW_VIEWPORT | VIEW_PROJECTION_ORTHO;
@@ -195,7 +213,7 @@ void SpeedMeter_DrawAllocEntry(SpeedMeterAllocEntry* this, GraphicsContext* gfxC
         gDPPipeSync(gfx++);
 
         OVERLAY_DISP = gfx;
-        CLOSE_DISPS(gfxCtx, "../speed_meter.c", 339);
+        CLOSE_DISPS(gfxCtx);
     }
 }
 
@@ -204,7 +222,7 @@ void SpeedMeter_DrawAllocEntries(SpeedMeter* meter, GraphicsContext* gfxCtx, Gam
     u32 ulx = 30;
     u32 lrx = 290;
     SpeedMeterAllocEntry entry;
-    u32 pad2;
+    TwoHeadArena* tha;
     s32 y;
     TwoHeadGfxArena* thga;
     u32 zeldaFreeMax;
@@ -234,10 +252,9 @@ void SpeedMeter_DrawAllocEntries(SpeedMeter* meter, GraphicsContext* gfxCtx, Gam
         y++;
     }
 
-    thga = (TwoHeadGfxArena*)&state->tha;
-    //! @bug THA_GetRemaining call should be THGA_GetRemaining like the others below, harmless as-is
-    SpeedMeter_InitAllocEntry(&entry, thga->size, thga->size - THA_GetRemaining(&thga->tha),
-                              GPACK_RGBA5551(0, 0, 255, 1), GPACK_RGBA5551(0, 255, 0, 1), ulx, lrx, y, y);
+    tha = &state->tha;
+    SpeedMeter_InitAllocEntry(&entry, tha->size, tha->size - THA_GetRemaining(tha), GPACK_RGBA5551(0, 0, 255, 1),
+                              GPACK_RGBA5551(0, 255, 0, 1), ulx, lrx, y, y);
     SpeedMeter_DrawAllocEntry(&entry, gfxCtx);
     y++;
 

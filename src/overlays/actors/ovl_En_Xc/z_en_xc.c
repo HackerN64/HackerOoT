@@ -88,7 +88,7 @@ void EnXc_SetEyePattern(EnXc* this) {
     s16* blinkTimer = &this->blinkTimer;
     s16* eyePattern = &this->eyeIdx;
 
-    if (!DECR(*blinkTimer)) {
+    if (DECR(*blinkTimer) == 0) {
         *blinkTimer = Rand_S16Offset(60, 60);
     }
 
@@ -120,7 +120,7 @@ s32 EnXc_AnimIsFinished(EnXc* this) {
 CsCmdActorCue* EnXc_GetCue(PlayState* play, s32 cueChannel) {
     CsCmdActorCue* cue = NULL;
 
-    if (play->csCtx.state != 0) {
+    if (play->csCtx.state != CS_STATE_IDLE) {
         cue = play->csCtx.actorCues[cueChannel];
     }
     return cue;
@@ -249,25 +249,25 @@ void func_80B3C8CC(EnXc* this, PlayState* play) {
     SkelAnime* skelAnime = &this->skelAnime;
 
     if (skelAnime->jointTable[0].y >= skelAnime->baseTransl.y) {
-        skelAnime->moveFlags |= 3;
+        skelAnime->moveFlags |= ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y;
         AnimationContext_SetMoveActor(play, &this->actor, skelAnime, 1.0f);
     }
 }
 
 void func_80B3C924(EnXc* this, PlayState* play) {
-    this->skelAnime.moveFlags |= 3;
+    this->skelAnime.moveFlags |= ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y;
     AnimationContext_SetMoveActor(play, &this->actor, &this->skelAnime, 1.0f);
 }
 
 void func_80B3C964(EnXc* this, PlayState* play) {
     this->skelAnime.baseTransl = this->skelAnime.jointTable[0];
     this->skelAnime.prevTransl = this->skelAnime.jointTable[0];
-    this->skelAnime.moveFlags |= 3;
+    this->skelAnime.moveFlags |= ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y;
     AnimationContext_SetMoveActor(play, &this->actor, &this->skelAnime, 1.0f);
 }
 
 void func_80B3C9DC(EnXc* this) {
-    this->skelAnime.moveFlags &= ~0x3;
+    this->skelAnime.moveFlags &= ~(ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y);
 }
 
 void func_80B3C9EC(EnXc* this) {
@@ -379,7 +379,7 @@ void EnXc_SetWalkingSFX(EnXc* this, PlayState* play) {
         if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
             sfxId = NA_SE_PL_WALK_GROUND;
             sfxId += SurfaceType_GetSfxOffset(&play->colCtx, this->actor.floorPoly, this->actor.floorBgId);
-            func_80078914(&this->actor.projectedPos, sfxId);
+            Sfx_PlaySfxAtPos(&this->actor.projectedPos, sfxId);
         }
     }
 }
@@ -393,11 +393,11 @@ void EnXc_SetNutThrowSFX(EnXc* this, PlayState* play) {
         if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
             sfxId = NA_SE_PL_WALK_GROUND;
             sfxId += SurfaceType_GetSfxOffset(&play->colCtx, this->actor.floorPoly, this->actor.floorBgId);
-            func_80078914(&this->actor.projectedPos, sfxId);
+            Sfx_PlaySfxAtPos(&this->actor.projectedPos, sfxId);
         }
     }
     if (Animation_OnFrame(&this->skelAnime, 20.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_VO_SK_SHOUT);
+        Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_VO_SK_SHOUT);
     }
 }
 
@@ -409,7 +409,7 @@ void EnXc_SetLandingSFX(EnXc* this, PlayState* play) {
         if (Animation_OnFrame(&this->skelAnime, 11.0f)) {
             sfxId = NA_SE_PL_WALK_GROUND;
             sfxId += SurfaceType_GetSfxOffset(&play->colCtx, this->actor.floorPoly, this->actor.floorBgId);
-            func_80078914(&this->actor.projectedPos, sfxId);
+            Sfx_PlaySfxAtPos(&this->actor.projectedPos, sfxId);
         }
     }
 }
@@ -422,20 +422,20 @@ void EnXc_SetColossusAppearSFX(EnXc* this, PlayState* play) {
         sceneId = play->sceneId;
         if (sceneId == SCENE_DESERT_COLOSSUS) {
             CutsceneContext* csCtx = &play->csCtx;
-            u16 frameCount = csCtx->curFrame;
+            u16 csCurFrame = csCtx->curFrame;
             f32 wDest[2];
 
-            if (frameCount == 119) {
+            if (csCurFrame == 119) {
                 Vec3f pos = { -611.0f, 728.0f, -2.0f };
 
                 SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &pos, &sXyzDist, wDest);
-                func_80078914(&sXyzDist, NA_SE_EV_JUMP_CONC);
-            } else if (frameCount == 164) {
+                Sfx_PlaySfxAtPos(&sXyzDist, NA_SE_EV_JUMP_CONC);
+            } else if (csCurFrame == 164) {
                 Vec3f pos = { -1069.0f, 38.0f, 0.0f };
                 s32 pad;
 
                 SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &pos, &sXyzDist, wDest);
-                func_80078914(&sXyzDist, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_STONE);
+                Sfx_PlaySfxAtPos(&sXyzDist, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_STONE);
             }
         }
     }
@@ -445,7 +445,7 @@ void func_80B3D118(PlayState* play) {
     s16 sceneId;
 
     if ((gSaveContext.sceneLayer != 4) || (sceneId = play->sceneId, sceneId != SCENE_DESERT_COLOSSUS)) {
-        func_800788CC(NA_SE_PL_SKIP);
+        Sfx_PlaySfxCentered2(NA_SE_PL_SKIP);
     }
 }
 
@@ -462,9 +462,9 @@ void EnXc_SetColossusWindSFX(PlayState* play) {
 
         if (sceneId == SCENE_DESERT_COLOSSUS) {
             CutsceneContext* csCtx = &play->csCtx;
-            u16 frameCount = csCtx->curFrame;
+            u16 csCurFrame = csCtx->curFrame;
 
-            if ((frameCount >= 120) && (frameCount < 164)) {
+            if ((csCurFrame >= 120) && (csCurFrame < 164)) {
                 s32 pad;
                 Vec3f* eye = &play->view.eye;
 
@@ -723,9 +723,8 @@ void func_80B3DAF0(EnXc* this, PlayState* play) {
         cueId = cue->id;
 
         if (cueId == 3 || cueId == 11 || cueId == 12 || cueId == 13 || cueId == 23) {
-            f32 frameCount;
+            f32 frameCount = Animation_GetLastFrame(&gSheikPullingOutHarpAnim);
 
-            frameCount = Animation_GetLastFrame(&gSheikPullingOutHarpAnim);
             Animation_Change(&this->skelAnime, &gSheikPullingOutHarpAnim, 1.0f, 0.0f, frameCount, ANIMMODE_ONCE, -4.0f);
             this->action = SHEIK_ACTION_7;
             this->drawMode = SHEIK_DRAW_PULLING_OUT_HARP;
@@ -765,7 +764,7 @@ void EnXc_SetupPlayingHarpAction(EnXc* this, PlayState* play, s32 animFinished) 
 void func_80B3DCA8(EnXc* this, PlayState* play) {
     f32 frameCount;
 
-    if (play->csCtx.state != 0) {
+    if (play->csCtx.state != CS_STATE_IDLE) {
         CsCmdActorCue* cue = play->csCtx.actorCues[4];
 
         if (cue != NULL && cue->id == 8) {
@@ -814,7 +813,7 @@ void func_80B3DE78(EnXc* this, s32 animFinished) {
 }
 
 void EnXc_SetupReverseAccel(EnXc* this, PlayState* play) {
-    if (play->csCtx.state != 0) {
+    if (play->csCtx.state != CS_STATE_IDLE) {
         CsCmdActorCue* cue = play->csCtx.actorCues[4];
 
         if (cue != NULL && cue->id == 4) {
@@ -866,7 +865,7 @@ void func_80B3E164(EnXc* this, PlayState* play) {
 }
 
 void EnXc_SetupDisappear(EnXc* this, PlayState* play) {
-    if (play->csCtx.state != 0) {
+    if (play->csCtx.state != CS_STATE_IDLE) {
         CsCmdActorCue* cue = play->csCtx.actorCues[4];
 
         if (cue != NULL && cue->id == 9) {
@@ -1084,7 +1083,7 @@ void EnXc_DrawPullingOutHarp(Actor* thisx, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     s32 pad2;
 
-    OPEN_DISPS(gfxCtx, "../z_en_oA2_inSpot05.c", 1444);
+    OPEN_DISPS(gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTexture));
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(eyeTexture));
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 20, 0);
@@ -1094,7 +1093,7 @@ void EnXc_DrawPullingOutHarp(Actor* thisx, PlayState* play) {
     func_8002EBCC(&this->actor, play, 0);
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                           EnXc_PullingOutHarpOverrideLimbDraw, NULL, this);
-    CLOSE_DISPS(gfxCtx, "../z_en_oA2_inSpot05.c", 1497);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EnXc_DrawHarp(Actor* thisx, PlayState* play) {
@@ -1106,7 +1105,7 @@ void EnXc_DrawHarp(Actor* thisx, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     s32 pad2;
 
-    OPEN_DISPS(gfxCtx, "../z_en_oA2_inSpot05.c", 1511);
+    OPEN_DISPS(gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTexture));
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(eyeTexture));
@@ -1117,7 +1116,7 @@ void EnXc_DrawHarp(Actor* thisx, PlayState* play) {
     func_8002EBCC(&this->actor, play, 0);
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                           EnXc_HarpOverrideLimbDraw, NULL, this);
-    CLOSE_DISPS(gfxCtx, "../z_en_oA2_inSpot05.c", 1564);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_80B3EBF0(EnXc* this, PlayState* play) {
@@ -1370,14 +1369,14 @@ void func_80B3F3C8(EnXc* this, PlayState* play) {
 }
 
 void func_80B3F3D8(void) {
-    func_800788CC(NA_SE_PL_SKIP);
+    Sfx_PlaySfxCentered2(NA_SE_PL_SKIP);
 }
 
 void EnXc_PlayDiveSFX(Vec3f* src, PlayState* play) {
     f32 wDest[2];
 
     SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, src, &D_80B42DA0, wDest);
-    func_80078914(&D_80B42DA0, NA_SE_EV_DIVE_INTO_WATER);
+    Sfx_PlaySfxAtPos(&D_80B42DA0, NA_SE_EV_DIVE_INTO_WATER);
 }
 
 void EnXc_LakeHyliaDive(PlayState* play) {
@@ -1400,9 +1399,9 @@ void EnXc_LakeHyliaDive(PlayState* play) {
 
 void func_80B3F534(PlayState* play) {
     CutsceneContext* csCtx = &play->csCtx;
-    u16 frameCount = csCtx->curFrame;
+    u16 csCurFrame = csCtx->curFrame;
 
-    if (frameCount == 310) {
+    if (csCurFrame == 310) {
         Actor_Spawn(&play->actorCtx, play, ACTOR_DOOR_WARP1, -1044.0f, -1243.0f, 7458.0f, 0, 0, 0, WARP_DESTINATION);
     }
 }
@@ -1553,7 +1552,7 @@ void EnXc_PlayTriforceSFX(Actor* thisx, PlayState* play) {
 
 void func_80B3FAE0(EnXc* this) {
     if (Animation_OnFrame(&this->skelAnime, 38.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_VO_SK_SHOUT);
+        Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_VO_SK_SHOUT);
         func_80B3FA2C();
     }
 }
@@ -1717,7 +1716,7 @@ void EnXc_DrawTriforce(Actor* thisx, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     s32 pad2;
 
-    OPEN_DISPS(gfxCtx, "../z_en_oA2_inMetamol.c", 565);
+    OPEN_DISPS(gfxCtx);
     if (this->unk_2BC != 0) {
         Mtx* mtx = Graph_Alloc(gfxCtx, sizeof(Mtx));
         s32* primColor = this->triforcePrimColor;
@@ -1743,7 +1742,7 @@ void EnXc_DrawTriforce(Actor* thisx, PlayState* play) {
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(eyeTexture));
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                           EnXc_TriforceOverrideLimbDraw, EnXc_TriforcePostLimbDraw, this);
-    CLOSE_DISPS(gfxCtx, "../z_en_oA2_inMetamol.c", 668);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void func_80B40590(EnXc* this, PlayState* play) {
@@ -1755,14 +1754,14 @@ void EnXc_SetThrownAroundSFX(EnXc* this) {
     SkelAnime* skelAnime = &this->skelAnime;
 
     if (Animation_OnFrame(skelAnime, 9.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_GRASS);
-        func_80078914(&this->actor.projectedPos, NA_SE_VO_SK_CRASH);
+        Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_GRASS);
+        Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_VO_SK_CRASH);
     } else if (Animation_OnFrame(skelAnime, 26.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_GRASS);
+        Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_PL_BOUND + SURFACE_SFX_OFFSET_GRASS);
     } else if (Animation_OnFrame(skelAnime, 28.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_GRASS);
+        Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_GRASS);
     } else if (Animation_OnFrame(skelAnime, 34.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_GRASS);
+        Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_GRASS);
     }
 }
 
@@ -1776,9 +1775,9 @@ void EnXc_SetCrySFX(EnXc* this, PlayState* play) {
     CutsceneContext* csCtx = &play->csCtx;
 
     if (csCtx->curFrame == 869) {
-        func_80078914(&this->actor.projectedPos, NA_SE_VO_SK_CRY_0);
+        Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_VO_SK_CRY_0);
     } else if (csCtx->curFrame == 939) {
-        func_80078914(&this->actor.projectedPos, NA_SE_VO_SK_CRY_1);
+        Sfx_PlaySfxAtPos(&this->actor.projectedPos, NA_SE_VO_SK_CRY_1);
     }
 }
 
@@ -2139,12 +2138,12 @@ void EnXc_DrawSquintingEyes(Actor* thisx, PlayState* play) {
     SkelAnime* skelAnime = &this->skelAnime;
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_en_oA2_inStalker.c", 839);
+    OPEN_DISPS(gfxCtx);
     Gfx_SetupDL_25Opa(gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(gSheikEyeSquintingTex));
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(gSheikEyeSquintingTex));
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount, NULL, NULL, NULL);
-    CLOSE_DISPS(gfxCtx, "../z_en_oA2_inStalker.c", 854);
+    CLOSE_DISPS(gfxCtx);
 }
 
 void EnXc_InitTempleOfTime(EnXc* this, PlayState* play) {
@@ -2392,14 +2391,14 @@ void EnXc_DrawDefault(Actor* thisx, PlayState* play) {
     GraphicsContext* localGfxCtx = play->state.gfxCtx;
     GraphicsContext* gfxCtx = localGfxCtx;
 
-    OPEN_DISPS(gfxCtx, "../z_en_oA2.c", 1164);
+    OPEN_DISPS(gfxCtx);
     func_8002EBCC(&this->actor, play, 0);
     Gfx_SetupDL_25Opa(gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeSegment));
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(eyeSegment));
     SkelAnime_DrawFlexOpa(play, skelAnime->skeleton, skelAnime->jointTable, skelAnime->dListCount,
                           EnXc_OverrideLimbDraw, EnXc_PostLimbDraw, this);
-    CLOSE_DISPS(gfxCtx, "../z_en_oA2.c", 1207);
+    CLOSE_DISPS(gfxCtx);
 }
 
 static EnXcDrawFunc sDrawFuncs[] = {

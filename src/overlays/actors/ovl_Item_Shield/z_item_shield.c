@@ -8,6 +8,8 @@
 #include "z_item_shield.h"
 #include "assets/objects/object_link_child/object_link_child.h"
 
+#include "config.h"
+
 #define FLAGS ACTOR_FLAG_4
 
 void ItemShield_Init(Actor* thisx, PlayState* play);
@@ -218,11 +220,14 @@ void ItemShield_Draw(Actor* thisx, PlayState* play) {
     ItemShield* this = (ItemShield*)thisx;
 
     if (!(this->unk_19C & 2)) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_item_shield.c", 457);
+        OPEN_DISPS(play->state.gfxCtx);
+#ifdef FIX_ANNOYING_GLITCH
+        gSPSegment(POLY_OPA_DISP++, 0x0C, gCullBackDList);
+#endif
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_item_shield.c", 460),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, SEGMENTED_TO_VIRTUAL(gLinkChildDekuShieldDL));
-        CLOSE_DISPS(play->state.gfxCtx, "../z_item_shield.c", 465);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }

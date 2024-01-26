@@ -153,7 +153,7 @@ void EnNwc_DrawChicks(EnNwc* this, PlayState* play) {
     MtxF floorMat;
     EnNwcChick* chick;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_nwc.c", 316);
+    OPEN_DISPS(play->state.gfxCtx);
     func_80093C80(play);
 
     dList1 = POLY_XLU_DISP;
@@ -198,7 +198,7 @@ void EnNwc_DrawChicks(EnNwc* this, PlayState* play) {
             gSPDisplayList(POLY_XLU_DISP++, gCuccoChickShadowDL);
         }
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_nwc.c", 395);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void EnNwc_Init(Actor* thisx, PlayState* play) {

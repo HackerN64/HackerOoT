@@ -80,35 +80,37 @@ void Interface_Init(PlayState* play) {
 
     ASSERT(interfaceCtx->iconItemSegment != NULL, "parameter->icon_itemSegment != NULL", "../z_construct.c", 193);
 
-    osSyncPrintf("Register_Item[%x, %x, %x, %x]\n", gSaveContext.equips.buttonItems[0],
-                 gSaveContext.equips.buttonItems[1], gSaveContext.equips.buttonItems[2],
-                 gSaveContext.equips.buttonItems[3]);
+    osSyncPrintf("Register_Item[%x, %x, %x, %x]\n", gSaveContext.save.info.equips.buttonItems[0],
+                 gSaveContext.save.info.equips.buttonItems[1], gSaveContext.save.info.equips.buttonItems[2],
+                 gSaveContext.save.info.equips.buttonItems[3]);
 
-    if (gSaveContext.equips.buttonItems[0] < 0xF0) {
+    if (gSaveContext.save.info.equips.buttonItems[0] < 0xF0) {
         DmaMgr_RequestSyncDebug(interfaceCtx->iconItemSegment + (0 * ITEM_ICON_SIZE),
-                                GET_ITEM_ICON_VROM(gSaveContext.equips.buttonItems[0]), ITEM_ICON_SIZE,
+
+                                GET_ITEM_ICON_VROM(gSaveContext.save.info.equips.buttonItems[0]), ITEM_ICON_SIZE,
                                 "../z_construct.c", 198);
-    } else if (gSaveContext.equips.buttonItems[0] != 0xFF) {
+    } else if (gSaveContext.save.info.equips.buttonItems[0] != 0xFF) {
         DmaMgr_RequestSyncDebug(interfaceCtx->iconItemSegment + (0 * ITEM_ICON_SIZE),
-                                GET_ITEM_ICON_VROM(gSaveContext.equips.buttonItems[0]), ITEM_ICON_SIZE,
+
+                                GET_ITEM_ICON_VROM(gSaveContext.save.info.equips.buttonItems[0]), ITEM_ICON_SIZE,
                                 "../z_construct.c", 203);
     }
 
-    if (gSaveContext.equips.buttonItems[1] < 0xF0) {
+    if (gSaveContext.save.info.equips.buttonItems[1] < 0xF0) {
         DmaMgr_RequestSyncDebug(interfaceCtx->iconItemSegment + (1 * ITEM_ICON_SIZE),
-                                GET_ITEM_ICON_VROM(gSaveContext.equips.buttonItems[1]), ITEM_ICON_SIZE,
+                                GET_ITEM_ICON_VROM(gSaveContext.save.info.equips.buttonItems[1]), ITEM_ICON_SIZE,
                                 "../z_construct.c", 209);
     }
 
-    if (gSaveContext.equips.buttonItems[2] < 0xF0) {
+    if (gSaveContext.save.info.equips.buttonItems[2] < 0xF0) {
         DmaMgr_RequestSyncDebug(interfaceCtx->iconItemSegment + (2 * ITEM_ICON_SIZE),
-                                GET_ITEM_ICON_VROM(gSaveContext.equips.buttonItems[2]), ITEM_ICON_SIZE,
+                                GET_ITEM_ICON_VROM(gSaveContext.save.info.equips.buttonItems[2]), ITEM_ICON_SIZE,
                                 "../z_construct.c", 214);
     }
 
-    if (gSaveContext.equips.buttonItems[3] < 0xF0) {
+    if (gSaveContext.save.info.equips.buttonItems[3] < 0xF0) {
         DmaMgr_RequestSyncDebug(interfaceCtx->iconItemSegment + (3 * ITEM_ICON_SIZE),
-                                GET_ITEM_ICON_VROM(gSaveContext.equips.buttonItems[3]), ITEM_ICON_SIZE,
+                                GET_ITEM_ICON_VROM(gSaveContext.save.info.equips.buttonItems[3]), ITEM_ICON_SIZE,
                                 "../z_construct.c", 219);
     }
 
@@ -137,7 +139,7 @@ void Interface_Init(PlayState* play) {
 
         gSaveContext.timerX[timerId] = 26;
 
-        if (gSaveContext.healthCapacity > 0xA0) {
+        if (gSaveContext.save.info.playerData.healthCapacity > 0xA0) {
             gSaveContext.timerY[timerId] = 54; // two rows of hearts
         } else {
             gSaveContext.timerY[timerId] = 46; // one row of hearts
@@ -158,16 +160,28 @@ void Interface_Init(PlayState* play) {
     interfaceCtx->unk_23C = interfaceCtx->unk_242 = 0;
 
     R_ITEM_BTN_X(0) = B_BUTTON_X;
+#ifdef N64_BTN_COLORS
+    R_B_BTN_COLOR(0) = 0;
+    R_B_BTN_COLOR(1) = 150;
+    R_B_BTN_COLOR(2) = 0;
+#else
     R_B_BTN_COLOR(0) = 255;
     R_B_BTN_COLOR(1) = 30;
     R_B_BTN_COLOR(2) = 30;
+#endif
     R_ITEM_ICON_X(0) = B_BUTTON_X;
     R_ITEM_AMMO_X(0) = B_BUTTON_X + 2;
     R_A_BTN_X = A_BUTTON_X;
     R_A_ICON_X = A_BUTTON_X;
+#ifdef N64_BTN_COLORS
+    R_A_BTN_COLOR(0) = 90;
+    R_A_BTN_COLOR(1) = 90;
+    R_A_BTN_COLOR(2) = 255;
+#else
     R_A_BTN_COLOR(0) = 0;
     R_A_BTN_COLOR(1) = 200;
     R_A_BTN_COLOR(2) = 50;
+#endif
 }
 
 #define TEXTBOX_SEGMENT_SIZE \

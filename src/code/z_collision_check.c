@@ -56,7 +56,7 @@ void Collider_DrawPoly(GraphicsContext* gfxCtx, Vec3f* vA, Vec3f* vB, Vec3f* vC,
     f32 nz;
     f32 originDist;
 
-    OPEN_DISPS(gfxCtx, "../z_collision_check.c", 713);
+    OPEN_DISPS(gfxCtx);
 
     gSPMatrix(POLY_OPA_DISP++, &gMtxClear, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(POLY_OPA_DISP++, 0x00, 0xFF, r, g, b, 50);
@@ -98,7 +98,7 @@ void Collider_DrawPoly(GraphicsContext* gfxCtx, Vec3f* vA, Vec3f* vB, Vec3f* vC,
     gSPVertex(POLY_OPA_DISP++, vtxTbl, 3, 0);
     gSP1Triangle(POLY_OPA_DISP++, 0, 1, 2, 0);
 
-    CLOSE_DISPS(gfxCtx, "../z_collision_check.c", 757);
+    CLOSE_DISPS(gfxCtx);
 }
 
 s32 Collider_InitBase(PlayState* play, Collider* collider) {
@@ -3560,7 +3560,7 @@ s32 CollisionCheck_CylSideVsLineSeg(f32 radius, f32 height, f32 offset, Vec3f* a
         return 0;
     }
 
-    if (intersect2 == false) {
+    if (!intersect2) {
         if (frac1 < 0.0f || 1.0f < frac1) {
             return 0;
         }
@@ -3587,7 +3587,7 @@ s32 CollisionCheck_CylSideVsLineSeg(f32 radius, f32 height, f32 offset, Vec3f* a
         ((frac2 * itemStep.y + actorToItem.y < 0.0f) || (height < frac2 * itemStep.y + actorToItem.y))) {
         intersect2 = false;
     }
-    if (intersect1 == false && intersect2 == false) {
+    if (!intersect1 && !intersect2) {
         return 0;
     } else if ((intersect1 == true) && (intersect2 == true)) {
         out1->x = frac1 * itemStep.x + actorToItem.x + actorPos->x;

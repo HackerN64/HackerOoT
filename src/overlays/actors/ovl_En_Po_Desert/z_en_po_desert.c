@@ -251,7 +251,7 @@ void EnPoDesert_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s*
 void EnPoDesert_Draw(Actor* thisx, PlayState* play) {
     EnPoDesert* this = (EnPoDesert*)thisx;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_po_desert.c", 559);
+    OPEN_DISPS(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gSPSegment(POLY_XLU_DISP++, 0x0A, Gfx_EnvColor(play->state.gfxCtx, 255, 85, 0, 255));
     gSPSegment(POLY_XLU_DISP++, 0x08,
@@ -264,5 +264,5 @@ void EnPoDesert_Draw(Actor* thisx, PlayState* play) {
     }
     POLY_XLU_DISP = SkelAnime_Draw(play, this->skelAnime.skeleton, this->skelAnime.jointTable,
                                    EnPoDesert_OverrideLimbDraw, EnPoDesert_PostLimbDraw, &this->actor, POLY_XLU_DISP);
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_po_desert.c", 597);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

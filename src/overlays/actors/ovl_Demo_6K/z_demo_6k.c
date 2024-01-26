@@ -17,7 +17,7 @@ void Demo6K_Init(Actor* thisx, PlayState* play);
 void Demo6K_Destroy(Actor* thisx, PlayState* play);
 void Demo6K_Update(Actor* thisx, PlayState* play);
 
-void func_80966DB0(Demo6K* this, PlayState* play);
+void Demo6K_WaitForObject(Demo6K* this, PlayState* play);
 void func_80966E04(Demo6K* this, PlayState* play);
 void func_80966E98(Demo6K* this, PlayState* play);
 void func_80966F84(Demo6K* this, PlayState* play);
@@ -69,26 +69,26 @@ void Demo6K_Init(Actor* thisx, PlayState* play) {
     Demo6K* this = (Demo6K*)thisx;
     s32 pad;
     s32 params = this->actor.params;
-    s32 objBankIndex;
+    s32 objectSlot;
     s32 i;
 
     osSyncPrintf("no = %d\n", params);
 
     if (sObjectIds[params] != OBJECT_GAMEPLAY_KEEP) {
-        objBankIndex = Object_GetIndex(&play->objectCtx, sObjectIds[params]);
+        objectSlot = Object_GetSlot(&play->objectCtx, sObjectIds[params]);
     } else {
-        objBankIndex = 0;
+        objectSlot = 0;
     }
 
-    osSyncPrintf("bank_ID = %d\n", objBankIndex);
+    osSyncPrintf("bank_ID = %d\n", objectSlot);
 
-    if (objBankIndex < 0) {
+    if (objectSlot < 0) {
         ASSERT(0, "0", "../z_demo_6k.c", 334);
     } else {
-        this->objBankIndex = objBankIndex;
+        this->requiredObjectSlot = objectSlot;
     }
 
-    Demo6K_SetupAction(this, func_80966DB0);
+    Demo6K_SetupAction(this, Demo6K_WaitForObject);
     this->timer1 = 0;
     this->flags = 0;
     this->timer2 = 0;
@@ -197,9 +197,9 @@ void Demo6K_Destroy(Actor* thisx, PlayState* play) {
     LightContext_RemoveLight(play, &play->lightCtx, this->lightNode);
 }
 
-void func_80966DB0(Demo6K* this, PlayState* play) {
-    if (Object_IsLoaded(&play->objectCtx, this->objBankIndex)) {
-        this->actor.objBankIndex = this->objBankIndex;
+void Demo6K_WaitForObject(Demo6K* this, PlayState* play) {
+    if (Object_IsLoaded(&play->objectCtx, this->requiredObjectSlot)) {
+        this->actor.objectSlot = this->requiredObjectSlot;
         this->actor.draw = this->drawFunc;
         this->actionFunc = this->initActionFunc;
     }
@@ -231,7 +231,7 @@ void func_80966E98(Demo6K* this, PlayState* play) {
     }
 
     if (this->timer1 == 39) {
-        func_800788CC(NA_SE_EV_CONSENTRATION);
+        Sfx_PlaySfxCentered2(NA_SE_EV_CONSENTRATION);
         Actor_Spawn(&play->actorCtx, play, ACTOR_DEMO_6K, this->actor.world.pos.x, this->actor.world.pos.y + 10.0f,
                     this->actor.world.pos.z, 0, 0, 0, 2);
     }
@@ -561,7 +561,7 @@ void func_80967FFC(Actor* thisx, PlayState* play) {
     s32 pad;
     u16 timer1 = this->timer1;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_6k.c", 1070);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     Matrix_RotateX(-M_PI / 2, MTXMODE_APPLY);
@@ -594,7 +594,7 @@ void func_80967FFC(Actor* thisx, PlayState* play) {
         if ((s16)i) {}
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_6k.c", 1127);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_80968298(Actor* thisx, PlayState* play) {
@@ -608,7 +608,7 @@ void func_80968298(Actor* thisx, PlayState* play) {
     s32 i2;
     u8 alpha;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_6k.c", 1145);
+    OPEN_DISPS(play->state.gfxCtx);
 
     alpha = (s32)(this->unk_170 * 255.0f);
     POLY_XLU_DISP = Gfx_SetupDL_57(POLY_XLU_DISP);
@@ -645,7 +645,7 @@ void func_80968298(Actor* thisx, PlayState* play) {
     gDPSetEnvColor(POLY_XLU_DISP++, 50, 50, 50, 255);
     gSPDisplayList(POLY_XLU_DISP++, object_demo_6k_DL_001040);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_6k.c", 1198);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_8096865C(Actor* thisx, PlayState* play) {
@@ -653,7 +653,7 @@ void func_8096865C(Actor* thisx, PlayState* play) {
     s32 pad;
     Gfx* displayList;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_6k.c", 1208);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (!(this->flags & 1)) {
         if (this->actor.params > 8) {
@@ -679,7 +679,7 @@ void func_8096865C(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, displayList);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_6k.c", 1242);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_809688C4(Actor* thisx, PlayState* play2) {
@@ -690,7 +690,7 @@ void func_809688C4(Actor* thisx, PlayState* play2) {
 
     if ((i = (play->csCtx.state != CS_STATE_IDLE) && (play->csCtx.actorCues[1] != NULL)) &&
         (play->csCtx.actorCues[1]->id != 1)) {
-        OPEN_DISPS(play->state.gfxCtx, "../z_demo_6k.c", 1277);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
         gDPSetPrimColor(POLY_XLU_DISP++, 0x80, 0x80, 255, 255, 255, 255);
@@ -714,7 +714,7 @@ void func_809688C4(Actor* thisx, PlayState* play2) {
 
         gSPDisplayList(POLY_XLU_DISP++, gEffFlash1DL);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_demo_6k.c", 1305);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 }
 
@@ -727,7 +727,7 @@ void func_80968B70(Actor* thisx, PlayState* play) {
 
     if (1) {}
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_6k.c", 1316);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     Matrix_Mult(&play->billboardMtxF, MTXMODE_APPLY);
@@ -764,7 +764,7 @@ void func_80968B70(Actor* thisx, PlayState* play) {
     gDPSetEnvColor(POLY_XLU_DISP++, envColor[0], envColor[1], envColor[2], 128);
     gSPDisplayList(POLY_XLU_DISP++, object_gnd_magic_DL_001190);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_6k.c", 1368);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_80968FB0(Actor* thisx, PlayState* play) {
@@ -777,7 +777,7 @@ void func_80968FB0(Actor* thisx, PlayState* play) {
 
     if (1) {}
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_demo_6k.c", 1386);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     scaleFactor = ((s16)D_809693CC[(frames * 4) & 0xF] * 0.01f) + 1.0f;
@@ -793,7 +793,7 @@ void func_80968FB0(Actor* thisx, PlayState* play) {
     gDPSetEnvColor(POLY_XLU_DISP++, 255, 200, 0, 255);
     gSPDisplayList(POLY_XLU_DISP++, gGlowCircleSmallDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_demo_6k.c", 1411);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
 
 void func_809691BC(Demo6K* this, PlayState* play, s32 cueChannel) {

@@ -69,7 +69,7 @@ void BgSpot01Idomizu_Update(Actor* thisx, PlayState* play) {
 void BgSpot01Idomizu_Draw(Actor* thisx, PlayState* play) {
     u32 frames;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot01_idomizu.c", 228);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -83,5 +83,5 @@ void BgSpot01Idomizu_Draw(Actor* thisx, PlayState* play) {
 
     gSPDisplayList(POLY_XLU_DISP++, gKakarikoWellWaterDL);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot01_idomizu.c", 244);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

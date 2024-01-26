@@ -461,7 +461,7 @@ void EnArrow_Draw(Actor* thisx, PlayState* play) {
     } else if (this->actor.speed != 0.0f) {
         alpha = (Math_CosS(this->timer * 5000) * 127.5f) + 127.5f;
 
-        OPEN_DISPS(play->state.gfxCtx, "../z_en_arrow.c", 1346);
+        OPEN_DISPS(play->state.gfxCtx);
 
         Gfx_SetupDL_25Xlu2(play->state.gfxCtx);
 
@@ -487,7 +487,7 @@ void EnArrow_Draw(Actor* thisx, PlayState* play) {
         Matrix_Pop();
         Matrix_RotateY(BINANG_TO_RAD(this->actor.world.rot.y), MTXMODE_APPLY);
 
-        CLOSE_DISPS(play->state.gfxCtx, "../z_en_arrow.c", 1381);
+        CLOSE_DISPS(play->state.gfxCtx);
     }
 
     func_809B4800(this, play);

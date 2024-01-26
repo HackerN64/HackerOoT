@@ -148,7 +148,7 @@ void ObjHsblock_Draw(Actor* thisx, PlayState* play) {
     Color_RGB8* color;
     Color_RGB8 defaultColor;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_obj_hsblock.c", 365);
+    OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
@@ -167,5 +167,5 @@ void ObjHsblock_Draw(Actor* thisx, PlayState* play) {
     gDPSetEnvColor(POLY_OPA_DISP++, color->r, color->g, color->b, 255);
     gSPDisplayList(POLY_OPA_DISP++, sDLists[thisx->params & 3]);
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_obj_hsblock.c", 399);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

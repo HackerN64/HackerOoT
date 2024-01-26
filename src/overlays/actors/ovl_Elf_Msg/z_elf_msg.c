@@ -166,7 +166,7 @@ void ElfMsg_Update(Actor* thisx, PlayState* play) {
 #include "assets/overlays/ovl_Elf_Msg/ovl_Elf_Msg.c"
 
 void ElfMsg_Draw(Actor* thisx, PlayState* play) {
-    OPEN_DISPS(play->state.gfxCtx, "../z_elf_msg.c", 436);
+    OPEN_DISPS(play->state.gfxCtx);
 
     if (R_NAVI_MSG_REGION_ALPHA == 0) {
         return;
@@ -189,5 +189,5 @@ void ElfMsg_Draw(Actor* thisx, PlayState* play) {
         gSPDisplayList(POLY_XLU_DISP++, sCylinderDL);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx, "../z_elf_msg.c", 457);
+    CLOSE_DISPS(play->state.gfxCtx);
 }

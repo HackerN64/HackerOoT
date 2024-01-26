@@ -817,7 +817,7 @@ void func_80ADB17C(EnPoSisters* this, PlayState* play) {
             Flags_UnsetSwitch(play, 0x1B);
         }
         play->envCtx.lightSettingOverride = LIGHT_SETTING_OVERRIDE_NONE;
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
         Actor_Kill(&this->actor);
     } else if (this->unk_19A < 32) {
         func_80AD9240(this, this->unk_19A, &this->actor.world.pos);
@@ -1348,7 +1348,7 @@ void EnPoSisters_Draw(Actor* thisx, PlayState* play) {
     Color_RGBA8* temp_s7 = &D_80ADD6F0[this->unk_194];
     s32 pad;
 
-    OPEN_DISPS(play->state.gfxCtx, "../z_en_po_sisters.c", 2989);
+    OPEN_DISPS(play->state.gfxCtx);
     func_80ADC55C(this);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -1415,5 +1415,5 @@ void EnPoSisters_Draw(Actor* thisx, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
     }
-    CLOSE_DISPS(play->state.gfxCtx, "../z_en_po_sisters.c", 3139);
+    CLOSE_DISPS(play->state.gfxCtx);
 }
