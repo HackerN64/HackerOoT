@@ -433,7 +433,7 @@ void Environment_Init(PlayState* play2, EnvironmentContext* envCtx, s32 unused) 
         play->csCtx.actorCues[i] = NULL;
     }
 
-    if (Object_GetIndex(&play->objectCtx, OBJECT_GAMEPLAY_FIELD_KEEP) < 0 && !play->envCtx.sunMoonDisabled) {
+    if (Object_GetSlot(&play->objectCtx, OBJECT_GAMEPLAY_FIELD_KEEP) < 0 && !play->envCtx.sunMoonDisabled) {
         play->envCtx.sunMoonDisabled = true;
         // "Sun setting other than field keep! So forced release!"
         osSyncPrintf(VT_COL(YELLOW, BLACK) "\n\nフィールド常駐以外、太陽設定！よって強制解除！\n" VT_RST);
@@ -891,12 +891,8 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
         Rumble_ClearRequests();
     }
 
-    if (pauseCtx->state == 0) {
-#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
-        if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0)) {
-#else
-        if ((play->pauseCtx.state == 0)) {
-#endif
+    if (pauseCtx->state == PAUSE_STATE_OFF) {
+        if (!IS_PAUSED(&play->pauseCtx)) {
             if (play->skyboxId == SKYBOX_NORMAL_SKY) {
                 play->skyboxCtx.rot.y -= 0.001f;
             } else if (play->skyboxId == SKYBOX_CUTSCENE_MAP) {
@@ -927,7 +923,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
             }
         }
 
-        if ((pauseCtx->state == 0) && (gameOverCtx->state == GAMEOVER_INACTIVE)) {
+        if ((pauseCtx->state == PAUSE_STATE_OFF) && (gameOverCtx->state == GAMEOVER_INACTIVE)) {
             if (((msgCtx->msgLength == 0) && (msgCtx->msgMode == MSGMODE_NONE)) ||
                 (((void)0, gSaveContext.gameMode) == GAMEMODE_END_CREDITS)) {
 
