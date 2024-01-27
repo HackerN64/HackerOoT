@@ -91,6 +91,7 @@ endif
 
 PROJECT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD_DIR := build/$(VERSION)
+VENV := .venv
 
 MAKE = make
 CFLAGS += -DOOT_DEBUG
@@ -141,7 +142,7 @@ MKDMADATA  := tools/mkdmadata
 ELF2ROM    := tools/elf2rom
 ZAPD       := tools/ZAPD/ZAPD.out
 FADO       := tools/fado/fado.elf
-PYTHON     ?= python3
+PYTHON     ?= $(VENV)/bin/python3
 
 # Command to replace path variables in the spec file. We can't use the C
 # preprocessor for this because it won't substitute inside string literals.
@@ -222,9 +223,11 @@ $(BUILD_DIR)/src/overlays/actors/ovl_Bg_Mori_Hineri/%.o: OPTFLAGS := -O0
 
 #### Main Targets ###
 
+all: rom compress
+
 rom: $(ROM)
 
-compressed: $(ROMC)
+compress: $(ROMC)
 
 wad:
 	$(MAKE) compressed CFLAGS="-DCONSOLE_WIIVC $(CFLAGS) -fno-reorder-blocks -fno-optimize-sibling-calls" CPPFLAGS="-DCONSOLE_WIIVC $(CPPFLAGS)"
@@ -249,7 +252,12 @@ distclean: clean assetclean
 	$(RM) -r baseroms/$(VERSION)/segments
 	$(MAKE) -C tools distclean
 
-setup:
+venv:
+	test -d $(VENV) || python3 -m venv $(VENV)
+	$(PYTHON) -m pip install -U pip
+	$(PYTHON) -m pip install -U -r requirements.txt
+
+setup: venv
 	$(MAKE) -C tools
 	$(PYTHON) tools/decompress_baserom.py $(VERSION)
 	$(PYTHON) extract_baserom.py
@@ -262,9 +270,8 @@ endif
 	$(N64_EMULATOR) $<
 
 
-.PHONY: all rom compressed clean setup run distclean assetclean wad rebuildtools
+.PHONY: all rom compress clean assetclean distclean venv setup run wad rebuildtools
 .DEFAULT_GOAL := rom
-all: rom compressed
 
 #### Various Recipes ####
 
