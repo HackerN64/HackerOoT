@@ -1109,7 +1109,7 @@ void Play_DrawMotionBlur(PlayState* this) {
     }
 
     if (sMotionBlurStatus != MOTION_BLUR_OFF) {
-        OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
+        OPEN_DISPS(gfxCtx);
 
         gfxHead = POLY_OPA_DISP;
         gfx = Graph_GfxPlusOne(gfxHead);
@@ -1130,7 +1130,7 @@ void Play_DrawMotionBlur(PlayState* this) {
         Graph_BranchDlist(gfxHead, gfx);
         POLY_OPA_DISP = gfx;
 
-        CLOSE_DISPS(gfxCtx, __FILE__, __LINE__);
+        CLOSE_DISPS(gfxCtx);
     }
 }
 
