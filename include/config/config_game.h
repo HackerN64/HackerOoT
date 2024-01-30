@@ -84,6 +84,11 @@
 // Use the button colors of the N64 version instead of GameCube
 #define N64_BTN_COLORS
 
+/*
+ * Motion Blur
+*/
+// #define ENABLE_MOTION_BLUR
+
 /**
  * Skips the N64 logo and boots directly into the game if defined (may already be skipped by the options below)
  */

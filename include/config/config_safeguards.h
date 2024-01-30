@@ -40,6 +40,7 @@
     #undef ENABLE_MSG_DEBUGGER
     #undef ENABLE_DEBUG_SAVE
     #undef MAP_SELECT_ON_FILE_1
+    #undef ENABLE_MOTION_BLUR_DEBUG
 #endif
 
 
@@ -66,6 +67,10 @@
 // The camera debugger uses the debug heap, which is located in the expanded RAM
 #if (defined ENABLE_CAMERA_DEBUGGER) && !(defined ENABLE_DEBUG_HEAP)
     #define ENABLE_DEBUG_HEAP
+#endif
+
+#if (defined ENABLE_MOTION_BLUR_DEBUG) && !(defined ENABLE_MOTION_BLUR)
+    #define ENABLE_MOTION_BLUR
 #endif
 
 
