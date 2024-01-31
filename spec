@@ -2,6 +2,8 @@
  * ROM spec file
  */
 
+//#include "config.h"
+
 beginseg
     name "makerom"
     include "$(BUILD_DIR)/src/makerom/rom_header.o"
@@ -385,9 +387,13 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_fbdemo_circle.o"
     include "$(BUILD_DIR)/src/code/z_fbdemo_fade.o"
     include "$(BUILD_DIR)/src/code/shrink_window.o"
+#if ENABLE_CAMERA_DEBUGGER
     include "$(BUILD_DIR)/src/code/db_camera.o"
+#endif
     include "$(BUILD_DIR)/src/code/code_800BB0A0.o"
+#if ENABLE_MEMPAK
     include "$(BUILD_DIR)/src/code/mempak.o"
+#endif
     include "$(BUILD_DIR)/src/code/z_kaleido_manager.o"
     include "$(BUILD_DIR)/src/code/z_kaleido_scope_call.o"
     include "$(BUILD_DIR)/src/code/z_play.o"
@@ -9626,6 +9632,7 @@ beginseg
     number 3
 endseg
 
+#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
 beginseg
     name "syotes_scene"
     romalign 0x1000
@@ -9667,6 +9674,7 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/test_levels/depth_test/depth_test_room_0.o"
     number 3
 endseg
+#endif
 
 beginseg
     name "spot00_scene"
@@ -10148,6 +10156,7 @@ beginseg
     number 3
 endseg
 
+#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
 beginseg
     name "testroom_scene"
     romalign 0x1000
@@ -10189,6 +10198,7 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/test_levels/testroom/testroom_room_4.o"
     number 3
 endseg
+#endif
 
 beginseg
     name "kenjyanoma_scene"
@@ -10230,6 +10240,7 @@ beginseg
     number 3
 endseg
 
+#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
 beginseg
     name "sutaru_scene"
     romalign 0x1000
@@ -10243,6 +10254,7 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/test_levels/sutaru/sutaru_room_0.o"
     number 3
 endseg
+#endif
 
 beginseg
     name "link_home_scene"
@@ -10516,6 +10528,7 @@ beginseg
     number 3
 endseg
 
+#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
 beginseg
     name "sasatest_scene"
     romalign 0x1000
@@ -10529,6 +10542,7 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/test_levels/sasatest/sasatest_room_0.o"
     number 3
 endseg
+#endif
 
 beginseg
     name "market_alley_scene"
@@ -11266,6 +11280,7 @@ beginseg
     number 3
 endseg
 
+#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
 beginseg
     name "hairal_niwa2_scene"
     romalign 0x1000
@@ -11279,6 +11294,7 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/indoors/hairal_niwa2/hairal_niwa2_room_0.o"
     number 3
 endseg
+#endif
 
 beginseg
     name "hakasitarelay_scene"
@@ -11752,6 +11768,7 @@ beginseg
     number 3
 endseg
 
+#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
 beginseg
     name "besitu_scene"
     romalign 0x1000
@@ -11765,6 +11782,7 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/test_levels/besitu/besitu_room_0.o"
     number 3
 endseg
+#endif
 
 beginseg
     name "face_shop_scene"
@@ -11822,6 +11840,7 @@ beginseg
     number 3
 endseg
 
+#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
 beginseg
     name "test01_scene"
     romalign 0x1000
@@ -11835,7 +11854,9 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/test_levels/test01/test01_room_0.o"
     number 3
 endseg
+#endif
 
+#if !ENABLE_HACKEROOT
 beginseg
     name "bump_texture_static"
     compress
@@ -11933,3 +11954,4 @@ beginseg
     romalign 0x1000
     include "$(BUILD_DIR)/baserom/softsprite_matrix_static.o"
 endseg
+#endif

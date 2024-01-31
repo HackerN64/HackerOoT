@@ -22,3 +22,6 @@ spimdisasm>=1.20.0,<2.0.0
 
 # z64compress_wrapper.py
 pyelftools
+
+# Ares GDB
+gdb-tools
