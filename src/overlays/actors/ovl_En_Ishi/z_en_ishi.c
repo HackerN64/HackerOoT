@@ -51,9 +51,9 @@ static f32 D_80A7FA28[] = { 0.0f, 0.005f };
 // the sizes of these arrays are very large and take up way more space than it needs to.
 // coincidentally the sizes are the same as the ID for NA_SE_EV_ROCK_BROKEN, which may explain a mistake that could
 // have been made here
-static u16 sBreakSfxIds[0x2852] = { NA_SE_EV_ROCK_BROKEN, NA_SE_EV_WALL_BROKEN };
+static u16 sBreakSfxIds[] = { NA_SE_EV_ROCK_BROKEN, NA_SE_EV_WALL_BROKEN };
 
-static u8 sBreakSfxDurations[0x2852] = { 20, 40 };
+static u8 sBreakSfxDurations[] = { 20, 40 };
 
 static EnIshiEffectSpawnFunc sFragmentSpawnFuncs[] = { EnIshi_SpawnFragmentsSmall, EnIshi_SpawnFragmentsLarge };
 

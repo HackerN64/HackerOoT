@@ -3063,6 +3063,10 @@ void Message_Update(PlayState* play) {
     s16 playerFocusScreenPosY;
     s16 actorFocusScreenPosY;
 
+    if (ENABLE_FAST_TEXT) {
+        sTextboxSkipped = true;
+    }
+
     if (BREG(0) != 0) {
         if (CHECK_BTN_ALL(input->press.button, BTN_DDOWN) && CHECK_BTN_ALL(input->cur.button, BTN_L)) {
             PRINTF("msgno=%d\n", D_80153D78);

@@ -1820,7 +1820,7 @@ u8 Item_Give(PlayState* play, u8 item) {
             }
         }
     } else if ((item >= ITEM_WEIRD_EGG) && (item <= ITEM_CLAIM_CHECK)) {
-        if (item == ITEM_POACHERS_SAW) {
+        if (!FIX_ANNOYING_GLITCH && item == ITEM_POACHERS_SAW) {
             SET_ITEMGETINF(ITEMGETINF_1F);
         }
 
@@ -2808,9 +2808,15 @@ void Interface_DrawItemButtons(PlayState* play) {
 
     if (!IS_PAUSE_STATE_GAMEOVER(pauseCtx)) {
         if (IS_PAUSED(&play->pauseCtx)) {
+            Color_RGB8 startBtnRGB = { 120, 120, 120 };
+
             // Start Button Texture, Color & Label
             gDPPipeSync(OVERLAY_DISP++);
-            gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 120, 120, 120, interfaceCtx->startAlpha);
+            if (N64_BTN_COLORS) {
+                startBtnRGB.r = 200;
+                startBtnRGB.g = startBtnRGB.b = 0;
+            }
+            gDPSetPrimColor(OVERLAY_DISP++, 0, 0, startBtnRGB.r, startBtnRGB.g, startBtnRGB.b, interfaceCtx->startAlpha);
             gSPTextureRectangle(OVERLAY_DISP++, startButtonLeftPos[gSaveContext.language] << 2, 17 << 2,
                                 (startButtonLeftPos[gSaveContext.language] + 22) << 2, 39 << 2, G_TX_RENDERTILE, 0, 0,
                                 (s32)(1.4277344 * (1 << 10)), (s32)(1.4277344 * (1 << 10)));
@@ -3145,7 +3151,19 @@ void Interface_Draw(PlayState* play) {
         Gfx_SetupDL_39Overlay(play->state.gfxCtx);
 
         // Rupee Icon
-        gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 200, 255, 100, interfaceCtx->magicAlpha);
+        if (MM_WALLET_ICON_COLORS) {
+            u8 walletUpg = CUR_UPG_VALUE(UPG_WALLET);
+            static Color_RGB8 const walletColors[] = {
+                { 200, 255, 100 },
+                { 130, 130, 255 },
+                { 255, 100, 100 },
+            };
+
+            gDPSetPrimColor(OVERLAY_DISP++, 0, 0, walletColors[walletUpg].r, walletColors[walletUpg].g,
+                            walletColors[walletUpg].b, interfaceCtx->magicAlpha);
+        } else {
+            gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 200, 255, 100, interfaceCtx->magicAlpha);
+        }
         gDPSetEnvColor(OVERLAY_DISP++, 0, 80, 0, 255);
         OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, gRupeeCounterIconTex, 16, 16, 26, 206, 16, 16, 1 << 10, 1 << 10);
 
