@@ -260,11 +260,11 @@ void func_808B4194(BgSpot15Rrbox* this, PlayState* play) {
     s32 approxFResult;
     Actor* actor = &this->dyna.actor;
 
-    this->unk_174 += 0.5f;
+    this->unk_174 += 0.5f * BLOCK_PUSH_SPEED;
 
-    this->unk_174 = CLAMP_MAX(this->unk_174, 2.0f);
+    this->unk_174 = CLAMP_MAX(this->unk_174, 2.0f * BLOCK_PUSH_SPEED);
 
-    approxFResult = Math_StepToF(&this->unk_178, 20.0f, this->unk_174);
+    approxFResult = Math_StepToF(&this->unk_178, 20.0f * BLOCK_PUSH_SPEED, this->unk_174);
 
     sign = this->unk_17C >= 0.0f ? 1.0f : -1.0f;
 

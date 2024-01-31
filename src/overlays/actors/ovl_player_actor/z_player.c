@@ -8128,6 +8128,10 @@ void Player_Action_80842180(Player* this, PlayState* play) {
 
         Player_GetMovementSpeedAndYaw(this, &speedTarget, &yawTarget, SPEED_MODE_CURVED, play);
 
+        if (MM_BUNNY_HOOD && this->currentMask == PLAYER_MASK_BUNNY) {
+            speedTarget *= MM_BUNNY_HOOD_SPEED;
+        }
+
         if (!func_8083C484(this, &speedTarget, &yawTarget)) {
             func_8083DF68(this, speedTarget, yawTarget);
             func_8083DDC8(this, play);
@@ -9955,6 +9959,28 @@ static void (*D_80854738[])(PlayState* play, Player* this) = {
 
 static Vec3f D_80854778 = { 0.0f, 50.0f, 0.0f };
 
+/**
+ * Iterates in the get item table to get the largest GI object size
+ */
+u32 Player_GetGIAllocSize() {
+    u32 i = 0, curSize = 0, allocSize = PLAYER_ALLOC_GI_MIN;
+
+    for (i = 0; i < ARRAY_COUNT(sGetItemTable); i++) {
+        u16 curGIObjectID = sGetItemTable[i].objectId;
+
+        if (curGIObjectID != OBJECT_INVALID) {
+            RomFile curObject = gObjectTable[curGIObjectID];
+            curSize = curObject.vromEnd - curObject.vromStart;
+
+            if (curSize > allocSize) {
+                allocSize = curSize;
+            }
+        }
+    }
+
+    return allocSize + 16;
+}
+
 void Player_Init(Actor* thisx, PlayState* play2) {
     Player* this = (Player*)thisx;
     PlayState* play = play2;
@@ -9985,7 +10011,16 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     Player_SetEquipmentData(play, this);
     this->prevBoots = this->currentBoots;
     Player_InitCommon(this, play, gPlayerSkelHeaders[((void)0, gSaveContext.save.linkAge)]);
-    this->giObjectSegment = (void*)(((uintptr_t)ZELDA_ARENA_MALLOC(0x3008, "../z_player.c", 17175) + 8) & ~0xF);
+
+    u32 giAllocSize = Player_GetGIAllocSize();
+    if (ENABLE_AUTO_GI_ALLOC) {
+        this->giObjectSegment =
+            (void*)ALIGN16((uintptr_t)ZELDA_ARENA_MALLOC(giAllocSize, __FILE__, __LINE__));
+    } else {
+        ASSERT(giAllocSize < 0x3008,
+                "[HackerOoT:ERROR]: GI Object larger than the allocated size.", __FILE__, __LINE__);
+        this->giObjectSegment = (void*)(((uintptr_t)ZELDA_ARENA_MALLOC(0x3008, "../z_player.c", 17175) + 8) & ~0xF);
+    }
 
     respawnFlag = gSaveContext.respawnFlag;
 
@@ -13891,7 +13926,7 @@ void Player_Action_8085063C(Player* this, PlayState* play) {
 
         if (play->msgCtx.choiceIndex == 1) {
             gSaveContext.respawn[RESPAWN_MODE_TOP].data = -respawnData;
-            gSaveContext.save.info.fw.set = 0;
+            gSaveContext.save.info.fwMain.set = 0;
             Sfx_PlaySfxAtPos(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, NA_SE_PL_MAGIC_WIND_VANISH);
         }
 
@@ -13993,16 +14028,16 @@ void Player_Action_808507F4(Player* this, PlayState* play) {
             if (this->av2.actionVar2 == 0) {
                 gSaveContext.respawn[RESPAWN_MODE_TOP].data = 1;
                 Play_SetupRespawnPoint(play, RESPAWN_MODE_TOP, 0x6FF);
-                gSaveContext.save.info.fw.set = 1;
-                gSaveContext.save.info.fw.pos.x = gSaveContext.respawn[RESPAWN_MODE_DOWN].pos.x;
-                gSaveContext.save.info.fw.pos.y = gSaveContext.respawn[RESPAWN_MODE_DOWN].pos.y;
-                gSaveContext.save.info.fw.pos.z = gSaveContext.respawn[RESPAWN_MODE_DOWN].pos.z;
-                gSaveContext.save.info.fw.yaw = gSaveContext.respawn[RESPAWN_MODE_DOWN].yaw;
-                gSaveContext.save.info.fw.playerParams = 0x6FF;
-                gSaveContext.save.info.fw.entranceIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex;
-                gSaveContext.save.info.fw.roomIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].roomIndex;
-                gSaveContext.save.info.fw.tempSwchFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempSwchFlags;
-                gSaveContext.save.info.fw.tempCollectFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags;
+                gSaveContext.save.info.fwMain.set = 1;
+                gSaveContext.save.info.fwMain.pos.x = gSaveContext.respawn[RESPAWN_MODE_DOWN].pos.x;
+                gSaveContext.save.info.fwMain.pos.y = gSaveContext.respawn[RESPAWN_MODE_DOWN].pos.y;
+                gSaveContext.save.info.fwMain.pos.z = gSaveContext.respawn[RESPAWN_MODE_DOWN].pos.z;
+                gSaveContext.save.info.fwMain.yaw = gSaveContext.respawn[RESPAWN_MODE_DOWN].yaw;
+                gSaveContext.save.info.fwMain.playerParams = 0x6FF;
+                gSaveContext.save.info.fwMain.entranceIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex;
+                gSaveContext.save.info.fwMain.roomIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].roomIndex;
+                gSaveContext.save.info.fwMain.tempSwchFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempSwchFlags;
+                gSaveContext.save.info.fwMain.tempCollectFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags;
                 this->av2.actionVar2 = 2;
             }
         } else if (this->av1.actionVar1 >= 0) {

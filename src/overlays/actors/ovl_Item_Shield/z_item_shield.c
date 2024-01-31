@@ -219,6 +219,9 @@ void ItemShield_Draw(Actor* thisx, PlayState* play) {
 
     if (!(this->unk_19C & 2)) {
         OPEN_DISPS(play->state.gfxCtx, "../z_item_shield.c", 457);
+        if (FIX_ANNOYING_GLITCH) {
+            gSPSegment(POLY_OPA_DISP++, 0x0C, gCullBackDList);
+        }
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_item_shield.c", 460),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

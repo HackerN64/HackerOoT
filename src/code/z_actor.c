@@ -1904,17 +1904,17 @@ f32 D_8015BC18;
 void func_8002FA60(PlayState* play) {
     Vec3f lightPos;
 
-    if (gSaveContext.save.info.fw.set) {
+    if (gSaveContext.save.info.fwMain.set) {
         gSaveContext.respawn[RESPAWN_MODE_TOP].data = 0x28;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].pos.x = gSaveContext.save.info.fw.pos.x;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].pos.y = gSaveContext.save.info.fw.pos.y;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].pos.z = gSaveContext.save.info.fw.pos.z;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].yaw = gSaveContext.save.info.fw.yaw;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].playerParams = gSaveContext.save.info.fw.playerParams;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].entranceIndex = gSaveContext.save.info.fw.entranceIndex;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].roomIndex = gSaveContext.save.info.fw.roomIndex;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].tempSwchFlags = gSaveContext.save.info.fw.tempSwchFlags;
-        gSaveContext.respawn[RESPAWN_MODE_TOP].tempCollectFlags = gSaveContext.save.info.fw.tempCollectFlags;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].pos.x = gSaveContext.save.info.fwMain.pos.x;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].pos.y = gSaveContext.save.info.fwMain.pos.y;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].pos.z = gSaveContext.save.info.fwMain.pos.z;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].yaw = gSaveContext.save.info.fwMain.yaw;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].playerParams = gSaveContext.save.info.fwMain.playerParams;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].entranceIndex = gSaveContext.save.info.fwMain.entranceIndex;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].roomIndex = gSaveContext.save.info.fwMain.roomIndex;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].tempSwchFlags = gSaveContext.save.info.fwMain.tempSwchFlags;
+        gSaveContext.respawn[RESPAWN_MODE_TOP].tempCollectFlags = gSaveContext.save.info.fwMain.tempCollectFlags;
     } else {
         gSaveContext.respawn[RESPAWN_MODE_TOP].data = 0;
         gSaveContext.respawn[RESPAWN_MODE_TOP].pos.x = 0.0f;
@@ -2026,7 +2026,7 @@ void Actor_DrawFaroresWindPointer(PlayState* play) {
             alpha = 255 - (temp * 30);
 
             if (alpha < 0) {
-                gSaveContext.save.info.fw.set = 0;
+                gSaveContext.save.info.fwMain.set = 0;
                 gSaveContext.respawn[RESPAWN_MODE_TOP].data = 0;
                 alpha = 0;
             } else {
@@ -3058,6 +3058,12 @@ Actor* Actor_Delete(ActorContext* actorCtx, Actor* actor, PlayState* play) {
         ASSERT(overlayEntry->numLoaded > 0, "actor_dlftbl->clients > 0", "../z_actor.c", 7252);
         overlayEntry->numLoaded--;
         Actor_FreeOverlay(overlayEntry);
+    }
+
+    if (FIX_SRM) {
+        // this is required to avoid having actor data still loaded in RAM after it's supposed to be deleted
+        // see func_80031B14
+        Actor_Kill(actor);
     }
 
     return newHead;
