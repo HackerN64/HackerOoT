@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import struct
+import argparse
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
 
@@ -1581,6 +1582,20 @@ def ExtractFunc(i):
 #####################################################################
 
 def main():
+    description = "Extract data from baserom."
+
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument("version", help="Version of the game to extract.", choices=["gc-eu-mq-dbg", "hacker-mq"])
+
+    args = parser.parse_args()
+    version = args.version
+
+    global ROM_FILE_PATH
+    global SEGMENTS_PATH
+    if version == "hacker-mq":
+        ROM_FILE_PATH = Path(f'baseroms/{version}/baserom-decompressed.z64')
+        SEGMENTS_PATH = Path(f'baseroms/{version}/segments/')
+
     SEGMENTS_PATH.mkdir(parents=True, exist_ok=True)
 
     # read baserom data

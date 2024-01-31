@@ -10,6 +10,7 @@ from pathlib import Path
 
 
 EXTRACTED_ASSETS_NAMEFILE = ".extracted-assets.json"
+VERSION = ""
 
 
 def SignalHandler(sig, frame):
@@ -28,7 +29,7 @@ def ExtractFile(xmlPath, outputPath, outputSourcePath):
     Path(outputPath).mkdir(parents=True, exist_ok=True)
     Path(outputSourcePath).mkdir(parents=True, exist_ok=True)
 
-    execStr = f"{zapdPath} e -eh -i {xmlPath} -b baseroms/gc-eu-mq-dbg/segments -o {outputPath} -osf {outputSourcePath} -gsf 1 -rconf {configPath} {ZAPDArgs}"
+    execStr = f"{zapdPath} e -eh -i {xmlPath} -b baseroms/{VERSION}/segments -o {outputPath} -osf {outputSourcePath} -gsf 1 -rconf {configPath} {ZAPDArgs}"
 
     if "overlays" in xmlPath:
         execStr += " --static"
@@ -100,7 +101,11 @@ def main():
     parser.add_argument("-j", "--jobs", help="Number of cpu cores to extract with.")
     parser.add_argument("-u", "--unaccounted", help="Enables ZAPD unaccounted detector warning system.", action="store_true")
     parser.add_argument("-Z", help="Pass the argument on to ZAPD, e.g. `-ZWunaccounted` to warn about unaccounted blocks in XMLs. Each argument should be passed separately, *without* the leading dash.", metavar="ZAPD_ARG", action="append")
+    parser.add_argument("-v", "--version", help="OoT Version", choices=["gc-eu-mq-dbg", "hacker-mq"])
     args = parser.parse_args()
+
+    global VERSION
+    VERSION = args.version
 
     global ZAPDArgs
     ZAPDArgs = processZAPDArgs(args.Z) if args.Z else ""
@@ -141,7 +146,7 @@ def main():
         if extract_text_path is not None or extract_staff_text_path is not None:
             print("Extracting text")
             from tools import msgdis
-            msgdis.extract_all_text(extract_text_path, extract_staff_text_path)
+            msgdis.extract_all_text(extract_text_path, extract_staff_text_path, VERSION)
 
         xmlFiles = []
         for currentPath, _, files in os.walk(os.path.join("assets", "xml")):

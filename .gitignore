@@ -28,6 +28,7 @@ docs/doxygen/
 *.dump
 out.txt
 *.ram
+common-key.bin
 
 # Tool artifacts
 tools/mipspro7.2_compiler/
