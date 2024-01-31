@@ -6,77 +6,124 @@ SHELL = /bin/bash
 
 # Build options can either be changed by modifying the makefile, or by building with 'make SETTING=value'
 
-# If COMPARE is 1, check the output md5sum after building
-COMPARE := 1
-# If NON_MATCHING is 1, define the NON_MATCHING C flag when building
-NON_MATCHING := 0
-# If ORIG_COMPILER is 1, compile with QEMU_IRIX and the original compiler
-ORIG_COMPILER := 0
-# If COMPILER is "gcc", compile with GCC instead of IDO.
-COMPILER := ido
+# currently, GCC is the only supported compiler
+COMPILER := gcc
+
 # Target game version. Currently only the following version is supported:
-#   gc-eu-mq-dbg   GameCube Europe/PAL Master Quest Debug (default)
+#   gc-eu-mq-dbg   GameCube Europe/PAL Master Quest Debug
+#   hacker-mq   HackerOoT, based on gc-eu-mq-dbg (default)
+#
 # The following versions are work-in-progress and not yet matching:
 #   gc-eu-mq       GameCube Europe/PAL Master Quest
-VERSION := gc-eu-mq-dbg
+#
+# Note: choosing hacker-mq will enable HackerOoT features,
+#       if another version is chosen, this repo will be like
+#       zeldaret/main decomp but without the disassembly, decompilation
+#       and matching tools, including the IDO compiler
+VERSION := hacker-mq
+
+# Enable optimization flags to use GDB on Ares
+ARES_GDB := 1
+
+# Toggle release or debug mode. 1=Release, 0=Debug
+# Note: currently only used for HackerOoT
+RELEASE := 0
+
 # Number of threads to extract and compress with
 N_THREADS := $(shell nproc)
 
 CFLAGS ?=
 CPPFLAGS ?=
 
-# ORIG_COMPILER cannot be combined with a non-IDO compiler. Check for this case and error out if found.
-ifneq ($(COMPILER),ido)
-  ifeq ($(ORIG_COMPILER),1)
-    $(error ORIG_COMPILER can only be used with the IDO compiler. Please check your Makefile variables and try again)
-  endif
-endif
-
 ifeq ($(COMPILER),gcc)
-  CFLAGS += -DCOMPILER_GCC
-  CPPFLAGS += -DCOMPILER_GCC
-  NON_MATCHING := 1
+  CFLAGS += -DCOMPILER_GCC -DNON_MATCHING -DAVOID_UB
+  CPPFLAGS += -DCOMPILER_GCC -DNON_MATCHING -DAVOID_UB
+else
+  $(error Unsupported compiler. Please use gcc as the COMPILER variable.)
 endif
 
 # Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
 # In nearly all cases, not having 'mips-linux-gnu-*' binaries on the PATH is indicative of missing dependencies
 MIPS_BINUTILS_PREFIX := mips-linux-gnu-
 
-ifeq ($(NON_MATCHING),1)
-  CFLAGS += -DNON_MATCHING -DAVOID_UB
-  CPPFLAGS += -DNON_MATCHING -DAVOID_UB
-  COMPARE := 0
-endif
-
 # Version-specific settings
 ifeq ($(VERSION),gc-eu-mq)
   DEBUG := 0
-  CFLAGS += -DNON_MATCHING
-  CPPFLAGS += -DNON_MATCHING
-  COMPARE := 0
+  HACKEROOT := 0
 else ifeq ($(VERSION),gc-eu-mq-dbg)
   DEBUG := 1
+  HACKEROOT := 0
+else ifeq ($(VERSION),hacker-mq)
+  HACKEROOT := 1
 else
 $(error Unsupported version $(VERSION))
 endif
 
 PROJECT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD_DIR := build/$(VERSION)
-EXPECTED_DIR := expected/$(BUILD_DIR)
 VENV := .venv
 
 MAKE = make
 CPPFLAGS += -fno-dollars-in-identifiers -P
 
-ifeq ($(DEBUG),1)
-  CFLAGS += -DOOT_DEBUG=1
-  CPPFLAGS += -DOOT_DEBUG=1
-  OPTFLAGS := -O2
-else
-  CFLAGS += -DNDEBUG -DOOT_DEBUG=0
-  CPPFLAGS += -DNDEBUG -DOOT_DEBUG=0
-  OPTFLAGS := -O2 -g3
+# Set PACKAGE_VERSION define for printing commit hash
+ifeq ($(origin PACKAGE_VERSION), undefined)
+  PACKAGE_VERSION := $(shell git log -1 --pretty=%h | tr -d '\n')
+  ifeq ('$(PACKAGE_VERSION)', '')
+    PACKAGE_VERSION = Unknown version
+  endif
 endif
+
+# Set PACKAGE_AUTHOR define for printing author's git name
+ifeq ($(origin PACKAGE_AUTHOR), undefined)
+  PACKAGE_AUTHOR := $(shell git config --get user.name)
+  ifeq ('$(PACKAGE_AUTHOR)', '')
+    PACKAGE_AUTHOR = Unknown author
+  endif
+endif
+
+# Make sure the build reports the correct version
+$(shell touch src/boot/build.c)
+
+ifeq ($(VERSION),hacker-mq)
+  SEGMENT_VERSION := hacker-mq
+  CFLAGS += -DENABLE_HACKEROOT=1 -DOOT_DEBUG=1
+  CPPFLAGS += -DENABLE_HACKEROOT=1 -DOOT_DEBUG=1
+  OPTFLAGS := -Os
+
+  ifeq ($(RELEASE),1)
+    CFLAGS += -DRELEASE_ROM=1
+    CPPFLAGS += -DRELEASE_ROM=1
+  else
+    CFLAGS += -DRELEASE_ROM=0
+    CPPFLAGS += -DRELEASE_ROM=0
+  endif
+else
+  ifeq ($(DEBUG),1)
+    CFLAGS += -DOOT_DEBUG=1
+    CPPFLAGS += -DOOT_DEBUG=1
+    OPTFLAGS := -O2
+  else
+    CFLAGS += -DNDEBUG -DOOT_DEBUG=0
+    CPPFLAGS += -DNDEBUG -DOOT_DEBUG=0
+    OPTFLAGS := -O2 -g3
+  endif
+
+  SEGMENT_VERSION := gc-eu-mq-dbg
+  CFLAGS += -DENABLE_HACKEROOT=0
+  CPPFLAGS += -DENABLE_HACKEROOT=0
+endif
+
+# Override optimization flags if using GDB
+ifeq ($(ARES_GDB),1)
+  OPTFLAGS := -Og -ggdb3
+endif
+
+# Define author and package version for every OoT version
+# Note: this won't be used if not using HackerOoT
+CFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)' -DPACKAGE_VERSION='$(PACKAGE_VERSION)'
+CPPFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)' -DPACKAGE_VERSION='$(PACKAGE_VERSION)'
+OPTFLAGS += -ffast-math -fno-unsafe-math-optimizations
 
 ifeq ($(OS),Windows_NT)
     DETECTED_OS=windows
@@ -100,23 +147,8 @@ endif
 # Detect compiler and set variables appropriately.
 ifeq ($(COMPILER),gcc)
   CC       := $(MIPS_BINUTILS_PREFIX)gcc
-else ifeq ($(COMPILER),ido)
-  CC       := tools/ido_recomp/$(DETECTED_OS)/7.1/cc
-  CC_OLD   := tools/ido_recomp/$(DETECTED_OS)/5.3/cc
 else
-$(error Unsupported compiler. Please use either ido or gcc as the COMPILER variable.)
-endif
-
-# if ORIG_COMPILER is 1, check that either QEMU_IRIX is set or qemu-irix package installed
-ifeq ($(ORIG_COMPILER),1)
-  ifndef QEMU_IRIX
-    QEMU_IRIX := $(shell which qemu-irix)
-    ifeq (, $(QEMU_IRIX))
-      $(error Please install qemu-irix package or set QEMU_IRIX env var to the full qemu-irix binary path)
-    endif
-  endif
-  CC        = $(QEMU_IRIX) -L tools/ido7.1_compiler tools/ido7.1_compiler/usr/bin/cc
-  CC_OLD    = $(QEMU_IRIX) -L tools/ido5.3_compiler tools/ido5.3_compiler/usr/bin/cc
+$(error Unsupported compiler. Please use gcc as the COMPILER variable.)
 endif
 
 AS      := $(MIPS_BINUTILS_PREFIX)as
@@ -144,43 +176,15 @@ PYTHON     ?= $(VENV)/bin/python3
 # preprocessor for this because it won't substitute inside string literals.
 SPEC_REPLACE_VARS := sed -e 's|$$(BUILD_DIR)|$(BUILD_DIR)|g'
 
-ifeq ($(COMPILER),gcc)
-  OPTFLAGS := -Os -ffast-math -fno-unsafe-math-optimizations
-endif
-
 ASFLAGS := -march=vr4300 -32 -no-pad-sections -Iinclude
 
 ifeq ($(COMPILER),gcc)
   CFLAGS += -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -mdivide-breaks -fno-zero-initialized-in-bss -fno-toplevel-reorder -ffreestanding -fno-common -fno-merge-constants -mno-explicit-relocs -mno-split-addresses $(CHECK_WARNINGS) -funsigned-char
   MIPS_VERSION := -mips3
-else
-  # Suppress warnings for wrong number of macro arguments (to fake variadic
-  # macros) and Microsoft extensions such as anonymous structs (which the
-  # compiler does support but warns for their usage).
-  CFLAGS += -G 0 -non_shared -fullwarn -verbose -Xcpluscomm $(INC) -Wab,-r4300_mul -woff 516,609,649,838,712
-  MIPS_VERSION := -mips2
-endif
-
-ifeq ($(COMPILER),ido)
-  # Have CC_CHECK pretend to be a MIPS compiler
-  MIPS_BUILTIN_DEFS := -D_MIPS_ISA_MIPS2=2 -D_MIPS_ISA=_MIPS_ISA_MIPS2 -D_ABIO32=1 -D_MIPS_SIM=_ABIO32 -D_MIPS_SZINT=32 -D_MIPS_SZLONG=32 -D_MIPS_SZPTR=32
-  CC_CHECK  = gcc -fno-builtin -fsyntax-only -funsigned-char -std=gnu90 -D_LANGUAGE_C -DNON_MATCHING -DOOT_DEBUG=1 $(MIPS_BUILTIN_DEFS) $(INC) $(CHECK_WARNINGS)
-  ifeq ($(shell getconf LONG_BIT), 32)
-    # Work around memory allocation bug in QEMU
-    export QEMU_GUEST_BASE := 1
-  else
-    # Ensure that gcc (warning check) treats the code as 32-bit
-    CC_CHECK += -m32
-  endif
-else
   CC_CHECK  = @:
 endif
 
 OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
-
-DISASM_DATA_DIR := tools/disasm/$(VERSION)
-DISASM_FLAGS += --custom-suffix _unknown --sequential-label-names --no-use-fpccsr --no-cop0-named-registers
-DISASM_FLAGS += --config-dir $(DISASM_DATA_DIR) --symbol-addrs $(DISASM_DATA_DIR)/functions.txt --symbol-addrs $(DISASM_DATA_DIR)/variables.txt
 
 #### Files ####
 
@@ -188,12 +192,11 @@ DISASM_FLAGS += --config-dir $(DISASM_DATA_DIR) --symbol-addrs $(DISASM_DATA_DIR
 ROMC := oot-$(VERSION)-compressed.z64
 ROM := oot-$(VERSION).z64
 ELF := $(ROM:.z64=.elf)
+WAD := $(ROM:.z64=.wad)
 # description of ROM segments
 SPEC := spec
 
-ifeq ($(COMPILER),ido)
-SRC_DIRS := $(shell find src -type d -not -path src/gcc_fix)
-else
+ifeq ($(COMPILER),gcc)
 SRC_DIRS := $(shell find src -type d)
 endif
 
@@ -207,7 +210,7 @@ ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_XML:.xml=.c),$f) \
 UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
 
 # TODO: for now, ROM segments are still taken from the Debug ROM even when building other versions
-BASEROM_SEGMENTS_DIR := baseroms/gc-eu-mq-dbg/segments
+BASEROM_SEGMENTS_DIR := baseroms/$(SEGMENT_VERSION)/segments
 BASEROM_BIN_FILES := $(wildcard $(BASEROM_SEGMENTS_DIR)/*)
 
 # source files
@@ -218,11 +221,6 @@ O_FILES       := $(foreach f,$(S_FILES:.s=.o),$(BUILD_DIR)/$f) \
                  $(foreach f,$(BASEROM_BIN_FILES),$(BUILD_DIR)/baserom/$(notdir $f).o)
 
 OVL_RELOC_FILES := $(shell $(CPP) $(CPPFLAGS) $(SPEC) | $(SPEC_REPLACE_VARS) | grep -o '[^"]*_reloc.o' )
-
-DISASM_BASEROM := baseroms/$(VERSION)/baserom-decompressed.z64
-DISASM_DATA_FILES := $(wildcard $(DISASM_DATA_DIR)/*.csv) $(wildcard $(DISASM_DATA_DIR)/*.txt)
-DISASM_S_FILES := $(shell test -e $(PYTHON) && $(PYTHON) tools/disasm/list_generated_files.py -o $(EXPECTED_DIR) --config-dir $(DISASM_DATA_DIR))
-DISASM_O_FILES := $(DISASM_S_FILES:.s=.o)
 
 # Automatic dependency files
 # (Only asm_processor dependencies and reloc dependencies are handled for now)
@@ -237,90 +235,14 @@ TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),$(BUILD_DIR)/$
 # create build directories
 $(shell mkdir -p $(BUILD_DIR)/baserom $(BUILD_DIR)/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS) $(ASSET_BIN_DIRS),$(BUILD_DIR)/$(dir)))
 
-ifeq ($(COMPILER),ido)
-$(BUILD_DIR)/src/boot/stackcheck.o: OPTFLAGS := -O2
+ifeq ($(COMPILER),gcc)
+  $(BUILD_DIR)/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
+  $(BUILD_DIR)/src/%.o: CC := $(CC) -fexec-charset=utf-8
 
-$(BUILD_DIR)/src/code/__osMalloc.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/code_800FC620.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/code_800FCE80.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/code_800FD970.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/gfxprint.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/jpegutils.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/jpegdecoder.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/load.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/loadfragment2.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/logutils.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/mtxuty-cvt.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/padsetup.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/padutils.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/printutils.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/relocation.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/sleep.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/system_malloc.o: OPTFLAGS := -O2
-
-$(BUILD_DIR)/src/code/fault.o: CFLAGS += -trapuv
-$(BUILD_DIR)/src/code/fault.o: OPTFLAGS := -O2 -g3
-$(BUILD_DIR)/src/code/fault_drawer.o: CFLAGS += -trapuv
-$(BUILD_DIR)/src/code/fault_drawer.o: OPTFLAGS := -O2 -g3
-$(BUILD_DIR)/src/code/ucode_disas.o: OPTFLAGS := -O2 -g3
-
-ifeq ($(DEBUG),1)
-$(BUILD_DIR)/src/code/fmodf.o: OPTFLAGS := -g
-$(BUILD_DIR)/src/code/__osMemset.o: OPTFLAGS := -g
-$(BUILD_DIR)/src/code/__osMemmove.o: OPTFLAGS := -g
-else
-$(BUILD_DIR)/src/code/fmodf.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/__osMemset.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/code/__osMemmove.o: OPTFLAGS := -O2
-endif
-
-$(BUILD_DIR)/src/audio/%.o: OPTFLAGS := -O2
-
-# Use signed chars instead of unsigned for this audio file (needed to match AudioDebug_ScrPrt)
-$(BUILD_DIR)/src/audio/general.o: CFLAGS += -signed
-
-# Put string literals in .data for some audio files (needed to match these files with literals)
-$(BUILD_DIR)/src/audio/sfx.o: CFLAGS += -use_readwrite_const
-$(BUILD_DIR)/src/audio/sequence.o: CFLAGS += -use_readwrite_const
-
-ifeq ($(DEBUG),1)
-$(BUILD_DIR)/src/libultra/libc/absf.o: OPTFLAGS := -O2 -g3
-$(BUILD_DIR)/src/libultra/libc/sqrt.o: OPTFLAGS := -O2 -g3
-else
-$(BUILD_DIR)/src/libultra/libc/absf.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/libultra/libc/sqrt.o: OPTFLAGS := -O2
-endif
-
-$(BUILD_DIR)/src/libultra/libc/ll.o: OPTFLAGS := -O1
-$(BUILD_DIR)/src/libultra/libc/ll.o: MIPS_VERSION := -mips3 -32
-$(BUILD_DIR)/src/libultra/libc/llcvt.o: OPTFLAGS := -O1
-$(BUILD_DIR)/src/libultra/libc/llcvt.o: MIPS_VERSION := -mips3 -32
-
-$(BUILD_DIR)/src/libultra/os/%.o: OPTFLAGS := -O1
-$(BUILD_DIR)/src/libultra/io/%.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/libultra/libc/%.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/libultra/rmon/%.o: OPTFLAGS := -O2
-$(BUILD_DIR)/src/libultra/gu/%.o: OPTFLAGS := -O2
-
-$(BUILD_DIR)/assets/misc/z_select_static/%.o: CFLAGS += -DF3DEX_GBI
-
-$(BUILD_DIR)/src/libultra/gu/%.o: CC := $(CC_OLD)
-$(BUILD_DIR)/src/libultra/io/%.o: CC := $(CC_OLD)
-$(BUILD_DIR)/src/libultra/libc/%.o: CC := $(CC_OLD)
-$(BUILD_DIR)/src/libultra/os/%.o: CC := $(CC_OLD)
-$(BUILD_DIR)/src/libultra/rmon/%.o: CC := $(CC_OLD)
-
-$(BUILD_DIR)/src/code/jpegutils.o: CC := $(CC_OLD)
-$(BUILD_DIR)/src/code/jpegdecoder.o: CC := $(CC_OLD)
-
-$(BUILD_DIR)/src/boot/%.o: CC := $(PYTHON) tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
-$(BUILD_DIR)/src/code/%.o: CC := $(PYTHON) tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
-$(BUILD_DIR)/src/overlays/%.o: CC := $(PYTHON) tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
-
-$(BUILD_DIR)/assets/%.o: CC := $(PYTHON) tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
-else
-$(BUILD_DIR)/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
-$(BUILD_DIR)/src/%.o: CC := $(CC) -fexec-charset=euc-jp
+  $(BUILD_DIR)/src/overlays/actors/ovl_Item_Shield/%.o: OPTFLAGS := -O2
+  $(BUILD_DIR)/src/overlays/actors/ovl_En_Part/%.o: OPTFLAGS := -O2
+  $(BUILD_DIR)/src/overlays/actors/ovl_Item_B_Heart/%.o: OPTFLAGS := -O0
+  $(BUILD_DIR)/src/overlays/actors/ovl_Bg_Mori_Hineri/%.o: OPTFLAGS := -O0
 endif
 
 #### Main Targets ###
@@ -328,19 +250,19 @@ endif
 all: rom compress
 
 rom: $(ROM)
-ifneq ($(COMPARE),0)
-	@md5sum $(ROM)
-	@md5sum -c baseroms/$(VERSION)/checksum.md5
-endif
 
 compress: $(ROMC)
-ifneq ($(COMPARE),0)
-	@md5sum $(ROMC)
-	@md5sum -c baseroms/$(VERSION)/checksum-compressed.md5
+
+wad:
+ifeq ("$(wildcard common-key.bin)", "")
+	$(error Please provide the common-key.bin file.)
 endif
+	$(MAKE) compress CFLAGS="-DCONSOLE_WIIVC $(CFLAGS) -fno-reorder-blocks -fno-optimize-sibling-calls" CPPFLAGS="-DCONSOLE_WIIVC $(CPPFLAGS)"
+	tools/gzinject/gzinject -a inject -r 1 -k common-key.bin -w basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
+	$(RM) -r wadextract/ common-key.bin
 
 clean:
-	$(RM) -r $(ROMC) $(ROM) $(ELF) $(BUILD_DIR)
+	$(RM) -r $(ROMC) $(ROM) $(ELF) $(BUILD_DIR) cache
 
 assetclean:
 	$(RM) -r $(ASSET_BIN_DIRS)
@@ -364,11 +286,16 @@ setup: venv
 	$(PYTHON) tools/decompress_baserom.py $(VERSION)
 # TODO: for now, we only extract ROM segments and assets from the Debug ROM
 ifeq ($(VERSION),gc-eu-mq-dbg)
-	$(PYTHON) extract_baserom.py
-	$(PYTHON) extract_assets.py -j$(N_THREADS)
+	$(PYTHON) extract_baserom.py gc-eu-mq-dbg
+	$(PYTHON) extract_assets.py -j$(N_THREADS) -v gc-eu-mq-dbg
+else
+ifeq ($(VERSION),hacker-mq)
+	$(PYTHON) extract_baserom.py hacker-mq
+	$(PYTHON) extract_assets.py -j$(N_THREADS) -v hacker-mq
+# temporary solution until decomp handles this properly
+	cp baseroms/hacker-mq/baserom-decompressed.z64 baseroms/gc-eu-mq-dbg/
 endif
-
-disasm: $(DISASM_O_FILES)
+endif
 
 run: $(ROM)
 ifeq ($(N64_EMULATOR),)
@@ -377,7 +304,7 @@ endif
 	$(N64_EMULATOR) $<
 
 
-.PHONY: all rom compress clean assetclean distclean venv setup disasm run
+.PHONY: all rom compress clean assetclean distclean venv setup run wad
 .DEFAULT_GOAL := rom
 
 #### Various Recipes ####
@@ -484,13 +411,6 @@ $(BUILD_DIR)/assets/%.bin.inc.c: assets/%.bin
 
 $(BUILD_DIR)/assets/%.jpg.inc.c: assets/%.jpg
 	$(ZAPD) bren -eh -i $< -o $@
-
-$(EXPECTED_DIR)/.disasm: $(DISASM_DATA_FILES)
-	$(PYTHON) tools/disasm/disasm.py $(DISASM_FLAGS) $(DISASM_BASEROM) -o $(EXPECTED_DIR) --split-functions $(EXPECTED_DIR)/functions
-	touch $@
-
-$(EXPECTED_DIR)/%.o: $(EXPECTED_DIR)/.disasm
-	$(AS) $(ASFLAGS) $(@:.o=.s) -o $@
 
 -include $(DEP_FILES)
 
