@@ -93,7 +93,9 @@ void func_80AFB768(EnSi* this, PlayState* play) {
             if (this->collider.base.ocFlags2 & OC2_HIT_PLAYER) {
                 this->collider.base.ocFlags2 &= ~OC2_HIT_PLAYER;
                 Item_Give(play, ITEM_SKULL_TOKEN);
-                player->actor.freezeTimer = 10;
+                if (!DISABLE_GS_TOKEN_FREEZE) {
+                    player->actor.freezeTimer = 10;
+                }
                 Message_StartTextbox(play, 0xB4, NULL);
                 Audio_PlayFanfare(NA_BGM_SMALL_ITEM_GET);
                 this->actionFunc = func_80AFB950;
@@ -115,7 +117,9 @@ void func_80AFB89C(EnSi* this, PlayState* play) {
 
     if (!CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_13)) {
         Item_Give(play, ITEM_SKULL_TOKEN);
-        player->actor.freezeTimer = 10;
+        if (!DISABLE_GS_TOKEN_FREEZE) {
+            player->actor.freezeTimer = 10;
+        }
         Message_StartTextbox(play, 0xB4, NULL);
         Audio_PlayFanfare(NA_BGM_SMALL_ITEM_GET);
         this->actionFunc = func_80AFB950;
@@ -125,7 +129,7 @@ void func_80AFB89C(EnSi* this, PlayState* play) {
 void func_80AFB950(EnSi* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (Message_GetState(&play->msgCtx) != TEXT_STATE_CLOSING) {
+    if (!DISABLE_GS_TOKEN_FREEZE && Message_GetState(&play->msgCtx) != TEXT_STATE_CLOSING) {
         player->actor.freezeTimer = 10;
     } else {
         SET_GS_FLAGS((this->actor.params & 0x1F00) >> 8, this->actor.params & 0xFF);

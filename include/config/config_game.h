@@ -49,12 +49,12 @@
 /**
  * Disable Player froze when getting a Gold Skulltula Token
 */
-// #define DISABLE_GS_TOKEN_FREEZE true
+#define DISABLE_GS_TOKEN_FREEZE true
 
 /**
  * Add Gold Skulltula count to the textbox
 */
-// #define GS_COUNT_IN_TEXT true
+#define GS_COUNT_IN_TEXT true
 
 /**
  * Applies the anti-aliasing filter for the background of the pause menu.

@@ -391,11 +391,34 @@ def extract_all_text(text_out, staff_text_out, version: str):
                 out += "#ifdef DEFINE_MESSAGE_FFFC\n"
             out += f"DEFINE_MESSAGE(0x{message[0]:04X}, {textbox_type[message[1]]}, {textbox_ypos[message[2]]},"
             out += "\n"
-            out += f"{message[3]}" + ("\n" if message[3] != "" else "") + ","
+
+            if message[0] in [0x00B4, 0x00B5]:
+                out += "#if !GS_COUNT_IN_TEXT\n"
+
+            tokenFreezeMode = (
+                "#if DISABLE_GS_TOKEN_FREEZE\n"
+                + "FADE(\"\\x20\")\n"
+                + "#endif\n"
+            ) if message[0] in [0x00B4, 0x00B5] else ""
+
+            out += f"{message[3]}" + ("\n" if message[3] != "" else "") + f"{tokenFreezeMode},"
             out += "\n" if message[3] != "" else ""
-            out += f"{message[4]}" + ("\n" if message[4] != "" else "") + ","
+            out += f"{message[4]}" + ("\n" if message[4] != "" else "") + f"{tokenFreezeMode},"
             out += "\n" if message[4] != "" else ""
-            out += f"{message[5]}\n)"
+            out += f"{message[5]}\n" + tokenFreezeMode
+
+            if message[0] in [0x00B4, 0x00B5]:
+                out += "#else\n"
+                out += "\"You got a \" COLOR(RED) \"Gold Skulltula Token\" COLOR(DEFAULT) \"!\\n\"\n"
+                out += f"\"You've collected \" COLOR(RED) TOKENS COLOR(DEFAULT) \" tokens in total.\"\n{tokenFreezeMode},\n"
+                out += "\"Du hast eine \" COLOR(RED) \"Goldene Skulltula\" COLOR(DEFAULT) \" zerstört!\\n\"\n"
+                out += f"\"Sie haben insgesamt \" COLOR(RED) TOKENS COLOR(DEFAULT) \" gesammelt.\"\n{tokenFreezeMode},\n"
+                out += "\"Vous venez de détruire une \" COLOR(RED) \"Skulltula d'or\" COLOR(DEFAULT) \"!\\n\"\n"
+                out += f"\"Vous en avez désormais \" COLOR(RED) TOKENS COLOR(DEFAULT) \".\"\n{tokenFreezeMode}"
+                out += "#endif\n"
+
+            out += ")"
+
             if message[0] == 0xFFFC:
                 out += "\n#endif"
             out += "\n\n"

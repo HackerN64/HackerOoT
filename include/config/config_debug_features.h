@@ -76,7 +76,7 @@
 
 /**** [CAMERA DEBUGGER] ****/
 // Includes a cutscene debugger/exporter
-// #define ENABLE_CAMERA_DEBUGGER false
+#define ENABLE_CAMERA_DEBUGGER false
 
 /**** [AUDIO DEBUGGER] ****/
 // #define ENABLE_AUDIO_DEBUGGER false

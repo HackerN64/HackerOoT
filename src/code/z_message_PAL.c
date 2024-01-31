@@ -3196,7 +3196,7 @@ void Message_Update(PlayState* play) {
             break;
         case MSGMODE_TEXT_NEXT_MSG:
             Message_Decode(play);
-            if (sTextFade) {
+            if (sTextFade || (DISABLE_GS_TOKEN_FREEZE && sTextFade && (msgCtx->textId != 0xB4) && (msgCtx->textId != 0xB5))) {
                 Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_NOTHING);
             }
             if (D_80153D74 != 0) {
