@@ -81,3 +81,39 @@ Add the following to (or create) the `.vscode/settings.json` file for VSCode to 
     },
 }
 ```
+
+## GDB Launch File
+```jsonc
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Ares GDB (Linux)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/oot-hacker-mq.elf",
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+            "miDebuggerServerAddress": "tcp:172.0.0.1:9123", // change this to your Linux/WSL IP address
+        },
+        {
+            "name": "Ares GDB (Windows)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "windows_path_to_HackerOoT.elf",
+            "cwd": "windows_path_to_folder_containing_HackerOoT.elf",
+            "stopAtEntry": true,
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/mnt/c/msys64/mingw64/bin/gdb-multiarch.exe",
+            "miDebuggerServerAddress": "[::1]:9123",
+        }
+    ]
+}
+```
