@@ -239,14 +239,15 @@ void Message_DrawTextChar(PlayState* play, void* textureImage, Gfx** p) {
         gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, msgCtx->textColorAlpha);
         gSPTextureRectangle(gfx++, (x + R_TEXT_DROP_SHADOW_OFFSET) << 2, (y + R_TEXT_DROP_SHADOW_OFFSET) << 2,
                             (x + R_TEXT_DROP_SHADOW_OFFSET + WIDE_MULT(sCharTexSize, WIDE_GET_RATIO)) << 2,
-                            (y + R_TEXT_DROP_SHADOW_OFFSET + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV(sCharTexScale, WIDE_GET_RATIO),
-                            sCharTexScale);
+                            (y + R_TEXT_DROP_SHADOW_OFFSET + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0,
+                            WIDE_DIV(sCharTexScale, WIDE_GET_RATIO), sCharTexScale);
     }
 
     gDPPipeSync(gfx++);
     gDPSetPrimColor(gfx++, 0, 0, msgCtx->textColorR, msgCtx->textColorG, msgCtx->textColorB, msgCtx->textColorAlpha);
-    gSPTextureRectangle(gfx++, x << 2, y << 2, (x + WIDE_MULT(sCharTexSize, WIDE_GET_RATIO)) << 2, (y + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0,
-                        WIDE_DIV(sCharTexScale, WIDE_GET_RATIO), sCharTexScale);
+    gSPTextureRectangle(gfx++, x << 2, y << 2, (x + WIDE_MULT(sCharTexSize, WIDE_GET_RATIO)) << 2,
+                        (y + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV(sCharTexScale, WIDE_GET_RATIO),
+                        sCharTexScale);
     *p = gfx;
 }
 
@@ -581,8 +582,9 @@ void Message_DrawTextboxIcon(PlayState* play, Gfx** p, s16 x, s16 y) {
     sCharTexSize = 16.0f * ((f32)R_TEXT_CHAR_SCALE / 100.0f);
     sCharTexScale = 1024.0f / ((f32)R_TEXT_CHAR_SCALE / 100.0f);
 
-    gSPTextureRectangle(gfx++, x << 2, y << 2, WIDE_INCR(((x + sCharTexSize) << 2), -(u16)(WIDE_GET_4_3 * 10.0f)), (y + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0,
-                        WIDE_DIV(sCharTexScale, WIDE_GET_RATIO), sCharTexScale);
+    gSPTextureRectangle(gfx++, x << 2, y << 2, WIDE_INCR(((x + sCharTexSize) << 2), -(u16)(WIDE_GET_4_3 * 10.0f)),
+                        (y + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV(sCharTexScale, WIDE_GET_RATIO),
+                        sCharTexScale);
 
     msgCtx->stateTimer++;
 
@@ -764,8 +766,11 @@ u16 Message_DrawItemIcon(PlayState* play, u16 itemId, Gfx** p, u16 i) {
     }
 
     gSPTextureRectangle(gfx++, (WIDE_INCR(msgCtx->textPosX, 3) + R_TEXTBOX_ICON_XPOS) << 2, R_TEXTBOX_ICON_YPOS << 2,
-                        WIDE_INCR((msgCtx->textPosX + R_TEXTBOX_ICON_XPOS + R_TEXTBOX_ICON_DIMENSION), (itemId < ITEM_MEDALLION_FOREST ? -5 : -3)) << 2,
-                        (R_TEXTBOX_ICON_YPOS + R_TEXTBOX_ICON_DIMENSION) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
+                        WIDE_INCR((msgCtx->textPosX + R_TEXTBOX_ICON_XPOS + R_TEXTBOX_ICON_DIMENSION),
+                                  (itemId < ITEM_MEDALLION_FOREST ? -5 : -3))
+                            << 2,
+                        (R_TEXTBOX_ICON_YPOS + R_TEXTBOX_ICON_DIMENSION) << 2, G_TX_RENDERTILE, 0, 0,
+                        WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
     gDPPipeSync(gfx++);
     gDPSetCombineLERP(gfx++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0);
 
@@ -1945,9 +1950,8 @@ void Message_DrawTextBox(PlayState* play, Gfx** p) {
                                G_TX_NOLOD, G_TX_NOLOD);
     }
 
-    gSPTextureRectangle(gfx++, posX << 2, R_TEXTBOX_Y << 2, (posX + width) << 2,
-                        (R_TEXTBOX_Y + R_TEXTBOX_HEIGHT) << 2, G_TX_RENDERTILE, 0, 0, texWidth << 1,
-                        R_TEXTBOX_TEXHEIGHT << 1);
+    gSPTextureRectangle(gfx++, posX << 2, R_TEXTBOX_Y << 2, (posX + width) << 2, (R_TEXTBOX_Y + R_TEXTBOX_HEIGHT) << 2,
+                        G_TX_RENDERTILE, 0, 0, texWidth << 1, R_TEXTBOX_TEXHEIGHT << 1);
 
     // Draw treble clef
     if (msgCtx->textBoxType == TEXTBOX_TYPE_OCARINA) {
@@ -1957,8 +1961,9 @@ void Message_DrawTextBox(PlayState* play, Gfx** p) {
         gDPSetPrimColor(gfx++, 0, 0, 255, 100, 0, 255);
         gDPLoadTextureBlock_4b(gfx++, gOcarinaTrebleClefTex, G_IM_FMT_I, 16, 32, 0, G_TX_MIRROR, G_TX_MIRROR,
                                G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-        gSPTextureRectangle(gfx++, WIDE_INCR(R_TEXTBOX_CLEF_XPOS, 20) << 2, R_TEXTBOX_CLEF_YPOS << 2, WIDE_INCR((R_TEXTBOX_CLEF_XPOS + 16), 20) << 2,
-                            (R_TEXTBOX_CLEF_YPOS + 32) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
+        gSPTextureRectangle(gfx++, WIDE_INCR(R_TEXTBOX_CLEF_XPOS, 20) << 2, R_TEXTBOX_CLEF_YPOS << 2,
+                            WIDE_INCR((R_TEXTBOX_CLEF_XPOS + 16), 20) << 2, (R_TEXTBOX_CLEF_YPOS + 32) << 2,
+                            G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
     }
 
     *p = gfx;
@@ -2904,7 +2909,8 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
             if (msgCtx->msgMode == MSGMODE_SONG_PLAYBACK) {
                 g = msgCtx->ocarinaAction - OCARINA_ACTION_PLAYBACK_MINUET;
                 r = gOcarinaSongButtons[g].numButtons;
-                for (notePosX = WIDE_INCR(R_OCARINA_BUTTONS_XPOS, 16), i = 0; i < r; i++, notePosX += WIDE_INCR(R_OCARINA_BUTTONS_XPOS_OFFSET, -4)) {
+                for (notePosX = WIDE_INCR(R_OCARINA_BUTTONS_XPOS, 16), i = 0; i < r;
+                     i++, notePosX += WIDE_INCR(R_OCARINA_BUTTONS_XPOS_OFFSET, -4)) {
                     gDPPipeSync(gfx++);
                     gDPSetPrimColor(gfx++, 0, 0, 150, 150, 150, 150);
                     gDPSetEnvColor(gfx++, 10, 10, 10, 0);
@@ -2923,7 +2929,8 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
 
             if (msgCtx->msgMode != MSGMODE_SCARECROW_LONG_RECORDING_START &&
                 msgCtx->msgMode != MSGMODE_MEMORY_GAME_START) {
-                for (notePosX = WIDE_INCR(R_OCARINA_BUTTONS_XPOS, 16), i = 0; i < 8; i++, notePosX += WIDE_INCR(R_OCARINA_BUTTONS_XPOS_OFFSET, -4)) {
+                for (notePosX = WIDE_INCR(R_OCARINA_BUTTONS_XPOS, 16), i = 0; i < 8;
+                     i++, notePosX += WIDE_INCR(R_OCARINA_BUTTONS_XPOS_OFFSET, -4)) {
                     if (sOcarinaButtonIndexBuf[i] == OCARINA_BTN_INVALID) {
                         break;
                     }
@@ -3207,7 +3214,8 @@ void Message_Update(PlayState* play) {
             break;
         case MSGMODE_TEXT_NEXT_MSG:
             Message_Decode(play);
-            if (sTextFade || (DISABLE_GS_TOKEN_FREEZE && sTextFade && (msgCtx->textId != 0xB4) && (msgCtx->textId != 0xB5))) {
+            if (sTextFade ||
+                (DISABLE_GS_TOKEN_FREEZE && sTextFade && (msgCtx->textId != 0xB4) && (msgCtx->textId != 0xB5))) {
                 Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_NOTHING);
             }
             if (D_80153D74 != 0) {

@@ -213,12 +213,13 @@ void GfxPrint_PrintCharImpl(GfxPrint* this, u8 c) {
         gDPSetColor(this->dList++, G_SETPRIMCOLOR, 0);
 
         if (this->flags & GFXP_FLAG_ENLARGE) {
-            gSPTextureRectangle(this->dList++, (this->posX + 4) << 1, (this->posY + 4) << 1, WIDE_INCR(this->posX + 4 + 32, -9) << 1,
-                                (this->posY + 4 + 32 - 1) << 1, tile, (u16)(c & 4) * 64, (u16)(c >> 3) * 256, WIDE_DIV((1 << 9), WIDE_GET_RATIO),
-                                1 << 9);
+            gSPTextureRectangle(this->dList++, (this->posX + 4) << 1, (this->posY + 4) << 1,
+                                WIDE_INCR(this->posX + 4 + 32, -9) << 1, (this->posY + 4 + 32 - 1) << 1, tile,
+                                (u16)(c & 4) * 64, (u16)(c >> 3) * 256, WIDE_DIV((1 << 9), WIDE_GET_RATIO), 1 << 9);
         } else {
-            gSPTextureRectangle(this->dList++, this->posX + 4, this->posY + 4, WIDE_INCR(this->posX + 4 + 32, -9), this->posY + 4 + 32 - 1,
-                                tile, (u16)(c & 4) * 64, (u16)(c >> 3) * 256, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
+            gSPTextureRectangle(this->dList++, this->posX + 4, this->posY + 4, WIDE_INCR(this->posX + 4 + 32, -9),
+                                this->posY + 4 + 32 - 1, tile, (u16)(c & 4) * 64, (u16)(c >> 3) * 256,
+                                WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
         }
 
         gDPSetColor(this->dList++, G_SETPRIMCOLOR, this->color.rgba);
@@ -226,10 +227,11 @@ void GfxPrint_PrintCharImpl(GfxPrint* this, u8 c) {
 
     if (this->flags & GFXP_FLAG_ENLARGE) {
         gSPTextureRectangle(this->dList++, this->posX << 1, this->posY << 1, WIDE_INCR(this->posX + 32, -9) << 1,
-                            (this->posY + 32 - 1) << 1, tile, (u16)(c & 4) * 64, (u16)(c >> 3) * 256, WIDE_DIV((1 << 9), WIDE_GET_RATIO), 1 << 9);
+                            (this->posY + 32 - 1) << 1, tile, (u16)(c & 4) * 64, (u16)(c >> 3) * 256,
+                            WIDE_DIV((1 << 9), WIDE_GET_RATIO), 1 << 9);
     } else {
-        gSPTextureRectangle(this->dList++, this->posX, this->posY, WIDE_INCR(this->posX + 32, -9), this->posY + 32 - 1, tile,
-                            (u16)(c & 4) * 64, (u16)(c >> 3) * 256, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
+        gSPTextureRectangle(this->dList++, this->posX, this->posY, WIDE_INCR(this->posX + 32, -9), this->posY + 32 - 1,
+                            tile, (u16)(c & 4) * 64, (u16)(c >> 3) * 256, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
     }
 
     this->posX += GFX_CHAR_X_SPACING << 2;

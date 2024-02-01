@@ -30,8 +30,8 @@ void TitleSetup_SetupTitleScreen(TitleSetupState* this) {
         gSaveContext.save.info.playerData.magicLevel = gSaveContext.save.info.playerData.magic = 0;
         gSaveContext.forceRisingButtonAlphas = false;
 
-        gSaveContext.nextHudVisibilityMode = gSaveContext.hudVisibilityMode =
-        gSaveContext.hudVisibilityModeTimer = HUD_VISIBILITY_NO_CHANGE;
+        gSaveContext.nextHudVisibilityMode = gSaveContext.hudVisibilityMode = gSaveContext.hudVisibilityModeTimer =
+            HUD_VISIBILITY_NO_CHANGE;
 
         for (i = 0; i < ARRAY_COUNT(gSaveContext.buttonStatus); i++) {
             gSaveContext.buttonStatus[i] = BTN_ENABLED;

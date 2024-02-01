@@ -11,7 +11,6 @@
 #if ENABLE_MAP_SELECT
 #include "z_select.h"
 
-
 void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;
     u32 size;

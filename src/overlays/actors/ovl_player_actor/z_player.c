@@ -10014,11 +10014,10 @@ void Player_Init(Actor* thisx, PlayState* play2) {
 
     u32 giAllocSize = Player_GetGIAllocSize();
     if (ENABLE_AUTO_GI_ALLOC) {
-        this->giObjectSegment =
-            (void*)ALIGN16((uintptr_t)ZELDA_ARENA_MALLOC(giAllocSize, __FILE__, __LINE__));
+        this->giObjectSegment = (void*)ALIGN16((uintptr_t)ZELDA_ARENA_MALLOC(giAllocSize, __FILE__, __LINE__));
     } else {
-        ASSERT(giAllocSize < 0x3008,
-                "[HackerOoT:ERROR]: GI Object larger than the allocated size.", __FILE__, __LINE__);
+        ASSERT(giAllocSize < 0x3008, "[HackerOoT:ERROR]: GI Object larger than the allocated size.", __FILE__,
+               __LINE__);
         this->giObjectSegment = (void*)(((uintptr_t)ZELDA_ARENA_MALLOC(0x3008, "../z_player.c", 17175) + 8) & ~0xF);
     }
 
@@ -14037,7 +14036,8 @@ void Player_Action_808507F4(Player* this, PlayState* play) {
                 gSaveContext.save.info.fwMain.entranceIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex;
                 gSaveContext.save.info.fwMain.roomIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].roomIndex;
                 gSaveContext.save.info.fwMain.tempSwchFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempSwchFlags;
-                gSaveContext.save.info.fwMain.tempCollectFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags;
+                gSaveContext.save.info.fwMain.tempCollectFlags =
+                    gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags;
                 this->av2.actionVar2 = 2;
             }
         } else if (this->av1.actionVar1 >= 0) {
