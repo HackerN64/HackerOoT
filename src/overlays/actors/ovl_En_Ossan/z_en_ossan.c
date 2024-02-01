@@ -2253,12 +2253,12 @@ void EnOssan_DrawCursor(PlayState* play, EnOssan* this, f32 x, f32 y, f32 z, u8 
         gDPLoadTextureBlock_4b(OVERLAY_DISP++, gSelectionCursorTex, G_IM_FMT_IA, 16, 16, 0, G_TX_MIRROR | G_TX_WRAP,
                                G_TX_MIRROR | G_TX_WRAP, 4, 4, G_TX_NOLOD, G_TX_NOLOD);
         w = 16.0f * z;
-        ulx = (x - w) * 4.0f;
+        ulx = WIDE_INCR(((x - w) * 4.0f), 25);
         uly = (y - w) * 4.0f;
-        lrx = (x + w) * 4.0f;
+        lrx = WIDE_INCR(((x + w) * 4.0f), -22);
         lry = (y + w) * 4.0f;
         dsdx = (1.0f / z) * 1024.0f;
-        gSPTextureRectangle(OVERLAY_DISP++, ulx, uly, lrx, lry, G_TX_RENDERTILE, 0, 0, dsdx, dsdx);
+        gSPTextureRectangle(OVERLAY_DISP++, ulx, uly, lrx, lry, G_TX_RENDERTILE, 0, 0, WIDE_DIV(dsdx, WIDE_GET_RATIO), dsdx);
     }
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_oB1.c", 4215);
 }

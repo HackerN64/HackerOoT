@@ -19,6 +19,7 @@ notes/
 baserom/
 baseroms/*/segments/
 docs/doxygen/
+cache/
 *.elf
 *.sra
 *.z64
@@ -26,6 +27,7 @@ docs/doxygen/
 *.v64
 *.map
 *.dump
+*.wad
 out.txt
 *.ram
 common-key.bin

@@ -112,7 +112,7 @@ void ConsoleLogo_Draw(ConsoleLogoState* this) {
     gSPSetLights1(POLY_OPA_DISP++, sTitleLights);
     ConsoleLogo_SetupView(this, 0, 150.0, 300.0);
     Gfx_SetupDL_25Opa(this->state.gfxCtx);
-    Matrix_Translate(-53.0, -5.0, 0, MTXMODE_NEW);
+    Matrix_Translate(WIDE_INCR(-53.0, -8.0), -5.0, 0, MTXMODE_NEW);
     Matrix_Scale(1.0, 1.0, 1.0, MTXMODE_APPLY);
     Matrix_RotateZYX(0, sTitleRotY, 0, MTXMODE_APPLY);
 
@@ -136,7 +136,7 @@ void ConsoleLogo_Draw(ConsoleLogoState* this) {
                             G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
         gDPSetTileSize(POLY_OPA_DISP++, 1, this->uls, (this->ult & 0x7F) - (idx << 2), 0, 0);
-        gSPTextureRectangle(POLY_OPA_DISP++, 97 << 2, y << 2, 289 << 2, (y + 2) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10,
+        gSPTextureRectangle(POLY_OPA_DISP++, WIDE_INCR(97, 8) << 2, y << 2, 289 << 2, (y + 2) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO),
                             1 << 10);
     }
 
