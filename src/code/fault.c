@@ -391,11 +391,11 @@ u32 Fault_WaitForInputImpl(void) {
 
         pressedBtn = input->press.button;
 
-        if (pressedBtn == BTN_L) {
+        if (!DISABLE_CRASH_DBG_AUTOSCROLL && pressedBtn == BTN_L) {
             sFaultInstance->autoScroll = !sFaultInstance->autoScroll;
         }
 
-        if (sFaultInstance->autoScroll) {
+        if (!DISABLE_CRASH_DBG_AUTOSCROLL && sFaultInstance->autoScroll) {
             if (count-- < 1) {
                 return false;
             }
@@ -647,7 +647,7 @@ void Fault_Wait5Seconds(void) {
         Fault_Sleep(1000 / 60);
     } while ((osGetTime() - start) < OS_SEC_TO_CYCLES(5) + 1);
 
-    sFaultInstance->autoScroll = true;
+    sFaultInstance->autoScroll = !DISABLE_CRASH_DBG_AUTOSCROLL;
 }
 
 void Fault_DrawMemDumpContents(const char* title, uintptr_t addr, u32 arg2) {
@@ -787,7 +787,7 @@ void Fault_DrawMemDump(uintptr_t pc, uintptr_t sp, uintptr_t cLeftJump, uintptr_
     } while (!CHECK_BTN_ALL(input->press.button, BTN_L));
 
     // Resume auto-scroll and move to next page
-    sFaultInstance->autoScroll = true;
+    sFaultInstance->autoScroll = !DISABLE_CRASH_DBG_AUTOSCROLL;
 }
 
 /**
@@ -1056,7 +1056,7 @@ void Fault_ThreadEntry(void* arg) {
         // Show fault framebuffer
         Fault_DisplayFrameBuffer();
 
-        if (sFaultInstance->autoScroll) {
+        if (!DISABLE_CRASH_DBG_AUTOSCROLL && sFaultInstance->autoScroll) {
             Fault_Wait5Seconds();
         } else {
             // Draw error bar signifying the crash screen is available
@@ -1064,7 +1064,7 @@ void Fault_ThreadEntry(void* arg) {
         }
 
         // Set auto-scrolling and default colors
-        sFaultInstance->autoScroll = true;
+        sFaultInstance->autoScroll = !DISABLE_CRASH_DBG_AUTOSCROLL;
         FaultDrawer_SetForeColor(GPACK_RGBA5551(255, 255, 255, 1));
         FaultDrawer_SetBackColor(GPACK_RGBA5551(0, 0, 0, 0));
 
@@ -1115,7 +1115,7 @@ void Fault_Init(void) {
     sFaultInstance->faultedThread = NULL;
     sFaultInstance->padCallback = Fault_PadCallback;
     sFaultInstance->clients = NULL;
-    sFaultInstance->autoScroll = false;
+    sFaultInstance->autoScroll = !DISABLE_CRASH_DBG_AUTOSCROLL;
     gFaultMgr.faultHandlerEnabled = true;
     osCreateMesgQueue(&sFaultInstance->queue, &sFaultInstance->msg, 1);
     StackCheck_Init(&sFaultThreadInfo, sFaultStack, STACK_TOP(sFaultStack), 0, 0x100, "fault");

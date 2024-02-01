@@ -40,8 +40,9 @@
 
 /**
  * Enable/Disable BGM on Map Select
+ * Comment this to disable BGM
  */
-#define MAP_SELECT_BGM NA_BGM_OWL
+// #define MAP_SELECT_BGM NA_BGM_OWL
 
 /**
  * Fix a crash if you spawn in a grotto without using the grotto actor
