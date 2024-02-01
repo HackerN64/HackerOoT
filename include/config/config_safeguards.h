@@ -105,18 +105,12 @@
 /*****************
  * config_game.h
  */
-
-#if ENABLE_WIDESCREEN
-    #if FORCE_WIDESCREEN
-        #define USE_WIDESCREEN true
-    #else
-        #define USE_WIDESCREEN (gIsUsingWidescreen == true)
-    #endif
+#if FORCE_WIDESCREEN
+    #define USE_WIDESCREEN true
 #else
-    #define USE_WIDESCREEN false
+    #define USE_WIDESCREEN (ENABLE_WIDESCREEN && gSavecontext.save.useWidescreen == true)
 #endif
 
-#endif
 
 /**
  * Default settings if not using HackerOoT mode
@@ -169,4 +163,6 @@
     // #define ENABLE_MSG_DEBUGGER false
     // #define ENABLE_DEBUG_SAVE false
     #define MAP_SELECT_ON_FILE_1 true
+#endif
+
 #endif

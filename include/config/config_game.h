@@ -66,13 +66,13 @@
  * Widescreen mode
  * Note: pre-rendered scenes with the fixed camera mode won't re-scale properly
 */
-// #define ENABLE_WIDESCREEN false
+#define ENABLE_WIDESCREEN false
 
 // Force widescreen mode regardless of SaveContext
-// #define FORCE_WIDESCREEN false
+#define FORCE_WIDESCREEN false
 
 // Increase the size of small elements (improves readability on N64)
-// #define WIDESCREEN_N64_MODE true
+#define WIDESCREEN_N64_MODE true
 
 /**
  * Automatic GI Object Allocation

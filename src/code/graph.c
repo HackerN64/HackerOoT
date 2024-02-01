@@ -407,6 +407,11 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
         SET_NEXT_GAMESTATE(gameState, PreNMI_Init, PreNMIState);
         gameState->running = false;
     }
+
+    if (ENABLE_WIDESCREEN && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_DUP) &&
+        CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_Z | BTN_R)) {
+        gSaveContext.save.useWidescreen ^= 1;
+    }
 }
 
 void Graph_ThreadEntry(void* arg0) {
