@@ -31,6 +31,8 @@ RELEASE := 0
 
 # Number of threads to extract and compress with
 N_THREADS := $(shell nproc)
+# Check code syntax with host compiler
+RUN_CC_CHECK := 1
 
 CFLAGS ?=
 CPPFLAGS ?=
@@ -181,7 +183,7 @@ ASFLAGS := -march=vr4300 -32 -no-pad-sections -Iinclude
 ifeq ($(COMPILER),gcc)
   CFLAGS += -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -fno-pic -mno-abicalls -mdivide-breaks -fno-zero-initialized-in-bss -fno-toplevel-reorder -ffreestanding -fno-common -fno-merge-constants -mno-explicit-relocs -mno-split-addresses $(CHECK_WARNINGS) -funsigned-char
   MIPS_VERSION := -mips3
-  CC_CHECK  = @:
+  RUN_CC_CHECK := 0
 endif
 
 OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
@@ -383,18 +385,24 @@ $(BUILD_DIR)/src/code/z_game_dlftbls.o: include/tables/gamestate_table.h
 $(BUILD_DIR)/src/code/z_scene_table.o: include/tables/scene_table.h include/tables/entrance_table.h
 
 $(BUILD_DIR)/src/%.o: src/%.c
+ifneq ($(RUN_CC_CHECK),0)
 	$(CC_CHECK) $<
+endif
 	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
 $(BUILD_DIR)/src/libultra/libc/ll.o: src/libultra/libc/ll.c
+ifneq ($(RUN_CC_CHECK),0)
 	$(CC_CHECK) $<
+endif
 	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(PYTHON) tools/set_o32abi_bit.py $@
 	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
 $(BUILD_DIR)/src/libultra/libc/llcvt.o: src/libultra/libc/llcvt.c
+ifneq ($(RUN_CC_CHECK),0)
 	$(CC_CHECK) $<
+endif
 	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(PYTHON) tools/set_o32abi_bit.py $@
 	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)

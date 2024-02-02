@@ -8,6 +8,7 @@
 #include "alloca.h"
 #include "assets/textures/nintendo_rogo_static/nintendo_rogo_static.h"
 
+#if OOT_DEBUG
 void ConsoleLogo_PrintBuildInfo(Gfx** gfxP) {
     if (!RELEASE_ROM) {
         Gfx* gfx;
@@ -38,6 +39,7 @@ void ConsoleLogo_PrintBuildInfo(Gfx** gfxP) {
         *gfxP = gfx;
     }
 }
+#endif
 
 // Note: In other rom versions this function also updates unk_1D4, coverAlpha, addAlpha, visibleDuration to calculate
 // the fade-in/fade-out + the duration of the n64 logo animation
@@ -158,7 +160,7 @@ void ConsoleLogo_Main(GameState* thisx) {
     ConsoleLogo_Calc(this);
     ConsoleLogo_Draw(this);
 
-    if (!RELEASE_ROM) {
+    if (OOT_DEBUG && !RELEASE_ROM) {
         ConsoleLogo_PrintBuildInfo(&POLY_OPA_DISP);
     }
 
