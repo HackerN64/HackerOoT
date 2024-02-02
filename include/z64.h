@@ -310,7 +310,7 @@ typedef struct {
     /* 0x01E2 */ char unk_1E2[0x06];
 } ConsoleLogoState; // size = 0x1E8
 
-#if ENABLE_MAP_SELECT
+#if OOT_DEBUG && ENABLE_MAP_SELECT
 
 struct MapSelectState;
 

@@ -8,7 +8,7 @@
 #include "terminal.h"
 #include "alloca.h"
 
-#if ENABLE_MAP_SELECT
+#if OOT_DEBUG && ENABLE_MAP_SELECT
 #include "z_select.h"
 
 void MapSelect_Init(GameState* thisx) {

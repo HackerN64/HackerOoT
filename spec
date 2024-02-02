@@ -387,7 +387,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_fbdemo_circle.o"
     include "$(BUILD_DIR)/src/code/z_fbdemo_fade.o"
     include "$(BUILD_DIR)/src/code/shrink_window.o"
-#if ENABLE_CAMERA_DEBUGGER
+#if OOT_DEBUG && ENABLE_CAMERA_DEBUGGER
     include "$(BUILD_DIR)/src/code/db_camera.o"
 #endif
     include "$(BUILD_DIR)/src/code/code_800BB0A0.o"

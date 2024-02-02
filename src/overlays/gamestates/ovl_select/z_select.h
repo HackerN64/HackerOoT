@@ -3,7 +3,7 @@
 
 #include "config.h"
 
-#if ENABLE_MAP_SELECT
+#if OOT_DEBUG && ENABLE_MAP_SELECT
 
 void MapSelect_Init(GameState* thisx);
 void MapSelect_Main(GameState* thisx);

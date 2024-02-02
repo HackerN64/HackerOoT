@@ -7048,14 +7048,14 @@ void Camera_Init(Camera* camera, View* view, CollisionContext* colCtx, PlayState
             R_CAM_DATA(i) = sCamDataRegsInit[i];
         }
 
-        if (ENABLE_CAMERA_DEBUGGER) {
+        if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER) {
             DebugCamera_Reset(camera, &D_8015BD80);
         }
         sInitRegs = false;
         PREG(88) = -1;
     }
     camera->play = D_8015BD7C = play;
-    if (ENABLE_CAMERA_DEBUGGER) {
+    if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER) {
         DebugCamera_Init(&D_8015BD80, camera);
     }
     curUID = sNextUID;
@@ -7243,7 +7243,7 @@ s16 Camera_ChangeStatus(Camera* camera, s16 status) {
 }
 
 void Camera_PrintSettings(Camera* camera) {
-    if (ENABLE_CAMERA_DEBUGGER) {
+    if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER) {
         char sp58[8];
         char sp50[8];
         char sp48[8];
@@ -7460,7 +7460,7 @@ s32 Camera_UpdateHotRoom(Camera* camera) {
 }
 
 s32 Camera_DbgChangeMode(Camera* camera) {
-    if (ENABLE_CAMERA_DEBUGGER) {
+    if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER) {
         s32 changeDir = 0;
 
         if (!gDebugCamEnabled && camera->play->activeCamId == CAM_ID_MAIN) {
@@ -7595,12 +7595,12 @@ Vec3s Camera_Update(Camera* camera) {
 
     player = camera->play->cameraPtrs[CAM_ID_MAIN]->player;
 
-    if (ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
+    if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
         PRINTF("camera: in %x\n", camera);
     }
 
     if (camera->status == CAM_STAT_CUT) {
-        if (ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
+        if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
             PRINTF("camera: cut out %x\n", camera);
         }
         return camera->inputDir;
@@ -7672,13 +7672,13 @@ Vec3s Camera_Update(Camera* camera) {
         }
     }
 
-    if (ENABLE_CAMERA_DEBUGGER) {
+    if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER) {
         Camera_PrintSettings(camera);
         Camera_DbgChangeMode(camera);
     }
 
     if (camera->status == CAM_STAT_WAIT) {
-        if (ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
+        if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
             PRINTF("camera: wait out %x\n", camera);
         }
         return camera->inputDir;
@@ -7688,7 +7688,7 @@ Vec3s Camera_Update(Camera* camera) {
     camera->stateFlags &= ~(CAM_STATE_BLOCK_BG | CAM_STATE_LOCK_MODE);
     camera->stateFlags |= CAM_STATE_CAM_FUNC_FINISH;
 
-    if (ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
+    if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
         PRINTF("camera: engine (%d %d %d) %04x \n", camera->setting, camera->mode,
                sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx, camera->stateFlags);
     }
@@ -7719,7 +7719,7 @@ Vec3s Camera_Update(Camera* camera) {
         }
     }
 
-    if (ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
+    if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
         PRINTF("camera: shrink_and_bitem %x(%d)\n", sCameraInterfaceField, camera->play->transitionMode);
         PRINTF("camera: engine (%s(%d) %s(%d) %s(%d)) ok!\n", &sCameraSettingNames[camera->setting], camera->setting,
                &sCameraModeNames[camera->mode], camera->mode,
@@ -7728,7 +7728,7 @@ Vec3s Camera_Update(Camera* camera) {
     }
 
     // enable/disable debug cam
-    if (ENABLE_CAMERA_DEBUGGER && CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_START)) {
+    if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER && CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_START)) {
         gDebugCamEnabled ^= 1;
         if (gDebugCamEnabled) {
             DebugCamera_Enable(&D_8015BD80, camera);
@@ -7738,11 +7738,11 @@ Vec3s Camera_Update(Camera* camera) {
     }
 
     // Debug cam update
-    if (ENABLE_CAMERA_DEBUGGER && gDebugCamEnabled) {
+    if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER && gDebugCamEnabled) {
         camera->play->view.fovy = D_8015BD80.fov;
         DebugCamera_Update(&D_8015BD80, camera);
         View_LookAt(&camera->play->view, &D_8015BD80.eye, &D_8015BD80.at, &D_8015BD80.unk_1C);
-        if (ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
+        if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
             PRINTF("camera: debug out\n");
         }
         return D_8015BD80.sub.unk_104A;
@@ -7818,7 +7818,7 @@ Vec3s Camera_Update(Camera* camera) {
         camera->timer = 0;
     }
 
-    if (ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
+    if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER && R_DEBUG_CAM_UPDATE) {
         PRINTF("camera: out (%f %f %f) (%f %f %f)\n", camera->at.x, camera->at.y, camera->at.z, camera->eye.x,
                camera->eye.y, camera->eye.z);
         PRINTF("camera: dir (%f %d(%f) %d(%f)) (%f)\n", eyeAtAngle.r, eyeAtAngle.pitch,
@@ -8385,7 +8385,7 @@ s32 Camera_Copy(Camera* dstCamera, Camera* srcCamera) {
 }
 
 s32 Camera_IsDebugCamEnabled(void) {
-    if (ENABLE_CAMERA_DEBUGGER) {
+    if (OOT_DEBUG && ENABLE_CAMERA_DEBUGGER) {
         return gDebugCamEnabled;
     }
 }

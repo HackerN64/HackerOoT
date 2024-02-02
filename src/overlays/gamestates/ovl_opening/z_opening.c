@@ -9,6 +9,21 @@
 void TitleSetup_SetupTitleScreen(TitleSetupState* this) {
     gSaveContext.gameMode = GAMEMODE_NORMAL;
 
+#if OOT_DEBUG && ENABLE_MAP_SELECT
+    if (BOOT_TO_MAP_SELECT) {
+        this->state.running = false;
+        SET_NEXT_GAMESTATE(&this->state, MapSelect_Init, MapSelectState);
+        return;
+    }
+#endif
+
+    if (BOOT_TO_FILE_SELECT) {
+        gSaveContext.gameMode = GAMEMODE_FILE_SELECT;
+        this->state.running = false;
+        SET_NEXT_GAMESTATE(&this->state, FileSelect_Init, FileSelectState);
+        return;
+    } 
+    
     if (BOOT_TO_SCENE || BOOT_TO_SCENE_NEW_GAME_ONLY) {
         u8 i;
 
@@ -36,15 +51,6 @@ void TitleSetup_SetupTitleScreen(TitleSetupState* this) {
         for (i = 0; i < ARRAY_COUNT(gSaveContext.buttonStatus); i++) {
             gSaveContext.buttonStatus[i] = BTN_ENABLED;
         }
-    } else if (BOOT_TO_FILE_SELECT) {
-        gSaveContext.gameMode = GAMEMODE_FILE_SELECT;
-        this->state.running = false;
-        SET_NEXT_GAMESTATE(&this->state, FileSelect_Init, FileSelectState);
-#if ENABLE_MAP_SELECT
-    } else if (BOOT_TO_MAP_SELECT) {
-        this->state.running = false;
-        SET_NEXT_GAMESTATE(&this->state, MapSelect_Init, MapSelectState);
-#endif
     } else {
         gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
         gSaveContext.save.linkAge = LINK_AGE_ADULT;
@@ -53,11 +59,9 @@ void TitleSetup_SetupTitleScreen(TitleSetupState* this) {
         gSaveContext.sceneLayer = 7;
     }
 
-    if (!BOOT_TO_FILE_SELECT || (!ENABLE_MAP_SELECT && !BOOT_TO_MAP_SELECT)) {
-        SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0);
-        this->state.running = false;
-        SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
-    }
+    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0);
+    this->state.running = false;
+    SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
 }
 
 void func_80803C5C(TitleSetupState* this) {
