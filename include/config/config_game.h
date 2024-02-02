@@ -47,9 +47,10 @@
 #define FW_SPLIT_AGE false
 
 /**
- * Disable Player froze when getting a Gold Skulltula Token
+ * Disable Player being unable to move
+ * Examples: when getting a Gold Skulltula Token, when pushing the walls in Forest Temple
 */
-#define DISABLE_GS_TOKEN_FREEZE true
+#define DISABLE_PLAYER_FREEZE true
 
 /**
  * Add Gold Skulltula count to the textbox

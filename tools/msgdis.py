@@ -396,7 +396,7 @@ def extract_all_text(text_out, staff_text_out, version: str):
                 out += "#if !GS_COUNT_IN_TEXT\n"
 
             tokenFreezeMode = (
-                "#if DISABLE_GS_TOKEN_FREEZE\n"
+                "#if DISABLE_PLAYER_FREEZE\n"
                 + "FADE(\"\\x20\")\n"
                 + "#endif\n"
             ) if message[0] in [0x00B4, 0x00B5] else ""

@@ -1152,7 +1152,7 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
         }
     }
     if (msgCtx->textDelayTimer == 0) {
-        msgCtx->textDrawPos = i;
+        msgCtx->textDrawPos = i + 1;
         msgCtx->textDelayTimer = msgCtx->textDelay;
     } else {
         msgCtx->textDelayTimer--;
@@ -3215,7 +3215,7 @@ void Message_Update(PlayState* play) {
         case MSGMODE_TEXT_NEXT_MSG:
             Message_Decode(play);
             if (sTextFade ||
-                (DISABLE_GS_TOKEN_FREEZE && sTextFade && (msgCtx->textId != 0xB4) && (msgCtx->textId != 0xB5))) {
+                (DISABLE_PLAYER_FREEZE && sTextFade && (msgCtx->textId != 0xB4) && (msgCtx->textId != 0xB5))) {
                 Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_NOTHING);
             }
             if (D_80153D74 != 0) {
