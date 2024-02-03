@@ -269,4 +269,4 @@ extern struct GraphicsContext* __gfxCtx;
 #define DEBUG_BTN_COMBO(useCombo, btnToHold, btnToPress, input) true
 #endif
 
-#define IS_DEBUG_CAM_ENABLED IS_DEBUG && ENABLE_CAMERA_DEBUGGER ? gDebugCamEnabled : false
+#define IS_DEBUG_CAM_ENABLED IS_CAMERA_DEBUG_ENABLED ? gDebugCamEnabled : false

@@ -102,7 +102,7 @@ void EnEncount1_SpawnLeevers(EnEncount1* this, PlayState* play) {
     f32 floorY;
     EnReeba* leever;
 
-    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+    if (IS_ACTOR_DEBUG_ENABLED) {
         this->outOfRangeTimer = 0;
     }
 
@@ -188,11 +188,11 @@ void EnEncount1_SpawnTektites(EnEncount1* this, PlayState* play) {
         this->timer = 10;
         if ((fabsf(player->actor.world.pos.y - this->actor.world.pos.y) > 100.0f) ||
             (this->actor.xzDistToPlayer > this->spawnRange)) {
-            if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+            if (IS_ACTOR_DEBUG_ENABLED) {
                 this->outOfRangeTimer++;
             }
         } else {
-            if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+            if (IS_ACTOR_DEBUG_ENABLED) {
                 this->outOfRangeTimer = 0;
             }
 
@@ -236,7 +236,7 @@ void EnEncount1_SpawnStalchildOrWolfos(EnEncount1* this, PlayState* play) {
     if (play->sceneId != SCENE_HYRULE_FIELD) {
         if ((fabsf(player->actor.world.pos.y - this->actor.world.pos.y) > 100.0f) ||
             (this->actor.xzDistToPlayer > this->spawnRange)) {
-            if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+            if (IS_ACTOR_DEBUG_ENABLED) {
                 this->outOfRangeTimer++;
             }
             return;
@@ -246,7 +246,7 @@ void EnEncount1_SpawnStalchildOrWolfos(EnEncount1* this, PlayState* play) {
         return;
     }
 
-    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+    if (IS_ACTOR_DEBUG_ENABLED) {
         this->outOfRangeTimer = 0;
     }
 
@@ -335,7 +335,7 @@ void EnEncount1_Update(Actor* thisx, PlayState* play) {
 
     this->updateFunc(this, play);
 
-    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER && BREG(0) != 0) {
+    if (IS_ACTOR_DEBUG_ENABLED && BREG(0) != 0) {
         if (this->outOfRangeTimer != 0) {
             if ((this->outOfRangeTimer & 1) == 0) {
                 DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,

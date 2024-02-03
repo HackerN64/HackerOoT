@@ -377,7 +377,7 @@ void Play_Init(GameState* thisx) {
     gTransitionTileState = TRANS_TILE_OFF;
     this->transitionMode = TRANS_MODE_OFF;
 
-#if IS_DEBUG && ENABLE_FRAMERATE_OPTIONS
+#if ARE_FRAMERATE_OPTIONS_ENABLED
     FrameAdvance_Init(&this->frameAdvCtx);
 #endif
 
@@ -507,7 +507,7 @@ void Play_Update(PlayState* this) {
     gSegments[5] = VIRTUAL_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.subKeepSlot].segment);
     gSegments[2] = VIRTUAL_TO_PHYSICAL(this->sceneSegment);
 
-#if IS_DEBUG && ENABLE_FRAMERATE_OPTIONS
+#if ARE_FRAMERATE_OPTIONS_ENABLED
 #define FRAMEADVANCE_CAN_UPDATE FrameAdvance_Update(&this->frameAdvCtx, &input[FA_CONTROLLER_PORT])
 #else
 #define FRAMEADVANCE_CAN_UPDATE true
@@ -1817,7 +1817,7 @@ int Play_CamIsNotFixed(PlayState* this) {
 }
 
 int FrameAdvance_IsEnabled(PlayState* this) {
-    return IS_DEBUG && ENABLE_FRAMERATE_OPTIONS ? !!this->frameAdvCtx.enabled : false;
+    return ARE_FRAMERATE_OPTIONS_ENABLED ? !!this->frameAdvCtx.enabled : false;
 }
 
 s32 func_800C0D34(PlayState* this, Actor* actor, s16* yaw) {

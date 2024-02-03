@@ -275,7 +275,7 @@ void EnWonderTalk2_Update(Actor* thisx, PlayState* play) {
 
     Actor_SetFocus(&this->actor, this->height);
 
-    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER && BREG(0) != 0) {
+    if (IS_ACTOR_DEBUG_ENABLED && BREG(0) != 0) {
         if (this->unk_158 != 0) {
             if ((this->unk_158 & 1) == 0) {
                 DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,

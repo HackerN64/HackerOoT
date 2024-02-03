@@ -6,7 +6,7 @@ typedef struct {
 } FlagSetEntry; // size = 0x08
 
 void FlagSet_Update(PlayState* play) {
-    if (IS_DEBUG && ENABLE_EVENT_EDITOR) {
+    if (IS_EVENT_EDITOR_ENABLED) {
         static s32 entryIdx = 0;
         static u32 curBit = 0;
         static s32 timer = 0;

@@ -1231,7 +1231,7 @@ u16 D_8016B7E4;
 struct {
     char str[5];
     u16 num;
-} sAudioScrPrtBuf[IS_DEBUG && ENABLE_AUDIO_DEBUGGER ? SCROLL_PRINT_BUF_SIZE : 0];
+} sAudioScrPrtBuf[IS_AUDIO_DEBUG_ENABLED ? SCROLL_PRINT_BUF_SIZE : 0];
 
 u8 sRiverSoundMainBgmVol;
 u8 sRiverSoundMainBgmCurrentVol;
@@ -2307,7 +2307,7 @@ void AudioOcarina_ResetStaffs(void) {
     sOcarinaDropInputTimer = 0;
 }
 
-#if IS_DEBUG && ENABLE_AUDIO_DEBUGGER
+#if IS_AUDIO_DEBUG_ENABLED
 #include "debug.inc.c"
 #else
 void AudioDebug_Draw(GfxPrint* printer) {
@@ -2325,7 +2325,7 @@ void Audio_UpdateFanfare(void);
  */
 void Audio_Update(void) {
     if (func_800FAD34() == 0) {
-#if IS_DEBUG && ENABLE_AUDIO_DEBUGGER
+#if IS_AUDIO_DEBUG_ENABLED
         sAudioUpdateTaskStart = gAudioCtx.totalTaskCount;
         sAudioUpdateStartTime = osGetTime();
 #endif
@@ -2344,14 +2344,14 @@ void Audio_Update(void) {
         func_800F8F88();
         Audio_UpdateActiveSequences();
 
-#if OOT_DEBUG && ENABLE_AUDIO_DEBUGGER
+#if IS_AUDIO_DEBUG_ENABLED
         AudioDebug_SetInput();
         AudioDebug_ProcessInput();
 #endif
 
         AudioThread_ScheduleProcessCmds();
 
-#if OOT_DEBUG && ENABLE_AUDIO_DEBUGGER
+#if IS_AUDIO_DEBUG_ENABLED
         sAudioUpdateTaskEnd = gAudioCtx.totalTaskCount;
         sAudioUpdateEndTime = osGetTime();
 #endif
@@ -2758,7 +2758,7 @@ void func_800F4010(Vec3f* pos, u16 sfxId, f32 arg2) {
     u8 phi_v0;
     u16 sfxId2;
 
-#if IS_DEBUG && ENABLE_AUDIO_DEBUGGER
+#if IS_AUDIO_DEBUG_ENABLED
     D_80131C8C = arg2;
 #endif
 
@@ -3883,7 +3883,7 @@ void Audio_SetNatureAmbienceChannelIO(u8 channelIdxRange, u8 ioPort, u8 ioData) 
     if ((gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId != NA_BGM_NATURE_AMBIENCE) &&
         Audio_IsSeqCmdNotQueued(SEQCMD_OP_PLAY_SEQUENCE << 28 | NA_BGM_NATURE_AMBIENCE, SEQCMD_OP_MASK | 0xFF)) {
 
-#if OOT_DEBUG && ENABLE_AUDIO_DEBUGGER
+#if IS_AUDIO_DEBUG_ENABLED
         sAudioNatureFailed = true;
 #endif
 

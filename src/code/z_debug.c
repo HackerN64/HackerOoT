@@ -18,12 +18,12 @@ typedef struct {
 RegEditor* gRegEditor; // ``gRegEditor->data`` is used by non-debug features in normal gameplay
 
 // ENABLE_CAMERA_DEBUGGER
-DebugCamTextBufferEntry sDebugCamTextBuffer[ENABLE_CAMERA_DEBUGGER ? 22 : 0];
+DebugCamTextBufferEntry sDebugCamTextBuffer[IS_CAMERA_DEBUG_ENABLED ? 22 : 0];
 
 s16 sDebugCamTextEntryCount = 0;
 
 Color_RGBA8 sDebugCamTextColors[] = {
-#if IS_DEBUG && ENABLE_CAMERA_DEBUGGER
+#if IS_CAMERA_DEBUG_ENABLED
     { 255, 255, 32, 192 },  // DEBUG_CAM_TEXT_YELLOW
     { 255, 150, 128, 192 }, // DEBUG_CAM_TEXT_PEACH
     { 128, 96, 0, 64 },     // DEBUG_CAM_TEXT_BROWN
@@ -36,7 +36,7 @@ Color_RGBA8 sDebugCamTextColors[] = {
 };
 
 InputCombo sRegGroupInputCombos[REG_GROUPS] = {
-#if IS_DEBUG && ENABLE_REG_EDITOR
+#if IS_REG_EDITOR_ENABLED
     { BTN_L, BTN_CUP },        //  REG
     { BTN_L, BTN_CLEFT },      // SREG
     { BTN_L, BTN_CDOWN },      // OREG
@@ -70,7 +70,7 @@ InputCombo sRegGroupInputCombos[REG_GROUPS] = {
 };
 
 char sRegGroupChars[REG_GROUPS] = {
-#if IS_DEBUG && ENABLE_REG_EDITOR
+#if IS_REG_EDITOR_ENABLED
     ' ', //  REG
     'S', // SREG
     'O', // OREG
@@ -108,7 +108,7 @@ void Regs_Init(void) {
 
     gRegEditor = SYSTEM_ARENA_MALLOC(sizeof(RegEditor), "../z_debug.c", 260);
 
-    if (IS_DEBUG && ENABLE_REG_EDITOR) {
+    if (IS_REG_EDITOR_ENABLED) {
         gRegEditor->regPage = 0;
         gRegEditor->regGroup = 0;
         gRegEditor->regCur = 0;
@@ -126,7 +126,7 @@ void DebugCamera_ScreenText(u8 x, u8 y, const char* text) {
 }
 
 void DebugCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text) {
-    if (IS_DEBUG && ENABLE_CAMERA_DEBUGGER) {
+    if (IS_CAMERA_DEBUG_ENABLED) {
         DebugCamTextBufferEntry* entry = &sDebugCamTextBuffer[sDebugCamTextEntryCount];
         char* textDest;
         s16 charCount;
@@ -154,7 +154,7 @@ void DebugCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text) 
 }
 
 void DebugCamera_DrawScreenText(GfxPrint* printer) {
-    if (IS_DEBUG && ENABLE_CAMERA_DEBUGGER) {
+    if (IS_CAMERA_DEBUG_ENABLED) {
         s32 i;
         Color_RGBA8* color;
         DebugCamTextBufferEntry* entry;
@@ -175,7 +175,7 @@ void DebugCamera_DrawScreenText(GfxPrint* printer) {
  * Also contains a controller rumble test that can be interfaced with via related REGs.
  */
 void Regs_UpdateEditor(Input* input) {
-    if (IS_DEBUG && ENABLE_REG_EDITOR) {
+    if (IS_REG_EDITOR_ENABLED) {
         s32 dPadInputCur;
         s32 pageDataStart = ((gRegEditor->regGroup * REG_PAGES) + gRegEditor->regPage - 1) * REGS_PER_PAGE;
         s32 increment;
@@ -264,7 +264,7 @@ void Regs_UpdateEditor(Input* input) {
 }
 
 void Regs_DrawEditor(GfxPrint* printer) {
-    if (IS_DEBUG && ENABLE_REG_EDITOR) {
+    if (IS_REG_EDITOR_ENABLED) {
         s32 i;
         s32 pageStart = (gRegEditor->regPage - 1) * REGS_PER_PAGE;
         s32 pageDataStart = ((gRegEditor->regGroup * REG_PAGES) + gRegEditor->regPage - 1) * REGS_PER_PAGE;
@@ -310,15 +310,15 @@ void Debug_DrawText(GraphicsContext* gfxCtx) {
         gSPDisplayList(OVERLAY_DISP++, gfx);
         GfxPrint_Open(&printer, gfx);
 
-        if (ENABLE_CAMERA_DEBUGGER && ((OREG(0) == 1) || (OREG(0) == 8))) {
+        if (IS_CAMERA_DEBUG_ENABLED && ((OREG(0) == 1) || (OREG(0) == 8))) {
             DebugCamera_DrawScreenText(&printer);
         }
 
-        if (ENABLE_REG_EDITOR && gRegEditor->regPage != 0) {
+        if (IS_REG_EDITOR_ENABLED && gRegEditor->regPage != 0) {
             Regs_DrawEditor(&printer);
         }
 
-        if (ENABLE_CAMERA_DEBUGGER) {
+        if (IS_CAMERA_DEBUG_ENABLED) {
             sDebugCamTextEntryCount = 0;
         }
 

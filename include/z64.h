@@ -313,7 +313,7 @@ typedef struct {
     /* 0x01E2 */ char unk_1E2[0x06];
 } ConsoleLogoState; // size = 0x1E8
 
-// vvv IS_DEBUG && ENABLE_MAP_SELECT vvv
+// vvv IS_MAP_SELECT_ENABLED vvv
 struct MapSelectState;
 
 typedef struct {
@@ -344,7 +344,7 @@ typedef struct MapSelectState {
     /* 0x0220 */ u8 selectedSceneColor;
 } MapSelectState; // size = 0x240
 
-// ^^^ IS_DEBUG && ENABLE_MAP_SELECT ^^^
+// ^^^ IS_MAP_SELECT_ENABLED ^^^
 
 typedef struct {
     /* 0x0000 */ GameState state;

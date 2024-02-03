@@ -131,7 +131,7 @@ s16 sQuakeIndex;
 void Cutscene_SetupScripted(PlayState* play, CutsceneContext* csCtx);
 
 void Cutscene_DrawDebugInfo(PlayState* play, Gfx** dlist, CutsceneContext* csCtx) {
-    if (IS_DEBUG && SHOW_CS_INFOS) {
+    if (CAN_SHOW_CS_INFOS) {
         GfxPrint printer;
         s32 pad[2];
 
@@ -175,7 +175,7 @@ void Cutscene_UpdateManual(PlayState* play, CutsceneContext* csCtx) {
 }
 
 void Cutscene_UpdateScripted(PlayState* play, CutsceneContext* csCtx) {
-    if (IS_DEBUG && ENABLE_CS_CONTROL) {
+    if (IS_CS_CONTROL_ENABLED) {
         Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
 
         if (CHECK_BTN_ALL(input->press.button, BTN_DLEFT) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER) {
@@ -566,7 +566,7 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
     }
 
     if ((csCtx->curFrame == cmd->startFrame) || titleDemoSkipped ||
-        (IS_DEBUG && ENABLE_CS_CONTROL && CS_CTRL_SKIP_TITLE_SCREEN && (csCtx->curFrame > 20) &&
+        (CS_CAN_SKIP_TITLE_SCREEN && (csCtx->curFrame > 20) &&
          CHECK_BTN_ALL(play->state.input[CS_CTRL_CONTROLLER_PORT].press.button, CS_CTRL_RUN_DEST_CONTROL) &&
          (gSaveContext.fileNum != 0xFEDC))) {
         csCtx->state = CS_STATE_RUN_UNSTOPPABLE;
@@ -1796,7 +1796,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
         return;
     }
 
-    if (IS_DEBUG && ENABLE_CS_CONTROL) {
+    if (IS_CS_CONTROL_ENABLED) {
         Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
         if (DEBUG_BTN_COMBO(CS_CTRL_USE_BTN_COMBO, CS_CTRL_BTN_HOLD_FOR_COMBO, CS_CTRL_STOP_CONTROL, input)) {
             csCtx->state = CS_STATE_STOP;
@@ -2210,7 +2210,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
 
 void CutsceneHandler_RunScript(PlayState* play, CutsceneContext* csCtx) {
     if (gSaveContext.save.cutsceneIndex >= 0xFFF0) {
-        if (IS_DEBUG && SHOW_CS_INFOS && BREG(0) != 0) {
+        if (CAN_SHOW_CS_INFOS && BREG(0) != 0) {
             Gfx* displayList;
             Gfx* prevDisplayList;
 

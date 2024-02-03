@@ -114,7 +114,7 @@ void EnKakasi2_Destroy(Actor* thisx, PlayState* play) {
 void func_80A90264(EnKakasi2* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+    if (IS_ACTOR_DEBUG_ENABLED) {
         this->unk_194++;
     }
 
@@ -139,7 +139,7 @@ void func_80A90264(EnKakasi2* this, PlayState* play) {
     } else if ((this->actor.xzDistToPlayer < this->maxSpawnDistance.x) &&
                (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < this->maxSpawnDistance.y) &&
                GET_EVENTCHKINF(EVENTCHKINF_9C)) {
-        if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+        if (IS_ACTOR_DEBUG_ENABLED) {
             this->unk_194 = 0;
         }
 
@@ -219,7 +219,7 @@ void EnKakasi2_Update(Actor* thisx, PlayState* play2) {
         CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
     }
 
-    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER && BREG(0) != 0) {
+    if (IS_ACTOR_DEBUG_ENABLED && BREG(0) != 0) {
         if (BREG(5) != 0) {
             PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ this->actor.player_distance ☆☆☆☆☆ %f\n" VT_RST, this->actor.xzDistToPlayer);
             PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ this->hosei.x ☆☆☆☆☆ %f\n" VT_RST, this->maxSpawnDistance.x);

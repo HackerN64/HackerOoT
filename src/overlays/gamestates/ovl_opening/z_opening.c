@@ -9,7 +9,7 @@
 void TitleSetup_SetupTitleScreen(TitleSetupState* this) {
     gSaveContext.gameMode = GAMEMODE_NORMAL;
 
-    if (IS_DEBUG && ENABLE_MAP_SELECT && BOOT_TO_MAP_SELECT) {
+    if (IS_MAP_SELECT_ENABLED && BOOT_TO_MAP_SELECT) {
         this->state.running = false;
         SET_NEXT_GAMESTATE(&this->state, MapSelect_Init, MapSelectState);
         return;

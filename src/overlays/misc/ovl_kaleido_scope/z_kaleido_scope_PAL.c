@@ -524,7 +524,7 @@ void KaleidoScope_SwitchPage(PauseContext* pauseCtx, u8 pt) {
 }
 
 void KaleidoScope_HandlePageToggles(PauseContext* pauseCtx, Input* input) {
-    if (IS_DEBUG && ENABLE_INV_EDITOR && (pauseCtx->debugState == 0) && CHECK_BTN_ALL(input->press.button, BTN_L)) {
+    if (IS_INV_EDITOR_ENABLED && (pauseCtx->debugState == 0) && CHECK_BTN_ALL(input->press.button, BTN_L)) {
         pauseCtx->debugState = 1;
         return;
     }
@@ -3629,7 +3629,7 @@ void KaleidoScope_Update(PlayState* play) {
                     pauseCtx->alpha = 0;
                 }
             } else {
-                if (IS_DEBUG && ENABLE_INV_EDITOR) {
+                if (IS_INV_EDITOR_ENABLED) {
                     pauseCtx->debugState = 0;
                 }
                 pauseCtx->state = PAUSE_STATE_RESUME_GAMEPLAY;

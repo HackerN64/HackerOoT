@@ -4013,7 +4013,7 @@ void Interface_Draw(PlayState* play) {
         }
     }
 
-    if (IS_DEBUG && ENABLE_EVENT_EDITOR && (pauseCtx->debugState == 3)) {
+    if (IS_EVENT_EDITOR_ENABLED && (pauseCtx->debugState == 3)) {
         FlagSet_Update(play);
     }
 

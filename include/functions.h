@@ -990,7 +990,7 @@ Path* Path_GetByIndex(PlayState* play, s16 index, s16 max);
 f32 Path_OrientAndGetDistSq(Actor* actor, Path* path, s16 waypoint, s16* yaw);
 void Path_CopyLastPoint(Path* path, Vec3f* dest);
 
-#if IS_DEBUG && ENABLE_FRAMERATE_OPTIONS
+#if ARE_FRAMERATE_OPTIONS_ENABLED
 void FrameAdvance_Init(FrameAdvanceContext* frameAdvCtx);
 s32 FrameAdvance_Update(FrameAdvanceContext* frameAdvCtx, Input* input);
 #endif
@@ -1478,7 +1478,7 @@ NORETURN void func_800D31A0(void);
 void func_800D31F0(void);
 void func_800D3210(void);
 
-// ENABLE_DEBUG_HEAP
+// IS_DEBUG_HEAP_ENABLED
 void DebugArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action);
 void* DebugArena_Malloc(u32 size);
 void* DebugArena_MallocDebug(u32 size, const char* file, s32 line);

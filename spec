@@ -311,7 +311,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_effect_soft_sprite.o"
     include "$(BUILD_DIR)/src/code/z_effect_soft_sprite_old_init.o"
     include "$(BUILD_DIR)/src/code/z_effect_soft_sprite_dlftbls.o"
-#if IS_DEBUG && ENABLE_EVENT_EDITOR
+#if IS_EVENT_EDITOR_ENABLED
     include "$(BUILD_DIR)/src/code/flg_set.o"
 #endif
     include "$(BUILD_DIR)/src/code/z_DLF.o"
@@ -355,7 +355,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_map_data.o"
     include "$(BUILD_DIR)/src/code/z_parameter.o"
     include "$(BUILD_DIR)/src/code/z_path.o"
-#if IS_DEBUG && ENABLE_FRAMERATE_OPTIONS
+#if ARE_FRAMERATE_OPTIONS_ENABLED
     include "$(BUILD_DIR)/src/code/z_frame_advance.o"
 #endif
     include "$(BUILD_DIR)/src/code/z_player_lib.o"
@@ -391,7 +391,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_fbdemo_circle.o"
     include "$(BUILD_DIR)/src/code/z_fbdemo_fade.o"
     include "$(BUILD_DIR)/src/code/shrink_window.o"
-#if IS_DEBUG && ENABLE_CAMERA_DEBUGGER
+#if IS_CAMERA_DEBUG_ENABLED
     include "$(BUILD_DIR)/src/code/db_camera.o"
 #endif
     include "$(BUILD_DIR)/src/code/code_800BB0A0.o"
@@ -415,7 +415,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/main.o"
     include "$(BUILD_DIR)/src/code/padmgr.o"
     include "$(BUILD_DIR)/src/code/sched.o"
-#if IS_DEBUG && ENABLE_SPEEDMETER
+#if IS_SPEEDMETER_ENABLED
     include "$(BUILD_DIR)/src/code/speed_meter.o"
 #endif
     include "$(BUILD_DIR)/src/code/sys_cfb.o"
@@ -427,7 +427,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/sys_rumble.o"
     include "$(BUILD_DIR)/src/code/code_800D31A0.o"
     include "$(BUILD_DIR)/src/code/irqmgr.o"
-#if IS_DEBUG && ENABLE_DEBUG_HEAP
+#if IS_DEBUG_HEAP_ENABLED
     include "$(BUILD_DIR)/src/code/debug_malloc.o"
 #endif
     include "$(BUILD_DIR)/src/code/fault.o"
@@ -566,7 +566,7 @@ beginseg
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_title/ovl_title_reloc.o"
 endseg
 
-#if IS_DEBUG && ENABLE_MAP_SELECT
+#if IS_MAP_SELECT_ENABLED
 beginseg
     name "ovl_select"
     compress
@@ -596,7 +596,7 @@ beginseg
     name "ovl_kaleido_scope"
     compress
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_collect.o"
-#if IS_DEBUG && ENABLE_INV_EDITOR
+#if IS_INV_EDITOR_ENABLED
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_debug.o"
 #endif
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_equipment.o"
@@ -9677,7 +9677,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "syotes_scene"
     romalign 0x1000
@@ -10201,7 +10201,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "testroom_scene"
     romalign 0x1000
@@ -10285,7 +10285,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "sutaru_scene"
     romalign 0x1000
@@ -10573,7 +10573,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "sasatest_scene"
     romalign 0x1000
@@ -11325,7 +11325,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "hairal_niwa2_scene"
     romalign 0x1000
@@ -11813,7 +11813,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "besitu_scene"
     romalign 0x1000
@@ -11885,7 +11885,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "test01_scene"
     compress

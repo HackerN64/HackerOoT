@@ -512,7 +512,7 @@ void Sched_HandleRSPDone(Scheduler* sc) {
 
     ASSERT(sc->curRSPTask != NULL, "sc->curRSPTask", "../sched.c", 819);
 
-    if (IS_DEBUG && ENABLE_SPEEDMETER) {
+    if (IS_SPEEDMETER_ENABLED) {
         // Task profiling
         if (sc->curRSPTask->list.t.type == M_AUDTASK) {
             gRSPAudioTimeAcc += osGetTime() - sRSPAudioTimeStart;
@@ -564,7 +564,7 @@ void Sched_HandleRDPDone(Scheduler* sc) {
     OSScTask* nextRDP = NULL;
     s32 state;
 
-    if (IS_DEBUG && ENABLE_SPEEDMETER) {
+    if (IS_SPEEDMETER_ENABLED) {
         // Task profiling
         gRDPTimeAcc = osGetTime() - sRDPTimeStart;
     }

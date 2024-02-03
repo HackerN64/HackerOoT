@@ -111,7 +111,7 @@ void func_80ABEF2C(EnOkarinaTag* this, PlayState* play) {
 
     player = GET_PLAYER(play);
 
-    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+    if (IS_ACTOR_DEBUG_ENABLED) {
         this->unk_15A++;
     }
 
@@ -135,7 +135,7 @@ void func_80ABEF2C(EnOkarinaTag* this, PlayState* play) {
                     this->actionFunc = func_80ABF0CC;
                 } else if ((this->actor.xzDistToPlayer < (50.0f + this->interactRange) &&
                             ((fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 40.0f)))) {
-                    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+                    if (IS_ACTOR_DEBUG_ENABLED) {
                         this->unk_15A = 0;
                     }
                     player->unk_6A8 = &this->actor;
@@ -192,7 +192,7 @@ void func_80ABF0CC(EnOkarinaTag* this, PlayState* play) {
 void func_80ABF28C(EnOkarinaTag* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+    if (IS_ACTOR_DEBUG_ENABLED) {
         this->unk_15A++;
     }
 
@@ -228,7 +228,7 @@ void func_80ABF28C(EnOkarinaTag* this, PlayState* play) {
                 this->actionFunc = func_80ABF4C8;
             } else if ((this->actor.xzDistToPlayer < (50.0f + this->interactRange)) &&
                        (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 40.0f)) {
-                if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+                if (IS_ACTOR_DEBUG_ENABLED) {
                     this->unk_15A = 0;
                 }
                 player->stateFlags2 |= PLAYER_STATE2_23;
@@ -298,7 +298,7 @@ void func_80ABF708(EnOkarinaTag* this, PlayState* play) {
     } else {
         yawDiff = this->actor.yawTowardsPlayer - this->actor.world.rot.y;
 
-        if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+        if (IS_ACTOR_DEBUG_ENABLED) {
             this->unk_15A++;
         }
 
@@ -307,7 +307,7 @@ void func_80ABF708(EnOkarinaTag* this, PlayState* play) {
                 this->actor.textId = 0x5021;
             }
             yawDiffNew = ABS(yawDiff);
-            if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER && yawDiffNew < 0x4300) {
+            if (IS_ACTOR_DEBUG_ENABLED && yawDiffNew < 0x4300) {
                 this->unk_15A = 0;
                 Actor_OfferTalk(&this->actor, play, 70.0f);
             }
@@ -334,7 +334,7 @@ void EnOkarinaTag_Update(Actor* thisx, PlayState* play) {
 
     this->actionFunc(this, play);
 
-    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER && BREG(0) != 0) {
+    if (IS_ACTOR_DEBUG_ENABLED && BREG(0) != 0) {
         if (this->unk_15A != 0) {
             if (!(this->unk_15A & 1)) {
                 DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,

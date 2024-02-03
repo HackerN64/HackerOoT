@@ -816,7 +816,7 @@ void Environment_DisableUnderwaterLights(PlayState* play) {
 }
 
 void Environment_PrintDebugInfo(PlayState* play, Gfx** gfx) {
-    if (IS_DEBUG && SHOW_TIME_INFOS) {
+    if (CAN_SHOW_TIME_INFOS) {
         GfxPrint printer;
         s32 pad[2];
 
@@ -955,7 +955,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
             gSaveContext.save.nightFlag = 0;
         }
 
-        if (IS_DEBUG && SHOW_TIME_INFOS && (R_ENABLE_ARENA_DBG != 0) || (CREG(2) != 0)) {
+        if (CAN_SHOW_TIME_INFOS && (R_ENABLE_ARENA_DBG != 0) || (CREG(2) != 0)) {
             Gfx* displayList;
             Gfx* prevDisplayList;
 

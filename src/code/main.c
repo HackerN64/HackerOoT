@@ -55,7 +55,7 @@ void Main(void* arg) {
     PRINTF("システムヒープ初期化 %08x-%08x %08x\n", systemHeapStart, fb, gSystemHeapSize);
     SystemHeap_Init((void*)systemHeapStart, gSystemHeapSize); // initializes the system heap
 
-    if (IS_DEBUG && ENABLE_DEBUG_HEAP) {
+    if (IS_DEBUG_HEAP_ENABLED) {
         void* debugHeapStart;
         u32 debugHeapSize;
 

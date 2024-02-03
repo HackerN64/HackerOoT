@@ -374,7 +374,7 @@ void EnDntJiji_Update(Actor* thisx, PlayState* play) {
     Actor_SetScale(&this->actor, 0.015f);
     this->unkTimer++;
 
-    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER && BREG(0)) {
+    if (IS_ACTOR_DEBUG_ENABLED && BREG(0)) {
         // "time"
         PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ 時間 ☆☆☆☆☆ %d\n" VT_RST, this->timer);
     }

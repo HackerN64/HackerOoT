@@ -45,7 +45,7 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
 
     // Update the audio driver
 
-    if (IS_DEBUG && ENABLE_SPEEDMETER) {
+    if (IS_SPEEDMETER_ENABLED) {
         gAudioThreadUpdateTimeStart = osGetTime();
     }
 
@@ -56,7 +56,7 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
         rspTask = AudioThread_Update();
     }
 
-    if (IS_DEBUG && ENABLE_SPEEDMETER) {
+    if (IS_SPEEDMETER_ENABLED) {
         gAudioThreadUpdateTimeAcc += osGetTime() - gAudioThreadUpdateTimeStart;
         gAudioThreadUpdateTimeStart = 0;
     }

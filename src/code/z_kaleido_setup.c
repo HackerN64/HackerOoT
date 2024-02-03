@@ -19,7 +19,7 @@ void KaleidoSetup_Update(PlayState* play) {
         gSaveContext.magicState != MAGIC_STATE_FILL &&
         (play->sceneId != SCENE_BOMBCHU_BOWLING_ALLEY || !Flags_GetSwitch(play, 0x38))) {
 
-        if (IS_DEBUG && ENABLE_EVENT_EDITOR && CHECK_BTN_ALL(input->cur.button, BTN_L) &&
+        if (IS_EVENT_EDITOR_ENABLED && CHECK_BTN_ALL(input->cur.button, BTN_L) &&
             CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
             if (BREG(0)) {
                 pauseCtx->debugState = 3;

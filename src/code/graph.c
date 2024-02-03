@@ -164,7 +164,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
     OSTask_t* task = &gfxCtx->task.list.t;
     OSScTask* scTask = &gfxCtx->task;
 
-    if (IS_DEBUG && ENABLE_SPEEDMETER) {
+    if (IS_SPEEDMETER_ENABLED) {
         gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime =
             osGetTime() - sGraphPrevTaskTimeStart - gAudioThreadUpdateTimeAcc;
     }
@@ -209,7 +209,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
             gfxCtx->callback(gfxCtx, gfxCtx->callbackParam);
         }
 
-        if (IS_DEBUG && ENABLE_SPEEDMETER) {
+        if (IS_SPEEDMETER_ENABLED) {
             timeNow = osGetTime();
             if (gAudioThreadUpdateTimeStart != 0) {
                 // The audio thread update is running
@@ -408,7 +408,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
         OSTime timeNow = osGetTime();
         s32 pad;
 
-        if (IS_DEBUG && ENABLE_SPEEDMETER) {
+        if (IS_SPEEDMETER_ENABLED) {
             gRSPGfxTimeTotal = gRSPGfxTimeAcc;
             gRSPAudioTimeTotal = gRSPAudioTimeAcc;
             gRDPTimeTotal = gRDPTimeAcc;
@@ -425,7 +425,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     }
 
 #if IS_DEBUG
-    if (IS_DEBUG && ENABLE_MAP_SELECT && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&
+    if (IS_MAP_SELECT_ENABLED && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&
         CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_L | BTN_R)) {
         gSaveContext.gameMode = GAMEMODE_NORMAL;
         SET_NEXT_GAMESTATE(gameState, MapSelect_Init, MapSelectState);

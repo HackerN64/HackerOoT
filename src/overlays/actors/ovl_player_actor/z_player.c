@@ -13672,7 +13672,7 @@ void Player_Action_8084FBF4(Player* this, PlayState* play) {
 
 // handles no clip mode, returns 0 when it's in no clip mode
 s32 func_8084FCAC(Player* this, PlayState* play) {
-    if (IS_DEBUG && ENABLE_NO_CLIP) {
+    if (IS_NO_CLIP_ENABLED) {
         sControlInput = &play->state.input[NOCLIP_CONTROLLER_PORT];
         if (DEBUG_BTN_COMBO(NOCLIP_USE_BTN_COMBO, NOCLIP_BTN_HOLD_FOR_COMBO, NOCLIP_TOGGLE_BTN, sControlInput)) {
             isNoClipEnabled ^= 1;
