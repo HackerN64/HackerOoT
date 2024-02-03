@@ -75,7 +75,7 @@ void MapSelect_Init(GameState* thisx) {
 #ifdef MAP_SELECT_BGM
     this->toggleBGM = true;
 #else
-#define MAP_SELECT_BGM NA_BGM_STOP
+#define MAP_SELECT_BGM NA_BGM_NO_MUSIC
 #endif
 }
 

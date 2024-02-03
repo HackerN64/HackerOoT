@@ -18,7 +18,7 @@ typedef struct {
 RegEditor* gRegEditor; // ``gRegEditor->data`` is used by non-debug features in normal gameplay
 
 // ENABLE_CAMERA_DEBUGGER
-DebugCamTextBufferEntry sDebugCamTextBuffer[IS_CAMERA_DEBUG_ENABLED ? 22 : 0];
+DebugCamTextBufferEntry sDebugCamTextBuffer[22];
 
 s16 sDebugCamTextEntryCount = 0;
 

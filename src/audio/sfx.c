@@ -34,9 +34,9 @@ u8 sCurSfxPlayerChannelIndex;
 u8 gSfxBankMuted[7];
 UnusedBankLerp sUnusedBankLerp[7];
 
-u16 gAudioSfxSwapSource[IS_AUDIO_DEBUG_ENABLED ? 10 : 0];
-u16 gAudioSfxSwapTarget[IS_AUDIO_DEBUG_ENABLED ? 10 : 0];
-u8 gAudioSfxSwapMode[IS_AUDIO_DEBUG_ENABLED ? 10 : 0];
+u16 gAudioSfxSwapSource[10];
+u16 gAudioSfxSwapTarget[10];
+u8 gAudioSfxSwapMode[10];
 
 void Audio_SetSfxBanksMute(u16 muteMask) {
     u8 bankId;

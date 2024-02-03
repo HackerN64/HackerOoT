@@ -1231,7 +1231,7 @@ u16 D_8016B7E4;
 struct {
     char str[5];
     u16 num;
-} sAudioScrPrtBuf[IS_AUDIO_DEBUG_ENABLED ? SCROLL_PRINT_BUF_SIZE : 0];
+} sAudioScrPrtBuf[SCROLL_PRINT_BUF_SIZE];
 
 u8 sRiverSoundMainBgmVol;
 u8 sRiverSoundMainBgmCurrentVol;
