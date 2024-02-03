@@ -16,7 +16,7 @@
 
 #define NODE_IS_VALID(node) (((node) != NULL) && ((node)->magic == NODE_MAGIC))
 
-#if OOT_DEBUG
+#if IS_DEBUG
 
 #define NODE_GET_NEXT(node) ArenaImpl_GetNextBlock(node)
 #define NODE_GET_PREV(node) ArenaImpl_GetPrevBlock(node)
@@ -67,7 +67,7 @@ u32 sTotalAllocFailures = 0;
 
 OSMesg sArenaLockMsg;
 
-#if OOT_DEBUG
+#if IS_DEBUG
 u32 __osMalloc_FreeBlockTest_Enable;
 
 u32 ArenaImpl_GetFillAllocBlock(Arena* arena) {
@@ -121,7 +121,7 @@ void ArenaImpl_Unlock(Arena* arena) {
     osRecvMesg(&arena->lockQueue, NULL, OS_MESG_BLOCK);
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 ArenaNode* ArenaImpl_GetNextBlock(ArenaNode* node) {
     ArenaNode* next = node->next;
 
@@ -178,7 +178,7 @@ void __osMallocAddBlock(Arena* arena, void* start, s32 size) {
         size2 = (size - diff) & ~0xF;
 
         if (size2 > (s32)sizeof(ArenaNode)) {
-#if OOT_DEBUG
+#if IS_DEBUG
             __osMemset(firstNode, BLOCK_UNINIT_MAGIC, size2);
 #endif
             firstNode->next = NULL;
@@ -200,7 +200,7 @@ void __osMallocAddBlock(Arena* arena, void* start, s32 size) {
     }
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 void ArenaImpl_RemoveAllBlocks(Arena* arena) {
     ArenaNode* iter;
     ArenaNode* next;
@@ -219,7 +219,7 @@ void ArenaImpl_RemoveAllBlocks(Arena* arena) {
 #endif
 
 void __osMallocCleanup(Arena* arena) {
-#if OOT_DEBUG
+#if IS_DEBUG
     ArenaImpl_RemoveAllBlocks(arena);
 #endif
     bzero(arena, sizeof(*arena));
@@ -492,7 +492,7 @@ void __osFree_NoLock(Arena* arena, void* ptr) {
         PRINTF(VT_COL(RED, WHITE) "__osFree:二重解放(%08x)\n" VT_RST, ptr); // "__osFree: Double release (%08x)"
         return;
     }
-#if OOT_DEBUG
+#if IS_DEBUG
     if (arena != node->arena && arena != NULL) {
         // "__osFree:Tried to release in a different way than when it was secured (%08x:%08x)"
         PRINTF(VT_COL(RED, WHITE) "__osFree:確保時と違う方法で解放しようとした (%08x:%08x)\n" VT_RST, arena,
@@ -558,12 +558,15 @@ void __osFree_NoLockDebug(Arena* arena, void* ptr, const char* file, s32 line) {
             PRINTF(VT_COL(RED, WHITE) "__osFree:二重解放(%08x) [%s:%d ]\n" VT_RST, ptr, file, line);
             return;
         }
+
+#if IS_DEBUG
         if (arena != node->arena && arena != NULL) {
             // "__osFree:Tried to release in a different way than when it was secured (%08x:%08x)"
             PRINTF(VT_COL(RED, WHITE) "__osFree:確保時と違う方法で解放しようとした (%08x:%08x)\n" VT_RST, arena,
                 node->arena);
             return;
         }
+#endif
 
         next = NODE_GET_NEXT(node);
         prev = NODE_GET_PREV(node);
@@ -770,12 +773,14 @@ void __osDisplayArena(Arena* arena) {
                             iter->isFree ? "空き" : "確保", //? "Free" : "Secure"
                             iter->size);
 
+#if IS_DEBUG
                 if (!iter->isFree) {
                     osSyncPrintf(" [%016llu:%2d:%s:%d]", OS_CYCLES_TO_NSEC(iter->time), iter->threadId,
                                 iter->filename != NULL ? iter->filename : "**NULL**", iter->line);
                 }
 
                 osSyncPrintf("\n");
+#endif
 
                 if (iter->isFree) {
                     freeSize += iter->size;
@@ -878,7 +883,7 @@ u32 __osCheckArena(Arena* arena) {
     return error;
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 u8 ArenaImpl_GetAllocFailures(Arena* arena) {
     return arena->allocFailures;
 }

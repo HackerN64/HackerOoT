@@ -3342,7 +3342,7 @@ s32 Audio_IsSequencePlaying(u16 seqId) {
 void func_800F5ACC(u16 seqId) {
     u16 curSeqId = Audio_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN);
 
-#if !OOT_DEBUG
+#if !IS_DEBUG
     if (1) {}
 #endif
 
@@ -3466,7 +3466,7 @@ void Audio_SetSequenceMode(u8 seqMode) {
     u16 seqId;
     u8 volumeFadeOutTimer;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     sSeqModeInput = seqMode;
 #endif
 
@@ -3572,7 +3572,7 @@ void Audio_UpdateMalonSinging(f32 dist, u16 seqId) {
     s8 melodyVolume;
     s16 curSeqId;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     sIsMalonSinging = true;
     sMalonSingingDist = dist;
 #endif
@@ -3924,7 +3924,7 @@ void Audio_StartNatureAmbienceSequence(u16 playerIO, u16 channelMask) {
 
     channelIdx = false;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (gStartSeqDisabled) {
         channelIdx = true;
         SEQCMD_DISABLE_PLAY_SEQUENCES(false);

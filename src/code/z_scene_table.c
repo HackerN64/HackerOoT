@@ -1651,7 +1651,7 @@ void (*sSceneDrawConfigs[SDC_MAX])(PlayState*) = {
 };
 
 void Scene_Draw(PlayState* play) {
-    if ((R_HREG_MODE == HREG_MODE_SCENE_CONFIG) && OOT_DEBUG) {
+    if ((R_HREG_MODE == HREG_MODE_SCENE_CONFIG) && IS_DEBUG) {
         if (R_SCENE_CONFIG_INIT != HREG_MODE_SCENE_CONFIG) {
             R_SCENE_CONFIG_INIT = HREG_MODE_SCENE_CONFIG;
             R_SCENE_CONFIG_DRAW_DEFAULT_DLIST = 1;

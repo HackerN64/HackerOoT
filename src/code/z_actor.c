@@ -10,7 +10,7 @@
 static CollisionPoly* sCurCeilingPoly;
 static s32 sCurCeilingBgId;
 
-#if OOT_DEBUG
+#if IS_DEBUG
 #define ACTOR_DEBUG_PRINTF           \
     if (R_ENABLE_ACTOR_DEBUG_PRINTF) \
     PRINTF
@@ -840,7 +840,7 @@ void Actor_Destroy(Actor* actor, PlayState* play) {
         actor->destroy(actor, play);
         actor->destroy = NULL;
     } else {
-#if OOT_DEBUG
+#if IS_DEBUG
         overlayEntry = actor->overlayEntry;
         name = overlayEntry->name != NULL ? overlayEntry->name : "";
 
@@ -1392,7 +1392,7 @@ Gfx* func_8002E830(Vec3f* object, Vec3f* eye, Vec3f* lightDir, GraphicsContext* 
 
     *hilite = GRAPH_ALLOC(gfxCtx, sizeof(Hilite));
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (R_HREG_MODE == HREG_MODE_PRINT_HILITE_INFO) {
         PRINTF("z_actor.c 3529 eye=[%f(%f) %f %f] object=[%f %f %f] light_direction=[%f %f %f]\n", correctedEyeX,
                eye->x, eye->y, eye->z, object->x, object->y, object->z, lightDir->x, lightDir->y, lightDir->z);
@@ -2187,7 +2187,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
         actorCtx->unk_02--;
     }
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (KREG(0) == -100) {
         Actor* player = &GET_PLAYER(play)->actor;
 
@@ -2309,7 +2309,7 @@ void Actor_FaultPrint(Actor* actor, char* command) {
         FaultDrawer_Printf("ACTOR NAME is NULL");
     }
 
-#if OOT_DEBUG
+#if IS_DEBUG
     overlayEntry = actor->overlayEntry;
     name = overlayEntry->name != NULL ? overlayEntry->name : "";
 
@@ -2564,22 +2564,22 @@ void func_800315AC(PlayState* play, ActorContext* actorCtx) {
             gDPNoOpString(POLY_OPA_DISP++, actorName, i);
             gDPNoOpString(POLY_XLU_DISP++, actorName, i);
 
-            if (OOT_DEBUG) {
+            if (IS_DEBUG) {
                 HREG(66) = i;
             }
 
-            if (!OOT_DEBUG || (HREG(64) != 1) || ((HREG(65) != -1) && (HREG(65) != HREG(66))) || (HREG(68) == 0)) {
+            if (!IS_DEBUG || (HREG(64) != 1) || ((HREG(65) != -1) && (HREG(65) != HREG(66))) || (HREG(68) == 0)) {
                 SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &actor->world.pos, &actor->projectedPos,
                                              &actor->projectedW);
             }
 
-            if (!OOT_DEBUG || (HREG(64) != 1) || ((HREG(65) != -1) && (HREG(65) != HREG(66))) || (HREG(69) == 0)) {
+            if (!IS_DEBUG || (HREG(64) != 1) || ((HREG(65) != -1) && (HREG(65) != HREG(66))) || (HREG(69) == 0)) {
                 if (actor->sfx != 0) {
                     func_80030ED8(actor);
                 }
             }
 
-            if (!OOT_DEBUG || (HREG(64) != 1) || ((HREG(65) != -1) && (HREG(65) != HREG(66))) || (HREG(70) == 0)) {
+            if (!IS_DEBUG || (HREG(64) != 1) || ((HREG(65) != -1) && (HREG(65) != HREG(66))) || (HREG(70) == 0)) {
                 if (func_800314B0(play, actor)) {
                     actor->flags |= ACTOR_FLAG_6;
                 } else {
@@ -2589,7 +2589,7 @@ void func_800315AC(PlayState* play, ActorContext* actorCtx) {
 
             actor->isDrawn = false;
 
-            if (!OOT_DEBUG || (HREG(64) != 1) || ((HREG(65) != -1) && (HREG(65) != HREG(66))) || (HREG(71) == 0)) {
+            if (!IS_DEBUG || (HREG(64) != 1) || ((HREG(65) != -1) && (HREG(65) != HREG(66))) || (HREG(71) == 0)) {
                 if ((actor->init == NULL) && (actor->draw != NULL) && (actor->flags & (ACTOR_FLAG_5 | ACTOR_FLAG_6))) {
                     if ((actor->flags & ACTOR_FLAG_REACT_TO_LENS) &&
                         ((play->roomCtx.curRoom.lensMode == LENS_MODE_HIDE_ACTORS) || play->actorCtx.lensActive ||
@@ -2599,7 +2599,7 @@ void func_800315AC(PlayState* play, ActorContext* actorCtx) {
                         invisibleActors[invisibleActorCounter] = actor;
                         invisibleActorCounter++;
                     } else {
-                        if (!OOT_DEBUG || (HREG(64) != 1) || ((HREG(65) != -1) && (HREG(65) != HREG(66))) ||
+                        if (!IS_DEBUG || (HREG(64) != 1) || ((HREG(65) != -1) && (HREG(65) != HREG(66))) ||
                             (HREG(72) == 0)) {
                             Actor_Draw(play, actor);
                             actor->isDrawn = true;
@@ -2612,15 +2612,15 @@ void func_800315AC(PlayState* play, ActorContext* actorCtx) {
         }
     }
 
-    if (!OOT_DEBUG || (HREG(64) != 1) || (HREG(73) != 0)) {
+    if (!IS_DEBUG || (HREG(64) != 1) || (HREG(73) != 0)) {
         Effect_DrawAll(play->state.gfxCtx);
     }
 
-    if (!OOT_DEBUG || (HREG(64) != 1) || (HREG(74) != 0)) {
+    if (!IS_DEBUG || (HREG(64) != 1) || (HREG(74) != 0)) {
         EffectSs_DrawAll(play);
     }
 
-    if (!OOT_DEBUG || (HREG(64) != 1) || (HREG(72) != 0)) {
+    if (!IS_DEBUG || (HREG(64) != 1) || (HREG(72) != 0)) {
         if (play->actorCtx.lensActive) {
             Actor_DrawLensActors(play, invisibleActorCounter, invisibleActors);
             if ((play->csCtx.state != CS_STATE_IDLE) || Player_InCsMode(play)) {
@@ -2635,7 +2635,7 @@ void func_800315AC(PlayState* play, ActorContext* actorCtx) {
         Lights_DrawGlow(play);
     }
 
-    if (!OOT_DEBUG || (HREG(64) != 1) || (HREG(75) != 0)) {
+    if (!IS_DEBUG || (HREG(64) != 1) || (HREG(75) != 0)) {
         TitleCard_Draw(play, &actorCtx->titleCtx);
     }
 
@@ -2832,7 +2832,7 @@ Actor* Actor_Spawn(ActorContext* actorCtx, PlayState* play, s16 actorId, f32 pos
     overlayEntry = &gActorOverlayTable[actorId];
     ASSERT(actorId < ACTOR_ID_MAX, "profile < ACTOR_DLF_MAX", "../z_actor.c", 6883);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     name = overlayEntry->name != NULL ? overlayEntry->name : "";
 #endif
 

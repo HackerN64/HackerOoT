@@ -359,7 +359,7 @@ void EnBom_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnBom* this = (EnBom*)thisx;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (1) {}
 #endif
 

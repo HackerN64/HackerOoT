@@ -33,7 +33,7 @@ void Locale_ResetRegion(void) {
     gCurrentRegion = REGION_NULL;
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 u32 func_80001F48(void) {
     if (gCurrentRegion == REGION_NATIVE) {
         return 0;

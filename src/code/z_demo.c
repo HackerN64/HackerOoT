@@ -728,7 +728,7 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
                 break;
 
             case CS_DEST_TEMPLE_OF_TIME_AFTER_LIGHT_MEDALLION:
-#if OOT_DEBUG
+#if IS_DEBUG
                 SET_EVENTCHKINF(EVENTCHKINF_WATCHED_SHEIK_AFTER_MASTER_SWORD_CS);
 #endif
                 play->nextEntranceIndex = ENTR_TEMPLE_OF_TIME_4;
@@ -899,7 +899,7 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
                 break;
 
             case CS_DEST_TEMPLE_OF_TIME_AFTER_LIGHT_MEDALLION_ALT:
-#if OOT_DEBUG
+#if IS_DEBUG
                 SET_EVENTCHKINF(EVENTCHKINF_WATCHED_SHEIK_AFTER_MASTER_SWORD_CS);
 #endif
                 play->nextEntranceIndex = ENTR_TEMPLE_OF_TIME_4;
@@ -956,7 +956,7 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
                 break;
 
             case CS_DEST_GERUDO_VALLEY_CREDITS:
-#if OOT_DEBUG
+#if IS_DEBUG
                 gSaveContext.gameMode = GAMEMODE_END_CREDITS;
                 Audio_SetSfxBanksMute(0x6F);
 #endif
@@ -2228,7 +2228,7 @@ void CutsceneHandler_RunScript(PlayState* play, CutsceneContext* csCtx) {
         }
         csCtx->curFrame++;
 
-        if (OOT_DEBUG && R_USE_DEBUG_CUTSCENE) {
+        if (IS_DEBUG && R_USE_DEBUG_CUTSCENE) {
             Cutscene_ProcessScript(play, csCtx, gDebugCutsceneScript);
         } else {
             Cutscene_ProcessScript(play, csCtx, play->csCtx.script);

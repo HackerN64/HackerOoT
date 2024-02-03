@@ -922,7 +922,7 @@ f32 Math3D_Plane(Plane* plane, Vec3f* pointOnPlane) {
  * `nx`, `ny`, `nz`, and `originDist`
  */
 f32 Math3D_UDistPlaneToPos(f32 nx, f32 ny, f32 nz, f32 originDist, Vec3f* p) {
-    if (OOT_DEBUG && IS_ZERO(sqrtf(SQ(nx) + SQ(ny) + SQ(nz)))) {
+    if (IS_DEBUG && IS_ZERO(sqrtf(SQ(nx) + SQ(ny) + SQ(nz)))) {
         PRINTF(VT_COL(YELLOW, BLACK));
         // "Math3DLengthPlaneAndPos(): Normal size is near zero %f %f %f"
         PRINTF("Math3DLengthPlaneAndPos():法線size がゼロ近いです%f %f %f\n", nx, ny, nz);
@@ -2144,7 +2144,7 @@ s32 Math3D_YZInSphere(Sphere16* sphere, f32 y, f32 z) {
     return false;
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 void Math3D_DrawSphere(PlayState* play, Sphere16* sph) {
 }
 

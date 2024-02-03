@@ -25,7 +25,7 @@ AudioMgr gAudioMgr;
 OSMesgQueue sSerialEventQueue;
 OSMesg sSerialMsgBuf[1];
 
-#if OOT_DEBUG
+#if IS_DEBUG
 void Main_LogSystemHeap(void) {
     PRINTF(VT_FGCOL(GREEN));
     // "System heap size% 08x (% dKB) Start address% 08x"
@@ -78,7 +78,7 @@ void Main(void* arg) {
     osCreateMesgQueue(&sSerialEventQueue, sSerialMsgBuf, ARRAY_COUNT(sSerialMsgBuf));
     osSetEventMesg(OS_EVENT_SI, &sSerialEventQueue, NULL);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     Main_LogSystemHeap();
 #endif
 

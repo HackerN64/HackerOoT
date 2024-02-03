@@ -1003,7 +1003,7 @@ void CollisionCheck_InitContext(PlayState* play, CollisionCheckContext* colChkCt
     colChkCtx->sacFlags = 0;
     CollisionCheck_ClearContext(play, colChkCtx);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     AREG(21) = true;
     AREG(22) = true;
     AREG(23) = true;
@@ -3707,7 +3707,7 @@ u8 CollisionCheck_GetSwordDamage(s32 dmgFlags) {
         damage = 8;
     }
 
-#if OOT_DEBUG
+#if IS_DEBUG
     KREG(7) = damage;
 #endif
 

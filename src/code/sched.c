@@ -52,7 +52,7 @@ OSTime sRSPAudioTimeStart;
 OSTime sRSPOtherTimeStart;
 OSTime sRDPTimeStart;
 
-#if OOT_DEBUG
+#if IS_DEBUG
 #define SCHED_DEBUG_PRINTF        \
     if (sSchedDebugPrintfEnabled) \
     PRINTF
@@ -81,7 +81,7 @@ void Sched_SwapFrameBufferImpl(CfbInfo* cfbInfo) {
             Fault_SetFrameBuffer(cfbInfo->swapBuffer, width, 16);
         }
 
-#if OOT_DEBUG
+#if IS_DEBUG
         if (R_HREG_MODE == HREG_MODE_SCHED && R_SCHED_INIT != HREG_MODE_SCHED) {
             R_SCHED_TOGGLE_SPECIAL_FEATURES = 0;
             R_SCHED_GAMMA_ON = 0;
@@ -127,7 +127,7 @@ void Sched_SwapFrameBuffer(Scheduler* sc, CfbInfo* cfbInfo) {
 }
 
 void Sched_HandlePreNMI(Scheduler* sc) {
-#if OOT_DEBUG
+#if IS_DEBUG
     OSTime now;
 
     if (sc->curRSPTask != NULL) {

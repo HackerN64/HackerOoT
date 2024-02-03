@@ -170,7 +170,7 @@ void DebugCamera_DrawScreenText(GfxPrint* printer) {
     }
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 /**
  * Updates the state of the Reg Editor according to user input.
  * Also contains a controller rumble test that can be interfaced with via related REGs.

@@ -30,7 +30,7 @@ UCodeInfo D_8012D248[3] = {
     { UCODE_S2DEX, gspS2DEX2d_fifoTextStart },
 };
 
-#if OOT_DEBUG
+#if IS_DEBUG
 void Graph_FaultClient(void) {
     void* nextFb = osViGetNextFramebuffer();
     void* newFb = (SysCfb_GetFbPtr(0) != nextFb) ? SysCfb_GetFbPtr(0) : SysCfb_GetFbPtr(1);
@@ -141,14 +141,14 @@ void Graph_Init(GraphicsContext* gfxCtx) {
     gfxCtx->xScale = gViConfigXScale;
     gfxCtx->yScale = gViConfigYScale;
     osCreateMesgQueue(&gfxCtx->queue, gfxCtx->msgBuff, ARRAY_COUNT(gfxCtx->msgBuff));
-#if OOT_DEBUG
+#if IS_DEBUG
     func_800D31F0();
     Fault_AddClient(&sGraphFaultClient, Graph_FaultClient, NULL, NULL);
 #endif
 }
 
 void Graph_Destroy(GraphicsContext* gfxCtx) {
-#if OOT_DEBUG
+#if IS_DEBUG
     func_800D3210();
     Fault_RemoveClient(&sGraphFaultClient);
 #endif
@@ -201,7 +201,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
 
         osRecvMesg(&gfxCtx->queue, &msg, OS_MESG_NOBLOCK);
 
-#if OOT_DEBUG
+#if IS_DEBUG
         sPrevTaskWorkBuffer = gfxCtx->workBuffer;
 #endif
 
@@ -291,7 +291,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gameState->inPreNMIState = false;
     Graph_InitTHGA(gfxCtx);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     OPEN_DISPS(gfxCtx, "../graph.c", 966);
 
     gDPNoOpString(WORK_DISP++, "WORK_DISP 開始", 0);
@@ -305,7 +305,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     GameState_ReqPadData(gameState);
     GameState_Update(gameState);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     OPEN_DISPS(gfxCtx, "../graph.c", 987);
 
     gDPNoOpString(WORK_DISP++, "WORK_DISP 終了", 0);
@@ -466,7 +466,7 @@ void Graph_ThreadEntry(void* arg0) {
         gameState = SYSTEM_ARENA_MALLOC(size, "../graph.c", 1196);
 
         if (gameState == NULL) {
-#if OOT_DEBUG
+#if IS_DEBUG
             char faultMsg[0x50];
             PRINTF("確保失敗\n"); // "Failure to secure"
 

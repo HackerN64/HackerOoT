@@ -36,7 +36,7 @@ u32 sDmaMgrIsRomCompressed = false;
 // dmadata filenames
 #define DEFINE_DMA_ENTRY(_0, nameString) nameString,
 
-#if OOT_DEBUG
+#if IS_DEBUG
 const char* sDmaMgrFileNames[] = {
 #include "tables/dmadata_table.h"
 };
@@ -44,7 +44,7 @@ const char* sDmaMgrFileNames[] = {
 
 #undef DEFINE_DMA_ENTRY
 
-#if OOT_DEBUG
+#if IS_DEBUG
 /**
  * Compares `str1` and `str2`.
  *
@@ -224,7 +224,7 @@ void DmaMgr_DmaFromDriveRom(void* ram, uintptr_t rom, size_t size) {
     osRecvMesg(&queue, NULL, OS_MESG_BLOCK);
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 /**
  * DMA error encountered, print error messages and bring up the crash screen.
  *
@@ -282,7 +282,7 @@ NORETURN void DmaMgr_Error(DmaRequest* req, const char* filename, const char* er
  * @return Pointer to associated filename
  */
 const char* DmaMgr_FindFileName(uintptr_t vrom) {
-#if OOT_DEBUG
+#if IS_DEBUG
     DmaEntry* iter = gDmaDataTable;
     const char** name = sDmaMgrFileNames;
 
@@ -305,7 +305,7 @@ const char* DmaMgr_FindFileName(uintptr_t vrom) {
 }
 
 const char* DmaMgr_GetFileName(uintptr_t vrom) {
-#if OOT_DEBUG
+#if IS_DEBUG
     const char* ret = DmaMgr_FindFileName(vrom);
 
     if (ret == NULL) {
@@ -333,7 +333,7 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
     DmaEntry* iter;
     const char* filename;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     // Get the filename (for debugging)
     filename = DmaMgr_GetFileName(vrom);
 #else
@@ -481,7 +481,7 @@ s32 DmaMgr_RequestAsync(DmaRequest* req, void* ram, uintptr_t vrom, size_t size,
                         OSMesg msg) {
     static s32 sDmaMgrQueueFullLogged = 0;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if ((ram == NULL) || (osMemSize < OS_K0_TO_PHYSICAL(ram) + size) || (vrom & 1) || (vrom > 0x4000000) ||
         (size == 0) || (size & 1)) {
         // The line numbers for `DMA_ERROR` are only used in retail builds, but this usage was removed so
@@ -498,7 +498,7 @@ s32 DmaMgr_RequestAsync(DmaRequest* req, void* ram, uintptr_t vrom, size_t size,
     req->notifyQueue = queue;
     req->notifyMsg = msg;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (1 && (sDmaMgrQueueFullLogged == 0) && MQ_IS_FULL(&sDmaMgrMsgQueue)) {
         sDmaMgrQueueFullLogged++;
         PRINTF("%c", BEL);
@@ -550,7 +550,7 @@ void DmaMgr_Init(void) {
                        (u32)(_dmadataSegmentRomEnd - _dmadataSegmentRomStart));
     PRINTF("dma_rom_ad[]\n");
 
-#if OOT_DEBUG
+#if IS_DEBUG
     name = sDmaMgrFileNames;
     iter = gDmaDataTable;
     idx = 0;
@@ -594,7 +594,7 @@ void DmaMgr_Init(void) {
     osStartThread(&sDmaMgrThread);
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 /**
  * Asynchronous DMA Request with source file and line info for debugging.
  *

@@ -455,7 +455,7 @@ void Play_Init(GameState* thisx) {
     AnimationContext_Update(this, &this->animationCtx);
     gSaveContext.respawnFlag = 0;
 
-    if (OOT_DEBUG && R_USE_DEBUG_CUTSCENE) {
+    if (IS_DEBUG && R_USE_DEBUG_CUTSCENE) {
         gDebugCutsceneScript = sDebugCutsceneScriptBuf;
         PRINTF("\nkawauso_data=[%x]", gDebugCutsceneScript);
 
@@ -885,7 +885,7 @@ void Play_Update(PlayState* this) {
             PLAY_LOG(3555);
             AnimationContext_Reset(&this->animationCtx);
 
-            if (!OOT_DEBUG) {}
+            if (!IS_DEBUG) {}
 
             PLAY_LOG(3561);
             Object_UpdateEntries(&this->objectCtx);
@@ -1089,7 +1089,7 @@ void Play_Draw(PlayState* this) {
 
     Gfx_SetupFrame(gfxCtx, 0, 0, 0);
 
-    if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_DRAW) {
+    if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_DRAW) {
         POLY_OPA_DISP = Play_SetFog(this, POLY_OPA_DISP);
         POLY_XLU_DISP = Play_SetFog(this, POLY_XLU_DISP);
 
@@ -1112,7 +1112,7 @@ void Play_Draw(PlayState* this) {
 
         gSPSegment(POLY_OPA_DISP++, 0x01, this->billboardMtx);
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_COVER_ELEMENTS) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_COVER_ELEMENTS) {
             Gfx* gfxP;
             Gfx* sp1CC = POLY_OPA_DISP;
 
@@ -1178,7 +1178,7 @@ void Play_Draw(PlayState* this) {
             goto Play_Draw_DrawOverlayElements;
         }
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
             if (this->skyboxId && (this->skyboxId != SKYBOX_UNSET_1D) && !this->envCtx.skyboxDisabled) {
                 if ((this->skyboxId == SKYBOX_NORMAL_SKY) || (this->skyboxId == SKYBOX_CUTSCENE_MAP)) {
                     Environment_UpdateSkybox(this->skyboxId, &this->envCtx, &this->skyboxCtx);
@@ -1191,32 +1191,32 @@ void Play_Draw(PlayState* this) {
             }
         }
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SUN_AND_MOON)) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SUN_AND_MOON)) {
             if (!this->envCtx.sunMoonDisabled) {
                 Environment_DrawSunAndMoon(this);
             }
         }
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SKYBOX_FILTERS)) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SKYBOX_FILTERS)) {
             Environment_DrawSkyboxFilters(this);
         }
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTNING)) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTNING)) {
             Environment_UpdateLightningStrike(this);
             Environment_DrawLightning(this, 0);
         }
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTS)) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTS)) {
             sp228 = LightContext_NewLights(&this->lightCtx, gfxCtx);
             Lights_BindAll(sp228, this->lightCtx.listHead, NULL);
             Lights_Draw(sp228, gfxCtx);
         }
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ROOM_FLAGS != 0)) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ROOM_FLAGS != 0)) {
             if (VREG(94) == 0) {
                 s32 roomDrawFlags;
 
-                if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY)) {
+                if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY)) {
                     roomDrawFlags = ROOM_DRAW_OPA | ROOM_DRAW_XLU;
                 } else {
                     roomDrawFlags = R_PLAY_DRAW_ROOM_FLAGS;
@@ -1227,7 +1227,7 @@ void Play_Draw(PlayState* this) {
             }
         }
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
             if ((this->skyboxCtx.drawType != SKYBOX_DRAW_128) &&
                 (GET_ACTIVE_CAM(this)->setting != CAM_SET_PREREND_FIXED)) {
                 Vec3f quakeOffset;
@@ -1242,15 +1242,15 @@ void Play_Draw(PlayState* this) {
             Environment_DrawRain(this, &this->view, gfxCtx);
         }
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ROOM_FLAGS != 0)) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ROOM_FLAGS != 0)) {
             Environment_FillScreen(gfxCtx, 0, 0, 0, this->bgCoverAlpha, FILL_SCREEN_OPA);
         }
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_ACTORS) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_ACTORS) {
             func_800315AC(this, &this->actorCtx);
         }
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_LENS_FLARES) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_LENS_FLARES) {
             if (!this->envCtx.sunMoonDisabled) {
                 sp21C.x = this->view.eye.x + this->envCtx.sunPos.x;
                 sp21C.y = this->view.eye.y + this->envCtx.sunPos.y;
@@ -1260,7 +1260,7 @@ void Play_Draw(PlayState* this) {
             Environment_DrawCustomLensFlare(this);
         }
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SCREEN_FILLS) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SCREEN_FILLS) {
             if (MREG(64) != 0) {
                 Environment_FillScreen(gfxCtx, MREG(65), MREG(66), MREG(67), MREG(68),
                                        FILL_SCREEN_OPA | FILL_SCREEN_XLU);
@@ -1277,13 +1277,13 @@ void Play_Draw(PlayState* this) {
             }
         }
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SANDSTORM) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SANDSTORM) {
             if (this->envCtx.sandstormState != SANDSTORM_OFF) {
                 Environment_DrawSandstorm(this, this->envCtx.sandstormState);
             }
         }
 
-#if OOT_DEBUG && !NO_DEBUG_DISPLAY
+#if IS_DEBUG && !NO_DEBUG_DISPLAY
         if ((R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_DEBUG_OBJECTS) {
             DebugDisplay_DrawObjects(this);
         }
@@ -1312,7 +1312,7 @@ void Play_Draw(PlayState* this) {
         }
 
     Play_Draw_DrawOverlayElements:
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_OVERLAY_ELEMENTS) {
+        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_OVERLAY_ELEMENTS) {
             Play_DrawOverlayElements(this);
         }
     }
@@ -1344,7 +1344,7 @@ void Play_Main(GameState* thisx) {
 
     PLAY_LOG(4556);
 
-    if (OOT_DEBUG && (R_HREG_MODE == HREG_MODE_PLAY) && (R_PLAY_INIT != HREG_MODE_PLAY)) {
+    if (IS_DEBUG && (R_HREG_MODE == HREG_MODE_PLAY) && (R_PLAY_INIT != HREG_MODE_PLAY)) {
         R_PLAY_RUN_UPDATE = true;
         R_PLAY_RUN_DRAW = true;
         R_PLAY_DRAW_SKYBOX = true;
@@ -1362,7 +1362,7 @@ void Play_Main(GameState* thisx) {
         R_PLAY_INIT = HREG_MODE_PLAY;
     }
 
-    if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_UPDATE) {
+    if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_UPDATE) {
         Play_Update(this);
     }
 

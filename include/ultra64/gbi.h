@@ -5123,7 +5123,7 @@ _DW({                                                   \
 #define gDPNoOpTag(pkt, tag)    gDPParam(pkt,   G_NOOP, tag)
 #define gsDPNoOpTag(tag)        gsDPParam(      G_NOOP, tag)
 
-#if OOT_DEBUG
+#if IS_DEBUG
 
 #define gDPNoOpHere(pkt, file, line)        gDma1p(pkt, G_NOOP, file, line, 1)
 #define gDPNoOpString(pkt, data, n)         gDma1p(pkt, G_NOOP, data, n, 2)
@@ -5149,7 +5149,7 @@ _DW({                                                   \
 #define gDPNoOpCloseDisp(pkt, file, line)
 #define gDPNoOpTag3(pkt, type, data, n)
 
-#endif /* OOT_DEBUG */
+#endif /* IS_DEBUG */
 
 #endif
 

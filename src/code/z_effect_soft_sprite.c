@@ -8,7 +8,7 @@ void EffectSs_InitInfo(PlayState* play, s32 tableSize) {
     EffectSs* effectSs;
     EffectSsOverlay* overlay;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     for (i = 0; i < ARRAY_COUNT(gEffectSsOverlayTable); i++) {
         overlay = &gEffectSsOverlayTable[i];
         PRINTF("effect index %3d:size=%6dbyte romsize=%6dbyte\n", i,

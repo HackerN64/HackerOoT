@@ -52,7 +52,7 @@ s32 gMaxActorId = 0;
 static FaultClient sFaultClient;
 
 void ActorOverlayTable_LogPrint(void) {
-#if OOT_DEBUG
+#if IS_DEBUG
     ActorOverlay* overlayEntry;
     u32 i;
 
@@ -82,7 +82,7 @@ void ActorOverlayTable_FaultPrint(void* arg0, void* arg1) {
         if (overlayEntry->loadedRamAddr != NULL) {
             FaultDrawer_Printf("%3d %08x-%08x %3d %s\n", i, overlayEntry->loadedRamAddr,
                                (uintptr_t)overlayEntry->loadedRamAddr + overlaySize, overlayEntry->numLoaded,
-                               (OOT_DEBUG && overlayEntry->name != NULL) ? overlayEntry->name : "");
+                               (IS_DEBUG && overlayEntry->name != NULL) ? overlayEntry->name : "");
         }
     }
 }

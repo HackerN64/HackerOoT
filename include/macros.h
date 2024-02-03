@@ -241,7 +241,7 @@ extern struct GraphicsContext* __gfxCtx;
 #define HUNGUP_AND_CRASH(file, line) LogUtils_HungupThread(file, line)
 #define GAME_ALLOC_MALLOC(alloc, size, file, line) GameAlloc_Malloc(alloc, size)
 
-#endif /* OOT_DEBUG */
+#endif /* IS_DEBUG */
 
 /**
  * `x` vertex x

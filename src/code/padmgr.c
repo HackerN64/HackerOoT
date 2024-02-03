@@ -32,7 +32,7 @@
 #include "terminal.h"
 
 #define PADMGR_LOG(controllerNum, msg)                              \
-    if (OOT_DEBUG) {                                                \
+    if (IS_DEBUG) {                                                \
         PRINTF(VT_FGCOL(YELLOW));                                   \
         /* padmgr: Controller %d: %s */                             \
         PRINTF("padmgr: %dコン: %s\n", (controllerNum) + 1, (msg)); \
@@ -68,7 +68,7 @@ s32 gPadMgrLogSeverity = LOG_SEVERITY_CRITICAL;
 OSMesgQueue* PadMgr_AcquireSerialEventQueue(PadMgr* padMgr) {
     OSMesgQueue* serialEventQueue;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     serialEventQueue = NULL;
 #endif
 
@@ -185,7 +185,7 @@ void PadMgr_UpdateRumble(PadMgr* padMgr) {
                 }
             } else {
                 if (padMgr->pakType[i] != CONT_PAK_NONE) {
-                    if (padMgr->pakType[i] == CONT_PAK_RUMBLE || !OOT_DEBUG) {
+                    if (padMgr->pakType[i] == CONT_PAK_RUMBLE || !IS_DEBUG) {
                         // "It seems that a vibration pack was pulled out"
                         PADMGR_LOG(i, "振動パックが抜かれたようです");
                         padMgr->pakType[i] = CONT_PAK_NONE;
@@ -367,7 +367,7 @@ void PadMgr_HandleRetrace(PadMgr* padMgr) {
     osRecvMesg(serialEventQueue, NULL, OS_MESG_BLOCK);
     osContGetReadData(padMgr->pads);
 
-#if !OOT_DEBUG
+#if !IS_DEBUG
     // Clear controllers 2 and 4
     bzero(&padMgr->pads[1], sizeof(OSContPad));
     bzero(&padMgr->pads[3], sizeof(OSContPad));

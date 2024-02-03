@@ -382,7 +382,7 @@ void FileSelect_PulsateCursor(GameState* thisx) {
     SramContext* sramCtx = &this->sramCtx;
     Input* debugInput = &this->state.input[2];
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (CHECK_BTN_ALL(debugInput->press.button, BTN_DLEFT)) {
         sramCtx->readBuff[SRAM_HEADER_LANGUAGE] = gSaveContext.language = LANGUAGE_ENG;
         *((u8*)0x80000002) = LANGUAGE_ENG;
