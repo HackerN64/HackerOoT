@@ -244,8 +244,8 @@ void __osMalloc_FreeBlockTest(Arena* arena, ArenaNode* node) {
             while (iter < end) {
                 if (*iter != BLOCK_UNINIT_MAGIC_32 && *iter != BLOCK_FREE_MAGIC_32) {
                     osSyncPrintf(
-                        VT_COL(RED, WHITE) "緊急事態！メモリリーク検出！ (block=%08x s=%08x e=%08x p=%08x)\n" VT_RST, node,
-                        start, end, iter);
+                        VT_COL(RED, WHITE) "緊急事態！メモリリーク検出！ (block=%08x s=%08x e=%08x p=%08x)\n" VT_RST,
+                        node, start, end, iter);
                     __osDisplayArena(arena);
                     return;
                 }
@@ -563,7 +563,7 @@ void __osFree_NoLockDebug(Arena* arena, void* ptr, const char* file, s32 line) {
         if (arena != node->arena && arena != NULL) {
             // "__osFree:Tried to release in a different way than when it was secured (%08x:%08x)"
             PRINTF(VT_COL(RED, WHITE) "__osFree:確保時と違う方法で解放しようとした (%08x:%08x)\n" VT_RST, arena,
-                node->arena);
+                   node->arena);
             return;
         }
 #endif
@@ -769,14 +769,14 @@ void __osDisplayArena(Arena* arena) {
             if (iter != NULL && iter->magic == NODE_MAGIC) {
                 next = iter->next;
                 osSyncPrintf("%08x-%08x%c %s %08x", iter, ((u32)iter + sizeof(ArenaNode) + iter->size),
-                            (next == NULL) ? '$' : (iter != next->prev ? '!' : ' '),
-                            iter->isFree ? "空き" : "確保", //? "Free" : "Secure"
-                            iter->size);
+                             (next == NULL) ? '$' : (iter != next->prev ? '!' : ' '),
+                             iter->isFree ? "空き" : "確保", //? "Free" : "Secure"
+                             iter->size);
 
 #if IS_DEBUG
                 if (!iter->isFree) {
                     osSyncPrintf(" [%016llu:%2d:%s:%d]", OS_CYCLES_TO_NSEC(iter->time), iter->threadId,
-                                iter->filename != NULL ? iter->filename : "**NULL**", iter->line);
+                                 iter->filename != NULL ? iter->filename : "**NULL**", iter->line);
                 }
 
                 osSyncPrintf("\n");

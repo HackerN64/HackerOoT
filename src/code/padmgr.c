@@ -32,7 +32,7 @@
 #include "terminal.h"
 
 #define PADMGR_LOG(controllerNum, msg)                              \
-    if (IS_DEBUG) {                                                \
+    if (IS_DEBUG) {                                                 \
         PRINTF(VT_FGCOL(YELLOW));                                   \
         /* padmgr: Controller %d: %s */                             \
         PRINTF("padmgr: %dコン: %s\n", (controllerNum) + 1, (msg)); \
