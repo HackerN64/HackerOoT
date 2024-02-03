@@ -7,7 +7,7 @@ typedef void (*ColChkApplyFunc)(PlayState*, CollisionCheckContext*, Collider*);
 typedef void (*ColChkVsFunc)(PlayState*, CollisionCheckContext*, Collider*, Collider*);
 typedef s32 (*ColChkLineFunc)(PlayState*, CollisionCheckContext*, Collider*, Vec3f*, Vec3f*);
 
-#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
+#if IS_DEBUG
 /**
  * Draws a red triangle with vertices vA, vB, and vC.
  */
@@ -1057,7 +1057,7 @@ void CollisionCheck_DisableSAC(PlayState* play, CollisionCheckContext* colChkCtx
     colChkCtx->sacFlags &= ~SAC_ENABLE;
 }
 
-#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
+#if IS_DEBUG
 /**
  * Draws a collider of any shape.
  * Math3D_DrawSphere and Math3D_DrawCylinder are noops, so JntSph and Cylinder are not drawn.

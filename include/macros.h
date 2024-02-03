@@ -116,7 +116,7 @@
 // ensure that these do not use the IDO workaround to avoid errors.
 #define IDO_PRINTF_WORKAROUND (__sgi && !__GNUC__ && !PERMUTER && !M2CTX)
 
-#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
+#if IS_DEBUG
 #define PRINTF osSyncPrintf
 #elif IDO_PRINTF_WORKAROUND
 #define PRINTF(args) (void)0
@@ -124,7 +124,7 @@
 #define PRINTF(format, ...) (void)0
 #endif
 
-#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
+#if IS_DEBUG
 #define LOG(exp, value, format, file, line)         \
     do {                                            \
         LogUtils_LogThreadId(file, line);           \
@@ -170,7 +170,7 @@ extern struct GraphicsContext* __gfxCtx;
 #define POLY_XLU_DISP   __gfxCtx->polyXlu.p
 #define OVERLAY_DISP    __gfxCtx->overlay.p
 
-#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
+#if IS_DEBUG
 
 // __gfxCtx shouldn't be used directly.
 // Use the DISP macros defined above when writing to display buffers.

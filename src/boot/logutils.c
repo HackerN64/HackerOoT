@@ -1,7 +1,7 @@
 #include "global.h"
 #include "terminal.h"
 
-#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
+#if IS_DEBUG
 f32 LogUtils_CheckFloatRange(const char* exp, s32 line, const char* valueName, f32 value, const char* minName, f32 min,
                              const char* maxName, f32 max) {
     if (value < min || max < value) {

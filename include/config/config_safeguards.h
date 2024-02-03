@@ -170,7 +170,7 @@
 /**
  * Used in if statements
 */
-#define IS_DEBUG (OOT_DEBUG && ENABLE_HACKEROOT)
+#define IS_DEBUG (OOT_DEBUG && ENABLE_HACKEROOT && !DISABLE_DEBUG_FEATURES)
 
 // General features
 #define IS_DEBUG_HEAP_ENABLED (IS_DEBUG && ENABLE_DEBUG_HEAP)

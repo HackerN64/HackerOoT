@@ -230,7 +230,7 @@ u8 __osMallocIsInitialized(Arena* arena) {
 }
 
 void __osMalloc_FreeBlockTest(Arena* arena, ArenaNode* node) {
-    if (OOT_DEBUG && !DISABLE_DEBUG_FEATURES) {
+    if (IS_DEBUG) {
         ArenaNode* node2 = node;
         u32* start;
         u32* end;
@@ -256,7 +256,7 @@ void __osMalloc_FreeBlockTest(Arena* arena, ArenaNode* node) {
 }
 
 void* __osMalloc_NoLockDebug(Arena* arena, u32 size, const char* file, s32 line) {
-    if (OOT_DEBUG && !DISABLE_DEBUG_FEATURES) {
+    if (IS_DEBUG) {
         ArenaNode* iter;
         u32 blockSize;
         ArenaNode* newNode;
@@ -304,7 +304,7 @@ void* __osMalloc_NoLockDebug(Arena* arena, u32 size, const char* file, s32 line)
 }
 
 void* __osMallocDebug(Arena* arena, u32 size, const char* file, s32 line) {
-    if (OOT_DEBUG && !DISABLE_DEBUG_FEATURES) {
+    if (IS_DEBUG) {
         void* alloc;
 
         ArenaImpl_Lock(arena);
@@ -317,7 +317,7 @@ void* __osMallocDebug(Arena* arena, u32 size, const char* file, s32 line) {
 }
 
 void* __osMallocRDebug(Arena* arena, u32 size, const char* file, s32 line) {
-    if (OOT_DEBUG && !DISABLE_DEBUG_FEATURES) {
+    if (IS_DEBUG) {
         ArenaNode* iter;
         ArenaNode* newNode;
         u32 blockSize;
@@ -537,7 +537,7 @@ void __osFree(Arena* arena, void* ptr) {
 }
 
 void __osFree_NoLockDebug(Arena* arena, void* ptr, const char* file, s32 line) {
-    if (OOT_DEBUG && !DISABLE_DEBUG_FEATURES) {
+    if (IS_DEBUG) {
         ArenaNode* node;
         ArenaNode* next;
         ArenaNode* prev;
@@ -597,7 +597,7 @@ void __osFree_NoLockDebug(Arena* arena, void* ptr, const char* file, s32 line) {
 }
 
 void __osFreeDebug(Arena* arena, void* ptr, const char* file, s32 line) {
-    if (OOT_DEBUG && !DISABLE_DEBUG_FEATURES) {
+    if (IS_DEBUG) {
         ArenaImpl_Lock(arena);
         __osFree_NoLockDebug(arena, ptr, file, line);
         ArenaImpl_Unlock(arena);
@@ -706,7 +706,7 @@ void* __osRealloc(Arena* arena, void* ptr, u32 newSize) {
 }
 
 void* __osReallocDebug(Arena* arena, void* ptr, u32 newSize, const char* file, s32 line) {
-    if (OOT_DEBUG && !DISABLE_DEBUG_FEATURES) {
+    if (IS_DEBUG) {
         return __osRealloc(arena, ptr, newSize);
     }
     return NULL;
@@ -739,7 +739,7 @@ void ArenaImpl_GetSizes(Arena* arena, u32* outMaxFree, u32* outFree, u32* outAll
 }
 
 void __osDisplayArena(Arena* arena) {
-    if (OOT_DEBUG && !DISABLE_DEBUG_FEATURES) {
+    if (IS_DEBUG) {
         u32 freeSize;
         u32 allocatedSize;
         u32 maxFree;

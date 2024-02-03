@@ -18,7 +18,7 @@ void Play_SpawnScene(PlayState* this, s32 sceneId, s32 spawn);
 
 // This macro prints the number "1" with a file and line number if R_ENABLE_PLAY_LOGS is enabled.
 // For example, it can be used to trace the play state execution at a high level.
-#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
+#if IS_DEBUG
 #define PLAY_LOG(line)                            \
     do {                                          \
         if (R_ENABLE_PLAY_LOGS) {                 \
@@ -218,7 +218,7 @@ void Play_Destroy(GameState* thisx) {
     KaleidoManager_Destroy();
     ZeldaArena_Cleanup();
 
-#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
+#if IS_DEBUG
     Fault_RemoveClient(&D_801614B8);
 #endif
 }
@@ -419,7 +419,7 @@ void Play_Init(GameState* thisx) {
     // "Zelda Heap"
     PRINTF("ゼルダヒープ %08x-%08x\n", zAllocAligned, (u8*)zAllocAligned + zAllocSize - (s32)(zAllocAligned - zAlloc));
 
-#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
+#if IS_DEBUG
     Fault_AddClient(&D_801614B8, ZeldaArena_Display, NULL, NULL);
 #endif
 
@@ -470,7 +470,7 @@ void Play_Update(PlayState* this) {
     s32 isPaused = IS_PAUSED(&this->pauseCtx);
     s32 pad1;
 
-#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
+#if IS_DEBUG
     if ((SREG(1) < 0) || (DREG(0) != 0)) {
         SREG(1) = 0;
         ZeldaArena_Display();
@@ -567,7 +567,7 @@ void Play_Update(PlayState* this) {
                         }
                     }
 
-#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
+#if IS_DEBUG
                     if (!R_TRANS_DBG_ENABLED) {
                         Play_SetupTransition(this, this->transitionType);
                     } else {

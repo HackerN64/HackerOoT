@@ -101,7 +101,7 @@ void func_800C4344(GameState* gameState) {
     gDmaMgrDmaBuffSize = SREG(21) != 0 ? ALIGN16(SREG(21)) : DMAMGR_DEFAULT_BUFSIZE;
     gSystemArenaLogSeverity = HREG(61);
 
-#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
+#if IS_DEBUG
     gZeldaArenaLogSeverity = HREG(62);
 #endif
 
@@ -116,7 +116,7 @@ void func_800C4344(GameState* gameState) {
         if (R_PRINT_MEMORY_TRIGGER < 0) {
             R_PRINT_MEMORY_TRIGGER = 0;
             hexDumpSize = (u32)(R_PRINT_MEMORY_SIZE == 0 ? 0x100 : R_PRINT_MEMORY_SIZE * 0x10);
-#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
+#if IS_DEBUG
             LogUtils_LogHexDump((void*)(0x80000000 + (R_PRINT_MEMORY_ADDR << 8)), hexDumpSize);
 #endif
         }
