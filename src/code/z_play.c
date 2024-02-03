@@ -467,7 +467,7 @@ void Play_Init(GameState* thisx) {
 
 void Play_Update(PlayState* this) {
     Input* input = this->state.input;
-    s32 isPaused;
+    s32 isPaused = IS_PAUSED(&this->pauseCtx);
     s32 pad1;
 
 #if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
