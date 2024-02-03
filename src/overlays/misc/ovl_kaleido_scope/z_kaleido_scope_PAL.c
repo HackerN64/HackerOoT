@@ -2439,9 +2439,9 @@ void KaleidoScope_Draw(PlayState* play) {
     gSPSegment(POLY_OPA_DISP++, 0x0D, pauseCtx->iconItemLangSegment);
 
 #if ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR
-    #define IS_DEBUG_STATE_VALUE(val) (pauseCtx->debugState == val)
+#define IS_DEBUG_STATE_VALUE(val) (pauseCtx->debugState == val)
 #else
-    #define IS_DEBUG_STATE_VALUE(val) true
+#define IS_DEBUG_STATE_VALUE(val) true
 #endif
     if (IS_DEBUG_STATE_VALUE(0)) {
         KaleidoScope_SetView(pauseCtx, pauseCtx->eye.x, pauseCtx->eye.y, pauseCtx->eye.z);

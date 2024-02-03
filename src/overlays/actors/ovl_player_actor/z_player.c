@@ -13733,7 +13733,8 @@ s32 func_8084FCAC(Player* this, PlayState* play) {
             this->actor.velocity.x = 0.0f;
 
             // should we keep that?
-            // if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT))
+            // if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button,
+            // BTN_DLEFT))
             // {
             //     Flags_SetTempClear(play, play->roomCtx.curRoom.num);
             // }

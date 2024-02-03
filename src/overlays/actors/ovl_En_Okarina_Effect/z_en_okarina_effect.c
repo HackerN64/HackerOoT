@@ -73,8 +73,7 @@ void EnOkarinaEffect_ManageStorm(EnOkarinaEffect* this, PlayState* play) {
     CutsceneFlags_Unset(play, 5);
 
     if (((play->pauseCtx.state == PAUSE_STATE_OFF) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
-         (play->msgCtx.msgLength == 0) &&
-         (!FrameAdvance_IsEnabled(play)) &&
+         (play->msgCtx.msgLength == 0) && (!FrameAdvance_IsEnabled(play)) &&
          ((play->transitionMode == TRANS_MODE_OFF) || (gSaveContext.gameMode != GAMEMODE_NORMAL))) ||
         (this->timer >= 250)) {
         if ((play->envCtx.lightMode != LIGHT_MODE_TIME) || play->envCtx.lightConfig != 1) {

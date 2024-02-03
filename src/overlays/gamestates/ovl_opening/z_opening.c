@@ -20,8 +20,8 @@ void TitleSetup_SetupTitleScreen(TitleSetupState* this) {
         this->state.running = false;
         SET_NEXT_GAMESTATE(&this->state, FileSelect_Init, FileSelectState);
         return;
-    } 
-    
+    }
+
     if (BOOT_TO_SCENE || BOOT_TO_SCENE_NEW_GAME_ONLY) {
         u8 i;
 
