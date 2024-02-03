@@ -537,7 +537,7 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
                             }
                         } else {
                             j = sSlotItems[i];
-                            osSyncPrintf("i=%d  j=%d\n", i, j);
+                            PRINTF("i=%d  j=%d\n", i, j);
                             if (gSaveContext.save.info.inventory.items[i] == ITEM_NONE) {
                                 gSaveContext.save.info.inventory.items[i] = j;
                             } else {

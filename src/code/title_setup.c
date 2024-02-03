@@ -2,7 +2,7 @@
 #include "config.h"
 
 void Setup_InitImpl(SetupState* this) {
-    osSyncPrintf("ゼルダ共通データ初期化\n"); // "Zelda common data initalization"
+    PRINTF("ゼルダ共通データ初期化\n"); // "Zelda common data initalization"
     SaveContext_Init();
     this->state.running = false;
 #if (defined BOOT_TO_SCENE || defined BOOT_TO_FILE_SELECT)

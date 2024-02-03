@@ -148,8 +148,8 @@ void Effect_Add(PlayState* play, s32* pIndex, s32 type, u8 arg3, u8 arg4, void* 
 
         if (!slotFound) {
             // "EffectAdd(): I cannot secure it. Be careful. Type %d"
-            osSyncPrintf("EffectAdd():確保できません。注意してください。Type%d\n", type);
-            osSyncPrintf("エフェクト追加せずに終了します。\n"); // "Exit without adding the effect."
+            PRINTF("EffectAdd():確保できません。注意してください。Type%d\n", type);
+            PRINTF("エフェクト追加せずに終了します。\n"); // "Exit without adding the effect."
         } else {
             sEffectInfoTable[type].init(effect, initParams);
             status->unk_02 = arg3;
@@ -165,24 +165,24 @@ void Effect_DrawAll(GraphicsContext* gfxCtx) {
     s32 i;
 
     for (i = 0; i < SPARK_COUNT; i++) {
-        if (sEffectContext.sparks[i].status.active) {
-            sEffectInfoTable[EFFECT_SPARK].draw(&sEffectContext.sparks[i].effect, gfxCtx);
+        if (!sEffectContext.sparks[i].status.active) {
+            continue;
         }
+        sEffectInfoTable[EFFECT_SPARK].draw(&sEffectContext.sparks[i].effect, gfxCtx);
     }
 
     for (i = 0; i < BLURE_COUNT; i++) {
-        if (sEffectContext.blures[i].status.active) {
-            sEffectInfoTable[EFFECT_BLURE1].draw(&sEffectContext.blures[i].effect, gfxCtx);
+        if (!sEffectContext.blures[i].status.active) {
+            continue;
         }
-        if (1) {} // Necessary to match
-        if (1) {}
+        sEffectInfoTable[EFFECT_BLURE1].draw(&sEffectContext.blures[i].effect, gfxCtx);
     }
 
     for (i = 0; i < SHIELD_PARTICLE_COUNT; i++) {
-        if (sEffectContext.shieldParticles[i].status.active) {
-            if (gfxCtx) {} // Necessary to match
-            sEffectInfoTable[EFFECT_SHIELD_PARTICLE].draw(&sEffectContext.shieldParticles[i].effect, gfxCtx);
+        if (!sEffectContext.shieldParticles[i].status.active) {
+            continue;
         }
+        sEffectInfoTable[EFFECT_SHIELD_PARTICLE].draw(&sEffectContext.shieldParticles[i].effect, gfxCtx);
     }
 }
 
@@ -243,7 +243,7 @@ void Effect_Delete(PlayState* play, s32 index) {
 void Effect_DeleteAll(PlayState* play) {
     s32 i;
 
-    osSyncPrintf("エフェクト総て解放\n"); // "All effect release"
+    PRINTF("エフェクト総て解放\n"); // "All effect release"
 
     for (i = 0; i < SPARK_COUNT; i++) {
         sEffectContext.sparks[i].status.active = false;
@@ -260,5 +260,5 @@ void Effect_DeleteAll(PlayState* play) {
         sEffectInfoTable[EFFECT_SHIELD_PARTICLE].destroy(&sEffectContext.shieldParticles[i].effect);
     }
 
-    osSyncPrintf("エフェクト総て解放 終了\n"); // "All effects release End"
+    PRINTF("エフェクト総て解放 終了\n"); // "All effects release End"
 }

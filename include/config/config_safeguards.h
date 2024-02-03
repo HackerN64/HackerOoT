@@ -23,6 +23,7 @@
 #endif
 
 #ifdef DISABLE_DEBUG_FEATURES
+    #undef OOT_DEBUG
     #undef SHOW_CS_INFOS
     #undef SHOW_INPUT_DISPLAY
     #undef SHOW_TIME_INFOS

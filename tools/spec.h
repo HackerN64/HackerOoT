@@ -9,6 +9,7 @@ typedef enum {
     STMT_after,
     STMT_align,
     STMT_beginseg,
+    STMT_compress,
     STMT_endseg,
     STMT_entry,
     STMT_flags,
@@ -20,14 +21,12 @@ typedef enum {
     STMT_stack,
     STMT_increment,
     STMT_pad_text,
-    STMT_compress,
 } STMTId;
 
 enum {
     FLAG_BOOT = (1 << 0),
     FLAG_OBJECT = (1 << 1),
     FLAG_RAW = (1 << 2),
-    FLAG_NOLOAD = (1 << 3),
 };
 
 struct Include {
