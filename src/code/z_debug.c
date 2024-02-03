@@ -223,16 +223,17 @@ void Regs_UpdateEditor(Input* input) {
                         gRegEditor->dPadInputPrev = dPadInputCur;
                     }
 
-                    increment =
-                        CHECK_BTN_ANY(dPadInputCur, BTN_DRIGHT)  ? (CHECK_BTN_ALL(input->cur.button, BTN_A | BTN_B) ? 1000
-                                                                    : CHECK_BTN_ALL(input->cur.button, BTN_A)       ? 100
-                                                                    : CHECK_BTN_ALL(input->cur.button, BTN_B)       ? 10
-                                                                                                                    : 1)
-                        : CHECK_BTN_ANY(dPadInputCur, BTN_DLEFT) ? (CHECK_BTN_ALL(input->cur.button, BTN_A | BTN_B) ? -1000
-                                                                    : CHECK_BTN_ALL(input->cur.button, BTN_A)       ? -100
-                                                                    : CHECK_BTN_ALL(input->cur.button, BTN_B)       ? -10
-                                                                                                                    : -1)
-                                                                : 0;
+                    increment = CHECK_BTN_ANY(dPadInputCur, BTN_DRIGHT)
+                                    ? (CHECK_BTN_ALL(input->cur.button, BTN_A | BTN_B) ? 1000
+                                       : CHECK_BTN_ALL(input->cur.button, BTN_A)       ? 100
+                                       : CHECK_BTN_ALL(input->cur.button, BTN_B)       ? 10
+                                                                                       : 1)
+                                : CHECK_BTN_ANY(dPadInputCur, BTN_DLEFT)
+                                    ? (CHECK_BTN_ALL(input->cur.button, BTN_A | BTN_B) ? -1000
+                                       : CHECK_BTN_ALL(input->cur.button, BTN_A)       ? -100
+                                       : CHECK_BTN_ALL(input->cur.button, BTN_B)       ? -10
+                                                                                       : -1)
+                                    : 0;
 
                     gRegEditor->data[gRegEditor->regCur + pageDataStart] += increment;
 

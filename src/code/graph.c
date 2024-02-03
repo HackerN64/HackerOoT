@@ -209,18 +209,18 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
             gfxCtx->callback(gfxCtx, gfxCtx->callbackParam);
         }
 
-    if (IS_DEBUG && ENABLE_SPEEDMETER) {
-        timeNow = osGetTime();
-        if (gAudioThreadUpdateTimeStart != 0) {
-            // The audio thread update is running
-            // Add the time already spent to the accumulator and leave the rest for the next cycle
+        if (IS_DEBUG && ENABLE_SPEEDMETER) {
+            timeNow = osGetTime();
+            if (gAudioThreadUpdateTimeStart != 0) {
+                // The audio thread update is running
+                // Add the time already spent to the accumulator and leave the rest for the next cycle
 
-            gAudioThreadUpdateTimeAcc += timeNow - gAudioThreadUpdateTimeStart;
-            gAudioThreadUpdateTimeStart = timeNow;
+                gAudioThreadUpdateTimeAcc += timeNow - gAudioThreadUpdateTimeStart;
+                gAudioThreadUpdateTimeStart = timeNow;
+            }
+            gAudioThreadUpdateTimeTotalPerGfxTask = gAudioThreadUpdateTimeAcc;
+            gAudioThreadUpdateTimeAcc = 0;
         }
-        gAudioThreadUpdateTimeTotalPerGfxTask = gAudioThreadUpdateTimeAcc;
-        gAudioThreadUpdateTimeAcc = 0;
-    }
 
         sGraphPrevTaskTimeStart = osGetTime();
 

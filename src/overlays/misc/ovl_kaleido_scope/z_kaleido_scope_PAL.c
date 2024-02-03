@@ -2464,7 +2464,8 @@ void KaleidoScope_Draw(PlayState* play) {
         KaleidoScope_DrawGameOver(play);
     }
 
-    if (IS_DEBUG && ((ENABLE_INV_EDITOR && (pauseCtx->debugState == 1)) || (ENABLE_EVENT_EDITOR && (pauseCtx->debugState == 2)))) {
+    if (IS_DEBUG &&
+        ((ENABLE_INV_EDITOR && (pauseCtx->debugState == 1)) || (ENABLE_EVENT_EDITOR && (pauseCtx->debugState == 2)))) {
         KaleidoScope_DrawDebugEditor(play);
     }
 

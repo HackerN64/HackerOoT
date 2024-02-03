@@ -236,9 +236,9 @@ void EnEncount1_SpawnStalchildOrWolfos(EnEncount1* this, PlayState* play) {
     if (play->sceneId != SCENE_HYRULE_FIELD) {
         if ((fabsf(player->actor.world.pos.y - this->actor.world.pos.y) > 100.0f) ||
             (this->actor.xzDistToPlayer > this->spawnRange)) {
-    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
-        this->outOfRangeTimer++;
-    }
+            if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+                this->outOfRangeTimer++;
+            }
             return;
         }
     } else if (IS_DAY || (Player_GetMask(play) == PLAYER_MASK_BUNNY)) {

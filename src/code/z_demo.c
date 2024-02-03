@@ -185,7 +185,7 @@ void Cutscene_UpdateScripted(PlayState* play, CutsceneContext* csCtx) {
         }
 
         if (CHECK_BTN_ALL(input->press.button, CS_CTRL_RESTART_CONTROL) && (csCtx->state == CS_STATE_IDLE) &&
-                IS_CUTSCENE_LAYER && !IS_DEBUG_CAM_ENABLED) {
+            IS_CUTSCENE_LAYER && !IS_DEBUG_CAM_ENABLED) {
             gUseCutsceneCam = true;
             gSaveContext.save.cutsceneIndex = 0xFFFD;
             gSaveContext.cutsceneTrigger = 1;

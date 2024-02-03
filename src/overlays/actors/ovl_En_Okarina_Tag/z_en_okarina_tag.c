@@ -135,9 +135,9 @@ void func_80ABEF2C(EnOkarinaTag* this, PlayState* play) {
                     this->actionFunc = func_80ABF0CC;
                 } else if ((this->actor.xzDistToPlayer < (50.0f + this->interactRange) &&
                             ((fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 40.0f)))) {
-                if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
-                    this->unk_15A = 0;
-                }
+                    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+                        this->unk_15A = 0;
+                    }
                     player->unk_6A8 = &this->actor;
                 }
             }
