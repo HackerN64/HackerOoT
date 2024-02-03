@@ -7,8 +7,6 @@
 #include "global.h"
 #include "terminal.h"
 #include "alloca.h"
-
-#if OOT_DEBUG && ENABLE_MAP_SELECT
 #include "z_select.h"
 
 void MapSelect_Init(GameState* thisx) {
@@ -577,5 +575,3 @@ void MapSelect_PrintControls(MapSelectState* this, GfxPrint* printer) {
         }
     }
 }
-
-#endif

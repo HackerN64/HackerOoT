@@ -50,9 +50,8 @@
 #define R_ENV_TIME_SPEED_OLD                     REG(15) // Most likely used during development. Unused in the final game.
 #define R_RUN_SPEED_LIMIT                        REG(45)
 
-#if ENABLE_SPEEDMETER || SHOW_TIME_INFOS
+// ENABLE_SPEEDMETER || SHOW_TIME_INFOS
 #define R_ENABLE_ARENA_DBG                       SREG(0)
-#endif
 
 #define R_AUDIOMGR_DEBUG_LEVEL                   SREG(20)
 #define R_ROOM_IMAGE_NODRAW_FLAGS                SREG(25)

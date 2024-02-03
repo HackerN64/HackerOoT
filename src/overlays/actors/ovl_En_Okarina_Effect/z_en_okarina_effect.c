@@ -74,9 +74,7 @@ void EnOkarinaEffect_ManageStorm(EnOkarinaEffect* this, PlayState* play) {
 
     if (((play->pauseCtx.state == PAUSE_STATE_OFF) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
          (play->msgCtx.msgLength == 0) &&
-#if ENABLE_FRAMERATE_OPTIONS
          (!FrameAdvance_IsEnabled(play)) &&
-#endif
          ((play->transitionMode == TRANS_MODE_OFF) || (gSaveContext.gameMode != GAMEMODE_NORMAL))) ||
         (this->timer >= 250)) {
         if ((play->envCtx.lightMode != LIGHT_MODE_TIME) || play->envCtx.lightConfig != 1) {

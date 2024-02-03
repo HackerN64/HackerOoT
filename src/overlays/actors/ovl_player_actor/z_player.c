@@ -179,9 +179,10 @@ void func_80846978(PlayState* play, Player* this);
 void func_808469BC(PlayState* play, Player* this);
 void func_80846A68(PlayState* play, Player* this);
 void Player_UpdateCommon(Player* this, PlayState* play, Input* input);
-#if ENABLE_NO_CLIP
+
+// ENABLE_NO_CLIP
 s32 func_8084FCAC(Player* this, PlayState* play);
-#endif
+
 void func_8084FF7C(Player* this);
 void Player_UpdateBunnyEars(Player* this);
 void func_80851008(PlayState* play, Player* this, void* anim);
@@ -496,10 +497,7 @@ static PlayerAgeProperties sAgeProperties[] = {
     },
 };
 
-#if ENABLE_NO_CLIP
 static u32 isNoClipEnabled = false;
-#endif
-
 static f32 sControlStickMagnitude = 0.0f;
 static s16 sControlStickAngle = 0;
 static s16 D_808535DC = 0;
@@ -11365,9 +11363,7 @@ void Player_Update(Actor* thisx, PlayState* play) {
     Input sp44;
     Actor* dog;
 
-#if ENABLE_NO_CLIP
     if (func_8084FCAC(this, play)) {
-#endif
         if (gSaveContext.dogParams < 0) {
             if (Object_GetSlot(&play->objectCtx, OBJECT_DOG) < 0) {
                 gSaveContext.dogParams = 0;
@@ -11403,9 +11399,7 @@ void Player_Update(Actor* thisx, PlayState* play) {
         }
 
         Player_UpdateCommon(this, play, &sp44);
-#if ENABLE_NO_CLIP
     }
-#endif
 
     MREG(52) = this->actor.world.pos.x;
     MREG(53) = this->actor.world.pos.y;
@@ -13676,81 +13670,84 @@ void Player_Action_8084FBF4(Player* this, PlayState* play) {
     func_8002F8F0(&this->actor, NA_SE_VO_LI_TAKEN_AWAY - SFX_FLAG + this->ageProperties->unk_92);
 }
 
-#ifdef ENABLE_NO_CLIP
 // handles no clip mode, returns 0 when it's in no clip mode
 s32 func_8084FCAC(Player* this, PlayState* play) {
-    u8 buttonCombo;
-    sControlInput = &play->state.input[NOCLIP_CONTROLLER_PORT];
+    if (IS_DEBUG && ENABLE_NO_CLIP) {
 
-    buttonCombo = NOCLIP_USE_BTN_COMBO ? CHECK_BTN_ALL(sControlInput->cur.button, NOCLIP_BTN_HOLD_FOR_COMBO) : true;
+        u8 buttonCombo;
+        sControlInput = &play->state.input[NOCLIP_CONTROLLER_PORT];
 
-    if ((buttonCombo && CHECK_BTN_ALL(sControlInput->press.button, NOCLIP_TOGGLE_BTN))) {
-        isNoClipEnabled ^= 1;
-    }
+        buttonCombo = NOCLIP_USE_BTN_COMBO ? CHECK_BTN_ALL(sControlInput->cur.button, NOCLIP_BTN_HOLD_FOR_COMBO) : true;
 
-    if (isNoClipEnabled) {
-        f32 speed;
-        s8 stickLeftInput = (sControlInput->rel.stick_x < -30), stickRightInput = (sControlInput->rel.stick_x > 30);
-        s8 stickUpInput = (sControlInput->rel.stick_y > 30), stickDownInput = (sControlInput->rel.stick_y < -30);
-
-        Camera_RequestMode(Play_GetCamera(play, CAM_ID_MAIN), CAM_MODE_Z_AIM);
-
-        if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_R)) {
-            speed = 100.0f;
-        } else {
-            speed = 20.0f;
+        if ((buttonCombo && CHECK_BTN_ALL(sControlInput->press.button, NOCLIP_TOGGLE_BTN))) {
+            isNoClipEnabled ^= 1;
         }
 
-        DebugCamera_ScreenText(3, 2, "DEBUG MODE");
+        if (isNoClipEnabled) {
+            f32 speed;
+            s8 stickLeftInput = (sControlInput->rel.stick_x < -30), stickRightInput = (sControlInput->rel.stick_x > 30);
+            s8 stickUpInput = (sControlInput->rel.stick_y > 30), stickDownInput = (sControlInput->rel.stick_y < -30);
 
-        if (!CHECK_BTN_ALL(sControlInput->cur.button, BTN_L)) {
-            if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_B)) {
-                this->actor.world.pos.y += speed;
-            } else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_A)) {
-                this->actor.world.pos.y -= speed;
+            Camera_RequestMode(Play_GetCamera(play, CAM_ID_MAIN), CAM_MODE_Z_AIM);
+
+            if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_R)) {
+                speed = 100.0f;
+            } else {
+                speed = 20.0f;
             }
 
-            if ((stickLeftInput || stickRightInput || stickUpInput || stickDownInput) ||
-                CHECK_BTN_ANY(sControlInput->cur.button, BTN_DUP | BTN_DLEFT | BTN_DDOWN | BTN_DRIGHT)) {
-                s16 angle;
-                s16 temp;
+            DebugCamera_ScreenText(3, 2, "DEBUG MODE");
 
-                angle = temp = Camera_GetInputDirYaw(GET_ACTIVE_CAM(play));
-
-                if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DDOWN) || stickDownInput) {
-                    angle = temp + 0x8000;
-                } else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DLEFT) || stickLeftInput) {
-                    angle = temp + 0x4000;
-                } else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DRIGHT) || stickRightInput) {
-                    angle = temp - 0x4000;
+            if (!CHECK_BTN_ALL(sControlInput->cur.button, BTN_L)) {
+                if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_B)) {
+                    this->actor.world.pos.y += speed;
+                } else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_A)) {
+                    this->actor.world.pos.y -= speed;
                 }
 
-                this->actor.world.pos.x += speed * Math_SinS(angle);
-                this->actor.world.pos.z += speed * Math_CosS(angle);
+                if ((stickLeftInput || stickRightInput || stickUpInput || stickDownInput) ||
+                    CHECK_BTN_ANY(sControlInput->cur.button, BTN_DUP | BTN_DLEFT | BTN_DDOWN | BTN_DRIGHT)) {
+                    s16 angle;
+                    s16 temp;
+
+                    angle = temp = Camera_GetInputDirYaw(GET_ACTIVE_CAM(play));
+
+                    if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DDOWN) || stickDownInput) {
+                        angle = temp + 0x8000;
+                    } else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DLEFT) || stickLeftInput) {
+                        angle = temp + 0x4000;
+                    } else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DRIGHT) || stickRightInput) {
+                        angle = temp - 0x4000;
+                    }
+
+                    this->actor.world.pos.x += speed * Math_SinS(angle);
+                    this->actor.world.pos.z += speed * Math_CosS(angle);
+                }
             }
+
+            Player_ZeroSpeedXZ(this);
+
+            this->actor.gravity = 0.0f;
+            this->actor.velocity.z = 0.0f;
+            this->actor.velocity.y = 0.0f;
+            this->actor.velocity.x = 0.0f;
+
+            // should we keep that?
+            // if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT))
+            // {
+            //     Flags_SetTempClear(play, play->roomCtx.curRoom.num);
+            // }
+
+            Math_Vec3f_Copy(&this->actor.home.pos, &this->actor.world.pos);
+
+            return 0;
         }
 
-        Player_ZeroSpeedXZ(this);
-
-        this->actor.gravity = 0.0f;
-        this->actor.velocity.z = 0.0f;
-        this->actor.velocity.y = 0.0f;
-        this->actor.velocity.x = 0.0f;
-
-        // should we keep that?
-        // if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT))
-        // {
-        //     Flags_SetTempClear(play, play->roomCtx.curRoom.num);
-        // }
-
-        Math_Vec3f_Copy(&this->actor.home.pos, &this->actor.world.pos);
-
-        return 0;
+        return 1;
     }
 
     return 1;
 }
-#endif
 
 void func_8084FF7C(Player* this) {
     this->unk_858 += this->unk_85C;

@@ -104,9 +104,7 @@ void Effect_Add(PlayState* play, s32* pIndex, s32 type, u8 arg3, u8 arg4, void* 
 
     *pIndex = TOTAL_EFFECT_COUNT;
 
-#if ENABLE_FRAMERATE_OPTIONS
     if (FrameAdvance_IsEnabled(play) != true) {
-#endif
         slotFound = false;
         switch (type) {
             case EFFECT_SPARK:
@@ -155,9 +153,7 @@ void Effect_Add(PlayState* play, s32* pIndex, s32 type, u8 arg3, u8 arg4, void* 
             status->unk_01 = arg4;
             status->active = true;
         }
-#if ENABLE_FRAMERATE_OPTIONS
     }
-#endif
 }
 
 void Effect_DrawAll(GraphicsContext* gfxCtx) {

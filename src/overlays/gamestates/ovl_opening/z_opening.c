@@ -9,13 +9,11 @@
 void TitleSetup_SetupTitleScreen(TitleSetupState* this) {
     gSaveContext.gameMode = GAMEMODE_NORMAL;
 
-#if OOT_DEBUG && ENABLE_MAP_SELECT
-    if (BOOT_TO_MAP_SELECT) {
+    if (IS_DEBUG && ENABLE_MAP_SELECT && BOOT_TO_MAP_SELECT) {
         this->state.running = false;
         SET_NEXT_GAMESTATE(&this->state, MapSelect_Init, MapSelectState);
         return;
     }
-#endif
 
     if (BOOT_TO_FILE_SELECT) {
         gSaveContext.gameMode = GAMEMODE_FILE_SELECT;

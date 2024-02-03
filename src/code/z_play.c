@@ -377,7 +377,7 @@ void Play_Init(GameState* thisx) {
     gTransitionTileState = TRANS_TILE_OFF;
     this->transitionMode = TRANS_MODE_OFF;
 
-#ifdef ENABLE_FRAMERATE_OPTIONS
+#if IS_DEBUG && ENABLE_FRAMERATE_OPTIONS
     FrameAdvance_Init(&this->frameAdvCtx);
 #endif
 
@@ -507,9 +507,13 @@ void Play_Update(PlayState* this) {
     gSegments[5] = VIRTUAL_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.subKeepSlot].segment);
     gSegments[2] = VIRTUAL_TO_PHYSICAL(this->sceneSegment);
 
-#ifdef ENABLE_FRAMERATE_OPTIONS
-    if (FrameAdvance_Update(&this->frameAdvCtx, &input[FA_CONTROLLER_PORT])) {
+#if IS_DEBUG && ENABLE_FRAMERATE_OPTIONS
+    #define FRAMEADVANCE_CAN_UPDATE FrameAdvance_Update(&this->frameAdvCtx, &input[FA_CONTROLLER_PORT])
+#else
+    #define FRAMEADVANCE_CAN_UPDATE true
 #endif
+
+    if (FRAMEADVANCE_CAN_UPDATE) {
         if ((this->transitionMode == TRANS_MODE_OFF) && (this->transitionTrigger != TRANS_TRIGGER_OFF)) {
             this->transitionMode = TRANS_MODE_SETUP;
         }
@@ -1009,9 +1013,7 @@ void Play_Update(PlayState* this) {
         } else {
             goto skip;
         }
-#ifdef ENABLE_FRAMERATE_OPTIONS
     }
-#endif
 
     PLAY_LOG(3799);
 
@@ -1821,11 +1823,9 @@ int Play_CamIsNotFixed(PlayState* this) {
            (R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_FIXED_MARKET) && (this->sceneId != SCENE_CASTLE_COURTYARD_GUARDS_DAY);
 }
 
-#if ENABLE_FRAMERATE_OPTIONS
 int FrameAdvance_IsEnabled(PlayState* this) {
-    return !!this->frameAdvCtx.enabled;
+    return IS_DEBUG && ENABLE_FRAMERATE_OPTIONS ? !!this->frameAdvCtx.enabled : false;
 }
-#endif
 
 s32 func_800C0D34(PlayState* this, Actor* actor, s16* yaw) {
     TransitionActorEntry* transitionActor;

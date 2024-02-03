@@ -130,27 +130,27 @@ s16 sQuakeIndex;
 
 void Cutscene_SetupScripted(PlayState* play, CutsceneContext* csCtx);
 
-#if OOT_DEBUG && SHOW_CS_INFOS
 void Cutscene_DrawDebugInfo(PlayState* play, Gfx** dlist, CutsceneContext* csCtx) {
-    GfxPrint printer;
-    s32 pad[2];
+    if (IS_DEBUG && SHOW_CS_INFOS) {
+        GfxPrint printer;
+        s32 pad[2];
 
-    GfxPrint_Init(&printer);
-    GfxPrint_Open(&printer, *dlist);
+        GfxPrint_Init(&printer);
+        GfxPrint_Open(&printer, *dlist);
 
-    GfxPrint_SetPos(&printer, 22, 25);
-    GfxPrint_SetColor(&printer, 255, 255, 55, 32);
-    GfxPrint_Printf(&printer, "%s", "FLAME ");
-    GfxPrint_SetColor(&printer, 255, 255, 255, 32);
-    GfxPrint_Printf(&printer, "%06d", csCtx->curFrame);
-    GfxPrint_SetColor(&printer, 50, 255, 255, 60);
-    GfxPrint_SetPos(&printer, 4, 26);
-    GfxPrint_Printf(&printer, "%s", "SKIP=(START) or (Cursole Right)");
+        GfxPrint_SetPos(&printer, 22, 25);
+        GfxPrint_SetColor(&printer, 255, 255, 55, 32);
+        GfxPrint_Printf(&printer, "%s", "FLAME ");
+        GfxPrint_SetColor(&printer, 255, 255, 255, 32);
+        GfxPrint_Printf(&printer, "%06d", csCtx->curFrame);
+        GfxPrint_SetColor(&printer, 50, 255, 255, 60);
+        GfxPrint_SetPos(&printer, 4, 26);
+        GfxPrint_Printf(&printer, "%s", "SKIP=(START) or (Cursole Right)");
 
-    *dlist = GfxPrint_Close(&printer);
-    GfxPrint_Destroy(&printer);
+        *dlist = GfxPrint_Close(&printer);
+        GfxPrint_Destroy(&printer);
+    }
 }
-#endif
 
 void Cutscene_InitContext(PlayState* play, CutsceneContext* csCtx) {
     csCtx->state = CS_STATE_IDLE;
@@ -175,28 +175,29 @@ void Cutscene_UpdateManual(PlayState* play, CutsceneContext* csCtx) {
 }
 
 void Cutscene_UpdateScripted(PlayState* play, CutsceneContext* csCtx) {
-#if OOT_DEBUG && ENABLE_CS_CONTROL
-    #if ENABLE_CAMERA_DEBUGGER
-        #define CS_IDLE_AND_PRESSED_DUP (CHECK_BTN_ALL(input->press.button, BTN_DUP) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER && !gDebugCamEnabled)
-    else
-        #define CS_IDLE_AND_PRESSED_DUP (CHECK_BTN_ALL(input->press.button, BTN_DUP) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER)
-    #endif
-    {
-        Input* input = &play->state.input[0];
+    if (IS_DEBUG && ENABLE_CS_CONTROL) {
+        #if ENABLE_CAMERA_DEBUGGER
+            #define CS_IDLE_AND_PRESSED_DUP (CHECK_BTN_ALL(input->press.button, CS_CTRL_RESTART_CONTROL) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER && !gDebugCamEnabled)
+        #else
+            #define CS_IDLE_AND_PRESSED_DUP (CHECK_BTN_ALL(input->press.button, CS_CTRL_RESTART_CONTROL) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER)
+        #endif
 
-        if (CHECK_BTN_ALL(input->press.button, BTN_DLEFT) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER) {
-            gUseCutsceneCam = false;
-            gSaveContext.save.cutsceneIndex = 0xFFFD;
-            gSaveContext.cutsceneTrigger = 1;
-        }
+        {
+            Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
 
-        if (CS_IDLE_AND_PRESSED_DUP) {
-            gUseCutsceneCam = true;
-            gSaveContext.save.cutsceneIndex = 0xFFFD;
-            gSaveContext.cutsceneTrigger = 1;
+            if (CHECK_BTN_ALL(input->press.button, BTN_DLEFT) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER) {
+                gUseCutsceneCam = false;
+                gSaveContext.save.cutsceneIndex = 0xFFFD;
+                gSaveContext.cutsceneTrigger = 1;
+            }
+
+            if (CS_IDLE_AND_PRESSED_DUP) {
+                gUseCutsceneCam = true;
+                gSaveContext.save.cutsceneIndex = 0xFFFD;
+                gSaveContext.cutsceneTrigger = 1;
+            }
         }
     }
-#endif
 
     if ((gSaveContext.cutsceneTrigger != 0) && (play->transitionTrigger == TRANS_TRIGGER_START)) {
         gSaveContext.cutsceneTrigger = 0;
@@ -572,7 +573,7 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
     }
 
     if ((csCtx->curFrame == cmd->startFrame) || titleDemoSkipped ||
-        (OOT_DEBUG && ENABLE_CS_CONTROL && (csCtx->curFrame > 20) && CHECK_BTN_ALL(play->state.input[0].press.button, CS_CTRL_RUN_DEST_CONTROL) &&
+        (IS_DEBUG && ENABLE_CS_CONTROL && CS_CTRL_SKIP_TITLE_SCREEN && (csCtx->curFrame > 20) && CHECK_BTN_ALL(play->state.input[CS_CTRL_CONTROLLER_PORT].press.button, CS_CTRL_RUN_DEST_CONTROL) &&
          (gSaveContext.fileNum != 0xFEDC))) {
         csCtx->state = CS_STATE_RUN_UNSTOPPABLE;
         Audio_SetCutsceneFlag(0);
@@ -1801,15 +1802,15 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
         return;
     }
 
-#if OOT_DEBUG && ENABLE_CS_CONTROL
-    // if using button combo check for the input, else simply return true
-    #define USE_COMBO (CS_CTRL_USE_BTN_COMBO ? CHECK_BTN_ALL(play->state.input[CS_CTRL_CONTROLLER_PORT].cur.button, CS_CTRL_BTN_HOLD_FOR_COMBO) : true)
+    if (IS_DEBUG && ENABLE_CS_CONTROL) {
+        // if using button combo check for the input, else simply return true
+        #define USE_COMBO (CS_CTRL_USE_BTN_COMBO ? CHECK_BTN_ALL(play->state.input[CS_CTRL_CONTROLLER_PORT].cur.button, CS_CTRL_BTN_HOLD_FOR_COMBO) : true)
 
-    if (USE_COMBO && CHECK_BTN_ALL(play->state.input[CS_CTRL_CONTROLLER_PORT].press.button, CS_CTRL_STOP_CONTROL)) {
-        csCtx->state = CS_STATE_STOP;
-        return;
+        if (USE_COMBO && CHECK_BTN_ALL(play->state.input[CS_CTRL_CONTROLLER_PORT].press.button, CS_CTRL_STOP_CONTROL)) {
+            csCtx->state = CS_STATE_STOP;
+            return;
+        }
     }
-#endif
 
     for (i = 0; i < totalEntries; i++) {
         MemCpy(&cmdType, script, sizeof(cmdType));
@@ -2217,7 +2218,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
 
 void CutsceneHandler_RunScript(PlayState* play, CutsceneContext* csCtx) {
     if (gSaveContext.save.cutsceneIndex >= 0xFFF0) {
-        if (OOT_DEBUG && SHOW_CS_INFOS && BREG(0) != 0) {
+        if (IS_DEBUG && SHOW_CS_INFOS && BREG(0) != 0) {
             Gfx* displayList;
             Gfx* prevDisplayList;
 

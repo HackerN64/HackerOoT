@@ -453,41 +453,35 @@ s32 func_80B4F45C(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s
         Matrix_Translate(362.0f, -133.0f, 0.0f, MTXMODE_APPLY);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
-#if ENABLE_FRAMERATE_OPTIONS
+
         if (!FrameAdvance_IsEnabled(play)) {
-#endif
             func_80B4EE38(this, sp2C.y, 0);
             func_80B4F230(this, sp2C.x, 1);
             func_80B4EF64(this, sp2C.z, 2);
-#if ENABLE_FRAMERATE_OPTIONS
         }
-#endif
+
         Matrix_RotateZYX(unk_1DC[0] + kREG(31), unk_1DC[1] + kREG(32), unk_1DC[2] + kREG(33), MTXMODE_APPLY);
         Matrix_Translate(-188.0f, -184.0f, 0.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[0], "../z_en_zl2.c", 1056);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
-#if ENABLE_FRAMERATE_OPTIONS
+
         if (!FrameAdvance_IsEnabled(play)) {
-#endif
             func_80B4EE38(this, sp2C.y, 3);
             func_80B4F230(this, sp2C.x, 4);
-#if ENABLE_FRAMERATE_OPTIONS
         }
-#endif
+
         Matrix_RotateZYX(unk_1DC[3] + kREG(34), unk_1DC[4] + kREG(35), unk_1DC[5] + kREG(36), MTXMODE_APPLY);
         Matrix_Translate(-410.0f, -184.0f, 0.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[1], "../z_en_zl2.c", 1100);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
-#if ENABLE_FRAMERATE_OPTIONS
+
         if (!FrameAdvance_IsEnabled(play)) {
-#endif
             func_80B4EE38(this, sp2C.y, 6);
             func_80B4F230(this, sp2C.x, 7);
-#if ENABLE_FRAMERATE_OPTIONS
         }
-#endif
+
         Matrix_RotateZYX(unk_1DC[6] + kREG(37), unk_1DC[7] + kREG(38), unk_1DC[8] + kREG(39), MTXMODE_APPLY);
         Matrix_Translate(-1019.0f, -26.0f, 0.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[2], "../z_en_zl2.c", 1120);
@@ -496,29 +490,25 @@ s32 func_80B4F45C(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s
         Matrix_Translate(467.0f, 265.0f, 389.0f, MTXMODE_APPLY);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
-#if ENABLE_FRAMERATE_OPTIONS
+
         if (!FrameAdvance_IsEnabled(play)) {
-#endif
             func_80B4EE38(this, sp2C.y, 9);
             func_80B4F230(this, sp2C.x, 10);
             func_80B4EF64(this, sp2C.z, 11);
-#if ENABLE_FRAMERATE_OPTIONS
         }
-#endif
+
         Matrix_RotateZYX(unk_1DC[9] + kREG(40), unk_1DC[10] + kREG(41), unk_1DC[11] + kREG(42), MTXMODE_APPLY);
         Matrix_Translate(-427.0f, -1.0f, -3.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[3], "../z_en_zl2.c", 1145);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
-#if ENABLE_FRAMERATE_OPTIONS
+
         if (!FrameAdvance_IsEnabled(play)) {
-#endif
             func_80B4EE38(this, sp2C.y, 12);
             func_80B4F230(this, sp2C.x, 13);
             func_80B4EF64(this, sp2C.z, 14);
-#if ENABLE_FRAMERATE_OPTIONS
         }
-#endif
+
         Matrix_RotateZYX(unk_1DC[12] + kREG(43), unk_1DC[13] + kREG(44), unk_1DC[14] + kREG(45), MTXMODE_APPLY);
         Matrix_Translate(-446.0f, -52.0f, 84.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[4], "../z_en_zl2.c", 1164);
@@ -527,29 +517,25 @@ s32 func_80B4F45C(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s
         Matrix_Translate(467.0f, 265.0f, -389.0f, MTXMODE_APPLY);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
-#if ENABLE_FRAMERATE_OPTIONS
+
         if (!FrameAdvance_IsEnabled(play)) {
-#endif
             func_80B4EE38(this, sp2C.y, 15);
             func_80B4F230(this, sp2C.x, 16);
             func_80B4EF64(this, sp2C.z, 17);
-#if ENABLE_FRAMERATE_OPTIONS
         }
-#endif
+
         Matrix_RotateZYX(unk_1DC[15] + kREG(46), unk_1DC[16] + kREG(47), unk_1DC[17] + kREG(48), MTXMODE_APPLY);
         Matrix_Translate(-427.0f, -1.0f, 3.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[5], "../z_en_zl2.c", 1189);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
-#if ENABLE_FRAMERATE_OPTIONS
+
         if (!FrameAdvance_IsEnabled(play)) {
-#endif
             func_80B4EE38(this, sp2C.y, 18);
             func_80B4F230(this, sp2C.x, 19);
             func_80B4EF64(this, sp2C.z, 20);
-#if ENABLE_FRAMERATE_OPTIONS
         }
-#endif
+
         Matrix_RotateZYX(unk_1DC[18] + kREG(49), unk_1DC[19] + kREG(50), unk_1DC[20] + kREG(51), MTXMODE_APPLY);
         Matrix_Translate(-446.0f, -52.0f, -84.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[6], "../z_en_zl2.c", 1208);

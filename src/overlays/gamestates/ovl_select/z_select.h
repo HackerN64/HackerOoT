@@ -3,8 +3,6 @@
 
 #include "config.h"
 
-#if OOT_DEBUG && ENABLE_MAP_SELECT
-
 void MapSelect_Init(GameState* thisx);
 void MapSelect_Main(GameState* thisx);
 void MapSelect_Draw(MapSelectState* this);
@@ -179,7 +177,7 @@ static SceneSelectEntry sScenes[] = {
     { "Deku Theater Grotto", MapSelect_LoadGame, ENTR_GROTTOS_12 },
     { "Death Mountain Trail Cow Grotto", MapSelect_LoadGame, ENTR_GROTTOS_13 },
     { "Cutscene Map", MapSelect_LoadGame, ENTR_CUTSCENE_MAP_0 },
-#if INCLUDE_TEST_SCENES
+#if IS_DEBUG && INCLUDE_TEST_SCENES
     { "Test Room", MapSelect_LoadGame, ENTR_BESITU_0 },
     { "SRD Map", MapSelect_LoadGame, ENTR_SASATEST_0 },
     { "Test Map", MapSelect_LoadGame, ENTR_TEST01_0 },
@@ -255,7 +253,5 @@ static const u16 adultLinkSfx[] = {
     NA_SE_VO_LI_MAGIC_ATTACK,
     NA_SE_VO_BL_DOWN,
 };
-
-#endif
 
 #endif

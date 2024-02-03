@@ -1443,10 +1443,8 @@ void FileSelect_LoadGame(GameState* thisx) {
         gSaveContext.fileNum = this->buttonIndex;
         Sram_OpenSave(&this->sramCtx);
         gSaveContext.gameMode = GAMEMODE_NORMAL;
-#if MAP_SELECT_ON_FILE_1
         SET_NEXT_GAMESTATE(&this->state, MapSelect_Init, MapSelectState);
         this->state.running = false;
-#endif
     } else {
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);

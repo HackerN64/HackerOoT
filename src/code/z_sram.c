@@ -718,7 +718,7 @@ void Sram_InitSave(FileSelectState* fileSelect, SramContext* sramCtx) {
     u16* ptr;
     u16 checksum;
 
-    if (fileSelect->buttonIndex != 0) {
+    if (!ENABLE_DEBUG_SAVE || fileSelect->buttonIndex != 0) {
         Sram_InitNewSave();
     } else {
         Sram_InitDebugSave();

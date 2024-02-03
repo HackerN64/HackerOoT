@@ -353,7 +353,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_map_data.o"
     include "$(BUILD_DIR)/src/code/z_parameter.o"
     include "$(BUILD_DIR)/src/code/z_path.o"
+#if IS_DEBUG && ENABLE_FRAMERATE_OPTIONS
     include "$(BUILD_DIR)/src/code/z_frame_advance.o"
+#endif
     include "$(BUILD_DIR)/src/code/z_player_lib.o"
     include "$(BUILD_DIR)/src/code/z_prenmi.o"
     include "$(BUILD_DIR)/src/code/z_quake.o"
@@ -421,7 +423,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/sys_rumble.o"
     include "$(BUILD_DIR)/src/code/code_800D31A0.o"
     include "$(BUILD_DIR)/src/code/irqmgr.o"
+#if IS_DEBUG && ENABLE_DEBUG_HEAP
     include "$(BUILD_DIR)/src/code/debug_malloc.o"
+#endif
     include "$(BUILD_DIR)/src/code/fault.o"
     include "$(BUILD_DIR)/src/code/fault_drawer.o"
 #ifndef NON_MATCHING
@@ -558,7 +562,7 @@ beginseg
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_title/ovl_title_reloc.o"
 endseg
 
-#if ENABLE_MAP_SELECT
+#if IS_DEBUG && ENABLE_MAP_SELECT
 beginseg
     name "ovl_select"
     compress
@@ -9667,7 +9671,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
+#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
 beginseg
     name "syotes_scene"
     romalign 0x1000
@@ -10191,7 +10195,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
+#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
 beginseg
     name "testroom_scene"
     romalign 0x1000
@@ -10275,7 +10279,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
+#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
 beginseg
     name "sutaru_scene"
     romalign 0x1000
@@ -10563,7 +10567,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
+#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
 beginseg
     name "sasatest_scene"
     romalign 0x1000
@@ -11315,7 +11319,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
+#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
 beginseg
     name "hairal_niwa2_scene"
     romalign 0x1000
@@ -11803,7 +11807,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
+#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
 beginseg
     name "besitu_scene"
     romalign 0x1000
@@ -11875,7 +11879,7 @@ beginseg
     number 3
 endseg
 
-#if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
+#if !ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES)
 beginseg
     name "test01_scene"
     compress

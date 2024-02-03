@@ -121,11 +121,9 @@ void Regs_Init(void) {
     }
 }
 
-#if ENABLE_NO_CLIP
 // Function is stubbed. Name is assumed by similarities in signature to `DebugCamera_ScreenTextColored` and usage.
 void DebugCamera_ScreenText(u8 x, u8 y, const char* text) {
 }
-#endif
 
 #if ENABLE_CAMERA_DEBUGGER
 void DebugCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text) {

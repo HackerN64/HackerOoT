@@ -17,41 +17,41 @@
  */
 
 /**** [DEBUG HEAP] ****/
-// #define ENABLE_DEBUG_HEAP false
+#define ENABLE_DEBUG_HEAP false
 
 // The memory space to allocate for the debug heap (used by the Camera Debugger)
 // Note: it can't be higher than 0x800000 with the Expansion Pak
 // Note: if the Expansion Pak is missing the heap's size will be 0x400
-// #define DEBUG_HEAP_SIZE 0x600000
+#define DEBUG_HEAP_SIZE 0x600000
 
 /**** [NO CLIP] ****/
-// #define ENABLE_NO_CLIP true
+#define ENABLE_NO_CLIP true
 
 /**** [INPUT DISPLAY] ****/
-// #define SHOW_INPUT_DISPLAY false
+#define SHOW_INPUT_DISPLAY false
 
 /**** [CUTSCENE FEATURES] ****/
-// #define SHOW_CS_INFOS false
-// #define ENABLE_CS_CONTROL false
+#define SHOW_CS_INFOS false
+#define ENABLE_CS_CONTROL false
 
 // Allow skip on the title screen (if using ``ENABLE_CS_CONTROL``)
-// #define CS_CTRL_SKIP_TITLE_SCREEN false
+#define CS_CTRL_SKIP_TITLE_SCREEN false
 
 /**** [TIME INFORMATIONS] ****/
-// #define SHOW_TIME_INFOS false
+#define SHOW_TIME_INFOS false
 
 /**** [FRAMERATE OPTIONS] ****/
 // TODO: check for frame advance for drawing, improve how it works
-// #define ENABLE_FRAMERATE_OPTIONS false
+#define ENABLE_FRAMERATE_OPTIONS false
 
 /**** [MAP SELECT] ****/
 #define ENABLE_MAP_SELECT false
 
 /**** [DEBUG FILE 1] ****/
-// #define ENABLE_DEBUG_SAVE true
+#define ENABLE_DEBUG_SAVE true
 
 /**** [TEST SCENES] ****/
-// #define INCLUDE_TEST_SCENES false
+#define INCLUDE_TEST_SCENES false
 
 // -------------------------------------------
 

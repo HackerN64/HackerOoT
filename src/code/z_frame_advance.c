@@ -1,7 +1,3 @@
-#include "config.h"
-
-#if ENABLE_FRAMERATE_OPTIONS
-
 #include "global.h"
 
 void FrameAdvance_Init(FrameAdvanceContext* frameAdvCtx) {
@@ -33,5 +29,3 @@ s32 FrameAdvance_Update(FrameAdvanceContext* frameAdvCtx, Input* input) {
 
     return false;
 }
-
-#endif

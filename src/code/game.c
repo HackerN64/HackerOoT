@@ -120,38 +120,39 @@ void func_800C4344(GameState* gameState) {
 #endif
 }
 
-#if OOT_DEBUG && SHOW_INPUT_DISPLAY
+// SHOW_INPUT_DISPLAY
 void GameState_DrawInputDisplay(u16 input, Gfx** gfxP) {
-    static const u16 sInpDispBtnColors[] = {
-        GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),
-        GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1),
-        GPACK_RGBA5551(0, 255, 255, 1),   GPACK_RGBA5551(255, 0, 255, 1),   GPACK_RGBA5551(120, 120, 120, 1),
-        GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1),
-        GPACK_RGBA5551(255, 0, 0, 1),     GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(0, 255, 0, 1),
-        GPACK_RGBA5551(0, 0, 255, 1),
-    };
-    s32 i, j, k;
-    Gfx* gfx = *gfxP;
+    if (IS_DEBUG && SHOW_INPUT_DISPLAY) {
+        static const u16 sInpDispBtnColors[] = {
+            GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),
+            GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1),
+            GPACK_RGBA5551(0, 255, 255, 1),   GPACK_RGBA5551(255, 0, 255, 1),   GPACK_RGBA5551(120, 120, 120, 1),
+            GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1),
+            GPACK_RGBA5551(255, 0, 0, 1),     GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(0, 255, 0, 1),
+            GPACK_RGBA5551(0, 0, 255, 1),
+        };
+        s32 i, j, k;
+        Gfx* gfx = *gfxP;
 
-    gDPPipeSync(gfx++);
-    gDPSetOtherMode(gfx++,
-                    G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_CONV | G_TF_POINT | G_TT_NONE | G_TL_TILE |
-                        G_TD_CLAMP | G_TP_NONE | G_CYC_FILL | G_PM_NPRIMITIVE,
-                    G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2);
+        gDPPipeSync(gfx++);
+        gDPSetOtherMode(gfx++,
+                        G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_CONV | G_TF_POINT | G_TT_NONE | G_TL_TILE |
+                            G_TD_CLAMP | G_TP_NONE | G_CYC_FILL | G_PM_NPRIMITIVE,
+                        G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2);
 
-    for (i = 0; i < 16; i++) {
-        j = i;
-        if (input & (1 << i)) {
-            gDPSetFillColor(gfx++, (sInpDispBtnColors[i] << 0x10) | sInpDispBtnColors[i]);
-            k = i + 1;
-            gDPFillRectangle(gfx++, (j * 4) + 226, 220, (k * 4) + 225, 223);
-            gDPPipeSync(gfx++);
+        for (i = 0; i < 16; i++) {
+            j = i;
+            if (input & (1 << i)) {
+                gDPSetFillColor(gfx++, (sInpDispBtnColors[i] << 0x10) | sInpDispBtnColors[i]);
+                k = i + 1;
+                gDPFillRectangle(gfx++, (j * 4) + 226, 220, (k * 4) + 225, 223);
+                gDPPipeSync(gfx++);
+            }
         }
-    }
 
-    *gfxP = gfx;
+        *gfxP = gfx;
+    }
 }
-#endif
 
 void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     Gfx* newDList;
@@ -169,11 +170,9 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 #if OOT_DEBUG
     sLastButtonPressed = gameState->input[0].press.button | gameState->input[0].cur.button;
 
-#if SHOW_INPUT_DISPLAY
-    if (R_DISABLE_INPUT_DISPLAY == 0) {
+    if (IS_DEBUG && SHOW_INPUT_DISPLAY && R_DISABLE_INPUT_DISPLAY == 0) {
         GameState_DrawInputDisplay(sLastButtonPressed, &newDList);
     }
-#endif
 
 #if ENABLE_AUDIO_DEBUGGER
     if (R_ENABLE_AUDIO_DBG & 1) {
@@ -190,13 +189,14 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 
 #endif
 
-#if OOT_DEBUG && ENABLE_SPEEDMETER
+#if IS_DEBUG && ENABLE_SPEEDMETER
     if (R_ENABLE_ARENA_DBG < 0) {
         s32 pad;
 
-#if ENABLE_DEBUG_HEAP
-        DebugArena_Display();
-#endif
+        if (IS_DEBUG && ENABLE_DEBUG_HEAP) {
+            DebugArena_Display();
+        }
+
         SystemArena_Display();
         // "%08x bytes left until the death of Hyrule (game_alloc)"
         PRINTF("ハイラル滅亡まであと %08x バイト(game_alloc)\n", THA_GetRemaining(&gameState->tha));

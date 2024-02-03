@@ -117,12 +117,11 @@ typedef struct {
     /* 0x01 */ u8   natureAmbienceId;
 } SequenceContext; // size = 0x2
 
-#if ENABLE_FRAMERATE_OPTIONS
+// ENABLE_FRAMERATE_OPTIONS
 typedef struct {
     /* 0x00 */ s32 enabled;
     /* 0x04 */ s32 timer;
 } FrameAdvanceContext; // size = 0x8
-#endif
 
 typedef struct {
     /* 0x00 */ Vec3f    pos;
@@ -314,8 +313,7 @@ typedef struct {
     /* 0x01E2 */ char unk_1E2[0x06];
 } ConsoleLogoState; // size = 0x1E8
 
-#if OOT_DEBUG && ENABLE_MAP_SELECT
-
+// vvv IS_DEBUG && ENABLE_MAP_SELECT vvv
 struct MapSelectState;
 
 typedef struct {
@@ -346,7 +344,7 @@ typedef struct MapSelectState {
     /* 0x0220 */ u8 selectedSceneColor;
 } MapSelectState; // size = 0x240
 
-#endif
+// ^^^ IS_DEBUG && ENABLE_MAP_SELECT ^^^
 
 typedef struct {
     /* 0x0000 */ GameState state;
@@ -395,11 +393,10 @@ typedef struct PlayState {
     /* 0x007A2 */ s16 nextCamId;
     /* 0x007A4 */ SequenceContext sequenceCtx;
     /* 0x007A8 */ LightContext lightCtx;
-#if ENABLE_FRAMERATE_OPTIONS
+
+    // ENABLE_FRAMERATE_OPTIONS
     /* 0x007B8 */ FrameAdvanceContext frameAdvCtx;
-#else
-    /* 0x007B8 */ u8 padding[8]; // preserves correct offsets
-#endif
+
     /* 0x007C0 */ CollisionContext colCtx;
     /* 0x01C24 */ ActorContext actorCtx;
     /* 0x01D64 */ CutsceneContext csCtx; // "demo_play"

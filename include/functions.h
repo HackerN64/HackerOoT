@@ -763,9 +763,10 @@ u8 CollisionCheck_GetSwordDamage(s32 dmgFlags);
 void SaveContext_Init(void);
 s32 func_800635D0(s32);
 void Regs_Init(void);
-#if ENABLE_NO_CLIP
+
+// ENABLE_NO_CLIP
 void DebugCamera_ScreenText(u8 x, u8 y, const char* text);
-#endif
+
 #if ENABLE_CAMERA_DEBUGGER
 void DebugCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text);
 #endif
@@ -998,10 +999,12 @@ void Interface_Update(PlayState* play);
 Path* Path_GetByIndex(PlayState* play, s16 index, s16 max);
 f32 Path_OrientAndGetDistSq(Actor* actor, Path* path, s16 waypoint, s16* yaw);
 void Path_CopyLastPoint(Path* path, Vec3f* dest);
-#if ENABLE_FRAMERATE_OPTIONS
+
+#if IS_DEBUG && ENABLE_FRAMERATE_OPTIONS
 void FrameAdvance_Init(FrameAdvanceContext* frameAdvCtx);
 s32 FrameAdvance_Update(FrameAdvanceContext* frameAdvCtx, Input* input);
 #endif
+
 void Player_SetBootData(PlayState* play, Player* this);
 int Player_InBlockingCsMode(PlayState* play, Player* this);
 int Player_InCsMode(PlayState* play);
@@ -1483,7 +1486,8 @@ u64* SysUcode_GetUCodeData(void);
 NORETURN void func_800D31A0(void);
 void func_800D31F0(void);
 void func_800D3210(void);
-#if ENABLE_DEBUG_HEAP
+
+// ENABLE_DEBUG_HEAP
 void DebugArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action);
 void* DebugArena_Malloc(u32 size);
 void* DebugArena_MallocDebug(u32 size, const char* file, s32 line);
@@ -1500,7 +1504,7 @@ void DebugArena_Check(void);
 void DebugArena_Init(void* start, u32 size);
 void DebugArena_Cleanup(void);
 u8 DebugArena_IsInitialized(void);
-#endif
+
 void UCodeDisas_Init(UCodeDisas*);
 void UCodeDisas_Destroy(UCodeDisas*);
 void UCodeDisas_Disassemble(UCodeDisas*, Gfx*);
@@ -1996,10 +2000,11 @@ void Setup_Init(GameState* thisx);
 void Setup_Destroy(GameState* thisx);
 void ConsoleLogo_Init(GameState* thisx);
 void ConsoleLogo_Destroy(GameState* thisx);
-#if ENABLE_MAP_SELECT
+
+// ENABLE_MAP_SELECT
 void MapSelect_Init(GameState* thisx);
 void MapSelect_Destroy(GameState* thisx);
-#endif
+
 void TitleSetup_Init(GameState* thisx);
 void TitleSetup_Destroy(GameState* thisx);
 void FileSelect_Init(GameState* thisx);

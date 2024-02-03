@@ -815,62 +815,62 @@ void Environment_DisableUnderwaterLights(PlayState* play) {
     }
 }
 
-#if SHOW_TIME_INFOS
 void Environment_PrintDebugInfo(PlayState* play, Gfx** gfx) {
-    GfxPrint printer;
-    s32 pad[2];
+    if (IS_DEBUG && SHOW_TIME_INFOS) {
+        GfxPrint printer;
+        s32 pad[2];
 
-    GfxPrint_Init(&printer);
-    GfxPrint_Open(&printer, *gfx);
+        GfxPrint_Init(&printer);
+        GfxPrint_Open(&printer, *gfx);
 
-    GfxPrint_SetPos(&printer, 22, 7);
-    GfxPrint_SetColor(&printer, 155, 155, 255, 64);
-    GfxPrint_Printf(&printer, "T%03d ", ((void)0, gSaveContext.save.totalDays));
-    GfxPrint_Printf(&printer, "E%03d", ((void)0, gSaveContext.save.bgsDayCount));
+        GfxPrint_SetPos(&printer, 22, 7);
+        GfxPrint_SetColor(&printer, 155, 155, 255, 64);
+        GfxPrint_Printf(&printer, "T%03d ", ((void)0, gSaveContext.save.totalDays));
+        GfxPrint_Printf(&printer, "E%03d", ((void)0, gSaveContext.save.bgsDayCount));
 
-    GfxPrint_SetColor(&printer, 255, 255, 55, 64);
-    GfxPrint_SetPos(&printer, 22, 8);
-    GfxPrint_Printf(&printer, "%s", "ZELDATIME ");
+        GfxPrint_SetColor(&printer, 255, 255, 55, 64);
+        GfxPrint_SetPos(&printer, 22, 8);
+        GfxPrint_Printf(&printer, "%s", "ZELDATIME ");
 
-    GfxPrint_SetColor(&printer, 255, 255, 255, 64);
-    GfxPrint_Printf(&printer, "%02d", (u8)(24 * 60 / (f32)0x10000 * ((void)0, gSaveContext.save.dayTime) / 60.0f));
+        GfxPrint_SetColor(&printer, 255, 255, 255, 64);
+        GfxPrint_Printf(&printer, "%02d", (u8)(24 * 60 / (f32)0x10000 * ((void)0, gSaveContext.save.dayTime) / 60.0f));
 
-    if ((gSaveContext.save.dayTime & 0x1F) >= 0x10 || gTimeSpeed >= 6) {
-        GfxPrint_Printf(&printer, "%s", ":");
-    } else {
-        GfxPrint_Printf(&printer, "%s", " ");
+        if ((gSaveContext.save.dayTime & 0x1F) >= 0x10 || gTimeSpeed >= 6) {
+            GfxPrint_Printf(&printer, "%s", ":");
+        } else {
+            GfxPrint_Printf(&printer, "%s", " ");
+        }
+
+        GfxPrint_Printf(&printer, "%02d", (s16)(24 * 60 / (f32)0x10000 * ((void)0, gSaveContext.save.dayTime)) % 60);
+
+        GfxPrint_SetColor(&printer, 255, 255, 55, 64);
+        GfxPrint_SetPos(&printer, 22, 9);
+        GfxPrint_Printf(&printer, "%s", "VRBOXTIME ");
+
+        GfxPrint_SetColor(&printer, 255, 255, 255, 64);
+        GfxPrint_Printf(&printer, "%02d", (u8)(24 * 60 / (f32)0x10000 * ((void)0, gSaveContext.skyboxTime) / 60.0f));
+
+        if ((((void)0, gSaveContext.skyboxTime) & 0x1F) >= 0x10 || gTimeSpeed >= 6) {
+            GfxPrint_Printf(&printer, "%s", ":");
+        } else {
+            GfxPrint_Printf(&printer, "%s", " ");
+        }
+
+        GfxPrint_Printf(&printer, "%02d", (s16)(24 * 60 / (f32)0x10000 * ((void)0, gSaveContext.skyboxTime)) % 60);
+
+        GfxPrint_SetColor(&printer, 55, 255, 255, 64);
+        GfxPrint_SetPos(&printer, 22, 6);
+
+        if (!IS_DAY) {
+            GfxPrint_Printf(&printer, "%s", "YORU"); // "night"
+        } else {
+            GfxPrint_Printf(&printer, "%s", "HIRU"); // "day"
+        }
+
+        *gfx = GfxPrint_Close(&printer);
+        GfxPrint_Destroy(&printer);
     }
-
-    GfxPrint_Printf(&printer, "%02d", (s16)(24 * 60 / (f32)0x10000 * ((void)0, gSaveContext.save.dayTime)) % 60);
-
-    GfxPrint_SetColor(&printer, 255, 255, 55, 64);
-    GfxPrint_SetPos(&printer, 22, 9);
-    GfxPrint_Printf(&printer, "%s", "VRBOXTIME ");
-
-    GfxPrint_SetColor(&printer, 255, 255, 255, 64);
-    GfxPrint_Printf(&printer, "%02d", (u8)(24 * 60 / (f32)0x10000 * ((void)0, gSaveContext.skyboxTime) / 60.0f));
-
-    if ((((void)0, gSaveContext.skyboxTime) & 0x1F) >= 0x10 || gTimeSpeed >= 6) {
-        GfxPrint_Printf(&printer, "%s", ":");
-    } else {
-        GfxPrint_Printf(&printer, "%s", " ");
-    }
-
-    GfxPrint_Printf(&printer, "%02d", (s16)(24 * 60 / (f32)0x10000 * ((void)0, gSaveContext.skyboxTime)) % 60);
-
-    GfxPrint_SetColor(&printer, 55, 255, 255, 64);
-    GfxPrint_SetPos(&printer, 22, 6);
-
-    if (!IS_DAY) {
-        GfxPrint_Printf(&printer, "%s", "YORU"); // "night"
-    } else {
-        GfxPrint_Printf(&printer, "%s", "HIRU"); // "day"
-    }
-
-    *gfx = GfxPrint_Close(&printer);
-    GfxPrint_Destroy(&printer);
 }
-#endif
 
 void Environment_PlayTimeBasedSequence(PlayState* play);
 void Environment_UpdateRain(PlayState* play);
@@ -927,9 +927,8 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
                 (((void)0, gSaveContext.gameMode) == GAMEMODE_END_CREDITS)) {
 
                 if ((envCtx->changeSkyboxTimer == 0) &&
-#if ENABLE_FRAMERATE_OPTIONS
                     !FrameAdvance_IsEnabled(play) &&
-#endif
+
                     (play->transitionMode == TRANS_MODE_OFF || ((void)0, gSaveContext.gameMode) != GAMEMODE_NORMAL)) {
 
                     if (IS_DAY || gTimeSpeed >= 400) {
@@ -957,8 +956,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
             gSaveContext.save.nightFlag = 0;
         }
 
-#if SHOW_TIME_INFOS
-        if (R_ENABLE_ARENA_DBG != 0 || CREG(2) != 0) {
+        if (IS_DEBUG && SHOW_TIME_INFOS && (R_ENABLE_ARENA_DBG != 0) || (CREG(2) != 0)) {
             Gfx* displayList;
             Gfx* prevDisplayList;
 
@@ -974,7 +972,6 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
             if (1) {}
             CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 1690);
         }
-#endif
 
         if ((envCtx->lightSettingOverride != LIGHT_SETTING_OVERRIDE_NONE) &&
             (envCtx->lightBlendOverride != LIGHT_BLEND_OVERRIDE_FULL_CONTROL) &&

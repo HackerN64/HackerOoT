@@ -10,6 +10,8 @@
  * These are put in place to insure that connected functionality works as intended.
  */
 
+#define IS_DEBUG OOT_DEBUG && ENABLE_HACKEROOT
+
 /*****************
  * config_debug.h
  */
