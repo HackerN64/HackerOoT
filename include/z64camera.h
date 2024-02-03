@@ -1622,7 +1622,7 @@ typedef struct Camera {
     /* 0x16A */ s16 unk_16A;
 } Camera; // size = 0x16C
 
-#if ENABLE_CAMERA_DEBUGGER
+// ENABLE_CAMERA_DEBUGGER
 
 /**
  * Debug Camera
@@ -1700,7 +1700,5 @@ typedef enum {
     /* 6 */ DEBUG_CAM_TEXT_BLUE,
     /* 7 */ DEBUG_CAM_TEXT_GREEN
 } DebugCamTextColor;
-
-#endif
 
 #endif

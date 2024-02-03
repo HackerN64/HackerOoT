@@ -60,13 +60,13 @@
  */
 
 /**** [INVENTORY EDITOR] ****/
-// #define ENABLE_INV_EDITOR false
+#define ENABLE_INV_EDITOR false
 
 /**** [EVENT EDITOR] ****/
-// #define ENABLE_EVENT_EDITOR false
+#define ENABLE_EVENT_EDITOR false
 
 /**** [REGISTERS EDITOR] ****/
-// #define ENABLE_REG_EDITOR false
+#define ENABLE_REG_EDITOR false
 
 // -------------------------------------------
 
@@ -79,16 +79,16 @@
 #define ENABLE_CAMERA_DEBUGGER false
 
 /**** [AUDIO DEBUGGER] ****/
-// #define ENABLE_AUDIO_DEBUGGER false
+#define ENABLE_AUDIO_DEBUGGER false
 
 /**** [ACTOR DEBUGGER] ****/
-// #define ENABLE_ACTOR_DEBUGGER false
+#define ENABLE_ACTOR_DEBUGGER false
 
 /**** [MESSAGES DEBUGGER] ****/
-// #define ENABLE_MSG_DEBUGGER false
+#define ENABLE_MSG_DEBUGGER false
 
 /**** [SPEEDMETER] ****/
 // This looks like a profiler
-// #define ENABLE_SPEEDMETER false
+#define ENABLE_SPEEDMETER false
 
 #endif

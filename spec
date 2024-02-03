@@ -311,7 +311,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_effect_soft_sprite.o"
     include "$(BUILD_DIR)/src/code/z_effect_soft_sprite_old_init.o"
     include "$(BUILD_DIR)/src/code/z_effect_soft_sprite_dlftbls.o"
+#if IS_DEBUG && ENABLE_EVENT_EDITOR
     include "$(BUILD_DIR)/src/code/flg_set.o"
+#endif
     include "$(BUILD_DIR)/src/code/z_DLF.o"
     include "$(BUILD_DIR)/src/code/z_actor.o"
     include "$(BUILD_DIR)/src/code/z_actor_dlftbls.o"
@@ -389,7 +391,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_fbdemo_circle.o"
     include "$(BUILD_DIR)/src/code/z_fbdemo_fade.o"
     include "$(BUILD_DIR)/src/code/shrink_window.o"
-#if OOT_DEBUG && ENABLE_CAMERA_DEBUGGER
+#if IS_DEBUG && ENABLE_CAMERA_DEBUGGER
     include "$(BUILD_DIR)/src/code/db_camera.o"
 #endif
     include "$(BUILD_DIR)/src/code/code_800BB0A0.o"
@@ -413,7 +415,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/main.o"
     include "$(BUILD_DIR)/src/code/padmgr.o"
     include "$(BUILD_DIR)/src/code/sched.o"
+#if IS_DEBUG && ENABLE_SPEEDMETER
     include "$(BUILD_DIR)/src/code/speed_meter.o"
+#endif
     include "$(BUILD_DIR)/src/code/sys_cfb.o"
     include "$(BUILD_DIR)/src/code/sys_math.o"
     include "$(BUILD_DIR)/src/code/sys_math3d.o"
@@ -592,7 +596,9 @@ beginseg
     name "ovl_kaleido_scope"
     compress
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_collect.o"
+#if IS_DEBUG && ENABLE_INV_EDITOR
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_debug.o"
+#endif
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_equipment.o"
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_item.o"
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_map_PAL.o"

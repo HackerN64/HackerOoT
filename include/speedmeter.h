@@ -1,10 +1,6 @@
 #ifndef SPEEDMETER_H
 #define SPEEDMETER_H
 
-#include "config.h"
-
-#if ENABLE_SPEEDMETER
-
 #include "ultra64/ultratypes.h"
 
 struct GraphicsContext;
@@ -20,7 +16,5 @@ void SpeedMeter_Init(SpeedMeter* this);
 void SpeedMeter_Destroy(SpeedMeter* this);
 void SpeedMeter_DrawTimeEntries(SpeedMeter* this, struct GraphicsContext* gfxCtx);
 void SpeedMeter_DrawAllocEntries(SpeedMeter* meter, struct GraphicsContext* gfxCtx, struct GameState* state);
-
-#endif
 
 #endif

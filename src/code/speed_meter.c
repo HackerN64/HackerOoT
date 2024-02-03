@@ -1,7 +1,3 @@
-#include "config.h"
-
-#if ENABLE_SPEEDMETER
-
 #include "global.h"
 #include "terminal.h"
 
@@ -276,5 +272,3 @@ void SpeedMeter_DrawAllocEntries(SpeedMeter* meter, GraphicsContext* gfxCtx, Gam
     SpeedMeter_DrawAllocEntry(&entry, gfxCtx);
     y++;
 }
-
-#endif

@@ -10,8 +10,6 @@
  * These are put in place to insure that connected functionality works as intended.
  */
 
-#define IS_DEBUG OOT_DEBUG && ENABLE_HACKEROOT
-
 /*****************
  * config_debug.h
  */
@@ -124,22 +122,22 @@
     #undef BOOT_TO_SCENE_NEW_GAME_ONLY
     #undef BOOT_TO_FILE_SELECT
     #undef DISABLE_DEBUG_FEATURES
-    // #undef SHOW_CS_INFOS
-    // #undef SHOW_INPUT_DISPLAY
-    // #undef SHOW_TIME_INFOS
+    #undef SHOW_CS_INFOS
+    #undef SHOW_INPUT_DISPLAY
+    #undef SHOW_TIME_INFOS
     #undef INCLUDE_TEST_SCENES
-    // #undef ENABLE_NO_CLIP
-    // #undef ENABLE_CS_CONTROL
-    // #undef ENABLE_FRAMERATE_OPTIONS
+    #undef ENABLE_NO_CLIP
+    #undef ENABLE_CS_CONTROL
+    #undef ENABLE_FRAMERATE_OPTIONS
     #undef ENABLE_MAP_SELECT
-    // #undef ENABLE_INV_EDITOR
-    // #undef ENABLE_EVENT_EDITOR
-    // #undef ENABLE_REG_EDITOR
+    #undef ENABLE_INV_EDITOR
+    #undef ENABLE_EVENT_EDITOR
+    #undef ENABLE_REG_EDITOR
     #undef ENABLE_CAMERA_DEBUGGER
-    // #undef ENABLE_AUDIO_DEBUGGER
-    // #undef ENABLE_ACTOR_DEBUGGER
-    // #undef ENABLE_MSG_DEBUGGER
-    // #undef ENABLE_DEBUG_SAVE
+    #undef ENABLE_AUDIO_DEBUGGER
+    #undef ENABLE_ACTOR_DEBUGGER
+    #undef ENABLE_MSG_DEBUGGER
+    #undef ENABLE_DEBUG_SAVE
     #undef MAP_SELECT_ON_FILE_1
 
     #define DETERMINISTIC_BUILD false
@@ -148,23 +146,25 @@
     #define BOOT_TO_SCENE_NEW_GAME_ONLY false
     #define BOOT_TO_FILE_SELECT false
     #define DISABLE_DEBUG_FEATURES false
-    // #define SHOW_CS_INFOS false
-    // #define SHOW_INPUT_DISPLAY false
-    // #define SHOW_TIME_INFOS false
+    #define SHOW_CS_INFOS false
+    #define SHOW_INPUT_DISPLAY false
+    #define SHOW_TIME_INFOS false
     #define INCLUDE_TEST_SCENES true
-    // #define ENABLE_NO_CLIP false
-    // #define ENABLE_CS_CONTROL false
-    // #define ENABLE_FRAMERATE_OPTIONS false
+    #define ENABLE_NO_CLIP false
+    #define ENABLE_CS_CONTROL false
+    #define ENABLE_FRAMERATE_OPTIONS false
     #define ENABLE_MAP_SELECT true
-    // #define ENABLE_INV_EDITOR false
-    // #define ENABLE_EVENT_EDITOR false
-    // #define ENABLE_REG_EDITOR false
+    #define ENABLE_INV_EDITOR false
+    #define ENABLE_EVENT_EDITOR false
+    #define ENABLE_REG_EDITOR false
     #define ENABLE_CAMERA_DEBUGGER true
-    // #define ENABLE_AUDIO_DEBUGGER false
-    // #define ENABLE_ACTOR_DEBUGGER false
-    // #define ENABLE_MSG_DEBUGGER false
-    // #define ENABLE_DEBUG_SAVE false
+    #define ENABLE_AUDIO_DEBUGGER false
+    #define ENABLE_ACTOR_DEBUGGER false
+    #define ENABLE_MSG_DEBUGGER false
+    #define ENABLE_DEBUG_SAVE false
     #define MAP_SELECT_ON_FILE_1 true
 #endif
+
+#define IS_DEBUG OOT_DEBUG && ENABLE_HACKEROOT
 
 #endif

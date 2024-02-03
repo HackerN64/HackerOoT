@@ -315,9 +315,8 @@ void EffectSsDeadSound_Spawn(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f
 void EffectSsDeadSound_SpawnStationary(PlayState* play, Vec3f* pos, u16 sfxId, s16 lowerPriority,
                                        s16 repeatMode, s32 life);
 void EffectSsIceSmoke_Spawn(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel, s16 scale);
-#if ENABLE_EVENT_EDITOR
-void FlagSet_Update(PlayState* play);
-#endif
+
+void FlagSet_Update(PlayState* play); // ENABLE_EVENT_EDITOR
 void Overlay_LoadGameState(GameStateOverlay* overlayEntry);
 void Overlay_FreeGameState(GameStateOverlay* overlayEntry);
 void ActorShape_Init(ActorShape* shape, f32 yOffset, ActorShadowFunc shadowDraw, f32 shadowScale);
@@ -763,19 +762,10 @@ u8 CollisionCheck_GetSwordDamage(s32 dmgFlags);
 void SaveContext_Init(void);
 s32 func_800635D0(s32);
 void Regs_Init(void);
-
-// ENABLE_NO_CLIP
-void DebugCamera_ScreenText(u8 x, u8 y, const char* text);
-
-#if ENABLE_CAMERA_DEBUGGER
-void DebugCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text);
-#endif
-#if ENABLE_REG_EDITOR
-void Regs_UpdateEditor(Input* input);
-#endif
-#if ENABLE_CAMERA_DEBUGGER || ENABLE_REG_EDITOR
-void Debug_DrawText(GraphicsContext* gfxCtx);
-#endif
+void DebugCamera_ScreenText(u8 x, u8 y, const char* text); // ENABLE_NO_CLIP
+void DebugCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text); // ENABLE_CAMERA_DEBUGGER
+void Regs_UpdateEditor(Input* input); // ENABLE_REG_EDITOR
+void Debug_DrawText(GraphicsContext* gfxCtx); // ENABLE_CAMERA_DEBUGGER || ENABLE_REG_EDITOR
 void DebugDisplay_Init(void);
 DebugDispObject* DebugDisplay_AddObject(f32 posX, f32 posY, f32 posZ, s16 rotX, s16 rotY, s16 rotZ, f32 scaleX,
                                         f32 scaleY, f32 scaleZ, u8 red, u8 green, u8 blue, u8 alpha, s16 type,
@@ -1259,12 +1249,13 @@ u32 Letterbox_GetSize(void);
 void Letterbox_Init(void);
 void Letterbox_Destroy(void);
 void Letterbox_Update(s32 updateRate);
-#if ENABLE_CAMERA_DEBUGGER
+
+// ENABLE_CAMERA_DEBUGGER
 void DebugCamera_Init(DebugCam* debugCam, Camera* cameraPtr);
 void DebugCamera_Enable(DebugCam* debugCam, Camera* cam);
 void DebugCamera_Update(DebugCam* debugCam, Camera* cam);
 void DebugCamera_Reset(Camera* cam, DebugCam* debugCam);
-#endif
+
 void func_800BB0A0(f32 u, Vec3f* pos, f32* roll, f32* viewAngle, f32* point0, f32* point1, f32* point2, f32* point3);
 s32 func_800BB2B4(Vec3f* pos, f32* roll, f32* fov, CutsceneCameraPoint* point, s16* keyFrame, f32* curFrame);
 void KaleidoManager_LoadOvl(KaleidoMgrOverlay* ovl);
@@ -1640,10 +1631,11 @@ OcarinaStaff* AudioOcarina_GetPlaybackStaff(void);
 void AudioOcarina_MemoryGameInit(u8 minigameRound);
 s32 AudioOcarina_MemoryGameNextNote(void);
 void AudioOcarina_PlayLongScarecrowSong(void);
-#if ENABLE_AUDIO_DEBUGGER
+
+// ENABLE_AUDIO_DEBUGGER
 void AudioDebug_Draw(GfxPrint* printer);
 void AudioDebug_ScrPrt(const char* str, u16 num);
-#endif
+
 void Audio_Update(void);
 void Audio_SetSfxProperties(u8 bankId, u8 entryIdx, u8 channelIndex);
 void Audio_PlayCutsceneEffectsSequence(u8 csEffectType);

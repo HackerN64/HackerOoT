@@ -1020,13 +1020,7 @@ void Play_Update(PlayState* this) {
 skip:
     PLAY_LOG(3801);
 
-#if ENABLE_CAMERA_DEBUGGER
-#define NOT_PAUSED_OR_DEBUG_CAM (!isPaused || gDebugCamEnabled)
-#else
-#define NOT_PAUSED_OR_DEBUG_CAM (!isPaused)
-#endif
-
-    if (NOT_PAUSED_OR_DEBUG_CAM) {
+    if (!isPaused || IS_DEBUG_CAM_ENABLED) {
         s32 i;
 
         this->nextCamId = this->activeCamId;

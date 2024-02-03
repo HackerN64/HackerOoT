@@ -1212,10 +1212,9 @@ OcarinaSongButtons gOcarinaSongButtons[OCARINA_SONG_MAX] = {
     { 0, { 0 } },
 };
 
-#if ENABLE_AUDIO_DEBUGGER
+// ENABLE_AUDIO_DEBUGGER
 u32 sAudioUpdateStartTime;
 u32 sAudioUpdateEndTime;
-#endif
 
 f32 D_8016B7A8;
 f32 D_8016B7AC;
@@ -1228,12 +1227,11 @@ s8 D_8016B7DC;
 f32 D_8016B7E0;
 u16 D_8016B7E4;
 
-#if ENABLE_AUDIO_DEBUGGER
+// ENABLE_AUDIO_DEBUGGER
 struct {
     char str[5];
     u16 num;
-} sAudioScrPrtBuf[SCROLL_PRINT_BUF_SIZE];
-#endif
+} sAudioScrPrtBuf[IS_DEBUG && ENABLE_AUDIO_DEBUGGER ? SCROLL_PRINT_BUF_SIZE : 0];
 
 u8 sRiverSoundMainBgmVol;
 u8 sRiverSoundMainBgmCurrentVol;
@@ -2309,7 +2307,7 @@ void AudioOcarina_ResetStaffs(void) {
     sOcarinaDropInputTimer = 0;
 }
 
-#if OOT_DEBUG && ENABLE_AUDIO_DEBUGGER
+#if IS_DEBUG && ENABLE_AUDIO_DEBUGGER
 #include "debug.inc.c"
 #else
 void AudioDebug_Draw(GfxPrint* printer) {
@@ -2327,7 +2325,7 @@ void Audio_UpdateFanfare(void);
  */
 void Audio_Update(void) {
     if (func_800FAD34() == 0) {
-#if OOT_DEBUG && ENABLE_AUDIO_DEBUGGER
+#if IS_DEBUG && ENABLE_AUDIO_DEBUGGER
         sAudioUpdateTaskStart = gAudioCtx.totalTaskCount;
         sAudioUpdateStartTime = osGetTime();
 #endif
@@ -2760,7 +2758,7 @@ void func_800F4010(Vec3f* pos, u16 sfxId, f32 arg2) {
     u8 phi_v0;
     u16 sfxId2;
 
-#if OOT_DEBUG
+#if IS_DEBUG && ENABLE_AUDIO_DEBUGGER
     D_80131C8C = arg2;
 #endif
 

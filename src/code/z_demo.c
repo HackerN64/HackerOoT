@@ -176,30 +176,19 @@ void Cutscene_UpdateManual(PlayState* play, CutsceneContext* csCtx) {
 
 void Cutscene_UpdateScripted(PlayState* play, CutsceneContext* csCtx) {
     if (IS_DEBUG && ENABLE_CS_CONTROL) {
-#if ENABLE_CAMERA_DEBUGGER
-#define CS_IDLE_AND_PRESSED_DUP                                                                        \
-    (CHECK_BTN_ALL(input->press.button, CS_CTRL_RESTART_CONTROL) && (csCtx->state == CS_STATE_IDLE) && \
-     IS_CUTSCENE_LAYER && !gDebugCamEnabled)
-#else
-#define CS_IDLE_AND_PRESSED_DUP                                                                        \
-    (CHECK_BTN_ALL(input->press.button, CS_CTRL_RESTART_CONTROL) && (csCtx->state == CS_STATE_IDLE) && \
-     IS_CUTSCENE_LAYER)
-#endif
+        Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
 
-        {
-            Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
+        if (CHECK_BTN_ALL(input->press.button, BTN_DLEFT) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER) {
+            gUseCutsceneCam = false;
+            gSaveContext.save.cutsceneIndex = 0xFFFD;
+            gSaveContext.cutsceneTrigger = 1;
+        }
 
-            if (CHECK_BTN_ALL(input->press.button, BTN_DLEFT) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER) {
-                gUseCutsceneCam = false;
-                gSaveContext.save.cutsceneIndex = 0xFFFD;
-                gSaveContext.cutsceneTrigger = 1;
-            }
-
-            if (CS_IDLE_AND_PRESSED_DUP) {
-                gUseCutsceneCam = true;
-                gSaveContext.save.cutsceneIndex = 0xFFFD;
-                gSaveContext.cutsceneTrigger = 1;
-            }
+        if (CHECK_BTN_ALL(input->press.button, CS_CTRL_RESTART_CONTROL) && (csCtx->state == CS_STATE_IDLE) &&
+                IS_CUTSCENE_LAYER && !IS_DEBUG_CAM_ENABLED) {
+            gUseCutsceneCam = true;
+            gSaveContext.save.cutsceneIndex = 0xFFFD;
+            gSaveContext.cutsceneTrigger = 1;
         }
     }
 
@@ -1808,13 +1797,8 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
     }
 
     if (IS_DEBUG && ENABLE_CS_CONTROL) {
-// if using button combo check for the input, else simply return true
-#define USE_COMBO                                                                                           \
-    (CS_CTRL_USE_BTN_COMBO                                                                                  \
-         ? CHECK_BTN_ALL(play->state.input[CS_CTRL_CONTROLLER_PORT].cur.button, CS_CTRL_BTN_HOLD_FOR_COMBO) \
-         : true)
-
-        if (USE_COMBO && CHECK_BTN_ALL(play->state.input[CS_CTRL_CONTROLLER_PORT].press.button, CS_CTRL_STOP_CONTROL)) {
+        Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
+        if (DEBUG_BTN_COMBO(CS_CTRL_USE_BTN_COMBO, CS_CTRL_BTN_HOLD_FOR_COMBO, CS_CTRL_STOP_CONTROL, input)) {
             csCtx->state = CS_STATE_STOP;
             return;
         }

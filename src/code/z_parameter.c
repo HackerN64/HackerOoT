@@ -3155,6 +3155,12 @@ void func_8008A994(InterfaceContext* interfaceCtx) {
     View_ApplyOrthoToOverlay(&interfaceCtx->view);
 }
 
+#if IS_DEBUG && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)
+#define CAN_DRAW_INTERFACE (pauseCtx->debugState == 0)
+#else
+#define CAN_DRAW_INTERFACE true
+#endif
+
 void Interface_Draw(PlayState* play) {
     static s16 magicArrowEffectsR[] = { 255, 100, 255 };
     static s16 magicArrowEffectsG[] = { 0, 100, 255 };
@@ -3193,9 +3199,7 @@ void Interface_Draw(PlayState* play) {
     gSPSegment(OVERLAY_DISP++, 0x08, interfaceCtx->iconItemSegment);
     gSPSegment(OVERLAY_DISP++, 0x0B, interfaceCtx->mapSegment);
 
-#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
-    if (pauseCtx->debugState == 0) {
-#endif
+    if (CAN_DRAW_INTERFACE) {
         Interface_InitVertices(play);
         func_8008A994(interfaceCtx);
         Health_DrawMeter(play);
@@ -4007,15 +4011,11 @@ void Interface_Draw(PlayState* play) {
                 }
             }
         }
-#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
     }
-#endif
 
-#if OOT_DEBUG && ENABLE_EVENT_EDITOR
-    if (pauseCtx->debugState == 3) {
+    if (IS_DEBUG && ENABLE_EVENT_EDITOR && (pauseCtx->debugState == 3)) {
         FlagSet_Update(play);
     }
-#endif
 
     if (interfaceCtx->unk_244 != 0) {
         gDPPipeSync(OVERLAY_DISP++);

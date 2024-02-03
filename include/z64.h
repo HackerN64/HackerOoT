@@ -102,13 +102,13 @@
 #define REGION_NATIVE REGION_EU
 
 typedef struct {
-#if ENABLE_REG_EDITOR
+    // ENABLE_REG_EDITOR
     /* 0x00 */ s32  regPage; // 0: no page selected (reg editor is not active); 1: first page; `REG_PAGES`: last page
     /* 0x04 */ s32  regGroup; // Indexed from 0 to `REG_GROUPS`-1. Each group has its own character to identify it.
     /* 0x08 */ s32  regCur; // Selected reg, indexed from 0 as the page start
     /* 0x0C */ s32  dPadInputPrev;
     /* 0x10 */ s32  inputRepeatTimer;
-#endif
+
     /* 0x14 */ s16  data[REG_GROUPS * REGS_PER_GROUP]; // Accessed through *REG macros, see regs.h
 } RegEditor; // size = 0x15D4
 
@@ -393,10 +393,7 @@ typedef struct PlayState {
     /* 0x007A2 */ s16 nextCamId;
     /* 0x007A4 */ SequenceContext sequenceCtx;
     /* 0x007A8 */ LightContext lightCtx;
-
-    // ENABLE_FRAMERATE_OPTIONS
-    /* 0x007B8 */ FrameAdvanceContext frameAdvCtx;
-
+    /* 0x007B8 */ FrameAdvanceContext frameAdvCtx; // ENABLE_FRAMERATE_OPTIONS
     /* 0x007C0 */ CollisionContext colCtx;
     /* 0x01C24 */ ActorContext actorCtx;
     /* 0x01D64 */ CutsceneContext csCtx; // "demo_play"

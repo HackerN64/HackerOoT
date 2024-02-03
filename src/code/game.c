@@ -1,9 +1,8 @@
 #include "global.h"
 #include "terminal.h"
 
-#if ENABLE_SPEEDMETER
+// ENABLE_SPEEDMETER
 SpeedMeter D_801664D0;
-#endif
 
 VisCvg sVisCvg;
 VisZBuf sVisZBuf;
@@ -94,9 +93,9 @@ void func_800C4344(GameState* gameState) {
         R_INPUT_TEST_COMPARE_COMBO_PRESS = CHECK_BTN_ALL(selectedInput->press.button, inputCompareValue);
     }
 
-#if ENABLE_REG_EDITOR
-    Regs_UpdateEditor(&gameState->input[1]);
-#endif
+    if (IS_DEBUG && ENABLE_REG_EDITOR) {
+        Regs_UpdateEditor(&gameState->input[1]);
+    }
 
     gDmaMgrVerbose = HREG(60);
     gDmaMgrDmaBuffSize = SREG(21) != 0 ? ALIGN16(SREG(21)) : DMAMGR_DEFAULT_BUFSIZE;
@@ -174,8 +173,7 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
         GameState_DrawInputDisplay(sLastButtonPressed, &newDList);
     }
 
-#if ENABLE_AUDIO_DEBUGGER
-    if (R_ENABLE_AUDIO_DBG & 1) {
+    if (IS_DEBUG && ENABLE_AUDIO_DEBUGGER && (R_ENABLE_AUDIO_DBG & 1)) {
         s32 pad;
         GfxPrint printer;
 
@@ -185,12 +183,10 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
         newDList = GfxPrint_Close(&printer);
         GfxPrint_Destroy(&printer);
     }
-#endif
 
 #endif
 
-#if IS_DEBUG && ENABLE_SPEEDMETER
-    if (R_ENABLE_ARENA_DBG < 0) {
+    if (IS_DEBUG && ENABLE_SPEEDMETER && (R_ENABLE_ARENA_DBG < 0)) {
         s32 pad;
 
         if (IS_DEBUG && ENABLE_DEBUG_HEAP) {
@@ -202,7 +198,6 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
         PRINTF("ハイラル滅亡まであと %08x バイト(game_alloc)\n", THA_GetRemaining(&gameState->tha));
         R_ENABLE_ARENA_DBG = 0;
     }
-#endif
 
     gSPEndDisplayList(newDList++);
     Gfx_Close(polyOpaP, newDList);
@@ -212,16 +207,14 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 
     CLOSE_DISPS(gfxCtx, "../game.c", 800);
 
-#if ENABLE_CAMERA_DEBUGGER || ENABLE_REG_EDITOR
-    Debug_DrawText(gfxCtx);
-#endif
+    if (IS_DEBUG && (ENABLE_CAMERA_DEBUGGER || ENABLE_REG_EDITOR)) {
+        Debug_DrawText(gfxCtx);
+    }
 
-#ifdef ENABLE_SPEEDMETER
-    if (R_ENABLE_ARENA_DBG != 0) {
+    if (IS_DEBUG && ENABLE_SPEEDMETER && (R_ENABLE_ARENA_DBG != 0)) {
         SpeedMeter_DrawTimeEntries(&D_801664D0, gfxCtx);
         SpeedMeter_DrawAllocEntries(&D_801664D0, gfxCtx, gameState);
     }
-#endif
 }
 
 void GameState_SetFrameBuffer(GraphicsContext* gfxCtx) {
@@ -456,9 +449,9 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
         ViMode_Init(&sViMode);
     }
 
-#if ENABLE_SPEEDMETER
-    SpeedMeter_Init(&D_801664D0);
-#endif
+    if (IS_DEBUG && ENABLE_SPEEDMETER) {
+        SpeedMeter_Init(&D_801664D0);
+    }
 
     Rumble_Init();
     osSendMesg(&gameState->gfxCtx->queue, NULL, OS_MESG_BLOCK);
@@ -484,9 +477,9 @@ void GameState_Destroy(GameState* gameState) {
     }
     Rumble_Destroy();
 
-#if ENABLE_SPEEDMETER
-    SpeedMeter_Destroy(&D_801664D0);
-#endif
+    if (IS_DEBUG && ENABLE_SPEEDMETER) {
+        SpeedMeter_Destroy(&D_801664D0);
+    }
 
     VisCvg_Destroy(&sVisCvg);
     VisZBuf_Destroy(&sVisZBuf);

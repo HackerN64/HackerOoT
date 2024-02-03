@@ -524,12 +524,10 @@ void KaleidoScope_SwitchPage(PauseContext* pauseCtx, u8 pt) {
 }
 
 void KaleidoScope_HandlePageToggles(PauseContext* pauseCtx, Input* input) {
-#if ENABLE_INV_EDITOR
-    if ((pauseCtx->debugState == 0) && CHECK_BTN_ALL(input->press.button, BTN_L)) {
+    if (IS_DEBUG && ENABLE_INV_EDITOR && (pauseCtx->debugState == 0) && CHECK_BTN_ALL(input->press.button, BTN_L)) {
         pauseCtx->debugState = 1;
         return;
     }
-#endif
 
     if (CHECK_BTN_ALL(input->press.button, BTN_R)) {
         KaleidoScope_SwitchPage(pauseCtx, 2);
@@ -2420,6 +2418,12 @@ void KaleidoScope_DrawGameOver(PlayState* play) {
     CLOSE_DISPS(gfxCtx, "../z_kaleido_scope_PAL.c", 3169);
 }
 
+#if IS_DEBUG && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)
+#define CAN_DRAW_PAUSE_MENU (pauseCtx->debugState == 0)
+#else
+#define CAN_DRAW_PAUSE_MENU true
+#endif
+
 void KaleidoScope_Draw(PlayState* play) {
     Input* input = &play->state.input[0];
     PauseContext* pauseCtx = &play->pauseCtx;
@@ -2438,12 +2442,7 @@ void KaleidoScope_Draw(PlayState* play) {
     gSPSegment(POLY_OPA_DISP++, 0x0C, pauseCtx->iconItemAltSegment);
     gSPSegment(POLY_OPA_DISP++, 0x0D, pauseCtx->iconItemLangSegment);
 
-#if ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR
-#define IS_DEBUG_STATE_VALUE(val) (pauseCtx->debugState == val)
-#else
-#define IS_DEBUG_STATE_VALUE(val) true
-#endif
-    if (IS_DEBUG_STATE_VALUE(0)) {
+    if (CAN_DRAW_PAUSE_MENU) {
         KaleidoScope_SetView(pauseCtx, pauseCtx->eye.x, pauseCtx->eye.y, pauseCtx->eye.z);
 
         Gfx_SetupDL_42Opa(play->state.gfxCtx);
@@ -2465,11 +2464,9 @@ void KaleidoScope_Draw(PlayState* play) {
         KaleidoScope_DrawGameOver(play);
     }
 
-#if ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR
-    if (IS_DEBUG_STATE_VALUE(1) || IS_DEBUG_STATE_VALUE(2)) {
+    if (IS_DEBUG && ((ENABLE_INV_EDITOR && (pauseCtx->debugState == 1)) || (ENABLE_EVENT_EDITOR && (pauseCtx->debugState == 2)))) {
         KaleidoScope_DrawDebugEditor(play);
     }
-#endif
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_scope_PAL.c", 3254);
 }
@@ -3309,9 +3306,9 @@ void KaleidoScope_Update(PlayState* play) {
                             pauseCtx->alpha = 0;
                         }
                     } else {
-#if ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR
-                        pauseCtx->debugState = 0;
-#endif
+                        if (IS_DEBUG && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)) {
+                            pauseCtx->debugState = 0;
+                        }
                         pauseCtx->state = PAUSE_STATE_RESUME_GAMEPLAY;
                         pauseCtx->unk_1F4 = pauseCtx->unk_1F8 = pauseCtx->unk_1FC = pauseCtx->unk_200 = 160.0f;
                         pauseCtx->namedItem = PAUSE_ITEM_NONE;
@@ -3631,9 +3628,9 @@ void KaleidoScope_Update(PlayState* play) {
                     pauseCtx->alpha = 0;
                 }
             } else {
-#if ENABLE_INV_EDITOR
-                pauseCtx->debugState = 0;
-#endif
+                if (IS_DEBUG && ENABLE_INV_EDITOR) {
+                    pauseCtx->debugState = 0;
+                }
                 pauseCtx->state = PAUSE_STATE_RESUME_GAMEPLAY;
                 pauseCtx->unk_200 = 160.0f;
                 pauseCtx->unk_1FC = 160.0f;

@@ -1,7 +1,3 @@
-#include "config.h"
-
-#if ENABLE_INV_EDITOR
-
 #include "z_kaleido_scope.h"
 #include "assets/textures/parameter_static/parameter_static.h"
 
@@ -653,5 +649,3 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_debug.c", 861);
 }
-
-#endif

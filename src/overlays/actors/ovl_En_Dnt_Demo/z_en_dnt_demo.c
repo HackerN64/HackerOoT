@@ -123,9 +123,11 @@ void EnDntDemo_Judge(EnDntDemo* this, PlayState* play) {
         this->leaderSignal = DNT_SIGNAL_NONE;
         this->actionFunc = EnDntDemo_Results;
     } else if ((this->actor.xzDistToPlayer > 30.0f) || (Player_GetMask(play) == 0)) {
-#if ENABLE_ACTOR_DEBUGGER
-        this->debugArrowTimer++;
-#endif
+
+        if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+            this->debugArrowTimer++;
+        }
+
         if (this->subCamId != SUB_CAM_ID_DONE) {
             this->subCamId = SUB_CAM_ID_DONE;
         }
@@ -139,9 +141,11 @@ void EnDntDemo_Judge(EnDntDemo* this, PlayState* play) {
         if ((Player_GetMask(play) != 0) && (this->subCamId == SUB_CAM_ID_DONE)) {
             this->subCamId = OnePointCutscene_Init(play, 2220, -99, &this->scrubs[3]->actor, CAM_ID_MAIN);
         }
-#if ENABLE_ACTOR_DEBUGGER
-        this->debugArrowTimer = 0;
-#endif
+
+        if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER) {
+            this->debugArrowTimer = 0;
+        }
+
         if (this->judgeTimer == 40) {
             for (i = 0; i < 9; i++) {
                 this->scrubs[i]->stageSignal = DNT_SIGNAL_LOOK;
@@ -329,8 +333,7 @@ void EnDntDemo_Update(Actor* thisx, PlayState* play) {
     }
     this->actionFunc(this, play);
 
-#if ENABLE_ACTOR_DEBUGGER
-    if (BREG(0)) {
+    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER && BREG(0)) {
         if (this->debugArrowTimer != 0) {
             if (!(this->debugArrowTimer & 1)) {
                 DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
@@ -343,5 +346,4 @@ void EnDntDemo_Update(Actor* thisx, PlayState* play) {
                                    1.0f, 1.0f, 255, 255, 255, 255, 4, play->state.gfxCtx);
         }
     }
-#endif
 }

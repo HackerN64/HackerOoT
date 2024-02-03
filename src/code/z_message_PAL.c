@@ -3005,7 +3005,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
  * the last value being saved in a static variable.
  */
 void Message_DrawDebugVariableChanged(s16* var, GraphicsContext* gfxCtx) {
-    if (ENABLE_MSG_DEBUGGER) {
+    if (IS_DEBUG && ENABLE_MSG_DEBUGGER) {
         static s16 sVarLastValue = 0;
         static s16 sFillTimer = 0;
         s32 pad;
@@ -3037,7 +3037,7 @@ void Message_DrawDebugVariableChanged(s16* var, GraphicsContext* gfxCtx) {
 }
 
 void Message_DrawDebugText(PlayState* play, Gfx** p) {
-    if (ENABLE_MSG_DEBUGGER) {
+    if (IS_DEBUG && ENABLE_MSG_DEBUGGER) {
         s32 pad;
         GfxPrint printer;
         s32 pad1;
@@ -3063,7 +3063,7 @@ void Message_Draw(PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx, "../z_message_PAL.c", 3554);
 
-    if (ENABLE_MSG_DEBUGGER) {
+    if (IS_DEBUG && ENABLE_MSG_DEBUGGER) {
         watchVar = gSaveContext.save.info.scarecrowLongSongSet;
         Message_DrawDebugVariableChanged(&watchVar, play->state.gfxCtx);
         if (BREG(0) != 0 && play->msgCtx.textId != 0) {
@@ -3123,7 +3123,7 @@ void Message_Update(PlayState* play) {
         sTextboxSkipped = true;
     }
 
-    if (ENABLE_MSG_DEBUGGER && BREG(0) != 0) {
+    if (IS_DEBUG && ENABLE_MSG_DEBUGGER && BREG(0) != 0) {
         if (CHECK_BTN_ALL(input->press.button, BTN_DDOWN) && CHECK_BTN_ALL(input->cur.button, BTN_L)) {
             PRINTF("msgno=%d\n", D_80153D78);
             Message_StartTextbox(play, R_MESSAGE_DEBUGGER_TEXTID, NULL);

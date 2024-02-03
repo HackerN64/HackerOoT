@@ -73,9 +73,7 @@ void Main(void* arg) {
 
     Regs_Init();
 
-#if ENABLE_SPEEDMETER
-    R_ENABLE_ARENA_DBG = 0;
-#endif
+    R_ENABLE_ARENA_DBG = 0; // ENABLE_SPEEDMETER
 
     osCreateMesgQueue(&sSerialEventQueue, sSerialMsgBuf, ARRAY_COUNT(sSerialMsgBuf));
     osSetEventMesg(OS_EVENT_SI, &sSerialEventQueue, NULL);

@@ -259,3 +259,14 @@ extern struct GraphicsContext* __gfxCtx;
     } while (0)
 
 #endif
+
+// HackerOoT
+
+#if IS_DEBUG
+// if using button combo check for the input, else simply return true
+#define DEBUG_BTN_COMBO(useCombo, btnToHold, btnToPress, input) ((useCombo ? CHECK_BTN_ALL(input->cur.button, btnToHold) : true) && CHECK_BTN_ALL(input->press.button, btnToPress))
+#else
+#define DEBUG_BTN_COMBO(useCombo, btnToHold, btnToPress, input) true
+#endif
+
+#define IS_DEBUG_CAM_ENABLED IS_DEBUG && ENABLE_CAMERA_DEBUGGER ? gDebugCamEnabled : false

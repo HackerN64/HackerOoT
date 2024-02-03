@@ -222,13 +222,11 @@ void EnWonderItem_MultitagFree(EnWonderItem* this, PlayState* play) {
                 this->timer = this->timerMod + 81;
                 return;
             }
-#if ENABLE_ACTOR_DEBUGGER
-            if (BREG(0) != 0) {
+            if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER && BREG(0) != 0) {
                 DebugDisplay_AddObject(sTagPointsFree[i].x, sTagPointsFree[i].y, sTagPointsFree[i].z,
                                        this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f,
                                        1.0f, 1.0f, 0, 255, 0, 255, 4, play->state.gfxCtx);
             }
-#endif
         }
     }
     if (this->timer == 1) {
@@ -294,12 +292,10 @@ void EnWonderItem_MultitagOrdered(EnWonderItem* this, PlayState* play) {
                     Actor_Kill(&this->actor);
                     return;
                 }
-#if ENABLE_ACTOR_DEBUGGER
-            } else if (BREG(0) != 0) {
+            } else if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER && BREG(0) != 0) {
                 DebugDisplay_AddObject(sTagPointsOrdered[i].x, sTagPointsOrdered[i].y, sTagPointsOrdered[i].z,
                                        this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f,
                                        1.0f, 1.0f, 0, 0, 255, 255, 4, play->state.gfxCtx);
-#endif
             }
         }
     }
@@ -363,12 +359,10 @@ void EnWonderItem_Update(Actor* thisx, PlayState* play) {
         colorIndex = 0;
     }
 
-#if ENABLE_ACTOR_DEBUGGER
-    if (BREG(0) != 0) {
+    if (IS_DEBUG && ENABLE_ACTOR_DEBUGGER && BREG(0) != 0) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, debugArrowColors[colorIndex], debugArrowColors[colorIndex + 1],
                                debugArrowColors[colorIndex + 2], 255, 4, play->state.gfxCtx);
     }
-#endif
 }

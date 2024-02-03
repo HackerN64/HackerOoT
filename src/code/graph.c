@@ -164,10 +164,10 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
     OSTask_t* task = &gfxCtx->task.list.t;
     OSScTask* scTask = &gfxCtx->task;
 
-#if ENABLE_SPEEDMETER
-    gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime =
-        osGetTime() - sGraphPrevTaskTimeStart - gAudioThreadUpdateTimeAcc;
-#endif
+    if (IS_DEBUG && ENABLE_SPEEDMETER) {
+        gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime =
+            osGetTime() - sGraphPrevTaskTimeStart - gAudioThreadUpdateTimeAcc;
+    }
 
     {
         CfbInfo* cfb;
@@ -209,7 +209,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
             gfxCtx->callback(gfxCtx, gfxCtx->callbackParam);
         }
 
-#if ENABLE_SPEEDMETER
+    if (IS_DEBUG && ENABLE_SPEEDMETER) {
         timeNow = osGetTime();
         if (gAudioThreadUpdateTimeStart != 0) {
             // The audio thread update is running
@@ -220,7 +220,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
         }
         gAudioThreadUpdateTimeTotalPerGfxTask = gAudioThreadUpdateTimeAcc;
         gAudioThreadUpdateTimeAcc = 0;
-#endif
+    }
 
         sGraphPrevTaskTimeStart = osGetTime();
 
@@ -408,18 +408,19 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
         OSTime timeNow = osGetTime();
         s32 pad;
 
-#if ENABLE_SPEEDMETER
-        gRSPGfxTimeTotal = gRSPGfxTimeAcc;
-        gRSPAudioTimeTotal = gRSPAudioTimeAcc;
-        gRDPTimeTotal = gRDPTimeAcc;
-        gRSPGfxTimeAcc = 0;
-        gRSPAudioTimeAcc = 0;
-        gRDPTimeAcc = 0;
+        if (IS_DEBUG && ENABLE_SPEEDMETER) {
+            gRSPGfxTimeTotal = gRSPGfxTimeAcc;
+            gRSPAudioTimeTotal = gRSPAudioTimeAcc;
+            gRDPTimeTotal = gRDPTimeAcc;
+            gRSPGfxTimeAcc = 0;
+            gRSPAudioTimeAcc = 0;
+            gRDPTimeAcc = 0;
 
-        if (sGraphPrevUpdateEndTime != 0) {
-            gGraphUpdatePeriod = timeNow - sGraphPrevUpdateEndTime;
+            if (sGraphPrevUpdateEndTime != 0) {
+                gGraphUpdatePeriod = timeNow - sGraphPrevUpdateEndTime;
+            }
         }
-#endif
+
         sGraphPrevUpdateEndTime = timeNow;
     }
 
