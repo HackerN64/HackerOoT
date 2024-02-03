@@ -512,6 +512,7 @@ void Sched_HandleRSPDone(Scheduler* sc) {
 
     ASSERT(sc->curRSPTask != NULL, "sc->curRSPTask", "../sched.c", 819);
 
+#if ENABLE_SPEEDMETER
     // Task profiling
     if (sc->curRSPTask->list.t.type == M_AUDTASK) {
         gRSPAudioTimeAcc += osGetTime() - sRSPAudioTimeStart;
@@ -520,6 +521,7 @@ void Sched_HandleRSPDone(Scheduler* sc) {
     } else {
         gRSPOtherTimeAcc += osGetTime() - sRSPOtherTimeStart;
     }
+#endif
 
     // Clear current RSP task
     curRSPTask = sc->curRSPTask;
@@ -562,8 +564,10 @@ void Sched_HandleRDPDone(Scheduler* sc) {
     OSScTask* nextRDP = NULL;
     s32 state;
 
+#if ENABLE_SPEEDMETER
     // Task profiling
     gRDPTimeAcc = osGetTime() - sRDPTimeStart;
+#endif
 
     // Sanity check
     ASSERT(sc->curRDPTask != NULL, "sc->curRDPTask", "../sched.c", 878);

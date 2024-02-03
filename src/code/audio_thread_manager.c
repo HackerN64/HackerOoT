@@ -45,7 +45,9 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
 
     // Update the audio driver
 
+#if ENABLE_SPEEDMETER
     gAudioThreadUpdateTimeStart = osGetTime();
+#endif
 
     if (R_AUDIOMGR_DEBUG_LEVEL >= AUDIOMGR_DEBUG_LEVEL_NO_UPDATE) {
         // Skip update, no rsp task produced
@@ -54,8 +56,10 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
         rspTask = AudioThread_Update();
     }
 
+#if ENABLE_SPEEDMETER
     gAudioThreadUpdateTimeAcc += osGetTime() - gAudioThreadUpdateTimeStart;
     gAudioThreadUpdateTimeStart = 0;
+#endif
 
     if (audioMgr->rspTask != NULL) {
         // Wait for the audio rsp task scheduled on the previous retrace to complete. This looks like it should wait

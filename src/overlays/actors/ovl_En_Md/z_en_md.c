@@ -568,7 +568,11 @@ void func_80AAB158(EnMd* this, PlayState* play) {
         temp2 = 1;
     }
 
+#if ENABLE_CAMERA_DEBUGGER
     if ((play->csCtx.state != CS_STATE_IDLE) || gDebugCamEnabled) {
+#else
+    if (play->csCtx.state != CS_STATE_IDLE) {
+#endif
         this->interactInfo.trackPos = play->view.eye;
         this->interactInfo.yOffset = 40.0f;
         trackingMode = NPC_TRACKING_HEAD_AND_TORSO;

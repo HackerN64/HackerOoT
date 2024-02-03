@@ -2559,7 +2559,6 @@ void Magic_Update(PlayState* play) {
                 (play->gameOverCtx.state == GAMEOVER_INACTIVE) && (play->transitionTrigger == TRANS_TRIGGER_OFF) &&
                 (play->transitionMode == TRANS_MODE_OFF) && !Play_InCsMode(play)) {
                 if ((gSaveContext.save.info.playerData.magic == 0) ||
-
                     ((Player_GetEnvironmentalHazard(play) >= PLAYER_ENV_HAZARD_UNDERWATER_FLOOR) &&
                      (Player_GetEnvironmentalHazard(play) <= PLAYER_ENV_HAZARD_UNDERWATER_FREE)) ||
                     ((gSaveContext.save.info.equips.buttonItems[1] != ITEM_LENS_OF_TRUTH) &&
@@ -3194,7 +3193,9 @@ void Interface_Draw(PlayState* play) {
     gSPSegment(OVERLAY_DISP++, 0x08, interfaceCtx->iconItemSegment);
     gSPSegment(OVERLAY_DISP++, 0x0B, interfaceCtx->mapSegment);
 
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
     if (pauseCtx->debugState == 0) {
+#endif
         Interface_InitVertices(play);
         func_8008A994(interfaceCtx);
         Health_DrawMeter(play);
@@ -4006,9 +4007,11 @@ void Interface_Draw(PlayState* play) {
                 }
             }
         }
+#if (defined ENABLE_INV_EDITOR || defined ENABLE_EVENT_EDITOR)
     }
+#endif
 
-#if OOT_DEBUG
+#if OOT_DEBUG && ENABLE_EVENT_EDITOR
     if (pauseCtx->debugState == 3) {
         FlagSet_Update(play);
     }

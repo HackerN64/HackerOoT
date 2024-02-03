@@ -156,12 +156,16 @@ s32 EffectSs_FindSlot(s32 priority, s32* pIndex) {
 void EffectSs_Insert(PlayState* play, EffectSs* effectSs) {
     s32 index;
 
+#if ENABLE_FRAMERATE_OPTIONS
     if (FrameAdvance_IsEnabled(play) != true) {
+#endif
         if (EffectSs_FindSlot(effectSs->priority, &index) == 0) {
             sEffectSsInfo.searchStartIndex = index + 1;
             sEffectSsInfo.table[index] = *effectSs;
         }
+#if ENABLE_FRAMERATE_OPTIONS
     }
+#endif
 }
 
 // original name: "EffectSoftSprite2_makeEffect"

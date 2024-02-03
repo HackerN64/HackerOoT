@@ -46,7 +46,9 @@ void DemoGt_SpawnDust(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel
 void func_8097D7D8(PlayState* play, Vec3f* pos, Vec3f* velOffset, f32 scale, s32 arg4, s32 arg5, s16 life) {
     s32 pad;
 
+#if ENABLE_FRAMERATE_OPTIONS
     if (!FrameAdvance_IsEnabled(play)) {
+#endif
         s32 frames = play->gameplayFrames;
 
         if (ABS(frames % arg4) == arg5) {
@@ -70,7 +72,9 @@ void func_8097D7D8(PlayState* play, Vec3f* pos, Vec3f* velOffset, f32 scale, s32
 
             DemoGt_SpawnDust(play, pos, &velocity, &accel, (300.0f * scale), (15.0f * scale), life);
         }
+#if ENABLE_FRAMERATE_OPTIONS
     }
+#endif
 }
 
 Actor* DemoGt_SpawnCloudRing(PlayState* play, Vec3f* pos, s16 params) {
@@ -267,7 +271,9 @@ void func_8097E454(PlayState* play, Vec3f* spawnerPos, Vec3f* velocity, Vec3f* a
     f32 dustScale = 300.0f * scale;
     Vec3f pos;
 
+#if ENABLE_FRAMERATE_OPTIONS
     if ((!FrameAdvance_IsEnabled(play)) && (arg7 > 0) && (arg6 > 0)) {
+#endif
         frames = (ABS((s32)play->gameplayFrames) % arg7);
         phi_s0 = 0x10000 * frames / arg6;
         increment = 0x10000 / arg6;
@@ -286,7 +292,9 @@ void func_8097E454(PlayState* play, Vec3f* spawnerPos, Vec3f* velocity, Vec3f* a
 
             phi_s0 += increment;
         }
+#if ENABLE_FRAMERATE_OPTIONS
     }
+#endif
 }
 
 u8 DemoGt_IsCutsceneIdle(PlayState* play) {
@@ -1285,10 +1293,13 @@ void DemoGt_Draw4(DemoGt* this, PlayState* play2) {
         Matrix_Translate(sp48.x, sp48.y, sp48.z, MTXMODE_APPLY);
         MATRIX_TO_MTX(sp60, "../z_demo_gt_part4_1.c", 232);
 
+#if ENABLE_FRAMERATE_OPTIONS
         if (!FrameAdvance_IsEnabled(play)) {
+#endif
             func_80980F8C(this, play);
+#if ENABLE_FRAMERATE_OPTIONS
         }
-
+#endif
         Matrix_Pop();
 
         Gfx_SetupDL_25Opa(gfxCtx);
@@ -1404,9 +1415,13 @@ void DemoGt_Draw5(DemoGt* this, PlayState* play) {
     Matrix_Translate(sp48.x, sp48.y, sp48.z, MTXMODE_APPLY);
     MATRIX_TO_MTX(sp60, "../z_demo_gt_part4_2.c", 227);
 
+#if ENABLE_FRAMERATE_OPTIONS
     if (!FrameAdvance_IsEnabled(play)) {
+#endif
         func_80981458(this, play);
+#if ENABLE_FRAMERATE_OPTIONS
     }
+#endif
 
     Matrix_Pop();
 

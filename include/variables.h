@@ -57,7 +57,11 @@ extern EffectSsOverlay gEffectSsOverlayTable[EFFECT_SS_TYPE_MAX];
 extern Gfx D_80116280[];
 extern ActorOverlay gActorOverlayTable[ACTOR_ID_MAX]; // original name: "actor_dlftbls" 801162A0
 extern s32 gMaxActorId; // original name: "MaxProfile"
+
+#if ENABLE_CAMERA_DEBUGGER
 extern s32 gDebugCamEnabled;
+#endif
+
 extern GameStateOverlay gGameStateOverlayTable[GAMESTATE_ID_MAX];
 extern u8 gWeatherMode;
 extern u8 gLightConfigAfterUnderwater;
@@ -143,13 +147,21 @@ extern u16 D_801333D0;
 extern Vec3f gSfxDefaultPos;
 extern f32 gSfxDefaultFreqAndVolScale;
 extern s8 gSfxDefaultReverb;
+
+#if ENABLE_AUDIO_DEBUGGER
 extern u8 D_801333F0;
 extern u8 gAudioSfxSwapOff;
 extern u8 D_801333F8;
+#endif
+
 extern u8 gSeqCmdWritePos;
 extern u8 gSeqCmdReadPos;
 extern u8 gStartSeqDisabled;
+
+#if ENABLE_AUDIO_DEBUGGER
 extern u8 gAudioDebugPrintSeqCmd;
+#endif
+
 extern u8 gSoundModeList[];
 extern u8 gAudioSpecId;
 extern u8 D_80133418;
@@ -189,6 +201,8 @@ extern Color_RGBA8_u32 gVisMonoColor;
 extern PreNmiBuff* gAppNmiBufferPtr;
 extern Scheduler gScheduler;
 extern uintptr_t gSegments[NUM_SEGMENTS];
+
+#if ENABLE_SPEEDMETER
 extern volatile OSTime gAudioThreadUpdateTimeTotalPerGfxTask;
 extern volatile OSTime gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime;
 extern volatile OSTime gRSPAudioTimeTotal;
@@ -201,6 +215,7 @@ extern volatile OSTime gRSPAudioTimeAcc;
 extern volatile OSTime gRSPGfxTimeAcc;
 extern volatile OSTime gRSPOtherTimeAcc;
 extern volatile OSTime gRDPTimeAcc;
+#endif
 
 extern SfxBankEntry D_8016BAD0[9];
 extern SfxBankEntry D_8016BC80[12];
@@ -211,9 +226,13 @@ extern SfxBankEntry D_8016C820[3];
 extern SfxBankEntry D_8016C8B0[5];
 extern ActiveSfx gActiveSfx[7][MAX_CHANNELS_PER_BANK]; // total size = 0xA8
 extern u8 gSfxBankMuted[];
+
+#if ENABLE_AUDIO_DEBUGGER
 extern u16 gAudioSfxSwapSource[10];
 extern u16 gAudioSfxSwapTarget[10];
 extern u8 gAudioSfxSwapMode[10];
+#endif
+
 extern ActiveSequence gActiveSeqs[4];
 extern AudioContext gAudioCtx;
 extern AudioCustomUpdateFunction gAudioCustomUpdateFunction;

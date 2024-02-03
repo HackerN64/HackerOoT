@@ -693,6 +693,7 @@ void EnReeba_Draw(Actor* thisx, PlayState* play) {
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_reeba.c", 1088);
 
+#if ENABLE_ACTOR_DEBUGGER
     if (BREG(0)) {
         Vec3f debugPos;
 
@@ -702,4 +703,5 @@ void EnReeba_Draw(Actor* thisx, PlayState* play) {
         DebugDisplay_AddObject(debugPos.x, debugPos.y, debugPos.z, this->actor.world.rot.x, this->actor.world.rot.y,
                                this->actor.world.rot.z, 1.0f, 1.0f, 1.0f, 255, 0, 0, 255, 4, play->state.gfxCtx);
     }
+#endif
 }

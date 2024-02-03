@@ -73,7 +73,10 @@ void EnOkarinaEffect_ManageStorm(EnOkarinaEffect* this, PlayState* play) {
     CutsceneFlags_Unset(play, 5);
 
     if (((play->pauseCtx.state == PAUSE_STATE_OFF) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
-         (play->msgCtx.msgLength == 0) && (!FrameAdvance_IsEnabled(play)) &&
+         (play->msgCtx.msgLength == 0) &&
+#if ENABLE_FRAMERATE_OPTIONS
+         (!FrameAdvance_IsEnabled(play)) &&
+#endif
          ((play->transitionMode == TRANS_MODE_OFF) || (gSaveContext.gameMode != GAMEMODE_NORMAL))) ||
         (this->timer >= 250)) {
         if ((play->envCtx.lightMode != LIGHT_MODE_TIME) || play->envCtx.lightConfig != 1) {
@@ -115,9 +118,12 @@ void EnOkarinaEffect_Update(Actor* thisx, PlayState* play) {
     EnOkarinaEffect* this = (EnOkarinaEffect*)thisx;
 
     this->actionFunc(this, play);
+
+#if ENABLE_ACTOR_DEBUGGER
     if (BREG(0) != 0) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 0xFF, 0, 0xFF, 0xFF, 4, play->state.gfxCtx);
     }
+#endif
 }

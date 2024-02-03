@@ -957,7 +957,11 @@ s32 EnKo_AdultSaved(EnKo* this, PlayState* play) {
 void func_80A9877C(EnKo* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if ((play->csCtx.state != CS_STATE_IDLE) || gDebugCamEnabled) {
+#if ENABLE_CAMERA_DEBUGGER
+    if ((play->csCtx.state != CS_STATE_IDLE) || (gDebugCamEnabled != 0)) {
+#else
+    if (play->csCtx.state != CS_STATE_IDLE) {
+#endif
         this->interactInfo.trackPos = play->view.eye;
         this->interactInfo.yOffset = 40.0f;
         if (ENKO_TYPE != ENKO_TYPE_CHILD_0) {
@@ -1097,7 +1101,12 @@ void func_80A98DB4(EnKo* this, PlayState* play) {
         this->modelAlpha = 255.0f;
         return;
     }
-    if ((play->csCtx.state != CS_STATE_IDLE) || gDebugCamEnabled) {
+
+#if ENABLE_CAMERA_DEBUGGER
+    if (play->csCtx.state != CS_STATE_IDLE || gDebugCamEnabled != 0) {
+#else
+    if (play->csCtx.state != CS_STATE_IDLE) {
+#endif
         dist = Math_Vec3f_DistXYZ(&this->actor.world.pos, &play->view.eye) * 0.25f;
     } else {
         dist = this->actor.xzDistToPlayer;

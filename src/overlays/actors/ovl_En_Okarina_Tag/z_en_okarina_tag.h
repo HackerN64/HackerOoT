@@ -16,7 +16,9 @@ typedef struct EnOkarinaTag {
     /* 0x0154 */ s16 switchFlag;
     /* 0x0156 */ char unk_156[0x2];
     /* 0x0158 */ s16 unk_158;
+#if ENABLE_ACTOR_DEBUGGER
     /* 0x015A */ s16 unk_15A;
+#endif
     /* 0x015C */ f32 interactRange;
 } EnOkarinaTag; // size = 0x0160
 

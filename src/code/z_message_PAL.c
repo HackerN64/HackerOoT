@@ -118,9 +118,18 @@ void Message_ResetOcarinaNoteState(void) {
     sOcarinaButtonAlphaValues[0] = sOcarinaButtonAlphaValues[1] = sOcarinaButtonAlphaValues[2] =
         sOcarinaButtonAlphaValues[3] = sOcarinaButtonAlphaValues[4] = sOcarinaButtonAlphaValues[5] =
             sOcarinaButtonAlphaValues[6] = sOcarinaButtonAlphaValues[7] = sOcarinaButtonAlphaValues[8] = 0;
-    sOcarinaButtonAPrimR = 80;
-    sOcarinaButtonAPrimG = 255;
-    sOcarinaButtonAPrimB = 150;
+
+    if (N64_BTN_COLORS) {
+        sOcarinaButtonAPrimR = 80;
+        sOcarinaButtonAPrimG = 150;
+        sOcarinaButtonAPrimB = 255;
+    }
+    else {
+        sOcarinaButtonAPrimR = 80;
+        sOcarinaButtonAPrimG = 255;
+        sOcarinaButtonAPrimB = 150;
+    }
+
     sOcarinaButtonAEnvR = 10;
     sOcarinaButtonAEnvG = 10;
     sOcarinaButtonAEnvB = 10;
@@ -479,6 +488,16 @@ void Message_SetTextColor(MessageContext* msgCtx, u16 colorParameter) {
 }
 
 void Message_DrawTextboxIcon(PlayState* play, Gfx** p, s16 x, s16 y) {
+#if N64_BTN_COLORS
+    static s16 sIconPrimColors[][3] = {
+        { 0, 80, 200 },
+        { 50, 130, 255 },
+    };
+    static s16 sIconEnvColors[][3] = {
+        { 0, 0, 0 },
+        { 0, 130, 255 },
+    };
+#else
     static s16 sIconPrimColors[][3] = {
         { 0, 200, 80 },
         { 50, 255, 130 },
@@ -487,6 +506,7 @@ void Message_DrawTextboxIcon(PlayState* play, Gfx** p, s16 x, s16 y) {
         { 0, 0, 0 },
         { 0, 255, 130 },
     };
+#endif
     static s16 sIconPrimR = 0;
     static s16 sIconPrimG = 200;
     static s16 sIconPrimB = 80;
@@ -1990,6 +2010,16 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
         gOcarinaBtnIconCLeftTex,  // OCARINA_BTN_C_LEFT
         gOcarinaBtnIconCUpTex,    // OCARINA_BTN_C_UP
     };
+#if N64_BTN_COLORS
+    static s16 sOcarinaButtonAPrimColors[][3] = {
+        { 80, 150, 255 },
+        { 100, 200, 255 },
+    };
+    static s16 sOcarinaButtonAEnvColors[][3] = {
+        { 10, 10, 10 },
+        { 50, 50, 255 },
+    };
+#else
     static s16 sOcarinaButtonAPrimColors[][3] = {
         { 80, 255, 150 },
         { 100, 255, 200 },
@@ -1998,6 +2028,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
         { 10, 10, 10 },
         { 50, 255, 50 },
     };
+#endif
     static s16 sOcarinaButtonCPrimColors[][3] = {
         { 255, 255, 50 },
         { 255, 255, 180 },
@@ -2975,50 +3006,54 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
  * the last value being saved in a static variable.
  */
 void Message_DrawDebugVariableChanged(s16* var, GraphicsContext* gfxCtx) {
-    static s16 sVarLastValue = 0;
-    static s16 sFillTimer = 0;
-    s32 pad;
+    if (ENABLE_MSG_DEBUGGER) {
+        static s16 sVarLastValue = 0;
+        static s16 sFillTimer = 0;
+        s32 pad;
 
-    OPEN_DISPS(gfxCtx, "../z_message_PAL.c", 3485);
+        OPEN_DISPS(gfxCtx, "../z_message_PAL.c", 3485);
 
-    if (sVarLastValue != *var) {
-        sVarLastValue = *var;
-        sFillTimer = 30;
+        if (sVarLastValue != *var) {
+            sVarLastValue = *var;
+            sFillTimer = 30;
+        }
+        if (sFillTimer != 0) {
+            sFillTimer--;
+            gDPPipeSync(POLY_OPA_DISP++);
+            gDPSetCycleType(POLY_OPA_DISP++, G_CYC_FILL);
+            gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
+            gDPSetFillColor(POLY_OPA_DISP++, GPACK_RGBA5551(0, 0, 0, 1) << 0x10 | GPACK_RGBA5551(0, 0, 0, 1));
+            gDPFillRectangle(POLY_OPA_DISP++, 0, 110, SCREEN_WIDTH - 1, 150); // 40x319 black bar
+            gDPPipeSync(POLY_OPA_DISP++);
+            gDPPipeSync(POLY_OPA_DISP++);
+            gDPSetCycleType(POLY_OPA_DISP++, G_CYC_FILL);
+            gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
+            gDPSetFillColor(POLY_OPA_DISP++, GPACK_RGBA5551(255, 255, 255, 1) << 0x10 | GPACK_RGBA5551(255, 255, 255, 1));
+            gDPFillRectangle(POLY_OPA_DISP++, 40, 120, 60, 140); // 20x20 white box
+            gDPPipeSync(POLY_OPA_DISP++);
+        }
+        CLOSE_DISPS(gfxCtx, "../z_message_PAL.c", 3513);
     }
-    if (sFillTimer != 0) {
-        sFillTimer--;
-        gDPPipeSync(POLY_OPA_DISP++);
-        gDPSetCycleType(POLY_OPA_DISP++, G_CYC_FILL);
-        gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
-        gDPSetFillColor(POLY_OPA_DISP++, GPACK_RGBA5551(0, 0, 0, 1) << 0x10 | GPACK_RGBA5551(0, 0, 0, 1));
-        gDPFillRectangle(POLY_OPA_DISP++, 0, 110, SCREEN_WIDTH - 1, 150); // 40x319 black bar
-        gDPPipeSync(POLY_OPA_DISP++);
-        gDPPipeSync(POLY_OPA_DISP++);
-        gDPSetCycleType(POLY_OPA_DISP++, G_CYC_FILL);
-        gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
-        gDPSetFillColor(POLY_OPA_DISP++, GPACK_RGBA5551(255, 255, 255, 1) << 0x10 | GPACK_RGBA5551(255, 255, 255, 1));
-        gDPFillRectangle(POLY_OPA_DISP++, 40, 120, 60, 140); // 20x20 white box
-        gDPPipeSync(POLY_OPA_DISP++);
-    }
-    CLOSE_DISPS(gfxCtx, "../z_message_PAL.c", 3513);
 }
 
 void Message_DrawDebugText(PlayState* play, Gfx** p) {
-    s32 pad;
-    GfxPrint printer;
-    s32 pad1;
+    if (ENABLE_MSG_DEBUGGER) {
+        s32 pad;
+        GfxPrint printer;
+        s32 pad1;
 
-    GfxPrint_Init(&printer);
-    GfxPrint_Open(&printer, *p);
-    GfxPrint_SetPos(&printer, 6, 26);
-    GfxPrint_SetColor(&printer, 255, 60, 0, 255);
-    GfxPrint_Printf(&printer, "%s", "MESSAGE");
-    GfxPrint_SetPos(&printer, 14, 26);
-    GfxPrint_Printf(&printer, "%s", "=");
-    GfxPrint_SetPos(&printer, 16, 26);
-    GfxPrint_Printf(&printer, "%x", play->msgCtx.textId);
-    *p = GfxPrint_Close(&printer);
-    GfxPrint_Destroy(&printer);
+        GfxPrint_Init(&printer);
+        GfxPrint_Open(&printer, *p);
+        GfxPrint_SetPos(&printer, 6, 26);
+        GfxPrint_SetColor(&printer, 255, 60, 0, 255);
+        GfxPrint_Printf(&printer, "%s", "MESSAGE");
+        GfxPrint_SetPos(&printer, 14, 26);
+        GfxPrint_Printf(&printer, "%s", "=");
+        GfxPrint_SetPos(&printer, 16, 26);
+        GfxPrint_Printf(&printer, "%x", play->msgCtx.textId);
+        *p = GfxPrint_Close(&printer);
+        GfxPrint_Destroy(&printer);
+    }
 }
 
 void Message_Draw(PlayState* play) {
@@ -3028,16 +3063,19 @@ void Message_Draw(PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx, "../z_message_PAL.c", 3554);
 
-    watchVar = gSaveContext.save.info.scarecrowLongSongSet;
-    Message_DrawDebugVariableChanged(&watchVar, play->state.gfxCtx);
-    if (BREG(0) != 0 && play->msgCtx.textId != 0) {
-        plusOne = Gfx_Open(polyOpaP = POLY_OPA_DISP);
-        gSPDisplayList(OVERLAY_DISP++, plusOne);
-        Message_DrawDebugText(play, &plusOne);
-        gSPEndDisplayList(plusOne++);
-        Gfx_Close(polyOpaP, plusOne);
-        POLY_OPA_DISP = plusOne;
+    if (ENABLE_MSG_DEBUGGER) {
+        watchVar = gSaveContext.save.info.scarecrowLongSongSet;
+        Message_DrawDebugVariableChanged(&watchVar, play->state.gfxCtx);
+        if (BREG(0) != 0 && play->msgCtx.textId != 0) {
+            plusOne = Gfx_Open(polyOpaP = POLY_OPA_DISP);
+            gSPDisplayList(OVERLAY_DISP++, plusOne);
+            Message_DrawDebugText(play, &plusOne);
+            gSPEndDisplayList(plusOne++);
+            Gfx_Close(polyOpaP, plusOne);
+            POLY_OPA_DISP = plusOne;
+        }
     }
+
     if (1) {}
     plusOne = Gfx_Open(polyOpaP = POLY_OPA_DISP);
     gSPDisplayList(OVERLAY_DISP++, plusOne);
@@ -3085,7 +3123,7 @@ void Message_Update(PlayState* play) {
         sTextboxSkipped = true;
     }
 
-    if (BREG(0) != 0) {
+    if (ENABLE_MSG_DEBUGGER && BREG(0) != 0) {
         if (CHECK_BTN_ALL(input->press.button, BTN_DDOWN) && CHECK_BTN_ALL(input->cur.button, BTN_L)) {
             PRINTF("msgno=%d\n", D_80153D78);
             Message_StartTextbox(play, R_MESSAGE_DEBUGGER_TEXTID, NULL);

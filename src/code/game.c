@@ -1,7 +1,10 @@
 #include "global.h"
 #include "terminal.h"
 
+#if ENABLE_SPEEDMETER
 SpeedMeter D_801664D0;
+#endif
+
 VisCvg sVisCvg;
 VisZBuf sVisZBuf;
 VisMono sVisMono;
@@ -91,9 +94,9 @@ void func_800C4344(GameState* gameState) {
         R_INPUT_TEST_COMPARE_COMBO_PRESS = CHECK_BTN_ALL(selectedInput->press.button, inputCompareValue);
     }
 
-    if (gIsCtrlr2Valid) {
-        Regs_UpdateEditor(&gameState->input[1]);
-    }
+#if ENABLE_REG_EDITOR
+    Regs_UpdateEditor(&gameState->input[1]);
+#endif
 
     gDmaMgrVerbose = HREG(60);
     gDmaMgrDmaBuffSize = SREG(21) != 0 ? ALIGN16(SREG(21)) : DMAMGR_DEFAULT_BUFSIZE;
@@ -117,7 +120,7 @@ void func_800C4344(GameState* gameState) {
 #endif
 }
 
-#if OOT_DEBUG
+#if OOT_DEBUG && SHOW_INPUT_DISPLAY
 void GameState_DrawInputDisplay(u16 input, Gfx** gfxP) {
     static const u16 sInpDispBtnColors[] = {
         GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),
@@ -165,10 +168,14 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 
 #if OOT_DEBUG
     sLastButtonPressed = gameState->input[0].press.button | gameState->input[0].cur.button;
+
+#if SHOW_INPUT_DISPLAY
     if (R_DISABLE_INPUT_DISPLAY == 0) {
         GameState_DrawInputDisplay(sLastButtonPressed, &newDList);
     }
+#endif
 
+#if ENABLE_AUDIO_DEBUGGER
     if (R_ENABLE_AUDIO_DBG & 1) {
         s32 pad;
         GfxPrint printer;
@@ -181,16 +188,21 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     }
 #endif
 
+#endif
+
+#if OOT_DEBUG && ENABLE_SPEEDMETER
     if (R_ENABLE_ARENA_DBG < 0) {
-#if OOT_DEBUG
         s32 pad;
+
+#if ENABLE_DEBUG_HEAP
         DebugArena_Display();
+#endif
         SystemArena_Display();
         // "%08x bytes left until the death of Hyrule (game_alloc)"
         PRINTF("ハイラル滅亡まであと %08x バイト(game_alloc)\n", THA_GetRemaining(&gameState->tha));
-#endif
         R_ENABLE_ARENA_DBG = 0;
     }
+#endif
 
     gSPEndDisplayList(newDList++);
     Gfx_Close(polyOpaP, newDList);
@@ -200,12 +212,16 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 
     CLOSE_DISPS(gfxCtx, "../game.c", 800);
 
+#if ENABLE_CAMERA_DEBUGGER || ENABLE_REG_EDITOR
     Debug_DrawText(gfxCtx);
+#endif
 
+#ifdef ENABLE_SPEEDMETER
     if (R_ENABLE_ARENA_DBG != 0) {
         SpeedMeter_DrawTimeEntries(&D_801664D0, gfxCtx);
         SpeedMeter_DrawAllocEntries(&D_801664D0, gfxCtx, gameState);
     }
+#endif
 }
 
 void GameState_SetFrameBuffer(GraphicsContext* gfxCtx) {
@@ -439,7 +455,11 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
     if ((R_VI_MODE_EDIT_STATE == VI_MODE_EDIT_STATE_INACTIVE) || !OOT_DEBUG) {
         ViMode_Init(&sViMode);
     }
+
+#if ENABLE_SPEEDMETER
     SpeedMeter_Init(&D_801664D0);
+#endif
+
     Rumble_Init();
     osSendMesg(&gameState->gfxCtx->queue, NULL, OS_MESG_BLOCK);
     endTime = osGetTime();
@@ -463,7 +483,11 @@ void GameState_Destroy(GameState* gameState) {
         gameState->destroy(gameState);
     }
     Rumble_Destroy();
+
+#if ENABLE_SPEEDMETER
     SpeedMeter_Destroy(&D_801664D0);
+#endif
+
     VisCvg_Destroy(&sVisCvg);
     VisZBuf_Destroy(&sVisZBuf);
     VisMono_Destroy(&sVisMono);

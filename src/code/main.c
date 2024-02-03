@@ -55,14 +55,14 @@ void Main(void* arg) {
     PRINTF("システムヒープ初期化 %08x-%08x %08x\n", systemHeapStart, fb, gSystemHeapSize);
     SystemHeap_Init((void*)systemHeapStart, gSystemHeapSize); // initializes the system heap
 
-#if OOT_DEBUG
+#if OOT_DEBUG && ENABLE_DEBUG_HEAP
     {
         void* debugHeapStart;
         u32 debugHeapSize;
 
         if (osMemSize >= 0x800000) {
             debugHeapStart = SysCfb_GetFbEnd();
-            debugHeapSize = PHYS_TO_K0(0x600000) - (uintptr_t)debugHeapStart;
+            debugHeapSize = PHYS_TO_K0(DEBUG_HEAP_SIZE) - (uintptr_t)debugHeapStart;
         } else {
             debugHeapSize = 0x400;
             debugHeapStart = SYSTEM_ARENA_MALLOC(debugHeapSize, "../main.c", 565);
@@ -75,7 +75,9 @@ void Main(void* arg) {
 
     Regs_Init();
 
+#if ENABLE_SPEEDMETER
     R_ENABLE_ARENA_DBG = 0;
+#endif
 
     osCreateMesgQueue(&sSerialEventQueue, sSerialMsgBuf, ARRAY_COUNT(sSerialMsgBuf));
     osSetEventMesg(OS_EVENT_SI, &sSerialEventQueue, NULL);

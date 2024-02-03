@@ -19,11 +19,15 @@ void KaleidoSetup_Update(PlayState* play) {
         gSaveContext.magicState != MAGIC_STATE_FILL &&
         (play->sceneId != SCENE_BOMBCHU_BOWLING_ALLEY || !Flags_GetSwitch(play, 0x38))) {
 
+#if ENABLE_EVENT_EDITOR
         if (CHECK_BTN_ALL(input->cur.button, BTN_L) && CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
             if (BREG(0)) {
                 pauseCtx->debugState = 3;
             }
         } else if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
+#else
+        if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
+#endif
             // The start button was pressed, pause
             gSaveContext.prevHudVisibilityMode = gSaveContext.hudVisibilityMode;
 
@@ -68,7 +72,9 @@ void KaleidoSetup_Init(PlayState* play) {
     u64 temp = 0; // Necessary to match
 
     pauseCtx->state = PAUSE_STATE_OFF;
+#if ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR
     pauseCtx->debugState = 0;
+#endif
     pauseCtx->alpha = 0;
     pauseCtx->unk_1EA = 0;
     pauseCtx->mainState = PAUSE_MAIN_STATE_IDLE;

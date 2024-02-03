@@ -325,7 +325,11 @@ static void* sCursorTexs[] = {
 static s16 sCursorColors[][3] = {
     { 255, 255, 255 },
     { 255, 255, 0 },
+#if N64_BTN_COLORS
+    { 0, 50, 255 },
+#else
     { 0, 255, 50 },
+#endif
 };
 
 static void* sSavePromptTexs[] = {
@@ -520,10 +524,12 @@ void KaleidoScope_SwitchPage(PauseContext* pauseCtx, u8 pt) {
 }
 
 void KaleidoScope_HandlePageToggles(PauseContext* pauseCtx, Input* input) {
+#if ENABLE_INV_EDITOR
     if ((pauseCtx->debugState == 0) && CHECK_BTN_ALL(input->press.button, BTN_L)) {
         pauseCtx->debugState = 1;
         return;
     }
+#endif
 
     if (CHECK_BTN_ALL(input->press.button, BTN_R)) {
         KaleidoScope_SwitchPage(pauseCtx, 2);
@@ -632,10 +638,17 @@ Gfx* KaleidoScope_DrawPageSections(Gfx* gfx, Vtx* vertices, void** textures) {
 }
 
 void KaleidoScope_DrawPages(PlayState* play, GraphicsContext* gfxCtx) {
+#if N64_BTN_COLORS
+    static s16 D_8082ACF4[][3] = {
+        { 0, 0, 0 }, { 0, 0, 0 },     { 0, 0, 0 },    { 0, 0, 0 }, { 255, 255, 0 }, { 0, 0, 0 },
+        { 0, 0, 0 }, { 255, 255, 0 }, { 0, 50, 255 }, { 0, 0, 0 }, { 0, 0, 0 },     { 0, 50, 255 },
+    };
+#else
     static s16 D_8082ACF4[][3] = {
         { 0, 0, 0 }, { 0, 0, 0 },     { 0, 0, 0 },    { 0, 0, 0 }, { 255, 255, 0 }, { 0, 0, 0 },
         { 0, 0, 0 }, { 255, 255, 0 }, { 0, 255, 50 }, { 0, 0, 0 }, { 0, 0, 0 },     { 0, 255, 50 },
     };
+#endif
     static s16 D_8082AD3C = 20;
     static s16 D_8082AD40 = 0;
     static s16 sStickXRepeatTimer = 0;
@@ -646,6 +659,12 @@ void KaleidoScope_DrawPages(PlayState* play, GraphicsContext* gfxCtx) {
     s16 stepR;
     s16 stepG;
     s16 stepB;
+
+    Color_RGB8 color = { 100, 255, 100 };
+    if (N64_BTN_COLORS) {
+        color.g = 100;
+        color.b = 255;
+    }
 
     OPEN_DISPS(gfxCtx, "../z_kaleido_scope_PAL.c", 1100);
 
@@ -968,7 +987,7 @@ void KaleidoScope_DrawPages(PlayState* play, GraphicsContext* gfxCtx) {
 
             gDPSetCombineLERP(POLY_OPA_DISP++, 1, 0, PRIMITIVE, 0, TEXEL0, 0, PRIMITIVE, 0, 1, 0, PRIMITIVE, 0, TEXEL0,
                               0, PRIMITIVE, 0);
-            gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 100, 255, 100, VREG(61));
+            gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, color.r, color.g, color.b, VREG(61));
 
             if (pauseCtx->promptChoice == 0) {
                 gSPDisplayList(POLY_OPA_DISP++, gPromptCursorLeftDL);
@@ -993,7 +1012,7 @@ void KaleidoScope_DrawPages(PlayState* play, GraphicsContext* gfxCtx) {
 
                 gDPSetCombineLERP(POLY_OPA_DISP++, 1, 0, PRIMITIVE, 0, TEXEL0, 0, PRIMITIVE, 0, 1, 0, PRIMITIVE, 0,
                                   TEXEL0, 0, PRIMITIVE, 0);
-                gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 100, 255, 100, VREG(61));
+                gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, color.r, color.g, color.b, VREG(61));
 
                 if (pauseCtx->promptChoice == 0) {
                     gSPDisplayList(POLY_OPA_DISP++, gPromptCursorLeftDL);
@@ -2419,7 +2438,12 @@ void KaleidoScope_Draw(PlayState* play) {
     gSPSegment(POLY_OPA_DISP++, 0x0C, pauseCtx->iconItemAltSegment);
     gSPSegment(POLY_OPA_DISP++, 0x0D, pauseCtx->iconItemLangSegment);
 
-    if (pauseCtx->debugState == 0) {
+#if ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR
+    #define IS_DEBUG_STATE_VALUE(val) (pauseCtx->debugState == val)
+#else
+    #define IS_DEBUG_STATE_VALUE(val) true
+#endif
+    if (IS_DEBUG_STATE_VALUE(0)) {
         KaleidoScope_SetView(pauseCtx, pauseCtx->eye.x, pauseCtx->eye.y, pauseCtx->eye.z);
 
         Gfx_SetupDL_42Opa(play->state.gfxCtx);
@@ -2441,9 +2465,11 @@ void KaleidoScope_Draw(PlayState* play) {
         KaleidoScope_DrawGameOver(play);
     }
 
-    if ((pauseCtx->debugState == 1) || (pauseCtx->debugState == 2)) {
+#if ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR
+    if (IS_DEBUG_STATE_VALUE(1) || IS_DEBUG_STATE_VALUE(2)) {
         KaleidoScope_DrawDebugEditor(play);
     }
+#endif
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_scope_PAL.c", 3254);
 }
@@ -3283,7 +3309,9 @@ void KaleidoScope_Update(PlayState* play) {
                             pauseCtx->alpha = 0;
                         }
                     } else {
+#if ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR
                         pauseCtx->debugState = 0;
+#endif
                         pauseCtx->state = PAUSE_STATE_RESUME_GAMEPLAY;
                         pauseCtx->unk_1F4 = pauseCtx->unk_1F8 = pauseCtx->unk_1FC = pauseCtx->unk_200 = 160.0f;
                         pauseCtx->namedItem = PAUSE_ITEM_NONE;
@@ -3603,7 +3631,9 @@ void KaleidoScope_Update(PlayState* play) {
                     pauseCtx->alpha = 0;
                 }
             } else {
+#if ENABLE_INV_EDITOR
                 pauseCtx->debugState = 0;
+#endif
                 pauseCtx->state = PAUSE_STATE_RESUME_GAMEPLAY;
                 pauseCtx->unk_200 = 160.0f;
                 pauseCtx->unk_1FC = 160.0f;

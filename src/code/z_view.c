@@ -504,7 +504,6 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
 
     // rescale the A button/icon properly
     width = WIDE_MULT((view->viewport.rightX - view->viewport.leftX), WIDE_GET_4_3);
-    ;
     height = view->viewport.bottomY - view->viewport.topY;
 
     aspect = (f32)width / (f32)height;

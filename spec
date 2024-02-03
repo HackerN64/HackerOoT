@@ -558,12 +558,14 @@ beginseg
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_title/ovl_title_reloc.o"
 endseg
 
+#if ENABLE_MAP_SELECT
 beginseg
     name "ovl_select"
     compress
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_select/z_select.o"
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_select/ovl_select_reloc.o"
 endseg
+#endif
 
 beginseg
     name "ovl_opening"
@@ -7354,6 +7356,7 @@ endseg
 
 beginseg
     name "vr_fine0_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_fine0_pal_static.o"
 endseg
@@ -7367,6 +7370,7 @@ endseg
 
 beginseg
     name "vr_fine1_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_fine1_pal_static.o"
 endseg
@@ -7380,6 +7384,7 @@ endseg
 
 beginseg
     name "vr_fine2_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_fine2_pal_static.o"
 endseg
@@ -7393,6 +7398,7 @@ endseg
 
 beginseg
     name "vr_fine3_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_fine3_pal_static.o"
 endseg
@@ -7406,6 +7412,7 @@ endseg
 
 beginseg
     name "vr_cloud0_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_cloud0_pal_static.o"
 endseg
@@ -7419,6 +7426,7 @@ endseg
 
 beginseg
     name "vr_cloud1_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_cloud1_pal_static.o"
 endseg
@@ -7432,6 +7440,7 @@ endseg
 
 beginseg
     name "vr_cloud2_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_cloud2_pal_static.o"
 endseg
@@ -7445,6 +7454,7 @@ endseg
 
 beginseg
     name "vr_cloud3_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_cloud3_pal_static.o"
 endseg
@@ -7458,6 +7468,7 @@ endseg
 
 beginseg
     name "vr_holy0_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_holy0_pal_static.o"
 endseg
@@ -7471,6 +7482,7 @@ endseg
 
 beginseg
     name "vr_holy1_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_holy1_pal_static.o"
 endseg
@@ -7484,6 +7496,7 @@ endseg
 
 beginseg
     name "vr_MDVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_MDVR_pal_static.o"
 endseg
@@ -7497,6 +7510,7 @@ endseg
 
 beginseg
     name "vr_MNVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_MNVR_pal_static.o"
 endseg
@@ -7510,6 +7524,7 @@ endseg
 
 beginseg
     name "vr_RUVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_RUVR_pal_static.o"
 endseg
@@ -7523,6 +7538,7 @@ endseg
 
 beginseg
     name "vr_LHVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_LHVR_pal_static.o"
 endseg
@@ -7536,6 +7552,7 @@ endseg
 
 beginseg
     name "vr_KHVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_KHVR_pal_static.o"
 endseg
@@ -7549,6 +7566,7 @@ endseg
 
 beginseg
     name "vr_K3VR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_K3VR_pal_static.o"
 endseg
@@ -7562,6 +7580,7 @@ endseg
 
 beginseg
     name "vr_K4VR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_K4VR_pal_static.o"
 endseg
@@ -7575,6 +7594,7 @@ endseg
 
 beginseg
     name "vr_K5VR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_K5VR_pal_static.o"
 endseg
@@ -7588,6 +7608,7 @@ endseg
 
 beginseg
     name "vr_SP1a_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_SP1a_pal_static.o"
 endseg
@@ -7601,6 +7622,7 @@ endseg
 
 beginseg
     name "vr_MLVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_MLVR_pal_static.o"
 endseg
@@ -7614,6 +7636,7 @@ endseg
 
 beginseg
     name "vr_KKRVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_KKRVR_pal_static.o"
 endseg
@@ -7627,6 +7650,7 @@ endseg
 
 beginseg
     name "vr_KR3VR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_KR3VR_pal_static.o"
 endseg
@@ -7640,6 +7664,7 @@ endseg
 
 beginseg
     name "vr_IPVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_IPVR_pal_static.o"
 endseg
@@ -7653,6 +7678,7 @@ endseg
 
 beginseg
     name "vr_KSVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_KSVR_pal_static.o"
 endseg
@@ -7666,6 +7692,7 @@ endseg
 
 beginseg
     name "vr_GLVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_GLVR_pal_static.o"
 endseg
@@ -7679,6 +7706,7 @@ endseg
 
 beginseg
     name "vr_ZRVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_ZRVR_pal_static.o"
 endseg
@@ -7692,6 +7720,7 @@ endseg
 
 beginseg
     name "vr_DGVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_DGVR_pal_static.o"
 endseg
@@ -7705,6 +7734,7 @@ endseg
 
 beginseg
     name "vr_ALVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_ALVR_pal_static.o"
 endseg
@@ -7718,6 +7748,7 @@ endseg
 
 beginseg
     name "vr_NSVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_NSVR_pal_static.o"
 endseg
@@ -7731,6 +7762,7 @@ endseg
 
 beginseg
     name "vr_LBVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_LBVR_pal_static.o"
 endseg
@@ -7744,6 +7776,7 @@ endseg
 
 beginseg
     name "vr_TTVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_TTVR_pal_static.o"
 endseg
@@ -7757,6 +7790,7 @@ endseg
 
 beginseg
     name "vr_FCVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_FCVR_pal_static.o"
 endseg
@@ -11844,6 +11878,7 @@ endseg
 #if !ENABLE_HACKEROOT || INCLUDE_TEST_SCENES
 beginseg
     name "test01_scene"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/scenes/test_levels/test01/test01_scene.o"
     number 2
@@ -11851,6 +11886,7 @@ endseg
 
 beginseg
     name "test01_room_0"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/scenes/test_levels/test01/test01_room_0.o"
     number 3

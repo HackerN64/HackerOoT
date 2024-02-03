@@ -102,11 +102,13 @@
 #define REGION_NATIVE REGION_EU
 
 typedef struct {
+#if ENABLE_REG_EDITOR
     /* 0x00 */ s32  regPage; // 0: no page selected (reg editor is not active); 1: first page; `REG_PAGES`: last page
     /* 0x04 */ s32  regGroup; // Indexed from 0 to `REG_GROUPS`-1. Each group has its own character to identify it.
     /* 0x08 */ s32  regCur; // Selected reg, indexed from 0 as the page start
     /* 0x0C */ s32  dPadInputPrev;
     /* 0x10 */ s32  inputRepeatTimer;
+#endif
     /* 0x14 */ s16  data[REG_GROUPS * REGS_PER_GROUP]; // Accessed through *REG macros, see regs.h
 } RegEditor; // size = 0x15D4
 
@@ -115,10 +117,12 @@ typedef struct {
     /* 0x01 */ u8   natureAmbienceId;
 } SequenceContext; // size = 0x2
 
+#if ENABLE_FRAMERATE_OPTIONS
 typedef struct {
     /* 0x00 */ s32 enabled;
     /* 0x04 */ s32 timer;
 } FrameAdvanceContext; // size = 0x8
+#endif
 
 typedef struct {
     /* 0x00 */ Vec3f    pos;
@@ -301,8 +305,8 @@ typedef struct {
     /* 0x01D0 */ SramContext sramCtx;
     /* 0x01D4 */ u16 timer; // not used in mq dbg (some sort of timer that doesn't seem to affect anything)
     /* 0x01D6 */ s16 coverAlpha;
-    /* 0x01D8 */ s16 addAlpha; // not used in mq dbg
-    /* 0x01DA */ u16 visibleDuration; // not used in mq dbg
+    /* 0x01D8 */ s16 addAlpha;
+    /* 0x01DA */ u16 visibleDuration;
     /* 0x01DC */ s16 ult;
     /* 0x01DE */ s16 uls;
     /* 0x01E0 */ char unk_1E0[0x01];
@@ -391,7 +395,11 @@ typedef struct PlayState {
     /* 0x007A2 */ s16 nextCamId;
     /* 0x007A4 */ SequenceContext sequenceCtx;
     /* 0x007A8 */ LightContext lightCtx;
+#if ENABLE_FRAMERATE_OPTIONS
     /* 0x007B8 */ FrameAdvanceContext frameAdvCtx;
+#else
+    /* 0x007B8 */ u8 padding[8]; // preserves correct offsets
+#endif
     /* 0x007C0 */ CollisionContext colCtx;
     /* 0x01C24 */ ActorContext actorCtx;
     /* 0x01D64 */ CutsceneContext csCtx; // "demo_play"
@@ -557,8 +565,8 @@ typedef struct {
      & (ENTRANCE_INFO_START_TRANS_TYPE_MASK >> ENTRANCE_INFO_START_TRANS_TYPE_SHIFT))
 
 typedef struct {
-    /* 0x00 */ s8  sceneId;
-    /* 0x01 */ s8  spawn;
+    /* 0x00 */ u8  sceneId;
+    /* 0x01 */ u8  spawn;
     /* 0x02 */ u16 field;
 } EntranceInfo; // size = 0x4
 

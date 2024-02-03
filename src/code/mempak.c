@@ -1,3 +1,7 @@
+#include "config.h"
+
+#ifdef ENABLE_MEMPAK
+
 /**
  * @file mempak.c
  *
@@ -272,3 +276,5 @@ s32 Mempak_GetFileSize(s32 controllerNum, char letter) {
     }
     return state.file_size;
 }
+
+#endif

@@ -376,7 +376,11 @@ void Play_Init(GameState* thisx) {
     PreRender_SetValues(&this->pauseBgPreRender, SCREEN_WIDTH, SCREEN_HEIGHT, NULL, NULL);
     gTransitionTileState = TRANS_TILE_OFF;
     this->transitionMode = TRANS_MODE_OFF;
+
+#ifdef ENABLE_FRAMERATE_OPTIONS
     FrameAdvance_Init(&this->frameAdvCtx);
+#endif
+
     Rand_Seed((u32)osGetTime());
     Matrix_Init(&this->state);
     this->state.main = Play_Main;
@@ -503,7 +507,9 @@ void Play_Update(PlayState* this) {
     gSegments[5] = VIRTUAL_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.subKeepSlot].segment);
     gSegments[2] = VIRTUAL_TO_PHYSICAL(this->sceneSegment);
 
-    if (FrameAdvance_Update(&this->frameAdvCtx, &input[1])) {
+#ifdef ENABLE_FRAMERATE_OPTIONS
+    if (FrameAdvance_Update(&this->frameAdvCtx, &input[FA_CONTROLLER_PORT])) {
+#endif
         if ((this->transitionMode == TRANS_MODE_OFF) && (this->transitionTrigger != TRANS_TRIGGER_OFF)) {
             this->transitionMode = TRANS_MODE_SETUP;
         }
@@ -1003,14 +1009,23 @@ void Play_Update(PlayState* this) {
         } else {
             goto skip;
         }
+#ifdef ENABLE_FRAMERATE_OPTIONS
     }
+#endif
 
     PLAY_LOG(3799);
 
 skip:
     PLAY_LOG(3801);
+    
 
-    if (!isPaused || gDebugCamEnabled) {
+#if ENABLE_CAMERA_DEBUGGER
+    #define NOT_PAUSED_OR_DEBUG_CAM (!isPaused || gDebugCamEnabled)
+#else
+    #define NOT_PAUSED_OR_DEBUG_CAM (!isPaused)
+#endif
+
+    if (NOT_PAUSED_OR_DEBUG_CAM) {
         s32 i;
 
         this->nextCamId = this->activeCamId;
@@ -1273,9 +1288,11 @@ void Play_Draw(PlayState* this) {
             }
         }
 
-        if (!OOT_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_DEBUG_OBJECTS) {
+#if OOT_DEBUG && !NO_DEBUG_DISPLAY
+        if ((R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_DEBUG_OBJECTS) {
             DebugDisplay_DrawObjects(this);
         }
+#endif
 
         if ((R_PAUSE_BG_PRERENDER_STATE == PAUSE_BG_PRERENDER_SETUP) || (gTransitionTileState == TRANS_TILE_SETUP)) {
             Gfx* gfxP = OVERLAY_DISP;
@@ -1326,7 +1343,9 @@ void Play_Main(GameState* thisx) {
 
     D_8012D1F8 = &this->state.input[0];
 
+#ifndef NO_DEBUG_DISPLAY
     DebugDisplay_Init();
+#endif
 
     PLAY_LOG(4556);
 
@@ -1802,9 +1821,11 @@ int Play_CamIsNotFixed(PlayState* this) {
            (R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_FIXED_MARKET) && (this->sceneId != SCENE_CASTLE_COURTYARD_GUARDS_DAY);
 }
 
+#if ENABLE_FRAMERATE_OPTIONS
 int FrameAdvance_IsEnabled(PlayState* this) {
     return !!this->frameAdvCtx.enabled;
 }
+#endif
 
 s32 func_800C0D34(PlayState* this, Actor* actor, s16* yaw) {
     TransitionActorEntry* transitionActor;

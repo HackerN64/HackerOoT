@@ -1,3 +1,7 @@
+#include "config.h"
+
+#if ENABLE_DEBUG_HEAP
+
 #include "global.h"
 
 #define LOG_SEVERITY_NOLOG 0
@@ -109,3 +113,5 @@ void DebugArena_Cleanup(void) {
 u8 DebugArena_IsInitialized(void) {
     return __osMallocIsInitialized(&sDebugArena);
 }
+
+#endif

@@ -114,10 +114,13 @@ void EnKakasi2_Destroy(Actor* thisx, PlayState* play) {
 void func_80A90264(EnKakasi2* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
+#if ENABLE_ACTOR_DEBUGGER
     this->unk_194++;
+#endif
 
     if ((BREG(1) != 0) && (this->actor.xzDistToPlayer < this->maxSpawnDistance.x) &&
         (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < this->maxSpawnDistance.y)) {
+        // debug feature?
 
         this->actor.draw = func_80A90948;
         Collider_InitCylinder(play, &this->collider);
@@ -137,7 +140,9 @@ void func_80A90264(EnKakasi2* this, PlayState* play) {
                (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < this->maxSpawnDistance.y) &&
                GET_EVENTCHKINF(EVENTCHKINF_9C)) {
 
+#if ENABLE_ACTOR_DEBUGGER
         this->unk_194 = 0;
+#endif
         if (play->msgCtx.ocarinaMode == OCARINA_MODE_0B) {
             if (this->switchFlag >= 0) {
                 Flags_SetSwitch(play, this->switchFlag);
@@ -213,6 +218,8 @@ void EnKakasi2_Update(Actor* thisx, PlayState* play2) {
         CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
         CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
     }
+
+#if ENABLE_ACTOR_DEBUGGER
     if (BREG(0) != 0) {
         if (BREG(5) != 0) {
             PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ this->actor.player_distance ☆☆☆☆☆ %f\n" VT_RST, this->actor.xzDistToPlayer);
@@ -233,6 +240,7 @@ void EnKakasi2_Update(Actor* thisx, PlayState* play2) {
             }
         }
     }
+#endif
 }
 
 void func_80A90948(Actor* thisx, PlayState* play) {
