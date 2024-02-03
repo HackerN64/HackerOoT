@@ -331,7 +331,7 @@ s32 View_ApplyPerspective(View* view) {
         guPerspective(projection, &view->normal, view->fovy, aspect, view->zNear, view->zFar, view->scale);
     }
 
-#if OOT_DEBUG
+#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
     if (QREG(88) & 1) {
         s32 i;
         MtxF mf;
@@ -375,7 +375,7 @@ s32 View_ApplyPerspective(View* view) {
 
     view->viewing = *viewing;
 
-#if OOT_DEBUG
+#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
     // Debug print view matrix
     if (QREG(88) & 2) {
         s32 i;
@@ -628,7 +628,7 @@ s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP) {
     return 1;
 }
 
-#if OOT_DEBUG
+#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
 /**
  * Logs an error and returns nonzero if camera is too far from the origin.
  */

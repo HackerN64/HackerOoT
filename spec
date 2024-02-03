@@ -2,7 +2,7 @@
  * ROM spec file
  */
 
-//#include "config.h"
+#include "include/config.h"
 
 beginseg
     name "makerom"

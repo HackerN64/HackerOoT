@@ -178,7 +178,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
         osStopTimer(&timer);
 
         if (msg == (OSMesg)666) {
-#if OOT_DEBUG
+#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
             PRINTF(VT_FGCOL(RED));
             PRINTF("RCPが帰ってきませんでした。"); // "RCP did not return."
             PRINTF(VT_RST);
@@ -327,7 +327,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
 
     CLOSE_DISPS(gfxCtx, "../graph.c", 1028);
 
-#if OOT_DEBUG
+#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
     if (R_HREG_MODE == HREG_MODE_PLAY && R_PLAY_ENABLE_UCODE_DISAS == 2) {
         R_HREG_MODE = HREG_MODE_UCODE_DISAS;
         R_UCODE_DISAS_TOGGLE = -1;

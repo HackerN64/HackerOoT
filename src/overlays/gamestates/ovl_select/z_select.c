@@ -57,7 +57,7 @@ void MapSelect_Init(GameState* thisx) {
     gSaveContext.save.cutsceneIndex = 0xFFEF;
 
     // turning the sfx volume back on
-    SEQCMD_SET_PLAYER_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 10);
+    SEQCMD_SET_SEQPLAYER_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 10);
 
 #ifdef BOOT_TO_MAP_SELECT
     gSaveContext.fileNum = 0xFF;

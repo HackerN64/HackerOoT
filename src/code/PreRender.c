@@ -777,31 +777,30 @@ void PreRender_DivotFilter(PreRender* this) {
  * Applies the Video Interface anti-aliasing filter and (optionally) the divot filter to `this->fbufSave` using
  * `this->cvgSave`
  */
-#if ENABLE_PAUSE_BG_AA
-
 void PreRender_ApplyFilters(PreRender* this) {
-    s32 x;
-    s32 y;
+    if (ENABLE_PAUSE_BG_AA) {
+        s32 x;
+        s32 y;
 
-    if ((this->cvgSave != NULL) && (this->fbufSave != NULL)) {
-        // Apply AA filter
-        for (y = 0; y < this->height; y++) {
-            for (x = 0; x < this->width; x++) {
-                s32 cvg = this->cvgSave[x + y * this->width];
+        if ((this->cvgSave != NULL) && (this->fbufSave != NULL)) {
+            // Apply AA filter
+            for (y = 0; y < this->height; y++) {
+                for (x = 0; x < this->width; x++) {
+                    s32 cvg = this->cvgSave[x + y * this->width];
 
-                cvg >>= 5;
-                cvg++;
-                if (cvg != 8) {
-                    // If this pixel has only partial coverage, perform the Video Filter interpolation on it
-                    PreRender_AntiAliasFilter(this, x, y);
+                    cvg >>= 5;
+                    cvg++;
+                    if (cvg != 8) {
+                        // If this pixel has only partial coverage, perform the Video Filter interpolation on it
+                        PreRender_AntiAliasFilter(this, x, y);
+                    }
                 }
             }
-        }
 
-        if ((R_HREG_MODE == HREG_MODE_PRERENDER ? R_PRERENDER_DIVOT_CONTROL : 0) != 0) {
-            // Apply divot filter
-            PreRender_DivotFilter(this);
+            if ((R_HREG_MODE == HREG_MODE_PRERENDER ? R_PRERENDER_DIVOT_CONTROL : 0) != 0) {
+                // Apply divot filter
+                PreRender_DivotFilter(this);
+            }
         }
     }
 }
-#endif

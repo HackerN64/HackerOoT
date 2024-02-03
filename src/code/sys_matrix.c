@@ -603,7 +603,7 @@ Mtx* Matrix_MtxFToMtx(MtxF* src, Mtx* dest) {
     return dest;
 }
 
-#if OOT_DEBUG
+#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
 
 Mtx* Matrix_ToMtx(Mtx* dest, char* file, s32 line) {
     return Matrix_MtxFToMtx(MATRIX_CHECK_FLOATS(sCurrentMatrix, file, line), dest);
@@ -969,7 +969,7 @@ void Matrix_RotateAxis(f32 angle, Vec3f* axis, u8 mode) {
     }
 }
 
-#if OOT_DEBUG
+#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
 MtxF* Matrix_CheckFloats(MtxF* mf, char* file, s32 line) {
     s32 i, j;
 

@@ -100,7 +100,10 @@ void func_800C4344(GameState* gameState) {
     gDmaMgrVerbose = HREG(60);
     gDmaMgrDmaBuffSize = SREG(21) != 0 ? ALIGN16(SREG(21)) : DMAMGR_DEFAULT_BUFSIZE;
     gSystemArenaLogSeverity = HREG(61);
+
+#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
     gZeldaArenaLogSeverity = HREG(62);
+#endif
 
     if (R_HREG_MODE == HREG_MODE_PRINT_MEMORY) {
         if (R_PRINT_MEMORY_INIT != HREG_MODE_PRINT_MEMORY) {
@@ -113,7 +116,9 @@ void func_800C4344(GameState* gameState) {
         if (R_PRINT_MEMORY_TRIGGER < 0) {
             R_PRINT_MEMORY_TRIGGER = 0;
             hexDumpSize = (u32)(R_PRINT_MEMORY_SIZE == 0 ? 0x100 : R_PRINT_MEMORY_SIZE * 0x10);
+#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
             LogUtils_LogHexDump((void*)(0x80000000 + (R_PRINT_MEMORY_ADDR << 8)), hexDumpSize);
+#endif
         }
     }
 #endif
@@ -399,9 +404,9 @@ void GameState_Realloc(GameState* gameState, size_t size) {
         THA_Init(&gameState->tha, NULL, 0);
         PRINTF("ハイラル再確保失敗\n"); // "Failure to secure Hyral"
 
-#if OOT_DEBUG
-        SystemArena_Display();
-#endif
+        if (IS_SPEEDMETER_ENABLED) {
+            SystemArena_Display();
+        }
         HUNGUP_AND_CRASH("../game.c", 1044);
     }
 }
@@ -490,10 +495,10 @@ void GameState_Destroy(GameState* gameState) {
     THA_Destroy(&gameState->tha);
     GameAlloc_Cleanup(&gameState->alloc);
 
-#if OOT_DEBUG
-    SystemArena_Display();
-    Fault_RemoveClient(&sGameFaultClient);
-#endif
+    if (IS_SPEEDMETER_ENABLED) {
+        SystemArena_Display();
+        Fault_RemoveClient(&sGameFaultClient);
+    }
 
     PRINTF("game デストラクタ終了\n"); // "game destructor end"
 }

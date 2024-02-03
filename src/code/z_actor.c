@@ -2639,7 +2639,7 @@ void func_800315AC(PlayState* play, ActorContext* actorCtx) {
         TitleCard_Draw(play, &actorCtx->titleCtx);
     }
 
-#if OOT_DEBUG
+#if OOT_DEBUG && !DISABLE_DEBUG_FEATURES
     if ((HREG(64) != 1) || (HREG(76) != 0)) {
         CollisionCheck_DrawCollision(play, &play->colChkCtx);
     }

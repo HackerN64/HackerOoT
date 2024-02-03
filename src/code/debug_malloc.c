@@ -97,13 +97,13 @@ void* DebugArena_Calloc(u32 num, u32 size) {
     return ret;
 }
 
-#if OOT_DEBUG
 void DebugArena_Display(void) {
-    // "Zelda heap display" ("Zelda" should probably have been changed to "Debug")
-    PRINTF("ゼルダヒープ表示\n");
-    __osDisplayArena(&sDebugArena);
+    if (IS_DEBUG_HEAP_ENABLED) {
+        // "Zelda heap display" ("Zelda" should probably have been changed to "Debug")
+        PRINTF("ゼルダヒープ表示\n");
+        __osDisplayArena(&sDebugArena);
+    }
 }
-#endif
 
 void DebugArena_GetSizes(u32* outMaxFree, u32* outFree, u32* outAlloc) {
     ArenaImpl_GetSizes(&sDebugArena, outMaxFree, outFree, outAlloc);
