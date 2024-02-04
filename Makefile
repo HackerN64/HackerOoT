@@ -378,6 +378,8 @@ $(BUILD_DIR)/baserom/%.o: $(BASEROM_SEGMENTS_DIR)/%
 $(BUILD_DIR)/data/%.o: data/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
+$(BUILD_DIR)/data/rsp.rodata.f3dex3.o: F3DEX3/F3DEX3.code F3DEX3/F3DEX3.data
+
 $(BUILD_DIR)/assets/text/%.enc.h: assets/text/%.h assets/text/charmap.txt
 	$(PYTHON) tools/msgenc.py assets/text/charmap.txt $< $@
 

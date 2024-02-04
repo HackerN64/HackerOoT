@@ -553,7 +553,11 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_construct.o"
     include "$(BUILD_DIR)/data/audio_tables.rodata.o"
     include "$(BUILD_DIR)/data/rsp.text.o"
+#if ENABLE_F3DEX3
+    include "$(BUILD_DIR)/data/rsp.rodata.f3dex3.o"
+#else
     include "$(BUILD_DIR)/data/rsp.rodata.o"
+#endif
 endseg
 
 beginseg

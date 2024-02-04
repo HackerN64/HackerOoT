@@ -33,6 +33,11 @@ void ConsoleLogo_PrintBuildInfo(Gfx** gfxP) {
         GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 25);
         GfxPrint_Printf(printer, "[Build Option:%s]", gBuildMakeOption);
 
+        if (ENABLE_F3DEX3) {
+            GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 27);
+            GfxPrint_Printf(printer, "Powered by F3DEX3!");
+        }
+
         gfx = GfxPrint_Close(printer);
         GfxPrint_Destroy(printer);
         *gfxP = gfx;

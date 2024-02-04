@@ -9,6 +9,15 @@
 // Disables AA (Improves console performance but causes visible seams between unconnected geometry).
 // #define DISABLE_AA false
 
+/**
+ * F3DEX3 options
+ * ``ENABLE_F3DEX3_RECOMMENDATIONS`` will enable the recommended changes listed in F3DEX3's readme
+ * ``ENABLE_F3DEX3_NEW_FEATURES`` will enable the required changes to use the new features from F3DEX3
+*/
+#define ENABLE_F3DEX3 true
+#define ENABLE_F3DEX3_RECOMMENDATIONS true
+#define ENABLE_F3DEX3_NEW_FEATURES true
+
 // Fix annoying glitches (crashes and softlocks)
 #define FIX_ANNOYING_GLITCH true
 
