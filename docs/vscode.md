@@ -41,7 +41,7 @@ You can create a `.vscode/c_cpp_properties.json` file with `C/C++: Edit Configur
 {
     "configurations": [
         {
-            "name": "N64 oot-hacker-mq",
+            "name": "N64 hackeroot-mq",
             "compilerPath": "/usr/bin/gcc", // Needs to not be "" for -m32 to work
             "compilerArgs": [
                 "-m32" // Removes integer truncation warnings with gbi macros
@@ -50,7 +50,7 @@ You can create a `.vscode/c_cpp_properties.json` file with `C/C++: Edit Configur
             "includePath": [ // Matches makefile's includes
                 "${workspaceFolder}/**",
                 "src",
-                "build/hacker-mq",
+                "build/hackeroot-mq",
                 "include",
                 "include/libc"
             ],
@@ -97,7 +97,7 @@ Add the following to (or create) the `.vscode/settings.json` file for VSCode to 
             "name": "Ares GDB (Linux)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/hacker-mq/oot-hacker-mq.elf",
+            "program": "${workspaceFolder}/build/hackeroot-mq/hackeroot-mq.elf",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "externalConsole": false,

@@ -11,16 +11,16 @@ COMPILER := gcc
 
 # Target game version. Currently only the following version is supported:
 #   gc-eu-mq-dbg   GameCube Europe/PAL Master Quest Debug
-#   hacker-mq   HackerOoT, based on gc-eu-mq-dbg (default)
+#   hackeroot-mq   HackerOoT, based on gc-eu-mq-dbg (default)
 #
 # The following versions are work-in-progress and not yet matching:
 #   gc-eu-mq       GameCube Europe/PAL Master Quest
 #
-# Note: choosing hacker-mq will enable HackerOoT features,
+# Note: choosing hackeroot-mq will enable HackerOoT features,
 #       if another version is chosen, this repo will be like
 #       zeldaret/main decomp but without the disassembly, decompilation
 #       and matching tools, including the IDO compiler
-VERSION := hacker-mq
+VERSION := hackeroot-mq
 
 # Enable optimization flags to use GDB on Ares
 ARES_GDB := 1
@@ -59,7 +59,7 @@ ifeq ($(VERSION),gc-eu-mq)
 else ifeq ($(VERSION),gc-eu-mq-dbg)
   DEBUG := 1
   HACKEROOT := 0
-else ifeq ($(VERSION),hacker-mq)
+else ifeq ($(VERSION),hackeroot-mq)
   HACKEROOT := 1
 else
 $(error Unsupported version $(VERSION))
@@ -91,8 +91,8 @@ endif
 # Make sure the build reports the correct version
 $(shell touch src/boot/build.c)
 
-ifeq ($(VERSION),hacker-mq)
-  SEGMENT_VERSION := hacker-mq
+ifeq ($(VERSION),hackeroot-mq)
+  SEGMENT_VERSION := hackeroot-mq
   CFLAGS += -DENABLE_HACKEROOT=1
   CPPFLAGS += -DENABLE_HACKEROOT=1
   OPTFLAGS := -Os
@@ -195,7 +195,11 @@ OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
 #### Files ####
 
 # ROM image
-ROM      := $(BUILD_DIR)/oot-$(VERSION).z64
+ifeq ($(VERSION),hackeroot-mq)
+  ROM      := $(BUILD_DIR)/$(VERSION).z64
+else
+  ROM      := $(BUILD_DIR)/oot-$(VERSION).z64
+endif
 ROMC     := $(ROM:.z64=-compressed.z64)
 WAD      := $(ROM:.z64=.wad)
 ELF      := $(ROM:.z64=.elf)
@@ -297,11 +301,11 @@ ifeq ($(VERSION),gc-eu-mq-dbg)
 	$(PYTHON) extract_baserom.py gc-eu-mq-dbg
 	$(PYTHON) extract_assets.py -j$(N_THREADS) -v gc-eu-mq-dbg
 else
-ifeq ($(VERSION),hacker-mq)
-	$(PYTHON) extract_baserom.py hacker-mq
-	$(PYTHON) extract_assets.py -j$(N_THREADS) -v hacker-mq
+ifeq ($(VERSION),hackeroot-mq)
+	$(PYTHON) extract_baserom.py hackeroot-mq
+	$(PYTHON) extract_assets.py -j$(N_THREADS) -v hackeroot-mq
 # temporary solution until decomp handles this properly
-	cp baseroms/hacker-mq/baserom-decompressed.z64 baseroms/gc-eu-mq-dbg/
+	cp baseroms/hackeroot-mq/baserom-decompressed.z64 baseroms/gc-eu-mq-dbg/
 endif
 endif
 

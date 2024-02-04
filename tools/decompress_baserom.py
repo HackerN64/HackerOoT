@@ -35,13 +35,13 @@ def decompress(data: bytes, is_zlib_compressed: bool) -> bytes:
 FILE_TABLE_OFFSET = {
     "gc-eu-mq":         0x07170,
     "gc-eu-mq-dbg":     0x12F70,
-    "hacker-mq":     0x12F70,
+    "hackeroot-mq":     0x12F70,
 }
 
 VERSIONS_MD5S = {
     "gc-eu-mq":         "1a438f4235f8038856971c14a798122a",
     "gc-eu-mq-dbg":     "f0b7f35375f9cc8ca1b2d59d78e35405",
-    "hacker-mq":     "f0b7f35375f9cc8ca1b2d59d78e35405",
+    "hackeroot-mq":     "f0b7f35375f9cc8ca1b2d59d78e35405",
 }
 
 
@@ -155,7 +155,7 @@ def byte_swap(file_content: bytearray) -> bytearray:
 
 
 def per_version_fixes(file_content: bytearray, version: str) -> bytearray:
-    if version in {"gc-eu-mq-dbg", "hacker-mq"}:
+    if version in {"gc-eu-mq-dbg", "hackeroot-mq"}:
         # Strip the overdump
         print("Stripping overdump...")
         file_content = file_content[0:0x3600000]
@@ -258,7 +258,7 @@ def main():
             f"Error: Expected a hash of {correct_str_hash} but got {str_hash}. The baserom has probably been tampered, find a new one"
         )
 
-        if version in {"gc-eu-mq-dbg", "hacker-mq"}:
+        if version in {"gc-eu-mq-dbg", "hackeroot-mq"}:
             if str_hash == "32fe2770c0f9b1a9cd2a4d449348c1cb":
                 print(
                     "The provided baserom is a rom which has been edited with ZeldaEdit and is not suitable for use with decomp. Find a new one."

@@ -1585,14 +1585,14 @@ def main():
     description = "Extract data from baserom."
 
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument("version", help="Version of the game to extract.", choices=["gc-eu-mq-dbg", "hacker-mq"])
+    parser.add_argument("version", help="Version of the game to extract.", choices=["gc-eu-mq-dbg", "hackeroot-mq"])
 
     args = parser.parse_args()
     version = args.version
 
     global ROM_FILE_PATH
     global SEGMENTS_PATH
-    if version == "hacker-mq":
+    if version == "hackeroot-mq":
         ROM_FILE_PATH = Path(f'baseroms/{version}/baserom-decompressed.z64')
         SEGMENTS_PATH = Path(f'baseroms/{version}/segments/')
 
