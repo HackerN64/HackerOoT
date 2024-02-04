@@ -177,6 +177,7 @@ ELF2ROM    := tools/elf2rom
 ZAPD       := tools/ZAPD/ZAPD.out
 FADO       := tools/fado/fado.elf
 PYTHON     ?= $(VENV)/bin/python3
+FLIPS      := tools/Flips/flips
 
 # Command to replace path variables in the spec file. We can't use the C
 # preprocessor for this because it won't substitute inside string literals.
@@ -202,11 +203,15 @@ else
 endif
 ROMC     := $(ROM:.z64=-compressed.z64)
 WAD      := $(ROM:.z64=.wad)
+BPS      := $(ROM:.z64=.bps)
 ELF      := $(ROM:.z64=.elf)
 MAP      := $(ROM:.z64=.map)
 LDSCRIPT := $(ROM:.z64=.ld)
 # description of ROM segments
 SPEC := spec
+
+# Baserom to use when creating BPS patches
+BASEROM_PATCH ?= baseroms/$(VERSION)/baserom.z64
 
 ifeq ($(COMPILER),gcc)
 SRC_DIRS := $(shell find src -type d)
@@ -315,8 +320,10 @@ ifeq ($(N64_EMULATOR),)
 endif
 	$(N64_EMULATOR) $<
 
+patch:
+	$(FLIPS) --create --bps $(BASEROM_PATCH) $(ROM) $(BPS)
 
-.PHONY: all rom compress clean assetclean distclean venv setup run wad
+.PHONY: all rom compress clean assetclean distclean venv setup run wad patch
 .DEFAULT_GOAL := rom
 
 #### Various Recipes ####

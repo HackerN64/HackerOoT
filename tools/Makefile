@@ -25,6 +25,7 @@ ifeq ($(wildcard ./gzinject/Makefile),)
 endif
 	$(MAKE) -C gzinject
 	$(MAKE) -C z64compress
+	$(MAKE) -C Flips TARGET=cli
 
 clean:
 	$(RM) $(PROGRAMS) $(addsuffix .exe,$(PROGRAMS))
@@ -34,6 +35,8 @@ ifneq ($(wildcard ./gzinject/Makefile),)
 	$(MAKE) -C gzinject clean
 endif
 	$(MAKE) -C z64compress clean
+	$(MAKE) -C Flips clean
+	rm Flips/flips
 
 distclean: clean
 
