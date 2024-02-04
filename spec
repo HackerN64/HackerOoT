@@ -3,6 +3,7 @@
  */
 
 #include "include/config.h"
+// #include "include/compression.h"
 
 beginseg
     name "makerom"
@@ -20,7 +21,13 @@ beginseg
     include "$(BUILD_DIR)/src/boot/idle.o"
     include "$(BUILD_DIR)/src/boot/viconfig.o"
     include "$(BUILD_DIR)/src/boot/z_std_dma.o"
-    include "$(BUILD_DIR)/src/boot/yaz0.o"
+#if COMPRESS_MODE == COMPRESS_TYPE_YAZ
+    include "$(BUILD_DIR)/src/compression/yaz0.o"
+#elif COMPRESS_MODE == COMPRESS_TYPE_LZO
+    include "$(BUILD_DIR)/src/compression/lzo.o"
+#elif COMPRESS_MODE == COMPRESS_TYPE_APLIB
+    include "$(BUILD_DIR)/src/compression/aplib.o"
+#endif
     include "$(BUILD_DIR)/src/boot/z_locale.o"
     include "$(BUILD_DIR)/src/boot/assert.o"
     include "$(BUILD_DIR)/src/boot/is_debug.o"

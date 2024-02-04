@@ -1,4 +1,5 @@
 #include "global.h"
+#include "compression.h"
 
 u8 sYaz0DataBuffer[0x400];
 u8* sYaz0DataBufferEnd;

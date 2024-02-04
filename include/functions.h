@@ -27,10 +27,6 @@ void Main_ThreadEntry(void* arg);
 void Idle_ThreadEntry(void* arg);
 void ViConfig_UpdateVi(u32 black);
 void ViConfig_UpdateBlack(void);
-void* Yaz0_FirstDMA(void);
-void* Yaz0_NextDMA(u8* curSrcPos);
-void Yaz0_DecompressImpl(u8* src, u8* dst);
-void Yaz0_Decompress(uintptr_t romStart, u8* dst, size_t size);
 void Locale_Init(void);
 void Locale_ResetRegion(void);
 #if IS_DEBUG

@@ -22,7 +22,6 @@ s32 BgCheck_CheckLineAgainstDyna(CollisionContext* colCtx, u16 xpFlags, Vec3f* p
                                  s32 bccFlags);
 s32 BgCheck_SphVsFirstDynaPoly(CollisionContext* colCtx, u16 xpFlags, CollisionPoly** outPoly, s32* outBgId,
                                Vec3f* center, f32 radius, Actor* actor, u16 bciFlags);
-void BgCheck_ResetPolyCheckTbl(SSNodeList* nodeList, s32 numPolys);
 
 #define SS_NULL 0xFFFF
 

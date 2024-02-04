@@ -29,6 +29,10 @@ ARES_GDB := 1
 # Note: currently only used for HackerOoT
 RELEASE := 0
 
+# Valid compression algorithms are 'yaz', 'lzo' and 'aplib'
+COMPRESSION ?= lzo
+COMPRESSION_TYPE ?= $(shell echo $(COMPRESSION) | tr '[:lower:]' '[:upper:]')
+
 # Number of threads to extract and compress with
 N_THREADS := $(shell nproc)
 # Check code syntax with host compiler
@@ -123,8 +127,8 @@ endif
 
 # Define author and package version for every OoT version
 # Note: this won't be used if not using HackerOoT
-CFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)' -DPACKAGE_VERSION='$(PACKAGE_VERSION)'
-CPPFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)' -DPACKAGE_VERSION='$(PACKAGE_VERSION)'
+CFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)' -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_MODE=COMPRESS_TYPE_$(COMPRESSION_TYPE)
+CPPFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)' -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_MODE=COMPRESS_TYPE_$(COMPRESSION_TYPE)
 OPTFLAGS += -ffast-math -fno-unsafe-math-optimizations
 
 ifeq ($(OS),Windows_NT)
@@ -258,12 +262,12 @@ rom: $(ROM)
 compress: $(ROMC)
 
 wad:
-ifeq ("$(wildcard common-key.bin)", "")
+ifeq ("$(wildcard baseroms/$(VERSION)/common-key.bin)", "")
 	$(error Please provide the common-key.bin file.)
 endif
 	$(MAKE) compress CFLAGS="-DCONSOLE_WIIVC $(CFLAGS) -fno-reorder-blocks -fno-optimize-sibling-calls" CPPFLAGS="-DCONSOLE_WIIVC $(CPPFLAGS)"
-	tools/gzinject/gzinject -a inject -r 1 -k common-key.bin -w basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
-	$(RM) -r wadextract/ common-key.bin
+	tools/gzinject/gzinject -a inject -r 1 -k baseroms/$(VERSION)/common-key.bin -w baseroms/$(VERSION)/basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
+	$(RM) -r wadextract/
 
 clean:
 	$(RM) -r $(BUILD_DIR)
@@ -316,10 +320,13 @@ endif
 $(ROM): $(ELF)
 	$(ELF2ROM) -cic 6105 $< $@
 
-# TODO: implement z64compress and setup cache folder into build
 $(ROMC): $(ROM) $(ELF) $(BUILD_DIR)/compress_ranges.txt
+ifeq ($(COMPRESSION),yaz)
 # note: $(BUILD_DIR)/compress_ranges.txt should only be used for nonmatching builds. it works by chance for matching builds too though
 	$(PYTHON) tools/compress.py --in $(ROM) --out $@ --dma-range `./tools/dmadata_range.sh $(NM) $(ELF)` --compress `cat $(BUILD_DIR)/compress_ranges.txt` --threads $(N_THREADS)
+else
+	$(PYTHON) tools/z64compress_wrapper.py --codec $(COMPRESSION) --cache $(BUILD_DIR)/cache --threads $(N_THREADS) $< $@ $(ELF) $(BUILD_DIR)/$(SPEC)
+endif
 	$(PYTHON) -m ipl3checksum sum --cic 6105 --update $@
 
 $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(LDSCRIPT) $(BUILD_DIR)/undefined_syms.txt

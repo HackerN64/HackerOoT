@@ -19,7 +19,7 @@ notes/
 baserom/
 baseroms/*/segments/
 docs/doxygen/
-cache/
+build/*/cache/
 *.elf
 *.ram
 *.sav

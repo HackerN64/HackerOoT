@@ -20,6 +20,7 @@
  */
 #include "global.h"
 #include "terminal.h"
+#include "compression.h"
 
 StackEntry sDmaMgrStackInfo;
 OSMesgQueue sDmaMgrMsgQueue;
@@ -396,7 +397,17 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
                 // Reduce the thread priority and decompress the file, the decompression routine handles the DMA
                 // in chunks. Restores the thread priority when done.
                 osSetThreadPri(NULL, THREAD_PRI_DMAMGR_LOW);
-                Yaz0_Decompress(romStart, ram, romSize);
+                switch (COMPRESS_MODE) {
+                    case COMPRESS_TYPE_YAZ:
+                        Yaz0_Decompress(romStart, ram, romSize);
+                        break;
+                    case COMPRESS_TYPE_LZO:
+                        LZO_Decompress(romStart, ram, romSize);
+                        break;
+                    case COMPRESS_TYPE_APLIB:
+                        Aplib_Decompress(romStart, ram, romSize);
+                        break;
+                }
                 osSetThreadPri(NULL, THREAD_PRI_DMAMGR);
                 found = true;
 
