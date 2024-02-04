@@ -3,12 +3,6 @@
 
 #include "ultra64.h"
 
-typedef enum CompressType {
-    COMPRESS_TYPE_YAZ,
-    COMPRESS_TYPE_LZO,
-    COMPRESS_TYPE_APLIB,
-} CompressType;
-
 void* Yaz0_FirstDMA(void);
 void* Yaz0_NextDMA(u8* curSrcPos);
 void Yaz0_DecompressImpl(u8* src, u8* dst);

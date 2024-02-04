@@ -41,22 +41,25 @@ You can create a `.vscode/c_cpp_properties.json` file with `C/C++: Edit Configur
 {
     "configurations": [
         {
-            "name": "N64 oot-gc-eu-mq-dbg",
-            "compilerPath": "${default}", // Needs to not be "" for -m32 to work
+            "name": "N64 oot-hacker-mq",
+            "compilerPath": "/usr/bin/gcc", // Needs to not be "" for -m32 to work
             "compilerArgs": [
                 "-m32" // Removes integer truncation warnings with gbi macros
             ],
-            "intelliSenseMode": "${default}", // Shouldn't matter
+            "intelliSenseMode": "gcc-x86", // Shouldn't matter
             "includePath": [ // Matches makefile's includes
                 "${workspaceFolder}/**",
                 "src",
-                "build/gc-eu-mq-dbg",
+                "build/hacker-mq",
                 "include",
                 "include/libc"
             ],
             "defines": [
                 "_LANGUAGE_C", // For gbi.h
-                "OOT_DEBUG=1" // If targeting a debug version
+                "OOT_DEBUG=1", // If targeting a debug version
+                "ENABLE_HACKEROOT=1",
+                "RELEASE_ROM=0",
+                "COMPRESS_YAZ=1"
             ],
             "cStandard": "gnu89", // C89 + some GNU extensions from C99 like C++ comments
             "cppStandard": "${default}" // Only ZAPD uses C++, so doesn't really matter
@@ -94,7 +97,7 @@ Add the following to (or create) the `.vscode/settings.json` file for VSCode to 
             "name": "Ares GDB (Linux)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/oot-hacker-mq.elf",
+            "program": "${workspaceFolder}/build/hacker-mq/oot-hacker-mq.elf",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "externalConsole": false,

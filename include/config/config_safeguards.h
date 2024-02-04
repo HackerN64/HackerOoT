@@ -201,8 +201,19 @@
 #define IS_MSG_DEBUG_ENABLED (IS_DEBUG && ENABLE_MSG_DEBUGGER)
 #define IS_SPEEDMETER_ENABLED (IS_DEBUG && ENABLE_SPEEDMETER)
 
-#ifndef COMPRESS_MODE
-#define COMPRESS_MODE COMPRESS_TYPE_YAZ
+/**
+ * Compression
+*/
+#ifndef COMPRESS_YAZ
+#define COMPRESS_YAZ false
+#endif
+
+#ifndef COMPRESS_LZO
+#define COMPRESS_LZO false
+#endif
+
+#ifndef COMPRESS_APLIB
+#define COMPRESS_APLIB false
 #endif
 
 #endif
