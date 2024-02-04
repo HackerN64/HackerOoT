@@ -92,7 +92,7 @@ endif
 $(shell touch src/boot/build.c)
 
 ifeq ($(VERSION),hackeroot-mq)
-  SEGMENT_VERSION := hackeroot-mq
+  BASEROM_VERSION := hackeroot-mq
   CFLAGS += -DENABLE_HACKEROOT=1
   CPPFLAGS += -DENABLE_HACKEROOT=1
   OPTFLAGS := -Os
@@ -115,7 +115,7 @@ else
     OPTFLAGS := -O2 -g3
   endif
 
-  SEGMENT_VERSION := gc-eu-mq-dbg
+  BASEROM_VERSION := gc-eu-mq-dbg
   CFLAGS += -DENABLE_HACKEROOT=0
   CPPFLAGS += -DENABLE_HACKEROOT=0
 endif
@@ -227,7 +227,7 @@ ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_XML:.xml=.c),$f) \
 UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
 
 # TODO: for now, ROM segments are still taken from the Debug ROM even when building other versions
-BASEROM_SEGMENTS_DIR := baseroms/$(SEGMENT_VERSION)/segments
+BASEROM_SEGMENTS_DIR := baseroms/$(BASEROM_VERSION)/segments
 BASEROM_BIN_FILES := $(wildcard $(BASEROM_SEGMENTS_DIR)/*)
 
 # source files
@@ -313,6 +313,7 @@ ifeq ($(VERSION),hackeroot-mq)
 	cp baseroms/hackeroot-mq/baserom-decompressed.z64 baseroms/gc-eu-mq-dbg/
 endif
 endif
+	$(MAKE) f3dex3
 
 run: $(ROM)
 ifeq ($(N64_EMULATOR),)
@@ -323,7 +324,14 @@ endif
 patch:
 	$(FLIPS) --create --bps $(BASEROM_PATCH) $(ROM) $(BPS)
 
-.PHONY: all rom compress clean assetclean distclean venv setup run wad patch
+f3dex3:
+	$(PYTHON) tools/data_extractor.py --start 0xBCD0F0 --size 0x1630 --input baseroms/$(BASEROM_VERSION)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.code
+	$(PYTHON) tools/data_extractor.py --start 0xBCE720 --size 0x420 --input baseroms/$(BASEROM_VERSION)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.data
+	$(FLIPS) --apply F3DEX3/F3DEX3.code.bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3.code
+	$(FLIPS) --apply F3DEX3/F3DEX3.data.bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3.data
+	rm -r F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
+
+.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3
 .DEFAULT_GOAL := rom
 
 #### Various Recipes ####

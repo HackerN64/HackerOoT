@@ -33,7 +33,9 @@ build/*/cache/
 *.wad
 out.txt
 *.ram
-common-key.bin
+*.bin
+F3DEX3/*.code
+F3DEX3/*.data
 
 # Tool artifacts
 tools/mipspro7.2_compiler/
