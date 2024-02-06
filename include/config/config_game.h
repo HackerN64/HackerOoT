@@ -17,7 +17,7 @@
 #define ENABLE_F3DEX3 true
 #define ENABLE_F3DEX3_RECOMMENDATIONS true // missing matrix stuff + fast64 re-export process
 #define ENABLE_F3DEX3_LIGHT_RECO false // unfinished, faster but experimental (reco -> recommendations)
-#define ENABLE_F3DEX3_NEW_FEATURES true // untested
+// #define ENABLE_F3DEX3_NEW_FEATURES true // not implemented yet
 
 // Fix annoying glitches (crashes and softlocks)
 #define FIX_ANNOYING_GLITCH true
