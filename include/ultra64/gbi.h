@@ -6,7 +6,11 @@
 #include "config.h"
 
 #if ENABLE_F3DEX3
-#include "gbi.f3dex3.h"
+    #define REQUIRE_SEMICOLONS_AFTER_GBI_COMMANDS
+    #if ENABLE_F3DEX3_RECOMMENDATIONS
+        #define NO_SYNCS_IN_TEXTURE_LOADS
+    #endif
+    #include "gbi.f3dex3.h"
 #else
 /* To enable Fast3DEX grucode support, define F3DEX_GBI. */
 
@@ -2900,6 +2904,9 @@ _DW({                                               \
 # define gsSPLight(l, n)                                                    \
      gsDma1p(       G_MOVEMEM, (l), sizeof(Light), ((n) - 1) * 2 + G_MV_L0)
 #endif  /* F3DEX_GBI_2 */
+
+// F3DEX3 compatibility
+#define gSPAmbient gSPLight
 
 /*
  * gSPLightColor changes color of light without recalculating light direction

@@ -15,8 +15,9 @@
  * ``ENABLE_F3DEX3_NEW_FEATURES`` will enable the required changes to use the new features from F3DEX3
 */
 #define ENABLE_F3DEX3 true
-#define ENABLE_F3DEX3_RECOMMENDATIONS true
-#define ENABLE_F3DEX3_NEW_FEATURES true
+#define ENABLE_F3DEX3_RECOMMENDATIONS true // missing matrix stuff + fast64 re-export process
+#define ENABLE_F3DEX3_LIGHT_RECO false // unfinished, faster but experimental (reco -> recommendations)
+#define ENABLE_F3DEX3_NEW_FEATURES true // untested
 
 // Fix annoying glitches (crashes and softlocks)
 #define FIX_ANNOYING_GLITCH true

@@ -64,6 +64,13 @@ void Lights_Draw(Lights* lights, GraphicsContext* gfxCtx) {
     gSPNumLights(POLY_OPA_DISP++, lights->numLights);
     gSPNumLights(POLY_XLU_DISP++, lights->numLights);
 
+#if ENABLE_F3DEX3_LIGHT_RECO
+    gSPSetLights(POLY_OPA_DISP++, lights->numLights, *lights);
+    gSPSetLights(POLY_XLU_DISP++, lights->numLights, *lights);
+
+    gSPAmbient(POLY_OPA_DISP++, &lights->l.a, lights->numLights);
+    gSPAmbient(POLY_XLU_DISP++, &lights->l.a, lights->numLights);
+#else
     light = &lights->l.l[0];
     i = 0;
 
@@ -73,14 +80,16 @@ void Lights_Draw(Lights* lights, GraphicsContext* gfxCtx) {
     }
 
     // ambient light is total number of lights + 1
-    gSPLight(POLY_OPA_DISP++, &lights->l.a, ++i);
-    gSPLight(POLY_XLU_DISP++, &lights->l.a, i);
+    gSPAmbient(POLY_OPA_DISP++, &lights->l.a, ++i);
+    gSPAmbient(POLY_XLU_DISP++, &lights->l.a, i);
+#endif
 
     CLOSE_DISPS(gfxCtx, "../z_lights.c", 352);
 }
 
 Light* Lights_FindSlot(Lights* lights) {
-    if (lights->numLights >= 7) {
+    u8 numLights = ENABLE_F3DEX3_RECOMMENDATIONS ? 9 : 7;
+    if (lights->numLights >= numLights) {
         return NULL;
     } else {
         return &lights->l.l[lights->numLights++];
