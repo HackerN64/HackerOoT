@@ -67,6 +67,8 @@ endif
 
 PROJECT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD_DIR := build/$(VERSION)
+EXPECTED_DIR := expected/$(BUILD_DIR)
+BASEROM_DIR := baseroms/$(VERSION)
 VENV := .venv
 
 MAKE = make
@@ -92,7 +94,6 @@ endif
 $(shell touch src/boot/build.c)
 
 ifeq ($(VERSION),hackeroot-mq)
-  BASEROM_VERSION := hackeroot-mq
   CFLAGS += -DENABLE_HACKEROOT=1
   CPPFLAGS += -DENABLE_HACKEROOT=1
   OPTFLAGS := -Os
@@ -115,7 +116,6 @@ else
     OPTFLAGS := -O2 -g3
   endif
 
-  BASEROM_VERSION := gc-eu-mq-dbg
   CFLAGS += -DENABLE_HACKEROOT=0
   CPPFLAGS += -DENABLE_HACKEROOT=0
 endif
@@ -226,8 +226,7 @@ ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_XML:.xml=.c),$f) \
 
 UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
 
-# TODO: for now, ROM segments are still taken from the Debug ROM even when building other versions
-BASEROM_SEGMENTS_DIR := baseroms/$(BASEROM_VERSION)/segments
+BASEROM_SEGMENTS_DIR := $(BASEROM_DIR)/segments
 BASEROM_BIN_FILES := $(wildcard $(BASEROM_SEGMENTS_DIR)/*)
 
 # source files
@@ -294,6 +293,7 @@ assetclean:
 distclean: clean assetclean
 	$(RM) -r $(BASEROM_SEGMENTS_DIR)
 	$(MAKE) -C tools distclean
+	$(RM) -r F3DEX3/F3DEX3.code F3DEX3/F3DEX3.data
 
 venv:
 # Create the virtual environment if it doesn't exist.
@@ -305,17 +305,11 @@ venv:
 setup: venv
 	$(MAKE) -C tools
 	$(PYTHON) tools/decompress_baserom.py $(VERSION)
-# TODO: for now, we only extract ROM segments and assets from the Debug ROM
-ifeq ($(VERSION),gc-eu-mq-dbg)
-	$(PYTHON) extract_baserom.py gc-eu-mq-dbg
-	$(PYTHON) extract_assets.py -j$(N_THREADS) -v gc-eu-mq-dbg
-else
-ifeq ($(VERSION),hackeroot-mq)
-	$(PYTHON) extract_baserom.py hackeroot-mq
-	$(PYTHON) extract_assets.py -j$(N_THREADS) -v hackeroot-mq
-# temporary solution until decomp handles this properly
-	cp baseroms/hackeroot-mq/baserom-decompressed.z64 baseroms/gc-eu-mq-dbg/
-endif
+	$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 -o $(BASEROM_SEGMENTS_DIR) --dmadata-start `cat $(BASEROM_DIR)/dmadata_start.txt` --dmadata-names $(BASEROM_DIR)/dmadata_names.txt
+# TODO: for now, we only extract assets from the Debug ROM
+ifneq ($(VERSION),gc-eu-mq)
+	$(PYTHON) extract_assets.py -j$(N_THREADS) -v $(VERSION)
+	$(PYTHON) tools/msgdis.py --text-out assets/text/message_data.h --staff-text-out assets/text/message_data_staff.h -v $(VERSION)
 endif
 	$(MAKE) f3dex3
 
@@ -329,11 +323,11 @@ patch:
 	$(FLIPS) --create --bps $(BASEROM_PATCH) $(ROM) $(BPS)
 
 f3dex3:
-	$(PYTHON) tools/data_extractor.py --start 0xBCD0F0 --size 0x1630 --input baseroms/$(BASEROM_VERSION)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.code
-	$(PYTHON) tools/data_extractor.py --start 0xBCE720 --size 0x420 --input baseroms/$(BASEROM_VERSION)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.data
+	$(PYTHON) tools/data_extractor.py --start 0xBCD0F0 --size 0x1630 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.code
+	$(PYTHON) tools/data_extractor.py --start 0xBCE720 --size 0x420 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.data
 	$(FLIPS) --apply F3DEX3/F3DEX3.code.bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3.code
 	$(FLIPS) --apply F3DEX3/F3DEX3.data.bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3.data
-	rm -r F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
+	$(RM) -r F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
 
 .PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3
 .DEFAULT_GOAL := rom
@@ -345,8 +339,7 @@ $(ROM): $(ELF)
 
 $(ROMC): $(ROM) $(ELF) $(BUILD_DIR)/compress_ranges.txt
 ifeq ($(COMPRESSION),yaz)
-# note: $(BUILD_DIR)/compress_ranges.txt should only be used for nonmatching builds. it works by chance for matching builds too though
-	$(PYTHON) tools/compress.py --in $(ROM) --out $@ --dma-range `./tools/dmadata_range.sh $(NM) $(ELF)` --compress `cat $(BUILD_DIR)/compress_ranges.txt` --threads $(N_THREADS)
+	$(PYTHON) tools/compress.py --in $(ROM) --out $@ --dmadata-start `./tools/dmadata_range.sh $(NM) $(ELF)` --compress `cat $(BUILD_DIR)/compress_ranges.txt` --threads $(N_THREADS)
 else
 	$(PYTHON) tools/z64compress_wrapper.py --codec $(COMPRESSION) --cache $(BUILD_DIR)/cache --threads $(N_THREADS) $< $@ $(ELF) $(BUILD_DIR)/$(SPEC)
 endif

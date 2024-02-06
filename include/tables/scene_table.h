@@ -112,7 +112,6 @@
 /* 0x64 */ DEFINE_SCENE(ganon_tou_scene, g_pn_43, SCENE_OUTSIDE_GANONS_CASTLE, SDC_OUTSIDE_GANONS_CASTLE, 0, 0)
 
 #if CAN_INCLUDE_TEST_SCENES
-// Debug-only scenes
 /* 0x65 */ DEFINE_SCENE(test01_scene, none, SCENE_TEST01, SDC_CALM_WATER, 0, 0)
 /* 0x66 */ DEFINE_SCENE(besitu_scene, none, SCENE_BESITU, SDC_BESITU, 0, 0)
 /* 0x67 */ DEFINE_SCENE(depth_test_scene, none, SCENE_DEPTH_TEST, SDC_DEFAULT, 0, 0)

@@ -562,6 +562,7 @@ endseg
 
 beginseg
     name "buffers"
+    flags NOLOAD
     align 0x40
     include "$(BUILD_DIR)/src/buffers/zbuffer.o"
     include "$(BUILD_DIR)/src/buffers/gfxbuffers.o"
