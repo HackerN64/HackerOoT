@@ -201,7 +201,7 @@ ifeq ($(VERSION),hackeroot-mq)
 else
   ROM      := $(BUILD_DIR)/oot-$(VERSION).z64
 endif
-ROMC     := $(ROM:.z64=-compressed.z64)
+ROMC     := $(ROM:.z64=-compressed-$(COMPRESSION).z64)
 WAD      := $(ROM:.z64=.wad)
 BPS      := $(ROM:.z64=.bps)
 ELF      := $(ROM:.z64=.elf)
@@ -268,7 +268,11 @@ all: rom compress
 
 rom: $(ROM)
 
-compress: $(ROMC)
+compress:
+# make sure z_std_dma.c and spec are up-to-date
+	$(shell touch spec)
+	$(shell touch src/boot/z_std_dma.c)
+	$(MAKE) $(ROMC)
 
 wad:
 ifeq ("$(wildcard baseroms/$(VERSION)/common-key.bin)", "")
