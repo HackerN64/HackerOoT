@@ -66,27 +66,26 @@ void KaleidoSetup_Update(PlayState* play) {
 
 void KaleidoSetup_Init(PlayState* play) {
     PauseContext* pauseCtx = &play->pauseCtx;
-    u64 temp = 0; // Necessary to match
 
     pauseCtx->state = PAUSE_STATE_OFF;
-
-    if (IS_DEBUG && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)) {
-        pauseCtx->debugState = 0;
-    }
 
     pauseCtx->alpha = 0;
     pauseCtx->unk_1EA = 0;
     pauseCtx->mainState = PAUSE_MAIN_STATE_IDLE;
     pauseCtx->mode = 0;
     pauseCtx->pageIndex = PAUSE_ITEM;
+    pauseCtx->debugState = 0;
 
-    pauseCtx->unk_1F4 = 160.0f;
-    pauseCtx->unk_1F8 = 160.0f;
-    pauseCtx->unk_1FC = 160.0f;
-    pauseCtx->unk_200 = 160.0f;
+    pauseCtx->eye.x = pauseCtx->eye.y = 0.0f;
     pauseCtx->eye.z = 64.0f;
     pauseCtx->unk_1F0 = 936.0f;
-    pauseCtx->eye.x = pauseCtx->eye.y = 0.0f;
+    pauseCtx->unk_1F4 = pauseCtx->unk_1F8 = pauseCtx->unk_1FC = pauseCtx->unk_200 = 160.0f;
+
+    pauseCtx->alpha = 0;
+
+    // mainState = PAUSE_MAIN_STATE_IDLE , pageIndex = PAUSE_ITEM
+    pauseCtx->unk_1EA = pauseCtx->mainState = pauseCtx->mode = pauseCtx->pageIndex = 0;
+
     pauseCtx->unk_204 = -314.0f;
 
     pauseCtx->cursorPoint[PAUSE_ITEM] = 0;
@@ -99,8 +98,8 @@ void KaleidoSetup_Init(PlayState* play) {
     pauseCtx->cursorY[PAUSE_ITEM] = 0;
     pauseCtx->cursorX[PAUSE_MAP] = 0;
     pauseCtx->cursorY[PAUSE_MAP] = 0;
-    pauseCtx->cursorX[PAUSE_QUEST] = temp;
-    pauseCtx->cursorY[PAUSE_QUEST] = temp;
+    pauseCtx->cursorX[PAUSE_QUEST] = 0;
+    pauseCtx->cursorY[PAUSE_QUEST] = 0;
     pauseCtx->cursorX[PAUSE_EQUIP] = 1;
     pauseCtx->cursorY[PAUSE_EQUIP] = 0;
 
