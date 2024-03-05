@@ -21,7 +21,7 @@ void bootproc(void) {
 
     gCartHandle = osCartRomInit();
     osDriveRomInit();
-#if OOT_DEBUG
+#if IS_DEBUG
     isPrintfInit();
 #endif
     Locale_Init();

@@ -64,8 +64,8 @@ static ColliderCylinderInit sCylinderInit = {
         ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
-        TOUCH_NONE,
-        BUMP_NONE,
+        ATELEM_NONE,
+        ACELEM_NONE,
         OCELEM_ON,
     },
     { 30, 80, 0, { 0, 0, 0 } },
@@ -373,10 +373,12 @@ void EnDntJiji_Update(Actor* thisx, PlayState* play) {
 
     Actor_SetScale(&this->actor, 0.015f);
     this->unkTimer++;
-    if (BREG(0)) {
+
+    if (IS_ACTOR_DEBUG_ENABLED && BREG(0)) {
         // "time"
         PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ 時間 ☆☆☆☆☆ %d\n" VT_RST, this->timer);
     }
+
     if ((this->timer > 1) && (this->timer != 0)) {
         this->timer--;
     }

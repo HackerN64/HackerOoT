@@ -44,17 +44,17 @@ s8 gSfxDefaultReverb = 0;
 
 s32 D_801333EC = 0; // unused
 
+// ENABLE_AUDIO_DEBUGGER
 u8 D_801333F0 = 0;
-
 u8 gAudioSfxSwapOff = 0;
-
 u8 D_801333F8 = 0;
-
 s32 D_801333FC = 0; // unused
 
 u8 gSeqCmdWritePos = 0;
 u8 gSeqCmdReadPos = 0;
 u8 gStartSeqDisabled = false;
+
+// ENABLE_AUDIO_DEBUGGER
 u8 gAudioDebugPrintSeqCmd = true;
 
 u8 gSoundModeList[] = {

@@ -17,6 +17,13 @@ typedef struct {
     /* 0x12 */ OSContPad rel; // X/Y store adjusted
 } Input; // size = 0x18
 
+typedef enum {
+    /* 0x0 */ CONTROLLER_PORT_1,
+    /* 0x1 */ CONTROLLER_PORT_2,
+    /* 0x2 */ CONTROLLER_PORT_3,
+    /* 0x3 */ CONTROLLER_PORT_4
+} ControllerPort;
+
 typedef struct PadMgr {
     /* 0x0000 */ OSContStatus padStatus[MAXCONTROLLERS];
     /* 0x0010 */ OSMesg serialMsg;

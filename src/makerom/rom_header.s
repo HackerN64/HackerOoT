@@ -12,7 +12,18 @@
 .word  0x00000000               /* Unknown */
 .ascii "THE LEGEND OF ZELDA "   /* Internal ROM name */
 .word  0x00000000               /* Unknown */
+
+#ifdef CONSOLE_WIIVC
+.word  0x00000043               /* Cartridge */
+#else
 .word  0x0000004E               /* Cartridge */
+#endif
+
 .ascii "ZL"                     /* Cartridge ID */
-.ascii "P"                      /* Region */
+.ascii "E"                      /* Region */
+
+#ifdef CONSOLE_WIIVC
+.byte  0x00                     /* Version */
+#else
 .byte  0x0F                     /* Version */
+#endif

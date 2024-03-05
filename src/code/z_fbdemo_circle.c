@@ -95,7 +95,8 @@ void TransitionCircle_Start(void* thisx) {
         }
     }
 
-    guPerspective(&this->projection, &this->normal, 60.0f, (4.0f / 3.0f), 10.0f, 12800.0f, 1.0f);
+    guPerspective(&this->projection, &this->normal, 60.0f, (USE_WIDESCREEN ? WIDE_GET_16_9 : WIDE_GET_4_3), 10.0f,
+                  12800.0f, 1.0f);
     guLookAt(&this->lookAt, 0.0f, 0.0f, 400.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 }
 
@@ -149,6 +150,10 @@ void TransitionCircle_Draw(void* thisx, Gfx** gfxP) {
     f32 tPos = 0.0f;
     f32 rot = 0.0f;
     f32 scale = 14.8f;
+
+    if (USE_WIDESCREEN) {
+        scale += 4.0f;
+    }
 
     modelView = this->modelView[this->frame];
 

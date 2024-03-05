@@ -1,6 +1,7 @@
 #ifndef Z64_H
 #define Z64_H
 
+#include "config.h"
 #include "ultra64.h"
 #include "ultra64/gs2dex.h"
 #include "attributes.h"
@@ -58,6 +59,7 @@
 #include "gfx.h"
 #include "jpeg.h"
 #include "prerender.h"
+#include "widescreen.h"
 
 #define SCREEN_WIDTH  320
 #define SCREEN_HEIGHT 240
@@ -100,11 +102,13 @@
 #define REGION_NATIVE REGION_EU
 
 typedef struct {
+    // ENABLE_REG_EDITOR
     /* 0x00 */ s32  regPage; // 0: no page selected (reg editor is not active); 1: first page; `REG_PAGES`: last page
     /* 0x04 */ s32  regGroup; // Indexed from 0 to `REG_GROUPS`-1. Each group has its own character to identify it.
     /* 0x08 */ s32  regCur; // Selected reg, indexed from 0 as the page start
     /* 0x0C */ s32  dPadInputPrev;
     /* 0x10 */ s32  inputRepeatTimer;
+
     /* 0x14 */ s16  data[REG_GROUPS * REGS_PER_GROUP]; // Accessed through *REG macros, see regs.h
 } RegEditor; // size = 0x15D4
 
@@ -113,6 +117,7 @@ typedef struct {
     /* 0x01 */ u8   natureAmbienceId;
 } SequenceContext; // size = 0x2
 
+// ENABLE_FRAMERATE_OPTIONS
 typedef struct {
     /* 0x00 */ s32 enabled;
     /* 0x04 */ s32 timer;
@@ -194,8 +199,7 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ void* loadedRamAddr;
-    /* 0x04 */ uintptr_t vromStart;
-    /* 0x08 */ uintptr_t vromEnd;
+    /* 0x04 */ RomFile file;
     /* 0x0C */ void* vramStart;
     /* 0x10 */ void* vramEnd;
     /* 0x14 */ u32 offset; // loadedRamAddr - vramStart
@@ -297,10 +301,10 @@ typedef struct {
     /* 0x00A4 */ u8* staticSegment;
     /* 0x00A8 */ View view;
     /* 0x01D0 */ SramContext sramCtx;
-    /* 0x01D4 */ u16 unk_1D4; // not used in mq dbg (some sort of timer that doesn't seem to affect anything)
+    /* 0x01D4 */ u16 timer; // not used in mq dbg (some sort of timer that doesn't seem to affect anything)
     /* 0x01D6 */ s16 coverAlpha;
-    /* 0x01D8 */ s16 addAlpha; // not used in mq dbg
-    /* 0x01DA */ u16 visibleDuration; // not used in mq dbg
+    /* 0x01D8 */ s16 addAlpha;
+    /* 0x01DA */ u16 visibleDuration;
     /* 0x01DC */ s16 ult;
     /* 0x01DE */ s16 uls;
     /* 0x01E0 */ char unk_1E0[0x01];
@@ -308,6 +312,7 @@ typedef struct {
     /* 0x01E2 */ char unk_1E2[0x06];
 } ConsoleLogoState; // size = 0x1E8
 
+// vvv IS_MAP_SELECT_ENABLED vvv
 struct MapSelectState;
 
 typedef struct {
@@ -319,24 +324,26 @@ typedef struct {
 typedef struct MapSelectState {
     /* 0x0000 */ GameState state;
     /* 0x00A8 */ View view;
-    /* 0x01D0 */ s32 count;
+    /* 0x01D0 */ s32 sceneTotal;
     /* 0x01D4 */ SceneSelectEntry* scenes;
     /* 0x01D8 */ s32 currentScene;
     /* 0x01DC */ s32 pageDownIndex; // Index of pageDownStops
     /* 0x01E0 */ s32 pageDownStops[7];
-    /* 0x01FC */ char unk_1FC[0x0C];
-    /* 0x0208 */ s32 opt;
-    /* 0x020C */ s32 topDisplayedScene; // The scene which is currently at the top of the screen
-    /* 0x0210 */ char unk_210[0x0C];
-    /* 0x021C */ s32 verticalInputAccumulator;
-    /* 0x0220 */ s32 verticalInput;
-    /* 0x0224 */ s32 timerUp;
-    /* 0x0228 */ s32 timerDown;
-    /* 0x022C */ s32 lockUp;
-    /* 0x0230 */ s32 lockDown;
-    /* 0x0234 */ s32 unk_234; // unused
-    /* 0x0238 */ u8* staticSegment;
+    /* 0x01FC */ s32 topDisplayedScene; // The scene which is currently at the top of the screen
+    /* 0x0200 */ s32 verticalInputAccumulator;
+    /* 0x0204 */ s32 verticalInput;
+    /* 0x0208 */ s32 timerUp;
+    /* 0x020A */ s32 timerDown;
+    /* 0x020C */ s32 lockUp;
+    /* 0x0210 */ s32 lockDown;
+    /* 0x0214 */ u8 showControls;
+    /* 0x0218 */ u8 toggleBGM;
+    /* 0x021A */ u8 isBGMPlaying;
+    /* 0x021C */ u8 sceneLayer;
+    /* 0x0220 */ u8 selectedSceneColor;
 } MapSelectState; // size = 0x240
+
+// ^^^ IS_MAP_SELECT_ENABLED ^^^
 
 typedef struct {
     /* 0x0000 */ GameState state;
@@ -385,7 +392,7 @@ typedef struct PlayState {
     /* 0x007A2 */ s16 nextCamId;
     /* 0x007A4 */ SequenceContext sequenceCtx;
     /* 0x007A8 */ LightContext lightCtx;
-    /* 0x007B8 */ FrameAdvanceContext frameAdvCtx;
+    /* 0x007B8 */ FrameAdvanceContext frameAdvCtx; // ENABLE_FRAMERATE_OPTIONS
     /* 0x007C0 */ CollisionContext colCtx;
     /* 0x01C24 */ ActorContext actorCtx;
     /* 0x01D64 */ CutsceneContext csCtx; // "demo_play"
@@ -551,15 +558,14 @@ typedef struct {
      & (ENTRANCE_INFO_START_TRANS_TYPE_MASK >> ENTRANCE_INFO_START_TRANS_TYPE_SHIFT))
 
 typedef struct {
-    /* 0x00 */ s8  sceneId;
-    /* 0x01 */ s8  spawn;
+    /* 0x00 */ u8  sceneId;
+    /* 0x01 */ u8  spawn;
     /* 0x02 */ u16 field;
 } EntranceInfo; // size = 0x4
 
 typedef struct {
     /* 0x00 */ void*     loadedRamAddr;
-    /* 0x04 */ uintptr_t vromStart; // if applicable
-    /* 0x08 */ uintptr_t vromEnd;   // if applicable
+    /* 0x04 */ RomFile   file;      // if applicable
     /* 0x0C */ void*     vramStart; // if applicable
     /* 0x10 */ void*     vramEnd;   // if applicable
     /* 0x14 */ void*     unk_14;
@@ -715,9 +721,9 @@ typedef struct ArenaNode {
     /* 0x04 */ u32 size;
     /* 0x08 */ struct ArenaNode* next;
     /* 0x0C */ struct ArenaNode* prev;
-#if OOT_DEBUG // TODO: This debug info is also present in N64 retail builds
+#if IS_DEBUG // TODO: This debug info is also present in N64 retail builds
     /* 0x10 */ const char* filename;
-    /* 0x14 */ s32 line;
+    /* 0x14 */ int line;
     /* 0x18 */ OSId threadId;
     /* 0x1C */ Arena* arena;
     /* 0x20 */ OSTime time;
@@ -755,7 +761,12 @@ typedef struct OverlayRelocationSection {
     /* 0x14 */ u32 relocations[1]; // size is nRelocations
 } OverlayRelocationSection; // size >= 0x18
 
-typedef struct {
+// This struct is used at osAppNMIBuffer which is not at an 8-byte aligned address. This causes an unaligned access
+// crash if the OSTime variables use 64-bit load/store instructions, which is the case in any MIPS ABI other than O32
+// where 64-bit load/store instructions are emulated with 2x 32-bit load/store instructions. The alignment attribute
+// conveys that this structure will not always be 8-bytes aligned, allowing a modern compiler to generate non-crashing
+// code for accessing these. This is not an issue in the original compiler as it only output O32 ABI code.
+ALIGNED(4) typedef struct {
     /* 0x00 */ u32 resetting;
     /* 0x04 */ u32 resetCount;
     /* 0x08 */ OSTime duration;

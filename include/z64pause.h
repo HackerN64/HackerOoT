@@ -5,6 +5,8 @@
 #include "z64message.h"
 #include "z64view.h"
 
+#include "config.h"
+
 struct OcarinaStaff;
 
 #define PAUSE_ITEM_NONE 999
@@ -52,8 +54,13 @@ typedef enum {
 #define IS_PAUSE_STATE_GAMEOVER(pauseCtx) \
     (((pauseCtx)->state >= PAUSE_STATE_8) && ((pauseCtx)->state <= PAUSE_STATE_17))
 
-#define IS_PAUSED(pauseCtx) \
-    (((pauseCtx)->state != PAUSE_STATE_OFF) || ((pauseCtx)->debugState != 0))
+#if ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR
+    #define IS_PAUSED(pauseCtx) \
+        (((pauseCtx)->state != PAUSE_STATE_OFF) || ((pauseCtx)->debugState != 0))
+#else
+    #define IS_PAUSED(pauseCtx) \
+        ((pauseCtx)->state != PAUSE_STATE_OFF)
+#endif
 
 // Sub-states of PAUSE_STATE_MAIN
 typedef enum {
@@ -95,7 +102,7 @@ typedef struct {
     /* 0x01B8 */ OSMesgQueue loadQueue;
     /* 0x01D0 */ OSMesg loadMsg;
     /* 0x01D4 */ u16 state;
-    /* 0x01D6 */ u16 debugState;
+    /* 0x01D6 */ u16 debugState; // ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR
     /* 0x01D8 */ Vec3f eye;
     /* 0x01E4 */ u16 mainState;
     /* 0x01E6 */ u16 mode;

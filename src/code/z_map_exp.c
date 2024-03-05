@@ -163,7 +163,8 @@ void Map_InitData(PlayState* play, s16 room) {
                              (uintptr_t)_map_i_staticSegmentRomStart +
                                  ((gMapData->dgnMinimapTexIndexOffset[mapIndex] + room) * MAP_I_TEX_SIZE),
                              MAP_I_TEX_SIZE, "../z_map_exp.c", 346);
-            R_COMPASS_OFFSET_X = gMapData->roomCompassOffsetX[mapIndex][room];
+            R_COMPASS_OFFSET_X =
+                WIDE_MULT(WIDE_MULT(gMapData->roomCompassOffsetX[mapIndex][room], WIDE_GET_16_9), WIDE_GET_RATIO);
             R_COMPASS_OFFSET_Y = gMapData->roomCompassOffsetY[mapIndex][room];
             Map_SetFloorPalettesData(play, VREG(30));
             PRINTF("ＭＡＰ 各階ＯＮチェック\n"); // "MAP Individual Floor ON Check"
@@ -263,7 +264,7 @@ void Map_Init(PlayState* play) {
             R_MAP_INDEX = gSaveContext.mapIndex = mapIndex;
             R_COMPASS_SCALE_X = gMapData->owCompassInfo[mapIndex][0];
             R_COMPASS_SCALE_Y = gMapData->owCompassInfo[mapIndex][1];
-            R_COMPASS_OFFSET_X = gMapData->owCompassInfo[mapIndex][2];
+            R_COMPASS_OFFSET_X = WIDE_MULT(gMapData->owCompassInfo[mapIndex][2], WIDE_MINIMAP_ARROW_SHIFT);
             R_COMPASS_OFFSET_Y = gMapData->owCompassInfo[mapIndex][3];
             Map_InitData(play, mapIndex);
             R_OW_MINIMAP_X = gMapData->owMinimapPosX[mapIndex];
@@ -365,7 +366,7 @@ void Minimap_Draw(PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx, "../z_map_exp.c", 626);
 
-    if (play->pauseCtx.state <= PAUSE_STATE_INIT) {
+    if (play->pauseCtx.state < PAUSE_STATE_INIT) {
         switch (play->sceneId) {
             case SCENE_DEKU_TREE:
             case SCENE_DODONGOS_CAVERN:
@@ -390,10 +391,10 @@ void Minimap_Draw(PlayState* play) {
                                                G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
                                                G_TX_NOLOD);
 
-                        gSPTextureRectangle(OVERLAY_DISP++, R_DGN_MINIMAP_X << 2, R_DGN_MINIMAP_Y << 2,
-                                            (R_DGN_MINIMAP_X + MAP_I_TEX_WIDTH) << 2,
-                                            (R_DGN_MINIMAP_Y + MAP_I_TEX_HEIGHT) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10,
-                                            1 << 10);
+                        gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((R_DGN_MINIMAP_X << 2), WIDE_MINIMAP_SHIFT),
+                                            R_DGN_MINIMAP_Y << 2, WIDE_INCR(R_DGN_MINIMAP_X + MAP_I_TEX_WIDTH, 4) << 2,
+                                            (R_DGN_MINIMAP_Y + MAP_I_TEX_HEIGHT) << 2, G_TX_RENDERTILE, 0, 0,
+                                            WIDE_INCR((1 << 10), (u16)((WIDE_GET_4_3 - 1.0f) * 1000.0f)), 1 << 10);
                     }
 
                     if (CHECK_DUNGEON_ITEM(DUNGEON_COMPASS, mapIndex)) {
@@ -451,10 +452,11 @@ void Minimap_Draw(PlayState* play) {
                                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
                                            G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
-                    gSPTextureRectangle(OVERLAY_DISP++, R_OW_MINIMAP_X << 2, R_OW_MINIMAP_Y << 2,
-                                        (R_OW_MINIMAP_X + gMapData->owMinimapWidth[mapIndex]) << 2,
+                    gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((R_OW_MINIMAP_X << 2), WIDE_MINIMAP_SHIFT),
+                                        R_OW_MINIMAP_Y << 2,
+                                        WIDE_INCR(R_OW_MINIMAP_X + gMapData->owMinimapWidth[mapIndex], 10) << 2,
                                         (R_OW_MINIMAP_Y + gMapData->owMinimapHeight[mapIndex]) << 2, G_TX_RENDERTILE, 0,
-                                        0, 1 << 10, 1 << 10);
+                                        0, WIDE_INCR((1 << 10), (u16)((WIDE_GET_4_3 - 1.0f) * 1000.0f)), 1 << 10);
 
                     if (((play->sceneId != SCENE_KAKARIKO_VILLAGE) && (play->sceneId != SCENE_KOKIRI_FOREST) &&
                          (play->sceneId != SCENE_ZORAS_FOUNTAIN)) ||
@@ -468,12 +470,15 @@ void Minimap_Draw(PlayState* play) {
                                                 8, 8, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
                                                 G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
-                            gSPTextureRectangle(OVERLAY_DISP++,
-                                                gMapData->owEntranceIconPosX[sEntranceIconMapIndex] << 2,
-                                                gMapData->owEntranceIconPosY[sEntranceIconMapIndex] << 2,
-                                                (gMapData->owEntranceIconPosX[sEntranceIconMapIndex] + 8) << 2,
-                                                (gMapData->owEntranceIconPosY[sEntranceIconMapIndex] + 8) << 2,
-                                                G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
+                            gSPTextureRectangle(
+                                OVERLAY_DISP++,
+                                WIDE_INCR((gMapData->owEntranceIconPosX[sEntranceIconMapIndex] << 2),
+                                          (WIDE_MINIMAP_SHIFT / 2)),
+                                gMapData->owEntranceIconPosY[sEntranceIconMapIndex] << 2,
+                                WIDE_INCR(((gMapData->owEntranceIconPosX[sEntranceIconMapIndex] + 8) << 2),
+                                          (WIDE_MINIMAP_SHIFT / 2)),
+                                (gMapData->owEntranceIconPosY[sEntranceIconMapIndex] + 8) << 2, G_TX_RENDERTILE, 0, 0,
+                                WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
                         }
                     }
 
@@ -483,8 +488,9 @@ void Minimap_Draw(PlayState* play) {
                                             8, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
                                             G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
-                        gSPTextureRectangle(OVERLAY_DISP++, 270 << 2, 154 << 2, 278 << 2, 162 << 2, G_TX_RENDERTILE, 0,
-                                            0, 1 << 10, 1 << 10);
+                        gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((270 << 2), (WIDE_MINIMAP_SHIFT / 2)), 154 << 2,
+                                            WIDE_INCR((278 << 2), (WIDE_MINIMAP_SHIFT / 2)), 162 << 2, G_TX_RENDERTILE,
+                                            0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
                     }
 
                     Minimap_DrawCompassIcons(play); // Draw icons for the player spawn and current position

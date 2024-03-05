@@ -7048,12 +7048,19 @@ void Camera_Init(Camera* camera, View* view, CollisionContext* colCtx, PlayState
             R_CAM_DATA(i) = sCamDataRegsInit[i];
         }
 
-        DebugCamera_Reset(camera, &D_8015BD80);
+        if (IS_CAMERA_DEBUG_ENABLED) {
+            DebugCamera_Reset(camera, &D_8015BD80);
+        }
+
         sInitRegs = false;
         PREG(88) = -1;
     }
     camera->play = D_8015BD7C = play;
-    DebugCamera_Init(&D_8015BD80, camera);
+
+    if (IS_CAMERA_DEBUG_ENABLED) {
+        DebugCamera_Init(&D_8015BD80, camera);
+    }
+
     curUID = sNextUID;
     sNextUID++;
     while (curUID != 0) {
@@ -7105,7 +7112,11 @@ void Camera_Init(Camera* camera, View* view, CollisionContext* colCtx, PlayState
     camera->quakeOffset.x = camera->quakeOffset.y = camera->quakeOffset.z = 0;
     camera->atLERPStepScale = 1;
     sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_IGNORE, CAM_HUD_VISIBILITY_IGNORE, 0);
-    sDbgModeIdx = -1;
+
+    if (IS_CAMERA_DEBUG_ENABLED) {
+        sDbgModeIdx = -1;
+    }
+
     D_8011D3F0 = 3;
     PRINTF(VT_FGCOL(BLUE) "camera: initialize --- " VT_RST " UID %d\n", camera->uid);
 }
@@ -7239,79 +7250,81 @@ s16 Camera_ChangeStatus(Camera* camera, s16 status) {
 }
 
 void Camera_PrintSettings(Camera* camera) {
-    char sp58[8];
-    char sp50[8];
-    char sp48[8];
-    s32 i;
+    if (IS_CAMERA_DEBUG_ENABLED) {
+        char sp58[8];
+        char sp50[8];
+        char sp48[8];
+        s32 i;
 
-    if ((OREG(0) & 1) && (camera->play->activeCamId == camera->camId) && !gDebugCamEnabled) {
-        for (i = 0; i < NUM_CAMS; i++) {
-            if (camera->play->cameraPtrs[i] == NULL) {
-                sp58[i] = '-';
-                sp48[i] = ' ';
-            } else {
-                switch (camera->play->cameraPtrs[i]->status) {
-                    case 0:
-                        sp58[i] = 'c';
-                        break;
-                    case 1:
-                        sp58[i] = 'w';
-                        break;
-                    case 3:
-                        sp58[i] = 's';
-                        break;
-                    case 7:
-                        sp58[i] = 'a';
-                        break;
-                    case 0x100:
-                        sp58[i] = 'd';
-                        break;
-                    default:
-                        sp58[i] = '*';
-                        break;
+        if ((OREG(0) & 1) && (camera->play->activeCamId == camera->camId) && !gDebugCamEnabled) {
+            for (i = 0; i < NUM_CAMS; i++) {
+                if (camera->play->cameraPtrs[i] == NULL) {
+                    sp58[i] = '-';
+                    sp48[i] = ' ';
+                } else {
+                    switch (camera->play->cameraPtrs[i]->status) {
+                        case 0:
+                            sp58[i] = 'c';
+                            break;
+                        case 1:
+                            sp58[i] = 'w';
+                            break;
+                        case 3:
+                            sp58[i] = 's';
+                            break;
+                        case 7:
+                            sp58[i] = 'a';
+                            break;
+                        case 0x100:
+                            sp58[i] = 'd';
+                            break;
+                        default:
+                            sp58[i] = '*';
+                            break;
+                    }
                 }
+                sp48[i] = ' ';
             }
-            sp48[i] = ' ';
+            sp58[i] = '\0';
+            sp48[i] = '\0';
+
+            sp48[camera->play->activeCamId] = 'a';
+            DebugCamera_ScreenTextColored(3, 22, DEBUG_CAM_TEXT_WHITE, sp58);
+            DebugCamera_ScreenTextColored(3, 22, DEBUG_CAM_TEXT_PEACH, sp48);
+            DebugCamera_ScreenTextColored(3, 23, DEBUG_CAM_TEXT_WHITE, "S:");
+            DebugCamera_ScreenTextColored(5, 23, DEBUG_CAM_TEXT_GOLD, sCameraSettingNames[camera->setting]);
+            DebugCamera_ScreenTextColored(3, 24, DEBUG_CAM_TEXT_WHITE, "M:");
+            DebugCamera_ScreenTextColored(5, 24, DEBUG_CAM_TEXT_GOLD, sCameraModeNames[camera->mode]);
+            DebugCamera_ScreenTextColored(3, 25, DEBUG_CAM_TEXT_WHITE, "F:");
+            DebugCamera_ScreenTextColored(
+                5, 25, DEBUG_CAM_TEXT_GOLD,
+                sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx]);
+
+            i = 0;
+            if (camera->bgCamIndex < 0) {
+                sp50[i++] = '-';
+            }
+
+            //! @bug: this code was clearly meaning to print `abs(camera->bgCamIndex)` as a
+            //! one-or-two-digit number, instead of `i`.
+            // "sp50[i++] = ..." matches here, but is undefined behavior due to conflicting
+            // reads/writes between sequence points, triggering warnings. Work around by
+            // putting i++ afterwards while on the same line.
+            // clang-format off
+            if (camera->bgCamIndex / 10 != 0) {
+                sp50[i] = i / 10 + '0'; i++;
+            }
+            sp50[i] = i % 10 + '0'; i++;
+            // clang-format on
+
+            sp50[i++] = ' ';
+            sp50[i++] = ' ';
+            sp50[i++] = ' ';
+            sp50[i++] = ' ';
+            sp50[i] = '\0';
+            DebugCamera_ScreenTextColored(3, 26, DEBUG_CAM_TEXT_WHITE, "I:");
+            DebugCamera_ScreenTextColored(5, 26, DEBUG_CAM_TEXT_GOLD, sp50);
         }
-        sp58[i] = '\0';
-        sp48[i] = '\0';
-
-        sp48[camera->play->activeCamId] = 'a';
-        DebugCamera_ScreenTextColored(3, 22, DEBUG_CAM_TEXT_WHITE, sp58);
-        DebugCamera_ScreenTextColored(3, 22, DEBUG_CAM_TEXT_PEACH, sp48);
-        DebugCamera_ScreenTextColored(3, 23, DEBUG_CAM_TEXT_WHITE, "S:");
-        DebugCamera_ScreenTextColored(5, 23, DEBUG_CAM_TEXT_GOLD, sCameraSettingNames[camera->setting]);
-        DebugCamera_ScreenTextColored(3, 24, DEBUG_CAM_TEXT_WHITE, "M:");
-        DebugCamera_ScreenTextColored(5, 24, DEBUG_CAM_TEXT_GOLD, sCameraModeNames[camera->mode]);
-        DebugCamera_ScreenTextColored(3, 25, DEBUG_CAM_TEXT_WHITE, "F:");
-        DebugCamera_ScreenTextColored(
-            5, 25, DEBUG_CAM_TEXT_GOLD,
-            sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx]);
-
-        i = 0;
-        if (camera->bgCamIndex < 0) {
-            sp50[i++] = '-';
-        }
-
-        //! @bug: this code was clearly meaning to print `abs(camera->bgCamIndex)` as a
-        //! one-or-two-digit number, instead of `i`.
-        // "sp50[i++] = ..." matches here, but is undefined behavior due to conflicting
-        // reads/writes between sequence points, triggering warnings. Work around by
-        // putting i++ afterwards while on the same line.
-        // clang-format off
-        if (camera->bgCamIndex / 10 != 0) {
-            sp50[i] = i / 10 + '0'; i++;
-        }
-        sp50[i] = i % 10 + '0'; i++;
-        // clang-format on
-
-        sp50[i++] = ' ';
-        sp50[i++] = ' ';
-        sp50[i++] = ' ';
-        sp50[i++] = ' ';
-        sp50[i] = '\0';
-        DebugCamera_ScreenTextColored(3, 26, DEBUG_CAM_TEXT_WHITE, "I:");
-        DebugCamera_ScreenTextColored(5, 26, DEBUG_CAM_TEXT_GOLD, sp50);
     }
 }
 
@@ -7453,32 +7466,36 @@ s32 Camera_UpdateHotRoom(Camera* camera) {
     return 1;
 }
 
+// doesn't seem to work properly
 s32 Camera_DbgChangeMode(Camera* camera) {
-    s32 changeDir = 0;
+    if (IS_CAMERA_DEBUG_ENABLED) {
+        s32 changeDir = 0;
 
-    if (!gDebugCamEnabled && camera->play->activeCamId == CAM_ID_MAIN) {
-        if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CUP)) {
-            PRINTF("attention sound URGENCY\n");
-            Sfx_PlaySfxCentered(NA_SE_SY_ATTENTION_URGENCY);
-        }
-        if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CDOWN)) {
-            PRINTF("attention sound NORMAL\n");
-            Sfx_PlaySfxCentered(NA_SE_SY_ATTENTION_ON);
-        }
+        if (!gDebugCamEnabled && camera->play->activeCamId == CAM_ID_MAIN) {
+            if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CUP)) {
+                PRINTF("attention sound URGENCY\n");
+                Sfx_PlaySfxCentered(NA_SE_SY_ATTENTION_URGENCY);
+            }
+            if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CDOWN)) {
+                PRINTF("attention sound NORMAL\n");
+                Sfx_PlaySfxCentered(NA_SE_SY_ATTENTION_ON);
+            }
 
-        if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CRIGHT)) {
-            changeDir = 1;
-        }
-        if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CLEFT)) {
-            changeDir = -1;
-        }
-        if (changeDir != 0) {
-            sDbgModeIdx = (sDbgModeIdx + changeDir) % 6;
-            if (Camera_RequestSetting(camera, D_8011DAFC[sDbgModeIdx]) > 0) {
-                PRINTF("camera: force change SET to %s!\n", sCameraSettingNames[D_8011DAFC[sDbgModeIdx]]);
+            if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CRIGHT)) {
+                changeDir = 1;
+            }
+            if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CLEFT)) {
+                changeDir = -1;
+            }
+            if (changeDir != 0) {
+                sDbgModeIdx = (sDbgModeIdx + changeDir) % 6;
+                if (Camera_RequestSetting(camera, D_8011DAFC[sDbgModeIdx]) > 0) {
+                    PRINTF("camera: force change SET to %s!\n", sCameraSettingNames[D_8011DAFC[sDbgModeIdx]]);
+                }
             }
         }
     }
+
     return true;
 }
 
@@ -7586,12 +7603,12 @@ Vec3s Camera_Update(Camera* camera) {
 
     player = camera->play->cameraPtrs[CAM_ID_MAIN]->player;
 
-    if (R_DEBUG_CAM_UPDATE) {
+    if (IS_CAMERA_DEBUG_ENABLED && R_DEBUG_CAM_UPDATE) {
         PRINTF("camera: in %x\n", camera);
     }
 
     if (camera->status == CAM_STAT_CUT) {
-        if (R_DEBUG_CAM_UPDATE) {
+        if (IS_CAMERA_DEBUG_ENABLED && R_DEBUG_CAM_UPDATE) {
             PRINTF("camera: cut out %x\n", camera);
         }
         return camera->inputDir;
@@ -7662,11 +7679,14 @@ Vec3s Camera_Update(Camera* camera) {
             }
         }
     }
-    Camera_PrintSettings(camera);
-    Camera_DbgChangeMode(camera);
+
+    if (IS_CAMERA_DEBUG_ENABLED) {
+        Camera_PrintSettings(camera);
+        Camera_DbgChangeMode(camera);
+    }
 
     if (camera->status == CAM_STAT_WAIT) {
-        if (R_DEBUG_CAM_UPDATE) {
+        if (IS_CAMERA_DEBUG_ENABLED && R_DEBUG_CAM_UPDATE) {
             PRINTF("camera: wait out %x\n", camera);
         }
         return camera->inputDir;
@@ -7676,7 +7696,7 @@ Vec3s Camera_Update(Camera* camera) {
     camera->stateFlags &= ~(CAM_STATE_BLOCK_BG | CAM_STATE_LOCK_MODE);
     camera->stateFlags |= CAM_STATE_CAM_FUNC_FINISH;
 
-    if (R_DEBUG_CAM_UPDATE) {
+    if (IS_CAMERA_DEBUG_ENABLED && R_DEBUG_CAM_UPDATE) {
         PRINTF("camera: engine (%d %d %d) %04x \n", camera->setting, camera->mode,
                sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx, camera->stateFlags);
     }
@@ -7707,39 +7727,38 @@ Vec3s Camera_Update(Camera* camera) {
         }
     }
 
-    if (R_DEBUG_CAM_UPDATE) {
+    if (IS_CAMERA_DEBUG_ENABLED && R_DEBUG_CAM_UPDATE) {
         PRINTF("camera: shrink_and_bitem %x(%d)\n", sCameraInterfaceField, camera->play->transitionMode);
-    }
-
-    if (R_DEBUG_CAM_UPDATE) {
         PRINTF("camera: engine (%s(%d) %s(%d) %s(%d)) ok!\n", &sCameraSettingNames[camera->setting], camera->setting,
                &sCameraModeNames[camera->mode], camera->mode,
                &sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx],
                sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx);
     }
 
-    // enable/disable debug cam
-    if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_START)) {
-        gDebugCamEnabled ^= 1;
-        if (gDebugCamEnabled) {
-            DebugCamera_Enable(&D_8015BD80, camera);
-        } else if (camera->play->csCtx.state != CS_STATE_IDLE) {
-            Cutscene_StopManual(camera->play, &camera->play->csCtx);
+    if (IS_CAMERA_DEBUG_ENABLED) {
+        // enable/disable debug cam
+        if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_START)) {
+            gDebugCamEnabled ^= 1;
+            if (gDebugCamEnabled) {
+                DebugCamera_Enable(&D_8015BD80, camera);
+            } else if (camera->play->csCtx.state != CS_STATE_IDLE) {
+                Cutscene_StopManual(camera->play, &camera->play->csCtx);
+            }
         }
-    }
 
-    // Debug cam update
-    if (gDebugCamEnabled) {
-        camera->play->view.fovy = D_8015BD80.fov;
-        DebugCamera_Update(&D_8015BD80, camera);
-        View_LookAt(&camera->play->view, &D_8015BD80.eye, &D_8015BD80.at, &D_8015BD80.unk_1C);
-        if (R_DEBUG_CAM_UPDATE) {
-            PRINTF("camera: debug out\n");
+        // Debug cam update
+        if (IS_DEBUG_CAM_ENABLED) {
+            camera->play->view.fovy = D_8015BD80.fov;
+            DebugCamera_Update(&D_8015BD80, camera);
+            View_LookAt(&camera->play->view, &D_8015BD80.eye, &D_8015BD80.at, &D_8015BD80.unk_1C);
+            if (IS_CAMERA_DEBUG_ENABLED && R_DEBUG_CAM_UPDATE) {
+                PRINTF("camera: debug out\n");
+            }
+            return D_8015BD80.sub.unk_104A;
         }
-        return D_8015BD80.sub.unk_104A;
-    }
 
-    OREG(0) &= ~8;
+        OREG(0) &= ~8;
+    }
 
     if (camera->status == CAM_STAT_UNK3) {
         return camera->inputDir;
@@ -7809,7 +7828,7 @@ Vec3s Camera_Update(Camera* camera) {
         camera->timer = 0;
     }
 
-    if (R_DEBUG_CAM_UPDATE) {
+    if (IS_CAMERA_DEBUG_ENABLED && R_DEBUG_CAM_UPDATE) {
         PRINTF("camera: out (%f %f %f) (%f %f %f)\n", camera->at.x, camera->at.y, camera->at.z, camera->eye.x,
                camera->eye.y, camera->eye.z);
         PRINTF("camera: dir (%f %d(%f) %d(%f)) (%f)\n", eyeAtAngle.r, eyeAtAngle.pitch,
@@ -8157,7 +8176,7 @@ s32 Camera_RequestBgCam(Camera* camera, s32 requestedBgCamIndex) {
 }
 
 Vec3s Camera_GetInputDir(Camera* camera) {
-    if (gDebugCamEnabled) {
+    if (IS_DEBUG_CAM_ENABLED) {
         return D_8015BD80.sub.unk_104A;
     } else {
         return camera->inputDir;
@@ -8177,7 +8196,7 @@ s16 Camera_GetInputDirYaw(Camera* camera) {
 }
 
 Vec3s Camera_GetCamDir(Camera* camera) {
-    if (gDebugCamEnabled) {
+    if (IS_DEBUG_CAM_ENABLED) {
         return D_8015BD80.sub.unk_104A;
     } else {
         return camera->camDir;
@@ -8376,7 +8395,7 @@ s32 Camera_Copy(Camera* dstCamera, Camera* srcCamera) {
 }
 
 s32 Camera_IsDebugCamEnabled(void) {
-    return gDebugCamEnabled;
+    return IS_DEBUG_CAM_ENABLED;
 }
 
 Vec3f Camera_GetQuakeOffset(Camera* camera) {

@@ -2555,8 +2555,10 @@ s32 (*sCameraFunctions[])(Camera*) = {
 
 s32 sInitRegs = 1;
 
+// ENABLE_CAMERA_DEBUGGER
 s32 gDebugCamEnabled = false;
 s32 sDbgModeIdx = -1;
+
 s16 sNextUID = 0;
 
 s32 sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_NONE, CAM_HUD_VISIBILITY_ALL, 1);
@@ -3034,5 +3036,8 @@ s16 D_8011DAFC[] = {
 };
 
 PlayState* D_8015BD7C;
+
+// ENABLE_CAMERA_DEBUGGER
 DebugCam D_8015BD80;
+
 CollisionPoly* playerFloorPoly;

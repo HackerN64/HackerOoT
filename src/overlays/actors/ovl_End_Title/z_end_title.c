@@ -28,12 +28,35 @@ ActorInit End_Title_InitVars = {
 
 #include "assets/overlays/ovl_End_Title/ovl_End_Title.c"
 
+static Gfx sWidePresentedByNintendoDL[] = {
+#if ENABLE_WIDESCREEN
+    gsDPPipeSync(),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetRenderMode(G_RM_PASS, G_RM_XLU_SURF2),
+    gsSPClearGeometryMode(G_CULL_BACK | G_FOG | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR),
+    gsDPSetCombineLERP(PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED, 0, 0, 0,
+                       COMBINED),
+    gsDPSetEnvColor(200, 230, 225, 255),
+    gsDPLoadTextureTile(sNintendoLeftTex, G_IM_FMT_IA, G_IM_SIZ_8b, 64, 0, 0, 0, 63, 47, 0, G_TX_NOMIRROR | G_TX_WRAP,
+                        G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD),
+    gsSPTextureRectangle(0x0184 + 20 + 30, 0x0168, 0x0280 - 0x40 + 19 + 30, 0x0224, G_TX_RENDERTILE, 0, 0,
+                         (1 << 10) / WIDE_GET_RATIO, 0x0400),
+    gsDPLoadTextureTile(sNintendoRightTex, G_IM_FMT_IA, G_IM_SIZ_8b, 64, 0, 0, 0, 63, 47, 0, G_TX_NOMIRROR | G_TX_WRAP,
+                        G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD),
+    gsSPTextureRectangle(0x0280 - 0x40 + 19 + 30, 0x0168, 0x037C - 76, 0x0224, G_TX_RENDERTILE, 0, 0,
+                         (1 << 10) / WIDE_GET_RATIO, 0x0400),
+    gsDPLoadTextureTile(sPresentedByTex, G_IM_FMT_IA, G_IM_SIZ_8b, 96, 0, 0, 0, 95, 15, 0, G_TX_NOMIRROR | G_TX_WRAP,
+                        G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD),
+    gsSPTextureRectangle(0x01C4 + 30, 0x0140, 0x0340, 0x017C, G_TX_RENDERTILE, 0, 0, (1 << 10) / WIDE_GET_RATIO,
+                         0x0400),
+    gsSPEndDisplayList(),
+#endif
+};
+
 void EndTitle_Init(Actor* thisx, PlayState* play) {
     EndTitle* this = (EndTitle*)thisx;
 
-    this->endAlpha = 0;
-    this->tlozAlpha = 0;
-    this->ootAlpha = 0;
+    this->endAlpha = this->tlozAlpha = this->ootAlpha = 0;
     if (this->actor.params == 1) {
         this->actor.draw = EndTitle_DrawNintendoLogo;
     }
@@ -124,7 +147,7 @@ void EndTitle_DrawNintendoLogo(Actor* thisx, PlayState* play) {
 
     OVERLAY_DISP = Gfx_SetupDL_64(OVERLAY_DISP);
     gDPSetPrimColor(OVERLAY_DISP++, 0, 0x80, 0, 0, 0, this->endAlpha);
-    gSPDisplayList(OVERLAY_DISP++, sPresentedByNintendoDL);
+    gSPDisplayList(OVERLAY_DISP++, (USE_WIDESCREEN ? sWidePresentedByNintendoDL : sPresentedByNintendoDL));
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_end_title.c", 600);
 }

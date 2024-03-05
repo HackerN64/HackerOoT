@@ -510,7 +510,12 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                     gDPPipeSync(POLY_OPA_DISP++);
 
                     if (D_8082A124[sp218] == 0) {
-                        gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 80, 255, 150, D_8082A150[sp218]);
+                        Color_RGB8 color = { 80, 255, 150 };
+                        if (N64_BTN_COLORS) {
+                            color.g = 150;
+                            color.b = 255;
+                        }
+                        gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, color.r, color.g, color.b, D_8082A150[sp218]);
                     } else {
                         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 50, D_8082A150[sp218]);
                     }
@@ -541,7 +546,12 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
 
                 if (pauseCtx->mainState == PAUSE_MAIN_STATE_8) {
                     if (gOcarinaSongButtons[sp224].buttonsIndex[phi_s3] == OCARINA_BTN_A) {
-                        gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 80, 255, 150, 200);
+                        Color_RGB8 color = { 80, 255, 150 };
+                        if (N64_BTN_COLORS) {
+                            color.g = 150;
+                            color.b = 255;
+                        }
+                        gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, color.r, color.g, color.b, 200);
                     } else {
                         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 50, 200);
                     }
@@ -596,7 +606,12 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                     gDPPipeSync(POLY_OPA_DISP++);
 
                     if (D_8082A124[phi_s3] == 0) {
-                        gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 80, 255, 150, D_8082A150[phi_s3]);
+                        Color_RGB8 color = { 80, 255, 150 };
+                        if (N64_BTN_COLORS) {
+                            color.g = 150;
+                            color.b = 255;
+                        }
+                        gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, color.r, color.g, color.b, D_8082A150[phi_s3]);
                     } else {
                         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 50, D_8082A150[phi_s3]);
                     }

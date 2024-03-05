@@ -1490,7 +1490,6 @@ void Scene_DrawConfigJabuJabu(PlayState* play) {
     gDPSetEnvColor(POLY_XLU_DISP++, 128, 128, 128, 128);
 
     if (FrameAdvance_IsEnabled(play) != true) {
-
         D_8012A39C += 1820;
         D_8012A3A0 += 1820;
 
@@ -1652,7 +1651,7 @@ void (*sSceneDrawConfigs[SDC_MAX])(PlayState*) = {
 };
 
 void Scene_Draw(PlayState* play) {
-    if ((R_HREG_MODE == HREG_MODE_SCENE_CONFIG) && OOT_DEBUG) {
+    if ((R_HREG_MODE == HREG_MODE_SCENE_CONFIG) && IS_DEBUG) {
         if (R_SCENE_CONFIG_INIT != HREG_MODE_SCENE_CONFIG) {
             R_SCENE_CONFIG_INIT = HREG_MODE_SCENE_CONFIG;
             R_SCENE_CONFIG_DRAW_DEFAULT_DLIST = 1;

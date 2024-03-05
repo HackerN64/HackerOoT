@@ -3,6 +3,15 @@
 #ifndef ULTRA64_GBI_H
 #define ULTRA64_GBI_H
 
+#include "config.h"
+
+#if ENABLE_F3DEX3
+    #define REQUIRE_SEMICOLONS_AFTER_GBI_COMMANDS
+    #if ENABLE_F3DEX3_RECOMMENDATIONS
+        #define NO_SYNCS_IN_TEXTURE_LOADS
+    #endif
+    #include "gbi.f3dex3.h"
+#else
 /* To enable Fast3DEX grucode support, define F3DEX_GBI. */
 
 /* Types */
@@ -2896,6 +2905,9 @@ _DW({                                               \
      gsDma1p(       G_MOVEMEM, (l), sizeof(Light), ((n) - 1) * 2 + G_MV_L0)
 #endif  /* F3DEX_GBI_2 */
 
+// F3DEX3 compatibility
+#define gSPAmbient gSPLight
+
 /*
  * gSPLightColor changes color of light without recalculating light direction
  * col is a 32 bit word with r,g,b,a (alpha is ignored)
@@ -5123,7 +5135,7 @@ _DW({                                                   \
 #define gDPNoOpTag(pkt, tag)    gDPParam(pkt,   G_NOOP, tag)
 #define gsDPNoOpTag(tag)        gsDPParam(      G_NOOP, tag)
 
-#if OOT_DEBUG
+#if IS_DEBUG
 
 #define gDPNoOpHere(pkt, file, line)        gDma1p(pkt, G_NOOP, file, line, 1)
 #define gDPNoOpString(pkt, data, n)         gDma1p(pkt, G_NOOP, data, n, 2)
@@ -5149,8 +5161,10 @@ _DW({                                                   \
 #define gDPNoOpCloseDisp(pkt, file, line)
 #define gDPNoOpTag3(pkt, type, data, n)
 
-#endif /* OOT_DEBUG */
+#endif /* IS_DEBUG */
 
 #endif
+
+#endif // ENABLE_F3DEX3
 
 #endif

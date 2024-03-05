@@ -92,11 +92,13 @@ void BgMoriKaitenkabe_Wait(BgMoriKaitenkabe* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (this->dyna.unk_150 > 0.001f) {
-        this->timer++;
+        this->timer += (s32)(1.0f * BLOCK_PUSH_SPEED);
         if ((this->timer > 28) && !Player_InCsMode(play)) {
             BgMoriKaitenkabe_SetupRotate(this);
-            Player_SetCsActionWithHaltedActors(play, &this->dyna.actor, PLAYER_CSACTION_8);
-            Math_Vec3f_Copy(&this->lockedPlayerPos, &player->actor.world.pos);
+            if (!DISABLE_PLAYER_FREEZE) {
+                Player_SetCsActionWithHaltedActors(play, &this->dyna.actor, PLAYER_CSACTION_8);
+                Math_Vec3f_Copy(&this->lockedPlayerPos, &player->actor.world.pos);
+            }
             push.x = Math_SinS(this->dyna.unk_158);
             push.y = 0.0f;
             push.z = Math_CosS(this->dyna.unk_158);
@@ -126,10 +128,12 @@ void BgMoriKaitenkabe_Rotate(BgMoriKaitenkabe* this, PlayState* play) {
     Actor* thisx = &this->dyna.actor;
     s16 rotY;
 
-    Math_StepToF(&this->rotSpeed, 0.6f, 0.02f);
+    Math_StepToF(&this->rotSpeed, 0.6f * BLOCK_PUSH_SPEED, 0.02f);
     if (Math_StepToF(&this->rotYdeg, this->rotDirection * 45.0f, this->rotSpeed)) {
         BgMoriKaitenkabe_SetupWait(this);
-        Player_SetCsActionWithHaltedActors(play, thisx, PLAYER_CSACTION_7);
+        if (!DISABLE_PLAYER_FREEZE) {
+            Player_SetCsActionWithHaltedActors(play, thisx, PLAYER_CSACTION_7);
+        }
         if (this->rotDirection > 0.0f) {
             thisx->home.rot.y += 0x2000;
         } else {
@@ -146,7 +150,10 @@ void BgMoriKaitenkabe_Rotate(BgMoriKaitenkabe* this, PlayState* play) {
         this->dyna.unk_150 = 0.0f;
         player->stateFlags2 &= ~PLAYER_STATE2_4;
     }
-    Math_Vec3f_Copy(&player->actor.world.pos, &this->lockedPlayerPos);
+
+    if (!DISABLE_PLAYER_FREEZE) {
+        Math_Vec3f_Copy(&player->actor.world.pos, &this->lockedPlayerPos);
+    }
 }
 
 void BgMoriKaitenkabe_Update(Actor* thisx, PlayState* play) {
