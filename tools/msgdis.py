@@ -452,12 +452,11 @@ def main():
     parser = argparse.ArgumentParser(
         description="Extract text from the baserom into .h files"
     )
-    parser.add_argument("--oot-version", help="OOT version", default="gc-eu-mq-dbg", choices=["gc-eu-mq", "gc-eu-mq-dbg"])
+    parser.add_argument("--oot-version", help="OOT version", default="gc-eu-mq-dbg", choices=["gc-eu-mq", "gc-eu-mq-dbg", "hackeroot-mq"])
     parser.add_argument("--text-out", help="Path to output .h file for text")
     parser.add_argument(
         "--staff-text-out", help="Path to output .h file for staff text"
     )
-    parser.add_argument("-v", "--version", help="OoT Version", choices=["gc-eu-mq-dbg", "hackeroot-mq"])
 
     args = parser.parse_args()
     if not (args.text_out or args.staff_text_out):
