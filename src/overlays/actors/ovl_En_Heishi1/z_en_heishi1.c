@@ -10,7 +10,7 @@
 
 #define FLAGS ACTOR_FLAG_4
 
-void EnHeishi1_Init(Actor* thisx, PlayState* play);
+void EnHeishi1_Init(Actor* thisx, PlayState* play2);
 void EnHeishi1_Destroy(Actor* thisx, PlayState* play);
 void EnHeishi1_Update(Actor* thisx, PlayState* play);
 void EnHeishi1_Draw(Actor* thisx, PlayState* play);
@@ -63,8 +63,8 @@ static s32 sBgCamIndices[] = {
 
 static s16 sWaypoints[] = { 0, 4, 1, 5, 2, 6, 3, 7 };
 
-void EnHeishi1_Init(Actor* thisx, PlayState* play) {
-    s32 pad;
+void EnHeishi1_Init(Actor* thisx, PlayState* play2) {
+    PlayState* play = play2;
     EnHeishi1* this = (EnHeishi1*)thisx;
     Vec3f rupeePos;
     s32 i;

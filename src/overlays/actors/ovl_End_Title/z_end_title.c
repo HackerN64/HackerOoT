@@ -56,9 +56,7 @@ static Gfx sWidePresentedByNintendoDL[] = {
 void EndTitle_Init(Actor* thisx, PlayState* play) {
     EndTitle* this = (EndTitle*)thisx;
 
-    this->endAlpha = 0;
-    this->tlozAlpha = 0;
-    this->ootAlpha = 0;
+    this->endAlpha = this->tlozAlpha = this->ootAlpha = 0;
     if (this->actor.params == 1) {
         this->actor.draw = EndTitle_DrawNintendoLogo;
     }

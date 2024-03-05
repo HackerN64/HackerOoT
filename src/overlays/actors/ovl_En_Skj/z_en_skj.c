@@ -364,7 +364,6 @@ void EnSkj_Init(Actor* thisx, PlayState* play2) {
     EnSkj* this = (EnSkj*)thisx;
     PlayState* play = play2;
     s32 pad;
-    Player* player;
 
     Actor_ProcessInitChain(thisx, sInitChain);
     switch (type) {
@@ -445,13 +444,18 @@ void EnSkj_Init(Actor* thisx, PlayState* play2) {
             this->actor.gravity = -1.0f;
             EnSkj_CalculateCenter(this);
 
-            player = GET_PLAYER(play);
-            PRINTF("Player_X : %f\n", player->actor.world.pos.x);
-            PRINTF("Player_Z : %f\n", player->actor.world.pos.z);
-            PRINTF("World_X  : %f\n", this->actor.world.pos.x);
-            PRINTF("World_Z  : %f\n", this->actor.world.pos.z);
-            PRINTF("Center_X : %f\n", this->center.x);
-            PRINTF("Center_Z : %f\n\n", this->center.z);
+#if OOT_DEBUG
+            {
+                Player* player = GET_PLAYER(play);
+
+                PRINTF("Player_X : %f\n", player->actor.world.pos.x);
+                PRINTF("Player_Z : %f\n", player->actor.world.pos.z);
+                PRINTF("World_X  : %f\n", this->actor.world.pos.x);
+                PRINTF("World_Z  : %f\n", this->actor.world.pos.z);
+                PRINTF("Center_X : %f\n", this->center.x);
+                PRINTF("Center_Z : %f\n\n", this->center.z);
+            }
+#endif
 
             break;
     }
@@ -1502,15 +1506,15 @@ void EnSkj_OfferNextRound(EnSkj* this, PlayState* play) {
 }
 
 void EnSkj_WaitForOfferResponse(EnSkj* this, PlayState* play) {
-    Player* player;
-
     if (Message_GetState(&play->msgCtx) == TEXT_STATE_CHOICE && Message_ShouldAdvance(play)) {
         switch (play->msgCtx.choiceIndex) {
-            case 0: // yes
-                player = GET_PLAYER(play);
+            case 0: { // yes
+                Player* player = GET_PLAYER(play);
+
                 player->stateFlags3 |= PLAYER_STATE3_5; // makes player take ocarina out right away after closing box
                 this->actionFunc = EnSkj_SetupWaitForOcarina;
                 break;
+            }
             case 1: // no
                 this->actionFunc = EnSkj_CleanupOcarinaGame;
                 break;

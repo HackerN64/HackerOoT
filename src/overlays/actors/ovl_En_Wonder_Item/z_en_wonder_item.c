@@ -206,15 +206,18 @@ void EnWonderItem_Init(Actor* thisx, PlayState* play) {
 
 void EnWonderItem_MultitagFree(EnWonderItem* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
-    s32 prevTagFlags = this->tagFlags;
+    s16 prevTagFlags = this->tagFlags;
     s32 i;
     s32 mask;
+    f32 dx;
+    f32 dy;
+    f32 dz;
 
     for (i = 0, mask = 1; i < this->numTagPoints; i++, mask <<= 1) {
         if (!(prevTagFlags & mask)) {
-            f32 dx = player->actor.world.pos.x - sTagPointsFree[i].x;
-            f32 dy = player->actor.world.pos.y - sTagPointsFree[i].y;
-            f32 dz = player->actor.world.pos.z - sTagPointsFree[i].z;
+            dx = player->actor.world.pos.x - sTagPointsFree[i].x;
+            dy = player->actor.world.pos.y - sTagPointsFree[i].y;
+            dz = player->actor.world.pos.z - sTagPointsFree[i].z;
 
             if (sqrtf(SQ(dx) + SQ(dy) + SQ(dz)) < 50.0f) {
                 this->tagFlags |= mask;
@@ -269,15 +272,18 @@ void EnWonderItem_ProximitySwitch(EnWonderItem* this, PlayState* play) {
 
 void EnWonderItem_MultitagOrdered(EnWonderItem* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
-    s32 prevTagFlags = this->tagFlags;
+    s16 prevTagFlags = this->tagFlags;
     s32 i;
     s32 mask;
+    f32 dx;
+    f32 dy;
+    f32 dz;
 
     for (i = 0, mask = 1; i < this->numTagPoints; i++, mask <<= 1) {
         if (!(prevTagFlags & mask)) {
-            f32 dx = player->actor.world.pos.x - sTagPointsOrdered[i].x;
-            f32 dy = player->actor.world.pos.y - sTagPointsOrdered[i].y;
-            f32 dz = player->actor.world.pos.z - sTagPointsOrdered[i].z;
+            dx = player->actor.world.pos.x - sTagPointsOrdered[i].x;
+            dy = player->actor.world.pos.y - sTagPointsOrdered[i].y;
+            dz = player->actor.world.pos.z - sTagPointsOrdered[i].z;
 
             if (sqrtf(SQ(dx) + SQ(dy) + SQ(dz)) < 50.0f) {
                 if (prevTagFlags & mask) {

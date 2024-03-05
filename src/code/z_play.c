@@ -10,9 +10,12 @@ TransitionTile sTransitionTile;
 s32 gTransitionTileState;
 VisMono sPlayVisMono;
 Color_RGBA8_u32 gVisMonoColor;
+
+#if OOT_DEBUG
 FaultClient D_801614B8;
+#endif
+
 s16 sTransitionFillTimer;
-u64 sDebugCutsceneScriptBuf[0xA00];
 
 void Play_SpawnScene(PlayState* this, s32 sceneId, s32 spawn);
 
@@ -456,6 +459,8 @@ void Play_Init(GameState* thisx) {
     gSaveContext.respawnFlag = 0;
 
     if (IS_DEBUG && R_USE_DEBUG_CUTSCENE) {
+        static u64 sDebugCutsceneScriptBuf[0xA00];
+
         gDebugCutsceneScript = sDebugCutsceneScriptBuf;
         PRINTF("\nkawauso_data=[%x]", gDebugCutsceneScript);
 

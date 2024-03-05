@@ -310,6 +310,7 @@ void EnFireRock_Update(Actor* thisx, PlayState* play) {
     s16 setCollision;
     Player* player = GET_PLAYER(play);
     Actor* playerActor = &GET_PLAYER(play)->actor;
+    f32 temp;
 
     if (this->timer2 != 0) {
         this->timer2--;
@@ -320,8 +321,6 @@ void EnFireRock_Update(Actor* thisx, PlayState* play) {
     this->actionFunc(this, play);
 
     if (this->type != FIRE_ROCK_CEILING_SPOT_SPAWNER) {
-        f32 temp;
-
         this->rockRotation.x += this->angularVelocity.x;
         this->rockRotation.y += this->angularVelocity.y;
         this->rockRotation.z += this->angularVelocity.z;

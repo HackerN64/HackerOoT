@@ -193,8 +193,8 @@ void EnDntDemo_Judge(EnDntDemo* this, PlayState* play) {
                 case PLAYER_MASK_ZORA:
                 case PLAYER_MASK_GERUDO:
                     rand9 = Rand_ZeroFloat(8.99f);
-                    maskIdx = Player_GetMask(play);
-                    maskIdx--;
+                    // fake match, possible alternative is `maskIdx = Player_GetMask(play); maskIdx--;` on one line
+                    maskIdx = (s16)Player_GetMask(play) - 1;
                     if (rand9 == 8) {
                         ignore = true;
                         delay = 8;
@@ -273,6 +273,9 @@ void EnDntDemo_Judge(EnDntDemo* this, PlayState* play) {
 
 void EnDntDemo_Results(EnDntDemo* this, PlayState* play) {
     s32 i;
+    s16 offsetAngle;
+    Vec3f leaderPos;
+    f32 offsetDist;
 
     if (this->leaderSignal != DNT_SIGNAL_NONE) {
         for (i = 0; i < 9; i++) {
@@ -292,9 +295,8 @@ void EnDntDemo_Results(EnDntDemo* this, PlayState* play) {
         this->actionFunc = EnDntDemo_Prize;
     } else if (this->prize == DNT_PRIZE_STICK) {
         for (i = 0; i < 9; i++) {
-            s16 offsetAngle = -this->leader->actor.shape.rot.y;
-            Vec3f leaderPos = this->leader->actor.world.pos;
-            f32 offsetDist;
+            offsetAngle = -this->leader->actor.shape.rot.y;
+            leaderPos = this->leader->actor.world.pos;
 
             if (!(i & 1)) {
                 offsetAngle -= 0x59D8;

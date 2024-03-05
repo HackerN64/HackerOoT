@@ -194,6 +194,8 @@ void EnYabusameMark_Update(Actor* thisx, PlayState* play) {
     arrayIndex = this->typeIndex * 4;
     vertexArray = &sCollisionVertices[arrayIndex];
 
+    if (1) {}
+
     this->vertexA.x = vertexArray[0].x + this->actor.world.pos.x;
     this->vertexA.y = vertexArray[0].y + this->actor.world.pos.y;
     this->vertexA.z = vertexArray[0].z + this->actor.world.pos.z;

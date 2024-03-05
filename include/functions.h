@@ -35,7 +35,7 @@ void isPrintfInit(void);
 void rmonPrintf(const char* fmt, ...);
 #if IS_DEBUG
 void* is_proutSyncPrintf(void* arg, const char* str, size_t count);
-NORETURN void func_80002384(const char* exp, const char* file, u32 line);
+NORETURN void func_80002384(const char* exp, const char* file, int line);
 #endif
 OSPiHandle* osDriveRomInit(void);
 void Mio0_Decompress(u8* src, u8* dst);
@@ -47,11 +47,11 @@ u32 StackCheck_CheckAll(void);
 u32 StackCheck_Check(StackEntry* entry);
 #if IS_DEBUG
 void LogUtils_LogHexDump(void* ptr, s32 size0);
-void LogUtils_CheckNullPointer(const char* exp, void* ptr, const char* file, s32 line);
-void LogUtils_CheckValidPointer(const char* exp, void* ptr, const char* file, s32 line);
-void LogUtils_LogThreadId(const char* name, s32 line);
+void LogUtils_CheckNullPointer(const char* exp, void* ptr, const char* file, int line);
+void LogUtils_CheckValidPointer(const char* exp, void* ptr, const char* file, int line);
+void LogUtils_LogThreadId(const char* name, int line);
 #endif
-void LogUtils_HungupThread(const char* name, s32 line);
+void LogUtils_HungupThread(const char* name, int line);
 void LogUtils_ResetHungup(void);
 void __osPiCreateAccessQueue(void);
 void __osPiGetAccess(void);
@@ -908,10 +908,10 @@ void ZeldaArena_Cleanup(void);
 u8 ZeldaArena_IsInitialized(void);
 #if IS_DEBUG
 void ZeldaArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action);
-void* ZeldaArena_MallocDebug(u32 size, const char* file, s32 line);
-void* ZeldaArena_MallocRDebug(u32 size, const char* file, s32 line);
-void* ZeldaArena_ReallocDebug(void* ptr, u32 newSize, const char* file, s32 line);
-void ZeldaArena_FreeDebug(void* ptr, const char* file, s32 line);
+void* ZeldaArena_MallocDebug(u32 size, const char* file, int line);
+void* ZeldaArena_MallocRDebug(u32 size, const char* file, int line);
+void* ZeldaArena_ReallocDebug(void* ptr, u32 newSize, const char* file, int line);
+void ZeldaArena_FreeDebug(void* ptr, const char* file, int line);
 void ZeldaArena_Display(void);
 #endif
 void MapMark_Init(PlayState* play);
@@ -1321,8 +1321,8 @@ void GameState_Destroy(GameState* gameState);
 GameStateFunc GameState_GetInit(GameState* gameState);
 u32 GameState_IsRunning(GameState* gameState);
 #if IS_DEBUG
-void* GameState_Alloc(GameState* gameState, size_t size, char* file, s32 line);
-void* GameAlloc_MallocDebug(GameAlloc* this, u32 size, const char* file, s32 line);
+void* GameState_Alloc(GameState* gameState, size_t size, const char* file, int line);
+void* GameAlloc_MallocDebug(GameAlloc* this, u32 size, const char* file, int line);
 #endif
 void* GameAlloc_Malloc(GameAlloc* this, u32 size);
 void GameAlloc_Free(GameAlloc* this, void* data);
@@ -1338,8 +1338,8 @@ void Graph_ThreadEntry(void*);
 void* Graph_Alloc(GraphicsContext* gfxCtx, size_t size);
 void* Graph_Alloc2(GraphicsContext* gfxCtx, size_t size);
 #if IS_DEBUG
-void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, s32 line);
-void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, s32 line);
+void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, int line);
+void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, int line);
 #endif
 Gfx* Gfx_Open(Gfx* gfx);
 Gfx* Gfx_Close(Gfx* gfx, Gfx* dst);
@@ -1442,8 +1442,8 @@ void Matrix_TranslateRotateZYX(Vec3f* translation, Vec3s* rotation);
 void Matrix_SetTranslateRotateYXZ(f32 translateX, f32 translateY, f32 translateZ, Vec3s* rot);
 Mtx* Matrix_MtxFToMtx(MtxF* src, Mtx* dest);
 #if IS_DEBUG
-Mtx* Matrix_ToMtx(Mtx* dest, char* file, s32 line);
-Mtx* Matrix_NewMtx(GraphicsContext* gfxCtx, char* file, s32 line);
+Mtx* Matrix_ToMtx(Mtx* dest, const char* file, int line);
+Mtx* Matrix_NewMtx(GraphicsContext* gfxCtx, const char* file, int line);
 #else
 Mtx* Matrix_ToMtx(Mtx* dest);
 Mtx* Matrix_NewMtx(GraphicsContext* gfxCtx);
@@ -1458,7 +1458,7 @@ void Matrix_MtxFToYXZRotS(MtxF* mf, Vec3s* rotDest, s32 flag);
 void Matrix_MtxFToZYXRotS(MtxF* mf, Vec3s* rotDest, s32 flag);
 void Matrix_RotateAxis(f32 angle, Vec3f* axis, u8 mode);
 #if IS_DEBUG
-MtxF* Matrix_CheckFloats(MtxF* mf, char* file, s32 line);
+MtxF* Matrix_CheckFloats(MtxF* mf, const char* file, int line);
 #endif
 void Matrix_SetTranslateScaleMtx2(Mtx* mtx, f32 scaleX, f32 scaleY, f32 scaleZ, f32 translateX, f32 translateY,
                                   f32 translateZ);
@@ -1479,13 +1479,13 @@ void DebugArena_Check(void);
 void DebugArena_Init(void* start, u32 size);
 void DebugArena_Cleanup(void);
 u8 DebugArena_IsInitialized(void);
-
 #if IS_DEBUG
-void DebugArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action); // IS_DEBUG_HEAP_ENABLED
-void* DebugArena_MallocDebug(u32 size, const char* file, s32 line);
-void* DebugArena_MallocRDebug(u32 size, const char* file, s32 line);
-void* DebugArena_ReallocDebug(void* ptr, u32 newSize, const char* file, s32 line);
-void DebugArena_FreeDebug(void* ptr, const char* file, s32 line);
+void DebugArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action);
+void* DebugArena_MallocDebug(u32 size, const char* file, int line);
+void* DebugArena_MallocRDebug(u32 size, const char* file, int line);
+void* DebugArena_ReallocDebug(void* ptr, u32 newSize, const char* file, int line);
+void DebugArena_FreeDebug(void* ptr, const char* file, int line);
+void DebugArena_Display(void);
 #endif
 void DebugArena_Display(void);
 
@@ -1783,12 +1783,12 @@ void SystemArena_Check(void);
 void SystemArena_Init(void* start, u32 size);
 void SystemArena_Cleanup(void);
 u8 SystemArena_IsInitialized(void);
-
 #if IS_DEBUG
-void* SystemArena_MallocDebug(u32 size, const char* file, s32 line);
-void* SystemArena_MallocRDebug(u32 size, const char* file, s32 line);
-void* SystemArena_ReallocDebug(void* ptr, u32 newSize, const char* file, s32 line);
-void SystemArena_FreeDebug(void* ptr, const char* file, s32 line);
+void* SystemArena_MallocDebug(u32 size, const char* file, int line);
+void* SystemArena_MallocRDebug(u32 size, const char* file, int line);
+void* SystemArena_ReallocDebug(void* ptr, u32 newSize, const char* file, int line);
+void SystemArena_FreeDebug(void* ptr, const char* file, int line);
+void SystemArena_Display(void);
 #endif
 void SystemArena_Display(void); // IS_SPEEDMETER_ENABLED
 
@@ -1810,14 +1810,13 @@ void __osFree(Arena* arena, void* ptr);
 void* __osRealloc(Arena* arena, void* ptr, u32 newSize);
 void ArenaImpl_GetSizes(Arena* arena, u32* outMaxFree, u32* outFree, u32* outAlloc);
 u32 __osCheckArena(Arena* arena);
-
-// debug
-void* __osMallocDebug(Arena* arena, u32 size, const char* file, s32 line);
-void* __osMallocRDebug(Arena* arena, u32 size, const char* file, s32 line);
-void __osFreeDebug(Arena* arena, void* ptr, const char* file, s32 line);
-void* __osReallocDebug(Arena* arena, void* ptr, u32 newSize, const char* file, s32 line);
+#if IS_DEBUG
+void* __osMallocDebug(Arena* arena, u32 size, const char* file, int line);
+void* __osMallocRDebug(Arena* arena, u32 size, const char* file, int line);
+void __osFreeDebug(Arena* arena, void* ptr, const char* file, int line);
+void* __osReallocDebug(Arena* arena, void* ptr, u32 newSize, const char* file, int line);
 void __osDisplayArena(Arena* arena);
-
+#endif
 s32 PrintUtils_VPrintf(PrintCallback* pfn, const char* fmt, va_list args);
 s32 PrintUtils_Printf(PrintCallback* pfn, const char* fmt, ...);
 void Sleep_Cycles(OSTime cycles);
