@@ -49,6 +49,7 @@ List of every HackerOoT contributors, from most recent to oldest contribution:
 - recardo-7
 - HailToDodongo
 - CrashOverride95
+- Trueffell
 - Yanis42
 - kurethedead
 - zelllll
