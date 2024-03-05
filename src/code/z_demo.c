@@ -2224,8 +2224,10 @@ void CutsceneHandler_RunScript(PlayState* play, CutsceneContext* csCtx) {
             Gfx_Close(prevDisplayList, displayList);
             POLY_OPA_DISP = displayList;
 
+            if (1) {}
             CLOSE_DISPS(play->state.gfxCtx, "../z_demo.c", 4108);
         }
+
         csCtx->curFrame++;
 
         if (IS_DEBUG && R_USE_DEBUG_CUTSCENE) {

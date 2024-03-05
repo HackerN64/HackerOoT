@@ -1262,7 +1262,6 @@ u32 sOcarinaInputButtonCur;
 u32 sOcarinaInputButtonStart;
 u32 sOcarinaInputButtonPrev;
 s32 sOcarinaInputButtonPress;
-s32 sOcarinaUnused;
 u8 sCurOcarinaSongWithoutMusicStaff[8];
 u8 sOcarinaWithoutMusicStaffPos;
 u8 sOcarinaHasStartedSong;
