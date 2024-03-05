@@ -1233,6 +1233,8 @@ struct {
     char str[5];
     u16 num;
 } sAudioScrPrtBuf[SCROLL_PRINT_BUF_SIZE];
+#endif
+
 u8 sRiverSoundMainBgmVol;
 u8 sRiverSoundMainBgmCurrentVol;
 u8 sRiverSoundMainBgmLower;
