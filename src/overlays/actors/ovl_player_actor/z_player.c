@@ -13694,8 +13694,9 @@ s32 Player_UpdateNoclip(Player* this, PlayState* play) {
         sControlInput = &play->state.input[0];
 
         if ((CHECK_BTN_ALL(sControlInput->cur.button, BTN_L | BTN_R | BTN_A) &&
-            CHECK_BTN_ALL(sControlInput->press.button, BTN_B)) ||
-            (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DRIGHT))) {
+             CHECK_BTN_ALL(sControlInput->press.button, BTN_B)) ||
+            (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) &&
+             CHECK_BTN_ALL(sControlInput->press.button, BTN_DRIGHT))) {
 
             sNoclipEnabled ^= 1;
 
@@ -13746,7 +13747,8 @@ s32 Player_UpdateNoclip(Player* this, PlayState* play) {
             this->actor.gravity = 0.0f;
             this->actor.velocity.x = this->actor.velocity.y = this->actor.velocity.z = 0.0f;
 
-            if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT)) {
+            if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) &&
+                CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT)) {
                 Flags_SetTempClear(play, play->roomCtx.curRoom.num);
             }
 

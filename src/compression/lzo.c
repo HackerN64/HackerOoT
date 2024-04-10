@@ -68,10 +68,10 @@ static unsigned char* refill(unsigned char* ip) {
 }
 
 void LZO_Decompress(unsigned int pstart /* physical rom offset of file      */
-                     ,
-                     unsigned char* op /* destination of decompressed data */
-                     ,
-                     unsigned int sz /* size of compressed file          */
+                    ,
+                    unsigned char* op /* destination of decompressed data */
+                    ,
+                    unsigned int sz /* size of compressed file          */
 ) {
     unsigned char* m_pos;
     unsigned char* ip;
