@@ -79,7 +79,7 @@ ActorInit En_GirlA_InitVars = {
     /**/ NULL,
 };
 
-#if OOT_DEBUG
+#if IS_DEBUG
 static char* sShopItemDescriptions[] = {
     "デクの実×5   ",  // "Deku nut x5"
     "矢×30        ",  // "Arrow x30"

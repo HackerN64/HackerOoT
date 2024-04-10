@@ -347,7 +347,7 @@ void func_80888A58(BgHidanHamstep* this, PlayState* play) {
     Actor_MoveXZGravity(&this->dyna.actor);
     func_80888694(this, (BgHidanHamstep*)this->dyna.actor.parent);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (((this->dyna.actor.params & 0xFF) <= 0) || ((this->dyna.actor.params & 0xFF) >= 6)) {
         // "[Hammer Step] arg_data strange (arg_data = %d)"
         PRINTF("【ハンマーステップ】 arg_data おかしい (arg_data = %d)", this->dyna.actor.params);

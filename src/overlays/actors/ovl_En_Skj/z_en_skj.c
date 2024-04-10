@@ -444,7 +444,7 @@ void EnSkj_Init(Actor* thisx, PlayState* play2) {
             this->actor.gravity = -1.0f;
             EnSkj_CalculateCenter(this);
 
-#if OOT_DEBUG
+#if IS_DEBUG
             {
                 Player* player = GET_PLAYER(play);
 

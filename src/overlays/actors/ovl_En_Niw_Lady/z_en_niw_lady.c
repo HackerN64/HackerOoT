@@ -224,7 +224,7 @@ void func_80ABA244(EnNiwLady* this, PlayState* play) {
         }
         currentCucco = (EnNiw*)currentCucco->actor.next;
     }
-    if (OOT_DEBUG && BREG(7) != 0) {
+    if (IS_DEBUG && BREG(7) != 0) {
         this->cuccosInPen = BREG(7) - 1;
     }
     phi_s1 = this->cuccosInPen;

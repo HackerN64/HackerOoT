@@ -61,7 +61,7 @@ void EffectSsIceSmoke_Draw(PlayState* play, u32 index, EffectSs* this) {
 
     OPEN_DISPS(play->state.gfxCtx, "../z_eff_ss_ice_smoke.c", 155);
 
-#if !OOT_DEBUG
+#if !IS_DEBUG
     if (1) {}
 #endif
 

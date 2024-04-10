@@ -40,7 +40,7 @@ void EnSyatekiMan_RestartGame(EnSyatekiMan* this, PlayState* play);
 void EnSyatekiMan_BlinkWait(EnSyatekiMan* this);
 void EnSyatekiMan_Blink(EnSyatekiMan* this);
 
-#if OOT_DEBUG
+#if IS_DEBUG
 void EnSyatekiMan_SetBgm(void);
 #endif
 
@@ -56,7 +56,7 @@ ActorInit En_Syateki_Man_InitVars = {
     /**/ EnSyatekiMan_Draw,
 };
 
-#if OOT_DEBUG
+#if IS_DEBUG
 static u16 sBgmList[] = {
     NA_BGM_GENERAL_SFX,
     NA_BGM_NATURE_AMBIENCE,
@@ -473,7 +473,7 @@ void EnSyatekiMan_Update(Actor* thisx, PlayState* play) {
     }
     this->actionFunc(this, play);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     EnSyatekiMan_SetBgm();
 #endif
 
@@ -511,7 +511,7 @@ void EnSyatekiMan_Draw(Actor* thisx, PlayState* play) {
                           EnSyatekiMan_OverrideLimbDraw, NULL, this);
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 void EnSyatekiMan_SetBgm(void) {
     if (BREG(80)) {
         BREG(80) = false;

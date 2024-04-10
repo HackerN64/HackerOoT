@@ -92,7 +92,7 @@ void ObjOshihiki_InitDynapoly(ObjOshihiki* this, PlayState* play, CollisionHeade
     CollisionHeader_GetVirtual(collision, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (this->dyna.bgId == BG_ACTOR_MAX) {
         s32 pad2;
 
@@ -647,7 +647,7 @@ void ObjOshihiki_Draw(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_obj_oshihiki.c", 1308),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     switch (play->sceneId) {
         case SCENE_DEKU_TREE:
         case SCENE_DODONGOS_CAVERN:

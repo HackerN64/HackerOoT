@@ -339,7 +339,7 @@ void Environment_Init(PlayState* play2, EnvironmentContext* envCtx, s32 unused) 
     envCtx->sceneTimeSpeed = 0;
     gTimeSpeed = envCtx->sceneTimeSpeed;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     R_ENV_TIME_SPEED_OLD = gTimeSpeed;
     R_ENV_DISABLE_DBG = true;
 
@@ -411,7 +411,7 @@ void Environment_Init(PlayState* play2, EnvironmentContext* envCtx, s32 unused) 
     gSkyboxIsChanging = false;
     gSaveContext.retainWeatherMode = false;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     R_ENV_LIGHT1_DIR(0) = 80;
     R_ENV_LIGHT1_DIR(1) = 80;
     R_ENV_LIGHT1_DIR(2) = 80;
@@ -708,7 +708,7 @@ void Environment_UpdateSkybox(u8 skyboxId, EnvironmentContext* envCtx, SkyboxCon
             }
         }
 
-#if OOT_DEBUG
+#if IS_DEBUG
         if (newSkybox1Index == 0xFF) {
             // "Environment VR data acquisition failed! Report to Sasaki!"
             PRINTF(VT_COL(RED, WHITE) "\n環境ＶＲデータ取得失敗！ ささきまでご報告を！" VT_RST);
@@ -825,7 +825,7 @@ void Environment_DisableUnderwaterLights(PlayState* play) {
     }
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 void Environment_PrintDebugInfo(PlayState* play, Gfx** gfx) {
     if (CAN_SHOW_TIME_INFOS) {
         GfxPrint printer;
@@ -1133,7 +1133,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
 
                     envCtx->lightSettings.zFar = LERP16(blend16[0], blend16[1], configChangeBlend);
 
-#if OOT_DEBUG
+#if IS_DEBUG
                     if (sTimeBasedLightConfigs[envCtx->changeLightNextConfig][i].nextLightSetting >=
                         envCtx->numLightSettings) {
                         // "The color palette setting seems to be wrong!"
@@ -1213,7 +1213,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
                                                     lightSettingsList[envCtx->lightSetting].zFar, envCtx->lightBlend);
             }
 
-#if OOT_DEBUG
+#if IS_DEBUG
             if (envCtx->lightSetting >= envCtx->numLightSettings) {
                 // "The color palette seems to be wrong!"
                 PRINTF("\n" VT_FGCOL(RED) "カラーパレットがおかしいようです！");
@@ -1287,7 +1287,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
             lightCtx->zFar = ENV_ZFAR_MAX;
         }
 
-#if OOT_DEBUG
+#if IS_DEBUG
         // When environment debug is enabled, various environment related variables can be configured via the reg editor
         if (R_ENV_DISABLE_DBG) {
             R_ENV_AMBIENT_COLOR(0) = lightCtx->ambientColor[0];

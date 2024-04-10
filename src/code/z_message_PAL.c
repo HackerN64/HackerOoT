@@ -2999,7 +2999,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
     *p = gfx;
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 /**
  * If the s16 variable pointed to by `var` changes in value, a black bar and white box
  * are briefly drawn onto the screen. It can only watch one variable per build due to
@@ -3062,7 +3062,7 @@ void Message_Draw(PlayState* play) {
     Gfx* plusOne;
     Gfx* polyOpaP;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     s16 watchVar;
 #endif
 
@@ -3416,7 +3416,7 @@ void Message_SetTables(void) {
     sStaffMessageEntryTablePtr = sStaffMessageEntryTable;
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 // Appears to be file padding
 UNK_TYPE D_80153D7C = 0x00000000;
 #endif

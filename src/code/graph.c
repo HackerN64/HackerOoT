@@ -159,7 +159,7 @@ void Graph_Destroy(GraphicsContext* gfxCtx) {
 }
 
 void Graph_TaskSet00(GraphicsContext* gfxCtx) {
-#if OOT_DEBUG
+#if IS_DEBUG
     static Gfx* sPrevTaskWorkBuffer = NULL;
 #endif
     static s32 sGraphCfbInfoIdx = 0;

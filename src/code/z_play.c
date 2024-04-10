@@ -2,7 +2,7 @@
 #include "quake.h"
 #include "terminal.h"
 
-#if OOT_DEBUG
+#if IS_DEBUG
 void* gDebugCutsceneScript = NULL;
 UNK_TYPE D_8012D1F4 = 0; // unused
 #endif
@@ -14,7 +14,7 @@ s32 gTransitionTileState;
 VisMono sPlayVisMono;
 Color_RGBA8_u32 gVisMonoColor;
 
-#if OOT_DEBUG
+#if IS_DEBUG
 FaultClient D_801614B8;
 #endif
 

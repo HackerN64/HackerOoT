@@ -28,7 +28,7 @@ beginseg
     include "$(BUILD_DIR)/src/compression/aplib.o"
 #endif
     include "$(BUILD_DIR)/src/boot/z_locale.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/boot/assert.o"
 #endif
     include "$(BUILD_DIR)/src/boot/is_debug.o"
@@ -36,7 +36,7 @@ beginseg
     include "$(BUILD_DIR)/src/boot/mio0.o"
     include "$(BUILD_DIR)/src/boot/stackcheck.o"
     include "$(BUILD_DIR)/src/boot/logutils.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/libc/sprintf.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/io/piacs.o"
@@ -69,12 +69,12 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/os/probetlb.o"
     include "$(BUILD_DIR)/src/libultra/os/getmemsize.o"
     include "$(BUILD_DIR)/src/libultra/os/seteventmesg.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/libc/xprintf.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/os/unmaptlball.o"
     include "$(BUILD_DIR)/src/libultra/io/epidma.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/libc/string.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/os/invalicache.o"
@@ -104,19 +104,19 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/io/epiread.o"
     include "$(BUILD_DIR)/src/libultra/io/visetspecial.o"
     include "$(BUILD_DIR)/src/libultra/io/cartrominit.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/vimodefpallan1.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/os/setfpccsr.o"
     include "$(BUILD_DIR)/src/libultra/os/getfpccsr.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/epiwrite.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/os/maptlbrdb.o"
     include "$(BUILD_DIR)/src/libultra/os/yieldthread.o"
     include "$(BUILD_DIR)/src/libultra/os/getcause.o"
     include "$(BUILD_DIR)/src/libultra/io/epirawwrite.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/libc/xlitob.o"
     include "$(BUILD_DIR)/src/libultra/libc/ldiv.o"
     include "$(BUILD_DIR)/src/libultra/libc/xldtob.o"
@@ -264,7 +264,7 @@ endseg
 beginseg
     name "nes_font_static"
     romalign 0x1000
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/assets/textures/nes_font_static/nes_font_static.o"
 #else
     // TODO: Remove this hack once assets are extracted from gc-eu-mq
@@ -372,7 +372,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_lights.o"
     include "$(BUILD_DIR)/src/code/z_malloc.o"
     include "$(BUILD_DIR)/src/code/z_map_mark.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/code/z_moji.o"
 #endif
     include "$(BUILD_DIR)/src/code/z_prenmi_buff.o"
@@ -403,7 +403,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_sram.o"
     include "$(BUILD_DIR)/src/code/z_ss_sram.o"
     include "$(BUILD_DIR)/src/code/z_rumble.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/data/z_text.data.o"
 #endif
     include "$(BUILD_DIR)/data/unk_8012ABC0.data.o"
@@ -467,7 +467,7 @@ beginseg
     include "$(BUILD_DIR)/data/fault_drawer.bss.o"
 #endif
     include "$(BUILD_DIR)/src/code/kanread.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/code/ucode_disas.o"
 #endif
     pad_text // on GameCube, NTSC 1.0 and "0.9" prerelease
@@ -482,7 +482,7 @@ beginseg
     include "$(BUILD_DIR)/src/audio/lib/effects.o"
     include "$(BUILD_DIR)/src/audio/lib/seqplayer.o"
     include "$(BUILD_DIR)/src/audio/general.o"
-#if !OOT_DEBUG
+#if !IS_DEBUG
     pad_text // on retail GameCube
 #endif
     include "$(BUILD_DIR)/src/audio/sfx_params.o"
@@ -494,7 +494,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/gfxprint.o"
     include "$(BUILD_DIR)/src/code/rcp_utils.o"
     include "$(BUILD_DIR)/src/code/loadfragment2.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/code/mtxuty-cvt.o"
 #endif
     include "$(BUILD_DIR)/src/code/relocation.o"
@@ -507,14 +507,14 @@ beginseg
     include "$(BUILD_DIR)/src/code/system_malloc.o"
     include "$(BUILD_DIR)/src/code/rand.o"
     include "$(BUILD_DIR)/src/code/__osMalloc.o"
-#if !OOT_DEBUG
+#if !IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/libc/sprintf.o"
 #endif
     include "$(BUILD_DIR)/src/code/printutils.o"
     include "$(BUILD_DIR)/src/code/sleep.o"
     include "$(BUILD_DIR)/src/code/jpegutils.o"
     include "$(BUILD_DIR)/src/code/jpegdecoder.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsfreeblocks.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/mgu/scale.o"
@@ -529,17 +529,17 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/io/sprawdma.o"
     include "$(BUILD_DIR)/src/libultra/io/sirawdma.o"
     include "$(BUILD_DIR)/src/libultra/io/sptaskyield.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsreadwritefile.o"
     include "$(BUILD_DIR)/src/libultra/io/pfsgetstatus.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/mgu/mtxidentf.o"
     include "$(BUILD_DIR)/src/libultra/gu/lookat.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsallocatefile.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/os/stoptimer.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/contpfs.o"
     include "$(BUILD_DIR)/src/libultra/mgu/mtxl2f.o"
     include "$(BUILD_DIR)/src/libultra/io/pfsfindfile.o"
@@ -548,7 +548,7 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/os/afterprenmi.o"
     include "$(BUILD_DIR)/src/libultra/io/contquery.o"
     include "$(BUILD_DIR)/src/libultra/gu/lookathil.o"
-#if !OOT_DEBUG
+#if !IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/libc/xprintf.o"
     include "$(BUILD_DIR)/src/libultra/libc/string.o"
 #endif
@@ -562,7 +562,7 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/mgu/normalize.o"
     include "$(BUILD_DIR)/src/libultra/io/dpgetstat.o"
     include "$(BUILD_DIR)/src/libultra/io/dpsetstat.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsdeletefile.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/gu/ortho.o"
@@ -570,13 +570,13 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/gu/libm_vals.o"
     include "$(BUILD_DIR)/src/libultra/gu/coss.o"
     include "$(BUILD_DIR)/src/libultra/io/visetevent.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsisplug.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/gu/us2dex.o"
     include "$(BUILD_DIR)/src/libultra/io/pfsselectbank.o"
     include "$(BUILD_DIR)/src/libultra/io/contsetch.o"
-#if OOT_DEBUG
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsfilestate.o"
     include "$(BUILD_DIR)/src/libultra/io/pfsinitpak.o"
     include "$(BUILD_DIR)/src/libultra/io/pfschecker.o"
@@ -584,18 +584,18 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/io/aigetlen.o"
     include "$(BUILD_DIR)/src/libultra/mgu/translate.o"
     include "$(BUILD_DIR)/src/libultra/io/contramwrite.o"
-#if !OOT_DEBUG
+#if !IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/vimodefpallan1.o"
     include "$(BUILD_DIR)/src/libultra/io/pfsgetstatus.o"
     include "$(BUILD_DIR)/src/libultra/io/contpfs.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/io/contramread.o"
     include "$(BUILD_DIR)/src/libultra/io/crc.o"
-#if !OOT_DEBUG
+#if !IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsisplug.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/os/settimer.o"
-#if !OOT_DEBUG
+#if !IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/libc/xldtob.o"
     include "$(BUILD_DIR)/src/libultra/libc/ldiv.o"
     include "$(BUILD_DIR)/src/libultra/libc/xlitob.o"

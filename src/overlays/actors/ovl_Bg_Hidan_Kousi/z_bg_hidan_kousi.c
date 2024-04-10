@@ -74,7 +74,7 @@ void BgHidanKousi_Init(Actor* thisx, PlayState* play) {
 
     Actor_ProcessInitChain(thisx, sInitChain);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (((thisx->params & 0xFF) < 0) || ((thisx->params & 0xFF) >= 3)) {
         PRINTF("arg_data おかしい 【格子】\n");
     }

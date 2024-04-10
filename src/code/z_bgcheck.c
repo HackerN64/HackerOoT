@@ -78,7 +78,7 @@ u16 sSurfaceMaterialToSfxOffset[SURFACE_MATERIAL_MAX] = {
     SURFACE_SFX_OFFSET_CARPET,        // SURFACE_MATERIAL_CARPET
 };
 
-#if OOT_DEBUG
+#if IS_DEBUG
 /**
  * original name: T_BGCheck_PosErrorCheck
  */
@@ -1711,7 +1711,7 @@ f32 BgCheck_RaycastDownImpl(PlayState* play, CollisionContext* colCtx, u16 xpFla
             break;
         }
 
-#if OOT_DEBUG
+#if IS_DEBUG
         if (BgCheck_PosErrorCheck(&checkPos, "../z_bgcheck.c", 4410)) {
             if (actor != NULL) {
                 PRINTF("こいつ,pself_actor->name %d\n", actor->id);
@@ -1963,7 +1963,7 @@ s32 BgCheck_CheckWallImpl(CollisionContext* colCtx, u16 xpFlags, Vec3f* posResul
     dy = posNext->y - posPrev->y;
     dz = posNext->z - posPrev->z;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (BgCheck_PosErrorCheck(posNext, "../z_bgcheck.c", 4831) == true ||
         BgCheck_PosErrorCheck(posPrev, "../z_bgcheck.c", 4832) == true) {
         if (actor != NULL) {
@@ -2157,7 +2157,7 @@ s32 BgCheck_CheckCeilingImpl(CollisionContext* colCtx, u16 xpFlags, f32* outY, V
     *outBgId = BGCHECK_SCENE;
     *outY = pos->y;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (BgCheck_PosErrorCheck(pos, "../z_bgcheck.c", 5206) == true) {
         if (actor != NULL) {
             PRINTF("こいつ,pself_actor->name %d\n", actor->id);
@@ -2230,7 +2230,7 @@ s32 BgCheck_CheckLineImpl(CollisionContext* colCtx, u16 xpFlags1, u16 xpFlags2, 
 
     *outBgId = BGCHECK_SCENE;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (BgCheck_PosErrorCheck(posA, "../z_bgcheck.c", 5334) == true ||
         BgCheck_PosErrorCheck(posB, "../z_bgcheck.c", 5335) == true) {
         if (actor != NULL) {
@@ -2452,7 +2452,7 @@ s32 BgCheck_SphVsFirstPolyImpl(CollisionContext* colCtx, u16 xpFlags, CollisionP
 
     *outBgId = BGCHECK_SCENE;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (BgCheck_PosErrorCheck(center, "../z_bgcheck.c", 5852) == true) {
         if (actor != NULL) {
             PRINTF("こいつ,pself_actor->name %d\n", actor->id);
@@ -2790,7 +2790,7 @@ void DynaPoly_DeleteBgActor(PlayState* play, DynaCollisionContext* dyna, s32 bgI
     PRINTF(VT_RST);
     if (!DynaPoly_IsBgIdBgActor(bgId)) {
 
-#if OOT_DEBUG
+#if IS_DEBUG
         if (bgId == -1) {
             PRINTF(VT_FGCOL(GREEN));
             // "The index that should have been deleted(? ) was(== -1), processing aborted."
@@ -2859,7 +2859,7 @@ void DynaPoly_AddBgActorToLookup(PlayState* play, DynaCollisionContext* dyna, s3
         return;
     }
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (!(dyna->polyListMax >= *polyStartIndex + pbgdata->numPolygons)) {
         PRINTF(VT_FGCOL(RED));
         // "do not use if %d exceeds %d"

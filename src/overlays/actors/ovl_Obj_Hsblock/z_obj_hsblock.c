@@ -60,7 +60,7 @@ void func_80B93B68(ObjHsblock* this, PlayState* play, CollisionHeader* collision
     CollisionHeader_GetVirtual(collision, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (this->dyna.bgId == BG_ACTOR_MAX) {
         s32 pad2;
 
@@ -98,7 +98,7 @@ void ObjHsblock_Init(Actor* thisx, PlayState* play) {
             }
     }
 
-#if OOT_DEBUG
+#if IS_DEBUG
     mREG(13) = 255;
     mREG(14) = 255;
     mREG(15) = 255;
@@ -164,7 +164,7 @@ void ObjHsblock_Draw(Actor* thisx, PlayState* play) {
     if (play->sceneId == SCENE_FIRE_TEMPLE) {
         color = &sFireTempleColor;
     } else {
-#if OOT_DEBUG
+#if IS_DEBUG
         defaultColor.r = mREG(13);
         defaultColor.g = mREG(14);
         defaultColor.b = mREG(15);

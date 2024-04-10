@@ -118,7 +118,7 @@ void func_80A90264(EnKakasi2* this, PlayState* play) {
         this->unk_194++;
     }
 
-    if (OOT_DEBUG && (BREG(1) != 0) && (this->actor.xzDistToPlayer < this->maxSpawnDistance.x) &&
+    if (IS_DEBUG && (BREG(1) != 0) && (this->actor.xzDistToPlayer < this->maxSpawnDistance.x) &&
         (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < this->maxSpawnDistance.y)) {
         // debug feature?
 

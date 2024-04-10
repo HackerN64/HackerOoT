@@ -23,7 +23,7 @@
 #undef DEFINE_ACTOR_UNSET
 
 // Actor Overlay Table definition
-#if OOT_DEBUG
+#if IS_DEBUG
 
 #define DEFINE_ACTOR(name, _1, allocType, nameString) \
     {                                                 \

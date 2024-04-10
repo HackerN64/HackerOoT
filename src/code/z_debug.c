@@ -35,7 +35,7 @@ Color_RGBA8 sDebugCamTextColors[] = {
 #endif
 };
 
-#if OOT_DEBUG
+#if IS_DEBUG
 InputCombo sRegGroupInputCombos[REG_GROUPS] = {
 #if IS_REG_EDITOR_ENABLED
     { BTN_L, BTN_CUP },        //  REG

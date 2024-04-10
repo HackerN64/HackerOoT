@@ -14,7 +14,7 @@
 
 #define WATER_SURFACE_Y(play) play->colCtx.colHeader->waterBoxes->ySurface
 
-#if OOT_DEBUG
+#if IS_DEBUG
 #define KREG_DEBUG(i) KREG(i)
 #else
 #define KREG_DEBUG(i) 0
@@ -836,7 +836,7 @@ void Fishing_Init(Actor* thisx, PlayState* play2) {
     Actor_ProcessInitChain(thisx, sInitChain);
     ActorShape_Init(&thisx->shape, 0.0f, NULL, 0.0f);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (KREG(5) != 0) {
         sLinkAge = LINK_AGE_CHILD;
     } else {
@@ -914,14 +914,14 @@ void Fishing_Init(Actor* thisx, PlayState* play2) {
             sFishingFoggy = 0;
         }
 
-#if OOT_DEBUG
+#if IS_DEBUG
         if (((sFishGameNumber & 7) == 6) || (KREG(3) != 0))
 #else
         if ((sFishGameNumber & 7) == 6)
 #endif
         {
             sStormChanceTimer = 100;
-#if OOT_DEBUG
+#if IS_DEBUG
             if (KREG(3) != 0) {
                 KREG(3) = 0;
                 HIGH_SCORE(HS_FISHING) &= ~(HS_FISH_PLAYED * 255);
@@ -980,7 +980,7 @@ void Fishing_Init(Actor* thisx, PlayState* play2) {
                            ENKANBAN_FISHING);
         Actor_Spawn(&play->actorCtx, play, ACTOR_FISHING, 0.0f, 0.0f, 0.0f, 0, 0, 0, 200);
 
-#if OOT_DEBUG
+#if IS_DEBUG
         if ((KREG(1) == 1) || ((sFishGameNumber & 3) == 3))
 #else
         if ((sFishGameNumber & 3) == 3)
@@ -1034,7 +1034,7 @@ void Fishing_Init(Actor* thisx, PlayState* play2) {
             this->fishLength += Rand_ZeroFloat(7.99999f);
         }
 
-#if OOT_DEBUG
+#if IS_DEBUG
         if (KREG(6) != 0) {
             this->fishLength = KREG(6) + 80.0f;
         }
@@ -2223,7 +2223,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
         case 0:
             sSinkingLureSegmentIndex = 0;
 
-#if OOT_DEBUG
+#if IS_DEBUG
             if (KREG(14) != 0) {
                 KREG(14) = 0;
                 sLureEquipped = FS_LURE_SINKING - sLureEquipped;
@@ -3151,7 +3151,7 @@ void Fishing_UpdateFish(Actor* thisx, PlayState* play2) {
                 }
             }
 
-#if OOT_DEBUG
+#if IS_DEBUG
             if (KREG(15) != 0) {
                 KREG(15) = 0;
                 this->fishState = 7;
@@ -3254,7 +3254,7 @@ void Fishing_UpdateFish(Actor* thisx, PlayState* play2) {
                 this->fishState = 10;
                 this->fishStateNext = 10;
             } else if ((KREG_DEBUG(2) != 0) || (((this->unk_1A4 & 0x7FF) == 0) && (this->unk_1A4 < 15000))) {
-#if OOT_DEBUG
+#if IS_DEBUG
                 KREG(2) = 0;
 #endif
                 this->fishState = -2;
@@ -3415,7 +3415,7 @@ void Fishing_UpdateFish(Actor* thisx, PlayState* play2) {
                 chance *= 5.0f;
             }
 
-#if OOT_DEBUG
+#if IS_DEBUG
             if (((this->timerArray[0] == 1) || (Rand_ZeroOne() < chance)) &&
                 ((Rand_ZeroOne() < (this->perception * multiplier)) || ((this->isLoach + 1) == KREG(69))))
 #else
@@ -5098,7 +5098,7 @@ void Fishing_HandleOwnerDialog(Fishing* this, PlayState* play) {
             break;
 
         case 22:
-#if OOT_DEBUG
+#if IS_DEBUG
             if (play) {}
 #endif
 
@@ -5162,7 +5162,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
     Player* player = GET_PLAYER(play);
     Input* input = &play->state.input[0];
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (0) {
         // Strings existing only in rodata
         PRINTF(VT_FGCOL(GREEN));
@@ -5227,7 +5227,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
         f32 dz = sOwnerHeadPos.z - sLurePos.z;
 
         if ((sqrtf(SQ(dx) + SQ(dy) + SQ(dz)) < 25.0f) || (KREG_DEBUG(77) > 0)) {
-#if OOT_DEBUG
+#if IS_DEBUG
             KREG(77) = 0;
 #endif
             sOwnerHair = FS_OWNER_BALD;
@@ -5243,7 +5243,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
         HIGH_SCORE(HS_FISHING) &= ~HS_FISH_STOLE_HAT;
     }
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (KREG(77) < 0) {
         KREG(77) = 0;
         sIsOwnersHatSunk = true;
@@ -5292,7 +5292,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
         SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 20);
     }
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (KREG(0) != 0) {
         s32 pad[3];
 
@@ -5646,7 +5646,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
         }
     }
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (sREG(15) != 0) {
         if (sStormStrengthTarget != (sREG(15) - 1)) {
             if (sStormStrengthTarget == 0) {
@@ -5758,7 +5758,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
     // convert length to weight. Theoretical max of 59 lbs (127^2*.0036+.5)
     gSaveContext.minigameScore = (SQ((f32)sFishLengthToWeigh) * 0.0036f) + 0.5f;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (BREG(26) != 0) {
         BREG(26) = 0;
         Message_StartTextbox(play, 0x407B + BREG(27), NULL);

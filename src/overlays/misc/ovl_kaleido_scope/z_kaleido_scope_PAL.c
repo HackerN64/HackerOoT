@@ -1296,7 +1296,7 @@ void KaleidoScope_DrawInfoPanel(PlayState* play) {
                                                         ITEM_NAME_TEX_HEIGHT, 0);
         }
 
-#if OOT_DEBUG
+#if IS_DEBUG
         if (pauseCtx->pageIndex == PAUSE_MAP) {
             if (YREG(7) != 0) {
                 PRINTF(VT_FGCOL(YELLOW));

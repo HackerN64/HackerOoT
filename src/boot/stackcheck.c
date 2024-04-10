@@ -98,7 +98,7 @@ u32 StackCheck_GetState(StackEntry* entry) {
         ret = STACK_STATUS_OK;
     }
 
-#if !OOT_DEBUG
+#if !IS_DEBUG
     // This string is still in .rodata for retail builds
     (void)"(null)";
 #endif

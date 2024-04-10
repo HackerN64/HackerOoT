@@ -13,7 +13,7 @@ typedef struct InitFunc {
 // .data
 void* sInitFuncs = NULL;
 
-#if OOT_DEBUG
+#if IS_DEBUG
 char sNew[] = "new";
 #else
 char sNew[] = "";
