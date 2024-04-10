@@ -100,7 +100,11 @@ f32 D_801305E4[4] = { 1.0f, 1.12246f, 1.33484f, 1.33484f }; // 2**({0, 2, 5, 5}/
 f32 D_801305F4 = 1.0f;
 u8 sGanonsTowerLevelsVol[8] = { 127, 80, 75, 73, 70, 68, 65, 60 };
 u8 sEnterGanonsTowerTimer = 0;
+#if IS_DEBUG
 s8 sSoundMode = SOUNDMODE_SURROUND;
+#else
+s8 sSoundMode = SOUNDMODE_STEREO;
+#endif
 s8 D_80130608 = 0;
 s8 sAudioCutsceneFlag = 0;
 s8 sSpecReverb = 0;
@@ -123,7 +127,10 @@ u8 sAudioBaseFilter2 = 0;
 u8 sAudioExtraFilter2 = 0;
 Vec3f* sSariaBgmPtr = NULL;
 f32 D_80130650 = 2000.0f;
+
+#if IS_DEBUG
 u8 sSeqModeInput = 0;
+#endif
 
 #define SEQ_FLAG_ENEMY (1 << 0) // Allows enemy bgm
 #define SEQ_FLAG_FANFARE (1 << 1)
@@ -1212,8 +1219,10 @@ OcarinaSongButtons gOcarinaSongButtons[OCARINA_SONG_MAX] = {
     { 0, { 0 } },
 };
 
+// ENABLE_AUDIO_DEBUGGER
 u32 sAudioUpdateStartTime;
 u32 sAudioUpdateEndTime;
+
 f32 D_8016B7A8;
 f32 D_8016B7AC;
 f32 D_8016B7B0;
@@ -1223,20 +1232,29 @@ FreqLerp sWaterfallFreqScaleLerp;
 f32 D_8016B7D8;
 s8 D_8016B7DC;
 f32 D_8016B7E0;
+#if IS_DEBUG
 u16 D_8016B7E4;
+
+// ENABLE_AUDIO_DEBUGGER
 struct {
     char str[5];
     u16 num;
 } sAudioScrPrtBuf[SCROLL_PRINT_BUF_SIZE];
+#endif
+
 u8 sRiverSoundMainBgmVol;
 u8 sRiverSoundMainBgmCurrentVol;
 u8 sRiverSoundMainBgmLower;
 u8 sRiverSoundMainBgmRestore;
 u8 sGanonsTowerVol;
 SfxPlayerState sSfxChannelState[0x10];
+#if IS_DEBUG
 char sBinToStrBuf[0x20];
+#endif
 u8 sMalonSingingTimer;
+#if IS_DEBUG
 u8 sAudioSpecPeakNumNotes[0x12];
+#endif
 u8 sMalonSingingDisabled;
 u8 D_8016B9F3;
 u8 sFanfareStartTimer;
@@ -1251,7 +1269,6 @@ u32 sOcarinaInputButtonCur;
 u32 sOcarinaInputButtonStart;
 u32 sOcarinaInputButtonPrev;
 s32 sOcarinaInputButtonPress;
-s32 sOcarinaUnused;
 u8 sCurOcarinaSongWithoutMusicStaff[8];
 u8 sOcarinaWithoutMusicStaffPos;
 u8 sOcarinaHasStartedSong;
@@ -1264,8 +1281,10 @@ u16 sMusicStaffCurHeldLength[OCARINA_SONG_MAX];
 u16 sMusicStaffExpectedLength[OCARINA_SONG_MAX];
 u8 sMusicStaffExpectedPitch[OCARINA_SONG_MAX];
 OcarinaNote sScarecrowsLongSongSecondNote;
+#if IS_DEBUG
 u8 sIsMalonSinging;
 f32 sMalonSingingDist;
+#endif
 
 void PadMgr_RequestPadData(PadMgr* padMgr, Input* inputs, s32 gameRequest);
 
@@ -2302,7 +2321,7 @@ void AudioOcarina_ResetStaffs(void) {
     sOcarinaDropInputTimer = 0;
 }
 
-#if OOT_DEBUG
+#if IS_AUDIO_DEBUG_ENABLED
 #include "debug.inc.c"
 #else
 void AudioDebug_Draw(GfxPrint* printer) {
@@ -2320,7 +2339,7 @@ void Audio_UpdateFanfare(void);
  */
 void Audio_Update(void) {
     if (func_800FAD34() == 0) {
-#if OOT_DEBUG
+#if IS_AUDIO_DEBUG_ENABLED
         sAudioUpdateTaskStart = gAudioCtx.totalTaskCount;
         sAudioUpdateStartTime = osGetTime();
 #endif
@@ -2339,14 +2358,14 @@ void Audio_Update(void) {
         func_800F8F88();
         Audio_UpdateActiveSequences();
 
-#if OOT_DEBUG
+#if IS_AUDIO_DEBUG_ENABLED
         AudioDebug_SetInput();
         AudioDebug_ProcessInput();
 #endif
 
         AudioThread_ScheduleProcessCmds();
 
-#if OOT_DEBUG
+#if IS_AUDIO_DEBUG_ENABLED
         sAudioUpdateTaskEnd = gAudioCtx.totalTaskCount;
         sAudioUpdateEndTime = osGetTime();
 #endif
@@ -2753,7 +2772,7 @@ void func_800F4010(Vec3f* pos, u16 sfxId, f32 arg2) {
     u8 phi_v0;
     u16 sfxId2;
 
-#if OOT_DEBUG
+#if IS_AUDIO_DEBUG_ENABLED
     D_80131C8C = arg2;
 #endif
 
@@ -3337,7 +3356,7 @@ s32 Audio_IsSequencePlaying(u16 seqId) {
 void func_800F5ACC(u16 seqId) {
     u16 curSeqId = Audio_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN);
 
-#if !OOT_DEBUG
+#if !IS_DEBUG
     if (1) {}
 #endif
 
@@ -3461,7 +3480,7 @@ void Audio_SetSequenceMode(u8 seqMode) {
     u16 seqId;
     u8 volumeFadeOutTimer;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     sSeqModeInput = seqMode;
 #endif
 
@@ -3567,7 +3586,7 @@ void Audio_UpdateMalonSinging(f32 dist, u16 seqId) {
     s8 melodyVolume;
     s16 curSeqId;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     sIsMalonSinging = true;
     sMalonSingingDist = dist;
 #endif
@@ -3878,7 +3897,7 @@ void Audio_SetNatureAmbienceChannelIO(u8 channelIdxRange, u8 ioPort, u8 ioData) 
     if ((gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId != NA_BGM_NATURE_AMBIENCE) &&
         Audio_IsSeqCmdNotQueued(SEQCMD_OP_PLAY_SEQUENCE << 28 | NA_BGM_NATURE_AMBIENCE, SEQCMD_OP_MASK | 0xFF)) {
 
-#if OOT_DEBUG
+#if IS_AUDIO_DEBUG_ENABLED
         sAudioNatureFailed = true;
 #endif
 
@@ -3919,7 +3938,7 @@ void Audio_StartNatureAmbienceSequence(u16 playerIO, u16 channelMask) {
 
     channelIdx = false;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (gStartSeqDisabled) {
         channelIdx = true;
         SEQCMD_DISABLE_PLAY_SEQUENCES(false);

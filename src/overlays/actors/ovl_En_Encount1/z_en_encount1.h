@@ -19,7 +19,7 @@ typedef struct EnEncount1 {
     /* 0x0154 */ s16 spawnType;
     /* 0x0156 */ s16 maxTotalSpawns;
     /* 0x0158 */ s16 totalNumSpawn;
-    /* 0x015A */ s16 outOfRangeTimer;
+    /* 0x015A */ s16 outOfRangeTimer; // ENABLE_ACTOR_DEBUGGER
     /* 0x015C */ s16 fieldSpawnTimer;
     /* 0x015E */ s16 killCount;
     /* 0x0160 */ s16 numLeeverSpawns;

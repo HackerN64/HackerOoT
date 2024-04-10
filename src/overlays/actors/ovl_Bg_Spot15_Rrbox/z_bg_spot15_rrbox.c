@@ -58,17 +58,19 @@ static Vec3f sBoxGroundCheckPoints[] = {
 void func_808B3960(BgSpot15Rrbox* this, PlayState* play, CollisionHeader* collision, s32 flags) {
     s32 pad;
     CollisionHeader* colHeader = NULL;
-    u32 pad2;
 
     DynaPolyActor_Init(&this->dyna, flags);
     CollisionHeader_GetVirtual(collision, &colHeader);
-
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
+#if IS_DEBUG
     if (this->dyna.bgId == BG_ACTOR_MAX) {
+        s32 pad2;
+
         PRINTF("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_spot15_rrbox.c", 171,
                this->dyna.actor.id, this->dyna.actor.params);
     }
+#endif
 }
 
 void BgSpot15Rrbox_RotatePoint(Vec3f* outPos, Vec3f* pos, f32 arg2, f32 arg3) {
@@ -224,11 +226,9 @@ s32 func_808B4010(BgSpot15Rrbox* this, PlayState* play) {
 }
 
 void func_808B4084(BgSpot15Rrbox* this, PlayState* play) {
-    this->actionFunc = func_808B40AC;
     this->dyna.actor.gravity = 0.0f;
-    this->dyna.actor.velocity.x = 0.0f;
-    this->dyna.actor.velocity.y = 0.0f;
-    this->dyna.actor.velocity.z = 0.0f;
+    this->dyna.actor.velocity.x = this->dyna.actor.velocity.y = this->dyna.actor.velocity.z = 0.0f;
+    this->actionFunc = func_808B40AC;
 }
 
 void func_808B40AC(BgSpot15Rrbox* this, PlayState* play) {
@@ -260,11 +260,11 @@ void func_808B4194(BgSpot15Rrbox* this, PlayState* play) {
     s32 approxFResult;
     Actor* actor = &this->dyna.actor;
 
-    this->unk_174 += 0.5f;
+    this->unk_174 += 0.5f * BLOCK_PUSH_SPEED;
 
-    this->unk_174 = CLAMP_MAX(this->unk_174, 2.0f);
+    this->unk_174 = CLAMP_MAX(this->unk_174, 2.0f * BLOCK_PUSH_SPEED);
 
-    approxFResult = Math_StepToF(&this->unk_178, 20.0f, this->unk_174);
+    approxFResult = Math_StepToF(&this->unk_178, 20.0f * BLOCK_PUSH_SPEED, this->unk_174);
 
     sign = this->unk_17C >= 0.0f ? 1.0f : -1.0f;
 
@@ -301,9 +301,7 @@ void func_808B4194(BgSpot15Rrbox* this, PlayState* play) {
 }
 
 void func_808B4380(BgSpot15Rrbox* this, PlayState* play) {
-    this->dyna.actor.velocity.x = 0.0f;
-    this->dyna.actor.velocity.y = 0.0f;
-    this->dyna.actor.velocity.z = 0.0f;
+    this->dyna.actor.velocity.x = this->dyna.actor.velocity.y = this->dyna.actor.velocity.z = 0.0f;
     this->dyna.actor.gravity = -1.0f;
     this->dyna.actor.floorHeight = BgSpot15Rrbox_GetFloorHeight(this, play);
     this->actionFunc = func_808B43D0;

@@ -33,6 +33,8 @@ ActiveSfx gActiveSfx[7][3];
 u8 sCurSfxPlayerChannelIndex;
 u8 gSfxBankMuted[7];
 UnusedBankLerp sUnusedBankLerp[7];
+
+//! TODO: audio debug feature?
 u16 gAudioSfxSwapSource[10];
 u16 gAudioSfxSwapTarget[10];
 u8 gAudioSfxSwapMode[10];
@@ -71,8 +73,7 @@ void Audio_PlaySfxGeneral(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* 
     if (!gSfxBankMuted[SFX_BANK_SHIFT(sfxId)]) {
         req = &sSfxRequests[gSfxRequestWriteIndex];
 
-#if OOT_DEBUG
-        if (!gAudioSfxSwapOff) {
+        if (IS_AUDIO_DEBUG_ENABLED && !gAudioSfxSwapOff) {
             for (i = 0; i < 10; i++) {
                 if (sfxId == gAudioSfxSwapSource[i]) {
                     if (gAudioSfxSwapMode[i] == 0) { // "SWAP"
@@ -91,7 +92,6 @@ void Audio_PlaySfxGeneral(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* 
                 }
             }
         }
-#endif
 
         req->sfxId = sfxId;
         req->pos = pos;
@@ -169,12 +169,10 @@ void Audio_ProcessSfxRequest(void) {
 
     bankId = SFX_BANK(req->sfxId);
 
-#if OOT_DEBUG
-    if ((1 << bankId) & D_801333F0) {
+    if (IS_AUDIO_DEBUG_ENABLED && ((1 << bankId) & D_801333F0)) {
         AudioDebug_ScrPrt("SE", req->sfxId);
         bankId = SFX_BANK(req->sfxId);
     }
-#endif
 
     count = 0;
     index = gSfxBanks[bankId][0].next;
@@ -733,8 +731,7 @@ void Audio_ResetSfx(void) {
         gSfxBanks[bankId][i].next = 0xFF;
     }
 
-#if OOT_DEBUG
-    if (D_801333F8 == 0) {
+    if (IS_AUDIO_DEBUG_ENABLED && D_801333F8 == 0) {
         for (bankId = 0; bankId < 10; bankId++) {
             gAudioSfxSwapSource[bankId] = 0;
             gAudioSfxSwapTarget[bankId] = 0;
@@ -742,5 +739,4 @@ void Audio_ResetSfx(void) {
         }
         D_801333F8++;
     }
-#endif
 }

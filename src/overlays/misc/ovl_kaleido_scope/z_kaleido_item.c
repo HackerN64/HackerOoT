@@ -118,6 +118,10 @@ void KaleidoScope_DrawItemSelect(PlayState* play) {
                 pauseCtx->stickAdjX = 40;
             }
 
+#if !IS_DEBUG
+            if (&gSaveContext) {}
+#endif
+
             if (ABS(pauseCtx->stickAdjX) > 30) {
                 cursorPoint = pauseCtx->cursorPoint[PAUSE_ITEM];
                 cursorX = pauseCtx->cursorX[PAUSE_ITEM];
@@ -125,9 +129,11 @@ void KaleidoScope_DrawItemSelect(PlayState* play) {
 
                 PRINTF("now=%d  ccc=%d\n", cursorPoint, cursorItem);
 
+#if IS_DEBUG
                 // Seems necessary to match
                 if (pauseCtx->cursorX[PAUSE_ITEM]) {}
                 if (gSaveContext.save.info.inventory.items[pauseCtx->cursorPoint[PAUSE_ITEM]]) {}
+#endif
 
                 while (moveCursorResult == 0) {
                     if (pauseCtx->stickAdjX < -30) {
@@ -535,7 +541,9 @@ void KaleidoScope_UpdateItemEquip(PlayState* play) {
         offsetX = ABS(pauseCtx->equipAnimX - bowItemVtx->v.ob[0] * 10) / sEquipMoveTimer;
         offsetY = ABS(pauseCtx->equipAnimY - bowItemVtx->v.ob[1] * 10) / sEquipMoveTimer;
     } else {
-        offsetX = ABS(pauseCtx->equipAnimX - sCButtonPosX[pauseCtx->equipTargetCBtn]) / sEquipMoveTimer;
+        offsetX =
+            ABS(pauseCtx->equipAnimX - WIDE_C_VAL(sCButtonPosX[pauseCtx->equipTargetCBtn], pauseCtx->equipTargetCBtn)) /
+            sEquipMoveTimer;
         offsetY = ABS(pauseCtx->equipAnimY - sCButtonPosY[pauseCtx->equipTargetCBtn]) / sEquipMoveTimer;
     }
 
@@ -565,7 +573,8 @@ void KaleidoScope_UpdateItemEquip(PlayState* play) {
                 pauseCtx->equipAnimY += offsetY;
             }
         } else {
-            if (pauseCtx->equipAnimX >= sCButtonPosX[pauseCtx->equipTargetCBtn]) {
+            if (pauseCtx->equipAnimX >=
+                WIDE_C_VAL(sCButtonPosX[pauseCtx->equipTargetCBtn], pauseCtx->equipTargetCBtn)) {
                 pauseCtx->equipAnimX -= offsetX;
             } else {
                 pauseCtx->equipAnimX += offsetX;

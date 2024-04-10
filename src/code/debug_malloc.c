@@ -6,7 +6,7 @@
 
 Arena sDebugArena;
 
-#if OOT_DEBUG
+#if IS_DEBUG
 s32 gDebugArenaLogSeverity = LOG_SEVERITY_ERROR;
 
 void DebugArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action) {
@@ -35,8 +35,8 @@ void* DebugArena_Malloc(u32 size) {
     return ptr;
 }
 
-#if OOT_DEBUG
-void* DebugArena_MallocDebug(u32 size, const char* file, s32 line) {
+#if IS_DEBUG
+void* DebugArena_MallocDebug(u32 size, const char* file, int line) {
     void* ptr = __osMallocDebug(&sDebugArena, size, file, line);
 
     DEBUG_ARENA_CHECK_POINTER(ptr, size, "debug_malloc_DEBUG", "確保"); // "Secure"
@@ -51,8 +51,8 @@ void* DebugArena_MallocR(u32 size) {
     return ptr;
 }
 
-#if OOT_DEBUG
-void* DebugArena_MallocRDebug(u32 size, const char* file, s32 line) {
+#if IS_DEBUG
+void* DebugArena_MallocRDebug(u32 size, const char* file, int line) {
     void* ptr = __osMallocRDebug(&sDebugArena, size, file, line);
 
     DEBUG_ARENA_CHECK_POINTER(ptr, size, "debug_malloc_r_DEBUG", "確保"); // "Secure"
@@ -66,8 +66,8 @@ void* DebugArena_Realloc(void* ptr, u32 newSize) {
     return ptr;
 }
 
-#if OOT_DEBUG
-void* DebugArena_ReallocDebug(void* ptr, u32 newSize, const char* file, s32 line) {
+#if IS_DEBUG
+void* DebugArena_ReallocDebug(void* ptr, u32 newSize, const char* file, int line) {
     ptr = __osReallocDebug(&sDebugArena, ptr, newSize, file, line);
     DEBUG_ARENA_CHECK_POINTER(ptr, newSize, "debug_realloc_DEBUG", "再確保"); // "Re-securing"
     return ptr;
@@ -78,8 +78,8 @@ void DebugArena_Free(void* ptr) {
     __osFree(&sDebugArena, ptr);
 }
 
-#if OOT_DEBUG
-void DebugArena_FreeDebug(void* ptr, const char* file, s32 line) {
+#if IS_DEBUG
+void DebugArena_FreeDebug(void* ptr, const char* file, int line) {
     __osFreeDebug(&sDebugArena, ptr, file, line);
 }
 #endif
@@ -97,13 +97,13 @@ void* DebugArena_Calloc(u32 num, u32 size) {
     return ret;
 }
 
-#if OOT_DEBUG
 void DebugArena_Display(void) {
-    // "Zelda heap display" ("Zelda" should probably have been changed to "Debug")
-    PRINTF("ゼルダヒープ表示\n");
-    __osDisplayArena(&sDebugArena);
+    if (IS_DEBUG_HEAP_ENABLED) {
+        // "Zelda heap display" ("Zelda" should probably have been changed to "Debug")
+        PRINTF("ゼルダヒープ表示\n");
+        __osDisplayArena(&sDebugArena);
+    }
 }
-#endif
 
 void DebugArena_GetSizes(u32* outMaxFree, u32* outFree, u32* outAlloc) {
     ArenaImpl_GetSizes(&sDebugArena, outMaxFree, outFree, outAlloc);
@@ -114,14 +114,14 @@ void DebugArena_Check(void) {
 }
 
 void DebugArena_Init(void* start, u32 size) {
-#if OOT_DEBUG
+#if IS_DEBUG
     gDebugArenaLogSeverity = LOG_SEVERITY_NOLOG;
 #endif
     __osMallocInit(&sDebugArena, start, size);
 }
 
 void DebugArena_Cleanup(void) {
-#if OOT_DEBUG
+#if IS_DEBUG
     gDebugArenaLogSeverity = LOG_SEVERITY_NOLOG;
 #endif
     __osMallocCleanup(&sDebugArena);

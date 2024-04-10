@@ -14,8 +14,13 @@ OSTime sGraphPrevUpdateEndTime;
  */
 OSTime sGraphPrevTaskTimeStart;
 
+#if IS_DEBUG
 FaultClient sGraphFaultClient;
+#endif
+
 CfbInfo sGraphCfbInfos[3];
+
+#if IS_DEBUG
 FaultClient sGraphUcodeFaultClient;
 
 UCodeInfo D_8012D230[3] = {
@@ -30,7 +35,6 @@ UCodeInfo D_8012D248[3] = {
     { UCODE_S2DEX, gspS2DEX2d_fifoTextStart },
 };
 
-#if OOT_DEBUG
 void Graph_FaultClient(void) {
     void* nextFb = osViGetNextFramebuffer();
     void* newFb = (SysCfb_GetFbPtr(0) != nextFb) ? SysCfb_GetFbPtr(0) : SysCfb_GetFbPtr(1);
@@ -141,21 +145,23 @@ void Graph_Init(GraphicsContext* gfxCtx) {
     gfxCtx->xScale = gViConfigXScale;
     gfxCtx->yScale = gViConfigYScale;
     osCreateMesgQueue(&gfxCtx->queue, gfxCtx->msgBuff, ARRAY_COUNT(gfxCtx->msgBuff));
-#if OOT_DEBUG
+#if IS_DEBUG
     func_800D31F0();
     Fault_AddClient(&sGraphFaultClient, Graph_FaultClient, NULL, NULL);
 #endif
 }
 
 void Graph_Destroy(GraphicsContext* gfxCtx) {
-#if OOT_DEBUG
+#if IS_DEBUG
     func_800D3210();
     Fault_RemoveClient(&sGraphFaultClient);
 #endif
 }
 
 void Graph_TaskSet00(GraphicsContext* gfxCtx) {
+#if IS_DEBUG
     static Gfx* sPrevTaskWorkBuffer = NULL;
+#endif
     static s32 sGraphCfbInfoIdx = 0;
 
     OSTime timeNow;
@@ -164,8 +170,10 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
     OSTask_t* task = &gfxCtx->task.list.t;
     OSScTask* scTask = &gfxCtx->task;
 
-    gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime =
-        osGetTime() - sGraphPrevTaskTimeStart - gAudioThreadUpdateTimeAcc;
+    if (IS_SPEEDMETER_ENABLED) {
+        gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime =
+            osGetTime() - sGraphPrevTaskTimeStart - gAudioThreadUpdateTimeAcc;
+    }
 
     {
         CfbInfo* cfb;
@@ -176,7 +184,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
         osStopTimer(&timer);
 
         if (msg == (OSMesg)666) {
-#if OOT_DEBUG
+#if IS_DEBUG
             PRINTF(VT_FGCOL(RED));
             PRINTF("RCPが帰ってきませんでした。"); // "RCP did not return."
             PRINTF(VT_RST);
@@ -199,7 +207,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
 
         osRecvMesg(&gfxCtx->queue, &msg, OS_MESG_NOBLOCK);
 
-#if OOT_DEBUG
+#if IS_DEBUG
         sPrevTaskWorkBuffer = gfxCtx->workBuffer;
 #endif
 
@@ -207,16 +215,18 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
             gfxCtx->callback(gfxCtx, gfxCtx->callbackParam);
         }
 
-        timeNow = osGetTime();
-        if (gAudioThreadUpdateTimeStart != 0) {
-            // The audio thread update is running
-            // Add the time already spent to the accumulator and leave the rest for the next cycle
+        if (IS_SPEEDMETER_ENABLED) {
+            timeNow = osGetTime();
+            if (gAudioThreadUpdateTimeStart != 0) {
+                // The audio thread update is running
+                // Add the time already spent to the accumulator and leave the rest for the next cycle
 
-            gAudioThreadUpdateTimeAcc += timeNow - gAudioThreadUpdateTimeStart;
-            gAudioThreadUpdateTimeStart = timeNow;
+                gAudioThreadUpdateTimeAcc += timeNow - gAudioThreadUpdateTimeStart;
+                gAudioThreadUpdateTimeStart = timeNow;
+            }
+            gAudioThreadUpdateTimeTotalPerGfxTask = gAudioThreadUpdateTimeAcc;
+            gAudioThreadUpdateTimeAcc = 0;
         }
-        gAudioThreadUpdateTimeTotalPerGfxTask = gAudioThreadUpdateTimeAcc;
-        gAudioThreadUpdateTimeAcc = 0;
 
         sGraphPrevTaskTimeStart = osGetTime();
 
@@ -287,7 +297,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gameState->inPreNMIState = false;
     Graph_InitTHGA(gfxCtx);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     OPEN_DISPS(gfxCtx, "../graph.c", 966);
 
     gDPNoOpString(WORK_DISP++, "WORK_DISP 開始", 0);
@@ -301,7 +311,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     GameState_ReqPadData(gameState);
     GameState_Update(gameState);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     OPEN_DISPS(gfxCtx, "../graph.c", 987);
 
     gDPNoOpString(WORK_DISP++, "WORK_DISP 終了", 0);
@@ -323,7 +333,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
 
     CLOSE_DISPS(gfxCtx, "../graph.c", 1028);
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (R_HREG_MODE == HREG_MODE_PLAY && R_PLAY_ENABLE_UCODE_DISAS == 2) {
         R_HREG_MODE = HREG_MODE_UCODE_DISAS;
         R_UCODE_DISAS_TOGGLE = -1;
@@ -404,21 +414,24 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
         OSTime timeNow = osGetTime();
         s32 pad;
 
-        gRSPGfxTimeTotal = gRSPGfxTimeAcc;
-        gRSPAudioTimeTotal = gRSPAudioTimeAcc;
-        gRDPTimeTotal = gRDPTimeAcc;
-        gRSPGfxTimeAcc = 0;
-        gRSPAudioTimeAcc = 0;
-        gRDPTimeAcc = 0;
+        if (IS_SPEEDMETER_ENABLED) {
+            gRSPGfxTimeTotal = gRSPGfxTimeAcc;
+            gRSPAudioTimeTotal = gRSPAudioTimeAcc;
+            gRDPTimeTotal = gRDPTimeAcc;
+            gRSPGfxTimeAcc = 0;
+            gRSPAudioTimeAcc = 0;
+            gRDPTimeAcc = 0;
 
-        if (sGraphPrevUpdateEndTime != 0) {
-            gGraphUpdatePeriod = timeNow - sGraphPrevUpdateEndTime;
+            if (sGraphPrevUpdateEndTime != 0) {
+                gGraphUpdatePeriod = timeNow - sGraphPrevUpdateEndTime;
+            }
         }
+
         sGraphPrevUpdateEndTime = timeNow;
     }
 
-#if OOT_DEBUG
-    if (gIsCtrlr2Valid && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&
+#if IS_DEBUG
+    if (IS_MAP_SELECT_ENABLED && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&
         CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_L | BTN_R)) {
         gSaveContext.gameMode = GAMEMODE_NORMAL;
         SET_NEXT_GAMESTATE(gameState, MapSelect_Init, MapSelectState);
@@ -432,6 +445,11 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
         gameState->running = false;
     }
 #endif
+
+    if (ENABLE_WIDESCREEN && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_DUP) &&
+        CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_Z | BTN_R)) {
+        gSaveContext.save.useWidescreen ^= 1;
+    }
 }
 
 void Graph_ThreadEntry(void* arg0) {
@@ -454,7 +472,7 @@ void Graph_ThreadEntry(void* arg0) {
         gameState = SYSTEM_ARENA_MALLOC(size, "../graph.c", 1196);
 
         if (gameState == NULL) {
-#if OOT_DEBUG
+#if IS_DEBUG
             char faultMsg[0x50];
             PRINTF("確保失敗\n"); // "Failure to secure"
 
@@ -500,8 +518,8 @@ void* Graph_Alloc2(GraphicsContext* gfxCtx, size_t size) {
     return THGA_AllocTail(&gfxCtx->polyOpa, ALIGN16(size));
 }
 
-#if OOT_DEBUG
-void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, s32 line) {
+#if IS_DEBUG
+void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, int line) {
     if (R_HREG_MODE == HREG_MODE_UCODE_DISAS && R_UCODE_DISAS_LOG_MODE != 4) {
         dispRefs[0] = gfxCtx->polyOpa.p;
         dispRefs[1] = gfxCtx->polyXlu.p;
@@ -513,7 +531,7 @@ void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, 
     }
 }
 
-void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, s32 line) {
+void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, int line) {
     if (R_HREG_MODE == HREG_MODE_UCODE_DISAS && R_UCODE_DISAS_LOG_MODE != 4) {
         if (dispRefs[0] + 1 == gfxCtx->polyOpa.p) {
             gfxCtx->polyOpa.p = dispRefs[0];

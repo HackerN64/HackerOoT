@@ -27,19 +27,15 @@ void Main_ThreadEntry(void* arg);
 void Idle_ThreadEntry(void* arg);
 void ViConfig_UpdateVi(u32 black);
 void ViConfig_UpdateBlack(void);
-void* Yaz0_FirstDMA(void);
-void* Yaz0_NextDMA(u8* curSrcPos);
-void Yaz0_DecompressImpl(u8* src, u8* dst);
-void Yaz0_Decompress(uintptr_t romStart, u8* dst, size_t size);
 void Locale_Init(void);
 void Locale_ResetRegion(void);
-#if OOT_DEBUG
+#if IS_DEBUG
 void isPrintfInit(void);
 #endif
 void rmonPrintf(const char* fmt, ...);
-#if OOT_DEBUG
+#if IS_DEBUG
 void* is_proutSyncPrintf(void* arg, const char* str, size_t count);
-NORETURN void func_80002384(const char* exp, const char* file, u32 line);
+NORETURN void func_80002384(const char* exp, const char* file, int line);
 #endif
 OSPiHandle* osDriveRomInit(void);
 void Mio0_Decompress(u8* src, u8* dst);
@@ -49,13 +45,13 @@ void StackCheck_Cleanup(StackEntry* entry);
 u32 StackCheck_GetState(StackEntry* entry);
 u32 StackCheck_CheckAll(void);
 u32 StackCheck_Check(StackEntry* entry);
-#if OOT_DEBUG
+#if IS_DEBUG
 void LogUtils_LogHexDump(void* ptr, s32 size0);
-void LogUtils_CheckNullPointer(const char* exp, void* ptr, const char* file, s32 line);
-void LogUtils_CheckValidPointer(const char* exp, void* ptr, const char* file, s32 line);
-void LogUtils_LogThreadId(const char* name, s32 line);
+void LogUtils_CheckNullPointer(const char* exp, void* ptr, const char* file, int line);
+void LogUtils_CheckValidPointer(const char* exp, void* ptr, const char* file, int line);
+void LogUtils_LogThreadId(const char* name, int line);
 #endif
-void LogUtils_HungupThread(const char* name, s32 line);
+void LogUtils_HungupThread(const char* name, int line);
 void LogUtils_ResetHungup(void);
 void __osPiCreateAccessQueue(void);
 void __osPiGetAccess(void);
@@ -308,7 +304,8 @@ void EffectSsDeadSound_Spawn(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f
 void EffectSsDeadSound_SpawnStationary(PlayState* play, Vec3f* pos, u16 sfxId, s16 lowerPriority,
                                        s16 repeatMode, s32 life);
 void EffectSsIceSmoke_Spawn(PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel, s16 scale);
-void FlagSet_Update(PlayState* play);
+
+void FlagSet_Update(PlayState* play); // ENABLE_EVENT_EDITOR
 void Overlay_LoadGameState(GameStateOverlay* overlayEntry);
 void Overlay_FreeGameState(GameStateOverlay* overlayEntry);
 void ActorShape_Init(ActorShape* shape, f32 yOffset, ActorShadowFunc shadowDraw, f32 shadowScale);
@@ -443,7 +440,6 @@ Actor* Actor_Delete(ActorContext* actorCtx, Actor* actor, PlayState* play);
 Actor* func_80032AF0(PlayState* play, ActorContext* actorCtx, Actor** actorPtr, Player* player);
 Actor* Actor_Find(ActorContext* actorCtx, s32 actorId, s32 actorCategory);
 void Enemy_StartFinishingBlow(PlayState* play, Actor* actor);
-s16 func_80032CB4(s16* arg0, s16 arg1, s16 arg2, s16 arg3);
 void BodyBreak_Alloc(BodyBreak* bodyBreak, s32 count, PlayState* play);
 void BodyBreak_SetInfo(BodyBreak* bodyBreak, s32 limbIndex, s32 minLimbIndex, s32 maxLimbIndex, u32 count, Gfx** dList,
                        s16 objectSlot);
@@ -612,7 +608,7 @@ u16 WaterBox_GetBgCamSetting(CollisionContext* colCtx, WaterBox* waterBox);
 u32 WaterBox_GetLightIndex(CollisionContext* colCtx, WaterBox* waterBox);
 s32 func_80042708(CollisionPoly* polyA, CollisionPoly* polyB, Vec3f* point, Vec3f* closestPoint);
 s32 func_800427B4(CollisionPoly* polyA, CollisionPoly* polyB, Vec3f* pointA, Vec3f* pointB, Vec3f* closestPoint);
-#if OOT_DEBUG
+#if IS_DEBUG
 void BgCheck_DrawDynaCollision(PlayState*, CollisionContext*);
 void BgCheck_DrawStaticCollision(PlayState*, CollisionContext*);
 #endif
@@ -660,7 +656,7 @@ s32 func_8005B198(void);
 s16 Camera_SetFinishedFlag(Camera* camera);
 DamageTable* DamageTable_Get(s32 index);
 void DamageTable_Clear(DamageTable* table);
-#if OOT_DEBUG
+#if IS_DEBUG
 void Collider_DrawRedPoly(GraphicsContext* gfxCtx, Vec3f* vA, Vec3f* vB, Vec3f* vC);
 void Collider_DrawPoly(GraphicsContext* gfxCtx, Vec3f* vA, Vec3f* vB, Vec3f* vC, u8 r, u8 g, u8 b);
 #endif
@@ -711,7 +707,7 @@ void CollisionCheck_DestroyContext(PlayState* play, CollisionCheckContext* colCh
 void CollisionCheck_ClearContext(PlayState* play, CollisionCheckContext* colChkCtx);
 void CollisionCheck_EnableSAC(PlayState* play, CollisionCheckContext* colChkCtx);
 void CollisionCheck_DisableSAC(PlayState* play, CollisionCheckContext* colChkCtx);
-#if OOT_DEBUG
+#if IS_DEBUG
 void Collider_Draw(PlayState* play, Collider* col);
 void CollisionCheck_DrawCollision(PlayState* play, CollisionCheckContext* colChkCtx);
 #endif
@@ -754,12 +750,10 @@ u8 CollisionCheck_GetSwordDamage(s32 dmgFlags);
 void SaveContext_Init(void);
 s32 func_800635D0(s32);
 void Regs_Init(void);
-void DebugCamera_ScreenText(u8 x, u8 y, const char* text);
-void DebugCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text);
-#if OOT_DEBUG
-void Regs_UpdateEditor(Input* input);
-#endif
-void Debug_DrawText(GraphicsContext* gfxCtx);
+void DebugCamera_ScreenText(u8 x, u8 y, const char* text); // ENABLE_NO_CLIP
+void DebugCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text); // ENABLE_CAMERA_DEBUGGER
+void Regs_UpdateEditor(Input* input); // ENABLE_REG_EDITOR
+void Debug_DrawText(GraphicsContext* gfxCtx); // ENABLE_CAMERA_DEBUGGER || ENABLE_REG_EDITOR
 void DebugDisplay_Init(void);
 DebugDispObject* DebugDisplay_AddObject(f32 posX, f32 posY, f32 posZ, s16 rotX, s16 rotY, s16 rotZ, f32 scaleX,
                                         f32 scaleY, f32 scaleZ, u8 red, u8 green, u8 blue, u8 alpha, s16 type,
@@ -911,12 +905,12 @@ void ZeldaArena_Check(void);
 void ZeldaArena_Init(void* start, u32 size);
 void ZeldaArena_Cleanup(void);
 u8 ZeldaArena_IsInitialized(void);
-#if OOT_DEBUG
+#if IS_DEBUG
 void ZeldaArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action);
-void* ZeldaArena_MallocDebug(u32 size, const char* file, s32 line);
-void* ZeldaArena_MallocRDebug(u32 size, const char* file, s32 line);
-void* ZeldaArena_ReallocDebug(void* ptr, u32 newSize, const char* file, s32 line);
-void ZeldaArena_FreeDebug(void* ptr, const char* file, s32 line);
+void* ZeldaArena_MallocDebug(u32 size, const char* file, int line);
+void* ZeldaArena_MallocRDebug(u32 size, const char* file, int line);
+void* ZeldaArena_ReallocDebug(void* ptr, u32 newSize, const char* file, int line);
+void ZeldaArena_FreeDebug(void* ptr, const char* file, int line);
 void ZeldaArena_Display(void);
 #endif
 void MapMark_Init(PlayState* play);
@@ -985,8 +979,12 @@ void Interface_Update(PlayState* play);
 Path* Path_GetByIndex(PlayState* play, s16 index, s16 max);
 f32 Path_OrientAndGetDistSq(Actor* actor, Path* path, s16 waypoint, s16* yaw);
 void Path_CopyLastPoint(Path* path, Vec3f* dest);
+
+#if ARE_FRAMERATE_OPTIONS_ENABLED
 void FrameAdvance_Init(FrameAdvanceContext* frameAdvCtx);
 s32 FrameAdvance_Update(FrameAdvanceContext* frameAdvCtx, Input* input);
+#endif
+
 void Player_SetBootData(PlayState* play, Player* this);
 int Player_InBlockingCsMode(PlayState* play, Player* this);
 int Player_InCsMode(PlayState* play);
@@ -1155,10 +1153,10 @@ void Sram_WriteSramHeader(SramContext* sramCtx);
 void Sram_InitSram(GameState* gameState, SramContext* sramCtx);
 void Sram_Alloc(GameState* gameState, SramContext* sramCtx);
 void Sram_Init(PlayState* play, SramContext* sramCtx);
-void SsSram_Init(u32 addr, u8 handleType, u8 handleDomain, u8 handleLatency, u8 handlePageSize, u8 handleRelDuration,
+void SsSram_Init(s32 addr, u8 handleType, u8 handleDomain, u8 handleLatency, u8 handlePageSize, u8 handleRelDuration,
                  u8 handlePulse, u32 handleSpeed);
 void SsSram_Dma(void* dramAddr, size_t size, s32 direction);
-void SsSram_ReadWrite(u32 addr, void* dramAddr, size_t size, s32 direction);
+void SsSram_ReadWrite(s32 addr, void* dramAddr, size_t size, s32 direction);
 View* View_New(GraphicsContext* gfxCtx);
 void View_Free(View* view);
 void View_Init(View*, GraphicsContext*);
@@ -1184,7 +1182,7 @@ s32 View_ApplyOrthoToOverlay(View* view);
 s32 View_ApplyPerspectiveToOverlay(View* view);
 s32 View_UpdateViewingMatrix(View* view);
 s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP);
-#if OOT_DEBUG
+#if IS_DEBUG
 s32 View_ErrorCheckEyePosition(f32 eyeX, f32 eyeY, f32 eyeZ);
 #endif
 void ViMode_LogPrint(OSViMode* osViMode);
@@ -1241,10 +1239,13 @@ u32 Letterbox_GetSize(void);
 void Letterbox_Init(void);
 void Letterbox_Destroy(void);
 void Letterbox_Update(s32 updateRate);
+
+// ENABLE_CAMERA_DEBUGGER
 void DebugCamera_Init(DebugCam* debugCam, Camera* cameraPtr);
 void DebugCamera_Enable(DebugCam* debugCam, Camera* cam);
 void DebugCamera_Update(DebugCam* debugCam, Camera* cam);
 void DebugCamera_Reset(Camera* cam, DebugCam* debugCam);
+
 void func_800BB0A0(f32 u, Vec3f* pos, f32* roll, f32* viewAngle, f32* point0, f32* point1, f32* point2, f32* point3);
 s32 func_800BB2B4(Vec3f* pos, f32* roll, f32* fov, CutsceneCameraPoint* point, s16* keyFrame, f32* curFrame);
 void KaleidoManager_LoadOvl(KaleidoMgrOverlay* ovl);
@@ -1294,6 +1295,8 @@ void PreRender_SetValuesSave(PreRender* this, u32 width, u32 height, void* fbuf,
 void PreRender_Init(PreRender* this);
 void PreRender_SetValues(PreRender* this, u32 width, u32 height, void* fbuf, void* zbuf);
 void PreRender_Destroy(PreRender* this);
+
+// ENABLE_PAUSE_BG_AA
 void func_800C170C(PreRender* this, Gfx** gfxP, void* buf, void* bufSave, u32 r, u32 g, u32 b, u32 a);
 void func_800C1AE8(PreRender* this, Gfx** gfxP, void* fbuf, void* fbufSave);
 void PreRender_SaveZBuffer(PreRender* this, Gfx** gfxP);
@@ -1305,6 +1308,7 @@ void PreRender_RestoreFramebuffer(PreRender* this, Gfx** gfxP);
 void PreRender_CopyImageRegion(PreRender* this, Gfx** gfxP);
 void PreRender_ApplyFilters(PreRender* this);
 void GameState_SetFBFilter(Gfx** gfxP);
+
 void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx);
 void GameState_SetFrameBuffer(GraphicsContext* gfxCtx);
 void GameState_ReqPadData(GameState* gameState);
@@ -1315,9 +1319,9 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
 void GameState_Destroy(GameState* gameState);
 GameStateFunc GameState_GetInit(GameState* gameState);
 u32 GameState_IsRunning(GameState* gameState);
-#if OOT_DEBUG
-void* GameState_Alloc(GameState* gameState, size_t size, char* file, s32 line);
-void* GameAlloc_MallocDebug(GameAlloc* this, u32 size, const char* file, s32 line);
+#if IS_DEBUG
+void* GameState_Alloc(GameState* gameState, size_t size, const char* file, int line);
+void* GameAlloc_MallocDebug(GameAlloc* this, u32 size, const char* file, int line);
 #endif
 void* GameAlloc_Malloc(GameAlloc* this, u32 size);
 void GameAlloc_Free(GameAlloc* this, void* data);
@@ -1332,9 +1336,9 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState);
 void Graph_ThreadEntry(void*);
 void* Graph_Alloc(GraphicsContext* gfxCtx, size_t size);
 void* Graph_Alloc2(GraphicsContext* gfxCtx, size_t size);
-#if OOT_DEBUG
-void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, s32 line);
-void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, s32 line);
+#if IS_DEBUG
+void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, int line);
+void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, int line);
 #endif
 Gfx* Gfx_Open(Gfx* gfx);
 Gfx* Gfx_Close(Gfx* gfx, Gfx* dst);
@@ -1436,9 +1440,9 @@ void Matrix_RotateZYX(s16 x, s16 y, s16 z, u8 mode);
 void Matrix_TranslateRotateZYX(Vec3f* translation, Vec3s* rotation);
 void Matrix_SetTranslateRotateYXZ(f32 translateX, f32 translateY, f32 translateZ, Vec3s* rot);
 Mtx* Matrix_MtxFToMtx(MtxF* src, Mtx* dest);
-#if OOT_DEBUG
-Mtx* Matrix_ToMtx(Mtx* dest, char* file, s32 line);
-Mtx* Matrix_NewMtx(GraphicsContext* gfxCtx, char* file, s32 line);
+#if IS_DEBUG
+Mtx* Matrix_ToMtx(Mtx* dest, const char* file, int line);
+Mtx* Matrix_NewMtx(GraphicsContext* gfxCtx, const char* file, int line);
 #else
 Mtx* Matrix_ToMtx(Mtx* dest);
 Mtx* Matrix_NewMtx(GraphicsContext* gfxCtx);
@@ -1452,8 +1456,8 @@ void Matrix_ReplaceRotation(MtxF* mf);
 void Matrix_MtxFToYXZRotS(MtxF* mf, Vec3s* rotDest, s32 flag);
 void Matrix_MtxFToZYXRotS(MtxF* mf, Vec3s* rotDest, s32 flag);
 void Matrix_RotateAxis(f32 angle, Vec3f* axis, u8 mode);
-#if OOT_DEBUG
-MtxF* Matrix_CheckFloats(MtxF* mf, char* file, s32 line);
+#if IS_DEBUG
+MtxF* Matrix_CheckFloats(MtxF* mf, const char* file, int line);
 #endif
 void Matrix_SetTranslateScaleMtx2(Mtx* mtx, f32 scaleX, f32 scaleY, f32 scaleZ, f32 translateX, f32 translateY,
                                   f32 translateZ);
@@ -1474,14 +1478,16 @@ void DebugArena_Check(void);
 void DebugArena_Init(void* start, u32 size);
 void DebugArena_Cleanup(void);
 u8 DebugArena_IsInitialized(void);
-#if OOT_DEBUG
+#if IS_DEBUG
 void DebugArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action);
-void* DebugArena_MallocDebug(u32 size, const char* file, s32 line);
-void* DebugArena_MallocRDebug(u32 size, const char* file, s32 line);
-void* DebugArena_ReallocDebug(void* ptr, u32 newSize, const char* file, s32 line);
-void DebugArena_FreeDebug(void* ptr, const char* file, s32 line);
+void* DebugArena_MallocDebug(u32 size, const char* file, int line);
+void* DebugArena_MallocRDebug(u32 size, const char* file, int line);
+void* DebugArena_ReallocDebug(void* ptr, u32 newSize, const char* file, int line);
+void DebugArena_FreeDebug(void* ptr, const char* file, int line);
 void DebugArena_Display(void);
 #endif
+void DebugArena_Display(void);
+
 void UCodeDisas_Init(UCodeDisas*);
 void UCodeDisas_Destroy(UCodeDisas*);
 void UCodeDisas_Disassemble(UCodeDisas*, Gfx*);
@@ -1617,8 +1623,11 @@ OcarinaStaff* AudioOcarina_GetPlaybackStaff(void);
 void AudioOcarina_MemoryGameInit(u8 minigameRound);
 s32 AudioOcarina_MemoryGameNextNote(void);
 void AudioOcarina_PlayLongScarecrowSong(void);
+
+// ENABLE_AUDIO_DEBUGGER
 void AudioDebug_Draw(GfxPrint* printer);
 void AudioDebug_ScrPrt(const char* str, u16 num);
+
 void Audio_Update(void);
 void Audio_SetSfxProperties(u8 bankId, u8 entryIdx, u8 channelIndex);
 void Audio_PlayCutsceneEffectsSequence(u8 csEffectType);
@@ -1773,13 +1782,15 @@ void SystemArena_Check(void);
 void SystemArena_Init(void* start, u32 size);
 void SystemArena_Cleanup(void);
 u8 SystemArena_IsInitialized(void);
-#if OOT_DEBUG
-void* SystemArena_MallocDebug(u32 size, const char* file, s32 line);
-void* SystemArena_MallocRDebug(u32 size, const char* file, s32 line);
-void* SystemArena_ReallocDebug(void* ptr, u32 newSize, const char* file, s32 line);
-void SystemArena_FreeDebug(void* ptr, const char* file, s32 line);
+#if IS_DEBUG
+void* SystemArena_MallocDebug(u32 size, const char* file, int line);
+void* SystemArena_MallocRDebug(u32 size, const char* file, int line);
+void* SystemArena_ReallocDebug(void* ptr, u32 newSize, const char* file, int line);
+void SystemArena_FreeDebug(void* ptr, const char* file, int line);
 void SystemArena_Display(void);
 #endif
+void SystemArena_Display(void); // IS_SPEEDMETER_ENABLED
+
 u32 Rand_Next(void);
 void Rand_Seed(u32 seed);
 f32 Rand_ZeroOne(void);
@@ -1798,11 +1809,11 @@ void __osFree(Arena* arena, void* ptr);
 void* __osRealloc(Arena* arena, void* ptr, u32 newSize);
 void ArenaImpl_GetSizes(Arena* arena, u32* outMaxFree, u32* outFree, u32* outAlloc);
 u32 __osCheckArena(Arena* arena);
-#if OOT_DEBUG
-void* __osMallocDebug(Arena* arena, u32 size, const char* file, s32 line);
-void* __osMallocRDebug(Arena* arena, u32 size, const char* file, s32 line);
-void __osFreeDebug(Arena* arena, void* ptr, const char* file, s32 line);
-void* __osReallocDebug(Arena* arena, void* ptr, u32 newSize, const char* file, s32 line);
+#if IS_DEBUG
+void* __osMallocDebug(Arena* arena, u32 size, const char* file, int line);
+void* __osMallocRDebug(Arena* arena, u32 size, const char* file, int line);
+void __osFreeDebug(Arena* arena, void* ptr, const char* file, int line);
+void* __osReallocDebug(Arena* arena, void* ptr, u32 newSize, const char* file, int line);
 void __osDisplayArena(Arena* arena);
 #endif
 s32 PrintUtils_VPrintf(PrintCallback* pfn, const char* fmt, va_list args);
@@ -1954,8 +1965,11 @@ void Setup_Init(GameState* thisx);
 void Setup_Destroy(GameState* thisx);
 void ConsoleLogo_Init(GameState* thisx);
 void ConsoleLogo_Destroy(GameState* thisx);
+
+// ENABLE_MAP_SELECT
 void MapSelect_Init(GameState* thisx);
 void MapSelect_Destroy(GameState* thisx);
+
 void TitleSetup_Init(GameState* thisx);
 void TitleSetup_Destroy(GameState* thisx);
 void FileSelect_Init(GameState* thisx);

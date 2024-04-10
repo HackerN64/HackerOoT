@@ -312,11 +312,11 @@ s32 View_ApplyPerspective(View* view) {
     LOG_UTILS_CHECK_NULL_POINTER("projection", projection, "../z_view.c", 616);
     view->projectionPtr = projection;
 
-    width = view->viewport.rightX - view->viewport.leftX;
+    width = WIDE_MULT((view->viewport.rightX - view->viewport.leftX), WIDE_GET_4_3);
     height = view->viewport.bottomY - view->viewport.topY;
     aspect = (f32)width / (f32)height;
 
-    if (OOT_DEBUG && R_HREG_MODE == HREG_MODE_PERSPECTIVE) {
+    if (IS_DEBUG && R_HREG_MODE == HREG_MODE_PERSPECTIVE) {
         if (R_PERSPECTIVE_INIT != HREG_MODE_PERSPECTIVE) {
             R_PERSPECTIVE_INIT = HREG_MODE_PERSPECTIVE;
             R_PERSPECTIVE_FOVY = 60;
@@ -331,7 +331,7 @@ s32 View_ApplyPerspective(View* view) {
         guPerspective(projection, &view->normal, view->fovy, aspect, view->zNear, view->zFar, view->scale);
     }
 
-#if OOT_DEBUG
+#if IS_DEBUG
     if (QREG(88) & 1) {
         s32 i;
         MtxF mf;
@@ -375,7 +375,7 @@ s32 View_ApplyPerspective(View* view) {
 
     view->viewing = *viewing;
 
-#if OOT_DEBUG
+#if IS_DEBUG
     // Debug print view matrix
     if (QREG(88) & 2) {
         s32 i;
@@ -440,6 +440,7 @@ s32 View_ApplyOrthoToOverlay(View* view) {
     GraphicsContext* gfxCtx = view->gfxCtx;
     Vp* vp;
     Mtx* projection;
+    s32 width;
 
     OPEN_DISPS(gfxCtx, "../z_view.c", 777);
 
@@ -457,8 +458,10 @@ s32 View_ApplyOrthoToOverlay(View* view) {
     LOG_UTILS_CHECK_NULL_POINTER("projection", projection, "../z_view.c", 791);
     view->projectionPtr = projection;
 
-    guOrtho(projection, -(f32)gScreenWidth * 0.5f, (f32)gScreenWidth * 0.5f, -(f32)gScreenHeight * 0.5f,
-            (f32)gScreenHeight * 0.5f, view->zNear, view->zFar, view->scale);
+    // scales beating heart, inventory item change and minimap arrows properly
+    width = WIDE_MULT(gScreenWidth, WIDE_GET_4_3);
+    guOrtho(projection, -(f32)width * 0.5f, (f32)width * 0.5f, -(f32)gScreenHeight * 0.5f, (f32)gScreenHeight * 0.5f,
+            view->zNear, view->zFar, view->scale);
 
     view->projection = *projection;
 
@@ -499,7 +502,8 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
     LOG_UTILS_CHECK_NULL_POINTER("projection", projection, "../z_view.c", 833);
     view->projectionPtr = projection;
 
-    width = view->viewport.rightX - view->viewport.leftX;
+    // rescale the A button/icon properly
+    width = WIDE_MULT((view->viewport.rightX - view->viewport.leftX), WIDE_GET_4_3);
     height = view->viewport.bottomY - view->viewport.topY;
 
     aspect = (f32)width / (f32)height;
@@ -624,7 +628,7 @@ s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP) {
     return 1;
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 /**
  * Logs an error and returns nonzero if camera is too far from the origin.
  */

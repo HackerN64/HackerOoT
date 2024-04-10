@@ -1,6 +1,8 @@
 #ifndef MESSAGE_DATA_FMT_H
 #define MESSAGE_DATA_FMT_H
 
+#include "config.h"
+
 /*
  * Macros to create both a constant and a string literal from a magic value
  *   The constants are used in code files when parsing text for various purposes

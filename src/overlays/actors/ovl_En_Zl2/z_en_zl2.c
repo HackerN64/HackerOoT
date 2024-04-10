@@ -212,8 +212,11 @@ s32 EnZl2_UpdateSkelAnime(EnZl2* this) {
 
 CsCmdActorCue* EnZl2_GetCue(PlayState* play, s32 cueChannel) {
     if (play->csCtx.state != CS_STATE_IDLE) {
-        return play->csCtx.actorCues[cueChannel];
+        CsCmdActorCue* cue = play->csCtx.actorCues[cueChannel];
+
+        return cue;
     }
+
     return NULL;
 }
 
@@ -334,7 +337,11 @@ void func_80B4EF64(EnZl2* this, s16 arg1, s32 arg2) {
         }
 
         if (arg2 == 2) {
+            s32 pad;
+
             if ((this->action == 5) || (this->action == 30)) {
+                s32 temp_t0;
+
                 curFrame = this->skelAnime.curFrame;
                 unk_278 = this->unk_278;
                 temp_t0 = (s32)((3500.0f * curFrame) / unk_278) + phi_a0;
@@ -343,13 +350,15 @@ void func_80B4EF64(EnZl2* this, s16 arg1, s32 arg2) {
                     phi_v0 /= -2;
                 }
             } else if ((this->action == 6) || (this->action == 31)) {
-                temp_t0 = phi_a0 + 0xDAC;
+                s32 temp_t0 = phi_a0 + 0xDAC;
+
                 if (temp_t0 >= temp_v1) {
                     temp_v1 = temp_t0;
                     phi_v0 /= -2;
                 }
             } else if (this->action == 20) {
-                temp_t0 = phi_a0 - 0x3E8;
+                s32 temp_t0 = phi_a0 - 0x3E8;
+
                 if (temp_t0 >= temp_v1) {
                     temp_v1 = temp_t0;
                     phi_v0 /= -2;
@@ -453,29 +462,35 @@ s32 func_80B4F45C(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s
         Matrix_Translate(362.0f, -133.0f, 0.0f, MTXMODE_APPLY);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+
         if (!FrameAdvance_IsEnabled(play)) {
             func_80B4EE38(this, sp2C.y, 0);
             func_80B4F230(this, sp2C.x, 1);
             func_80B4EF64(this, sp2C.z, 2);
         }
+
         Matrix_RotateZYX(unk_1DC[0] + kREG(31), unk_1DC[1] + kREG(32), unk_1DC[2] + kREG(33), MTXMODE_APPLY);
         Matrix_Translate(-188.0f, -184.0f, 0.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[0], "../z_en_zl2.c", 1056);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+
         if (!FrameAdvance_IsEnabled(play)) {
             func_80B4EE38(this, sp2C.y, 3);
             func_80B4F230(this, sp2C.x, 4);
         }
+
         Matrix_RotateZYX(unk_1DC[3] + kREG(34), unk_1DC[4] + kREG(35), unk_1DC[5] + kREG(36), MTXMODE_APPLY);
         Matrix_Translate(-410.0f, -184.0f, 0.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[1], "../z_en_zl2.c", 1100);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+
         if (!FrameAdvance_IsEnabled(play)) {
             func_80B4EE38(this, sp2C.y, 6);
             func_80B4F230(this, sp2C.x, 7);
         }
+
         Matrix_RotateZYX(unk_1DC[6] + kREG(37), unk_1DC[7] + kREG(38), unk_1DC[8] + kREG(39), MTXMODE_APPLY);
         Matrix_Translate(-1019.0f, -26.0f, 0.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[2], "../z_en_zl2.c", 1120);
@@ -484,21 +499,25 @@ s32 func_80B4F45C(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s
         Matrix_Translate(467.0f, 265.0f, 389.0f, MTXMODE_APPLY);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+
         if (!FrameAdvance_IsEnabled(play)) {
             func_80B4EE38(this, sp2C.y, 9);
             func_80B4F230(this, sp2C.x, 10);
             func_80B4EF64(this, sp2C.z, 11);
         }
+
         Matrix_RotateZYX(unk_1DC[9] + kREG(40), unk_1DC[10] + kREG(41), unk_1DC[11] + kREG(42), MTXMODE_APPLY);
         Matrix_Translate(-427.0f, -1.0f, -3.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[3], "../z_en_zl2.c", 1145);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+
         if (!FrameAdvance_IsEnabled(play)) {
             func_80B4EE38(this, sp2C.y, 12);
             func_80B4F230(this, sp2C.x, 13);
             func_80B4EF64(this, sp2C.z, 14);
         }
+
         Matrix_RotateZYX(unk_1DC[12] + kREG(43), unk_1DC[13] + kREG(44), unk_1DC[14] + kREG(45), MTXMODE_APPLY);
         Matrix_Translate(-446.0f, -52.0f, 84.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[4], "../z_en_zl2.c", 1164);
@@ -507,21 +526,25 @@ s32 func_80B4F45C(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s
         Matrix_Translate(467.0f, 265.0f, -389.0f, MTXMODE_APPLY);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+
         if (!FrameAdvance_IsEnabled(play)) {
             func_80B4EE38(this, sp2C.y, 15);
             func_80B4F230(this, sp2C.x, 16);
             func_80B4EF64(this, sp2C.z, 17);
         }
+
         Matrix_RotateZYX(unk_1DC[15] + kREG(46), unk_1DC[16] + kREG(47), unk_1DC[17] + kREG(48), MTXMODE_APPLY);
         Matrix_Translate(-427.0f, -1.0f, 3.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[5], "../z_en_zl2.c", 1189);
         Matrix_Get(&sp34);
         Matrix_MtxFToYXZRotS(&sp34, &sp2C, 0);
+
         if (!FrameAdvance_IsEnabled(play)) {
             func_80B4EE38(this, sp2C.y, 18);
             func_80B4F230(this, sp2C.x, 19);
             func_80B4EF64(this, sp2C.z, 20);
         }
+
         Matrix_RotateZYX(unk_1DC[18] + kREG(49), unk_1DC[19] + kREG(50), unk_1DC[20] + kREG(51), MTXMODE_APPLY);
         Matrix_Translate(-446.0f, -52.0f, -84.0f, MTXMODE_APPLY);
         MATRIX_TO_MTX(&sp74[6], "../z_en_zl2.c", 1208);
@@ -1563,9 +1586,11 @@ void func_80B52114(EnZl2* this, PlayState* play) {
         case 4:
             func_80B51D0C(this, play);
             break;
+#if IS_DEBUG
         case 0:
             func_80B4FD90(this, play);
             break;
+#endif
         default:
             PRINTF(VT_FGCOL(RED) " En_Oa2 の arg_data がおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
             func_80B4FD90(this, play);
@@ -1578,10 +1603,12 @@ void func_80B521A0(EnZl2* this, PlayState* play) {
     s32 objectSlot = Object_GetSlot(objectCtx, OBJECT_ZL2_ANIME1);
     s32 pad2;
 
+#if IS_DEBUG
     if (objectSlot < 0) {
         PRINTF(VT_FGCOL(RED) "En_Zl2_main_bankアニメーションのバンクを読めない!!!!!!!!!!!!\n" VT_RST);
         return;
     }
+#endif
 
     if (Object_IsLoaded(objectCtx, objectSlot)) {
         this->zl2Anime1ObjectSlot = objectSlot;

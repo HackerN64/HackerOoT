@@ -42,7 +42,7 @@ typedef struct {
 /**
  * @see ACTOROVL_ALLOC_ABSOLUTE
  */
-#if OOT_DEBUG
+#if IS_DEBUG
 #define ACTOROVL_ABSOLUTE_SPACE_SIZE 0x27A0
 #else
 #define ACTOROVL_ABSOLUTE_SPACE_SIZE 0x24E0
@@ -89,8 +89,7 @@ typedef struct {
 #define ACTOROVL_ALLOC_PERSISTENT (1 << 1)
 
 typedef struct {
-    /* 0x00 */ uintptr_t vromStart;
-    /* 0x04 */ uintptr_t vromEnd;
+    /* 0x00 */ RomFile file;
     /* 0x08 */ void* vramStart;
     /* 0x0C */ void* vramEnd;
     /* 0x10 */ void* loadedRamAddr; // original name: "allocp"
@@ -135,7 +134,7 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ Vec3s rot; // Current actor shape rotation
-    /* 0x06 */ s16 face; // Used to index eyebrow/eye/mouth textures. Only used by player
+    /* 0x06 */ s16 face; // Used to index eyes and mouth textures. Only used by player
     /* 0x08 */ f32 yOffset; // Model y axis offset. Represents model space units
     /* 0x0C */ ActorShadowFunc shadowDraw; // Shadow draw function
     /* 0x10 */ f32 shadowScale; // Changes the size of the shadow
@@ -309,7 +308,7 @@ typedef struct Actor {
     /* 0x130 */ ActorFunc update; // Update Routine. Called by `Actor_UpdateAll`
     /* 0x134 */ ActorFunc draw; // Draw Routine. Called by `Actor_Draw`
     /* 0x138 */ ActorOverlay* overlayEntry; // Pointer to the overlay table entry for this actor
-#if OOT_DEBUG
+#if IS_DEBUG
     /* 0x13C */ char dbgPad[0x10];
 #endif
 } Actor; // size = 0x14C

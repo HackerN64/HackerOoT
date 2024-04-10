@@ -14,13 +14,15 @@ void FrameAdvance_Init(FrameAdvanceContext* frameAdvCtx) {
  * This function returns true when frame advance is not active (game will run normally)
  */
 s32 FrameAdvance_Update(FrameAdvanceContext* frameAdvCtx, Input* input) {
-    if (CHECK_BTN_ALL(input->cur.button, BTN_R) && CHECK_BTN_ALL(input->press.button, BTN_DDOWN)) {
+    // if the macro is set to true check R input, else simply return true
+    u8 checkR = FA_USE_BTN_COMBO ? CHECK_BTN_ALL(input->cur.button, FA_BTN_HOLD_FOR_COMBO) : true;
+
+    if (checkR && CHECK_BTN_ALL(input->press.button, FA_PAUSE_CONTROL)) {
         frameAdvCtx->enabled = !frameAdvCtx->enabled;
     }
 
-    if (!frameAdvCtx->enabled || (CHECK_BTN_ALL(input->cur.button, BTN_Z) &&
-                                  (CHECK_BTN_ALL(input->press.button, BTN_R) ||
-                                   (CHECK_BTN_ALL(input->cur.button, BTN_R) && (++frameAdvCtx->timer >= 9))))) {
+    if (!frameAdvCtx->enabled ||
+        ((checkR && CHECK_BTN_ALL(input->press.button, FA_CONTROL)) || (checkR && (++frameAdvCtx->timer >= 9)))) {
         frameAdvCtx->timer = 0;
         return true;
     }

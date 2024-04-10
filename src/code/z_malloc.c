@@ -6,7 +6,7 @@
 
 Arena sZeldaArena;
 
-#if OOT_DEBUG
+#if IS_DEBUG
 s32 gZeldaArenaLogSeverity = LOG_SEVERITY_ERROR;
 
 void ZeldaArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action) {
@@ -34,8 +34,8 @@ void* ZeldaArena_Malloc(u32 size) {
     return ptr;
 }
 
-#if OOT_DEBUG
-void* ZeldaArena_MallocDebug(u32 size, const char* file, s32 line) {
+#if IS_DEBUG
+void* ZeldaArena_MallocDebug(u32 size, const char* file, int line) {
     void* ptr = __osMallocDebug(&sZeldaArena, size, file, line);
 
     ZELDA_ARENA_CHECK_POINTER(ptr, size, "zelda_malloc_DEBUG", "確保"); // "Secure"
@@ -50,8 +50,8 @@ void* ZeldaArena_MallocR(u32 size) {
     return ptr;
 }
 
-#if OOT_DEBUG
-void* ZeldaArena_MallocRDebug(u32 size, const char* file, s32 line) {
+#if IS_DEBUG
+void* ZeldaArena_MallocRDebug(u32 size, const char* file, int line) {
     void* ptr = __osMallocRDebug(&sZeldaArena, size, file, line);
 
     ZELDA_ARENA_CHECK_POINTER(ptr, size, "zelda_malloc_r_DEBUG", "確保"); // "Secure"
@@ -65,8 +65,8 @@ void* ZeldaArena_Realloc(void* ptr, u32 newSize) {
     return ptr;
 }
 
-#if OOT_DEBUG
-void* ZeldaArena_ReallocDebug(void* ptr, u32 newSize, const char* file, s32 line) {
+#if IS_DEBUG
+void* ZeldaArena_ReallocDebug(void* ptr, u32 newSize, const char* file, int line) {
     ptr = __osReallocDebug(&sZeldaArena, ptr, newSize, file, line);
     ZELDA_ARENA_CHECK_POINTER(ptr, newSize, "zelda_realloc_DEBUG", "再確保"); // "Re-securing"
     return ptr;
@@ -77,8 +77,8 @@ void ZeldaArena_Free(void* ptr) {
     __osFree(&sZeldaArena, ptr);
 }
 
-#if OOT_DEBUG
-void ZeldaArena_FreeDebug(void* ptr, const char* file, s32 line) {
+#if IS_DEBUG
+void ZeldaArena_FreeDebug(void* ptr, const char* file, int line) {
     __osFreeDebug(&sZeldaArena, ptr, file, line);
 }
 #endif
@@ -96,7 +96,7 @@ void* ZeldaArena_Calloc(u32 num, u32 size) {
     return ret;
 }
 
-#if OOT_DEBUG
+#if IS_DEBUG
 void ZeldaArena_Display(void) {
     PRINTF("ゼルダヒープ表示\n"); // "Zelda heap display"
     __osDisplayArena(&sZeldaArena);
@@ -112,14 +112,14 @@ void ZeldaArena_Check(void) {
 }
 
 void ZeldaArena_Init(void* start, u32 size) {
-#if OOT_DEBUG
+#if IS_DEBUG
     gZeldaArenaLogSeverity = LOG_SEVERITY_NOLOG;
 #endif
     __osMallocInit(&sZeldaArena, start, size);
 }
 
 void ZeldaArena_Cleanup(void) {
-#if OOT_DEBUG
+#if IS_DEBUG
     gZeldaArenaLogSeverity = LOG_SEVERITY_NOLOG;
 #endif
     __osMallocCleanup(&sZeldaArena);

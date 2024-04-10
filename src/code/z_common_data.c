@@ -1,7 +1,6 @@
 #include "global.h"
 
-// The use of ALIGNED8 here is just a temporary solution until the SaveContext is re-structured
-ALIGNED8 SaveContext gSaveContext;
+ALIGNED(16) SaveContext gSaveContext;
 u32 D_8015FA88;
 u32 D_8015FA8C;
 
@@ -20,4 +19,5 @@ void SaveContext_Init(void) {
     gSaveContext.dogIsLost = true;
     gSaveContext.nextTransitionType = TRANS_NEXT_TYPE_DEFAULT;
     gSaveContext.prevHudVisibilityMode = HUD_VISIBILITY_ALL;
+    gSaveContext.save.useWidescreen = false;
 }

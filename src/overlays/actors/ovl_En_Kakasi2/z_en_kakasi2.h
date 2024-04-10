@@ -12,7 +12,7 @@ typedef struct EnKakasi2 {
     /* 0x0000 */ Actor actor;
     /* 0x014C */ EnKakasi2ActionFunc actionFunc;
     /* 0x0150 */ SkelAnime skelAnime;
-    /* 0x0194 */ s16 unk_194;
+    /* 0x0194 */ s16 unk_194; // ENABLE_ACTOR_DEBUGGER
     /* 0x0196 */ s16 switchFlag;
     /* 0x0198 */ s16 unk_198;
     /* 0x019C */ Vec3f maxSpawnDistance;

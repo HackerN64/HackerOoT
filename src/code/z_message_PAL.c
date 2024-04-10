@@ -30,24 +30,28 @@ u16 sOcarinaSongBitFlags = 0; // ocarina bit flags
 MessageTableEntry sNesMessageEntryTable[] = {
 #define DEFINE_MESSAGE(textId, type, yPos, nesMessage, gerMessage, fraMessage) \
     { textId, (_SHIFTL(type, 4, 8) | _SHIFTL(yPos, 0, 8)), _message_##textId##_nes },
-#define DEFINE_MESSAGE_FFFC
+#define DEFINE_MESSAGE_NES(textId, type, yPos, nesMessage) DEFINE_MESSAGE(textId, type, yPos, nesMessage, , )
 #include "assets/text/message_data.h"
-#undef DEFINE_MESSAGE_FFFC
 #undef DEFINE_MESSAGE
+#undef DEFINE_MESSAGE_NES
     { 0xFFFF, 0, NULL },
 };
 
 const char* sGerMessageEntryTable[] = {
 #define DEFINE_MESSAGE(textId, type, yPos, nesMessage, gerMessage, fraMessage) _message_##textId##_ger,
+#define DEFINE_MESSAGE_NES(textId, type, yPos, nesMessage)
 #include "assets/text/message_data.h"
 #undef DEFINE_MESSAGE
+#undef DEFINE_MESSAGE_NES
     NULL,
 };
 
 const char* sFraMessageEntryTable[] = {
 #define DEFINE_MESSAGE(textId, type, yPos, nesMessage, gerMessage, fraMessage) _message_##textId##_fra,
+#define DEFINE_MESSAGE_NES(textId, type, yPos, nesMessage)
 #include "assets/text/message_data.h"
 #undef DEFINE_MESSAGE
+#undef DEFINE_MESSAGE_NES
     NULL,
 };
 
@@ -118,9 +122,17 @@ void Message_ResetOcarinaNoteState(void) {
     sOcarinaButtonAlphaValues[0] = sOcarinaButtonAlphaValues[1] = sOcarinaButtonAlphaValues[2] =
         sOcarinaButtonAlphaValues[3] = sOcarinaButtonAlphaValues[4] = sOcarinaButtonAlphaValues[5] =
             sOcarinaButtonAlphaValues[6] = sOcarinaButtonAlphaValues[7] = sOcarinaButtonAlphaValues[8] = 0;
-    sOcarinaButtonAPrimR = 80;
-    sOcarinaButtonAPrimG = 255;
-    sOcarinaButtonAPrimB = 150;
+
+    if (N64_BTN_COLORS) {
+        sOcarinaButtonAPrimR = 80;
+        sOcarinaButtonAPrimG = 150;
+        sOcarinaButtonAPrimB = 255;
+    } else {
+        sOcarinaButtonAPrimR = 80;
+        sOcarinaButtonAPrimG = 255;
+        sOcarinaButtonAPrimB = 150;
+    }
+
     sOcarinaButtonAEnvR = 10;
     sOcarinaButtonAEnvG = 10;
     sOcarinaButtonAEnvB = 10;
@@ -238,15 +250,16 @@ void Message_DrawTextChar(PlayState* play, void* textureImage, Gfx** p) {
     if (msgCtx->textBoxType != TEXTBOX_TYPE_NONE_NO_SHADOW) {
         gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, msgCtx->textColorAlpha);
         gSPTextureRectangle(gfx++, (x + R_TEXT_DROP_SHADOW_OFFSET) << 2, (y + R_TEXT_DROP_SHADOW_OFFSET) << 2,
-                            (x + R_TEXT_DROP_SHADOW_OFFSET + sCharTexSize) << 2,
-                            (y + R_TEXT_DROP_SHADOW_OFFSET + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0, sCharTexScale,
-                            sCharTexScale);
+                            (x + R_TEXT_DROP_SHADOW_OFFSET + WIDE_MULT(sCharTexSize, WIDE_GET_RATIO)) << 2,
+                            (y + R_TEXT_DROP_SHADOW_OFFSET + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0,
+                            WIDE_DIV(sCharTexScale, WIDE_GET_RATIO), sCharTexScale);
     }
 
     gDPPipeSync(gfx++);
     gDPSetPrimColor(gfx++, 0, 0, msgCtx->textColorR, msgCtx->textColorG, msgCtx->textColorB, msgCtx->textColorAlpha);
-    gSPTextureRectangle(gfx++, x << 2, y << 2, (x + sCharTexSize) << 2, (y + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0,
-                        sCharTexScale, sCharTexScale);
+    gSPTextureRectangle(gfx++, x << 2, y << 2, (x + WIDE_MULT(sCharTexSize, WIDE_GET_RATIO)) << 2,
+                        (y + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV(sCharTexScale, WIDE_GET_RATIO),
+                        sCharTexScale);
     *p = gfx;
 }
 
@@ -291,17 +304,15 @@ void Message_GrowTextbox(MessageContext* msgCtx) {
 void Message_FindMessage(PlayState* play, u16 textId) {
     const char* foundSeg;
     const char* nextSeg;
+    Font* font = &play->msgCtx.font;
     MessageTableEntry* messageTableEntry = sNesMessageEntryTablePtr;
     const char** languageSegmentTable;
-    Font* font;
     const char* seg;
 
     if (gSaveContext.language == LANGUAGE_ENG) {
         seg = messageTableEntry->segment;
 
         while (messageTableEntry->textId != 0xFFFF) {
-            font = &play->msgCtx.font;
-
             if (messageTableEntry->textId == textId) {
                 foundSeg = messageTableEntry->segment;
                 font->charTexBuf[0] = messageTableEntry->typePos;
@@ -323,8 +334,6 @@ void Message_FindMessage(PlayState* play, u16 textId) {
         seg = messageTableEntry->segment;
 
         while (messageTableEntry->textId != 0xFFFF) {
-            font = &play->msgCtx.font;
-
             if (messageTableEntry->textId == textId) {
                 foundSeg = *languageSegmentTable;
                 font->charTexBuf[0] = messageTableEntry->typePos;
@@ -344,7 +353,6 @@ void Message_FindMessage(PlayState* play, u16 textId) {
     }
     // "Message not found!!!"
     PRINTF(" メッセージが,見つからなかった！！！ = %x\n", textId);
-    font = &play->msgCtx.font;
     messageTableEntry = sNesMessageEntryTablePtr;
 
     if (gSaveContext.language == LANGUAGE_ENG) {
@@ -368,13 +376,11 @@ void Message_FindCreditsMessage(PlayState* play, u16 textId) {
     const char* foundSeg;
     const char* nextSeg;
     const char* seg;
+    Font* font = &play->msgCtx.font;
     MessageTableEntry* messageTableEntry = sStaffMessageEntryTablePtr;
-    Font* font;
 
     seg = messageTableEntry->segment;
     while (messageTableEntry->textId != 0xFFFF) {
-        font = &play->msgCtx.font;
-
         if (messageTableEntry->textId == textId) {
             foundSeg = messageTableEntry->segment;
             font->charTexBuf[0] = messageTableEntry->typePos;
@@ -478,6 +484,16 @@ void Message_SetTextColor(MessageContext* msgCtx, u16 colorParameter) {
 }
 
 void Message_DrawTextboxIcon(PlayState* play, Gfx** p, s16 x, s16 y) {
+#if N64_BTN_COLORS
+    static s16 sIconPrimColors[][3] = {
+        { 0, 80, 200 },
+        { 50, 130, 255 },
+    };
+    static s16 sIconEnvColors[][3] = {
+        { 0, 0, 0 },
+        { 0, 130, 255 },
+    };
+#else
     static s16 sIconPrimColors[][3] = {
         { 0, 200, 80 },
         { 50, 255, 130 },
@@ -486,6 +502,7 @@ void Message_DrawTextboxIcon(PlayState* play, Gfx** p, s16 x, s16 y) {
         { 0, 0, 0 },
         { 0, 255, 130 },
     };
+#endif
     static s16 sIconPrimR = 0;
     static s16 sIconPrimG = 200;
     static s16 sIconPrimB = 80;
@@ -581,8 +598,9 @@ void Message_DrawTextboxIcon(PlayState* play, Gfx** p, s16 x, s16 y) {
     sCharTexSize = 16.0f * ((f32)R_TEXT_CHAR_SCALE / 100.0f);
     sCharTexScale = 1024.0f / ((f32)R_TEXT_CHAR_SCALE / 100.0f);
 
-    gSPTextureRectangle(gfx++, x << 2, y << 2, (x + sCharTexSize) << 2, (y + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0,
-                        sCharTexScale, sCharTexScale);
+    gSPTextureRectangle(gfx++, x << 2, y << 2, WIDE_INCR(((x + sCharTexSize) << 2), -(u16)(WIDE_GET_4_3 * 10.0f)),
+                        (y + sCharTexSize) << 2, G_TX_RENDERTILE, 0, 0, WIDE_DIV(sCharTexScale, WIDE_GET_RATIO),
+                        sCharTexScale);
 
     msgCtx->stateTimer++;
 
@@ -762,9 +780,13 @@ u16 Message_DrawItemIcon(PlayState* play, u16 itemId, Gfx** p, u16 i) {
                             ITEM_ICON_WIDTH, ITEM_ICON_HEIGHT, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
                             G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
     }
-    gSPTextureRectangle(gfx++, (msgCtx->textPosX + R_TEXTBOX_ICON_XPOS) << 2, R_TEXTBOX_ICON_YPOS << 2,
-                        (msgCtx->textPosX + R_TEXTBOX_ICON_XPOS + R_TEXTBOX_ICON_DIMENSION) << 2,
-                        (R_TEXTBOX_ICON_YPOS + R_TEXTBOX_ICON_DIMENSION) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
+
+    gSPTextureRectangle(gfx++, (WIDE_INCR(msgCtx->textPosX, 3) + R_TEXTBOX_ICON_XPOS) << 2, R_TEXTBOX_ICON_YPOS << 2,
+                        WIDE_INCR((msgCtx->textPosX + R_TEXTBOX_ICON_XPOS + R_TEXTBOX_ICON_DIMENSION),
+                                  (itemId < ITEM_MEDALLION_FOREST ? -5 : -3))
+                            << 2,
+                        (R_TEXTBOX_ICON_YPOS + R_TEXTBOX_ICON_DIMENSION) << 2, G_TX_RENDERTILE, 0, 0,
+                        WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
     gDPPipeSync(gfx++);
     gDPSetCombineLERP(gfx++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0);
 
@@ -857,7 +879,7 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
     Font* font = &play->msgCtx.font;
     Gfx* gfx = *gfxP;
 
-    play->msgCtx.textPosX = R_TEXT_INIT_XPOS;
+    play->msgCtx.textPosX = WIDE_INCR(R_TEXT_INIT_XPOS, 23);
 
     if (!sTextIsCredits) {
         msgCtx->textPosY = R_TEXT_INIT_YPOS;
@@ -879,7 +901,7 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
 
         switch (character) {
             case MESSAGE_NEWLINE:
-                msgCtx->textPosX = R_TEXT_INIT_XPOS;
+                msgCtx->textPosX = WIDE_INCR(R_TEXT_INIT_XPOS, 23);
                 if (msgCtx->choiceNum == 1 || msgCtx->choiceNum == 3) {
                     msgCtx->textPosX += 32;
                 }
@@ -892,7 +914,7 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
                 Message_SetTextColor(msgCtx, msgCtx->msgBufDecoded[++i] & 0xF);
                 break;
             case ' ':
-                msgCtx->textPosX += MESSAGE_SPACE_WIDTH;
+                msgCtx->textPosX += WIDE_MULT(MESSAGE_SPACE_WIDTH, WIDE_GET_RATIO);
                 break;
             case MESSAGE_BOX_BREAK:
                 if (msgCtx->msgMode == MSGMODE_TEXT_DISPLAYING) {
@@ -910,7 +932,7 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
                 *gfxP = gfx;
                 return;
             case MESSAGE_SHIFT:
-                msgCtx->textPosX += msgCtx->msgBufDecoded[++i];
+                msgCtx->textPosX += WIDE_INCR(msgCtx->msgBufDecoded[++i], (msgCtx->textId == 0x009E ? -16 : -8));
                 break;
             case MESSAGE_TEXTID:
                 msgCtx->textboxEndType = TEXTBOX_ENDTYPE_HAS_NEXT;
@@ -981,7 +1003,8 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
                     sMessageHasSetSfx = true;
                     // "Sound (SE)"
                     PRINTF("サウンド（ＳＥ）\n");
-                    sfxHi = msgCtx->msgBufDecoded[i + 1] << 8;
+                    sfxHi = msgCtx->msgBufDecoded[i + 1];
+                    sfxHi <<= 8;
                     Audio_PlaySfxGeneral(sfxHi | msgCtx->msgBufDecoded[i + 2], &gSfxDefaultPos, 4,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 }
@@ -1133,8 +1156,15 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
                 }
                 Message_DrawTextChar(play, &font->charTexBuf[charTexIdx], &gfx);
                 charTexIdx += FONT_CHAR_TEX_SIZE;
+                {
+                    f32 fontWidth = sFontWidths[character - ' '];
 
-                msgCtx->textPosX += (s32)(sFontWidths[character - ' '] * (R_TEXT_CHAR_SCALE / 100.0f));
+                    if (character - ' ' == 7) {
+                        fontWidth = WIDE_N64_MODE(sFontWidths[character - ' '], 3.0f);
+                    }
+
+                    msgCtx->textPosX += (s32)WIDE_MULT((fontWidth * (R_TEXT_CHAR_SCALE / 100.0f)), WIDE_GET_RATIO);
+                }
                 break;
         }
     }
@@ -1369,8 +1399,8 @@ void Message_Decode(PlayState* play) {
                 }
                 if (loadChar) {
                     Font_LoadChar(font, digits[i] + '0' - ' ', charTexIdx);
-                    msgCtx->msgBufDecoded[decodedBufPos] = digits[i] + '0';
                     charTexIdx += FONT_CHAR_TEX_SIZE;
+                    msgCtx->msgBufDecoded[decodedBufPos] = digits[i] + '0';
                     PRINTF("%x(%x) ", digits[i] + '0' - ' ', digits[i]);
                     decodedBufPos++;
                 }
@@ -1390,8 +1420,8 @@ void Message_Decode(PlayState* play) {
             for (i = 0; i < 2; i++) {
                 if (i == 1 || digits[i] != 0) {
                     Font_LoadChar(font, digits[i] + '0' - ' ', charTexIdx);
-                    msgCtx->msgBufDecoded[decodedBufPos] = digits[i] + '0';
                     charTexIdx += FONT_CHAR_TEX_SIZE;
+                    msgCtx->msgBufDecoded[decodedBufPos] = digits[i] + '0';
                     PRINTF("%x(%x) ", digits[i] + '0' - ' ', digits[i]);
                     decodedBufPos++;
                 }
@@ -1579,9 +1609,10 @@ void Message_OpenText(PlayState* play, u16 textId) {
     Font* font = &msgCtx->font;
     s16 textBoxType;
 
-    if (msgCtx->msgMode == MSGMODE_NONE) {
-        gSaveContext.prevHudVisibilityMode = gSaveContext.hudVisibilityMode;
-    }
+    // clang-format off
+    if (msgCtx->msgMode == MSGMODE_NONE) { gSaveContext.prevHudVisibilityMode = gSaveContext.hudVisibilityMode; }
+    // clang-format on
+
     if (R_SCENE_CAM_TYPE == SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT) {
         Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_A_HEARTS_MAGIC_FORCE);
     }
@@ -1707,6 +1738,7 @@ void Message_StartTextbox(PlayState* play, u16 textId, Actor* actor) {
 }
 
 void Message_ContinueTextbox(PlayState* play, u16 textId) {
+    s32 pad;
     MessageContext* msgCtx = &play->msgCtx;
 
     PRINTF(VT_FGCOL(GREEN));
@@ -1915,6 +1947,9 @@ u8 Message_GetState(MessageContext* msgCtx) {
 void Message_DrawTextBox(PlayState* play, Gfx** p) {
     MessageContext* msgCtx = &play->msgCtx;
     Gfx* gfx = *p;
+    u32 width = WIDE_MULT(R_TEXTBOX_WIDTH, WIDE_GET_RATIO);
+    u32 texWidth = WIDE_DIV(R_TEXTBOX_TEXWIDTH, WIDE_GET_RATIO);
+    u32 posX = WIDE_INCR(R_TEXTBOX_X, 30);
 
     gDPPipeSync(gfx++);
     gDPSetPrimColor(gfx++, 0, 0, msgCtx->textboxColorRed, msgCtx->textboxColorGreen, msgCtx->textboxColorBlue,
@@ -1934,9 +1969,8 @@ void Message_DrawTextBox(PlayState* play, Gfx** p) {
                                G_TX_NOLOD, G_TX_NOLOD);
     }
 
-    gSPTextureRectangle(gfx++, R_TEXTBOX_X << 2, R_TEXTBOX_Y << 2, (R_TEXTBOX_X + R_TEXTBOX_WIDTH) << 2,
-                        (R_TEXTBOX_Y + R_TEXTBOX_HEIGHT) << 2, G_TX_RENDERTILE, 0, 0, R_TEXTBOX_TEXWIDTH << 1,
-                        R_TEXTBOX_TEXHEIGHT << 1);
+    gSPTextureRectangle(gfx++, posX << 2, R_TEXTBOX_Y << 2, (posX + width) << 2, (R_TEXTBOX_Y + R_TEXTBOX_HEIGHT) << 2,
+                        G_TX_RENDERTILE, 0, 0, texWidth << 1, R_TEXTBOX_TEXHEIGHT << 1);
 
     // Draw treble clef
     if (msgCtx->textBoxType == TEXTBOX_TYPE_OCARINA) {
@@ -1946,8 +1980,9 @@ void Message_DrawTextBox(PlayState* play, Gfx** p) {
         gDPSetPrimColor(gfx++, 0, 0, 255, 100, 0, 255);
         gDPLoadTextureBlock_4b(gfx++, gOcarinaTrebleClefTex, G_IM_FMT_I, 16, 32, 0, G_TX_MIRROR, G_TX_MIRROR,
                                G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-        gSPTextureRectangle(gfx++, R_TEXTBOX_CLEF_XPOS << 2, R_TEXTBOX_CLEF_YPOS << 2, (R_TEXTBOX_CLEF_XPOS + 16) << 2,
-                            (R_TEXTBOX_CLEF_YPOS + 32) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
+        gSPTextureRectangle(gfx++, WIDE_INCR(R_TEXTBOX_CLEF_XPOS, 20) << 2, R_TEXTBOX_CLEF_YPOS << 2,
+                            WIDE_INCR((R_TEXTBOX_CLEF_XPOS + 16), 20) << 2, (R_TEXTBOX_CLEF_YPOS + 32) << 2,
+                            G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
     }
 
     *p = gfx;
@@ -1974,6 +2009,16 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
         gOcarinaBtnIconCLeftTex,  // OCARINA_BTN_C_LEFT
         gOcarinaBtnIconCUpTex,    // OCARINA_BTN_C_UP
     };
+#if N64_BTN_COLORS
+    static s16 sOcarinaButtonAPrimColors[][3] = {
+        { 80, 150, 255 },
+        { 100, 200, 255 },
+    };
+    static s16 sOcarinaButtonAEnvColors[][3] = {
+        { 10, 10, 10 },
+        { 50, 50, 255 },
+    };
+#else
     static s16 sOcarinaButtonAPrimColors[][3] = {
         { 80, 255, 150 },
         { 100, 255, 200 },
@@ -1982,6 +2027,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
         { 10, 10, 10 },
         { 50, 255, 50 },
     };
+#endif
     static s16 sOcarinaButtonCPrimColors[][3] = {
         { 255, 255, 50 },
         { 255, 255, 180 },
@@ -2852,11 +2898,11 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                 switch (msgCtx->textboxEndType) {
                     case TEXTBOX_ENDTYPE_2_CHOICE:
                         Message_HandleChoiceSelection(play, 1);
-                        Message_DrawTextboxIcon(play, &gfx, msgCtx->textPosX, msgCtx->textPosY);
+                        Message_DrawTextboxIcon(play, &gfx, WIDE_INCR(msgCtx->textPosX, 24), msgCtx->textPosY);
                         break;
                     case TEXTBOX_ENDTYPE_3_CHOICE:
                         Message_HandleChoiceSelection(play, 2);
-                        Message_DrawTextboxIcon(play, &gfx, msgCtx->textPosX, msgCtx->textPosY);
+                        Message_DrawTextboxIcon(play, &gfx, WIDE_INCR(msgCtx->textPosX, 24), msgCtx->textPosY);
                         break;
                     case TEXTBOX_ENDTYPE_PERSISTENT:
                         if (msgCtx->textId >= 0x6D && msgCtx->textId < 0x73) {
@@ -2893,7 +2939,8 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
             if (msgCtx->msgMode == MSGMODE_SONG_PLAYBACK) {
                 g = msgCtx->ocarinaAction - OCARINA_ACTION_PLAYBACK_MINUET;
                 r = gOcarinaSongButtons[g].numButtons;
-                for (notePosX = R_OCARINA_BUTTONS_XPOS, i = 0; i < r; i++, notePosX += R_OCARINA_BUTTONS_XPOS_OFFSET) {
+                for (notePosX = WIDE_INCR(R_OCARINA_BUTTONS_XPOS, 16), i = 0; i < r;
+                     i++, notePosX += WIDE_INCR(R_OCARINA_BUTTONS_XPOS_OFFSET, -4)) {
                     gDPPipeSync(gfx++);
                     gDPSetPrimColor(gfx++, 0, 0, 150, 150, 150, 150);
                     gDPSetEnvColor(gfx++, 10, 10, 10, 0);
@@ -2906,13 +2953,14 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                                         R_OCARINA_BUTTONS_YPOS(gOcarinaSongButtons[g].buttonsIndex[i]) << 2,
                                         (notePosX + 16) << 2,
                                         (R_OCARINA_BUTTONS_YPOS(gOcarinaSongButtons[g].buttonsIndex[i]) + 16) << 2,
-                                        G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
+                                        G_TX_RENDERTILE, 0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
                 }
             }
 
             if (msgCtx->msgMode != MSGMODE_SCARECROW_LONG_RECORDING_START &&
                 msgCtx->msgMode != MSGMODE_MEMORY_GAME_START) {
-                for (notePosX = R_OCARINA_BUTTONS_XPOS, i = 0; i < 8; i++, notePosX += R_OCARINA_BUTTONS_XPOS_OFFSET) {
+                for (notePosX = WIDE_INCR(R_OCARINA_BUTTONS_XPOS, 16), i = 0; i < 8;
+                     i++, notePosX += WIDE_INCR(R_OCARINA_BUTTONS_XPOS_OFFSET, -4)) {
                     if (sOcarinaButtonIndexBuf[i] == OCARINA_BTN_INVALID) {
                         break;
                     }
@@ -2943,7 +2991,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                     gSPTextureRectangle(gfx++, notePosX << 2, R_OCARINA_BUTTONS_YPOS(sOcarinaButtonIndexBuf[i]) << 2,
                                         (notePosX + 16) << 2,
                                         (R_OCARINA_BUTTONS_YPOS(sOcarinaButtonIndexBuf[i]) + 16) << 2, G_TX_RENDERTILE,
-                                        0, 0, 1 << 10, 1 << 10);
+                                        0, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
                 }
             }
         }
@@ -2951,76 +2999,90 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
     *p = gfx;
 }
 
+#if IS_DEBUG
 /**
  * If the s16 variable pointed to by `var` changes in value, a black bar and white box
  * are briefly drawn onto the screen. It can only watch one variable per build due to
  * the last value being saved in a static variable.
  */
 void Message_DrawDebugVariableChanged(s16* var, GraphicsContext* gfxCtx) {
-    static s16 sVarLastValue = 0;
-    static s16 sFillTimer = 0;
-    s32 pad;
+    if (IS_MSG_DEBUG_ENABLED) {
+        static s16 sVarLastValue = 0;
+        static s16 sFillTimer = 0;
+        s32 pad;
 
-    OPEN_DISPS(gfxCtx, "../z_message_PAL.c", 3485);
+        OPEN_DISPS(gfxCtx, "../z_message_PAL.c", 3485);
 
-    if (sVarLastValue != *var) {
-        sVarLastValue = *var;
-        sFillTimer = 30;
+        if (sVarLastValue != *var) {
+            sVarLastValue = *var;
+            sFillTimer = 30;
+        }
+        if (sFillTimer != 0) {
+            sFillTimer--;
+            gDPPipeSync(POLY_OPA_DISP++);
+            gDPSetCycleType(POLY_OPA_DISP++, G_CYC_FILL);
+            gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
+            gDPSetFillColor(POLY_OPA_DISP++, GPACK_RGBA5551(0, 0, 0, 1) << 0x10 | GPACK_RGBA5551(0, 0, 0, 1));
+            gDPFillRectangle(POLY_OPA_DISP++, 0, 110, SCREEN_WIDTH - 1, 150); // 40x319 black bar
+            gDPPipeSync(POLY_OPA_DISP++);
+            gDPPipeSync(POLY_OPA_DISP++);
+            gDPSetCycleType(POLY_OPA_DISP++, G_CYC_FILL);
+            gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
+            gDPSetFillColor(POLY_OPA_DISP++,
+                            GPACK_RGBA5551(255, 255, 255, 1) << 0x10 | GPACK_RGBA5551(255, 255, 255, 1));
+            gDPFillRectangle(POLY_OPA_DISP++, 40, 120, 60, 140); // 20x20 white box
+            gDPPipeSync(POLY_OPA_DISP++);
+        }
+        CLOSE_DISPS(gfxCtx, "../z_message_PAL.c", 3513);
     }
-    if (sFillTimer != 0) {
-        sFillTimer--;
-        gDPPipeSync(POLY_OPA_DISP++);
-        gDPSetCycleType(POLY_OPA_DISP++, G_CYC_FILL);
-        gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
-        gDPSetFillColor(POLY_OPA_DISP++, GPACK_RGBA5551(0, 0, 0, 1) << 0x10 | GPACK_RGBA5551(0, 0, 0, 1));
-        gDPFillRectangle(POLY_OPA_DISP++, 0, 110, SCREEN_WIDTH - 1, 150); // 40x319 black bar
-        gDPPipeSync(POLY_OPA_DISP++);
-        gDPPipeSync(POLY_OPA_DISP++);
-        gDPSetCycleType(POLY_OPA_DISP++, G_CYC_FILL);
-        gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
-        gDPSetFillColor(POLY_OPA_DISP++, GPACK_RGBA5551(255, 255, 255, 1) << 0x10 | GPACK_RGBA5551(255, 255, 255, 1));
-        gDPFillRectangle(POLY_OPA_DISP++, 40, 120, 60, 140); // 20x20 white box
-        gDPPipeSync(POLY_OPA_DISP++);
-    }
-    CLOSE_DISPS(gfxCtx, "../z_message_PAL.c", 3513);
 }
 
 void Message_DrawDebugText(PlayState* play, Gfx** p) {
-    s32 pad;
-    GfxPrint printer;
-    s32 pad1;
+    if (IS_MSG_DEBUG_ENABLED) {
+        s32 pad;
+        GfxPrint printer;
+        s32 pad1;
 
-    GfxPrint_Init(&printer);
-    GfxPrint_Open(&printer, *p);
-    GfxPrint_SetPos(&printer, 6, 26);
-    GfxPrint_SetColor(&printer, 255, 60, 0, 255);
-    GfxPrint_Printf(&printer, "%s", "MESSAGE");
-    GfxPrint_SetPos(&printer, 14, 26);
-    GfxPrint_Printf(&printer, "%s", "=");
-    GfxPrint_SetPos(&printer, 16, 26);
-    GfxPrint_Printf(&printer, "%x", play->msgCtx.textId);
-    *p = GfxPrint_Close(&printer);
-    GfxPrint_Destroy(&printer);
+        GfxPrint_Init(&printer);
+        GfxPrint_Open(&printer, *p);
+        GfxPrint_SetPos(&printer, 6, 26);
+        GfxPrint_SetColor(&printer, 255, 60, 0, 255);
+        GfxPrint_Printf(&printer, "%s", "MESSAGE");
+        GfxPrint_SetPos(&printer, 14, 26);
+        GfxPrint_Printf(&printer, "%s", "=");
+        GfxPrint_SetPos(&printer, 16, 26);
+        GfxPrint_Printf(&printer, "%x", play->msgCtx.textId);
+        *p = GfxPrint_Close(&printer);
+        GfxPrint_Destroy(&printer);
+    }
 }
+#endif
 
 void Message_Draw(PlayState* play) {
     Gfx* plusOne;
     Gfx* polyOpaP;
+
+#if IS_DEBUG
     s16 watchVar;
+#endif
 
     OPEN_DISPS(play->state.gfxCtx, "../z_message_PAL.c", 3554);
 
-    watchVar = gSaveContext.save.info.scarecrowLongSongSet;
-    Message_DrawDebugVariableChanged(&watchVar, play->state.gfxCtx);
-    if (BREG(0) != 0 && play->msgCtx.textId != 0) {
-        plusOne = Gfx_Open(polyOpaP = POLY_OPA_DISP);
-        gSPDisplayList(OVERLAY_DISP++, plusOne);
-        Message_DrawDebugText(play, &plusOne);
-        gSPEndDisplayList(plusOne++);
-        Gfx_Close(polyOpaP, plusOne);
-        POLY_OPA_DISP = plusOne;
+    if (IS_MSG_DEBUG_ENABLED) {
+        watchVar = gSaveContext.save.info.scarecrowLongSongSet;
+        Message_DrawDebugVariableChanged(&watchVar, play->state.gfxCtx);
+        if (BREG(0) != 0 && play->msgCtx.textId != 0) {
+            plusOne = Gfx_Open(polyOpaP = POLY_OPA_DISP);
+            gSPDisplayList(OVERLAY_DISP++, plusOne);
+            Message_DrawDebugText(play, &plusOne);
+            gSPEndDisplayList(plusOne++);
+            Gfx_Close(polyOpaP, plusOne);
+            POLY_OPA_DISP = plusOne;
+        }
     }
+
     if (1) {}
+
     plusOne = Gfx_Open(polyOpaP = POLY_OPA_DISP);
     gSPDisplayList(OVERLAY_DISP++, plusOne);
     Message_DrawMain(play, &plusOne);
@@ -3052,7 +3114,6 @@ void Message_Update(PlayState* play) {
         0x0015, 0x0016, 0x0017, 0x0003, 0x0000, 0x270B, 0x00C8, 0x012C, 0x012D, 0xFFDA, 0x0014, 0x0016, 0x0014, 0x0016,
     };
     static u8 D_80153D74 = 0;
-    static u16 D_80153D78 = 0;
     MessageContext* msgCtx = &play->msgCtx;
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
     Player* player = GET_PLAYER(play);
@@ -3063,11 +3124,17 @@ void Message_Update(PlayState* play) {
     s16 playerFocusScreenPosY;
     s16 actorFocusScreenPosY;
 
-    if (BREG(0) != 0) {
+    if (ENABLE_FAST_TEXT) {
+        sTextboxSkipped = true;
+    }
+
+    if (IS_MSG_DEBUG_ENABLED && BREG(0) != 0) {
+        static u16 sMessageDebuggerTextboxCount = 0;
+
         if (CHECK_BTN_ALL(input->press.button, BTN_DDOWN) && CHECK_BTN_ALL(input->cur.button, BTN_L)) {
-            PRINTF("msgno=%d\n", D_80153D78);
+            PRINTF("msgno=%d\n", sMessageDebuggerTextboxCount);
             Message_StartTextbox(play, R_MESSAGE_DEBUGGER_TEXTID, NULL);
-            D_80153D78 = (D_80153D78 + 1) % 10;
+            sMessageDebuggerTextboxCount = (sMessageDebuggerTextboxCount + 1) % 10;
         }
         if (R_MESSAGE_DEBUGGER_SELECT != 0) {
             while (R_MESSAGE_DEBUGGER_TEXTID != 0x8000) {
@@ -3089,255 +3156,256 @@ void Message_Update(PlayState* play) {
         }
     }
 
-    if (msgCtx->msgLength == 0) {
-        return;
-    }
+    if (msgCtx->msgLength != 0) {
 
-    switch (msgCtx->msgMode) {
-        case MSGMODE_TEXT_START:
-            D_8014B2F4++;
+        switch (msgCtx->msgMode) {
+            case MSGMODE_TEXT_START:
+                D_8014B2F4++;
 
-            var = false;
-            if (R_SCENE_CAM_TYPE == SCENE_CAM_TYPE_FIXED_MARKET) {
-                if (D_8014B2F4 >= 4) {
+                var = false;
+                if (R_SCENE_CAM_TYPE == SCENE_CAM_TYPE_FIXED_MARKET) {
+                    if (D_8014B2F4 >= 4) {
+                        var = true;
+                    }
+                } else if (R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_DEFAULT ||
+                           play->sceneId == SCENE_CASTLE_COURTYARD_GUARDS_DAY) {
+                    var = true;
+                } else if (D_8014B2F4 >= 4 || msgCtx->talkActor == NULL) {
                     var = true;
                 }
-            } else if (R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_DEFAULT ||
-                       play->sceneId == SCENE_CASTLE_COURTYARD_GUARDS_DAY) {
-                var = true;
-            } else if (D_8014B2F4 >= 4 || msgCtx->talkActor == NULL) {
-                var = true;
-            }
 
-            if (var) {
-                if (msgCtx->talkActor != NULL) {
-                    Actor_GetScreenPos(play, &GET_PLAYER(play)->actor, &focusScreenPosX, &playerFocusScreenPosY);
-                    Actor_GetScreenPos(play, msgCtx->talkActor, &focusScreenPosX, &actorFocusScreenPosY);
+                if (var) {
+                    if (msgCtx->talkActor != NULL) {
+                        Actor_GetScreenPos(play, &GET_PLAYER(play)->actor, &focusScreenPosX, &playerFocusScreenPosY);
+                        Actor_GetScreenPos(play, msgCtx->talkActor, &focusScreenPosX, &actorFocusScreenPosY);
 
-                    if (playerFocusScreenPosY >= actorFocusScreenPosY) {
-                        averageY = ((playerFocusScreenPosY - actorFocusScreenPosY) / 2) + actorFocusScreenPosY;
+                        if (playerFocusScreenPosY >= actorFocusScreenPosY) {
+                            averageY = ((playerFocusScreenPosY - actorFocusScreenPosY) / 2) + actorFocusScreenPosY;
+                        } else {
+                            averageY = ((actorFocusScreenPosY - playerFocusScreenPosY) / 2) + playerFocusScreenPosY;
+                        }
+                        PRINTF("dxpos=%d   dypos=%d  dypos1  dypos2=%d\n", focusScreenPosX, averageY,
+                               playerFocusScreenPosY, actorFocusScreenPosY);
                     } else {
-                        averageY = ((actorFocusScreenPosY - playerFocusScreenPosY) / 2) + playerFocusScreenPosY;
+                        R_TEXTBOX_X = R_TEXTBOX_X_TARGET;
+                        R_TEXTBOX_Y = R_TEXTBOX_Y_TARGET;
                     }
-                    PRINTF("dxpos=%d   dypos=%d  dypos1  dypos2=%d\n", focusScreenPosX, averageY, playerFocusScreenPosY,
-                           actorFocusScreenPosY);
-                } else {
-                    R_TEXTBOX_X = R_TEXTBOX_X_TARGET;
-                    R_TEXTBOX_Y = R_TEXTBOX_Y_TARGET;
-                }
 
-                var = msgCtx->textBoxType;
+                    var = msgCtx->textBoxType;
 
-                if (!msgCtx->textBoxPos) { // variable position
-                    if (R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_DEFAULT ||
-                        play->sceneId == SCENE_CASTLE_COURTYARD_GUARDS_DAY) {
-                        if (averageY < XREG(92)) {
-                            R_TEXTBOX_Y_TARGET = sTextboxLowerYPositions[var];
+                    if (!msgCtx->textBoxPos) { // variable position
+                        if (R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_DEFAULT ||
+                            play->sceneId == SCENE_CASTLE_COURTYARD_GUARDS_DAY) {
+                            if (averageY < XREG(92)) {
+                                R_TEXTBOX_Y_TARGET = sTextboxLowerYPositions[var];
+                            } else {
+                                R_TEXTBOX_Y_TARGET = sTextboxUpperYPositions[var];
+                            }
+                        } else if (play->sceneId == SCENE_MARKET_DAY || play->sceneId == SCENE_MARKET_NIGHT ||
+                                   play->sceneId == SCENE_MARKET_RUINS) {
+                            if (averageY < XREG(93)) {
+                                R_TEXTBOX_Y_TARGET = sTextboxLowerYPositions[var];
+                            } else {
+                                R_TEXTBOX_Y_TARGET = sTextboxUpperYPositions[var];
+                            }
                         } else {
-                            R_TEXTBOX_Y_TARGET = sTextboxUpperYPositions[var];
+                            if (averageY < XREG(94)) {
+                                R_TEXTBOX_Y_TARGET = sTextboxLowerYPositions[var];
+                            } else {
+                                R_TEXTBOX_Y_TARGET = sTextboxUpperYPositions[var];
+                            }
                         }
-                    } else if (play->sceneId == SCENE_MARKET_DAY || play->sceneId == SCENE_MARKET_NIGHT ||
-                               play->sceneId == SCENE_MARKET_RUINS) {
-                        if (averageY < XREG(93)) {
-                            R_TEXTBOX_Y_TARGET = sTextboxLowerYPositions[var];
-                        } else {
-                            R_TEXTBOX_Y_TARGET = sTextboxUpperYPositions[var];
-                        }
+                    } else if (msgCtx->textBoxPos == TEXTBOX_POS_TOP) {
+                        R_TEXTBOX_Y_TARGET = sTextboxUpperYPositions[var];
+                    } else if (msgCtx->textBoxPos == TEXTBOX_POS_MIDDLE) {
+                        R_TEXTBOX_Y_TARGET = sTextboxMidYPositions[var];
                     } else {
-                        if (averageY < XREG(94)) {
-                            R_TEXTBOX_Y_TARGET = sTextboxLowerYPositions[var];
-                        } else {
-                            R_TEXTBOX_Y_TARGET = sTextboxUpperYPositions[var];
-                        }
+                        R_TEXTBOX_Y_TARGET = sTextboxLowerYPositions[var];
                     }
-                } else if (msgCtx->textBoxPos == TEXTBOX_POS_TOP) {
-                    R_TEXTBOX_Y_TARGET = sTextboxUpperYPositions[var];
-                } else if (msgCtx->textBoxPos == TEXTBOX_POS_MIDDLE) {
-                    R_TEXTBOX_Y_TARGET = sTextboxMidYPositions[var];
-                } else {
-                    R_TEXTBOX_Y_TARGET = sTextboxLowerYPositions[var];
-                }
 
-                R_TEXTBOX_X_TARGET = sTextboxXPositions[var];
-                R_TEXTBOX_END_YPOS = sTextboxEndIconYOffset[var] + R_TEXTBOX_Y_TARGET;
-                R_TEXT_CHOICE_YPOS(0) = R_TEXTBOX_Y_TARGET + 20;
-                R_TEXT_CHOICE_YPOS(1) = R_TEXTBOX_Y_TARGET + 32;
-                R_TEXT_CHOICE_YPOS(2) = R_TEXTBOX_Y_TARGET + 44;
-                PRINTF("message->msg_disp_type=%x\n", msgCtx->textBoxProperties & 0xF0);
-                if (msgCtx->textBoxType == TEXTBOX_TYPE_NONE_BOTTOM ||
-                    msgCtx->textBoxType == TEXTBOX_TYPE_NONE_NO_SHADOW) {
-                    msgCtx->msgMode = MSGMODE_TEXT_STARTING;
-                    R_TEXTBOX_X = R_TEXTBOX_X_TARGET;
-                    R_TEXTBOX_Y = R_TEXTBOX_Y_TARGET;
-                    R_TEXTBOX_WIDTH = 256;
-                    R_TEXTBOX_HEIGHT = 64;
-                    R_TEXTBOX_TEXWIDTH = 512;
-                    R_TEXTBOX_TEXHEIGHT = 512;
-                } else {
-                    Message_GrowTextbox(msgCtx);
-                    Audio_PlaySfxIfNotInCutscene(NA_SE_NONE);
-                    msgCtx->stateTimer = 0;
-                    msgCtx->msgMode = MSGMODE_TEXT_BOX_GROWING;
+                    R_TEXTBOX_X_TARGET = sTextboxXPositions[var];
+                    R_TEXTBOX_END_YPOS = sTextboxEndIconYOffset[var] + R_TEXTBOX_Y_TARGET;
+                    R_TEXT_CHOICE_YPOS(0) = R_TEXTBOX_Y_TARGET + 20;
+                    R_TEXT_CHOICE_YPOS(1) = R_TEXTBOX_Y_TARGET + 32;
+                    R_TEXT_CHOICE_YPOS(2) = R_TEXTBOX_Y_TARGET + 44;
+                    PRINTF("message->msg_disp_type=%x\n", msgCtx->textBoxProperties & 0xF0);
+                    if (msgCtx->textBoxType == TEXTBOX_TYPE_NONE_BOTTOM ||
+                        msgCtx->textBoxType == TEXTBOX_TYPE_NONE_NO_SHADOW) {
+                        msgCtx->msgMode = MSGMODE_TEXT_STARTING;
+                        R_TEXTBOX_X = R_TEXTBOX_X_TARGET;
+                        R_TEXTBOX_Y = R_TEXTBOX_Y_TARGET;
+                        R_TEXTBOX_WIDTH = 256;
+                        R_TEXTBOX_HEIGHT = 64;
+                        R_TEXTBOX_TEXWIDTH = 512;
+                        R_TEXTBOX_TEXHEIGHT = 512;
+                    } else {
+                        Message_GrowTextbox(msgCtx);
+                        Audio_PlaySfxIfNotInCutscene(NA_SE_NONE);
+                        msgCtx->stateTimer = 0;
+                        msgCtx->msgMode = MSGMODE_TEXT_BOX_GROWING;
+                    }
                 }
-            }
-            break;
-        case MSGMODE_TEXT_BOX_GROWING:
-            Message_GrowTextbox(msgCtx);
-            break;
-        case MSGMODE_TEXT_STARTING:
-            msgCtx->msgMode = MSGMODE_TEXT_NEXT_MSG;
-            if (YREG(31) == 0) {
-                Interface_SetDoAction(play, DO_ACTION_NEXT);
-            }
-            break;
-        case MSGMODE_TEXT_NEXT_MSG:
-            Message_Decode(play);
-            if (sTextFade) {
-                Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_NOTHING);
-            }
-            if (D_80153D74 != 0) {
-                msgCtx->textDrawPos = msgCtx->decodedTextLen;
-                D_80153D74 = 0;
-            }
-            break;
-        case MSGMODE_TEXT_CONTINUING:
-            msgCtx->stateTimer--;
-            if (msgCtx->stateTimer == 0) {
+                break;
+            case MSGMODE_TEXT_BOX_GROWING:
+                Message_GrowTextbox(msgCtx);
+                break;
+            case MSGMODE_TEXT_STARTING:
+                msgCtx->msgMode = MSGMODE_TEXT_NEXT_MSG;
+                if (YREG(31) == 0) {
+                    Interface_SetDoAction(play, DO_ACTION_NEXT);
+                }
+                break;
+            case MSGMODE_TEXT_NEXT_MSG:
                 Message_Decode(play);
-            }
-            break;
-        case MSGMODE_TEXT_DISPLAYING:
-            if (msgCtx->textBoxType != TEXTBOX_TYPE_NONE_BOTTOM && YREG(31) == 0 &&
-                CHECK_BTN_ALL(play->state.input[0].press.button, BTN_B) && !msgCtx->textUnskippable) {
-                sTextboxSkipped = true;
-                msgCtx->textDrawPos = msgCtx->decodedTextLen;
-            }
-            break;
-        case MSGMODE_TEXT_AWAIT_INPUT:
-            if (YREG(31) == 0 && Message_ShouldAdvance(play)) {
-                msgCtx->msgMode = MSGMODE_TEXT_DISPLAYING;
-                msgCtx->textDrawPos++;
-            }
-            break;
-        case MSGMODE_TEXT_DELAYED_BREAK:
-            msgCtx->stateTimer--;
-            if (msgCtx->stateTimer == 0) {
-                msgCtx->msgMode = MSGMODE_TEXT_NEXT_MSG;
-            }
-            break;
-        case MSGMODE_TEXT_AWAIT_NEXT:
-            if (Message_ShouldAdvance(play)) {
-                msgCtx->msgMode = MSGMODE_TEXT_NEXT_MSG;
-                msgCtx->textUnskippable = false;
-                msgCtx->msgBufPos++;
-            }
-            break;
-        case MSGMODE_TEXT_DONE:
-            if (msgCtx->textboxEndType == TEXTBOX_ENDTYPE_FADING) {
+                if (sTextFade ||
+                    (DISABLE_PLAYER_FREEZE && sTextFade && (msgCtx->textId != 0xB4) && (msgCtx->textId != 0xB5))) {
+                    Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_NOTHING);
+                }
+                if (D_80153D74 != 0) {
+                    msgCtx->textDrawPos = msgCtx->decodedTextLen;
+                    D_80153D74 = 0;
+                }
+                break;
+            case MSGMODE_TEXT_CONTINUING:
                 msgCtx->stateTimer--;
                 if (msgCtx->stateTimer == 0) {
-                    Message_CloseTextbox(play);
+                    Message_Decode(play);
                 }
-            } else if (msgCtx->textboxEndType != TEXTBOX_ENDTYPE_PERSISTENT &&
-                       msgCtx->textboxEndType != TEXTBOX_ENDTYPE_EVENT && YREG(31) == 0) {
-                if (msgCtx->textboxEndType == TEXTBOX_ENDTYPE_2_CHOICE && play->msgCtx.ocarinaMode == OCARINA_MODE_01) {
-                    if (Message_ShouldAdvance(play)) {
-                        PRINTF("OCARINA_MODE=%d -> ", play->msgCtx.ocarinaMode);
-                        play->msgCtx.ocarinaMode = (msgCtx->choiceIndex == 0) ? OCARINA_MODE_02 : OCARINA_MODE_04;
-                        PRINTF("InRaceSeq=%d(%d) OCARINA_MODE=%d  -->  ", GET_EVENTINF_HORSES_STATE(), 1,
-                               play->msgCtx.ocarinaMode);
-                        Message_CloseTextbox(play);
-                        PRINTF("OCARINA_MODE=%d\n", play->msgCtx.ocarinaMode);
-                    }
-                } else if (Message_ShouldAdvanceSilent(play)) {
-                    PRINTF("select=%d\n", msgCtx->textboxEndType);
-                    if (msgCtx->textboxEndType == TEXTBOX_ENDTYPE_HAS_NEXT) {
-                        Audio_PlaySfxGeneral(NA_SE_SY_MESSAGE_PASS, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                        Message_ContinueTextbox(play, sNextTextId);
-                    } else {
-                        Audio_PlaySfxGeneral(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                        Message_CloseTextbox(play);
-                    }
-                }
-            }
-            break;
-        case MSGMODE_TEXT_CLOSING:
-            msgCtx->stateTimer--;
-            if (msgCtx->stateTimer != 0) {
                 break;
-            }
-            if ((msgCtx->textId >= 0xC2 && msgCtx->textId < 0xC7) ||
-                (msgCtx->textId >= 0xFA && msgCtx->textId < 0xFE)) {
-                gSaveContext.healthAccumulator = 0x140; // Refill 20 hearts
-            }
-            if (msgCtx->textId == 0x301F || msgCtx->textId == 0xA || msgCtx->textId == 0xC || msgCtx->textId == 0xCF ||
-                msgCtx->textId == 0x21C || msgCtx->textId == 9 || msgCtx->textId == 0x4078 ||
-                msgCtx->textId == 0x2015 || msgCtx->textId == 0x3040) {
-                gSaveContext.prevHudVisibilityMode = HUD_VISIBILITY_ALL;
-            }
-            if (play->csCtx.state == 0) {
-                PRINTF(VT_FGCOL(GREEN));
-                PRINTF("day_time=%x  active_camera=%d  ", gSaveContext.save.cutsceneIndex, play->activeCamId);
-
-                if (msgCtx->textId != 0x2061 && msgCtx->textId != 0x2025 && msgCtx->textId != 0x208C &&
-                    ((msgCtx->textId < 0x88D || msgCtx->textId >= 0x893) || msgCtx->choiceIndex != 0) &&
-                    (msgCtx->textId != 0x3055 && gSaveContext.save.cutsceneIndex < 0xFFF0)) {
-                    PRINTF("=== day_time=%x ", ((void)0, gSaveContext.save.cutsceneIndex));
-                    if (play->activeCamId == CAM_ID_MAIN) {
-                        if (gSaveContext.prevHudVisibilityMode == HUD_VISIBILITY_NO_CHANGE ||
-                            gSaveContext.prevHudVisibilityMode == HUD_VISIBILITY_NOTHING ||
-                            gSaveContext.prevHudVisibilityMode == HUD_VISIBILITY_NOTHING_ALT) {
-                            gSaveContext.prevHudVisibilityMode = HUD_VISIBILITY_ALL;
+            case MSGMODE_TEXT_DISPLAYING:
+                if (msgCtx->textBoxType != TEXTBOX_TYPE_NONE_BOTTOM && YREG(31) == 0 &&
+                    CHECK_BTN_ALL(play->state.input[0].press.button, BTN_B) && !msgCtx->textUnskippable) {
+                    sTextboxSkipped = true;
+                    msgCtx->textDrawPos = msgCtx->decodedTextLen;
+                }
+                break;
+            case MSGMODE_TEXT_AWAIT_INPUT:
+                if (YREG(31) == 0 && Message_ShouldAdvance(play)) {
+                    msgCtx->msgMode = MSGMODE_TEXT_DISPLAYING;
+                    msgCtx->textDrawPos++;
+                }
+                break;
+            case MSGMODE_TEXT_DELAYED_BREAK:
+                msgCtx->stateTimer--;
+                if (msgCtx->stateTimer == 0) {
+                    msgCtx->msgMode = MSGMODE_TEXT_NEXT_MSG;
+                }
+                break;
+            case MSGMODE_TEXT_AWAIT_NEXT:
+                if (Message_ShouldAdvance(play)) {
+                    msgCtx->msgMode = MSGMODE_TEXT_NEXT_MSG;
+                    msgCtx->textUnskippable = false;
+                    msgCtx->msgBufPos++;
+                }
+                break;
+            case MSGMODE_TEXT_DONE:
+                if (msgCtx->textboxEndType == TEXTBOX_ENDTYPE_FADING) {
+                    msgCtx->stateTimer--;
+                    if (msgCtx->stateTimer == 0) {
+                        Message_CloseTextbox(play);
+                    }
+                } else if (msgCtx->textboxEndType != TEXTBOX_ENDTYPE_PERSISTENT &&
+                           msgCtx->textboxEndType != TEXTBOX_ENDTYPE_EVENT && YREG(31) == 0) {
+                    if (msgCtx->textboxEndType == TEXTBOX_ENDTYPE_2_CHOICE &&
+                        play->msgCtx.ocarinaMode == OCARINA_MODE_01) {
+                        if (Message_ShouldAdvance(play)) {
+                            PRINTF("OCARINA_MODE=%d -> ", play->msgCtx.ocarinaMode);
+                            play->msgCtx.ocarinaMode = (msgCtx->choiceIndex == 0) ? OCARINA_MODE_02 : OCARINA_MODE_04;
+                            PRINTF("InRaceSeq=%d(%d) OCARINA_MODE=%d  -->  ", GET_EVENTINF_HORSES_STATE(), 1,
+                                   play->msgCtx.ocarinaMode);
+                            Message_CloseTextbox(play);
+                            PRINTF("OCARINA_MODE=%d\n", play->msgCtx.ocarinaMode);
                         }
-                        gSaveContext.hudVisibilityMode = HUD_VISIBILITY_NO_CHANGE;
-                        Interface_ChangeHudVisibilityMode(gSaveContext.prevHudVisibilityMode);
+                    } else if (Message_ShouldAdvanceSilent(play)) {
+                        PRINTF("select=%d\n", msgCtx->textboxEndType);
+                        if (msgCtx->textboxEndType == TEXTBOX_ENDTYPE_HAS_NEXT) {
+                            Audio_PlaySfxGeneral(NA_SE_SY_MESSAGE_PASS, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                            Message_ContinueTextbox(play, sNextTextId);
+                        } else {
+                            Audio_PlaySfxGeneral(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                            Message_CloseTextbox(play);
+                        }
                     }
                 }
-            }
-            PRINTF(VT_RST);
-            msgCtx->msgLength = 0;
-            msgCtx->msgMode = MSGMODE_NONE;
-            interfaceCtx->unk_1FA = interfaceCtx->unk_1FC = 0;
-            msgCtx->textId = msgCtx->stateTimer = 0;
+                break;
+            case MSGMODE_TEXT_CLOSING:
+                msgCtx->stateTimer--;
+                if (msgCtx->stateTimer != 0) {
+                    break;
+                }
+                if ((msgCtx->textId >= 0xC2 && msgCtx->textId < 0xC7) ||
+                    (msgCtx->textId >= 0xFA && msgCtx->textId < 0xFE)) {
+                    gSaveContext.healthAccumulator = 0x140; // Refill 20 hearts
+                }
+                if (msgCtx->textId == 0x301F || msgCtx->textId == 0xA || msgCtx->textId == 0xC ||
+                    msgCtx->textId == 0xCF || msgCtx->textId == 0x21C || msgCtx->textId == 9 ||
+                    msgCtx->textId == 0x4078 || msgCtx->textId == 0x2015 || msgCtx->textId == 0x3040) {
+                    gSaveContext.prevHudVisibilityMode = HUD_VISIBILITY_ALL;
+                }
+                if (play->csCtx.state == 0) {
+                    PRINTF(VT_FGCOL(GREEN));
+                    PRINTF("day_time=%x  active_camera=%d  ", gSaveContext.save.cutsceneIndex, play->activeCamId);
 
-            if (msgCtx->textboxEndType == TEXTBOX_ENDTYPE_PERSISTENT) {
-                msgCtx->textboxEndType = TEXTBOX_ENDTYPE_DEFAULT;
-                play->msgCtx.ocarinaMode = OCARINA_MODE_02;
-            } else {
-                msgCtx->textboxEndType = TEXTBOX_ENDTYPE_DEFAULT;
-            }
-            if ((s32)(gSaveContext.save.info.inventory.questItems & 0xF0000000) == (4 << QUEST_HEART_PIECE_COUNT)) {
-                gSaveContext.save.info.inventory.questItems ^= (4 << QUEST_HEART_PIECE_COUNT);
-                gSaveContext.save.info.playerData.healthCapacity += 0x10;
-                gSaveContext.save.info.playerData.health += 0x10;
-            }
-            if (msgCtx->ocarinaAction != OCARINA_ACTION_CHECK_NOWARP_DONE) {
-                if (sLastPlayedSong == OCARINA_SONG_SARIAS) {
-                    //! @bug The last played song is not unset often, and if something interrupts the message system
-                    //       before it reaches this point after playing Saria's song, the song will be "stored".
-                    //       Later, if the ocarina has not been played and another textbox is closed, this handling
-                    //       for Saria's song will be carried out.
-                    player->naviTextId = -0xE0;
-                    player->naviActor->flags |= ACTOR_FLAG_16;
-                }
-                if (msgCtx->ocarinaAction == OCARINA_ACTION_FREE_PLAY_DONE &&
-                    (play->msgCtx.ocarinaMode == OCARINA_MODE_01 || play->msgCtx.ocarinaMode == OCARINA_MODE_0B)) {
-                    play->msgCtx.ocarinaMode = OCARINA_MODE_04;
-                    if (msgCtx->unk_E3F2 == OCARINA_SONG_SUNS) {
-                        play->msgCtx.ocarinaMode = OCARINA_MODE_01;
+                    if (msgCtx->textId != 0x2061 && msgCtx->textId != 0x2025 && msgCtx->textId != 0x208C &&
+                        ((msgCtx->textId < 0x88D || msgCtx->textId >= 0x893) || msgCtx->choiceIndex != 0) &&
+                        (msgCtx->textId != 0x3055 && gSaveContext.save.cutsceneIndex < 0xFFF0)) {
+                        PRINTF("=== day_time=%x ", ((void)0, gSaveContext.save.cutsceneIndex));
+                        if (play->activeCamId == CAM_ID_MAIN) {
+                            if (gSaveContext.prevHudVisibilityMode == HUD_VISIBILITY_NO_CHANGE ||
+                                gSaveContext.prevHudVisibilityMode == HUD_VISIBILITY_NOTHING ||
+                                gSaveContext.prevHudVisibilityMode == HUD_VISIBILITY_NOTHING_ALT) {
+                                gSaveContext.prevHudVisibilityMode = HUD_VISIBILITY_ALL;
+                            }
+                            gSaveContext.hudVisibilityMode = HUD_VISIBILITY_NO_CHANGE;
+                            Interface_ChangeHudVisibilityMode(gSaveContext.prevHudVisibilityMode);
+                        }
                     }
                 }
-            }
-            sLastPlayedSong = 0xFF;
-            PRINTF("OCARINA_MODE=%d   chk_ocarina_no=%d\n", play->msgCtx.ocarinaMode, msgCtx->unk_E3F2);
-            break;
-        case MSGMODE_PAUSED:
-            break;
-        default:
-            msgCtx->lastOcarinaButtonIndex = OCARINA_BTN_INVALID;
-            break;
+                PRINTF(VT_RST);
+                msgCtx->msgLength = 0;
+                msgCtx->msgMode = MSGMODE_NONE;
+                interfaceCtx->unk_1FA = interfaceCtx->unk_1FC = 0;
+                msgCtx->textId = msgCtx->stateTimer = 0;
+
+                if (msgCtx->textboxEndType == TEXTBOX_ENDTYPE_PERSISTENT) {
+                    msgCtx->textboxEndType = TEXTBOX_ENDTYPE_DEFAULT;
+                    play->msgCtx.ocarinaMode = OCARINA_MODE_02;
+                } else {
+                    msgCtx->textboxEndType = TEXTBOX_ENDTYPE_DEFAULT;
+                }
+                if ((s32)(gSaveContext.save.info.inventory.questItems & 0xF0000000) == (4 << QUEST_HEART_PIECE_COUNT)) {
+                    gSaveContext.save.info.inventory.questItems ^= (4 << QUEST_HEART_PIECE_COUNT);
+                    gSaveContext.save.info.playerData.healthCapacity += 0x10;
+                    gSaveContext.save.info.playerData.health += 0x10;
+                }
+                if (msgCtx->ocarinaAction != OCARINA_ACTION_CHECK_NOWARP_DONE) {
+                    if (sLastPlayedSong == OCARINA_SONG_SARIAS) {
+                        //! @bug The last played song is not unset often, and if something interrupts the message system
+                        //       before it reaches this point after playing Saria's song, the song will be "stored".
+                        //       Later, if the ocarina has not been played and another textbox is closed, this handling
+                        //       for Saria's song will be carried out.
+                        player->naviTextId = -0xE0;
+                        player->naviActor->flags |= ACTOR_FLAG_16;
+                    }
+                    if (msgCtx->ocarinaAction == OCARINA_ACTION_FREE_PLAY_DONE &&
+                        (play->msgCtx.ocarinaMode == OCARINA_MODE_01 || play->msgCtx.ocarinaMode == OCARINA_MODE_0B)) {
+                        play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+                        if (msgCtx->unk_E3F2 == OCARINA_SONG_SUNS) {
+                            play->msgCtx.ocarinaMode = OCARINA_MODE_01;
+                        }
+                    }
+                }
+                sLastPlayedSong = 0xFF;
+                PRINTF("OCARINA_MODE=%d   chk_ocarina_no=%d\n", play->msgCtx.ocarinaMode, msgCtx->unk_E3F2);
+                break;
+            case MSGMODE_PAUSED:
+                break;
+            default:
+                msgCtx->lastOcarinaButtonIndex = OCARINA_BTN_INVALID;
+                break;
+        }
     }
 }
 
@@ -3348,8 +3416,10 @@ void Message_SetTables(void) {
     sStaffMessageEntryTablePtr = sStaffMessageEntryTable;
 }
 
+#if IS_DEBUG
 // Appears to be file padding
 UNK_TYPE D_80153D7C = 0x00000000;
+#endif
 
 // This should be part of z_game_over.c, but cannot be moved there as the entire
 // late_rodata section of this file is in the way

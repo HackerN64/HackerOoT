@@ -119,7 +119,7 @@ typedef struct {
     u16 params;
 } SfxParams;
 
-#if OOT_DEBUG
+#if IS_DEBUG
 #define SFX_DIST_SCALING 1.0f
 #else
 #define SFX_DIST_SCALING 10.0f

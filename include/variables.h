@@ -38,9 +38,11 @@ extern OSViContext* __osViCurr;
 extern OSViContext* __osViNext;
 extern OSViMode osViModeFpalLan1;
 extern u32 __additional_scanline;
-extern u8 gBuildTeam[];
-extern u8 gBuildDate[];
-extern u8 gBuildMakeOption[];
+extern const char gBuildAuthor[];
+extern const char gBuildDate[];
+extern const char gBuildMakeOption[];
+extern const char gBuildGitVersion[];
+extern const char gBuildTeam[];
 extern OSMesgQueue gPiMgrCmdQueue;
 extern OSViMode gViConfigMode;
 extern u8 gViConfigModeType;
@@ -55,7 +57,7 @@ extern EffectSsOverlay gEffectSsOverlayTable[EFFECT_SS_TYPE_MAX];
 extern Gfx D_80116280[];
 extern ActorOverlay gActorOverlayTable[ACTOR_ID_MAX]; // original name: "actor_dlftbls" 801162A0
 extern s32 gMaxActorId; // original name: "MaxProfile"
-extern s32 gDebugCamEnabled;
+extern s32 gDebugCamEnabled; // ENABLE_CAMERA_DEBUGGER
 extern GameStateOverlay gGameStateOverlayTable[GAMESTATE_ID_MAX];
 extern u8 gWeatherMode;
 extern u8 gLightConfigAfterUnderwater;
@@ -103,7 +105,7 @@ extern s32 gScreenWidth;
 extern s32 gScreenHeight;
 extern Mtx gMtxClear;
 extern MtxF gMtxFClear;
-#if OOT_DEBUG
+#if IS_DEBUG
 extern u32 gIsCtrlr2Valid;
 #endif
 extern s16* gWaveSamples[9];
@@ -143,13 +145,19 @@ extern u16 D_801333D0;
 extern Vec3f gSfxDefaultPos;
 extern f32 gSfxDefaultFreqAndVolScale;
 extern s8 gSfxDefaultReverb;
+
+// ENABLE_AUDIO_DEBUGGER
 extern u8 D_801333F0;
 extern u8 gAudioSfxSwapOff;
 extern u8 D_801333F8;
+
 extern u8 gSeqCmdWritePos;
 extern u8 gSeqCmdReadPos;
 extern u8 gStartSeqDisabled;
+
+// ENABLE_AUDIO_DEBUGGER
 extern u8 gAudioDebugPrintSeqCmd;
+
 extern u8 gSoundModeList[];
 extern u8 gAudioSpecId;
 extern u8 D_80133418;
@@ -189,6 +197,8 @@ extern Color_RGBA8_u32 gVisMonoColor;
 extern PreNmiBuff* gAppNmiBufferPtr;
 extern Scheduler gScheduler;
 extern uintptr_t gSegments[NUM_SEGMENTS];
+
+// ENABLE_SPEEDMETER
 extern volatile OSTime gAudioThreadUpdateTimeTotalPerGfxTask;
 extern volatile OSTime gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime;
 extern volatile OSTime gRSPAudioTimeTotal;
@@ -211,9 +221,12 @@ extern SfxBankEntry D_8016C820[3];
 extern SfxBankEntry D_8016C8B0[5];
 extern ActiveSfx gActiveSfx[7][MAX_CHANNELS_PER_BANK]; // total size = 0xA8
 extern u8 gSfxBankMuted[];
+
+// ENABLE_AUDIO_DEBUGGER
 extern u16 gAudioSfxSwapSource[10];
 extern u16 gAudioSfxSwapTarget[10];
 extern u8 gAudioSfxSwapMode[10];
+
 extern ActiveSequence gActiveSeqs[4];
 extern AudioContext gAudioCtx;
 extern AudioCustomUpdateFunction gAudioCustomUpdateFunction;
@@ -231,6 +244,5 @@ extern u64 gGfxSPTaskYieldBuffer[OS_YIELD_DATA_SIZE / sizeof(u64)]; // 0xC00 byt
 extern u64 gGfxSPTaskStack[SP_DRAM_STACK_SIZE64]; // 0x400 bytes
 extern GfxPool gGfxPools[2]; // 0x24820 bytes
 extern u8 gAudioHeap[0x38000]; // 0x38000 bytes
-extern u8 gSystemHeap[];
 
 #endif

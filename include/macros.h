@@ -114,9 +114,9 @@
 // argument errors instead.
 // Note some tools define __sgi but preprocess with a modern cpp implementation,
 // ensure that these do not use the IDO workaround to avoid errors.
-#define IDO_PRINTF_WORKAROUND (__sgi && !__GNUC__ && !PERMUTER && !M2CTX)
+#define IDO_PRINTF_WORKAROUND (__sgi && !__GNUC__ && !M2CTX)
 
-#if OOT_DEBUG
+#if IS_DEBUG
 #define PRINTF osSyncPrintf
 #elif IDO_PRINTF_WORKAROUND
 #define PRINTF(args) (void)0
@@ -124,7 +124,7 @@
 #define PRINTF(format, ...) (void)0
 #endif
 
-#if OOT_DEBUG
+#if IS_DEBUG
 #define LOG(exp, value, format, file, line)         \
     do {                                            \
         LogUtils_LogThreadId(file, line);           \
@@ -170,7 +170,7 @@ extern struct GraphicsContext* __gfxCtx;
 #define POLY_XLU_DISP   __gfxCtx->polyXlu.p
 #define OVERLAY_DISP    __gfxCtx->overlay.p
 
-#if OOT_DEBUG
+#if IS_DEBUG
 
 // __gfxCtx shouldn't be used directly.
 // Use the DISP macros defined above when writing to display buffers.
@@ -241,7 +241,7 @@ extern struct GraphicsContext* __gfxCtx;
 #define HUNGUP_AND_CRASH(file, line) LogUtils_HungupThread(file, line)
 #define GAME_ALLOC_MALLOC(alloc, size, file, line) GameAlloc_Malloc(alloc, size)
 
-#endif /* OOT_DEBUG */
+#endif /* IS_DEBUG */
 
 /**
  * `x` vertex x
@@ -272,3 +272,14 @@ extern struct GraphicsContext* __gfxCtx;
     } while (0)
 
 #endif
+
+// HackerOoT
+
+#if IS_DEBUG
+// if using button combo check for the input, else simply return true
+#define DEBUG_BTN_COMBO(useCombo, btnToHold, btnToPress, input) ((useCombo ? CHECK_BTN_ALL(input->cur.button, btnToHold) : true) && CHECK_BTN_ALL(input->press.button, btnToPress))
+#else
+#define DEBUG_BTN_COMBO(useCombo, btnToHold, btnToPress, input) true
+#endif
+
+#define IS_DEBUG_CAM_ENABLED (IS_CAMERA_DEBUG_ENABLED ? gDebugCamEnabled : false)

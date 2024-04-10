@@ -2,6 +2,8 @@
  * ROM spec file
  */
 
+#include "include/config.h"
+
 beginseg
     name "makerom"
     include "$(BUILD_DIR)/src/makerom/rom_header.o"
@@ -18,15 +20,25 @@ beginseg
     include "$(BUILD_DIR)/src/boot/idle.o"
     include "$(BUILD_DIR)/src/boot/viconfig.o"
     include "$(BUILD_DIR)/src/boot/z_std_dma.o"
-    include "$(BUILD_DIR)/src/boot/yaz0.o"
+#if COMPRESS_YAZ
+    include "$(BUILD_DIR)/src/compression/yaz0.o"
+#elif COMPRESS_LZO
+    include "$(BUILD_DIR)/src/compression/lzo.o"
+#elif COMPRESS_APLIB
+    include "$(BUILD_DIR)/src/compression/aplib.o"
+#endif
     include "$(BUILD_DIR)/src/boot/z_locale.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/boot/assert.o"
+#endif
     include "$(BUILD_DIR)/src/boot/is_debug.o"
     include "$(BUILD_DIR)/src/libultra/io/driverominit.o"
     include "$(BUILD_DIR)/src/boot/mio0.o"
     include "$(BUILD_DIR)/src/boot/stackcheck.o"
     include "$(BUILD_DIR)/src/boot/logutils.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/libc/sprintf.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/io/piacs.o"
     include "$(BUILD_DIR)/src/libultra/os/sendmesg.o"
     include "$(BUILD_DIR)/src/libultra/os/stopthread.o"
@@ -57,10 +69,14 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/os/probetlb.o"
     include "$(BUILD_DIR)/src/libultra/os/getmemsize.o"
     include "$(BUILD_DIR)/src/libultra/os/seteventmesg.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/libc/xprintf.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/os/unmaptlball.o"
     include "$(BUILD_DIR)/src/libultra/io/epidma.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/libc/string.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/os/invalicache.o"
     include "$(BUILD_DIR)/src/libultra/os/createmesgqueue.o"
     include "$(BUILD_DIR)/src/libultra/os/invaldcache.o"
@@ -88,17 +104,23 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/io/epiread.o"
     include "$(BUILD_DIR)/src/libultra/io/visetspecial.o"
     include "$(BUILD_DIR)/src/libultra/io/cartrominit.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/vimodefpallan1.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/os/setfpccsr.o"
     include "$(BUILD_DIR)/src/libultra/os/getfpccsr.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/epiwrite.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/os/maptlbrdb.o"
     include "$(BUILD_DIR)/src/libultra/os/yieldthread.o"
     include "$(BUILD_DIR)/src/libultra/os/getcause.o"
     include "$(BUILD_DIR)/src/libultra/io/epirawwrite.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/libc/xlitob.o"
     include "$(BUILD_DIR)/src/libultra/libc/ldiv.o"
     include "$(BUILD_DIR)/src/libultra/libc/xldtob.o"
+#endif
     include "$(BUILD_DIR)/src/boot/build.o"
     include "$(BUILD_DIR)/src/libultra/io/sirawwrite.o"
     include "$(BUILD_DIR)/src/libultra/io/vimgr.o"
@@ -242,7 +264,12 @@ endseg
 beginseg
     name "nes_font_static"
     romalign 0x1000
+#if IS_DEBUG
     include "$(BUILD_DIR)/assets/textures/nes_font_static/nes_font_static.o"
+#else
+    // TODO: Remove this hack once assets are extracted from gc-eu-mq
+    include "$(BUILD_DIR)/baserom/nes_font_static.o"
+#endif
     number 10
 endseg
 
@@ -299,6 +326,7 @@ beginseg
     name "code"
     compress
     after "dmadata"
+    align 0x20
     include "$(BUILD_DIR)/src/code/z_en_a_keep.o"
     include "$(BUILD_DIR)/src/code/z_en_item00.o"
     include "$(BUILD_DIR)/src/code/z_eff_blure.o"
@@ -309,7 +337,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_effect_soft_sprite.o"
     include "$(BUILD_DIR)/src/code/z_effect_soft_sprite_old_init.o"
     include "$(BUILD_DIR)/src/code/z_effect_soft_sprite_dlftbls.o"
+#if IS_EVENT_EDITOR_ENABLED
     include "$(BUILD_DIR)/src/code/flg_set.o"
+#endif
     include "$(BUILD_DIR)/src/code/z_DLF.o"
     include "$(BUILD_DIR)/src/code/z_actor.o"
     include "$(BUILD_DIR)/src/code/z_actor_dlftbls.o"
@@ -342,7 +372,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_lights.o"
     include "$(BUILD_DIR)/src/code/z_malloc.o"
     include "$(BUILD_DIR)/src/code/z_map_mark.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/code/z_moji.o"
+#endif
     include "$(BUILD_DIR)/src/code/z_prenmi_buff.o"
     include "$(BUILD_DIR)/src/code/z_nulltask.o"
     include "$(BUILD_DIR)/src/code/z_olib.o"
@@ -351,7 +383,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_map_data.o"
     include "$(BUILD_DIR)/src/code/z_parameter.o"
     include "$(BUILD_DIR)/src/code/z_path.o"
+#if ARE_FRAMERATE_OPTIONS_ENABLED
     include "$(BUILD_DIR)/src/code/z_frame_advance.o"
+#endif
     include "$(BUILD_DIR)/src/code/z_player_lib.o"
     include "$(BUILD_DIR)/src/code/z_prenmi.o"
     include "$(BUILD_DIR)/src/code/z_quake.o"
@@ -369,7 +403,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_sram.o"
     include "$(BUILD_DIR)/src/code/z_ss_sram.o"
     include "$(BUILD_DIR)/src/code/z_rumble.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/data/z_text.data.o"
+#endif
     include "$(BUILD_DIR)/data/unk_8012ABC0.data.o"
     include "$(BUILD_DIR)/src/code/z_view.o"
     include "$(BUILD_DIR)/src/code/z_vimode.o"
@@ -385,9 +421,13 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_fbdemo_circle.o"
     include "$(BUILD_DIR)/src/code/z_fbdemo_fade.o"
     include "$(BUILD_DIR)/src/code/shrink_window.o"
+#if IS_CAMERA_DEBUG_ENABLED
     include "$(BUILD_DIR)/src/code/db_camera.o"
+#endif
     include "$(BUILD_DIR)/src/code/code_800BB0A0.o"
+#if ENABLE_MEMPAK
     include "$(BUILD_DIR)/src/code/mempak.o"
+#endif
     include "$(BUILD_DIR)/src/code/z_kaleido_manager.o"
     include "$(BUILD_DIR)/src/code/z_kaleido_scope_call.o"
     include "$(BUILD_DIR)/src/code/z_play.o"
@@ -405,7 +445,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/main.o"
     include "$(BUILD_DIR)/src/code/padmgr.o"
     include "$(BUILD_DIR)/src/code/sched.o"
+#if IS_SPEEDMETER_ENABLED
     include "$(BUILD_DIR)/src/code/speed_meter.o"
+#endif
     include "$(BUILD_DIR)/src/code/sys_cfb.o"
     include "$(BUILD_DIR)/src/code/sys_math.o"
     include "$(BUILD_DIR)/src/code/sys_math3d.o"
@@ -415,7 +457,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/sys_rumble.o"
     include "$(BUILD_DIR)/src/code/code_800D31A0.o"
     include "$(BUILD_DIR)/src/code/irqmgr.o"
+#if IS_DEBUG_HEAP_ENABLED
     include "$(BUILD_DIR)/src/code/debug_malloc.o"
+#endif
     include "$(BUILD_DIR)/src/code/fault.o"
     include "$(BUILD_DIR)/src/code/fault_drawer.o"
 #ifndef NON_MATCHING
@@ -423,8 +467,10 @@ beginseg
     include "$(BUILD_DIR)/data/fault_drawer.bss.o"
 #endif
     include "$(BUILD_DIR)/src/code/kanread.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/code/ucode_disas.o"
-    pad_text // audio library aligned to 32 bytes?
+#endif
+    pad_text // on GameCube, NTSC 1.0 and "0.9" prerelease
     include "$(BUILD_DIR)/src/audio/lib/data.o"
     include "$(BUILD_DIR)/src/audio/lib/synthesis.o"
     include "$(BUILD_DIR)/src/audio/lib/heap.o"
@@ -436,6 +482,9 @@ beginseg
     include "$(BUILD_DIR)/src/audio/lib/effects.o"
     include "$(BUILD_DIR)/src/audio/lib/seqplayer.o"
     include "$(BUILD_DIR)/src/audio/general.o"
+#if !IS_DEBUG
+    pad_text // on retail GameCube
+#endif
     include "$(BUILD_DIR)/src/audio/sfx_params.o"
     include "$(BUILD_DIR)/src/audio/sfx.o"
     include "$(BUILD_DIR)/src/audio/sequence.o"
@@ -445,7 +494,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/gfxprint.o"
     include "$(BUILD_DIR)/src/code/rcp_utils.o"
     include "$(BUILD_DIR)/src/code/loadfragment2.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/code/mtxuty-cvt.o"
+#endif
     include "$(BUILD_DIR)/src/code/relocation.o"
     include "$(BUILD_DIR)/src/code/load.o"
     include "$(BUILD_DIR)/src/code/code_800FC620.o"
@@ -454,13 +505,18 @@ beginseg
     include "$(BUILD_DIR)/src/code/code_800FCE80.o"
     include "$(BUILD_DIR)/src/code/fp.o"
     include "$(BUILD_DIR)/src/code/system_malloc.o"
-    include "$(BUILD_DIR)/src/code/code_800FD970.o"
+    include "$(BUILD_DIR)/src/code/rand.o"
     include "$(BUILD_DIR)/src/code/__osMalloc.o"
+#if !IS_DEBUG
+    include "$(BUILD_DIR)/src/libultra/libc/sprintf.o"
+#endif
     include "$(BUILD_DIR)/src/code/printutils.o"
     include "$(BUILD_DIR)/src/code/sleep.o"
     include "$(BUILD_DIR)/src/code/jpegutils.o"
     include "$(BUILD_DIR)/src/code/jpegdecoder.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsfreeblocks.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/mgu/scale.o"
     include "$(BUILD_DIR)/src/libultra/gu/sinf.o"
     include "$(BUILD_DIR)/src/libultra/gu/sins.o"
@@ -473,19 +529,29 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/io/sprawdma.o"
     include "$(BUILD_DIR)/src/libultra/io/sirawdma.o"
     include "$(BUILD_DIR)/src/libultra/io/sptaskyield.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsreadwritefile.o"
     include "$(BUILD_DIR)/src/libultra/io/pfsgetstatus.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/mgu/mtxidentf.o"
     include "$(BUILD_DIR)/src/libultra/gu/lookat.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsallocatefile.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/os/stoptimer.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/contpfs.o"
     include "$(BUILD_DIR)/src/libultra/mgu/mtxl2f.o"
     include "$(BUILD_DIR)/src/libultra/io/pfsfindfile.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/gu/sqrtf.o"
     include "$(BUILD_DIR)/src/libultra/os/afterprenmi.o"
     include "$(BUILD_DIR)/src/libultra/io/contquery.o"
     include "$(BUILD_DIR)/src/libultra/gu/lookathil.o"
+#if !IS_DEBUG
+    include "$(BUILD_DIR)/src/libultra/libc/xprintf.o"
+    include "$(BUILD_DIR)/src/libultra/libc/string.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/io/sp.o"
     include "$(BUILD_DIR)/src/libultra/mgu/mtxident.o"
     include "$(BUILD_DIR)/src/libultra/gu/position.o"
@@ -496,25 +562,44 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/mgu/normalize.o"
     include "$(BUILD_DIR)/src/libultra/io/dpgetstat.o"
     include "$(BUILD_DIR)/src/libultra/io/dpsetstat.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsdeletefile.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/gu/ortho.o"
     include "$(BUILD_DIR)/src/libultra/gu/cosf.o"
     include "$(BUILD_DIR)/src/libultra/gu/libm_vals.o"
     include "$(BUILD_DIR)/src/libultra/gu/coss.o"
     include "$(BUILD_DIR)/src/libultra/io/visetevent.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsisplug.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/gu/us2dex.o"
     include "$(BUILD_DIR)/src/libultra/io/pfsselectbank.o"
     include "$(BUILD_DIR)/src/libultra/io/contsetch.o"
+#if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsfilestate.o"
     include "$(BUILD_DIR)/src/libultra/io/pfsinitpak.o"
     include "$(BUILD_DIR)/src/libultra/io/pfschecker.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/io/aigetlen.o"
     include "$(BUILD_DIR)/src/libultra/mgu/translate.o"
     include "$(BUILD_DIR)/src/libultra/io/contramwrite.o"
+#if !IS_DEBUG
+    include "$(BUILD_DIR)/src/libultra/io/vimodefpallan1.o"
+    include "$(BUILD_DIR)/src/libultra/io/pfsgetstatus.o"
+    include "$(BUILD_DIR)/src/libultra/io/contpfs.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/io/contramread.o"
     include "$(BUILD_DIR)/src/libultra/io/crc.o"
+#if !IS_DEBUG
+    include "$(BUILD_DIR)/src/libultra/io/pfsisplug.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/os/settimer.o"
+#if !IS_DEBUG
+    include "$(BUILD_DIR)/src/libultra/libc/xldtob.o"
+    include "$(BUILD_DIR)/src/libultra/libc/ldiv.o"
+    include "$(BUILD_DIR)/src/libultra/libc/xlitob.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/io/spgetstat.o"
     include "$(BUILD_DIR)/src/libultra/io/spsetstat.o"
     include "$(BUILD_DIR)/src/libultra/os/writebackdcacheall.o"
@@ -533,15 +618,20 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_construct.o"
     include "$(BUILD_DIR)/data/audio_tables.rodata.o"
     include "$(BUILD_DIR)/data/rsp.text.o"
+#if ENABLE_F3DEX3
+    include "$(BUILD_DIR)/data/rsp.rodata.f3dex3.o"
+#else
     include "$(BUILD_DIR)/data/rsp.rodata.o"
+#endif
 endseg
 
 beginseg
     name "buffers"
+    flags NOLOAD
     align 0x40
     include "$(BUILD_DIR)/src/buffers/zbuffer.o"
     include "$(BUILD_DIR)/src/buffers/gfxbuffers.o"
-    include "$(BUILD_DIR)/src/buffers/heaps.o"
+    include "$(BUILD_DIR)/src/buffers/audio_heap.o"
 endseg
 
 beginseg
@@ -552,12 +642,14 @@ beginseg
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_title/ovl_title_reloc.o"
 endseg
 
+#if IS_MAP_SELECT_ENABLED
 beginseg
     name "ovl_select"
     compress
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_select/z_select.o"
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_select/ovl_select_reloc.o"
 endseg
+#endif
 
 beginseg
     name "ovl_opening"
@@ -580,7 +672,9 @@ beginseg
     name "ovl_kaleido_scope"
     compress
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_collect.o"
+#if IS_INV_EDITOR_ENABLED
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_debug.o"
+#endif
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_equipment.o"
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_item.o"
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_map_PAL.o"
@@ -2910,7 +3004,7 @@ beginseg
     name "ovl_En_Mb"
     compress
     include "$(BUILD_DIR)/src/overlays/actors/ovl_En_Mb/z_en_mb.o"
-	include "$(BUILD_DIR)/src/overlays/actors/ovl_En_Mb/ovl_En_Mb_reloc.o"
+    include "$(BUILD_DIR)/src/overlays/actors/ovl_En_Mb/ovl_En_Mb_reloc.o"
 endseg
 
 beginseg
@@ -7348,6 +7442,7 @@ endseg
 
 beginseg
     name "vr_fine0_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_fine0_pal_static.o"
 endseg
@@ -7361,6 +7456,7 @@ endseg
 
 beginseg
     name "vr_fine1_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_fine1_pal_static.o"
 endseg
@@ -7374,6 +7470,7 @@ endseg
 
 beginseg
     name "vr_fine2_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_fine2_pal_static.o"
 endseg
@@ -7387,6 +7484,7 @@ endseg
 
 beginseg
     name "vr_fine3_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_fine3_pal_static.o"
 endseg
@@ -7400,6 +7498,7 @@ endseg
 
 beginseg
     name "vr_cloud0_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_cloud0_pal_static.o"
 endseg
@@ -7413,6 +7512,7 @@ endseg
 
 beginseg
     name "vr_cloud1_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_cloud1_pal_static.o"
 endseg
@@ -7426,6 +7526,7 @@ endseg
 
 beginseg
     name "vr_cloud2_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_cloud2_pal_static.o"
 endseg
@@ -7439,6 +7540,7 @@ endseg
 
 beginseg
     name "vr_cloud3_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_cloud3_pal_static.o"
 endseg
@@ -7452,6 +7554,7 @@ endseg
 
 beginseg
     name "vr_holy0_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_holy0_pal_static.o"
 endseg
@@ -7465,6 +7568,7 @@ endseg
 
 beginseg
     name "vr_holy1_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/skyboxes/vr_holy1_pal_static.o"
 endseg
@@ -7478,6 +7582,7 @@ endseg
 
 beginseg
     name "vr_MDVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_MDVR_pal_static.o"
 endseg
@@ -7491,6 +7596,7 @@ endseg
 
 beginseg
     name "vr_MNVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_MNVR_pal_static.o"
 endseg
@@ -7504,6 +7610,7 @@ endseg
 
 beginseg
     name "vr_RUVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_RUVR_pal_static.o"
 endseg
@@ -7517,6 +7624,7 @@ endseg
 
 beginseg
     name "vr_LHVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_LHVR_pal_static.o"
 endseg
@@ -7530,6 +7638,7 @@ endseg
 
 beginseg
     name "vr_KHVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_KHVR_pal_static.o"
 endseg
@@ -7543,6 +7652,7 @@ endseg
 
 beginseg
     name "vr_K3VR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_K3VR_pal_static.o"
 endseg
@@ -7556,6 +7666,7 @@ endseg
 
 beginseg
     name "vr_K4VR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_K4VR_pal_static.o"
 endseg
@@ -7569,6 +7680,7 @@ endseg
 
 beginseg
     name "vr_K5VR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_K5VR_pal_static.o"
 endseg
@@ -7582,6 +7694,7 @@ endseg
 
 beginseg
     name "vr_SP1a_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_SP1a_pal_static.o"
 endseg
@@ -7595,6 +7708,7 @@ endseg
 
 beginseg
     name "vr_MLVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_MLVR_pal_static.o"
 endseg
@@ -7608,6 +7722,7 @@ endseg
 
 beginseg
     name "vr_KKRVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_KKRVR_pal_static.o"
 endseg
@@ -7621,6 +7736,7 @@ endseg
 
 beginseg
     name "vr_KR3VR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_KR3VR_pal_static.o"
 endseg
@@ -7634,6 +7750,7 @@ endseg
 
 beginseg
     name "vr_IPVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_IPVR_pal_static.o"
 endseg
@@ -7647,6 +7764,7 @@ endseg
 
 beginseg
     name "vr_KSVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_KSVR_pal_static.o"
 endseg
@@ -7660,6 +7778,7 @@ endseg
 
 beginseg
     name "vr_GLVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_GLVR_pal_static.o"
 endseg
@@ -7673,6 +7792,7 @@ endseg
 
 beginseg
     name "vr_ZRVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_ZRVR_pal_static.o"
 endseg
@@ -7686,6 +7806,7 @@ endseg
 
 beginseg
     name "vr_DGVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_DGVR_pal_static.o"
 endseg
@@ -7699,6 +7820,7 @@ endseg
 
 beginseg
     name "vr_ALVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_ALVR_pal_static.o"
 endseg
@@ -7712,6 +7834,7 @@ endseg
 
 beginseg
     name "vr_NSVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_NSVR_pal_static.o"
 endseg
@@ -7725,6 +7848,7 @@ endseg
 
 beginseg
     name "vr_LBVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_LBVR_pal_static.o"
 endseg
@@ -7738,6 +7862,7 @@ endseg
 
 beginseg
     name "vr_TTVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_TTVR_pal_static.o"
 endseg
@@ -7751,6 +7876,7 @@ endseg
 
 beginseg
     name "vr_FCVR_pal_static"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/backgrounds/vr_FCVR_pal_static.o"
 endseg
@@ -9627,6 +9753,7 @@ beginseg
     number 3
 endseg
 
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "syotes_scene"
     romalign 0x1000
@@ -9668,6 +9795,7 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/test_levels/depth_test/depth_test_room_0.o"
     number 3
 endseg
+#endif
 
 beginseg
     name "spot00_scene"
@@ -10149,6 +10277,7 @@ beginseg
     number 3
 endseg
 
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "testroom_scene"
     romalign 0x1000
@@ -10190,6 +10319,7 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/test_levels/testroom/testroom_room_4.o"
     number 3
 endseg
+#endif
 
 beginseg
     name "kenjyanoma_scene"
@@ -10231,6 +10361,7 @@ beginseg
     number 3
 endseg
 
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "sutaru_scene"
     romalign 0x1000
@@ -10244,6 +10375,7 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/test_levels/sutaru/sutaru_room_0.o"
     number 3
 endseg
+#endif
 
 beginseg
     name "link_home_scene"
@@ -10517,6 +10649,7 @@ beginseg
     number 3
 endseg
 
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "sasatest_scene"
     romalign 0x1000
@@ -10530,6 +10663,7 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/test_levels/sasatest/sasatest_room_0.o"
     number 3
 endseg
+#endif
 
 beginseg
     name "market_alley_scene"
@@ -11267,6 +11401,7 @@ beginseg
     number 3
 endseg
 
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "hairal_niwa2_scene"
     romalign 0x1000
@@ -11280,6 +11415,7 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/indoors/hairal_niwa2/hairal_niwa2_room_0.o"
     number 3
 endseg
+#endif
 
 beginseg
     name "hakasitarelay_scene"
@@ -11753,6 +11889,7 @@ beginseg
     number 3
 endseg
 
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "besitu_scene"
     romalign 0x1000
@@ -11766,6 +11903,7 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/test_levels/besitu/besitu_room_0.o"
     number 3
 endseg
+#endif
 
 beginseg
     name "face_shop_scene"
@@ -11823,8 +11961,10 @@ beginseg
     number 3
 endseg
 
+#if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "test01_scene"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/scenes/test_levels/test01/test01_scene.o"
     number 2
@@ -11832,11 +11972,14 @@ endseg
 
 beginseg
     name "test01_room_0"
+    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/scenes/test_levels/test01/test01_room_0.o"
     number 3
 endseg
+#endif
 
+#if !ENABLE_HACKEROOT
 beginseg
     name "bump_texture_static"
     compress
@@ -11934,3 +12077,4 @@ beginseg
     romalign 0x1000
     include "$(BUILD_DIR)/baserom/softsprite_matrix_static.o"
 endseg
+#endif

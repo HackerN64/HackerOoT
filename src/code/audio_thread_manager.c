@@ -45,7 +45,9 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
 
     // Update the audio driver
 
-    gAudioThreadUpdateTimeStart = osGetTime();
+    if (IS_SPEEDMETER_ENABLED) {
+        gAudioThreadUpdateTimeStart = osGetTime();
+    }
 
     if (R_AUDIOMGR_DEBUG_LEVEL >= AUDIOMGR_DEBUG_LEVEL_NO_UPDATE) {
         // Skip update, no rsp task produced
@@ -54,8 +56,10 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
         rspTask = AudioThread_Update();
     }
 
-    gAudioThreadUpdateTimeAcc += osGetTime() - gAudioThreadUpdateTimeStart;
-    gAudioThreadUpdateTimeStart = 0;
+    if (IS_SPEEDMETER_ENABLED) {
+        gAudioThreadUpdateTimeAcc += osGetTime() - gAudioThreadUpdateTimeStart;
+        gAudioThreadUpdateTimeStart = 0;
+    }
 
     if (audioMgr->rspTask != NULL) {
         // Wait for the audio rsp task scheduled on the previous retrace to complete. This looks like it should wait
@@ -105,7 +109,7 @@ void AudioMgr_ThreadEntry(void* arg) {
     IrqMgr_AddClient(audioMgr->irqMgr, &irqClient, &audioMgr->interruptQueue);
 
     // Spin waiting for events
-    while (true) {
+    for (;;) {
         osRecvMesg(&audioMgr->interruptQueue, (OSMesg*)&msg, OS_MESG_BLOCK);
 
         switch (*msg) {

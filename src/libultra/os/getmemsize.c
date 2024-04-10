@@ -9,7 +9,7 @@ u32 osGetMemSize(void) {
     u32 data1;
 
     while (size < 0x800000) {
-        ptr = (vu32*)(K1BASE + size);
+        ptr = OS_PHYSICAL_TO_K1(size);
 
         data0 = *ptr;
         data1 = ptr[STEP / 4 - 1];

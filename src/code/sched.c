@@ -45,14 +45,14 @@
 #define RDP_DONE_MSG 668
 #define NOTIFY_MSG 670 // original name: ENTRY_MSG
 
-vs32 sSchedDebugPrintfEnabled = false;
-
 OSTime sRSPGfxTimeStart;
 OSTime sRSPAudioTimeStart;
 OSTime sRSPOtherTimeStart;
 OSTime sRDPTimeStart;
 
-#if OOT_DEBUG
+#if IS_DEBUG
+vs32 sSchedDebugPrintfEnabled = false;
+
 #define SCHED_DEBUG_PRINTF        \
     if (sSchedDebugPrintfEnabled) \
     PRINTF
@@ -81,7 +81,7 @@ void Sched_SwapFrameBufferImpl(CfbInfo* cfbInfo) {
             Fault_SetFrameBuffer(cfbInfo->swapBuffer, width, 16);
         }
 
-#if OOT_DEBUG
+#if IS_DEBUG
         if (R_HREG_MODE == HREG_MODE_SCHED && R_SCHED_INIT != HREG_MODE_SCHED) {
             R_SCHED_TOGGLE_SPECIAL_FEATURES = 0;
             R_SCHED_GAMMA_ON = 0;
@@ -127,7 +127,7 @@ void Sched_SwapFrameBuffer(Scheduler* sc, CfbInfo* cfbInfo) {
 }
 
 void Sched_HandlePreNMI(Scheduler* sc) {
-#if OOT_DEBUG
+#if IS_DEBUG
     OSTime now;
 
     if (sc->curRSPTask != NULL) {
@@ -512,13 +512,15 @@ void Sched_HandleRSPDone(Scheduler* sc) {
 
     ASSERT(sc->curRSPTask != NULL, "sc->curRSPTask", "../sched.c", 819);
 
-    // Task profiling
-    if (sc->curRSPTask->list.t.type == M_AUDTASK) {
-        gRSPAudioTimeAcc += osGetTime() - sRSPAudioTimeStart;
-    } else if (sc->curRSPTask->list.t.type == M_GFXTASK) {
-        gRSPGfxTimeAcc += osGetTime() - sRSPGfxTimeStart;
-    } else {
-        gRSPOtherTimeAcc += osGetTime() - sRSPOtherTimeStart;
+    if (IS_SPEEDMETER_ENABLED) {
+        // Task profiling
+        if (sc->curRSPTask->list.t.type == M_AUDTASK) {
+            gRSPAudioTimeAcc += osGetTime() - sRSPAudioTimeStart;
+        } else if (sc->curRSPTask->list.t.type == M_GFXTASK) {
+            gRSPGfxTimeAcc += osGetTime() - sRSPGfxTimeStart;
+        } else {
+            gRSPOtherTimeAcc += osGetTime() - sRSPOtherTimeStart;
+        }
     }
 
     // Clear current RSP task
@@ -562,8 +564,10 @@ void Sched_HandleRDPDone(Scheduler* sc) {
     OSScTask* nextRDP = NULL;
     s32 state;
 
-    // Task profiling
-    gRDPTimeAcc = osGetTime() - sRDPTimeStart;
+    if (IS_SPEEDMETER_ENABLED) {
+        // Task profiling
+        gRDPTimeAcc = osGetTime() - sRDPTimeStart;
+    }
 
     // Sanity check
     ASSERT(sc->curRDPTask != NULL, "sc->curRDPTask", "../sched.c", 878);

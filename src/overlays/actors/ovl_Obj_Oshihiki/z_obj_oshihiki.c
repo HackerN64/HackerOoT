@@ -87,17 +87,20 @@ static Vec2f sFaceDirection[] = {
 void ObjOshihiki_InitDynapoly(ObjOshihiki* this, PlayState* play, CollisionHeader* collision, s32 moveFlag) {
     s32 pad;
     CollisionHeader* colHeader = NULL;
-    s32 pad2;
 
     DynaPolyActor_Init(&this->dyna, moveFlag);
     CollisionHeader_GetVirtual(collision, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
+#if IS_DEBUG
     if (this->dyna.bgId == BG_ACTOR_MAX) {
+        s32 pad2;
+
         // "Warning : move BG registration failure"
         PRINTF("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_obj_oshihiki.c", 280,
                this->dyna.actor.id, this->dyna.actor.params);
     }
+#endif
 }
 
 void ObjOshihiki_RotateXZ(Vec3f* out, Vec3f* in, f32 sn, f32 cs) {
@@ -242,13 +245,12 @@ void ObjOshihiki_SetTexture(ObjOshihiki* this, PlayState* play) {
     }
 }
 
-void ObjOshihiki_SetColor(ObjOshihiki* this, PlayState* play) {
-    Color_RGB8* src;
+void ObjOshihiki_SetColor(ObjOshihiki* this, PlayState* play2) {
+    PlayState* play = play2;
+    s16 paramsColorIdx = (this->dyna.actor.params >> 6) & 3;
     Color_RGB8* color = &this->color;
-    s16 paramsColorIdx;
+    Color_RGB8* src;
     s32 i;
-
-    paramsColorIdx = (this->dyna.actor.params >> 6) & 3;
 
     for (i = 0; i < ARRAY_COUNT(sSceneIds); i++) {
         if (sSceneIds[i] == play->sceneId) {
@@ -315,14 +317,12 @@ void ObjOshihiki_Destroy(Actor* thisx, PlayState* play) {
 }
 
 void ObjOshihiki_SetFloors(ObjOshihiki* this, PlayState* play) {
+    s32 pad;
+    Vec3f colCheckPoint;
+    Vec3f colCheckOffset;
     s32 i;
 
     for (i = 0; i < 5; i++) {
-        Vec3f colCheckPoint;
-        Vec3f colCheckOffset;
-        CollisionPoly** floorPoly;
-        s32* floorBgId;
-
         colCheckOffset.x = sColCheckPoints[i].x * (this->dyna.actor.scale.x * 10.0f);
         colCheckOffset.y = sColCheckPoints[i].y * (this->dyna.actor.scale.y * 10.0f);
         colCheckOffset.z = sColCheckPoints[i].z * (this->dyna.actor.scale.z * 10.0f);
@@ -331,10 +331,8 @@ void ObjOshihiki_SetFloors(ObjOshihiki* this, PlayState* play) {
         colCheckPoint.y += this->dyna.actor.prevPos.y;
         colCheckPoint.z += this->dyna.actor.world.pos.z;
 
-        floorPoly = &this->floorPolys[i];
-        floorBgId = &this->floorBgIds[i];
-        this->floorHeights[i] =
-            BgCheck_EntityRaycastDown6(&play->colCtx, floorPoly, floorBgId, &this->dyna.actor, &colCheckPoint, 0.0f);
+        this->floorHeights[i] = BgCheck_EntityRaycastDown6(&play->colCtx, &this->floorPolys[i], &this->floorBgIds[i],
+                                                           &this->dyna.actor, &colCheckPoint, 0.0f);
     }
 }
 
@@ -445,9 +443,9 @@ s32 ObjOshihiki_MoveWithBlockUnder(ObjOshihiki* this, PlayState* play) {
 
 void ObjOshihiki_SetupOnScene(ObjOshihiki* this, PlayState* play) {
     this->stateFlags |= PUSHBLOCK_SETUP_ON_SCENE;
-    this->actionFunc = ObjOshihiki_OnScene;
     this->dyna.actor.gravity = 0.0f;
     this->dyna.actor.velocity.x = this->dyna.actor.velocity.y = this->dyna.actor.velocity.z = 0.0f;
+    this->actionFunc = ObjOshihiki_OnScene;
 }
 
 void ObjOshihiki_OnScene(ObjOshihiki* this, PlayState* play) {
@@ -472,9 +470,9 @@ void ObjOshihiki_OnScene(ObjOshihiki* this, PlayState* play) {
 
 void ObjOshihiki_SetupOnActor(ObjOshihiki* this, PlayState* play) {
     this->stateFlags |= PUSHBLOCK_SETUP_ON_ACTOR;
-    this->actionFunc = ObjOshihiki_OnActor;
     this->dyna.actor.velocity.x = this->dyna.actor.velocity.y = this->dyna.actor.velocity.z = 0.0f;
     this->dyna.actor.gravity = -1.0f;
+    this->actionFunc = ObjOshihiki_OnActor;
 }
 
 void ObjOshihiki_OnActor(ObjOshihiki* this, PlayState* play) {
@@ -543,10 +541,10 @@ void ObjOshihiki_Push(ObjOshihiki* this, PlayState* play) {
     f32 pushDistSigned;
     s32 stopFlag;
 
-    this->pushSpeed += 0.5f;
+    this->pushSpeed += 0.5f * BLOCK_PUSH_SPEED;
     this->stateFlags |= PUSHBLOCK_PUSH;
-    this->pushSpeed = CLAMP_MAX(this->pushSpeed, 2.0f);
-    stopFlag = Math_StepToF(&this->pushDist, 20.0f, this->pushSpeed);
+    this->pushSpeed = CLAMP_MAX(this->pushSpeed, 2.0f * BLOCK_PUSH_SPEED);
+    stopFlag = Math_StepToF(&this->pushDist, 20.0f * BLOCK_PUSH_SPEED, this->pushSpeed);
     pushDistSigned = ((this->direction >= 0.0f) ? 1.0f : -1.0f) * this->pushDist;
     thisx->world.pos.x = thisx->home.pos.x + (pushDistSigned * this->yawSin);
     thisx->world.pos.z = thisx->home.pos.z + (pushDistSigned * this->yawCos);
@@ -649,6 +647,7 @@ void ObjOshihiki_Draw(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_obj_oshihiki.c", 1308),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
+#if IS_DEBUG
     switch (play->sceneId) {
         case SCENE_DEKU_TREE:
         case SCENE_DODONGOS_CAVERN:
@@ -664,6 +663,9 @@ void ObjOshihiki_Draw(Actor* thisx, PlayState* play) {
             gDPSetEnvColor(POLY_OPA_DISP++, mREG(13), mREG(14), mREG(15), 255);
             break;
     }
+#else
+    gDPSetEnvColor(POLY_OPA_DISP++, this->color.r, this->color.g, this->color.b, 255);
+#endif
 
     gSPDisplayList(POLY_OPA_DISP++, gPushBlockDL);
     CLOSE_DISPS(play->state.gfxCtx, "../z_obj_oshihiki.c", 1334);

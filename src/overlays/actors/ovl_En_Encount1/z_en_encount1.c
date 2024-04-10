@@ -51,6 +51,8 @@ void EnEncount1_Init(Actor* thisx, PlayState* play) {
     spawnRange = 120.0f + (40.0f * this->actor.world.rot.z);
     this->spawnRange = spawnRange;
 
+    if (1) {}
+
     PRINTF("\n\n");
     // "It's an enemy spawner!"
     PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 敵発生ゾーンでた！ ☆☆☆☆☆ %x\n" VT_RST, this->actor.params);
@@ -102,7 +104,10 @@ void EnEncount1_SpawnLeevers(EnEncount1* this, PlayState* play) {
     f32 floorY;
     EnReeba* leever;
 
-    this->outOfRangeTimer = 0;
+    if (IS_ACTOR_DEBUG_ENABLED) {
+        this->outOfRangeTimer = 0;
+    }
+
     spawnPos = this->actor.world.pos;
 
     if ((this->timer == 0) && (play->csCtx.state == CS_STATE_IDLE) && (this->curNumSpawn <= this->maxCurSpawns) &&
@@ -185,9 +190,14 @@ void EnEncount1_SpawnTektites(EnEncount1* this, PlayState* play) {
         this->timer = 10;
         if ((fabsf(player->actor.world.pos.y - this->actor.world.pos.y) > 100.0f) ||
             (this->actor.xzDistToPlayer > this->spawnRange)) {
-            this->outOfRangeTimer++;
+            if (IS_ACTOR_DEBUG_ENABLED) {
+                this->outOfRangeTimer++;
+            }
         } else {
-            this->outOfRangeTimer = 0;
+            if (IS_ACTOR_DEBUG_ENABLED) {
+                this->outOfRangeTimer = 0;
+            }
+
             if ((this->curNumSpawn < this->maxCurSpawns) && (this->totalNumSpawn < this->maxTotalSpawns)) {
                 spawnPos.x = this->actor.world.pos.x + Rand_CenteredFloat(50.0f);
                 spawnPos.y = this->actor.world.pos.y + 120.0f;
@@ -228,7 +238,9 @@ void EnEncount1_SpawnStalchildOrWolfos(EnEncount1* this, PlayState* play) {
     if (play->sceneId != SCENE_HYRULE_FIELD) {
         if ((fabsf(player->actor.world.pos.y - this->actor.world.pos.y) > 100.0f) ||
             (this->actor.xzDistToPlayer > this->spawnRange)) {
-            this->outOfRangeTimer++;
+            if (IS_ACTOR_DEBUG_ENABLED) {
+                this->outOfRangeTimer++;
+            }
             return;
         }
     } else if (IS_DAY || (Player_GetMask(play) == PLAYER_MASK_BUNNY)) {
@@ -236,7 +248,10 @@ void EnEncount1_SpawnStalchildOrWolfos(EnEncount1* this, PlayState* play) {
         return;
     }
 
-    this->outOfRangeTimer = 0;
+    if (IS_ACTOR_DEBUG_ENABLED) {
+        this->outOfRangeTimer = 0;
+    }
+
     spawnPos = this->actor.world.pos;
     if ((this->curNumSpawn < this->maxCurSpawns) && (this->totalNumSpawn < this->maxTotalSpawns)) {
         while ((this->curNumSpawn < this->maxCurSpawns) && (this->totalNumSpawn < this->maxTotalSpawns)) {
@@ -322,7 +337,7 @@ void EnEncount1_Update(Actor* thisx, PlayState* play) {
 
     this->updateFunc(this, play);
 
-    if (BREG(0) != 0) {
+    if (IS_ACTOR_DEBUG_ENABLED && BREG(0) != 0) {
         if (this->outOfRangeTimer != 0) {
             if ((this->outOfRangeTimer & 1) == 0) {
                 DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,

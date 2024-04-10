@@ -41,22 +41,26 @@ You can create a `.vscode/c_cpp_properties.json` file with `C/C++: Edit Configur
 {
     "configurations": [
         {
-            "name": "N64 oot-gc-eu-mq-dbg",
-            "compilerPath": "${default}", // Needs to not be "" for -m32 to work
+            "name": "N64 hackeroot-mq",
+            "compilerPath": "/usr/bin/gcc", // Needs to not be "" for -m32 to work
             "compilerArgs": [
                 "-m32" // Removes integer truncation warnings with gbi macros
             ],
-            "intelliSenseMode": "${default}", // Shouldn't matter
+            "intelliSenseMode": "gcc-x86", // Shouldn't matter
             "includePath": [ // Matches makefile's includes
-                "${workspaceFolder}/**",
-                "src",
-                "build/gc-eu-mq-dbg",
                 "include",
-                "include/libc"
+                "include/libc",
+                "src",
+                "build/hackeroot-mq",
+                ".",
+                "extracted/hackeroot-mq"
             ],
             "defines": [
                 "_LANGUAGE_C", // For gbi.h
-                "OOT_DEBUG=1" // If targeting a debug version
+                "OOT_DEBUG=1", // If targeting a debug version
+                "ENABLE_HACKEROOT=1",
+                "RELEASE_ROM=0",
+                "COMPRESS_YAZ=1"
             ],
             "cStandard": "gnu89", // C89 + some GNU extensions from C99 like C++ comments
             "cppStandard": "${default}" // Only ZAPD uses C++, so doesn't really matter
@@ -79,5 +83,41 @@ Add the following to (or create) the `.vscode/settings.json` file for VSCode to 
         "build/**": true,
         "expected/**": true,
     },
+}
+```
+
+## GDB Launch File
+```jsonc
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Ares GDB (Linux)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/hackeroot-mq/hackeroot-mq.elf",
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+            "miDebuggerServerAddress": "tcp:172.0.0.1:9123", // change this to your Linux/WSL IP address
+        },
+        {
+            "name": "Ares GDB (Windows)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "windows_path_to_HackerOoT.elf",
+            "cwd": "windows_path_to_folder_containing_HackerOoT.elf",
+            "stopAtEntry": true,
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/mnt/c/msys64/mingw64/bin/gdb-multiarch.exe",
+            "miDebuggerServerAddress": "[::1]:9123",
+        }
+    ]
 }
 ```

@@ -6,6 +6,8 @@
 #include "z64math.h"
 #include "z64save.h"
 
+#include "config.h"
+
 // these two angle conversion macros are slightly inaccurate
 #define CAM_DEG_TO_BINANG(degrees) (s16)TRUNCF_BINANG((degrees) * 182.04167f + .5f)
 #define CAM_BINANG_TO_DEG(binang) ((f32)(binang) * (360.0001525f / 65535.0f))
@@ -1619,6 +1621,8 @@ typedef struct Camera {
     /* 0x168 */ s16 csId;
     /* 0x16A */ s16 unk_16A;
 } Camera; // size = 0x16C
+
+// ENABLE_CAMERA_DEBUGGER
 
 /**
  * Debug Camera
