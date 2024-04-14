@@ -1,6 +1,7 @@
 #include "global.h"
 #include "quake.h"
 #include "z64camera.h"
+#include "config.h"
 
 #include "assets/scenes/indoors/tokinoma/tokinoma_scene.h"
 #include "assets/scenes/overworld/spot00/spot00_scene.h"
@@ -29,6 +30,7 @@
 #include "assets/scenes/dungeons/ice_doukutu/ice_doukutu_scene.h"
 
 #include "assets/scenes/misc/hakaana_ouke/hakaana_ouke_scene.h"
+
 
 u16 sCurTextId = 0;
 u16 sCurOcarinaAction = 0;
@@ -1776,6 +1778,37 @@ void CutsceneCmd_Text(PlayState* play, CutsceneContext* csCtx, CsCmdText* cmd) {
     }
 }
 
+void CutsceneCmd_MotionBlur(PlayState* play, CutsceneContext* csCtx, CsCmdMotionBlur* cmd) {
+    if (ENABLE_MOTION_BLUR) {
+        if ((csCtx->curFrame >= cmd->startFrame) && (cmd->endFrame >= csCtx->curFrame)) {
+            f32 lerp = Environment_LerpWeight(cmd->endFrame, cmd->startFrame, csCtx->curFrame);
+
+            if (ENABLE_MOTION_BLUR_DEBUG) {
+                PRINTF("[HackerOoT:INFO]: originalBlurAlpha: 0x%X, lerp: %f\n", play->csCtx.originalBlurAlpha, lerp);
+            }
+
+            if (cmd->type == CS_MOTION_BLUR_ENABLE) {
+                if (csCtx->originalBlurAlpha == 0) {
+                    csCtx->originalBlurAlpha = cmd->alpha;
+                }
+
+                Play_EnableMotionBlur(lerp * cmd->alpha);
+            } else if (cmd->type == CS_MOTION_BLUR_DISABLE) {
+                if (lerp >= 0.9f) {
+                    Play_DisableMotionBlur();
+                    csCtx->originalBlurAlpha = 0;
+                } else {
+                    Play_SetMotionBlurAlpha((1.0f - lerp) * csCtx->originalBlurAlpha);
+                }
+            }
+        }
+    } else if (ENABLE_MOTION_BLUR_DEBUG) {
+        PRINTF("[HackerOoT:INFO]: Warning: Motion Blur is disabled\ntype: %d, startFrame: %d, endFrame: %d, curFrame: %d\n",
+            cmd->type, cmd->startFrame, cmd->endFrame, csCtx->curFrame
+        );
+    }
+}
+
 void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script) {
     s16 i;
     s32 totalEntries;
@@ -2194,6 +2227,18 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 script += sizeof(cmdEntries);
                 CutsceneCmd_Transition(play, csCtx, (void*)script);
                 script += sizeof(CsCmdTransition);
+                break;
+
+            case CS_CMD_MOTION_BLUR:
+                if (ENABLE_MOTION_BLUR) {
+                    MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                    script += sizeof(cmdEntries);
+
+                    for (j = 0; j < cmdEntries; j++) {
+                        CutsceneCmd_MotionBlur(play, csCtx, (CsCmdMotionBlur*)script);
+                        script += sizeof(CsCmdMotionBlur);
+                    }
+                }
                 break;
 
             default:
