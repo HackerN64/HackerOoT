@@ -14,7 +14,7 @@
  * ``ENABLE_F3DEX3_RECOMMENDATIONS`` will enable the recommended changes listed in F3DEX3's readme
  * ``ENABLE_F3DEX3_NEW_FEATURES`` will enable the required changes to use the new features from F3DEX3
 */
-#define ENABLE_F3DEX3 false
+#define ENABLE_F3DEX3 true
 #define ENABLE_F3DEX3_RECOMMENDATIONS true // missing matrix stuff + fast64 re-export process
 #define ENABLE_F3DEX3_LIGHT_RECO false // unfinished, faster but experimental (reco -> recommendations)
 // #define ENABLE_F3DEX3_NEW_FEATURES true // not implemented yet

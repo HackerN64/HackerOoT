@@ -414,7 +414,7 @@ $(BUILD_DIR)/baserom/%.o: $(EXTRACTED_DIR)/baserom/%
 $(BUILD_DIR)/data/%.o: data/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
-$(BUILD_DIR)/data/rsp.rodata.f3dex3.o: F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data
+$(BUILD_DIR)/data/rsp.rodata.f3dex3.o: F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data F3DEX3/Profiling/F3DEX3_BrW.code F3DEX3/Profiling/F3DEX3_BrW.data F3DEX3/Profiling/F3DEX3_BrW_PA.code F3DEX3/Profiling/F3DEX3_BrW_PB.code F3DEX3/Profiling/F3DEX3_BrW_PC.code F3DEX3/Profiling/F3DEX3_BrW_PA.data F3DEX3/Profiling/F3DEX3_BrW_PB.data F3DEX3/Profiling/F3DEX3_BrW_PC.data
 
 $(BUILD_DIR)/assets/text/%.enc.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.txt
 	$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) $< | $(PYTHON) tools/msgenc.py - --output $@ --charmap assets/text/charmap.txt

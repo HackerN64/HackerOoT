@@ -7,9 +7,10 @@
 
 #if ENABLE_F3DEX3
     #define REQUIRE_SEMICOLONS_AFTER_GBI_COMMANDS
-    #if ENABLE_F3DEX3_RECOMMENDATIONS
-        #define NO_SYNCS_IN_TEXTURE_LOADS
-    #endif
+    //! TODO: fix the issue with GfxPrint and no syncs
+    // #if ENABLE_F3DEX3_RECOMMENDATIONS
+    //     #define NO_SYNCS_IN_TEXTURE_LOADS
+    // #endif
     #include "gbi.f3dex3.h"
 #else
 /* To enable Fast3DEX grucode support, define F3DEX_GBI. */

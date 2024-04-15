@@ -631,6 +631,7 @@ beginseg
     compress
     include "$(BUILD_DIR)/src/debug/print.o"
     include "$(BUILD_DIR)/src/debug/utility.o"
+    include "$(BUILD_DIR)/src/debug/profiler.o"
 endseg
 #endif
 

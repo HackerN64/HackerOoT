@@ -244,6 +244,9 @@ void Play_Init(GameState* thisx) {
 #if ENABLE_HACKER_DEBUG
     gDebug.play = this;
     gDebug.input = &this->state.input[0];
+#if ENABLE_F3DEX3
+    Profiler_Init(&gProfiler);
+#endif
 #endif
 
     if (gSaveContext.save.entranceIndex == ENTR_LOAD_OPENING) {
@@ -1101,6 +1104,12 @@ void Play_Draw(PlayState* this) {
     gSPSegment(OVERLAY_DISP++, 0x02, this->sceneSegment);
 
     Gfx_SetupFrame(gfxCtx, 0, 0, 0);
+
+    {
+        Profiler_UpdateMode(&gProfiler, &this->state.input[0]);
+        Profiler_Update(&gProfiler);
+        Profiler_Draw(&gProfiler, gfxCtx);
+    }
 
     if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_DRAW) {
         POLY_OPA_DISP = Play_SetFog(this, POLY_OPA_DISP);

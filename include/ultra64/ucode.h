@@ -24,4 +24,26 @@ extern u64 gspS2DEX2d_fifoDataStart[], gspS2DEX2d_fifoDataEnd[];
 extern u64 njpgdspMainTextStart[], njpgdspMainTextEnd[];
 extern u64 njpgdspMainDataStart[], njpgdspMainDataEnd[];
 
+#if ENABLE_HACKER_DEBUG && ENABLE_F3DEX3
+extern u64 gF3DEX3_BrW_TextStart[];
+extern u64 gF3DEX3_BrW_PA_TextStart[];
+extern u64 gF3DEX3_BrW_PB_TextStart[];
+extern u64 gF3DEX3_BrW_PC_TextStart[];
+
+extern u64 gF3DEX3_BrW_TextEnd[];
+extern u64 gF3DEX3_BrW_PA_TextEnd[];
+extern u64 gF3DEX3_BrW_PB_TextEnd[];
+extern u64 gF3DEX3_BrW_PC_TextEnd[];
+
+extern u64 gF3DEX3_BrW_DataStart[];
+extern u64 gF3DEX3_BrW_PA_DataStart[];
+extern u64 gF3DEX3_BrW_PB_DataStart[];
+extern u64 gF3DEX3_BrW_PC_DataStart[];
+
+extern u64 gF3DEX3_BrW_DataEnd[];
+extern u64 gF3DEX3_BrW_PA_DataEnd[];
+extern u64 gF3DEX3_BrW_PB_DataEnd[];
+extern u64 gF3DEX3_BrW_PC_DataEnd[];
+#endif
+
 #endif

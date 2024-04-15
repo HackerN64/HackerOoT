@@ -29,6 +29,12 @@ OSMesg sSerialMsgBuf[1];
 
 #if ENABLE_HACKER_DEBUG
 Debug gDebug;
+
+#if ENABLE_F3DEX3
+volatile F3DEX3YieldDataFooter gRSPProfilingResults;
+Profiler gProfiler;
+#endif
+
 #endif
 
 #if IS_DEBUG

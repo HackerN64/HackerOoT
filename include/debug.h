@@ -6,6 +6,7 @@
 #include "macros.h"
 #include "padmgr.h"
 #include "debug/print.h"
+#include "debug/profiler.h"
 
 #define DEBUG_PRINT_VAR(var) PRINTF("%s: %d\n", #var, var)
 
