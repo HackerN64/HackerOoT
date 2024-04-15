@@ -94,6 +94,9 @@ endif
 # Make sure the build reports the correct version
 $(shell touch src/boot/build.c)
 
+# available: default, pa, pb, pc (px: profiling mode x)
+F3DEX3_MODE ?= default
+
 ifeq ($(VERSION),hackeroot-mq)
   CFLAGS += -DENABLE_HACKEROOT=1
   CPPFLAGS += -DENABLE_HACKEROOT=1
@@ -105,6 +108,25 @@ ifeq ($(VERSION),hackeroot-mq)
   else
     CFLAGS += -DRELEASE_ROM=0 -DOOT_DEBUG=1
     CPPFLAGS += -DRELEASE_ROM=0 -DOOT_DEBUG=1
+  endif
+
+F3DEX3 := F3DEX3
+F3DEX3_BUILD := F3DEX3_BrW
+
+  ifneq ($(F3DEX3_MODE),default)
+	F3DEX3 := F3DEX3/Profiling
+  endif
+
+  ifeq ($(F3DEX3_MODE),pa)
+	F3DEX3_BUILD := $(F3DEX3_BUILD)_PA
+  else
+	ifeq ($(F3DEX3_MODE),pb)
+		F3DEX3_BUILD := $(F3DEX3_BUILD)_PB
+	else
+		ifeq ($(F3DEX3_MODE),pc)
+			F3DEX3_BUILD := $(F3DEX3_BUILD)_PC
+		endif
+	endif
   endif
 else
   ifeq ($(DEBUG),1)
@@ -298,7 +320,7 @@ distclean: assetclean
 	$(RM) -r extracted/
 	$(RM) -r build/
 	$(MAKE) -C tools distclean
-	$(RM) -r F3DEX3/F3DEX3.code F3DEX3/F3DEX3.data
+	$(RM) -r F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data
 
 venv:
 # Create the virtual environment if it doesn't exist.
@@ -327,14 +349,26 @@ endif
 patch:
 	$(FLIPS) --create --bps $(BASEROM_PATCH) $(ROM) $(BPS)
 
-f3dex3:
+f3dex3_extract:
 	$(PYTHON) tools/data_extractor.py --start 0xBCD0F0 --size 0x1630 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.code
 	$(PYTHON) tools/data_extractor.py --start 0xBCE720 --size 0x420 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.data
-	$(FLIPS) --apply F3DEX3/F3DEX3.code.bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3.code
-	$(FLIPS) --apply F3DEX3/F3DEX3.data.bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3.data
+
+f3dex3_clean:
 	$(RM) -r F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
 
-.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3
+f3dex3:
+	$(MAKE) f3dex3_extract
+	$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).code.bps F3DEX3/f3dzex2.code $(F3DEX3)/F3DEX3_BrW.code
+	$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).data.bps F3DEX3/f3dzex2.data $(F3DEX3)/F3DEX3_BrW.data
+	$(MAKE) f3dex3_clean
+
+f3dex3_patch:
+	$(MAKE) f3dex3_extract
+	$(FLIPS) --create --bps F3DEX3/f3dzex2.code $(F3DEX3)/$(F3DEX3_BUILD).code F3DEX3/Patch/$(F3DEX3_BUILD).code.bps
+	$(FLIPS) --create --bps F3DEX3/f3dzex2.data $(F3DEX3)/$(F3DEX3_BUILD).data F3DEX3/Patch/$(F3DEX3_BUILD).data.bps
+	$(MAKE) f3dex3_clean
+
+.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3 f3dex3_patch f3dex3_extract f3dex3_clean
 .DEFAULT_GOAL := rom
 
 #### Various Recipes ####
@@ -380,7 +414,7 @@ $(BUILD_DIR)/baserom/%.o: $(EXTRACTED_DIR)/baserom/%
 $(BUILD_DIR)/data/%.o: data/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
-$(BUILD_DIR)/data/rsp.rodata.f3dex3.o: F3DEX3/F3DEX3.code F3DEX3/F3DEX3.data
+$(BUILD_DIR)/data/rsp.rodata.f3dex3.o: F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data
 
 $(BUILD_DIR)/assets/text/%.enc.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.txt
 	$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) $< | $(PYTHON) tools/msgenc.py - --output $@ --charmap assets/text/charmap.txt
