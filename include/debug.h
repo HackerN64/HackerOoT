@@ -16,5 +16,6 @@ typedef struct Debug {
 } Debug;
 
 void Debug_DrawColorRectangle(GraphicsContext* gfxCtx, Vec2s rectLeft, Vec2s rectRight, Color_RGBA8 rgba);
+void Debug_ConfigureNewRectangle(GraphicsContext* gfxCtx, Input* controller);
 
 #endif

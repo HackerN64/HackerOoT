@@ -28,6 +28,15 @@ void Print_DebugPos(PrintUtils* this, Input* input, s16 posXChangeBy, s16 posYCh
     }
 }
 
+/**
+ * Sets the required informations before using ``Print_Screen``
+ * 
+ * @param this reference to a ``PrintUtils`` struct, usually ``&gDebug.printer``
+ * @param gfxCtx reference to graphics context
+ * @param x the horizontal position of the text to print
+ * @param y the vertical position of the text to print
+ * @param rgba the color to use for the text to print
+*/
 void Print_SetInfos(PrintUtils* this, GraphicsContext* gfxCtx, s16 x, s16 y, Color_RGBA8 rgba) {
     this->gfxCtx = gfxCtx;
     this->pos.x = x;
@@ -35,11 +44,18 @@ void Print_SetInfos(PrintUtils* this, GraphicsContext* gfxCtx, s16 x, s16 y, Col
     this->rgba = rgba;
 }
 
+/**
+ * Draws text
+ * 
+ * @param this reference to a ``PrintUtils`` struct, usually ``&gDebug.printer``
+ * @param fmt the text to print, can be formatted (``%d``, ``%08X``, etc...)
+ * @param ... the variables to use for the format of the text
+*/
 void Print_Screen(PrintUtils* this, const char* fmt, ...) {
     GfxPrint gfxP;
     Gfx *dl, *gfxRef;
 
-    OPEN_DISPS(this->gfxCtx, __BASE_FILE__, __LINE__);
+    OPEN_DISPS(this->gfxCtx, __FILE__, __LINE__);
 
     dl = Gfx_Open(gfxRef = POLY_OPA_DISP);
     gSPDisplayList(OVERLAY_DISP++, dl);
@@ -64,5 +80,5 @@ void Print_Screen(PrintUtils* this, const char* fmt, ...) {
     Gfx_Close(gfxRef, dl);
     POLY_OPA_DISP = dl;
 
-    CLOSE_DISPS(this->gfxCtx, __BASE_FILE__, __LINE__);
+    CLOSE_DISPS(this->gfxCtx, __FILE__, __LINE__);
 }

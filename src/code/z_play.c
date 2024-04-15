@@ -1102,24 +1102,6 @@ void Play_Draw(PlayState* this) {
 
     Gfx_SetupFrame(gfxCtx, 0, 0, 0);
 
-    {
-        Vec2s left = { 50, 50 };
-        Vec2s right = { SCREEN_WIDTH - 50, SCREEN_HEIGHT - 50 };
-        Color_RGBA8 white = { 255, 255, 255, 255 };
-        Color_RGBA8 black = { 0, 0, 0, 128 };
-
-        Debug_DrawColorRectangle(gfxCtx, left, right, black);
-
-        Print_SetInfos(&gDebug.printer, gfxCtx, 7, 7, white);
-        Print_Screen(&gDebug.printer, "Hello from:");
-
-        Print_SetInfos(&gDebug.printer, gfxCtx, 8, 8, white);
-        Print_Screen(&gDebug.printer, "- file: %s", __FILE__);
-
-        Print_SetInfos(&gDebug.printer, gfxCtx, 8, 9, white);
-        Print_Screen(&gDebug.printer, "- line: %d", __LINE__);
-    }
-
     if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_DRAW) {
         POLY_OPA_DISP = Play_SetFog(this, POLY_OPA_DISP);
         POLY_XLU_DISP = Play_SetFog(this, POLY_XLU_DISP);
