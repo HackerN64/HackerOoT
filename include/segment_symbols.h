@@ -2,6 +2,7 @@
 #define SEGMENT_SYMBOLS_H
 
 #include "z64.h"
+#include "config.h"
 
 #define DECLARE_SEGMENT(name)          \
     extern u8 _##name##SegmentStart[]; \
@@ -63,6 +64,12 @@ DECLARE_ROM_SEGMENT(map_48x85_static)
 DECLARE_SEGMENT(code)
 DECLARE_ROM_SEGMENT(code)
 DECLARE_BSS_SEGMENT(code)
+
+#if ENABLE_HACKER_DEBUG
+DECLARE_SEGMENT(debug)
+DECLARE_ROM_SEGMENT(debug)
+DECLARE_BSS_SEGMENT(debug)
+#endif
 
 DECLARE_OVERLAY_SEGMENT(kaleido_scope)
 DECLARE_OVERLAY_SEGMENT(player_actor)

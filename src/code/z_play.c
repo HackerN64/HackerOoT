@@ -241,6 +241,11 @@ void Play_Init(GameState* thisx) {
     u8 baseSceneLayer;
     s32 pad[2];
 
+#if ENABLE_HACKER_DEBUG
+    gDebug.play = this;
+    gDebug.input = &this->state.input[0];
+#endif
+
     if (gSaveContext.save.entranceIndex == ENTR_LOAD_OPENING) {
         gSaveContext.save.entranceIndex = 0;
         this->state.running = false;
@@ -1096,6 +1101,24 @@ void Play_Draw(PlayState* this) {
     gSPSegment(OVERLAY_DISP++, 0x02, this->sceneSegment);
 
     Gfx_SetupFrame(gfxCtx, 0, 0, 0);
+
+    {
+        Vec2s left = { 50, 50 };
+        Vec2s right = { SCREEN_WIDTH - 50, SCREEN_HEIGHT - 50 };
+        Color_RGBA8 white = { 255, 255, 255, 255 };
+        Color_RGBA8 black = { 0, 0, 0, 128 };
+
+        Debug_DrawColorRectangle(gfxCtx, left, right, black);
+
+        Print_SetInfos(&gDebug.printer, gfxCtx, 7, 7, white);
+        Print_Screen(&gDebug.printer, "Hello from:");
+
+        Print_SetInfos(&gDebug.printer, gfxCtx, 8, 8, white);
+        Print_Screen(&gDebug.printer, "- file: %s", __FILE__);
+
+        Print_SetInfos(&gDebug.printer, gfxCtx, 8, 9, white);
+        Print_Screen(&gDebug.printer, "- line: %d", __LINE__);
+    }
 
     if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_DRAW) {
         POLY_OPA_DISP = Play_SetFog(this, POLY_OPA_DISP);

@@ -11,6 +11,11 @@
  */
 
 /**
+ * Enables HackerOoT debugger
+*/
+#define ENABLE_HACKER_DEBUG true
+
+/**
  * Avoids code that may be compiled differently between builds, such as using `__DATE__`, `__TIME__`, `__FILE__`, or `__LINE__`.
  */
 #define DETERMINISTIC_BUILD false

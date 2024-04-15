@@ -6,6 +6,10 @@
 #define VEC_SET(V,X,Y,Z) (V).x=(X);(V).y=(Y);(V).z=(Z)
 
 typedef struct {
+    s32 x, y;
+} Vec2s; // size = 0x08
+
+typedef struct {
     f32 x, y;
 } Vec2f; // size = 0x08
 

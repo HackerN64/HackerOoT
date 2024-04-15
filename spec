@@ -625,6 +625,15 @@ beginseg
 #endif
 endseg
 
+#if ENABLE_HACKER_DEBUG
+beginseg
+    name "debug"
+    compress
+    include "$(BUILD_DIR)/src/debug/print.o"
+    include "$(BUILD_DIR)/src/debug/utility.o"
+endseg
+#endif
+
 beginseg
     name "buffers"
     flags NOLOAD

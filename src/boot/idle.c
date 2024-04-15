@@ -30,6 +30,15 @@ void Main_ThreadEntry(void* arg) {
     PRINTF("転送時間 %6.3f\n");
     bzero(_codeSegmentBssStart, _codeSegmentBssEnd - _codeSegmentBssStart);
     PRINTF("codeセグメントBSSクリア完了\n");
+
+#if ENABLE_HACKER_DEBUG
+    PRINTF("[HackerOoT:Info]: Loading 'debug' segment...\n");
+    DMA_REQUEST_SYNC(_debugSegmentStart, (uintptr_t)_debugSegmentRomStart, _debugSegmentRomEnd - _debugSegmentRomStart,
+                        __BASE_FILE__, __LINE__);
+    bzero(_debugSegmentBssStart, _debugSegmentBssEnd - _debugSegmentBssStart);
+    PRINTF("[HackerOoT:Info]: Completed!\n");
+#endif
+
     Main(arg);
     PRINTF("mainx 実行終了\n");
 }

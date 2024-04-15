@@ -27,6 +27,10 @@ AudioMgr gAudioMgr;
 OSMesgQueue sSerialEventQueue;
 OSMesg sSerialMsgBuf[1];
 
+#if ENABLE_HACKER_DEBUG
+Debug gDebug;
+#endif
+
 #if IS_DEBUG
 void Main_LogSystemHeap(void) {
     PRINTF(VT_FGCOL(GREEN));
