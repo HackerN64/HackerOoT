@@ -317,6 +317,10 @@ ifneq ($(VERSION),gc-eu-mq)
 	$(PYTHON) extract_assets.py -j$(N_THREADS) -v $(VERSION)
 endif
 	$(MAKE) f3dex3
+ifneq ($(VERSION),hackeroot-mq)
+# TODO: proper fix (for .s files)
+	cp baseroms/hackeroot-mq/baserom-decompressed.z64 baseroms/gc-eu-mq-dbg/baserom-decompressed.z64
+endif
 
 run: $(ROM)
 ifeq ($(N64_EMULATOR),)
