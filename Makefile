@@ -267,9 +267,11 @@ endif
 
 #### Main Targets ###
 
-all: rom compress
+all: rom
 
-rom: $(ROM)
+rom:
+	python3 tools/mod_assets.py
+	$(MAKE) $(ROM)
 
 compress:
 # make sure z_std_dma.c and spec are up-to-date
