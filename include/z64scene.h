@@ -3,6 +3,7 @@
 
 #include "z64.h"
 #include "z64dma.h" // for RomFile
+#include "config.h"
 
 #include "command_macros_base.h"
 

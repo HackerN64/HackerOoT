@@ -65,4 +65,9 @@
 */
 #define ENABLE_DMA_PRINTF false
 
+/**
+ * Include example scene
+*/
+#define INCLUDE_EXAMPLE_SCENE true
+
 #endif

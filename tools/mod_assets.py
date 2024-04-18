@@ -95,7 +95,7 @@ def update_cache_time(root: str) -> int:
 
 
 def main():
-    root = os.path.dirname(os.path.realpath(__file__))
+    root = os.path.dirname(os.path.realpath(__file__)).removesuffix("/tools")
     last_cache_time = update_cache_time(root)
     copied_files = copy_all(root)
     remove_stale_assets(root, copied_files, last_cache_time)

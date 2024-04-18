@@ -48,6 +48,7 @@
     #undef ENABLE_DEBUG_SAVE
     #undef MAP_SELECT_ON_FILE_1
     #undef ENABLE_DEBUG_HEAP
+    #undef INCLUDE_EXAMPLE_SCENE
 
     #define SHOW_CS_INFOS false
     #define SHOW_INPUT_DISPLAY false
@@ -67,6 +68,7 @@
     #define ENABLE_DEBUG_SAVE false
     #define MAP_SELECT_ON_FILE_1 false
     #define ENABLE_DEBUG_HEAP false
+    #define INCLUDE_EXAMPLE_SCENE false
 #endif
 
 
