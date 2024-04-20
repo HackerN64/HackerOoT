@@ -11,6 +11,7 @@
 
 /**
  * F3DEX3 options
+ * This only works on "LLE-Emulators" like ares or ParaLLEl. It will not work on standard Project64.
  * ``ENABLE_F3DEX3_RECOMMENDATIONS`` will enable the recommended changes listed in F3DEX3's readme
  * ``ENABLE_F3DEX3_NEW_FEATURES`` will enable the required changes to use the new features from F3DEX3
 */
@@ -76,6 +77,7 @@
 
 /**
  * Widescreen mode
+ * Use the button combo Z + R + D-Pad Up to toggle
  * Note: pre-rendered scenes with the fixed camera mode won't re-scale properly
 */
 #define ENABLE_WIDESCREEN false
