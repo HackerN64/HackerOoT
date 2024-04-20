@@ -701,8 +701,10 @@ void FileSelect_UpdateOptionsMenu(GameState* thisx) {
             if (gSaveContext.audioSetting > 0xF0) {
                 gSaveContext.audioSetting = FS_AUDIO_SURROUND;
             }
-        } else {
+        } else if (sSelectedSetting == FS_SETTING_TARGET) {
             gSaveContext.zTargetSetting ^= 1;
+        } else {
+            gSaveContext.useWidescreen ^= 1;
         }
     } else if (this->stickAdjX > 30) {
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
@@ -714,19 +716,44 @@ void FileSelect_UpdateOptionsMenu(GameState* thisx) {
             if (gSaveContext.audioSetting > FS_AUDIO_SURROUND) {
                 gSaveContext.audioSetting = FS_AUDIO_STEREO;
             }
-        } else {
+        } else if (sSelectedSetting == FS_SETTING_TARGET) {
             gSaveContext.zTargetSetting ^= 1;
+        } else {
+            gSaveContext.useWidescreen ^= 1;
         }
     }
 
-    if ((this->stickAdjY < -30) || (this->stickAdjY > 30)) {
+    // check which option is selected
+    if ((this->stickAdjY < -30)) {
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        sSelectedSetting ^= 1;
+        if (sSelectedSetting == FS_SETTING_AUDIO) {
+            sSelectedSetting = FS_SETTING_TARGET;
+        } else if (sSelectedSetting == FS_SETTING_TARGET) {
+            sSelectedSetting = FS_SETTING_WIDESCREEN;
+        } else {
+            sSelectedSetting = FS_SETTING_AUDIO;
+        }
+    } else if ((this->stickAdjY > 30)) {
+        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        if (sSelectedSetting == FS_SETTING_AUDIO) {
+            sSelectedSetting = FS_SETTING_WIDESCREEN;
+        } else if (sSelectedSetting == FS_SETTING_TARGET) {
+            sSelectedSetting = FS_SETTING_AUDIO;
+        } else {
+            sSelectedSetting = FS_SETTING_TARGET;
+        }
     } else if (CHECK_BTN_ALL(input->press.button, BTN_A)) {
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        sSelectedSetting ^= 1;
+        if (sSelectedSetting == FS_SETTING_AUDIO) {
+            sSelectedSetting = FS_SETTING_TARGET;
+        } else if (sSelectedSetting == FS_SETTING_TARGET) {
+            sSelectedSetting = FS_SETTING_WIDESCREEN;
+        } else {
+            sSelectedSetting = FS_SETTING_AUDIO;
+        }
     }
 }
 
@@ -752,9 +779,15 @@ static OptionsMenuTextureInfo sOptionsMenuHeaders[] = {
         { 64, 144, 64 },
         16,
     },
-    {
+    /*TEMPORARILY DISABLED, BECAUSE WIDESCREEN REPLACES BRIGHTNESS ATM{
         { gFileSelCheckBrightnessENGTex, gFileSelCheckBrightnessGERTex, gFileSelCheckBrightnessFRATex },
         { 128, 128, 128 },
+        16,
+    },*/
+    // TODO: Add actual texture
+    {
+        { gFileSelSOUNDENGTex, gFileSelSOUNDENGTex, gFileSelSOUNDFRATex },
+        { 64, 64, 64 },
         16,
     },
 };
@@ -780,6 +813,17 @@ static OptionsMenuTextureInfo sOptionsMenuSettings[] = {
         { 48, 48, 48 },
         16,
     },
+    {
+        { gFileSelSwitchENGTex, gFileSelSwitchGERTex, gFileSelSwitchFRATex },
+        { 48, 80, 48 },
+        16,
+    },
+    {
+        { gFileSelHoldENGTex, gFileSelHoldGERTex, gFileSelHoldFRATex },
+        { 48, 80, 48 },
+        16,
+    },
+    // TODO: Use actual textures
     {
         { gFileSelSwitchENGTex, gFileSelSwitchGERTex, gFileSelSwitchFRATex },
         { 48, 80, 48 },
@@ -905,6 +949,7 @@ void FileSelect_DrawOptionsImpl(GameState* thisx) {
         gSPVertex(POLY_OPA_DISP++, D_80811F30, 32, 0);
     }
 
+    // draw audio options
     for (i = 0, vtx = 0; i < 4; i++, vtx += 4) {
         gDPPipeSync(POLY_OPA_DISP++);
         if (i == gSaveContext.audioSetting) {
@@ -921,23 +966,22 @@ void FileSelect_DrawOptionsImpl(GameState* thisx) {
             gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
         }
 
-        //! @bug Mistakenly using sOptionsMenuHeaders instead of sOptionsMenuSettings for the height.
-        //! This works out anyway because all heights are 16.
         gDPLoadTextureBlock(POLY_OPA_DISP++, sOptionsMenuSettings[i].texture[gSaveContext.language], G_IM_FMT_IA,
                             G_IM_SIZ_8b, sOptionsMenuSettings[i].width[gSaveContext.language],
-                            sOptionsMenuHeaders[i].height, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
+                            sOptionsMenuSettings[i].height, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
                             G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
         gSP1Quadrangle(POLY_OPA_DISP++, vtx, vtx + 2, vtx + 3, vtx + 1, 0);
     }
 
+    // draw target options
     for (; i < 6; i++, vtx += 4) {
         gDPPipeSync(POLY_OPA_DISP++);
 
-        if (i == (gSaveContext.zTargetSetting + 4)) {
-            if (sSelectedSetting != FS_SETTING_AUDIO) {
+        if (i == (gSaveContext.zTargetSetting + 4)) { // not quite sure what this is doing?? has to do with which option is highlighted
+            if (sSelectedSetting == FS_SETTING_TARGET) {
                 gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, cursorPrimRed, cursorPrimGreen, cursorPrimBlue,
                                 this->titleAlpha[0]);
-                gDPSetEnvColor(POLY_OPA_DISP++, cursorEnvRed, cursorEnvGreen, cursorEnvBlue, 0xFF);
+                gDPSetEnvColor(POLY_OPA_DISP++, cursorEnvRed, cursorEnvGreen, cursorEnvBlue, 255);
             } else {
                 gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, this->titleAlpha[0]);
                 gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
@@ -947,12 +991,34 @@ void FileSelect_DrawOptionsImpl(GameState* thisx) {
             gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
         }
 
-        //! @bug Mistakenly using sOptionsMenuHeaders instead of sOptionsMenuSettings for the height.
-        //! This is also an OOB read that happens to access the height of the first two elements in
-        //! sOptionsMenuSettings, and since all heights are 16, it works out anyway.
         gDPLoadTextureBlock(POLY_OPA_DISP++, sOptionsMenuSettings[i].texture[gSaveContext.language], G_IM_FMT_IA,
                             G_IM_SIZ_8b, sOptionsMenuSettings[i].width[gSaveContext.language],
-                            sOptionsMenuHeaders[i].height, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
+                            sOptionsMenuSettings[i].height, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
+                            G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+        gSP1Quadrangle(POLY_OPA_DISP++, vtx, vtx + 2, vtx + 3, vtx + 1, 0);
+    }
+
+    // draw widescreen options
+    for (; i < 8; i++, vtx += 4) {
+        gDPPipeSync(POLY_OPA_DISP++);
+
+        if (i == (gSaveContext.useWidescreen + 6)) {
+            if (sSelectedSetting == FS_SETTING_WIDESCREEN) {
+                gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, cursorPrimRed, cursorPrimGreen, cursorPrimBlue,
+                                this->titleAlpha[0]);
+                gDPSetEnvColor(POLY_OPA_DISP++, cursorEnvRed, cursorEnvGreen, cursorEnvBlue, 255);
+            } else {
+                gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, this->titleAlpha[0]);
+                gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
+            }
+        } else {
+            gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 120, 120, 120, this->titleAlpha[0]);
+            gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
+        }
+
+        gDPLoadTextureBlock(POLY_OPA_DISP++, sOptionsMenuSettings[i].texture[gSaveContext.language], G_IM_FMT_IA,
+                            G_IM_SIZ_8b, sOptionsMenuSettings[i].width[gSaveContext.language],
+                            sOptionsMenuSettings[i].height, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
                             G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
         gSP1Quadrangle(POLY_OPA_DISP++, vtx, vtx + 2, vtx + 3, vtx + 1, 0);
     }
@@ -960,7 +1026,8 @@ void FileSelect_DrawOptionsImpl(GameState* thisx) {
     gDPPipeSync(POLY_OPA_DISP++);
 
     // check brightness bars
-    gDPLoadTextureBlock_4b(POLY_OPA_DISP++, gFileSelBrightnessCheckTex, G_IM_FMT_IA, 96, 16, 0,
+    // TEMPORARY: REPLACES BRIGHTNESS SETTINGS
+    /*gDPLoadTextureBlock_4b(POLY_OPA_DISP++, gFileSelBrightnessCheckTex, G_IM_FMT_IA, 96, 16, 0,
                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
                            G_TX_NOLOD);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 55, 55, 55, this->titleAlpha[0]);
@@ -974,7 +1041,7 @@ void FileSelect_DrawOptionsImpl(GameState* thisx) {
     gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
     gSP1Quadrangle(POLY_OPA_DISP++, vtx, vtx + 2, vtx + 3, vtx + 1, 0);
 
-    vtx += 4;
+    vtx += 4;*/
 
     // blue divider lines
     gDPPipeSync(POLY_OPA_DISP++);

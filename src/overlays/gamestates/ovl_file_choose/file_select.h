@@ -144,7 +144,8 @@ typedef enum {
 
 typedef enum {
     /* 0 */ FS_SETTING_AUDIO,
-    /* 1 */ FS_SETTING_TARGET
+    /* 1 */ FS_SETTING_TARGET,
+    /* 2 */ FS_SETTING_WIDESCREEN
 } SettingIndex;
 
 typedef enum {
