@@ -1803,7 +1803,7 @@ void CutsceneCmd_MotionBlur(PlayState* play, CutsceneContext* csCtx, CsCmdMotion
             }
         }
     } else if (ENABLE_MOTION_BLUR_DEBUG) {
-        PRINTF("[HackerOoT:INFO]: Warning: Motion Blur is disabled\ntype: %d, startFrame: %d, endFrame: %d, curFrame: %d\n",
+        PRINTF("[HackerOoT:INFO]: Motion Blur disabled - type: %d, startFrame: %d, endFrame: %d, curFrame: %d\n",
             cmd->type, cmd->startFrame, cmd->endFrame, csCtx->curFrame
         );
     }
@@ -2230,7 +2230,6 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_MOTION_BLUR:
-                if (ENABLE_MOTION_BLUR) {
                     MemCpy(&cmdEntries, script, sizeof(cmdEntries));
                     script += sizeof(cmdEntries);
 
@@ -2238,7 +2237,6 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                         CutsceneCmd_MotionBlur(play, csCtx, (CsCmdMotionBlur*)script);
                         script += sizeof(CsCmdMotionBlur);
                     }
-                }
                 break;
 
             default:

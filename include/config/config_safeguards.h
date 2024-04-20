@@ -132,6 +132,15 @@
     #define USE_WIDESCREEN (ENABLE_WIDESCREEN && gSaveContext.save.useWidescreen == true)
 #endif
 
+//! TODO: implement better Wii VC compatibility
+#ifdef CONSOLE_WIIVC
+    #undef ENABLE_F3DEX3
+    #undef ENABLE_MOTION_BLUR
+
+    #define ENABLE_F3DEX3 false
+    #define ENABLE_MOTION_BLUR false
+#endif
+
 
 /**
  * Default settings if not using HackerOoT mode

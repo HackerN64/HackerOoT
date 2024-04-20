@@ -1171,20 +1171,28 @@ void Play_DestroyMotionBlur(void) {
     R_MOTION_BLUR_PRIORITY_ENABLED = false;
     sMotionBlurStatus = MOTION_BLUR_OFF;
 }
+#endif
 
 void Play_SetMotionBlurAlpha(u32 alpha) {
+    #if ENABLE_MOTION_BLUR
     R_MOTION_BLUR_ALPHA = alpha;
+    #endif
 }
 
 void Play_EnableMotionBlur(u32 alpha) {
+    #if ENABLE_MOTION_BLUR
     R_MOTION_BLUR_ALPHA = alpha;
     R_MOTION_BLUR_ENABLED = true;
+    #endif
 }
 
 void Play_DisableMotionBlur(void) {
+    #if ENABLE_MOTION_BLUR
     R_MOTION_BLUR_ENABLED = false;
+    #endif
 }
 
+#if ENABLE_MOTION_BLUR
 void Play_SetMotionBlurPriorityAlpha(u32 alpha) {
     R_MOTION_BLUR_PRIORITY_ALPHA = alpha;
 }
