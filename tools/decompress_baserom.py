@@ -127,7 +127,7 @@ def byte_swap(file_content: bytearray) -> bytearray:
 
 
 def per_version_fixes(file_content: bytearray, version: str) -> bytearray:
-    if version == "gc-eu-mq-dbg":
+    if version in {"gc-eu-mq-dbg", "hackeroot-mq"}:
         # Strip the overdump, which consists of an area of 0xFF bytes (which may
         # be erased flash memory) and ROM data from an unrelated game
         print("Stripping overdump...")
@@ -227,7 +227,7 @@ def main():
             f"Error: Expected a hash of {correct_str_hash} but got {str_hash}. The baserom has probably been tampered, find a new one"
         )
 
-        if version == "gc-eu-mq-dbg":
+        if version in {"gc-eu-mq-dbg", "hackeroot-mq"}:
             if str_hash == "9fede30e3239558cf3993f12b7ed7458":
                 print(
                     "The provided baserom is a rom which has been edited with ZeldaEdit and is not suitable for use with decomp. Find a new one."

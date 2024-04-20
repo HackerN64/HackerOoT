@@ -50,7 +50,25 @@ endif
 
 # Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
 # In nearly all cases, not having 'mips-linux-gnu-*' binaries on the PATH is indicative of missing dependencies
-MIPS_BINUTILS_PREFIX := mips-linux-gnu-
+
+# Returns the path to the command $(1) if exists. Otherwise returns an empty string.
+find-command = $(shell which $(1) 2>/dev/null)
+
+ifneq ($(call find-command,mips64-elf-ld),)
+  MIPS_BINUTILS_PREFIX := mips64-elf-
+else ifneq ($(call find-command,mips-n64-ld),)
+  MIPS_BINUTILS_PREFIX := mips-n64-
+else ifneq ($(call find-command,mips64-ld),)
+  MIPS_BINUTILS_PREFIX := mips64-
+else ifneq ($(call find-command,mips-linux-gnu-ld),)
+  MIPS_BINUTILS_PREFIX := mips-linux-gnu-
+else ifneq ($(call find-command,mips64-linux-gnu-ld),)
+  MIPS_BINUTILS_PREFIX := mips64-linux-gnu-
+else ifneq ($(call find-command,mips-ld),)
+  MIPS_BINUTILS_PREFIX := mips-
+else
+  $(error Unable to detect a suitable MIPS toolchain installed)
+endif
 
 # Version-specific settings
 ifeq ($(VERSION),gc-eu-mq)
@@ -317,6 +335,10 @@ ifneq ($(VERSION),gc-eu-mq)
 	$(PYTHON) extract_assets.py -j$(N_THREADS) -v $(VERSION)
 endif
 	$(MAKE) f3dex3
+ifeq ($(VERSION),hackeroot-mq)
+# TODO: proper fix (for .s files)
+	cp baseroms/hackeroot-mq/baserom-decompressed.z64 baseroms/gc-eu-mq-dbg/baserom-decompressed.z64
+endif
 
 run: $(ROM)
 ifeq ($(N64_EMULATOR),)
