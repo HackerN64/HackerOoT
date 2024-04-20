@@ -80,7 +80,7 @@
  * Use the button combo Z + R + D-Pad Up to toggle
  * Note: pre-rendered scenes with the fixed camera mode won't re-scale properly
 */
-#define ENABLE_WIDESCREEN false
+#define ENABLE_WIDESCREEN true
 
 // Force widescreen mode regardless of SaveContext
 #define FORCE_WIDESCREEN false
