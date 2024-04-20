@@ -10,6 +10,10 @@ We recommend using WSL on Windows, or native Linux, which the rest of this readm
 (These will also depend on the Linux instructions.)
 Some of these may also be out of date or unmaintained; usually our contributors use WSL, Linux, and macOS, so these instructions should be up to date.
 
+### Compiler
+
+The compiler to use is automatically detected by the build system. We recommend using [Modern SDK](https://crashoveride95.github.io/modernsdk/startoff.html).
+
 ### Windows
 
 For Windows 10 or 11, install WSL and a distribution by following this
