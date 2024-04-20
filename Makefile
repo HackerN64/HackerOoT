@@ -156,6 +156,7 @@ NO_COL  := \033[0m
 GREEN   := \033[0;32m
 BLUE    := \033[0;36m
 YELLOW  := \033[0;33m
+BLINK   := \033[32;5m
 
 PRINT := printf
 
