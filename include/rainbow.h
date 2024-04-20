@@ -25,13 +25,14 @@ typedef struct Rainbow {
     Color_RGB8 color;
     u8 state;
     u8 speed;
-    bool allowDebug;
+    u8 bAllowDebug;
+    u8 bPause;
 } Rainbow;
 
 void Rainbow_Debug(Rainbow* this);
 void Rainbow_InitColor(Rainbow* this);
 void Rainbow_Init(Rainbow* this);
-bool Rainbow_CheckColor(Rainbow* this, Color_RGB8 rgb);
+u8 Rainbow_CheckColor(Rainbow* this, Color_RGB8 rgb);
 void Rainbow_UpdateColor(Rainbow* this);
 void Rainbow_UpdateState(Rainbow* this, RainbowTarget target);
 void Rainbow_Update(Rainbow* this);

@@ -32,11 +32,12 @@ void Rainbow_InitColor(Rainbow* this) {
 void Rainbow_Init(Rainbow* this) {
     this->state = STATE_RED_TO_YELLOW;
     this->speed = 8;
-    this->allowDebug = false;
+    this->bAllowDebug = false;
+    this->bPause = false;
     Rainbow_InitColor(this);
 }
 
-bool Rainbow_CheckColor(Rainbow* this, Color_RGB8 rgb) {
+u8 Rainbow_CheckColor(Rainbow* this, Color_RGB8 rgb) {
     return ((this->color.r == rgb.r) && (this->color.g == rgb.g) && (this->color.b == rgb.b));
 }
 
@@ -71,10 +72,12 @@ void Rainbow_UpdateState(Rainbow* this, RainbowTarget target) {
 }
 
 void Rainbow_Update(Rainbow* this) {
-    Rainbow_UpdateColor(this);
-    Rainbow_UpdateState(this, sRainbowTarget[this->state]);
+    if (!this->bPause) {
+        Rainbow_UpdateColor(this);
+        Rainbow_UpdateState(this, sRainbowTarget[this->state]);
 
-    if (this->allowDebug) {
-        Rainbow_Debug(this);
+        if (this->bAllowDebug) {
+            Rainbow_Debug(this);
+        }
     }
 }
