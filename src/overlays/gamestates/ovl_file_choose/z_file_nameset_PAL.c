@@ -786,7 +786,7 @@ static OptionsMenuTextureInfo sOptionsMenuHeaders[] = {
     },*/
     // TODO: Add actual texture
     {
-        { gFileSelSOUNDENGTex, gFileSelSOUNDENGTex, gFileSelSOUNDFRATex },
+        { gFileSelWidescreenENGTex, gFileSelWidescreenENGTex, gFileSelWidescreenENGTex },
         { 64, 64, 64 },
         16,
     },
@@ -825,12 +825,12 @@ static OptionsMenuTextureInfo sOptionsMenuSettings[] = {
     },
     // TODO: Use actual textures
     {
-        { gFileSelSwitchENGTex, gFileSelSwitchGERTex, gFileSelSwitchFRATex },
+        { gFileSel4BY3ENGTex, gFileSel4BY3ENGTex, gFileSel4BY3ENGTex },
         { 48, 80, 48 },
         16,
     },
     {
-        { gFileSelHoldENGTex, gFileSelHoldGERTex, gFileSelHoldFRATex },
+        { gFileSel16BY9ENGTex, gFileSel16BY9ENGTex, gFileSel16BY9ENGTex },
         { 48, 80, 48 },
         16,
     },
