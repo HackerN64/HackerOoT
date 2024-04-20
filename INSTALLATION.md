@@ -134,4 +134,4 @@ The patch will be in the ``build/hackeroot-mq/`` folder.
 You can customize which HackerOoT features you want in your project and which not in the `include/config/` folder.
 Just define the features as `true` or `false` or, if necessary, put in the value you want (e.g. Text speed).
 
-**TIP:** if you are using VS Code, it might show you errors in your files with red squiglly lines. Those are false alarms, to get rid of them, you can place [THIS FILE](https://gist.github.com/krm01/7345ca80e0e7f6b083a0ea4e85515d4b) by [@kentonm](https://www.github.com/krm01) in your `.vscode` folder (You might need to create it first).
+**TIP:** if you are using VS Code, look at [vscode.md](docs/vscode.md) for useful costumization that make working with this project easier.
