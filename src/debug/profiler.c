@@ -37,7 +37,9 @@ void Profiler_Init(Profiler* this) {
     }
 
     firIdx = 0;
+    this->bShow = false;
     this->mode = PROFILING_MODE_DEFAULT;
+    this->results = NULL;
 }
 
 void Profiler_UpdateMode(Profiler* this, Input* controller) {
@@ -54,6 +56,10 @@ void Profiler_UpdateMode(Profiler* this, Input* controller) {
         if (this->mode > PROFILING_MODE_C) {
             this->mode = PROFILING_MODE_DEFAULT;
         }
+    }
+
+    if (CHECK_BTN_ALL(controller->cur.button, BTN_R) && CHECK_BTN_ALL(controller->press.button, BTN_L)) {
+        this->bShow ^= 1;
     }
 }
 

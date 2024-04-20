@@ -372,6 +372,7 @@ patch:
 	$(FLIPS) --create --bps $(BASEROM_PATCH) $(ROM) $(BPS)
 
 f3dex3_extract:
+	$(call mkdir F3DEX3/Profiling)
 	$(PYTHON) tools/data_extractor.py --start 0xBCD0F0 --size 0x1630 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.code
 	$(PYTHON) tools/data_extractor.py --start 0xBCE720 --size 0x420 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.data
 
@@ -380,8 +381,8 @@ f3dex3_clean:
 
 f3dex3:
 	$(MAKE) f3dex3_extract
-	$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).code.bps F3DEX3/f3dzex2.code $(F3DEX3)/F3DEX3_BrW.code
-	$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).data.bps F3DEX3/f3dzex2.data $(F3DEX3)/F3DEX3_BrW.data
+	$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).code.bps F3DEX3/f3dzex2.code $(F3DEX3)/$(F3DEX3_BUILD).code
+	$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).data.bps F3DEX3/f3dzex2.data $(F3DEX3)/$(F3DEX3_BUILD).data
 	$(MAKE) f3dex3_clean
 
 f3dex3_patch:
@@ -436,7 +437,7 @@ $(BUILD_DIR)/baserom/%.o: $(EXTRACTED_DIR)/baserom/%
 $(BUILD_DIR)/data/%.o: data/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
-$(BUILD_DIR)/data/rsp.rodata.f3dex3.o: F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data F3DEX3/Profiling/F3DEX3_BrW.code F3DEX3/Profiling/F3DEX3_BrW.data F3DEX3/Profiling/F3DEX3_BrW_PA.code F3DEX3/Profiling/F3DEX3_BrW_PB.code F3DEX3/Profiling/F3DEX3_BrW_PC.code F3DEX3/Profiling/F3DEX3_BrW_PA.data F3DEX3/Profiling/F3DEX3_BrW_PB.data F3DEX3/Profiling/F3DEX3_BrW_PC.data
+$(BUILD_DIR)/data/rsp.rodata.f3dex3.o: F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data F3DEX3/Profiling/F3DEX3_BrW_PA.code F3DEX3/Profiling/F3DEX3_BrW_PB.code F3DEX3/Profiling/F3DEX3_BrW_PC.code F3DEX3/Profiling/F3DEX3_BrW_PA.data F3DEX3/Profiling/F3DEX3_BrW_PB.data F3DEX3/Profiling/F3DEX3_BrW_PC.data
 
 $(BUILD_DIR)/assets/text/%.enc.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.txt
 	$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) $< | $(PYTHON) tools/msgenc.py - --output $@ --charmap assets/text/charmap.txt

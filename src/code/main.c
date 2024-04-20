@@ -84,6 +84,10 @@ void Main(void* arg) {
         DebugArena_Init(debugHeapStart, debugHeapSize);
     }
 
+#if ENABLE_F3DEX3
+    Profiler_Init(&gProfiler);
+#endif
+
     Regs_Init();
 
     R_ENABLE_ARENA_DBG = 0; // ENABLE_SPEEDMETER

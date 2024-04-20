@@ -88,8 +88,6 @@ const char* const gF3DEX3VersionNames[] = {
     // "LVP_NOC_PC",
 };
 
-// u8 runF3DEX3Version = 0;
-
 u64* SysUcode_GetUCode(void) {
     return gF3DEX3TextStarts[gProfiler.mode & 3]; // & 0xF];
 }

@@ -354,6 +354,17 @@ void GameState_Update(GameState* gameState) {
         func_800C49F4(gfxCtx);
     }
 
+     #if ENABLE_F3DEX3
+        if (gProfiler.results != NULL) {
+            Profiler_UpdateMode(&gProfiler, &gameState->input[0]);
+            Profiler_Update(&gProfiler);
+
+            if (gProfiler.bShow) {
+                Profiler_Draw(&gProfiler, gfxCtx);
+            }
+        }
+    #endif
+
     gameState->frames++;
 }
 

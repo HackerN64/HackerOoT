@@ -97,6 +97,7 @@ typedef enum ProfilingMode {
 } ProfilingMode;
 
 typedef struct Profiler {
+    u8 bShow;
     ProfilingMode mode;
     F3DEX3YieldDataFooter* results;
 } Profiler;

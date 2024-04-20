@@ -24,7 +24,7 @@ glabel gspF3DZEX2_NoN_PosLight_fifoDataEnd
 .balign 16
 
 glabel gF3DEX3_BrW_TextStart
-    .incbin "F3DEX3/Profiling/F3DEX3_BrW.code"
+    .incbin "F3DEX3/F3DEX3_BrW.code"
 glabel gF3DEX3_BrW_TextEnd
 .balign 16
 
@@ -44,7 +44,7 @@ glabel gF3DEX3_BrW_PC_TextEnd
 .balign 16
 
 glabel gF3DEX3_BrW_DataStart
-    .incbin "F3DEX3/Profiling/F3DEX3_BrW.data"
+    .incbin "F3DEX3/F3DEX3_BrW.data"
 glabel gF3DEX3_BrW_DataEnd
 .balign 16
 
