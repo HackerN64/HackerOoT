@@ -7,7 +7,7 @@
 
 #if ENABLE_F3DEX3
     #define REQUIRE_SEMICOLONS_AFTER_GBI_COMMANDS
-    #if ENABLE_F3DEX3_RECOMMENDATIONS
+    #if ENABLE_F3DEX3_NOSYNCS
         #define NO_SYNCS_IN_TEXTURE_LOADS
     #endif
     #include "gbi.f3dex3.h"
