@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
+
 """
 copies mod_assets into assets. assumes file is located at project root
 """
+
 import os
 import shutil
 import time
 import glob
 import typing as T
+import argparse
+
 from pathlib import Path
 
 
+allow_print = False
+
 def log(msg: str):
-    print(f"[{__file__}]: {msg}")
+    if allow_print:
+        print(f"[{__file__}]: {msg}")
 
 
 def remove_stale_assets(root: str, copied_files: T.List[str], last_cache_time: int):
@@ -95,6 +102,13 @@ def update_cache_time(root: str) -> int:
 
 
 def main():
+    global allow_print
+
+    parser = argparse.ArgumentParser(description="mod assets handler")
+    parser.add_argument("-v", "--verbose", help="shows prints", action="store_true")
+    args = parser.parse_args()
+    allow_print = args.verbose
+
     root = os.path.dirname(os.path.realpath(__file__)).removesuffix("/tools")
     last_cache_time = update_cache_time(root)
     copied_files = copy_all(root)

@@ -9,7 +9,7 @@
 
 CutsceneData gExampleCS[] = {
     CS_BEGIN_CUTSCENE(23, 308),
-        CS_DESTINATION(CS_DEST_KOKIRI_FOREST_FARORE, 99, 0),
+        // CS_DESTINATION(CS_DEST_KOKIRI_FOREST_FARORE, 99, 0),
         CS_MISC_LIST(3),
             CS_MISC(CS_MISC_RED_PULSATING_LIGHTS, 12, 75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
             CS_MISC(CS_MISC_VISMONO_BLACK_AND_WHITE, 80, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -20,8 +20,8 @@ CutsceneData gExampleCS[] = {
             CS_TEXT_NONE(2, 3),
         CS_TEXT_LIST(1),
             CS_TEXT_OCARINA_ACTION(OCARINA_ACTION_TEACH_BOLERO, 5, 6, 0x5678),
-        CS_LIGHT_SETTING_LIST(1),
-            CS_LIGHT_SETTING(9, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        // CS_LIGHT_SETTING_LIST(1),
+        //     CS_LIGHT_SETTING(9, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
         CS_TIME_LIST(1),
             CS_TIME(0, 45, 0, 14, 0),
         CS_STOP_SEQ_LIST(2),

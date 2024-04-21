@@ -308,8 +308,9 @@ endif
 all: rom
 
 rom:
-	python3 tools/mod_assets.py
-	$(MAKE) $(ROM)
+	$(call print,Building the rom...)
+	$(V)python3 tools/mod_assets.py
+	$(V)$(MAKE) $(ROM)
 
 compress:
 	$(call print,Compressing the rom...)
@@ -376,11 +377,11 @@ ifeq ($(VERSION),hackeroot-mq)
 	cp baseroms/hackeroot-mq/baserom-decompressed.z64 baseroms/gc-eu-mq-dbg/baserom-decompressed.z64
 endif
 
-run: $(ROM)
+run: rom
 ifeq ($(N64_EMULATOR),)
 	$(error Emulator path not set. Set N64_EMULATOR in the Makefile or define it as an environment variable)
 endif
-	$(N64_EMULATOR) $<
+	$(N64_EMULATOR) $(ROM)
 
 patch:
 	$(call print,Creating BPS patch...)

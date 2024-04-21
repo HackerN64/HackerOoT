@@ -2,6 +2,10 @@
 #include "quake.h"
 #include "terminal.h"
 
+#if INCLUDE_EXAMPLE_SCENE
+#include "assets/scenes/example/example_scene.h"
+#endif
+
 #if IS_DEBUG
 void* gDebugCutsceneScript = NULL;
 UNK_TYPE D_8012D1F4 = 0; // unused
@@ -1078,6 +1082,14 @@ skip:
             }
         }
     }
+
+#if INCLUDE_EXAMPLE_SCENE
+    if (this->sceneId == SCENE_EXAMPLE && CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_L | BTN_R)
+            && CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A) && !Play_InCsMode(this)) {
+        Cutscene_SetScript(this, gExampleCS);
+        gSaveContext.cutsceneTrigger = 1;
+    }
+#endif
 }
 
 void Play_DrawOverlayElements(PlayState* this) {
