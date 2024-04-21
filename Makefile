@@ -101,14 +101,6 @@ ifeq ($(origin PACKAGE_VERSION), undefined)
   endif
 endif
 
-# Set PACKAGE_AUTHOR define for printing author's git name
-ifeq ($(origin PACKAGE_AUTHOR), undefined)
-  PACKAGE_AUTHOR := $(shell git config --get user.name)
-  ifeq ('$(PACKAGE_AUTHOR)', '')
-    PACKAGE_AUTHOR = Unknown author
-  endif
-endif
-
 ifeq ($(VERSION),hackeroot-mq)
   CFLAGS += -DENABLE_HACKEROOT=1
   CPPFLAGS += -DENABLE_HACKEROOT=1
@@ -143,8 +135,8 @@ endif
 
 # Define author and package version for every OoT version
 # Note: this won't be used if not using HackerOoT
-CFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)' -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
-CPPFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)' -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
+CFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
+CPPFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
 OPTFLAGS += -ffast-math -fno-unsafe-math-optimizations
 
 ifeq ($(OS),Windows_NT)
