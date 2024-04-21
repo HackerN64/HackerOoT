@@ -357,4 +357,9 @@ typedef enum {
 #define R_VI_CUR_ADDI_SCAN_LINES   HREG(83)
 #define R_VI_CUR_Y_SCALE_MODE      HREG(84)
 
+#define R_MOTION_BLUR_ALPHA             SREG(90)
+#define R_MOTION_BLUR_PRIORITY_ALPHA    SREG(92)
+#define R_MOTION_BLUR_PRIORITY_ENABLED  SREG(93)
+#define R_MOTION_BLUR_ENABLED           SREG(95)
+
 #endif

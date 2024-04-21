@@ -48,6 +48,7 @@
     #undef ENABLE_DEBUG_SAVE
     #undef MAP_SELECT_ON_FILE_1
     #undef ENABLE_DEBUG_HEAP
+    #undef ENABLE_MOTION_BLUR_DEBUG
 
     #define SHOW_CS_INFOS false
     #define SHOW_INPUT_DISPLAY false
@@ -67,6 +68,7 @@
     #define ENABLE_DEBUG_SAVE false
     #define MAP_SELECT_ON_FILE_1 false
     #define ENABLE_DEBUG_HEAP false
+    #define ENABLE_MOTION_BLUR_DEBUG false
 #endif
 
 
@@ -130,6 +132,15 @@
     #define USE_WIDESCREEN (ENABLE_WIDESCREEN && gSaveContext.save.useWidescreen == true)
 #endif
 
+//! TODO: implement better Wii VC compatibility
+#ifdef CONSOLE_WIIVC
+    #undef ENABLE_F3DEX3
+    #undef ENABLE_MOTION_BLUR
+
+    #define ENABLE_F3DEX3 false
+    #define ENABLE_MOTION_BLUR false
+#endif
+
 
 /**
  * Default settings if not using HackerOoT mode
@@ -158,6 +169,7 @@
     #undef ENABLE_MSG_DEBUGGER
     #undef ENABLE_DEBUG_SAVE
     #undef MAP_SELECT_ON_FILE_1
+    #undef ENABLE_MOTION_BLUR_DEBUG
 
     #define DETERMINISTIC_BUILD false
     #define SKIP_N64_BOOT_LOGO true
@@ -182,6 +194,7 @@
     #define ENABLE_MSG_DEBUGGER false
     #define ENABLE_DEBUG_SAVE false
     #define MAP_SELECT_ON_FILE_1 true
+    #define ENABLE_MOTION_BLUR_DEBUG false
 #endif
 
 /**
@@ -192,6 +205,15 @@
 #else
 #define IS_DEBUG OOT_DEBUG
 #endif
+
+/**
+ * Game
+*/
+#define IS_MOTION_BLUR_ENABLED (ENABLE_HACKEROOT && ENABLE_MOTION_BLUR)
+
+/**
+ * Debug
+*/
 
 // General features
 #define IS_DEBUG_HEAP_ENABLED (IS_DEBUG && ENABLE_DEBUG_HEAP)
