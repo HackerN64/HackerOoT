@@ -46,6 +46,7 @@
     #undef ENABLE_DEBUG_SAVE
     #undef MAP_SELECT_ON_FILE_1
     #undef ENABLE_DEBUG_HEAP
+    #undef INCLUDE_EXAMPLE_SCENE
     #undef ENABLE_MOTION_BLUR_DEBUG
 
     #define SHOW_CS_INFOS false
@@ -66,6 +67,7 @@
     #define ENABLE_DEBUG_SAVE false
     #define MAP_SELECT_ON_FILE_1 false
     #define ENABLE_DEBUG_HEAP false
+    #define INCLUDE_EXAMPLE_SCENE false
     #define ENABLE_MOTION_BLUR_DEBUG false
 #endif
 
