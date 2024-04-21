@@ -7,7 +7,7 @@
 #include "z64cutscene_commands.h"
 #include "variables.h"
 
-CutsceneData gZcameditTestCS[] = {
+CutsceneData gExampleCS[] = {
     CS_BEGIN_CUTSCENE(23, 308),
         CS_DESTINATION(CS_DEST_KOKIRI_FOREST_FARORE, 99, 0),
         CS_MISC_LIST(3),

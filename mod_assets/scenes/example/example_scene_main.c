@@ -22,7 +22,7 @@ SceneCmd example_scene_header00[] = {
     SCENE_CMD_SPAWN_LIST(7, example_scene_header00_playerEntryList),
     SCENE_CMD_ENV_LIGHT_SETTINGS(4, example_scene_header00_lightSettings),
     SCENE_CMD_TRANSITION_ACTOR_LIST(1, example_scene_header00_transitionActors),
-    SCENE_CMD_CUTSCENE_DATA(gZcameditTestCS),
+    SCENE_CMD_CUTSCENE_DATA(gExampleCS),
     SCENE_CMD_END(),
 };
 

@@ -29,7 +29,7 @@ extern CollisionPoly example_polygons[];
 extern Vec3s example_vertices[133];
 extern WaterBox example_waterBoxes[];
 extern CollisionHeader example_collisionHeader;
-extern CutsceneData gZcameditTestCS[];
+extern CutsceneData gExampleCS[];
 extern SceneCmd* example_room_0_alternateHeaders[];
 extern SceneCmd example_room_0_header00[];
 extern s16 example_room_0_header00_objectList[];
