@@ -186,6 +186,12 @@ f32 __powisf2(f32 x, s32 m) {
     return (m < 0) ? (1.0f / y) : y;
 }
 
+int __ucmpdi2(unsigned long long a, unsigned long long b) {
+    if (a == b)
+        return 1;
+    return (a < b) ? 0 : 2;
+}
+
 // Compute division and modulo of 64-bit signed and unsigned integers
 
 __asm__("                                   \n\

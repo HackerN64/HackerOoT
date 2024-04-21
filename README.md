@@ -31,9 +31,19 @@ This project is using the following tools:
 
 **Discord:** <https://discord.zelda64.dev>
 
-## Installation
+## Getting Started
+
+### Installation
 
 Instructions to build this project are available [here](INSTALLATION.md).
+
+### Modding
+
+HackerOoT features are listed in the config headers under ``include/config/``.
+
+This project includes an example scene, available if ``INCLUDE_EXAMPLE_SCENE`` is set to ``true``. It's accessible from the file select.
+
+This also includes an example cutscene, playable in the example scene when holding ``L`` + ``R`` and pressing ``A``.
 
 ## Contributing
 

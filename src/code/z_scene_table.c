@@ -1,5 +1,6 @@
 #include "global.h"
 #include "quake.h"
+#include "config.h"
 
 #include "assets/scenes/overworld/spot00/spot00_scene.h"
 #include "assets/scenes/overworld/spot00/spot00_room_0.h"
