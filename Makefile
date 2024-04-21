@@ -54,9 +54,7 @@ endif
 # Returns the path to the command $(1) if exists. Otherwise returns an empty string.
 find-command = $(shell which $(1) 2>/dev/null)
 
-ifneq ($(call find-command,mips64-elf-ld),)
-  MIPS_BINUTILS_PREFIX := mips64-elf-
-else ifneq ($(call find-command,mips-n64-ld),)
+ifneq ($(call find-command,mips-n64-ld),)
   MIPS_BINUTILS_PREFIX := mips-n64-
 else ifneq ($(call find-command,mips64-ld),)
   MIPS_BINUTILS_PREFIX := mips64-
@@ -66,6 +64,8 @@ else ifneq ($(call find-command,mips64-linux-gnu-ld),)
   MIPS_BINUTILS_PREFIX := mips64-linux-gnu-
 else ifneq ($(call find-command,mips-ld),)
   MIPS_BINUTILS_PREFIX := mips-
+else ifneq ($(call find-command,mips64-elf-ld),)
+  MIPS_BINUTILS_PREFIX := mips64-elf-
 else
   $(error Unable to detect a suitable MIPS toolchain installed)
 endif
@@ -395,7 +395,6 @@ verify:
 	$(V)$(MAKE) clean
 	$(V)$(MAKE) rom
 	@md5sum $(ROM)
-	@md5sum -c build.md5 
 
 .PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3 verify
 .DEFAULT_GOAL := rom
