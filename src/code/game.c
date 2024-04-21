@@ -271,6 +271,7 @@ void GameState_Update(GameState* gameState) {
 
     gameState->main(gameState);
 
+    Rainbow_Update(&gRainbow);
     func_800C4344(gameState);
 
 #if IS_DEBUG
