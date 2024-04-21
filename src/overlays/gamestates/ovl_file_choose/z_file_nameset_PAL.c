@@ -670,6 +670,7 @@ void FileSelect_UpdateOptionsMenu(GameState* thisx) {
     SramContext* sramCtx = &this->sramCtx;
     Input* input = &this->state.input[0];
 
+    // save the settings
     if (CHECK_BTN_ALL(input->press.button, BTN_B)) {
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
@@ -784,7 +785,6 @@ static OptionsMenuTextureInfo sOptionsMenuHeaders[] = {
         { 128, 128, 128 },
         16,
     },*/
-    // TODO: Add actual texture
     {
         { gFileSelWidescreenENGTex, gFileSelWidescreenENGTex, gFileSelWidescreenENGTex },
         { 64, 64, 64 },
@@ -823,15 +823,14 @@ static OptionsMenuTextureInfo sOptionsMenuSettings[] = {
         { 48, 80, 48 },
         16,
     },
-    // TODO: Use actual textures
     {
         { gFileSel4BY3ENGTex, gFileSel4BY3ENGTex, gFileSel4BY3ENGTex },
-        { 48, 80, 48 },
+        { 48, 48, 48 },
         16,
     },
     {
         { gFileSel16BY9ENGTex, gFileSel16BY9ENGTex, gFileSel16BY9ENGTex },
-        { 48, 80, 48 },
+        { 48, 48, 48 },
         16,
     },
 };
@@ -977,7 +976,7 @@ void FileSelect_DrawOptionsImpl(GameState* thisx) {
     for (; i < 6; i++, vtx += 4) {
         gDPPipeSync(POLY_OPA_DISP++);
 
-        if (i == (gSaveContext.zTargetSetting + 4)) { // not quite sure what this is doing?? has to do with which option is highlighted
+        if (i == (gSaveContext.zTargetSetting + 4)) {
             if (sSelectedSetting == FS_SETTING_TARGET) {
                 gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, cursorPrimRed, cursorPrimGreen, cursorPrimBlue,
                                 this->titleAlpha[0]);
