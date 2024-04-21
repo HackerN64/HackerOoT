@@ -234,7 +234,6 @@ typedef struct {
     /* 0x14 */ s32 totalDays;
     /* 0x18 */ s32 bgsDayCount; // increments with totalDays, can be cleared with `Environment_ClearBgsDayCount`
     /* 0x1C */ SaveInfo info; // "information"
-    u8 useWidescreen;
 } Save;
 
 typedef struct {
@@ -300,6 +299,7 @@ typedef struct {
     /* 0x1420 */ s16 worldMapArea;
     /* 0x1422 */ s16 sunsSongState; // controls the effects of suns song
     /* 0x1424 */ s16 healthAccumulator;
+    u8 useWidescreen;
 } SaveContext; // size = 0x1428
 
 typedef enum {

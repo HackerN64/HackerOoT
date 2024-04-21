@@ -452,7 +452,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
 
     if (ENABLE_WIDESCREEN && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_DUP) &&
         CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_Z | BTN_R)) {
-        gSaveContext.save.useWidescreen ^= 1;
+        gSaveContext.useWidescreen ^= 1;
     }
 }
 

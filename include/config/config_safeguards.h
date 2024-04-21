@@ -131,7 +131,7 @@
 #if FORCE_WIDESCREEN
     #define USE_WIDESCREEN true
 #else
-    #define USE_WIDESCREEN (ENABLE_WIDESCREEN && gSaveContext.save.useWidescreen == true)
+    #define USE_WIDESCREEN (ENABLE_WIDESCREEN && gSaveContext.useWidescreen == true)
 #endif
 
 //! TODO: implement better Wii VC compatibility
