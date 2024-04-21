@@ -267,6 +267,30 @@
     CS_CMD_DESTINATION, 1, CMD_HH(destination, startFrame), CMD_HH(endFrame, endFrame)
 
 /**
+ * Declares a list of `CS_MOTION_BLUR` entries
+ */
+#define CS_MOTION_BLUR_LIST(entries) \
+    CS_CMD_MOTION_BLUR, CMD_W(entries)
+
+#define CS_MOTION_BLUR(type, alpha, startFrame, endFrame) \
+    CMD_HH(type, alpha), CMD_HH(startFrame, endFrame)
+
+/**
+ * Enables motion blur
+ * ``alpha`` is how visible the motion blur is, MM uses 180 for every instance of motion blur.
+ * Note: this can happen gradually
+ */
+#define CS_MOTION_BLUR_ENABLE(startFrame, endFrame, alpha) \
+    CS_MOTION_BLUR(CS_MOTION_BLUR_ENABLE, alpha, startFrame, endFrame)
+
+/**
+ * Disables motion blur
+ * Note: this can happen gradually
+*/
+#define CS_MOTION_BLUR_DISABLE(startFrame, endFrame) \
+    CS_MOTION_BLUR(CS_MOTION_BLUR_DISABLE, 0, startFrame, endFrame)
+
+/**
  * Marks the end of a cutscene script.
  */
 #define CS_END() 0xFFFFFFFF, 0x00000000

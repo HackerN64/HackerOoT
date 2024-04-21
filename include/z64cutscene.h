@@ -2,6 +2,7 @@
 #define Z64CUTSCENE_H
 
 #include "ultra64.h"
+#include "config.h"
 
 typedef union CutsceneData {
     s32 i;
@@ -147,6 +148,7 @@ typedef enum {
     /* 0x008F */ CS_CMD_ACTOR_CUE_9_0,
     /* 0x0090 */ CS_CMD_ACTOR_CUE_0_17,
     /* 0x03E8 */ CS_CMD_DESTINATION = 0x03E8,
+    /* 0x03E9 */ CS_CMD_MOTION_BLUR,
     /* 0xFFFF */ CS_CMD_END = 0xFFFF
 } CutsceneCmd;
 
@@ -510,6 +512,22 @@ typedef struct {
     /* 0x20 */ CutsceneCameraPoint* camEyePoints;
     /* 0x24 */ CsCmdActorCue* playerCue;
     /* 0x28 */ CsCmdActorCue* actorCues[10]; // "npcdemopnt"
+    /* 0x38 */ u16 originalBlurAlpha;
 } CutsceneContext; // size = 0x50
+
+typedef union {
+    struct {
+        /* 0x0 */ u16 type;
+        /* 0x2 */ u16 alpha;
+        /* 0x4 */ u16 startFrame;
+        /* 0x6 */ u16 endFrame;
+    };
+    s32 _words[2];
+} CsCmdMotionBlur; // size = 0x8
+
+typedef enum {
+    /* 1 */ CS_MOTION_BLUR_ENABLE = 1,
+    /* 2 */ CS_MOTION_BLUR_DISABLE
+} CsMotionBlurType;
 
 #endif

@@ -70,4 +70,9 @@
 */
 #define INCLUDE_EXAMPLE_SCENE true
 
+/**
+ * Enable motion blur debug
+*/
+#define ENABLE_MOTION_BLUR_DEBUG false
+
 #endif

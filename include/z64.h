@@ -60,6 +60,7 @@
 #include "jpeg.h"
 #include "prerender.h"
 #include "widescreen.h"
+#include "rainbow.h"
 
 #define SCREEN_WIDTH  320
 #define SCREEN_HEIGHT 240
