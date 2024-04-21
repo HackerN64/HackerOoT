@@ -109,9 +109,6 @@ ifeq ($(origin PACKAGE_AUTHOR), undefined)
   endif
 endif
 
-# Make sure the build reports the correct version
-$(shell touch src/boot/build.c)
-
 ifeq ($(VERSION),hackeroot-mq)
   CFLAGS += -DENABLE_HACKEROOT=1
   CPPFLAGS += -DENABLE_HACKEROOT=1
@@ -394,7 +391,13 @@ f3dex3:
 	$(V)$(RM) -r F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
 	$(call print,Success!)
 
-.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3
+verify:
+	$(V)$(MAKE) clean
+	$(V)$(MAKE) rom
+	@md5sum $(ROM)
+	@md5sum -c build.md5 
+
+.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3 verify
 .DEFAULT_GOAL := rom
 
 #### Various Recipes ####

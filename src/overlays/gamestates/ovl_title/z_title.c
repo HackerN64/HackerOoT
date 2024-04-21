@@ -22,19 +22,17 @@ void ConsoleLogo_PrintBuildInfo(Gfx** gfxP) {
         GfxPrint_SetColor(printer, 255, 255, 255, 255);
 
         GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 22);
-        GfxPrint_Printf(printer, "[Author:%s]", gBuildAuthor);
-
-        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 23);
         GfxPrint_Printf(printer, "[Date:%s]", gBuildDate);
 
-        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 24);
+        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 23);
         GfxPrint_Printf(printer, "[Version:%s]", gBuildGitVersion);
 
-        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 25);
+        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 24);
         GfxPrint_Printf(printer, "[Build Option:%s]", gBuildMakeOption);
 
         if (ENABLE_F3DEX3) {
-            GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 27);
+            GfxPrint_SetColor(printer, gRainbow.color.r, gRainbow.color.g, gRainbow.color.b, 255);
+            GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 26);
             GfxPrint_Printf(printer, "Powered by F3DEX3!");
         }
 

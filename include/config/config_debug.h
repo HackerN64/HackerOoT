@@ -11,11 +11,6 @@
  */
 
 /**
- * Avoids code that may be compiled differently between builds, such as using `__DATE__`, `__TIME__`, `__FILE__`, or `__LINE__`.
- */
-#define DETERMINISTIC_BUILD false
-
-/**
  * Options for booting directly into a scene, the map select or the file select, instead of the title screen.
  */
 #define BOOT_TO_SCENE false
