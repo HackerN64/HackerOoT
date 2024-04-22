@@ -60,6 +60,7 @@
 #include "jpeg.h"
 #include "prerender.h"
 #include "widescreen.h"
+#include "rainbow.h"
 
 #if ENABLE_HACKER_DEBUG
 #include "debug.h"

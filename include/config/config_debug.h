@@ -16,11 +16,6 @@
 #define ENABLE_HACKER_DEBUG true
 
 /**
- * Avoids code that may be compiled differently between builds, such as using `__DATE__`, `__TIME__`, `__FILE__`, or `__LINE__`.
- */
-#define DETERMINISTIC_BUILD false
-
-/**
  * Options for booting directly into a scene, the map select or the file select, instead of the title screen.
  */
 #define BOOT_TO_SCENE false
@@ -69,5 +64,15 @@
  * Enable DMA print at boot
 */
 #define ENABLE_DMA_PRINTF false
+
+/**
+ * Include example scene
+*/
+#define INCLUDE_EXAMPLE_SCENE true
+
+/**
+ * Enable motion blur debug
+*/
+#define ENABLE_MOTION_BLUR_DEBUG false
 
 #endif

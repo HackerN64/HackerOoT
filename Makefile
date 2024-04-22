@@ -54,9 +54,7 @@ endif
 # Returns the path to the command $(1) if exists. Otherwise returns an empty string.
 find-command = $(shell which $(1) 2>/dev/null)
 
-ifneq ($(call find-command,mips64-elf-ld),)
-  MIPS_BINUTILS_PREFIX := mips64-elf-
-else ifneq ($(call find-command,mips-n64-ld),)
+ifneq ($(call find-command,mips-n64-ld),)
   MIPS_BINUTILS_PREFIX := mips-n64-
 else ifneq ($(call find-command,mips64-ld),)
   MIPS_BINUTILS_PREFIX := mips64-
@@ -66,6 +64,8 @@ else ifneq ($(call find-command,mips64-linux-gnu-ld),)
   MIPS_BINUTILS_PREFIX := mips64-linux-gnu-
 else ifneq ($(call find-command,mips-ld),)
   MIPS_BINUTILS_PREFIX := mips-
+else ifneq ($(call find-command,mips64-elf-ld),)
+  MIPS_BINUTILS_PREFIX := mips64-elf-
 else
   $(error Unable to detect a suitable MIPS toolchain installed)
 endif
@@ -100,17 +100,6 @@ ifeq ($(origin PACKAGE_VERSION), undefined)
     PACKAGE_VERSION = Unknown version
   endif
 endif
-
-# Set PACKAGE_AUTHOR define for printing author's git name
-ifeq ($(origin PACKAGE_AUTHOR), undefined)
-  PACKAGE_AUTHOR := $(shell git config --get user.name)
-  ifeq ('$(PACKAGE_AUTHOR)', '')
-    PACKAGE_AUTHOR = Unknown author
-  endif
-endif
-
-# Make sure the build reports the correct version
-$(shell touch src/boot/build.c)
 
 # available: default, pa, pb, pc (px: profiling mode x)
 F3DEX3_MODE ?= default
@@ -168,8 +157,8 @@ endif
 
 # Define author and package version for every OoT version
 # Note: this won't be used if not using HackerOoT
-CFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)' -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
-CPPFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)' -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
+CFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
+CPPFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
 OPTFLAGS += -ffast-math -fno-unsafe-math-optimizations
 
 ifeq ($(OS),Windows_NT)
@@ -184,6 +173,26 @@ else
         MAKE=gmake
     endif
 endif
+
+# Verbose toggle
+V := @
+ifeq (VERBOSE, 1)
+    V=
+endif
+
+# Colors
+NO_COL  := \033[0m
+GREEN   := \033[0;32m
+BLUE    := \033[0;36m
+YELLOW  := \033[0;33m
+BLINK   := \033[32;5m
+
+PRINT := printf
+
+# Generic print function for make rules
+define print
+  $(V)echo -e "$(GREEN)$(1) $(YELLOW)$(2)$(GREEN) -> $(BLUE)$(3)$(NO_COL)"
+endef
 
 #### Tools ####
 ifneq ($(shell type $(MIPS_BINUTILS_PREFIX)ld >/dev/null 2>/dev/null; echo $$?), 0)
@@ -307,108 +316,140 @@ endif
 
 #### Main Targets ###
 
-all: rom compress
+all: rom
 
-rom: $(ROM)
+rom:
+	$(call print,Building the rom...)
+	$(V)python3 tools/mod_assets.py
+	$(V)$(MAKE) $(ROM)
 
 compress:
+	$(call print,Compressing the rom...)
 # make sure z_std_dma.c and spec are up-to-date
-	$(shell touch spec)
-	$(shell touch src/boot/z_std_dma.c)
-	$(MAKE) $(ROMC)
+	$(V)$(shell touch spec)
+	$(V)$(shell touch src/boot/z_std_dma.c)
+	$(V)$(MAKE) $(ROMC)
+	$(call print,Success!)
 
 wad:
+	$(call print,Patching WAD...)
 ifeq ("$(wildcard baseroms/$(VERSION)/common-key.bin)", "")
 	$(error Please provide the common-key.bin file.)
 endif
-	$(MAKE) compress CFLAGS="-DCONSOLE_WIIVC $(CFLAGS) -fno-reorder-blocks -fno-optimize-sibling-calls" CPPFLAGS="-DCONSOLE_WIIVC $(CPPFLAGS)"
-	tools/gzinject/gzinject -a inject -r 1 -k baseroms/$(VERSION)/common-key.bin -w baseroms/$(VERSION)/basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
-	$(RM) -r wadextract/
+	$(V)$(MAKE) compress CFLAGS="-DCONSOLE_WIIVC $(CFLAGS) -fno-reorder-blocks -fno-optimize-sibling-calls" CPPFLAGS="-DCONSOLE_WIIVC $(CPPFLAGS)"
+	$(V)tools/gzinject/gzinject -a inject -r 1 -k baseroms/$(VERSION)/common-key.bin -w baseroms/$(VERSION)/basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
+	$(V)$(RM) -r wadextract/
+	$(call print,Success!)
 
 clean:
-	$(RM) -r $(BUILD_DIR)
+	$(V)$(RM) -r $(BUILD_DIR)
+	$(call print,Success!)
 
 assetclean:
-	$(RM) -r $(ASSET_BIN_DIRS)
-	$(RM) -r $(EXTRACTED_DIR)
-	$(RM) -r $(BUILD_DIR)/assets
-	$(RM) -r .extracted-assets.json
+	$(V)$(RM) -r $(ASSET_BIN_DIRS)
+	$(V)$(RM) -r $(EXTRACTED_DIR)
+	$(V)$(RM) -r $(BUILD_DIR)/assets
+	$(V)$(RM) -r .extracted-assets.json
+	$(call print,Success!)
 
 distclean: assetclean
-	$(RM) -r extracted/
-	$(RM) -r build/
-	$(MAKE) -C tools distclean
-	$(RM) -r F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data
+	$(V)$(RM) -r extracted/
+	$(V)$(RM) -r build/
+	$(V)$(MAKE) -C tools distclean
+	$(V)$(RM) -r F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data
+	$(call print,Success!)
 
 venv:
 # Create the virtual environment if it doesn't exist.
 # Delete the virtual environment directory if creation fails.
-	test -d $(VENV) || python3 -m venv $(VENV) || { rm -rf $(VENV); false; }
-	$(PYTHON) -m pip install -U pip
-	$(PYTHON) -m pip install -U -r requirements.txt
+	$(call print,Preparing the virtual environment...)
+	$(V)test -d $(VENV) || python3 -m venv $(VENV) || { rm -rf $(VENV); false; }
+	$(V)$(PYTHON) -m pip install -U pip
+	$(V)$(PYTHON) -m pip install -U -r requirements.txt
+	$(call print,Success!)
 
 setup: venv
-	$(MAKE) -C tools
-	$(PYTHON) tools/decompress_baserom.py $(VERSION)
-	$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 -o $(EXTRACTED_DIR)/baserom --dmadata-start `cat $(BASEROM_DIR)/dmadata_start.txt` --dmadata-names $(BASEROM_DIR)/dmadata_names.txt
-	$(PYTHON) tools/msgdis.py --oot-version $(VERSION) --text-out $(EXTRACTED_DIR)/text/message_data.h --staff-text-out $(EXTRACTED_DIR)/text/message_data_staff.h
+	$(call print,Setup in progress...)
+	$(V)$(MAKE) -C tools
+	$(call print,Tools: Done!)
+	$(V)$(PYTHON) tools/decompress_baserom.py $(VERSION)
+	$(call print,Decompressing baserom: Done!)
+	$(V)$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 -o $(EXTRACTED_DIR)/baserom --dmadata-start `cat $(BASEROM_DIR)/dmadata_start.txt` --dmadata-names $(BASEROM_DIR)/dmadata_names.txt
+	$(V)$(PYTHON) tools/msgdis.py --oot-version $(VERSION) --text-out $(EXTRACTED_DIR)/text/message_data.h --staff-text-out $(EXTRACTED_DIR)/text/message_data_staff.h
 # TODO: for now, we only extract assets from the Debug ROM
 ifneq ($(VERSION),gc-eu-mq)
-	$(PYTHON) extract_assets.py -j$(N_THREADS) -v $(VERSION)
+	$(V)$(PYTHON) extract_assets.py -j$(N_THREADS) -v $(VERSION)
 endif
+	$(call print,Extracting files: Done!)
 	$(MAKE) f3dex3
+	$(call print,Success!)
 ifeq ($(VERSION),hackeroot-mq)
 # TODO: proper fix (for .s files)
 	cp baseroms/hackeroot-mq/baserom-decompressed.z64 baseroms/gc-eu-mq-dbg/baserom-decompressed.z64
 endif
 
-run: $(ROM)
+run: rom
 ifeq ($(N64_EMULATOR),)
 	$(error Emulator path not set. Set N64_EMULATOR in the Makefile or define it as an environment variable)
 endif
-	$(N64_EMULATOR) $<
+	$(N64_EMULATOR) $(ROM)
 
 patch:
-	$(FLIPS) --create --bps $(BASEROM_PATCH) $(ROM) $(BPS)
+	$(call print,Creating BPS patch...)
+	$(V)$(FLIPS) --create --bps $(BASEROM_PATCH) $(ROM) $(BPS)
+	$(call print,Success!)
 
 f3dex3_extract:
-	$(call mkdir F3DEX3/Profiling)
-	$(PYTHON) tools/data_extractor.py --start 0xBCD0F0 --size 0x1630 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.code
-	$(PYTHON) tools/data_extractor.py --start 0xBCE720 --size 0x420 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.data
+	$(V)$(call mkdir F3DEX3/Profiling)
+	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCD0F0 --size 0x1630 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.code
+	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCE720 --size 0x420 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.data
 
 f3dex3_clean:
-	$(RM) -r F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
+	$(V)$(RM) -r F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
 
 f3dex3:
-	$(MAKE) f3dex3_extract
-	$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).code.bps F3DEX3/f3dzex2.code $(F3DEX3)/$(F3DEX3_BUILD).code
-	$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).data.bps F3DEX3/f3dzex2.data $(F3DEX3)/$(F3DEX3_BUILD).data
-	$(MAKE) f3dex3_clean
+	$(call print,Patching the microcode...)
+	$(V)$(MAKE) f3dex3_extract
+	$(V)$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).code.bps F3DEX3/f3dzex2.code $(F3DEX3)/$(F3DEX3_BUILD).code
+	$(V)$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).data.bps F3DEX3/f3dzex2.data $(F3DEX3)/$(F3DEX3_BUILD).data
+	$(V)$(MAKE) f3dex3_clean
+	$(call print,Success!)
 
 f3dex3_patch:
-	$(MAKE) f3dex3_extract
-	$(FLIPS) --create --bps F3DEX3/f3dzex2.code $(F3DEX3)/$(F3DEX3_BUILD).code F3DEX3/Patch/$(F3DEX3_BUILD).code.bps
-	$(FLIPS) --create --bps F3DEX3/f3dzex2.data $(F3DEX3)/$(F3DEX3_BUILD).data F3DEX3/Patch/$(F3DEX3_BUILD).data.bps
-	$(MAKE) f3dex3_clean
+	$(V)$(MAKE) f3dex3_extract
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code $(F3DEX3)/$(F3DEX3_BUILD).code F3DEX3/Patch/$(F3DEX3_BUILD).code.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data $(F3DEX3)/$(F3DEX3_BUILD).data F3DEX3/Patch/$(F3DEX3_BUILD).data.bps
+	$(V)$(MAKE) f3dex3_clean
 
-.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3 f3dex3_patch f3dex3_extract f3dex3_clean
+.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3 f3dex3_patch f3dex3_extract f3dex3_clean verify
+
+verify:
+	$(V)$(MAKE) clean
+	$(V)$(MAKE) rom
+	@md5sum $(ROM)
+
+.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3 verify
 .DEFAULT_GOAL := rom
 
 #### Various Recipes ####
 
 $(ROM): $(ELF)
-	$(ELF2ROM) -cic 6105 $< $@
+	$(V)$(ELF2ROM) -cic 6105 $< $@
+	@$(PRINT) "${BLINK}Build succeeded.\n$(NO_COL)"
+	@$(PRINT) "==== Build Options ====$(NO_COL)\n"
+	@$(PRINT) "${GREEN}OoT Version: $(BLUE)$(VERSION)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}Code Version: $(BLUE)$(PACKAGE_VERSION)$(NO_COL)\n"
 
 $(ROMC): $(ROM) $(ELF) $(BUILD_DIR)/compress_ranges.txt
 ifeq ($(COMPRESSION),yaz)
-	$(PYTHON) tools/compress.py --in $(ROM) --out $@ --dmadata-start `./tools/dmadata_range.sh $(NM) $(ELF)` --compress `cat $(BUILD_DIR)/compress_ranges.txt` --threads $(N_THREADS)
+	$(V)$(PYTHON) tools/compress.py --in $(ROM) --out $@ --dmadata-start `./tools/dmadata_range.sh $(NM) $(ELF)` --compress `cat $(BUILD_DIR)/compress_ranges.txt` --threads $(N_THREADS)
 else
-	$(PYTHON) tools/z64compress_wrapper.py --codec $(COMPRESSION) --cache $(BUILD_DIR)/cache --threads $(N_THREADS) $< $@ $(ELF) $(BUILD_DIR)/$(SPEC)
+	$(V)$(PYTHON) tools/z64compress_wrapper.py --codec $(COMPRESSION) --cache $(BUILD_DIR)/cache --threads $(N_THREADS) $< $@ $(ELF) $(BUILD_DIR)/$(SPEC)
 endif
-	$(PYTHON) -m ipl3checksum sum --cic 6105 --update $@
+	$(V)$(PYTHON) -m ipl3checksum sum --cic 6105 --update $@
 
 $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(LDSCRIPT) $(BUILD_DIR)/undefined_syms.txt
-	$(LD) -T $(LDSCRIPT) -T $(BUILD_DIR)/undefined_syms.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP) -o $@
+	$(V)$(LD) -T $(LDSCRIPT) -T $(BUILD_DIR)/undefined_syms.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP) -o $@
 
 ## Order-only prerequisites
 # These ensure e.g. the O_FILES are built before the OVL_RELOC_FILES.
@@ -423,24 +464,29 @@ $(O_FILES): | asset_files
 .PHONY: o_files asset_files
 
 $(BUILD_DIR)/$(SPEC): $(SPEC)
-	$(CPP) $(CPPFLAGS) $< | $(SPEC_REPLACE_VARS) > $@
+	$(call print,Compiling:,$<,$@)
+	$(V)$(CPP) $(CPPFLAGS) $< | $(SPEC_REPLACE_VARS) > $@
 
 $(LDSCRIPT): $(BUILD_DIR)/$(SPEC)
-	$(MKLDSCRIPT) $< $@
+	$(call print,Linking:,$<,$@)
+	$(V)$(MKLDSCRIPT) $< $@
 
 $(BUILD_DIR)/undefined_syms.txt: undefined_syms.txt
-	$(CPP) $(CPPFLAGS) $< > $@
+	$(call print,Compiling:,$<,$@)
+	$(V)$(CPP) $(CPPFLAGS) $< > $@
 
 $(BUILD_DIR)/baserom/%.o: $(EXTRACTED_DIR)/baserom/%
-	$(OBJCOPY) -I binary -O elf32-big $< $@
+	$(V)$(OBJCOPY) -I binary -O elf32-big $< $@
 
 $(BUILD_DIR)/data/%.o: data/%.s
-	$(AS) $(ASFLAGS) $< -o $@
+	$(call print,Relocating:,$<,$@)
+	$(V)$(AS) $(ASFLAGS) $< -o $@
 
 $(BUILD_DIR)/data/rsp.rodata.f3dex3.o: F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data F3DEX3/Profiling/F3DEX3_BrW_PA.code F3DEX3/Profiling/F3DEX3_BrW_PB.code F3DEX3/Profiling/F3DEX3_BrW_PC.code F3DEX3/Profiling/F3DEX3_BrW_PA.data F3DEX3/Profiling/F3DEX3_BrW_PB.data F3DEX3/Profiling/F3DEX3_BrW_PC.data
 
 $(BUILD_DIR)/assets/text/%.enc.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.txt
-	$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) $< | $(PYTHON) tools/msgenc.py - --output $@ --charmap assets/text/charmap.txt
+	$(call print,Compiling:,$<,$@)
+	$(V)$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) $< | $(PYTHON) tools/msgenc.py - --output $@ --charmap assets/text/charmap.txt
 
 # Dependencies for files including message data headers
 # TODO remove when full header dependencies are used.
@@ -451,14 +497,16 @@ $(BUILD_DIR)/assets/text/staff_message_data_static.o: $(BUILD_DIR)/assets/text/m
 $(BUILD_DIR)/src/code/z_message_PAL.o: $(BUILD_DIR)/assets/text/message_data.enc.h $(BUILD_DIR)/assets/text/message_data_staff.enc.h
 
 $(BUILD_DIR)/assets/%.o: assets/%.c
-	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
-	$(OBJCOPY) -O binary $@ $@.bin
+	$(call print,Compiling:,$<,$@)
+	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
+	$(V)$(OBJCOPY) -O binary $@ $@.bin
 
 $(BUILD_DIR)/src/%.o: src/%.s
-	$(CPP) $(CPPFLAGS) -Iinclude $< | $(AS) $(ASFLAGS) -o $@
+	$(call print,Compiling:,$<,$@)
+	$(V)$(CPP) $(CPPFLAGS) -Iinclude $< | $(AS) $(ASFLAGS) -o $@
 
 $(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt: $(BUILD_DIR)/$(SPEC)
-	$(MKDMADATA) $< $(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt
+	$(V)$(MKDMADATA) $< $(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt
 
 # Dependencies for files that may include the dmadata header automatically generated from the spec file
 $(BUILD_DIR)/src/boot/z_std_dma.o: $(BUILD_DIR)/dmadata_table_spec.h
@@ -476,39 +524,43 @@ $(BUILD_DIR)/src/code/z_scene_table.o: include/tables/scene_table.h include/tabl
 
 $(BUILD_DIR)/src/%.o: src/%.c
 ifneq ($(RUN_CC_CHECK),0)
-	$(CC_CHECK) $<
+	$(V)$(CC_CHECK) $<
 endif
-	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
-	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
+	$(call print,Compiling:,$<,$@)
+	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
+	$(V)@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
 $(BUILD_DIR)/src/libultra/libc/ll.o: src/libultra/libc/ll.c
 ifneq ($(RUN_CC_CHECK),0)
-	$(CC_CHECK) $<
+	$(V)$(CC_CHECK) $<
 endif
-	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
-	$(PYTHON) tools/set_o32abi_bit.py $@
-	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
+	$(call print,Compiling:,$<,$@)
+	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
+	$(V)$(PYTHON) tools/set_o32abi_bit.py $@
+	$(V)@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
 $(BUILD_DIR)/src/libultra/libc/llcvt.o: src/libultra/libc/llcvt.c
 ifneq ($(RUN_CC_CHECK),0)
-	$(CC_CHECK) $<
+	$(V)$(CC_CHECK) $<
 endif
-	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
-	$(PYTHON) tools/set_o32abi_bit.py $@
-	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
+	$(call print,Compiling:,$<,$@)
+	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
+	$(V)$(PYTHON) tools/set_o32abi_bit.py $@
+	$(V)@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
 $(BUILD_DIR)/src/overlays/%_reloc.o: $(BUILD_DIR)/$(SPEC)
-	$(FADO) $$(tools/reloc_prereq $< $(notdir $*)) -n $(notdir $*) -o $(@:.o=.s) -M $(@:.o=.d)
-	$(AS) $(ASFLAGS) $(@:.o=.s) -o $@
+	$(call print,Generating Relocation:,$<,$@)
+	$(V)$(FADO) $$(tools/reloc_prereq $< $(notdir $*)) -n $(notdir $*) -o $(@:.o=.s) -M $(@:.o=.d)
+	$(V)$(AS) $(ASFLAGS) $(@:.o=.s) -o $@
 
 $(BUILD_DIR)/%.inc.c: %.png
-	$(ZAPD) btex -eh -tt $(subst .,,$(suffix $*)) -i $< -o $@
+	$(V)$(ZAPD) btex -eh -tt $(subst .,,$(suffix $*)) -i $< -o $@
 
 $(BUILD_DIR)/assets/%.bin.inc.c: assets/%.bin
-	$(ZAPD) bblb -eh -i $< -o $@
+	$(V)$(ZAPD) bblb -eh -i $< -o $@
 
 $(BUILD_DIR)/assets/%.jpg.inc.c: assets/%.jpg
-	$(ZAPD) bren -eh -i $< -o $@
+	$(V)$(ZAPD) bren -eh -i $< -o $@
 
 -include $(DEP_FILES)
 

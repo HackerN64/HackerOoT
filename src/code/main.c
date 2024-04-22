@@ -37,6 +37,8 @@ Profiler gProfiler;
 
 #endif
 
+Rainbow gRainbow;
+
 #if IS_DEBUG
 void Main_LogSystemHeap(void) {
     PRINTF(VT_FGCOL(GREEN));
@@ -88,6 +90,7 @@ void Main(void* arg) {
     Profiler_Init(&gProfiler);
 #endif
 
+    Rainbow_Init(&gRainbow);
     Regs_Init();
 
     R_ENABLE_ARENA_DBG = 0; // ENABLE_SPEEDMETER

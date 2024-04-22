@@ -1975,4 +1975,17 @@ void TitleSetup_Destroy(GameState* thisx);
 void FileSelect_Init(GameState* thisx);
 void FileSelect_Destroy(GameState* thisx);
 
+#if ENABLE_MOTION_BLUR
+void Play_DrawMotionBlur(PlayState* this);
+void Play_InitMotionBlur(PlayState* this);
+void Play_DestroyMotionBlur(void);
+void Play_SetMotionBlurPriorityAlpha(u32 alpha);
+void Play_EnableMotionBlurPriority(u32 alpha);
+void Play_DisableMotionBlurPriority(void);
+#endif
+
+void Play_SetMotionBlurAlpha(u32 alpha);
+void Play_EnableMotionBlur(u32 alpha);
+void Play_DisableMotionBlur(void);
+
 #endif
