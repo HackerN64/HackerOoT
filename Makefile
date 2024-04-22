@@ -400,7 +400,7 @@ patch:
 	$(call print,Success!)
 
 f3dex3_extract:
-	$(V)$(call mkdir F3DEX3/Profiling)
+	$(V)$(shell mkdir F3DEX3/Profiling)
 	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCD0F0 --size 0x1630 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.code
 	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCE720 --size 0x420 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.data
 
