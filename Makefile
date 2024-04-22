@@ -54,9 +54,7 @@ endif
 # Returns the path to the command $(1) if exists. Otherwise returns an empty string.
 find-command = $(shell which $(1) 2>/dev/null)
 
-ifneq ($(call find-command,mips64-elf-ld),)
-  MIPS_BINUTILS_PREFIX := mips64-elf-
-else ifneq ($(call find-command,mips-n64-ld),)
+ifneq ($(call find-command,mips-n64-ld),)
   MIPS_BINUTILS_PREFIX := mips-n64-
 else ifneq ($(call find-command,mips64-ld),)
   MIPS_BINUTILS_PREFIX := mips64-
@@ -66,6 +64,8 @@ else ifneq ($(call find-command,mips64-linux-gnu-ld),)
   MIPS_BINUTILS_PREFIX := mips64-linux-gnu-
 else ifneq ($(call find-command,mips-ld),)
   MIPS_BINUTILS_PREFIX := mips-
+else ifneq ($(call find-command,mips64-elf-ld),)
+  MIPS_BINUTILS_PREFIX := mips64-elf-
 else
   $(error Unable to detect a suitable MIPS toolchain installed)
 endif
@@ -101,17 +101,6 @@ ifeq ($(origin PACKAGE_VERSION), undefined)
   endif
 endif
 
-# Set PACKAGE_AUTHOR define for printing author's git name
-ifeq ($(origin PACKAGE_AUTHOR), undefined)
-  PACKAGE_AUTHOR := $(shell git config --get user.name)
-  ifeq ('$(PACKAGE_AUTHOR)', '')
-    PACKAGE_AUTHOR = Unknown author
-  endif
-endif
-
-# Make sure the build reports the correct version
-$(shell touch src/boot/build.c)
-
 ifeq ($(VERSION),hackeroot-mq)
   CFLAGS += -DENABLE_HACKEROOT=1
   CPPFLAGS += -DENABLE_HACKEROOT=1
@@ -146,8 +135,8 @@ endif
 
 # Define author and package version for every OoT version
 # Note: this won't be used if not using HackerOoT
-CFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)' -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
-CPPFLAGS += -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)' -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
+CFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
+CPPFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
 OPTFLAGS += -ffast-math -fno-unsafe-math-optimizations
 
 ifeq ($(OS),Windows_NT)
@@ -397,7 +386,12 @@ f3dex3:
 	$(V)$(RM) -r F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
 	$(call print,Success!)
 
-.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3
+verify:
+	$(V)$(MAKE) clean
+	$(V)$(MAKE) rom
+	@md5sum $(ROM)
+
+.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3 verify
 .DEFAULT_GOAL := rom
 
 #### Various Recipes ####
