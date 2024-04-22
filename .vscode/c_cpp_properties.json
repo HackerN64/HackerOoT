@@ -1,0 +1,30 @@
+{
+    "configurations": [
+        {
+            "name": "N64 hackeroot-mq",
+            "compilerPath": "/usr/bin/gcc", // Needs to not be "" for -m32 to work
+            "compilerArgs": [
+                "-m32" // Removes integer truncation warnings with gbi macros
+            ],
+            "intelliSenseMode": "gcc-x86", // Shouldn't matter
+            "includePath": [ // Matches makefile's includes
+                "include",
+                "include/libc",
+                "src",
+                "build/hackeroot-mq",
+                ".",
+                "extracted/hackeroot-mq"
+            ],
+            "defines": [
+                "_LANGUAGE_C", // For gbi.h
+                "OOT_DEBUG=1", // If targeting a debug version
+                "ENABLE_HACKEROOT=1",
+                "RELEASE_ROM=0",
+                "COMPRESS_YAZ=1"
+            ],
+            "cStandard": "gnu89", // C89 + some GNU extensions from C99 like C++ comments
+            "cppStandard": "${default}" // Only ZAPD uses C++, so doesn't really matter
+        }
+    ],
+    "version": 4
+}
