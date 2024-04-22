@@ -56,6 +56,7 @@ Most discussions happen on our [Discord Server](https://discord.gg/brETAakcXr), 
 
 List of every HackerOoT contributors, from most recent to oldest contribution:
 
+- Reonu
 - Thar0
 - recardo-7
 - HailToDodongo
