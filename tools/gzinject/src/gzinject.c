@@ -11,6 +11,7 @@
 #include "gzinject.h"
 #include "lz77.h"
 #include "u8.h"
+#include "gcm.h"
 #include "gzi.h"
 #include "aes.h"
 #include "sha1.h"
@@ -29,19 +30,20 @@ int verbose = 0;
 int dol_after = -1;
 
 static char *wad = NULL;
+static char *iso = NULL;
 static char *directory = NULL;
 static char *keyfile = NULL;
 static char    *workingdirectory = NULL;
 static char *rom = NULL;
-static char *outwad = NULL;
+static char *output = NULL;
 static patch_list_t *patch = NULL;
 static patch_list_t **patch_link = &patch;
 static dol_list_t *dol = NULL;
 static dol_list_t **dol_link = &dol;
 static dol_loading_list_t *dol_loading = NULL;
 static dol_loading_list_t **dol_loading_link = &dol_loading;
-static char *titleid = NULL;
-static char *channelname = NULL;
+static char *gameid = NULL;
+static char *gamename = NULL;
 
 uint16_t be16(const uint8_t *p)
 {
@@ -56,8 +58,11 @@ uint32_t be32(const uint8_t *p)
 static const struct option cmdoptions[] = {
     { "action",required_argument,0,'a' },
     { "wad",required_argument,0,'w' },
+    { "iso",required_argument,0,'s' },
     { "channelid",required_argument,0,'i' },
+    { "gameid",required_argument,0,'i' },
     { "channeltitle",required_argument,0,'t' },
+    { "gamename",required_argument,0,'t' },
     { "help",no_argument,0,'h' },
     { "key",required_argument,0,'k' },
     { "region",required_argument,0,'r' },
@@ -67,6 +72,7 @@ static const struct option cmdoptions[] = {
     { "version",no_argument,0,'v'},
     { "rom",required_argument,0,'m'},
     { "outputwad",required_argument,0,'o'},
+    { "outputiso",required_argument,0,'o'},
     { "patch-file",required_argument,0,'p'},
     { "content-num",required_argument,0,'c'},
     { "dol-inject",required_argument,0,'f'},
@@ -196,32 +202,38 @@ static char *removeext(char* mystr) {
 static void print_usage() {
     puts("Usage:\n"
     "  gzinject -a extract -w SOURCEWAD [options]\n"
+    "  gzinject -a extract -s SOURCEISO [options]\n"
     "  gzinject -a pack -w DESTWAD [options]\n"
+    "  gzinject -a pack -s DESTISO [options]\n"
     "  gzinject -a inject -w SOURCEWAD -m ROM [options]\n"
+    "  gzinject -a inject -s SOURCEISO -m ROM [options]\n"
     "  gzinject -a romc -m INROM -o OUTROM [options]\n"
     "  gzinject -a genkey [options]\n"
     "  gzinject --help\n"
     "  gzinject --version\n\n"
     "Actions:\n"
-    "  extract      extracts SOURCEWAD to directory\n"
-    "  pack         packs directory into DESTWAD\n"
-    "  inject       injects rom into SOURCEWAD\n"
+    "  extract      extracts SOURCEWAD or SOURCEISO to directory\n"
+    "  pack         packs directory into DESTWAD or DESTISO\n"
+    "  inject       injects rom into SOURCEWAD or SOURCEISO\n"
     "  romc         decompresses a romc compressed rom\n"
     "  genkey       generates wii common-key\n\n"
     "Options:\n"
-    "  -i, --channelid=ID           New Channel ID For Pack and Inject actions (default: none)\n"
-    "  -t, --title=title            New Channel name for pack and inject actions (default: none)\n"
+    "  -i, --channelid=ID, --gameid=ID\n"
+    "                               New channel ID for game ID For pack and inject actions (default: none)\n"
+    "  -t, --channeltitle=title, --gamename=title\n"
+    "                               New channel name or game name for pack and inject actions (default: none)\n"
     "  -h, --help                   Prints this help message\n"
-    "  -k, --key=keyfile            Location of the common-key file (default: ./common-key.bin)\n"
-    "  -r, --region=1-3             Region to use (default: 3)\n"
+    "  -k, --key=keyfile            Location of the wii common-key file (default: ./common-key.bin)\n"
+    "  -r, --region=1-3             Wii region to use (default: 3)\n"
     "  --verbose                    Print out verbose program execution information\n"
-    "  -d, --directory=directory    Directory to extract contents to, or directory to read contents from (default: ./wadextract)\n"
+    "  -d, --directory=directory    Directory to extract contents to, or directory to read contents from (default: ./wadextract or ./isoextract)\n"
     "  --cleanup                    Remove files before performing actions\n"
     "  --version                    Prints the current version\n"
     "  -m, --rom=rom                Rom to inject for inject action (default: none), also rom to romc decompress\n"
-    "  -o, --outputwad=outwad       The output wad for inject actions (default: SOURCEWAD-inject.wad), also output for romc decompression\n"
+    "  -o, --outputwad=outwad, --outputiso=outiso\n"
+    "                               The output wad or iso for inject actions (default: SOURCEWAD-inject.wad or SOURCEISO-inject.iso), also output for romc decompression\n"
     "  -p, --patch-file=patchfile   gzi file to use for applying patches (default: none)\n"
-    "  -c, --content=contentfile    the primary content file (default: 5)\n"
+    "  -c, --content=contentfile    the primary wii content file (default: 5)\n"
     "  --dol-inject                 Binary data to inject into the emulator program, requires --dol-loading\n"
     "  --dol-loading                The loading address for the binary specified by --dol-inject\n"
     "  --dol-after                  After which patch file to inject the dol, default: after all patches\n"
@@ -261,7 +273,39 @@ static void truchasign(uint8_t *data, uint8_t type, size_t len) {
     }
 }
 
-static int do_extract() {
+static int apply_dol_patch(const char *dol_file, uint32_t loading_address, uint8_t **data, uint32_t *size){
+    if(verbose){
+        printf("Injecting dol file %s\n",dol_file);
+    }
+    struct stat sbuffer;
+    chdir(workingdirectory);
+    doltool_ctxt_t *dolctxt = calloc(1,sizeof(*dolctxt));
+    if(!dolctxt){
+        perror("Could not create dol ctxt");
+        errno = ENOMEM;
+        return -1;
+    }
+    dol_load(dolctxt,data,size);
+    FILE *inject_file = fopen(dol_file,"rb");
+    if(!inject_file){
+        free(dolctxt);
+        perror(dol_file);
+        errno = ENOENT;
+        return -1;
+    }
+    stat(dol_file,&sbuffer);
+    uint8_t *inject_data = malloc(sbuffer.st_size);
+    fread(inject_data,1,sbuffer.st_size,inject_file);
+    fclose(inject_file);
+    dol_inject(dolctxt,inject_data,sbuffer.st_size,loading_address);
+    dol_save(dolctxt);
+    free(dolctxt);
+    free(inject_data);
+    chdir(directory);
+    return 0;
+}
+
+static int do_wad_extract() {
     struct stat sbuffer;
 
     if (stat(wad, &sbuffer) != 0) {
@@ -437,7 +481,7 @@ static int do_extract() {
         // Main rom content file
         if (i == content_num) {
             if (verbose) {
-                printf("Extracting content %d uint8_t Archive.\n",content_num);
+                printf("Extracting content %d u8 archive.\n",content_num);
             }
             char dbuf[100];
             snprintf(dbuf,100,"content%d",content_num);
@@ -473,39 +517,7 @@ static int do_extract() {
     return 1;
 }
 
-static int apply_dol_patch(const char *dol_file, uint32_t loading_address, uint8_t **data, uint32_t *size){
-    if(verbose){
-        printf("Injecting dol file %s\n",dol_file);
-    }
-    struct stat sbuffer;
-    chdir(workingdirectory);
-    doltool_ctxt_t *dolctxt = calloc(1,sizeof(*dolctxt));
-    if(!dolctxt){
-        perror("Could not create dol ctxt");
-        errno = ENOMEM;
-        return -1;
-    }
-    dol_load(dolctxt,data,size);
-    FILE *inject_file = fopen(dol_file,"rb");
-    if(!inject_file){
-        free(dolctxt);
-        perror(dol_file);
-        errno = ENOENT;
-        return -1;
-    }
-    stat(dol_file,&sbuffer);
-    uint8_t *inject_data = malloc(sbuffer.st_size);
-    fread(inject_data,1,sbuffer.st_size,inject_file);
-    fclose(inject_file);
-    dol_inject(dolctxt,inject_data,sbuffer.st_size,loading_address);
-    dol_save(dolctxt);
-    free(dolctxt);
-    free(inject_data);
-    chdir(directory);
-    return 0;
-}
-
-static int do_pack() {
+static int do_wad_pack() {
     DIR *testdir = opendir(directory);
     if (testdir) {
         closedir(testdir);
@@ -625,29 +637,32 @@ static int do_pack() {
     sprintf(footer,"gzinject v%s https://github.com/krimtonz/gzinject", GZINJECT_VERSION);
     uint32_t footersize = 0x40;
 
-    // Build Content5 into a .app file first
-    char dbuf[100], nbuf[100] = {0};
-    snprintf(dbuf,100,"content%d",content_num);
-    strcpy(nbuf,dbuf);
-    strcat(nbuf,".app");
-    if(verbose){
-        printf("Generating %s u8 archive\n",nbuf);
-    }
+    uint16_t contentsc = be16(tmd + 0x1DE);
 
-    int content5len = create_u8_archive(dbuf,nbuf);
-    if(!content5len){
-        fprintf(stderr,"Could not create u8 archive from %s into %s\n",dbuf,nbuf);
-        free(cert);
-        free(tik);
-        free(tmd);
-        return 0;
+    if (content_num < contentsc) {
+        // Build Content5 into a .app file first
+        char dbuf[100], nbuf[100] = {0};
+        snprintf(dbuf,100,"content%d",content_num);
+        strcpy(nbuf,dbuf);
+        strcat(nbuf,".app");
+        if(verbose){
+            printf("Generating %s u8 archive\n",nbuf);
+        }
+
+        int content5len = create_u8_archive(dbuf,nbuf);
+        if(!content5len){
+            fprintf(stderr,"Could not create u8 archive from %s into %s\n",dbuf,nbuf);
+            free(cert);
+            free(tik);
+            free(tmd);
+            return 0;
+        }
     }
     chdir(workingdirectory);
     chdir(directory);
     if (verbose) {
         printf("Modifying content metadata in the TMD\n");
     }
-    uint16_t contentsc = be16(tmd + 0x1DE);
     int i;
 
     char cfname[100];
@@ -770,12 +785,12 @@ static int do_pack() {
     }
 
     // Change Title ID
-    if (titleid != NULL) {
+    if (gameid != NULL) {
         if (verbose) {
             printf("Changing Channel ID\n");
         }
-        memcpy(tik + 0x1e0, titleid, 4);
-        memcpy(tmd + 0x190, titleid, 4);
+        memcpy(tik + 0x1e0, gameid, 4);
+        memcpy(tmd + 0x190, gameid, 4);
     }
 
     if (verbose) {
@@ -814,7 +829,7 @@ static int do_pack() {
         uint8_t *contents = fileptrs[i];
 
         if (i == 0) {
-            if (channelname != NULL) {
+            if (gamename != NULL) {
                 if (verbose) {
                     printf("Changing the Channel Name in content0.app\n");
                 }
@@ -828,10 +843,10 @@ static int do_pack() {
                 }
                 if(imetpos!=-1){
                     uint16_t count = 0;
-                    size_t cnamelen = strlen(channelname);
+                    size_t cnamelen = strlen(gamename);
                     char namebuf[40] = {0};
                     for(j=0,count=0;count<cnamelen;j+=2,count++)
-                        namebuf[j+1] = channelname[count];
+                        namebuf[j+1] = gamename[count];
                     char *names = (char*)contents + imetpos + 28;
                     for(j=0;j<8;j++){
                         memcpy(names + (j*84),namebuf,40);
@@ -1007,8 +1022,489 @@ error:
     return 0;
 }
 
+static void do_wad(const char* action) {
+    if (directory == NULL) directory = "wadextract";
+
+    struct stat sbuffer;
+    if (keyfile == NULL) {
+        if (stat("key.bin", &sbuffer) == 0) {
+            keyfile = "key.bin";
+        }
+        else if (stat("common-key.bin", &sbuffer) == 0) {
+            keyfile = "common-key.bin";
+        }
+        else {
+            printf("Cannot find key.bin or common-key.bin.\n");
+            exit(1);
+        }
+    }
+    else {
+        if (stat(keyfile, &sbuffer) != 0) {
+            printf("Cannot find keyfile specified.\n");
+            exit(1);
+        }
+    }
+
+    FILE *fkeyfile = fopen(keyfile, "rb");
+    if(!fkeyfile){
+        perror("Could not open keyfile");
+        exit(1);
+    }
+
+    fread(&key, 1, 16, fkeyfile);
+    if(ferror(fkeyfile)){
+        perror("Could not read from keyfile.");
+        exit(1);
+    }
+    fclose(fkeyfile);
+
+    workingdirectory = malloc(200);
+    if(!workingdirectory){
+        perror("Could not allocate for working directory");
+        exit(1);
+    }
+    workingdirectory = getcwd(workingdirectory, 200);
+
+    if (strcmp(action, "extract") == 0) {
+        if(!do_wad_extract()){
+            exit(1);
+        }
+    }
+    else if (strcmp(action, "pack") == 0) {
+        if(!do_wad_pack()){
+            exit(1);
+        }
+    }
+    else if (strcmp(action, "inject") == 0) {
+        if (rom == NULL) {
+            printf("-a inject specified, but no rom to inject\n");
+            free(workingdirectory);
+            exit(1);
+
+        }
+        if(!do_wad_extract()){
+            perror("Could not extract wad\n");
+            free(workingdirectory);
+            exit(1);
+        }
+
+        if (verbose) {
+            printf("Copying %s to %s/content%d/rom\n", rom, directory,content_num);
+        }
+        FILE *from = fopen(rom, "rb");
+        fseek(from, 0, SEEK_END);
+        size_t fromlen = ftell(from);
+        fseek(from, 0, SEEK_SET);
+        uint8_t *inrom = malloc(fromlen);
+        if(!inrom){
+            perror("could not allocate input rom\n");
+            free(workingdirectory);
+            exit(1);
+        }
+        fread(inrom, 1, fromlen, from);
+        fclose(from);
+
+        char *orom = malloc(200);
+        if(!orom){
+            perror("Could not allocate output rom name\n");
+            free(workingdirectory);
+            free(inrom);
+            exit(1);
+        }
+        snprintf(orom, 200, "%s/content%d/rom", directory,content_num);
+        from = fopen(orom, "wb");
+        fwrite(inrom, 1, fromlen, from);
+        fclose(from);
+        free(inrom);
+        free(orom);
+
+
+        char *wadname = removeext(wad),
+            *outname = malloc(strlen(wadname) + 12);
+        if(!outname){
+            perror("could not allocate for output wad name\n");
+            free(workingdirectory);
+            exit(1);
+        }
+        sprintf(outname, "%s-inject.wad", wadname);
+        free(wadname);
+        if (output == NULL) {
+            wad = outname;
+        }
+        else {
+            wad = output;
+        }
+
+        if(!do_wad_pack()){
+            perror("Could not pack wad\n");
+            free(outname);
+            free(workingdirectory);
+            exit(1);
+        }
+        free(outname);
+    }
+
+    free(workingdirectory);
+}
+
+static int do_iso_extract() {
+    if (verbose) {
+        printf("Extracting %s to %s\n", iso, directory);
+    }
+
+    struct stat sbuffer;
+
+    if (cleanup == 1) removedir(directory);
+
+    stat(directory,&sbuffer);
+    if(S_ISDIR(sbuffer.st_mode)){
+        if(verbose){
+            printf("%s exists, not creating.\n",directory);
+        }
+    }else{
+        if(verbose)
+            printf("Creating %s\n",directory);
+        if(mkdir(directory, 0755)==-1){
+            fprintf(stderr,"Could not mkdir %s\n",directory);
+            return 0;
+        }
+    }
+
+    return extract_gcm_archive(iso, directory);
+}
+
+static int do_iso_pack() {
+    DIR *testdir = opendir(directory);
+    if (testdir) {
+        closedir(testdir);
+    } else {
+        fprintf(stderr,"%s doesn't exist, or is not a directory!\n", directory);
+        return 0;
+    }
+
+    if (verbose) {
+        printf("Packing %s into %s\n", directory, iso);
+    }
+    if(chdir(directory)==-1){
+        fprintf(stderr,"Could not change directory to %s",directory);
+        return 0;
+    }
+
+    if (verbose) {
+        printf("Reading header.bin\n");
+    }
+    FILE *infile = fopen("header.bin", "rb");
+    if(!infile){
+        perror("Could not open header.bin for reading\n");
+        return 0;
+    }
+    uint8_t *gcm_header = calloc(GCM_HEADER_SIZE, sizeof(uint8_t));
+    if(!gcm_header){
+        fprintf(stderr,"Could not allocate %d bytes for header.bin\n",GCM_HEADER_SIZE);
+        return 0;
+    }
+    int bytesread = fread(gcm_header, 1, GCM_HEADER_SIZE, infile);
+    if(bytesread!=GCM_HEADER_SIZE || ferror(infile)){
+        perror("Error reading from header.bin\n");
+        free(gcm_header);
+        fclose(infile);
+        return 0;
+    }
+    fclose(infile);
+
+    struct stat sbuffer;
+    if(stat("main.dol", &sbuffer)!=0){
+        perror("Could not stat main.dol\n");
+        free(gcm_header);
+        return 0;
+    }
+    uint32_t dol_size = sbuffer.st_size;
+
+    if (verbose) {
+        printf("Reading main.dol\n");
+    }
+    infile = fopen("main.dol", "rb");
+    if(!infile){
+        perror("Could not open main.dol for reading\n");
+        free(gcm_header);
+        return 0;
+    }
+    uint8_t *dol_content = calloc(dol_size, sizeof(uint8_t));
+    if(!dol_content){
+        fprintf(stderr,"Could not allocate %d bytes for main.dol\n",dol_size);
+        return 0;
+    }
+    bytesread = fread(dol_content, 1, dol_size, infile);
+    if(bytesread!=dol_size || ferror(infile)){
+        perror("Error reading from main.dol\n");
+        free(gcm_header);
+        free(dol_content);
+        fclose(infile);
+        return 0;
+    }
+    fclose(infile);
+
+    // DOL is index 1 for consistency with WADs
+    uint16_t contentsc = 2;
+    uint8_t **fileptrs = malloc(sizeof(*fileptrs) * contentsc);
+    if(!fileptrs){
+        perror("Could not allocate filepointers.\n");;
+        return 0;
+    }
+    uint32_t *filesizes = malloc(sizeof(*filesizes) * contentsc);
+    if(!filesizes){
+        perror("Could not allocate filesizes\n");
+        free(fileptrs);
+        return 0;
+    }
+
+    fileptrs[0] = NULL;
+    filesizes[0] = 0;
+    fileptrs[1] = dol_content;
+    filesizes[1] = dol_size;
+
+    int patch_idx = 0;
+    int dol_applied = 0;
+    if(dol_after>=101) dol_after-=101;
+
+    while(patch){
+        if(verbose){
+            printf("Applying %s gzi patches\n",patch->filename);
+        }
+
+        if(chdir(workingdirectory)!=0){
+            fprintf(stderr,"Could not change directory to %s",workingdirectory);
+        }
+        gzi_ctxt_t gzi;
+        if(!gzi_init(&gzi,fileptrs,filesizes,contentsc,NULL,NULL,NULL,NULL,NULL,NULL)){
+            perror("Could not initialize patch file");
+            goto error;
+
+        }
+        if(!gzi_parse_file(&gzi,patch->filename)){
+            perror("Could not parse gzi patch file");
+            goto error;
+        }
+        if(!gzi_run(&gzi)){
+            perror("Could not run gzi patch file");
+            goto error;
+        }
+        if(chdir(directory)!=0){
+            fprintf(stderr,"Could not change directory to %s",directory);
+            goto error;
+        }
+
+        if(!gzi_destroy(&gzi)){
+            perror("Could not destory gzi patch file");
+            goto error;
+        }
+        patch_list_t *old_patch = patch;
+        patch = patch->next;
+        free(old_patch);
+        if(dol_after == patch_idx){
+            while(dol && dol_loading){
+                if (apply_dol_patch(dol->filename,dol_loading->loading_address,&fileptrs[1],&filesizes[1]) != 0) {
+                    fprintf(stderr, "Could not inject dol patch\n");
+                    goto error;
+                }
+                dol_list_t *old_dol = dol;
+                dol = dol->next;
+                free(old_dol);
+                dol_loading_list_t *old_loading = dol_loading;
+                dol_loading = dol_loading->next;
+                free(old_loading);
+            }
+            dol_applied = 1;
+        }
+        patch_idx++;
+    }
+
+    if(!dol_applied && dol && dol_loading){
+        while(dol && dol_loading){
+            if (apply_dol_patch(dol->filename,dol_loading->loading_address,&fileptrs[1],&filesizes[1]) != 0) {
+                fprintf(stderr, "Could not inject dol patch\n");
+                goto error;
+            }
+            dol_list_t *old_dol = dol;
+            dol = dol->next;
+            free(old_dol);
+            dol_loading_list_t *old_loading = dol_loading;
+            dol_loading = dol_loading->next;
+            free(old_loading);
+        }
+    }
+
+    if (gameid != NULL) {
+        if (verbose) {
+            printf("Changing game ID\n");
+        }
+        if (strlen(gameid) != 4) {
+            fprintf(stderr,"Game ID must be 4 characters long\n");
+            goto error;
+        }
+        memcpy(&gcm_header[0], gameid, 4);
+    }
+    if (gamename != NULL) {
+        if (verbose) {
+            printf("Changing game name\n");
+        }
+        int max_length = 0x03E0;
+        if (strlen(gamename) >= max_length) {
+            fprintf(stderr,"Game name must be less than %d characters long\n", max_length);
+            goto error;
+        }
+        memset(&gcm_header[0x20], 0, max_length);
+        memcpy(&gcm_header[0x20], gamename, strlen(gamename));
+    }
+
+    if (verbose) {
+        printf("Writing header.bin\n");
+    }
+    FILE *outfile = fopen("header.bin", "wb");
+    fwrite(gcm_header, 1, GCM_HEADER_SIZE, outfile);
+    if(ferror(outfile)){
+        perror("Could not write header.bin\n");
+        fclose(outfile);
+        goto error;
+    }
+    fclose(outfile);
+
+    if (verbose) {
+        printf("Writing main.dol\n");
+    }
+    outfile = fopen("main.dol", "wb");
+    fwrite(dol_content, 1, dol_size, outfile);
+    if(ferror(outfile)){
+        perror("Could not write main.dol\n");
+        fclose(outfile);
+        goto error;
+    }
+    fclose(outfile);
+
+    chdir(workingdirectory);
+    if (!create_gcm_archive(directory, iso)) {
+        return 0;
+    }
+
+    free(gcm_header);
+    for(int i=0;i<contentsc;i++){
+        if(fileptrs[i]) free(fileptrs[i]);
+    }
+    free(fileptrs);
+    free(filesizes);
+
+    if (cleanup)
+        removedir(directory);
+
+    return 1;
+
+error:
+    free(gcm_header);
+    if(fileptrs){
+        for(int i=0;i<contentsc;i++){
+            if(fileptrs[i]) free(fileptrs[i]);
+        }
+        free(fileptrs);
+
+    }
+    if(filesizes) free(filesizes);
+    return 0;
+}
+
+static void do_iso(const char* action) {
+    if (directory == NULL) directory = "isoextract";
+
+    workingdirectory = malloc(200);
+    if(!workingdirectory){
+        perror("Could not allocate for working directory");
+        exit(1);
+    }
+    workingdirectory = getcwd(workingdirectory, 200);
+
+    if (strcmp(action, "extract") == 0) {
+        if(!do_iso_extract()){
+            exit(1);
+        }
+    }
+    else if (strcmp(action, "pack") == 0) {
+        if(!do_iso_pack()){
+            exit(1);
+        }
+    }
+    else if (strcmp(action, "inject") == 0) {
+        if (rom == NULL) {
+            printf("-a inject specified, but no rom to inject\n");
+            free(workingdirectory);
+            exit(1);
+
+        }
+        if(!do_iso_extract()){
+            perror("Could not extract iso\n");
+            free(workingdirectory);
+            exit(1);
+        }
+
+        if (verbose) {
+            printf("Copying %s to %s/zlj_f.tgc/zlj_f.n64\n", rom, directory);
+        }
+        FILE *from = fopen(rom, "rb");
+        fseek(from, 0, SEEK_END);
+        size_t fromlen = ftell(from);
+        fseek(from, 0, SEEK_SET);
+        uint8_t *inrom = malloc(fromlen);
+        if(!inrom){
+            perror("could not allocate input rom\n");
+            free(workingdirectory);
+            exit(1);
+        }
+        fread(inrom, 1, fromlen, from);
+        fclose(from);
+
+        char *orom = malloc(200);
+        if(!orom){
+            perror("Could not allocate output rom name\n");
+            free(workingdirectory);
+            free(inrom);
+            exit(1);
+        }
+        snprintf(orom, 200, "%s/zlj_f.tgc/zlj_f.n64", directory);
+        from = fopen(orom, "wb");
+        fwrite(inrom, 1, fromlen, from);
+        fclose(from);
+        free(inrom);
+        free(orom);
+
+
+        char *isoname = removeext(iso),
+            *outname = malloc(strlen(isoname) + 12);
+        if(!outname){
+            perror("could not allocate for output iso name\n");
+            free(workingdirectory);
+            exit(1);
+        }
+        sprintf(outname, "%s-inject.iso", isoname);
+        free(isoname);
+        if (output == NULL) {
+            iso = outname;
+        }
+        else {
+            iso = output;
+        }
+
+        if(!do_iso_pack()){
+            perror("Could not pack iso\n");
+            free(outname);
+            free(workingdirectory);
+            exit(1);
+        }
+        free(outname);
+    }
+
+    free(workingdirectory);
+}
+
 void romc(){
-    if(outwad == NULL || rom == NULL){
+    if(output == NULL || rom == NULL){
         print_usage();
         exit(1);
     }
@@ -1033,9 +1529,9 @@ void romc(){
         printf("Could not decompress %s\n",rom);
         exit(1);
     }
-    FILE *outrom = fopen(outwad,"wb");
+    FILE *outrom = fopen(output,"wb");
     if(!outrom){
-        printf("Could not open %s for writing\n",outwad);
+        printf("Could not open %s for writing\n",output);
         exit(1);
     }
     fwrite(decomp,1,decomp_size,outrom);
@@ -1079,7 +1575,7 @@ int main(int argc, char **argv) {
 
     while (1) {
         int oi = 0;
-        opt = getopt_long(argc, argv, "a:w:i:t:?k:r:d:vm:o:p:c:", cmdoptions, &oi);
+        opt = getopt_long(argc, argv, "a:w:s:i:t:?k:r:d:vm:o:p:c:", cmdoptions, &oi);
         if (opt == -1) break;
         switch (opt) {
         case 'a':
@@ -1088,11 +1584,14 @@ int main(int argc, char **argv) {
         case 'w':
             wad = optarg;
             break;
+        case 's':
+            iso = optarg;
+            break;
         case 'i':
-            titleid = optarg;
+            gameid = optarg;
             break;
         case 't':
-            channelname = optarg;
+            gamename = optarg;
             break;
         case 'h':
         case '?':
@@ -1119,7 +1618,7 @@ int main(int argc, char **argv) {
             rom = optarg;
             break;
         case 'o':
-            outwad = optarg;
+            output = optarg;
             break;
         case 'p': {
             patch_list_t *new_patch = malloc(sizeof(*new_patch));
@@ -1198,132 +1697,14 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    if (wad == NULL) {
+    if (wad != NULL && iso == NULL) {
+        do_wad(action);
+    } else if (wad == NULL && iso != NULL) {
+        do_iso(action);
+    } else {
         print_usage();
         exit(1);
     }
 
-    if (directory == NULL) directory = "wadextract";
-
-    struct stat sbuffer;
-    if (keyfile == NULL) {
-        if (stat("key.bin", &sbuffer) == 0) {
-            keyfile = "key.bin";
-        }
-        else if (stat("common-key.bin", &sbuffer) == 0) {
-            keyfile = "common-key.bin";
-        }
-        else {
-            printf("Cannot find key.bin or common-key.bin.\n");
-            exit(1);
-        }
-    }
-    else {
-        if (stat(keyfile, &sbuffer) != 0) {
-            printf("Cannot find keyfile specified.\n");
-            exit(1);
-        }
-    }
-
-    FILE *fkeyfile = fopen(keyfile, "rb");
-    if(!fkeyfile){
-        perror("Could not open keyfile");
-        exit(1);
-    }
-
-    fread(&key, 1, 16, fkeyfile);
-    if(ferror(fkeyfile)){
-        perror("Could not read from keyfile.");
-        exit(1);
-    }
-    fclose(fkeyfile);
-
-    workingdirectory = malloc(200);
-    if(!workingdirectory){
-        perror("Could not allocate for working directory");
-        exit(1);
-    }
-    workingdirectory = getcwd(workingdirectory, 200);
-
-    if (strcmp(action, "extract") == 0) {
-        if(!do_extract()){
-            exit(1);
-        }
-    }
-    else if (strcmp(action, "pack") == 0) {
-        if(!do_pack()){
-            exit(1);
-        }
-    }
-    else if (strcmp(action, "inject") == 0) {
-        if (rom == NULL) {
-            printf("-a inject specified, but no rom to inject\n");
-            free(workingdirectory);
-            exit(1);
-
-        }
-        if(!do_extract()){
-            perror("Could not extract wad\n");
-            free(workingdirectory);
-            exit(1);
-        }
-
-        if (verbose) {
-            printf("Copying %s to %s/content%d/rom\n", rom, directory,content_num);
-        }
-        FILE *from = fopen(rom, "rb");
-        fseek(from, 0, SEEK_END);
-        size_t fromlen = ftell(from);
-        fseek(from, 0, SEEK_SET);
-        uint8_t *inrom = malloc(fromlen);
-        if(!inrom){
-            perror("could not allocate input rom\n");
-            free(workingdirectory);
-            exit(1);
-        }
-        fread(inrom, 1, fromlen, from);
-        fclose(from);
-
-        char *orom = malloc(200);
-        if(!orom){
-            perror("Could not allocate output rom name\n");
-            free(workingdirectory);
-            free(inrom);
-            exit(1);
-        }
-        snprintf(orom, 200, "%s/content%d/rom", directory,content_num);
-        from = fopen(orom, "wb");
-        fwrite(inrom, 1, fromlen, from);
-        fclose(from);
-        free(inrom);
-        free(orom);
-
-
-        char *wadname = removeext(wad),
-            *outname = malloc(strlen(wadname) + 12);
-        if(!outname){
-            perror("could not allocate for output wad name\n");
-            free(workingdirectory);
-            exit(1);
-        }
-        sprintf(outname, "%s-inject.wad", wadname);
-        free(wadname);
-        if (outwad == NULL) {
-            wad = outname;
-        }
-        else {
-            wad = outwad;
-        }
-
-        if(!do_pack()){
-            perror("Could not pack wad\n");
-            free(outname);
-            free(workingdirectory);
-            exit(1);
-        }
-        free(outname);
-    }
-
-    free(workingdirectory);
     return 0;
 }

@@ -71,12 +71,21 @@ static int gzi_cmd_apply_patch(gzi_ctxt_t *ctxt, int pos){
     uint8_t *p;
     switch(curfile){
         case GZI_FILE_TMD:
+            if (ctxt->tmd == NULL) {
+                return -1;
+            }
             p = ctxt->tmd;
             break;
         case GZI_FILE_TIK:
+            if (ctxt->tik == NULL) {
+                return -1;
+            }
             p = ctxt->tik;
             break;
         case GZI_FILE_CERT:
+            if (ctxt->cert == NULL) {
+                return -1;
+            }
             p = ctxt->cert;
             break;
         default:
