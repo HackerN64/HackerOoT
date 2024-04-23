@@ -55,11 +55,6 @@
 #define WIDESCREEN_N64_MODE true
 
 /**
- * Automatic GI Object Allocation
-*/
-#define ENABLE_AUTO_GI_ALLOC false
-
-/**
  * Skips the N64 logo and boots directly into the game if defined (may already be skipped by the options below)
  */
 #define SKIP_N64_BOOT_LOGO true
