@@ -29,6 +29,8 @@ OSMesg sSerialMsgBuf[1];
 
 Rainbow gRainbow;
 
+u8 gGPUTimingsExist;
+
 #if IS_DEBUG
 void Main_LogSystemHeap(void) {
     PRINTF(VT_FGCOL(GREEN));
@@ -78,6 +80,12 @@ void Main(void* arg) {
 
     Rainbow_Init(&gRainbow);
     Regs_Init();
+
+    if (IO_READ(DPC_PIPEBUSY_REG) == 0) {
+        gGPUTimingsExist = 0;
+    } else {
+        gGPUTimingsExist = 1;
+    }       
 
     R_ENABLE_ARENA_DBG = 0; // ENABLE_SPEEDMETER
 
