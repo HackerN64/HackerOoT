@@ -1,6 +1,7 @@
 #include "global.h"
 #include "quake.h"
 #include "terminal.h"
+#include "config.h"
 
 #if INCLUDE_EXAMPLE_SCENE
 #include "assets/scenes/example/example_scene.h"
@@ -264,7 +265,7 @@ void Play_Init(GameState* thisx) {
         SystemArena_Display();
     }
 
-    GameState_Realloc(&this->state, 0x1D4790);
+    GameState_Realloc(&this->state, IS_DEBUG_HEAP_ENABLED ? 0x1D4790 : PLAY_ALLOC_SIZE);
     KaleidoManager_Init(this);
     View_Init(&this->view, gfxCtx);
     Audio_SetExtraFilter(0);

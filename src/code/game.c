@@ -451,7 +451,7 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
     // "gamealloc_init processing time %d us"
     PRINTF("gamealloc_init 処理時間 %d us\n", OS_CYCLES_TO_USEC(endTime - startTime));
     startTime = endTime;
-    GameState_InitArena(gameState, 0x100000);
+    GameState_InitArena(gameState, GAMESTATE_ALLOC_SIZE);
 
     R_UPDATE_RATE = 3;
     init(gameState);

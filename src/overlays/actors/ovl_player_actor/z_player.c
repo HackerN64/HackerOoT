@@ -10002,9 +10002,9 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     if (ENABLE_AUTO_GI_ALLOC) {
         this->giObjectSegment = (void*)ALIGN16((uintptr_t)ZELDA_ARENA_MALLOC(giAllocSize, __FILE__, __LINE__));
     } else {
-        ASSERT(giAllocSize < 0x3008, "[HackerOoT:ERROR]: GI Object larger than the allocated size.", __FILE__,
+        ASSERT(giAllocSize < GI_ALLOC_SIZE, "[HackerOoT:ERROR]: GI Object larger than the allocated size.", __FILE__,
                __LINE__);
-        this->giObjectSegment = (void*)(((uintptr_t)ZELDA_ARENA_MALLOC(0x3008, "../z_player.c", 17175) + 8) & ~0xF);
+        this->giObjectSegment = (void*)(((uintptr_t)ZELDA_ARENA_MALLOC(GI_ALLOC_SIZE, "../z_player.c", 17175) + 8) & ~0xF);
     }
 
     respawnFlag = gSaveContext.respawnFlag;

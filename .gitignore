@@ -62,6 +62,7 @@ graphs/
 !*_custom*
 .extracted-assets.json
 extracted/
+!mod_assets/*
 
 # Docs
 !docs/tutorial/
