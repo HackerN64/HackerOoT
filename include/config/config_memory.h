@@ -2,7 +2,7 @@
 #define CONFIG_MEMORY_H
 
 /**
- * This file hosts different macros that changes of different types
+ * This file hosts different macros that changes different types
  * of buffer/heap allocation size.
  * 
  * IMPORTANT: do not change these values unless you know what you are doing.
