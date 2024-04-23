@@ -633,6 +633,7 @@ beginseg
     include "$(BUILD_DIR)/src/debug/print.o"
     include "$(BUILD_DIR)/src/debug/utility.o"
     include "$(BUILD_DIR)/src/debug/profiler.o"
+    include "$(BUILD_DIR)/src/debug/menu.o"
 endseg
 #endif
 

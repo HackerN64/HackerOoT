@@ -43,7 +43,7 @@ void Profiler_Init(Profiler* this) {
 }
 
 void Profiler_UpdateMode(Profiler* this, Input* controller) {
-    if (CHECK_BTN_ALL(controller->cur.button, BTN_R) && CHECK_BTN_ALL(controller->press.button, BTN_DLEFT)) {
+    if (CHECK_BTN_ALL(controller->cur.button, BTN_Z) && CHECK_BTN_ALL(controller->press.button, BTN_DLEFT)) {
         if (this->mode == PROFILING_MODE_DEFAULT) {
             this->mode = PROFILING_MODE_C;
         } else {
@@ -51,15 +51,11 @@ void Profiler_UpdateMode(Profiler* this, Input* controller) {
         }
     }
 
-    if (CHECK_BTN_ALL(controller->cur.button, BTN_R) && CHECK_BTN_ALL(controller->press.button, BTN_DRIGHT)) {
+    if (CHECK_BTN_ALL(controller->cur.button, BTN_Z) && CHECK_BTN_ALL(controller->press.button, BTN_DRIGHT)) {
         this->mode++;
         if (this->mode > PROFILING_MODE_C) {
             this->mode = PROFILING_MODE_DEFAULT;
         }
-    }
-
-    if (CHECK_BTN_ALL(controller->cur.button, BTN_R) && CHECK_BTN_ALL(controller->press.button, BTN_L)) {
-        this->bShow ^= 1;
     }
 }
 
@@ -77,68 +73,41 @@ f32 Profiler_RcpCyclesToMs(u32 cyc) {
 void Profiler_PrintDefault(Profiler* this, GraphicsContext* gfxCtx, u8 baseX, u8 baseY) {
     Color_RGBA8 rgba = { 255, 255, 255, 255 };
 
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY, rgba);
-    Print_Screen(&gDebug.printer, "%5dTin\n", this->results->def.rspInTriCount);
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY + 1, rgba);
-    Print_Screen(&gDebug.printer, "%5dTo\n", this->results->def.rdpOutTriCount);
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY + 2, rgba);
-    Print_Screen(&gDebug.printer, "%5drct\n", this->results->def.rectCount);
+    Print_Screen(&gDebug.printer, baseX, baseY, COLOR_WHITE, "%5dTin\n", this->results->def.rspInTriCount);
+    Print_Screen(&gDebug.printer, baseX, baseY + 1, COLOR_WHITE, "%5dTo\n", this->results->def.rdpOutTriCount);
+    Print_Screen(&gDebug.printer, baseX, baseY + 2, COLOR_WHITE, "%5drct\n", this->results->def.rectCount);
 }
 
 void Profiler_PrintA(Profiler* this, GraphicsContext* gfxCtx, u8 baseX, u8 baseY) {
-    Color_RGBA8 rgba = { 255, 255, 255, 255 };
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY, rgba);
-    Print_Screen(&gDebug.printer, "%5dfDL\n", this->results->a.fetchedDLCommandCount);
+    Print_Screen(&gDebug.printer, baseX, baseY, COLOR_WHITE, "%5dfDL\n", this->results->a.fetchedDLCommandCount);
 }
 
 void Profiler_PrintB(Profiler* this, GraphicsContext* gfxCtx, u8 baseX, u8 baseY) {
-    Color_RGBA8 rgba = { 255, 255, 255, 255 };
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY, rgba);
-    Print_Screen(&gDebug.printer, "%5dlit\n", this->results->b.litVertexCount);
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY + 1, rgba);
-    Print_Screen(&gDebug.printer, "%5docc\n", this->results->b.occlusionPlaneCullCount);
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY + 2, rgba);
-    Print_Screen(&gDebug.printer, "%5dclp\n", this->results->b.clippedTriCount);
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY + 3, rgba);
-    Print_Screen(&gDebug.printer, "%4d all\n", this->results->b.allOverlayLoadCount);
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY + 4, rgba);
-    Print_Screen(&gDebug.printer, "%4d 2lt\n", this->results->b.lightingOverlayLoadCount);
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY + 5, rgba);
-    Print_Screen(&gDebug.printer, "%4d 3cl\n", this->results->b.clippingOverlayLoadCount);
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY + 6, rgba);
-    Print_Screen(&gDebug.printer, "%4d 4m\n", this->results->b.miscOverlayLoadCount);
+    Print_Screen(&gDebug.printer, baseX, baseY, COLOR_WHITE, "%5dlit\n", this->results->b.litVertexCount);
+    Print_Screen(&gDebug.printer, baseX, baseY + 1, COLOR_WHITE, "%5docc\n", this->results->b.occlusionPlaneCullCount);
+    Print_Screen(&gDebug.printer, baseX, baseY + 2, COLOR_WHITE, "%5dclp\n", this->results->b.clippedTriCount);
+    Print_Screen(&gDebug.printer, baseX, baseY + 3, COLOR_WHITE, "%4d all\n", this->results->b.allOverlayLoadCount);
+    Print_Screen(&gDebug.printer, baseX, baseY + 4, COLOR_WHITE, "%4d 2lt\n", this->results->b.lightingOverlayLoadCount);
+    Print_Screen(&gDebug.printer, baseX, baseY + 5, COLOR_WHITE, "%4d 3cl\n", this->results->b.clippingOverlayLoadCount);
+    Print_Screen(&gDebug.printer, baseX, baseY + 6, COLOR_WHITE, "%4d 4m\n", this->results->b.miscOverlayLoadCount);
 }
 
 void Profiler_PrintC(Profiler* this, GraphicsContext* gfxCtx, u8 baseX, u8 baseY) {
-    Color_RGBA8 rgba = { 255, 255, 255, 255 };
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY, rgba);
-    Print_Screen(&gDebug.printer, "%5dsml\n", this->results->c.smallRDPCommandCount);
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY + 1, rgba);
-    Print_Screen(&gDebug.printer, "%5.2fslf\n", perfAvgs[PERF_SELF]);
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY + 2, rgba);
-    Print_Screen(&gDebug.printer, "%5.2fDMA\n", perfAvgs[PERF_RSP_STALL_DMA]);
-
-    Print_SetInfos(&gDebug.printer, gfxCtx, baseX, baseY + 3, rgba);
-    Print_Screen(&gDebug.printer, "%5dmtx\n", this->results->c.matrixCount);
-
+    Print_Screen(&gDebug.printer, baseX, baseY, COLOR_WHITE, "%5dsml\n", this->results->c.smallRDPCommandCount);
+    Print_Screen(&gDebug.printer, baseX, baseY + 1, COLOR_WHITE, "%5.2fslf\n", perfAvgs[PERF_SELF]);
+    Print_Screen(&gDebug.printer, baseX, baseY + 2, COLOR_WHITE, "%5.2fDMA\n", perfAvgs[PERF_RSP_STALL_DMA]);
+    Print_Screen(&gDebug.printer, baseX, baseY + 3, COLOR_WHITE, "%5dmtx\n", this->results->c.matrixCount);
 }
 
-void Profiler_Update(Profiler* this) {
+u8 Profiler_Update(Profiler* this) {
     s32 p, f;
     hasFifoFull = this->mode == PROFILING_MODE_DEFAULT || this->mode == PROFILING_MODE_A;
+
+    if (gProfiler.results == NULL) {
+        return true;
+    }
+
+    Profiler_UpdateMode(&gProfiler, gDebug.input);
 
     perfTimes[PERF_FIFO_FULL][firIdx] = hasFifoFull ?
         Profiler_RcpCyclesToMs(this->results->def.stallRDPFifoFullCycles) : 0.0f;
@@ -171,54 +140,53 @@ void Profiler_Update(Profiler* this) {
         avg *= (1.0f / (f32)NUM_FIR);
         perfAvgs[p] = avg;
     }
+
+    return true;
 }
 
-void Profiler_Draw(Profiler* this, GraphicsContext* gfxCtx) {
+u8 Profiler_Draw(Profiler* this) {
     Color_RGBA8 rgba = { 255, 255, 255, 255 };
-    Color_RGBA8 bg = { 0, 0, 0, 128 };
-    Vec2s left = { 15, 55 };
-    Vec2s right = { 115, 225 };
     PrintUtils* pPrint = &gDebug.printer;
+    GraphicsContext* gfxCtx = gDebug.printer.gfxCtx;
+    u8 baseY = 5;
 
-    Debug_DrawColorRectangle(gfxCtx, left, right, bg);
+    if (gProfiler.results == NULL) {
+        return true;
+    }
 
-    Print_SetInfos(pPrint, gfxCtx, 3, 7, rgba);
-    Print_Screen(pPrint, "%s\n", gF3DEX3VersionNames[this->mode]);
+    Print_Screen(pPrint, 4, baseY, COLOR_WHITE, "%s\n", gF3DEX3VersionNames[this->mode]);
+    Print_Screen(pPrint, 4, baseY + 1, COLOR_WHITE, "----------\n");
 
-    Print_SetInfos(pPrint, gfxCtx, 3, 8, rgba);
-    Print_Screen(pPrint, "----------\n");
-
-    Print_SetInfos(pPrint, gfxCtx, 3, 9, rgba);
     if ((this->mode == PROFILING_MODE_DEFAULT) || (this->mode == PROFILING_MODE_B)) {
-        Print_Screen(pPrint, "%5dV\n", this->results->def.vertexCount);
+        Print_Screen(pPrint, 4, baseY + 2, COLOR_WHITE, "%5dV\n", this->results->def.vertexCount);
     } else {
-        Print_Screen(pPrint, "None\n");
+        Print_Screen(pPrint, 4, baseY + 3, COLOR_WHITE, "None\n");
     }
 
-    Print_SetInfos(pPrint, gfxCtx, 3, 10, rgba);
     if ((this->mode == PROFILING_MODE_A) || (this->mode == PROFILING_MODE_C)) {
-        Print_Screen(pPrint, "%5dDL\n", this->results->a.dlCommandCount);
+        Print_Screen(pPrint, 4, baseY + 4, COLOR_WHITE, "%5dDL\n", this->results->a.dlCommandCount);
     } else {
-        Print_Screen(pPrint, "None\n");
+        Print_Screen(pPrint, 4, baseY + 5, COLOR_WHITE, "None\n");
     }
 
-    Print_SetInfos(pPrint, gfxCtx, 3, 11, rgba);
-    Print_Screen(pPrint, "----------\n");
+    Print_Screen(pPrint, 4, baseY + 6, COLOR_WHITE, "----------\n");
 
     switch (this->mode) {
         case PROFILING_MODE_DEFAULT:
-            Profiler_PrintDefault(this, gfxCtx, 3, 12);
+            Profiler_PrintDefault(this, gfxCtx, 4, baseY + 7);
             break;
         case PROFILING_MODE_A:
-            Profiler_PrintA(this, gfxCtx, 3, 12);
+            Profiler_PrintA(this, gfxCtx, 4, baseY + 7);
             break;
         case PROFILING_MODE_B:
-            Profiler_PrintB(this, gfxCtx, 3, 12);
+            Profiler_PrintB(this, gfxCtx, 4, baseY + 7);
             break;
         case PROFILING_MODE_C:
-            Profiler_PrintC(this, gfxCtx, 3, 12);
+            Profiler_PrintC(this, gfxCtx, 4, baseY + 7);
             break;
         default:
             break;
     }
+
+    return true;
 }

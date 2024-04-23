@@ -14,13 +14,10 @@ typedef struct PrintUtils {
     Gfx* dl;
     Gfx* gfxRef;
     GfxPrint gfxP;
-    Vec3s pos; // Note: Z-Pos isn't used
-    Color_RGBA8 rgba;
 } PrintUtils;
 
 void Print_DebugPos(PrintUtils* this, Input* input, s16 posXChangeBy, s16 posYChangeBy);
-void Print_SetInfos(PrintUtils* this, GraphicsContext* gfxCtx, s16 x, s16 y, Color_RGBA8 rgba);
-void Print_Screen(PrintUtils* this, const char* fmt, ...);
+void Print_Screen(PrintUtils* this, u8 x, u8 y, u32 rgba, const char* fmt, ...);
 
 s32 GfxPrint_VPrintf(GfxPrint* this, const char* fmt, va_list args);
 

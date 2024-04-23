@@ -104,7 +104,7 @@ typedef struct Profiler {
 
 void Profiler_Init(Profiler* this);
 void Profiler_UpdateMode(Profiler* this, Input* controller);
-void Profiler_Update(Profiler* this);
-void Profiler_Draw(Profiler* this, GraphicsContext* gfxCtx);
+u8 Profiler_Update(Profiler* this);
+u8 Profiler_Draw(Profiler* this);
 
 #endif

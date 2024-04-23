@@ -355,16 +355,13 @@ void GameState_Update(GameState* gameState) {
         func_800C49F4(gfxCtx);
     }
 
-     #if ENABLE_F3DEX3
-        if (gProfiler.results != NULL) {
-            Profiler_UpdateMode(&gProfiler, &gameState->input[0]);
-            Profiler_Update(&gProfiler);
-
-            if (gProfiler.bShow) {
-                Profiler_Draw(&gProfiler, gfxCtx);
-            }
-        }
-    #endif
+#if ENABLE_HACKER_DEBUG
+    gDebug.printer.gfxCtx = gameState->gfxCtx;
+    if (gDebug.menu.bShow) {
+        Menu_Draw(&gDebug.menu);
+    }
+    Menu_Update(&gDebug.menu);
+#endif
 
     gameState->frames++;
 }
@@ -483,6 +480,11 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
 
 #if IS_DEBUG
     Fault_AddClient(&sGameFaultClient, GameState_FaultPrint, NULL, NULL);
+#endif
+
+#if ENABLE_HACKER_DEBUG
+    gDebug.input = &gameState->input[0];
+    Menu_Init(&gDebug.menu);
 #endif
 
     PRINTF("game コンストラクタ終了\n"); // "game constructor end"

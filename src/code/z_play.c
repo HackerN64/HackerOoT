@@ -251,7 +251,6 @@ void Play_Init(GameState* thisx) {
 
 #if ENABLE_HACKER_DEBUG
     gDebug.play = this;
-    gDebug.input = &this->state.input[0];
 #endif
 
     if (gSaveContext.save.entranceIndex == ENTR_LOAD_OPENING) {

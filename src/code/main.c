@@ -86,8 +86,10 @@ void Main(void* arg) {
         DebugArena_Init(debugHeapStart, debugHeapSize);
     }
 
-#if ENABLE_F3DEX3
-    Profiler_Init(&gProfiler);
+#if ENABLE_HACKER_DEBUG
+    #if ENABLE_F3DEX3
+        Profiler_Init(&gProfiler);
+    #endif
 #endif
 
     Rainbow_Init(&gRainbow);
