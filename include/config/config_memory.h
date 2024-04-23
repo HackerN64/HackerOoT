@@ -45,7 +45,8 @@
 #define OBJECT_BANK_SIZE 0x200000
 
 /**
- * Automatic GI Object Allocation based on the size of the largest GI object
+ * @brief Automatic GI Object Allocation based on 
+ * the size of the largest GI object
 */
 #define ENABLE_AUTO_GI_ALLOC false
 
@@ -53,6 +54,8 @@
  * @brief Player's memory space reserved to load GI models (the model Link
  * holds over his head when getting an item). Vanilla's size is very
  * tiny, `0x3008`, ~12KB.
+ * 
+ * Note: this will be ignored if the automatic allocation is enabled.
  * 
  */
 #define GI_ALLOC_SIZE 0xB000
@@ -76,6 +79,11 @@
  * @brief Space allocated for the Work buffer. Vanilla value is `0x80`.
  */
 #define WORK_BUFFER_SIZE 0x80
+
+/**
+ * @brief Space allocated for the Debug buffer.
+ */
+#define DEBUG_BUFFER_SIZE 0xC00
 
 /**
  * @brief Vanilla value is 0x8044BE80. Make this a little larger to

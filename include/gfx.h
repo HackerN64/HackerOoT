@@ -16,7 +16,7 @@ typedef struct {
     /* 0x0BF08 */ Gfx polyXluBuffer[POLY_XLU_BUFFER_SIZE];
     /* 0x0FF08 */ Gfx overlayBuffer[OVERLAY_BUFFER_SIZE];
     /* 0x11F08 */ Gfx workBuffer[WORK_BUFFER_SIZE];
-    /* 0x11308 */ Gfx unusedBuffer[0x20];
+    /* 0x11308 */ Gfx debugBuffer[IS_DEBUG ? DEBUG_BUFFER_SIZE : 0x20];
     /* 0x12408 */ u16 tailMagic; // GFXPOOL_TAIL_MAGIC
 } GfxPool; // size = 0x12410
 
@@ -49,7 +49,8 @@ typedef struct GraphicsContext {
     /* 0x02F0 */ void* callbackParam;
     /* 0x02F4 */ f32 xScale;
     /* 0x02F8 */ f32 yScale;
-    /* 0x02FC */ char unk_2FC[0x04];
+    /* 0x02FC */ Gfx* debugBuffer;
+    TwoHeadGfxArena debug;
 } GraphicsContext; // size = 0x300
 
 typedef enum {
