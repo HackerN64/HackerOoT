@@ -207,6 +207,7 @@ ZAPD       := tools/ZAPD/ZAPD.out
 FADO       := tools/fado/fado.elf
 PYTHON     ?= $(VENV)/bin/python3
 FLIPS      := tools/Flips/flips
+GZINJECT   := tools/gzinject/gzinject
 
 # Command to replace path variables in the spec file. We can't use the C
 # preprocessor for this because it won't substitute inside string literals.
@@ -232,10 +233,12 @@ else
 endif
 ROMC     := $(ROM:.z64=-compressed-$(COMPRESSION).z64)
 WAD      := $(ROM:.z64=.wad)
+ISO      := $(ROM:.z64=.iso)
 BPS      := $(ROM:.z64=.bps)
 ELF      := $(ROM:.z64=.elf)
 MAP      := $(ROM:.z64=.map)
 LDSCRIPT := $(ROM:.z64=.ld)
+DMA_SCENE_FILES := scene_files.txt
 # description of ROM segments
 SPEC := spec
 
@@ -315,8 +318,20 @@ ifeq ("$(wildcard baseroms/$(VERSION)/common-key.bin)", "")
 	$(error Please provide the common-key.bin file.)
 endif
 	$(V)$(MAKE) compress CFLAGS="-DCONSOLE_WIIVC $(CFLAGS) -fno-reorder-blocks -fno-optimize-sibling-calls" CPPFLAGS="-DCONSOLE_WIIVC $(CPPFLAGS)"
-	$(V)tools/gzinject/gzinject -a inject -r 1 -k baseroms/$(VERSION)/common-key.bin -w baseroms/$(VERSION)/basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
+	$(V)$(GZINJECT) -a inject -r 1 -k baseroms/$(VERSION)/common-key.bin -w baseroms/$(VERSION)/basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
 	$(V)$(RM) -r wadextract/
+	$(call print,Success!)
+
+iso:
+	$(call print,Patching ISO...)
+	$(V)$(MAKE) compress CFLAGS="-DCONSOLE_GC $(CFLAGS) -fno-reorder-blocks -fno-optimize-sibling-calls" CPPFLAGS="-DCONSOLE_GC $(CPPFLAGS)"
+	$(V)$(PYTHON) tools/gc_utility.py -v $(VERSION) -m txt
+	$(V)$(GZINJECT) -a extract -s baseroms/$(VERSION)/baseiso.iso
+	$(V)$(shell cp $(BUILD_DIR)/$(DMA_SCENE_FILES) isoextract/zlj.tgc/$(DMA_SCENE_FILES))
+	$(V)$(shell cp $(ROMC) isoextract/zlj.tgc/zlj_f.z64)
+	$(V)$(RM) -r isoextract/S_*.tgc/
+	$(V)$(GZINJECT) -a pack -s $(ISO)
+	$(V)$(RM) -r isoextract/
 	$(call print,Success!)
 
 clean:
@@ -391,7 +406,7 @@ verify:
 	$(V)$(MAKE) rom
 	@md5sum $(ROM)
 
-.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3 verify
+.PHONY: all rom compress clean assetclean distclean venv setup run wad iso patch f3dex3 verify
 .DEFAULT_GOAL := rom
 
 #### Various Recipes ####
