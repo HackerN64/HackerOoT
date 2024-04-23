@@ -1,0 +1,9 @@
+{
+    "search.useIgnoreFiles": false,
+    "search.exclude": {
+        "**/.git": true,
+        "baseroms/**": true,
+        "build/**": true,
+        "expected/**": true,
+    },
+}
