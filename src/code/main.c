@@ -29,7 +29,7 @@ OSMesg sSerialMsgBuf[1];
 
 Rainbow gRainbow;
 
-u8 gIsConsole;
+u8 gGPUTimingsExist;
 
 #if IS_DEBUG
 void Main_LogSystemHeap(void) {
@@ -82,9 +82,9 @@ void Main(void* arg) {
     Regs_Init();
 
     if (IO_READ(DPC_PIPEBUSY_REG) == 0) {
-        gIsConsole = 0;
+        gGPUTimingsExist = 0;
     } else {
-        gIsConsole = 1;
+        gGPUTimingsExist = 1;
     }       
 
     R_ENABLE_ARENA_DBG = 0; // ENABLE_SPEEDMETER
