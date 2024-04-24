@@ -38,19 +38,25 @@ if __name__ == "__main__":
 
     VERSION = args.version
     DMATABLE_PATH = f"build/{VERSION}/dmadata_table_spec.h"
-    ROM_PATH = f"build/{VERSION}/{'oot-' if VERSION != 'hackeroot-mq' else ''}hackeroot-mq-compressed-{args.codec}.z64"
+    ROM_PATH = f"build/{VERSION}/{'oot-' if VERSION != 'hackeroot-mq' else ''}{VERSION}-compressed{'-' + args.codec if VERSION == 'hackeroot-mq' else ''}.z64"
     sceneFiles: list[DmaInfo] = []
     otherFiles: list[DmaInfo] = []
+    allFiles: list[DmaInfo] = []
 
     with open(DMATABLE_PATH, "r") as file:
         dmaTable = file.readlines()
 
     for i, dmaEntry in enumerate(dmaTable):
         entryName = dmaEntry.removeprefix("DEFINE_DMA_ENTRY(").removesuffix(")").split(", ")[0]
+        allFiles.append(DmaInfo(entryName, i))
         if entryName.endswith("_scene"):
             sceneFiles.append(DmaInfo(entryName, i))
         if entryName in { "code", "ovl_title", "vr_fine1_static", "elf_message_field", "elf_message_ydan"}:
             otherFiles.append(DmaInfo(entryName, i))
+
+    i = sceneFiles[-1].index
+    entryName = dmaTable[i + 1].removeprefix("DEFINE_DMA_ENTRY(").removesuffix(")").split(", ")[0]
+    sceneFiles.append(DmaInfo(entryName, i + 1))
     
     mapFile = f"oot-{VERSION}.map" if VERSION != "hackeroot-mq" else "hackeroot-mq.map"
     BUILTMAP = Path("build") / VERSION / mapFile
