@@ -33,12 +33,14 @@ static char *wad = NULL;
 static char *iso = NULL;
 static char *directory = NULL;
 static char *keyfile = NULL;
-static char    *workingdirectory = NULL;
+static char *workingdirectory = NULL;
 static char *rom = NULL;
+static char *rom_iso_path = NULL;
 static char *output = NULL;
 static patch_list_t *patch = NULL;
 static patch_list_t **patch_link = &patch;
 static dol_list_t *dol = NULL;
+static char* dol_iso_path = NULL;
 static dol_list_t **dol_link = &dol;
 static dol_loading_list_t *dol_loading = NULL;
 static dol_loading_list_t **dol_loading_link = &dol_loading;
@@ -71,11 +73,13 @@ static const struct option cmdoptions[] = {
     { "cleanup", no_argument,&cleanup,1},
     { "version",no_argument,0,'v'},
     { "rom",required_argument,0,'m'},
+    { "rom-iso-path",required_argument,0,'n'},
     { "outputwad",required_argument,0,'o'},
     { "outputiso",required_argument,0,'o'},
     { "patch-file",required_argument,0,'p'},
     { "content-num",required_argument,0,'c'},
     { "dol-inject",required_argument,0,'f'},
+    { "dol-iso-path",required_argument,0,'g'},
     { "dol-loading",required_argument,0,'l'},
     { "dol-after", required_argument,0,'e'},
     { 0,0,0,0}
@@ -230,11 +234,13 @@ static void print_usage() {
     "  --cleanup                    Remove files before performing actions\n"
     "  --version                    Prints the current version\n"
     "  -m, --rom=rom                Rom to inject for inject action (default: none), also rom to romc decompress\n"
+    "  --iso-rom-path               For gamecube isos, path to the rom file inside the iso\n"
     "  -o, --outputwad=outwad, --outputiso=outiso\n"
     "                               The output wad or iso for inject actions (default: SOURCEWAD-inject.wad or SOURCEISO-inject.iso), also output for romc decompression\n"
     "  -p, --patch-file=patchfile   gzi file to use for applying patches (default: none)\n"
     "  -c, --content=contentfile    the primary wii content file (default: 5)\n"
     "  --dol-inject                 Binary data to inject into the emulator program, requires --dol-loading\n"
+    "  --iso-dol-path               For gamecube isos, path to the dol file inside the iso\n"
     "  --dol-loading                The loading address for the binary specified by --dol-inject\n"
     "  --dol-after                  After which patch file to inject the dol, default: after all patches\n"
     );
@@ -1173,71 +1179,35 @@ static int do_iso_extract() {
     return extract_gcm_archive(iso, directory);
 }
 
-static int do_iso_pack() {
-    DIR *testdir = opendir(directory);
-    if (testdir) {
-        closedir(testdir);
-    } else {
-        fprintf(stderr,"%s doesn't exist, or is not a directory!\n", directory);
+static int do_iso_dol_patches() {
+    if (!dol_iso_path) {
+        fprintf(stderr, "DOL patching requested, but no --dol-iso-path specified\n");
         return 0;
     }
-
-    if (verbose) {
-        printf("Packing %s into %s\n", directory, iso);
-    }
-    if(chdir(directory)==-1){
-        fprintf(stderr,"Could not change directory to %s",directory);
-        return 0;
-    }
-
-    if (verbose) {
-        printf("Reading header.bin\n");
-    }
-    FILE *infile = fopen("header.bin", "rb");
-    if(!infile){
-        perror("Could not open header.bin for reading\n");
-        return 0;
-    }
-    uint8_t *gcm_header = calloc(GCM_HEADER_SIZE, sizeof(uint8_t));
-    if(!gcm_header){
-        fprintf(stderr,"Could not allocate %d bytes for header.bin\n",GCM_HEADER_SIZE);
-        return 0;
-    }
-    int bytesread = fread(gcm_header, 1, GCM_HEADER_SIZE, infile);
-    if(bytesread!=GCM_HEADER_SIZE || ferror(infile)){
-        perror("Error reading from header.bin\n");
-        free(gcm_header);
-        fclose(infile);
-        return 0;
-    }
-    fclose(infile);
 
     struct stat sbuffer;
-    if(stat("main.dol", &sbuffer)!=0){
-        perror("Could not stat main.dol\n");
-        free(gcm_header);
+    if(stat(dol_iso_path, &sbuffer)!=0){
+        perror("Could not stat dol file\n");
         return 0;
     }
     uint32_t dol_size = sbuffer.st_size;
 
     if (verbose) {
-        printf("Reading main.dol\n");
+        printf("Reading %s\n", dol_iso_path);
     }
-    infile = fopen("main.dol", "rb");
+    FILE *infile = fopen(dol_iso_path, "rb");
     if(!infile){
-        perror("Could not open main.dol for reading\n");
-        free(gcm_header);
+        perror("Could not open dol file for reading\n");
         return 0;
     }
     uint8_t *dol_content = calloc(dol_size, sizeof(uint8_t));
     if(!dol_content){
-        fprintf(stderr,"Could not allocate %d bytes for main.dol\n",dol_size);
+        fprintf(stderr,"Could not allocate %d bytes for %s\n",dol_size,dol_iso_path);
         return 0;
     }
-    bytesread = fread(dol_content, 1, dol_size, infile);
+    int bytesread = fread(dol_content, 1, dol_size, infile);
     if(bytesread!=dol_size || ferror(infile)){
-        perror("Error reading from main.dol\n");
-        free(gcm_header);
+        perror("Error reading from dol file\n");
         free(dol_content);
         fclose(infile);
         return 0;
@@ -1334,13 +1304,92 @@ static int do_iso_pack() {
         }
     }
 
+    if (verbose) {
+        printf("Writing %s\n", dol_iso_path);
+    }
+    FILE *outfile = fopen(dol_iso_path, "wb");
+    fwrite(dol_content, 1, dol_size, outfile);
+    if(ferror(outfile)){
+        perror("Could not write dol file\n");
+        fclose(outfile);
+        goto error;
+    }
+    fclose(outfile);
+
+    for(int i=0;i<contentsc;i++){
+        if(fileptrs[i]) free(fileptrs[i]);
+    }
+    free(fileptrs);
+    free(filesizes);
+    return 1;
+
+error:
+    if(fileptrs){
+        for(int i=0;i<contentsc;i++){
+            if(fileptrs[i]) free(fileptrs[i]);
+        }
+        free(fileptrs);
+
+    }
+    if(filesizes) free(filesizes);
+    return 0;
+}
+
+static int do_iso_pack() {
+    DIR *testdir = opendir(directory);
+    if (testdir) {
+        closedir(testdir);
+    } else {
+        fprintf(stderr,"%s doesn't exist, or is not a directory!\n", directory);
+        return 0;
+    }
+
+    if (verbose) {
+        printf("Packing %s into %s\n", directory, iso);
+    }
+    if(chdir(directory)==-1){
+        fprintf(stderr,"Could not change directory to %s",directory);
+        return 0;
+    }
+
+    if (verbose) {
+        printf("Reading header.bin\n");
+    }
+    FILE *infile = fopen("header.bin", "rb");
+    if(!infile){
+        perror("Could not open header.bin for reading\n");
+        return 0;
+    }
+    uint8_t *gcm_header = calloc(GCM_HEADER_SIZE, sizeof(uint8_t));
+    if(!gcm_header){
+        fprintf(stderr,"Could not allocate %d bytes for header.bin\n",GCM_HEADER_SIZE);
+        return 0;
+    }
+    int bytesread = fread(gcm_header, 1, GCM_HEADER_SIZE, infile);
+    if(bytesread!=GCM_HEADER_SIZE || ferror(infile)){
+        perror("Error reading from header.bin\n");
+        free(gcm_header);
+        fclose(infile);
+        return 0;
+    }
+    fclose(infile);
+
+    FILE *outfile;
+    if (dol || patch) {
+        if (!do_iso_dol_patches()) {
+            free(gcm_header);
+            return 0;
+        }
+    }
+
     if (gameid != NULL) {
         if (verbose) {
             printf("Changing game ID\n");
         }
         if (strlen(gameid) != 4) {
             fprintf(stderr,"Game ID must be 4 characters long\n");
-            goto error;
+            free(gcm_header);
+            return 0;
         }
         memcpy(&gcm_header[0], gameid, 4);
     }
@@ -1351,7 +1400,8 @@ static int do_iso_pack() {
         int max_length = 0x03E0;
         if (strlen(gamename) >= max_length) {
             fprintf(stderr,"Game name must be less than %d characters long\n", max_length);
-            goto error;
+            free(gcm_header);
+            return 0;
         }
         memset(&gcm_header[0x20], 0, max_length);
         memcpy(&gcm_header[0x20], gamename, strlen(gamename));
@@ -1360,24 +1410,13 @@ static int do_iso_pack() {
     if (verbose) {
         printf("Writing header.bin\n");
     }
-    FILE *outfile = fopen("header.bin", "wb");
+    outfile = fopen("header.bin", "wb");
     fwrite(gcm_header, 1, GCM_HEADER_SIZE, outfile);
     if(ferror(outfile)){
         perror("Could not write header.bin\n");
         fclose(outfile);
-        goto error;
-    }
-    fclose(outfile);
-
-    if (verbose) {
-        printf("Writing main.dol\n");
-    }
-    outfile = fopen("main.dol", "wb");
-    fwrite(dol_content, 1, dol_size, outfile);
-    if(ferror(outfile)){
-        perror("Could not write main.dol\n");
-        fclose(outfile);
-        goto error;
+        free(gcm_header);
+        return 0;
     }
     fclose(outfile);
 
@@ -1387,28 +1426,11 @@ static int do_iso_pack() {
     }
 
     free(gcm_header);
-    for(int i=0;i<contentsc;i++){
-        if(fileptrs[i]) free(fileptrs[i]);
-    }
-    free(fileptrs);
-    free(filesizes);
 
     if (cleanup)
         removedir(directory);
 
     return 1;
-
-error:
-    free(gcm_header);
-    if(fileptrs){
-        for(int i=0;i<contentsc;i++){
-            if(fileptrs[i]) free(fileptrs[i]);
-        }
-        free(fileptrs);
-
-    }
-    if(filesizes) free(filesizes);
-    return 0;
 }
 
 static void do_iso(const char* action) {
@@ -1436,7 +1458,11 @@ static void do_iso(const char* action) {
             printf("-a inject specified, but no rom to inject\n");
             free(workingdirectory);
             exit(1);
-
+        }
+        if (rom_iso_path == NULL) {
+            printf("--rom-iso-path is required for injecting to isos\n");
+            free(workingdirectory);
+            exit(1);
         }
         if(!do_iso_extract()){
             perror("Could not extract iso\n");
@@ -1445,7 +1471,7 @@ static void do_iso(const char* action) {
         }
 
         if (verbose) {
-            printf("Copying %s to %s/zlj_f.tgc/zlj_f.n64\n", rom, directory);
+            printf("Copying %s to %s/%s\n", rom, directory, rom_iso_path);
         }
         FILE *from = fopen(rom, "rb");
         fseek(from, 0, SEEK_END);
@@ -1467,7 +1493,7 @@ static void do_iso(const char* action) {
             free(inrom);
             exit(1);
         }
-        snprintf(orom, 200, "%s/zlj_f.tgc/zlj_f.n64", directory);
+        snprintf(orom, 200, "%s/%s", directory, rom_iso_path);
         from = fopen(orom, "wb");
         fwrite(inrom, 1, fromlen, from);
         fclose(from);
@@ -1617,6 +1643,9 @@ int main(int argc, char **argv) {
         case 'm':
             rom = optarg;
             break;
+        case 'n':
+            rom_iso_path = optarg;
+            break;
         case 'o':
             output = optarg;
             break;
@@ -1649,6 +1678,9 @@ int main(int argc, char **argv) {
             dol_link = &new_dol->next;
             break;
         }
+        case 'g':
+            dol_iso_path = optarg;
+            break;
         case 'l':{
             char loading_address[10];
             sscanf(optarg,"%9s",loading_address);

@@ -1,4 +1,5 @@
 #include <dirent.h>
+#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,8 +12,8 @@
 uint32_t GCM_HEADER_SIZE = 0x2440;
 uint32_t TGC_HEADER_SIZE = 0x8000;
 
-#define MAX_FST_ENTRIES 1000
-#define MAX_STRING_TABLE_SIZE 0x100000
+#define MAX_FST_ENTRIES 10000
+#define MAX_STRING_TABLE_SIZE 0x1000000
 
 typedef struct {
     bool is_dir;
@@ -41,7 +42,16 @@ static void fst_init(fst_t *fst) {
     fst->string_table_size = 0;
 }
 
-static void fst_add_file(fst_t *fst, const char *name) {
+static int fst_add_file(fst_t *fst, const char *name) {
+    if (fst->num_entries >= MAX_FST_ENTRIES) {
+        fprintf(stderr,"Too many files\n");
+        return 0;
+    }
+    if (fst->string_table_size + strlen(name) + 1 >= MAX_STRING_TABLE_SIZE) {
+        fprintf(stderr,"String table too large\n");
+        return 0;
+    }
+
     fst_entry_t *entry = &fst->entries[fst->num_entries];
     entry->is_dir = false;
     entry->name_offset = fst->string_table_size;
@@ -51,9 +61,10 @@ static void fst_add_file(fst_t *fst, const char *name) {
     strcpy(&fst->string_table[fst->string_table_size], name);
     fst->num_entries++;
     fst->string_table_size += strlen(name) + 1;
+    return 1;
 }
 
-static int fst_add_dir(fst_t *fst, const char *name, int parent_offset) {
+static int fst_add_dir(fst_t *fst, const char* parent, const char *name, int parent_offset) {
     DIR *dir;
     struct dirent *dirent;
 
@@ -71,9 +82,16 @@ static int fst_add_dir(fst_t *fst, const char *name, int parent_offset) {
         fst->string_table_size += strlen(name) + 1;
     }
 
-    dir = opendir(".");
+    char dirname[256];
+    if (strlen(parent) == 0 && strlen(name) == 0) {
+        strcpy(dirname, "");
+        dir = opendir(".");
+    } else {
+        snprintf(dirname, sizeof(dirname), "%s%s/", parent, name);
+        dir = opendir(dirname);
+    }
     if (!dir) {
-        fprintf(stderr,"Could not open current directory\n");
+        fprintf(stderr,"Could not open directory %s\n", dirname);
         return 0;
     }
 
@@ -86,24 +104,15 @@ static int fst_add_dir(fst_t *fst, const char *name, int parent_offset) {
         }
 
         if (dirent->d_type == DT_DIR && !is_tgc(dirent->d_name)) {
-            if (chdir(dirent->d_name) == -1) {
-                fprintf(stderr,"Could not chdir to %s\n",dirent->d_name);
-                closedir(dir);
-                return 0;
-            }
-
-            if (!fst_add_dir(fst, dirent->d_name, i)) {
-                closedir(dir);
-                return 0;
-            }
-
-            if (chdir("..") == -1) {
-                fprintf(stderr,"Could not chdir back to parent directory\n");
+            if (!fst_add_dir(fst, dirname, dirent->d_name, i)) {
                 closedir(dir);
                 return 0;
             }
         } else {
-            fst_add_file(fst, dirent->d_name);
+            if (!fst_add_file(fst, dirent->d_name)) {
+                closedir(dir);
+                return 0;
+            }
         }
     }
 
@@ -124,12 +133,14 @@ static size_t align(size_t offset, size_t alignment) {
 static int pack_gcm(FILE *f, const char *dirname, bool is_tgc, uint32_t start_offset, uint32_t *end_offset);
 
 static int pack_file(FILE *f, const char *dirname, const char *name, uint32_t start_offset, uint32_t *end_offset) {
+    char filename[256];
+    snprintf(filename, sizeof(filename), "%s%s", dirname, name);
     if (verbose) {
-        printf("Packing %s%s.\n", dirname, name);
+        printf("Packing %s.\n", filename);
     }
-    FILE *input = fopen(name, "rb");
+    FILE *input = fopen(filename, "rb");
     if(!input){
-        fprintf(stderr,"Could not open %s for reading\n",name);
+        fprintf(stderr,"Could not open %s for reading\n",filename);
         return 0;
     }
 
@@ -163,38 +174,18 @@ static int pack_files(FILE *f, fst_t *fst, const char *dirname, int start, int e
         start_offset = align(start_offset, 0x8000);
 
         if (entry->is_dir) {
-            if (chdir(name) == -1) {
-                fprintf(stderr,"Could not chdir to %s\n",name);
-                return 0;
-            }
-
             char subdirname[256];
             snprintf(subdirname, sizeof(subdirname), "%s%s/", dirname, name);
             if (!pack_files(f, fst, subdirname, i + 1, entry->next_offset, file_base_offset, start_offset, end_offset)) {
                 return 0;
             }
 
-            if (chdir("..") == -1) {
-                fprintf(stderr,"Could not chdir back to parent directory\n");
-                return 0;
-            }
-
             i = entry->next_offset - 1;
             start_offset = *end_offset;
         } else if (is_tgc(name)) {
-            if (chdir(name) == -1) {
-                fprintf(stderr,"Could not chdir to %s\n",name);
-                return 0;
-            }
-
             char subdirname[256];
             snprintf(subdirname, sizeof(subdirname), "%s%s/", dirname, name);
             if (!pack_gcm(f, subdirname, true, start_offset, end_offset)) {
-                return 0;
-            }
-
-            if (chdir("..") == -1) {
-                fprintf(stderr,"Could not chdir back to parent directory\n");
                 return 0;
             }
 
@@ -215,12 +206,15 @@ static int pack_files(FILE *f, fst_t *fst, const char *dirname, int start, int e
 }
 
 static int pack_gcm(FILE *f, const char *dirname, bool is_tgc, uint32_t start_offset, uint32_t *end_offset) {
+    char path[256];
     uint8_t *gcm_header = malloc(GCM_HEADER_SIZE);
     if(!gcm_header){
         fprintf(stderr,"Could not allocate %ld bytes for gcm header\n",GCM_HEADER_SIZE);
         return 0;
     }
-    FILE *header_file = fopen("header.bin", "rb");
+
+    snprintf(path, sizeof(path), "%sheader.bin", dirname);
+    FILE *header_file = fopen(path, "rb");
     if(!header_file){
         fprintf(stderr,"Could not open header.bin\n");
         free(gcm_header);
@@ -236,14 +230,16 @@ static int pack_gcm(FILE *f, const char *dirname, bool is_tgc, uint32_t start_of
     fclose(header_file);
 
     struct stat sbuffer;
-    if (stat("apploader.img", &sbuffer) == -1) {
+    snprintf(path, sizeof(path), "%sapploader.img", dirname);
+    if (stat(path, &sbuffer) == -1) {
         fprintf(stderr,"Could not stat apploader.img\n");
         free(gcm_header);
         return 0;
     }
     uint32_t apploader_size = sbuffer.st_size;
 
-    if (stat("main.dol", &sbuffer) == -1) {
+    snprintf(path, sizeof(path), "%smain.dol", dirname);
+    if (stat(path, &sbuffer) == -1) {
         fprintf(stderr,"Could not stat main.dol\n");
         free(gcm_header);
         return 0;
@@ -253,7 +249,7 @@ static int pack_gcm(FILE *f, const char *dirname, bool is_tgc, uint32_t start_of
     fst_t fst;
     fst_init(&fst);
 
-    if (!fst_add_dir(&fst, "", -1)) {
+    if (!fst_add_dir(&fst, dirname, "", -1)) {
         free(gcm_header);
         fst_destroy(&fst);
         return 0;
@@ -372,9 +368,12 @@ int create_gcm_archive(const char *dir, const char *output) {
     return 1;
 }
 
-static int extract_file(FILE *f, const char *dirname, const char *filename, uint32_t offset, size_t size) {
+static int extract_file(FILE *f, const char *dirname, const char *name, uint32_t offset, size_t size) {
+    char filename[256];
+    snprintf(filename, sizeof(filename), "%s%s", dirname, name);
+
     if (verbose) {
-        printf("Writing %s%s.\n", dirname, filename);
+        printf("Writing %s.\n", filename);
     }
 
     FILE *outfile = fopen(filename, "wb");
@@ -406,22 +405,11 @@ static int extract_file(FILE *f, const char *dirname, const char *filename, uint
     return 1;
 }
 
-static int enter_directory(const char *name) {
-    struct stat sbuffer;
-
-    stat(name,&sbuffer);
-    if(!S_ISDIR(sbuffer.st_mode)){
-        if(mkdir(name, 0755)==-1){
-            fprintf(stderr,"Could not mkdir %s\n",name);
-            return 0;
-        }
-    }
-
-    if (chdir(name) == -1) {
-        fprintf(stderr,"Could not chdir to %s\n",name);
+static int create_directory(const char *name) {
+    if(mkdir(name, 0755)==-1 && errno != EEXIST) {
+        fprintf(stderr,"Could not mkdir %s\n",name);
         return 0;
     }
-
     return 1;
 }
 
@@ -437,17 +425,15 @@ static int extract_gcm_files(FILE *f, const char *dirname, uint8_t *fst, const c
             uint32_t size = be32(entry + 8);
 
             if (is_tgc(name)) {
-                if (!enter_directory(name)) {
+                char subdirname[256];
+                snprintf(subdirname, sizeof(subdirname), "%s%s/", dirname, name);
+                if (!create_directory(subdirname)) {
                     return 0;
                 }
 
-                char subdirname[256];
-                snprintf(subdirname, sizeof(subdirname), "%s%s/", dirname, name);
                 if (!extract_tgc(f, subdirname, offset + file_base_offset)) {
                     return 0;
                 }
-
-                chdir("..");
             } else {
                 if (!extract_file(f, dirname, name, offset + file_base_offset, size)) {
                     return 0;
@@ -455,18 +441,15 @@ static int extract_gcm_files(FILE *f, const char *dirname, uint8_t *fst, const c
             }
         } else if (entry[0] == 1) { // directory
             uint32_t next_offset = be32(entry + 8);
-
-            if (!enter_directory(name)) {
+            char subdirname[256];
+            snprintf(subdirname, sizeof(subdirname), "%s%s/", dirname, name);
+            if (!create_directory(subdirname)) {
                 return 0;
             }
 
-            char subdirname[256];
-            snprintf(subdirname, sizeof(subdirname), "%s%s/", dirname, name);
             if (!extract_gcm_files(f, subdirname, fst, string_table, i + 1, next_offset, file_base_offset)) {
                 return 0;
             }
-
-            chdir("..");
             i = next_offset - 1;
         } else {
             fprintf(stderr,"Invalid fst entry\n");
