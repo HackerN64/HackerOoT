@@ -1,27 +1,46 @@
 #!/usr/bin/env python3
 
 import argparse
+import mapfile_parser
+import sys
+from io import StringIO
+from pathlib import Path
 from dataclasses import dataclass
 
-DMATABLE_PATH = ""
-VERSION = ""
-INDENT = " " * 4
+# from https://stackoverflow.com/a/16571630
+class Capturing(list):
+    def __enter__(self):
+        self._stdout = sys.stdout
+        sys.stdout = self._stringio = StringIO()
+        return self
+    def __exit__(self, *args):
+        self.extend(self._stringio.getvalue().splitlines())
+        del self._stringio    # free up some memory
+        sys.stdout = self._stdout
 
 @dataclass
-class SceneFiles:
+class DmaInfo:
     name: str
     index: int
 
+@dataclass
+class DmaEntry:
+    vromStart: str
+    vromEnd: str
+    romStart: str
+    romEnd: str
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="gamecube utility")
-    parser.add_argument("-m", "--mode", help="Write Mode ('code' or 'txt')", default="code")
     parser.add_argument("-v", "--version", help="OoT Version", default="hackeroot-mq")
+    parser.add_argument("-c", "--codec", help="Compression Codec", default="yaz")
     args = parser.parse_args()
 
-    mode = args.mode
     VERSION = args.version
     DMATABLE_PATH = f"build/{VERSION}/dmadata_table_spec.h"
-    sceneFiles: list[SceneFiles] = []
+    ROM_PATH = f"build/{VERSION}/{'oot-' if VERSION != 'hackeroot-mq' else ''}hackeroot-mq-compressed-{args.codec}.z64"
+    sceneFiles: list[DmaInfo] = []
+    otherFiles: list[DmaInfo] = []
 
     with open(DMATABLE_PATH, "r") as file:
         dmaTable = file.readlines()
@@ -29,19 +48,46 @@ if __name__ == "__main__":
     for i, dmaEntry in enumerate(dmaTable):
         entryName = dmaEntry.removeprefix("DEFINE_DMA_ENTRY(").removesuffix(")").split(", ")[0]
         if entryName.endswith("_scene"):
-            sceneFiles.append(SceneFiles(entryName, i))
+            sceneFiles.append(DmaInfo(entryName, i))
+        if entryName in { "code", "ovl_title", "vr_fine1_static", "elf_message_field", "elf_message_ydan"}:
+            otherFiles.append(DmaInfo(entryName, i))
+    
+    mapFile = f"oot-{VERSION}.map" if VERSION != "hackeroot-mq" else "hackeroot-mq.map"
+    BUILTMAP = Path("build") / VERSION / mapFile
+    mapPath = BUILTMAP
+    with Capturing() as stdout:
+        ret = mapfile_parser.frontends.sym_info.doSymInfo(mapPath, "gDmaDataTable")
+    assert ret == 0
+    split = stdout[0].removesuffix(")").split("(")[1].split(", ")
+    dmaVrom = split[1]
+    dmaSize = split[2]
 
-    if mode == "code":
-        output = (
-            ("static s32 ganSceneFileIndices[] = {\n" + INDENT)
-            + f"\n{INDENT}".join(f"{scene.index}, // {scene.name}" for scene in sceneFiles)
-            + "\n};\n"
+    with open(ROM_PATH, "rb") as file:
+        file.seek(int(dmaVrom.removeprefix('VROM: '), 16))
+        rom_data = bytearray(file.read(int(dmaSize.removeprefix('SIZE: '), 16)))
+
+    temp: list[bytearray] = []
+    for i in range(0, len(rom_data), 16):
+        temp.append(rom_data[i:i + 16])
+
+    dmaTable: list[DmaEntry] = []
+    for data in temp:
+        dmaTable.append(
+            DmaEntry(
+                f"0x{int.from_bytes(data[:4], byteorder='big', signed=False):08X}",
+                f"0x{int.from_bytes(data[4:8], byteorder='big', signed=False):08X}",
+                f"0x{int.from_bytes(data[8:12], byteorder='big', signed=False):08X}",
+                f"0x{int.from_bytes(data[12:16], byteorder='big', signed=False):08X}",
+            )
         )
-    elif mode == "txt":
-        output = "".join(f"{scene.index}\n" for scene in sceneFiles)
-    else:
-        raise ValueError(f"ERROR: unknown write mode (``{mode}``)")
 
-    fileType = ".h" if mode == "code" else ".txt"
-    with open("build/" + VERSION + "/scene_files" + fileType, "w") as file:
+    output = f"{(len(otherFiles) + 1) * 16:016}" # scene offset
+    for info in otherFiles:
+        entry = dmaTable[info.index]
+        output += f"{int(entry.romStart, 16):016}"
+    for info in sceneFiles:
+        entry = dmaTable[info.index]
+        output += f"{int(entry.romStart, 16):016}"
+
+    with open("build/" + VERSION + "/dma_config.txt", "w") as file:
         file.write(output)

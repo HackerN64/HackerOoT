@@ -238,7 +238,7 @@ BPS      := $(ROM:.z64=.bps)
 ELF      := $(ROM:.z64=.elf)
 MAP      := $(ROM:.z64=.map)
 LDSCRIPT := $(ROM:.z64=.ld)
-DMA_SCENE_FILES := scene_files.txt
+DMA_CONFIG_FILE := dma_config.txt
 # description of ROM segments
 SPEC := spec
 
@@ -325,9 +325,9 @@ endif
 iso:
 	$(call print,Patching ISO...)
 	$(V)$(MAKE) compress CFLAGS="-DCONSOLE_GC $(CFLAGS) -fno-reorder-blocks -fno-optimize-sibling-calls" CPPFLAGS="-DCONSOLE_GC $(CPPFLAGS)"
-	$(V)$(PYTHON) tools/gc_utility.py -v $(VERSION) -m txt
+	$(V)$(PYTHON) tools/gc_utility.py -v $(VERSION) -c $(COMPRESSION)
 	$(V)$(GZINJECT) -a extract -s baseroms/$(VERSION)/baseiso.iso
-	$(V)$(shell cp $(BUILD_DIR)/$(DMA_SCENE_FILES) isoextract/zlj.tgc/$(DMA_SCENE_FILES))
+	$(V)$(shell cp $(BUILD_DIR)/$(DMA_CONFIG_FILE) isoextract/zlj.tgc/$(DMA_CONFIG_FILE))
 	$(V)$(shell cp $(ROMC) isoextract/zlj.tgc/zlj_f.z64)
 	$(V)$(RM) -r isoextract/S_*.tgc/
 	$(V)$(GZINJECT) -a pack -s $(ISO)
