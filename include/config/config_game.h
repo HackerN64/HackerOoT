@@ -62,7 +62,7 @@
 /**
  * Skips the N64 logo and boots directly into the game if defined (may already be skipped by the options below)
  */
-#define SKIP_N64_BOOT_LOGO true
+#define SKIP_N64_BOOT_LOGO false
 
 /**
  * Use Majora's Masks' N64 Logo logic
