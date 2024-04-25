@@ -323,13 +323,13 @@ endif
 	$(call print,Success!)
 
 iso:
-	$(call print,Patching ISO...)
 	$(V)$(MAKE) compress CFLAGS="-DCONSOLE_GC $(CFLAGS) -fno-reorder-blocks -fno-optimize-sibling-calls" CPPFLAGS="-DCONSOLE_GC $(CPPFLAGS)"
+	$(call print,Patching ISO...)
 	$(V)$(PYTHON) tools/gc_utility.py -v $(VERSION) -c $(COMPRESSION)
 	$(V)$(GZINJECT) -a extract -s baseroms/$(VERSION)/baseiso.iso
 	$(V)$(shell cp $(BUILD_DIR)/$(DMA_CONFIG_FILE) isoextract/zlj.tgc/$(DMA_CONFIG_FILE))
 	$(V)$(shell cp $(ROMC) isoextract/zlj.tgc/zlj_f.z64)
-	$(V)$(RM) -r isoextract/S_*.tgc/
+	$(V)$(RM) -r isoextract/S_*.tgc/ isoextract/zlj_f.tgc/*.thp
 	$(V)$(GZINJECT) -a pack -s $(ISO)
 	$(V)$(RM) -r isoextract/
 	$(call print,Success!)
