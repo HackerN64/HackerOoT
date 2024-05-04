@@ -51,6 +51,9 @@ void Object_InitContext(PlayState* play, ObjectContext* objectCtx) {
     u32 spaceSize;
     s32 i;
 
+#if ENABLE_HACKEROOT
+    spaceSize = OBJECT_BANK_SIZE;
+#else
     if (play2->sceneId == SCENE_HYRULE_FIELD) {
         spaceSize = 1000 * 1024;
     } else if (play2->sceneId == SCENE_GANON_BOSS) {
@@ -68,6 +71,7 @@ void Object_InitContext(PlayState* play, ObjectContext* objectCtx) {
     } else {
         spaceSize = 1000 * 1024;
     }
+#endif
 
     objectCtx->numEntries = objectCtx->numPersistentEntries = 0;
     objectCtx->mainKeepSlot = objectCtx->subKeepSlot = 0;

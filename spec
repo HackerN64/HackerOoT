@@ -12079,3 +12079,25 @@ beginseg
     include "$(BUILD_DIR)/baserom/softsprite_matrix_static.o"
 endseg
 #endif
+
+#if INCLUDE_EXAMPLE_SCENE
+beginseg
+    name "example_scene"
+    compress
+    romalign 0x1000
+    include "$(BUILD_DIR)/assets/scenes/example/example_scene_main.o"
+    include "$(BUILD_DIR)/assets/scenes/example/example_scene_col.o"
+    include "$(BUILD_DIR)/assets/scenes/example/example_scene_cs_0.o"
+    number 2
+endseg
+
+beginseg
+    name "example_room_0"
+    compress
+    romalign 0x1000
+    include "$(BUILD_DIR)/assets/scenes/example/example_room_0_main.o"
+    include "$(BUILD_DIR)/assets/scenes/example/example_room_0_model_info.o"
+    include "$(BUILD_DIR)/assets/scenes/example/example_room_0_model.o"
+    number 3
+endseg
+#endif

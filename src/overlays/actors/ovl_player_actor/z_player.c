@@ -23,6 +23,8 @@
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/object_link_child/object_link_child.h"
 
+#include "config.h"
+
 // Some player animations are played at this reduced speed, for reasons yet unclear.
 // This is called "adjusted" for now.
 #define PLAYER_ANIM_ADJUSTED_SPEED (2.0f / 3.0f)
@@ -10000,9 +10002,9 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     if (ENABLE_AUTO_GI_ALLOC) {
         this->giObjectSegment = (void*)ALIGN16((uintptr_t)ZELDA_ARENA_MALLOC(giAllocSize, __FILE__, __LINE__));
     } else {
-        ASSERT(giAllocSize < 0x3008, "[HackerOoT:ERROR]: GI Object larger than the allocated size.", __FILE__,
+        ASSERT(giAllocSize < GI_ALLOC_SIZE, "[HackerOoT:ERROR]: GI Object larger than the allocated size.", __FILE__,
                __LINE__);
-        this->giObjectSegment = (void*)(((uintptr_t)ZELDA_ARENA_MALLOC(0x3008, "../z_player.c", 17175) + 8) & ~0xF);
+        this->giObjectSegment = (void*)(((uintptr_t)ZELDA_ARENA_MALLOC(GI_ALLOC_SIZE, "../z_player.c", 17175) + 8) & ~0xF);
     }
 
     respawnFlag = gSaveContext.respawnFlag;
@@ -11503,15 +11505,17 @@ void Player_Draw(Actor* thisx, PlayState* play2) {
 
     if (!(this->stateFlags2 & PLAYER_STATE2_29)) {
         OverrideLimbDrawOpa overrideLimbDraw = Player_OverrideLimbDrawGameplayDefault;
-        s32 lod;
+        s32 lod = 0;
         s32 pad;
 
+#if (ENABLE_LINK_LOD)
         if ((this->csAction != PLAYER_CSACTION_NONE) || (func_8008E9C4(this) && 0) ||
             (this->actor.projectedPos.z < 160.0f)) {
             lod = 0;
         } else {
             lod = 1;
         }
+#endif
 
         func_80093C80(play);
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
