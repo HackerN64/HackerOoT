@@ -109,6 +109,6 @@
 /*
  * Motion Blur
 */
-#define ENABLE_MOTION_BLUR true
+#define ENABLE_MOTION_BLUR false
 
 #endif
