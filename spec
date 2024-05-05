@@ -448,6 +448,9 @@ beginseg
 #if IS_SPEEDMETER_ENABLED
     include "$(BUILD_DIR)/src/code/speed_meter.o"
 #endif
+#if ENABLE_F3DEX3_OCCLUSION_PLANES
+    include "$(BUILD_DIR)/src/code/occlusionplanes.o"
+#endif
     include "$(BUILD_DIR)/src/code/sys_cfb.o"
     include "$(BUILD_DIR)/src/code/sys_math.o"
     include "$(BUILD_DIR)/src/code/sys_math3d.o"

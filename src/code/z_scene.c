@@ -483,6 +483,13 @@ BAD_RETURN(s32) Scene_CommandMiscSettings(PlayState* play, SceneCmd* cmd) {
     }
 }
 
+#if ENABLE_F3DEX3_OCCLUSION_PLANES
+BAD_RETURN(s32) Scene_CommandOccPlaneCandList(PlayState* play, SceneCmd* cmd){
+    play->occPlaneCtx.list = SEGMENTED_TO_VIRTUAL(cmd->occPlaneCandList.list);
+    play->occPlaneCtx.count = cmd->occPlaneCandList.count;
+}
+#endif
+
 void Scene_SetTransitionForNextEntrance(PlayState* play) {
     s16 entranceIndex;
 
@@ -530,6 +537,9 @@ SceneCmdHandlerFunc gSceneCmdHandlers[SCENE_CMD_ID_MAX] = {
     Scene_CommandCutsceneData,             // SCENE_CMD_ID_CUTSCENE_DATA
     Scene_CommandAlternateHeaderList,      // SCENE_CMD_ID_ALTERNATE_HEADER_LIST
     Scene_CommandMiscSettings,             // SCENE_CMD_ID_MISC_SETTINGS
+#if ENABLE_F3DEX3_OCCLUSION_PLANES
+    Scene_CommandOccPlaneCandList,         // SCENE_CMD_ID_OCC_PLANE_CAND_LIST
+#endif
 };
 
 RomFile sNaviQuestHintFiles[] = {

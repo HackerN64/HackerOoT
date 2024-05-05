@@ -1272,6 +1272,10 @@ void Play_Draw(PlayState* this) {
 
         gSPSegment(POLY_OPA_DISP++, 0x01, this->billboardMtx);
 
+#if ENABLE_F3DEX3_OCCLUSION_PLANES
+        OcclusionPlane_Draw_Start(this);
+#endif
+
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_COVER_ELEMENTS) {
             Gfx* gfxP;
             Gfx* sp1CC = POLY_OPA_DISP;
@@ -1344,6 +1348,10 @@ void Play_Draw(PlayState* this) {
 
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
             if (this->skyboxId && (this->skyboxId != SKYBOX_UNSET_1D) && !this->envCtx.skyboxDisabled) {
+#if ENABLE_F3DEX3_OCCLUSION_PLANES
+                OcclusionPlane_Draw_PreSky(this);
+#endif
+                
                 if ((this->skyboxId == SKYBOX_NORMAL_SKY) || (this->skyboxId == SKYBOX_CUTSCENE_MAP)) {
                     Environment_UpdateSkybox(this->skyboxId, &this->envCtx, &this->skyboxCtx);
                     Skybox_Draw(&this->skyboxCtx, gfxCtx, this->skyboxId, this->envCtx.skyboxBlend, this->view.eye.x,
@@ -1354,6 +1362,10 @@ void Play_Draw(PlayState* this) {
                 }
             }
         }
+
+#if ENABLE_F3DEX3_OCCLUSION_PLANES
+        OcclusionPlane_Draw_Main(this);
+#endif
 
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SUN_AND_MOON)) {
             if (!this->envCtx.sunMoonDisabled) {
@@ -1518,6 +1530,9 @@ Play_Draw_skip:
             Skybox_UpdateMatrix(&this->skyboxCtx, this->view.eye.x, this->view.eye.y, this->view.eye.z);
         }
     }
+#if ENABLE_F3DEX3_OCCLUSION_PLANES
+    OcclusionPlane_Draw_PostCamUpdate(this);
+#endif
 
     Camera_Finish(GET_ACTIVE_CAM(this));
 
@@ -1658,6 +1673,9 @@ void Play_InitScene(PlayState* this, s32 spawn) {
 
     this->numActorEntries = 0;
 
+#if ENABLE_F3DEX3_OCCLUSION_PLANES
+    OcclusionPlane_NewScene(this);
+#endif
     Object_InitContext(this, &this->objectCtx);
     LightContext_Init(this, &this->lightCtx);
     TransitionActor_InitContext(&this->state, &this->transiActorCtx);

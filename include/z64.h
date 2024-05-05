@@ -61,6 +61,7 @@
 #include "prerender.h"
 #include "widescreen.h"
 #include "rainbow.h"
+#include "occlusionplanes.h"
 
 #define SCREEN_WIDTH  320
 #define SCREEN_HEIGHT 240
@@ -409,6 +410,9 @@ typedef struct PlayState {
     /* 0x117A4 */ ObjectContext objectCtx;
     /* 0x11CBC */ RoomContext roomCtx;
     /* 0x11D34 */ TransitionActorContext transiActorCtx;
+#if ENABLE_F3DEX3_OCCLUSION_PLANES
+                  OcclusionPlaneContext occPlaneCtx;
+#endif
     /* 0x11D3C */ void (*playerInit)(Player* player, struct PlayState* play, FlexSkeletonHeader* skelHeader);
     /* 0x11D40 */ void (*playerUpdate)(Player* player, struct PlayState* play, Input* input);
     /* 0x11D44 */ int (*isPlayerDroppingFish)(struct PlayState* play);

@@ -13,6 +13,7 @@
 #define ENABLE_F3DEX3_NOSYNCS false // not working properly currently
 #define ENABLE_F3DEX3_LIGHT_RECO false // unfinished, faster but experimental (reco -> recommendations)
 // #define ENABLE_F3DEX3_NEW_FEATURES true // not implemented yet
+#define ENABLE_F3DEX3_OCCLUSION_PLANES true
 
 /**
  * Other graphical settings

@@ -1988,4 +1988,12 @@ void Play_SetMotionBlurAlpha(u32 alpha);
 void Play_EnableMotionBlur(u32 alpha);
 void Play_DisableMotionBlur(void);
 
+#if ENABLE_F3DEX3_OCCLUSION_PLANES
+void OcclusionPlane_NewScene(PlayState* play);
+void OcclusionPlane_Draw_Start(PlayState* play);
+void OcclusionPlane_Draw_PreSky(PlayState* play);
+void OcclusionPlane_Draw_Main(PlayState* play);
+void OcclusionPlane_Draw_PostCamUpdate(PlayState* play);
+#endif
+
 #endif
