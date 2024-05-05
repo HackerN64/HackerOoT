@@ -13690,6 +13690,7 @@ void Player_Action_8084FBF4(Player* this, PlayState* play) {
  * @return  true if Noclip is disabled, false if enabled
  */
 s32 Player_UpdateNoclip(Player* this, PlayState* play) {
+    static s32 cameraMode = 0;
     if (ENABLE_NO_CLIP) {
         sControlInput = &play->state.input[0];
 
@@ -13699,62 +13700,134 @@ s32 Player_UpdateNoclip(Player* this, PlayState* play) {
              CHECK_BTN_ALL(sControlInput->press.button, BTN_DRIGHT))) {
 
             sNoclipEnabled ^= 1;
-
-            if (sNoclipEnabled) {
-                Camera_RequestMode(Play_GetCamera(play, CAM_ID_MAIN), CAM_MODE_Z_AIM);
-            }
+            cameraMode = 0;
         }
 
         if (sNoclipEnabled) {
+            Camera* cam = GET_ACTIVE_CAM(play);
             f32 speed;
-
+            s32 mod = 0;
+            f32 yvel = 0.0f;
+            
             if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_R)) {
                 speed = 100.0f;
             } else {
                 speed = 20.0f;
             }
-
-            DebugCamera_ScreenText(3, 2, "DEBUG MODE");
-
-            if (!CHECK_BTN_ALL(sControlInput->cur.button, BTN_L)) {
-                if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_B)) {
-                    this->actor.world.pos.y += speed;
-                } else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_A)) {
-                    this->actor.world.pos.y -= speed;
+            
+            if (CHECK_BTN_ALL(sControlInput->press.button, BTN_Z)) {
+                cameraMode ^= 1;
+            }
+            
+            if (cameraMode == 0) {
+                if (cam->mode != CAM_MODE_Z_PARALLEL) {
+                    Camera_RequestMode(Play_GetCamera(play, CAM_ID_MAIN), CAM_MODE_Z_PARALLEL);
                 }
-
-                if (CHECK_BTN_ANY(sControlInput->cur.button, BTN_DUP | BTN_DLEFT | BTN_DDOWN | BTN_DRIGHT)) {
-                    s16 angle;
-                    s16 temp;
-
-                    angle = temp = Camera_GetInputDirYaw(GET_ACTIVE_CAM(play));
-
-                    if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DDOWN)) {
-                        angle = temp + 0x8000;
-                    } else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DLEFT)) {
-                        angle = temp + 0x4000;
-                    } else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_DRIGHT)) {
-                        angle = temp - 0x4000;
-                    }
-
-                    this->actor.world.pos.x += speed * Math_SinS(angle);
-                    this->actor.world.pos.z += speed * Math_CosS(angle);
+                
+            } else {
+                if (cam->mode != CAM_MODE_NORMAL) {
+                    Camera_RequestMode(Play_GetCamera(play, CAM_ID_MAIN), CAM_MODE_NORMAL);
                 }
             }
-
+            
+            if (cameraMode == 1) {
+                if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_CRIGHT)) {
+                    cam->eye.x += Math_SinS(Camera_GetCamDirYaw(cam) + 0x3FFF) * Math_Vec3f_DistXYZ(&cam->eye, &cam->at) * 0.15f;
+                    cam->eye.z += Math_CosS(Camera_GetCamDirYaw(cam) + 0x3FFF) * Math_Vec3f_DistXYZ(&cam->eye, &cam->at) * 0.15f;
+                    cam->eyeNext = cam->eye;
+                    mod = true;
+                }
+                
+                if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_CLEFT)) {
+                    cam->eye.x += Math_SinS(Camera_GetCamDirYaw(cam) - 0x3FFF) * Math_Vec3f_DistXYZ(&cam->eye, &cam->at) * 0.15f;
+                    cam->eye.z += Math_CosS(Camera_GetCamDirYaw(cam) - 0x3FFF) * Math_Vec3f_DistXYZ(&cam->eye, &cam->at) * 0.15f;
+                    cam->eyeNext = cam->eye;
+                    mod = true;
+                }
+            } else {
+                Parallel1* parallel = &cam->paramData.para1;
+                
+                if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_CRIGHT)) {
+                    parallel->rwData.yawTarget -= DEG_TO_BINANG(7);
+                    mod = true;
+                }
+                
+                if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_CLEFT)) {
+                    parallel->rwData.yawTarget += DEG_TO_BINANG(7);
+                    mod = true;
+                }
+                
+            }
+            
+            if (mod) {
+                this->actor.shape.rot.y = Camera_GetCamDirYaw(cam);
+            }
+            
+            DebugCamera_ScreenText(3, 2, "DEBUG MODE");
+            
+            if (!CHECK_BTN_ALL(sControlInput->cur.button, BTN_L)) {
+                
+                if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_B)) {
+                    yvel = 1.0f;
+                }
+                
+                else if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_A)) {
+                    yvel = -1.0f;
+                }
+                
+                OSContPad* ctrl = &play->state.input[0].cur;
+                Vec3f zero = { 0.0f, 0.0f, 0.0f };
+                Vec3f conpos = {
+                    .x = -((f32)ctrl->stick_x / 128),
+                    .y = 0.0f,
+                    .z = (f32)ctrl->stick_y / 128,
+                };
+                s16 angle;
+                f32 speedC = Math_Vec3f_DistXZ(&zero, &conpos);
+                
+                if (speedC <= 0.1f) {
+                    speedC = 0.0f;
+                }
+                
+                angle = Camera_GetInputDirYaw(GET_ACTIVE_CAM(play));
+                if (CHECK_BTN_ANY(sControlInput->cur.button, BTN_DUP | BTN_DDOWN | BTN_DLEFT | BTN_DRIGHT)) {
+                    
+                    if (CHECK_BTN_ANY(sControlInput->cur.button, BTN_DUP))
+                        conpos.z = 1.0f;
+                    
+                    if (CHECK_BTN_ANY(sControlInput->cur.button, BTN_DDOWN))
+                        conpos.z = -1.0f;
+                    
+                    if (CHECK_BTN_ANY(sControlInput->cur.button, BTN_DLEFT))
+                        conpos.x = 1.0f;
+                    
+                    if (CHECK_BTN_ANY(sControlInput->cur.button, BTN_DRIGHT))
+                        conpos.x = -1.0f;
+                    
+                    speedC = 1.0f;
+                }
+                
+                angle += Math_Vec3f_Yaw(&zero, &conpos);
+                
+                this->actor.world.pos.x += speed * Math_SinS(angle) * speedC;
+                this->actor.world.pos.z += speed * Math_CosS(angle) * speedC;
+                this->actor.world.pos.y += speed * yvel * 0.5f;
+            }
+            
             Player_ZeroSpeedXZ(this);
-
+            
             this->actor.gravity = 0.0f;
-            this->actor.velocity.x = this->actor.velocity.y = this->actor.velocity.z = 0.0f;
-
-            if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) &&
-                CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT)) {
+            this->actor.velocity.z = 0.0f;
+            this->actor.velocity.y = 0.0f;
+            this->actor.velocity.x = 0.0f;
+            
+            if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT)) {
                 Flags_SetTempClear(play, play->roomCtx.curRoom.num);
             }
-
+            
             Math_Vec3f_Copy(&this->actor.home.pos, &this->actor.world.pos);
-
-            return false;
+            
+            return 0;
         }
     }
 
