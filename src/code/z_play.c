@@ -1349,7 +1349,7 @@ void Play_Draw(PlayState* this) {
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
             if (this->skyboxId && (this->skyboxId != SKYBOX_UNSET_1D) && !this->envCtx.skyboxDisabled) {
 #if ENABLE_F3DEX3_OCCLUSION_PLANES
-                OcclusionPlane_Draw_PreSky(this);
+                OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_PRE_SKY_1);
 #endif
                 
                 if ((this->skyboxId == SKYBOX_NORMAL_SKY) || (this->skyboxId == SKYBOX_CUTSCENE_MAP)) {
@@ -1363,10 +1363,6 @@ void Play_Draw(PlayState* this) {
             }
         }
 
-#if ENABLE_F3DEX3_OCCLUSION_PLANES
-        OcclusionPlane_Draw_Main(this);
-#endif
-
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SUN_AND_MOON)) {
             if (!this->envCtx.sunMoonDisabled) {
                 Environment_DrawSunAndMoon(this);
@@ -1376,7 +1372,10 @@ void Play_Draw(PlayState* this) {
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SKYBOX_FILTERS)) {
             Environment_DrawSkyboxFilters(this);
         }
-
+        
+#if ENABLE_F3DEX3_OCCLUSION_PLANES
+        OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_PRE_SCENE);
+#endif
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTNING)) {
             Environment_UpdateLightningStrike(this);
             Environment_DrawLightning(this, 0);
@@ -1406,6 +1405,9 @@ void Play_Draw(PlayState* this) {
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
             if ((this->skyboxCtx.drawType != SKYBOX_DRAW_128) &&
                 (GET_ACTIVE_CAM(this)->setting != CAM_SET_PREREND_FIXED)) {
+#if ENABLE_F3DEX3_OCCLUSION_PLANES
+                OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_PRE_SKY_2);
+#endif
                 Vec3f quakeOffset;
 
                 quakeOffset = Camera_GetQuakeOffset(GET_ACTIVE_CAM(this));
@@ -1413,7 +1415,10 @@ void Play_Draw(PlayState* this) {
                             this->view.eye.y + quakeOffset.y, this->view.eye.z + quakeOffset.z);
             }
         }
-
+        
+#if ENABLE_F3DEX3_OCCLUSION_PLANES
+        OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_PRE_ACTORS);
+#endif
         if (this->envCtx.precipitation[PRECIP_RAIN_CUR] != 0) {
             Environment_DrawRain(this, &this->view, gfxCtx);
         }

@@ -169,7 +169,7 @@ static bool ClipPolygon(PlayState* play, ClipVertex* verts, s8* indices, s8** id
             if(i2 < 0) break;
             ClipVertex* v2 = &verts[i2];
             ++idxRead;
-            bool v2Offscreen, v3Offscreen;
+            bool v2Offscreen = false, v3Offscreen = false;
             switch(condition){
             case 4: // -W
                 v2Offscreen = v2->w <= 0.0f;
@@ -539,37 +539,67 @@ void OcclusionPlane_NewScene(PlayState* play){
 }
 
 void OcclusionPlane_Draw_Start(PlayState* play){
-    play->occPlaneCtx.preSkyPlaneCommand = NULL;
-    play->occPlaneCtx.mainPlaneCommand = NULL;
+    for(s32 i=0; i<OCCLUSION_PLANE_PHASE_COUNT; ++i){
+        play->occPlaneCtx.planeCommands[i] = NULL;
+    }
     
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     OPEN_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
     gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
     CLOSE_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
 }
-void OcclusionPlane_Draw_PreSky(PlayState* play){
+
+void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase loc){
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     OPEN_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
-    play->occPlaneCtx.preSkyPlaneCommand = POLY_OPA_DISP;
+    play->occPlaneCtx.planeCommands[loc] = POLY_OPA_DISP;
     gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
     CLOSE_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
 }
-void OcclusionPlane_Draw_Main(PlayState* play){
-    GraphicsContext* gfxCtx = play->state.gfxCtx;
-    OPEN_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
-    play->occPlaneCtx.mainPlaneCommand = POLY_OPA_DISP;
-    gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
-    CLOSE_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
-}
+
 void OcclusionPlane_Draw_PostCamUpdate(PlayState* play){
-    if(play->occPlaneCtx.preSkyPlaneCommand == NULL
-        && play->occPlaneCtx.mainPlaneCommand == NULL) return;
+    OcclusionPlaneContext* ctx = &play->occPlaneCtx;
+    
+    bool anyPlane = false;
+    for(s32 i=0; i<OCCLUSION_PLANE_PHASE_COUNT; ++i){
+        if(ctx->planeCommands[i] != NULL){
+            anyPlane = true;
+            break;
+        }
+    }
+    if(!anyPlane) return;
     
     s32 result = OcclusionPlane_Choose(play);
     if(result != 0) return;
-    OcclusionPlane* plane = ComputeOcclusionPlane(play, play->occPlaneCtx.selCandidate);
-    // TODO sky
-    if(play->occPlaneCtx.mainPlaneCommand != NULL){
-        ((u32*)(play->occPlaneCtx.mainPlaneCommand))[1] = (u32)plane;
+    OcclusionPlane* mainPlane = ComputeOcclusionPlane(play, ctx->selCandidate);
+    
+    if(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SKY_1] != NULL
+            || ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SKY_2] != NULL){
+        OcclusionPlane* skyPlane = mainPlane;
+        if(mainPlane != &sNoOcclusionPlane){
+            // The skybox is not actually really far away, it's a smallish box
+            // centered on the camera. Thus, for occluding sky triangles, we will
+            // use the same computed occlusion plane coefficients for the edges, but
+            // set up the clip space plane so that all tris match the equation,
+            // effectively disabling the depth check.
+            skyPlane = Graph_Alloc(play->state.gfxCtx, sizeof(OcclusionPlane));
+            bcopy(mainPlane, skyPlane, 8*sizeof(short)); // Copy edge coeffs
+            skyPlane->o.kx = 0;
+            skyPlane->o.ky = 0;
+            skyPlane->o.kz = 0;
+            skyPlane->o.kc = 0x7FFF;
+        }
+        if(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SKY_1] != NULL){
+            ((u32*)(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SKY_1]))[1] = (u32)skyPlane;
+        }
+        if(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SKY_2] != NULL){
+            ((u32*)(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SKY_2]))[1] = (u32)skyPlane;
+        }
+    }
+    if(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SCENE] != NULL){
+        ((u32*)(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SCENE]))[1] = (u32)mainPlane;
+    }
+    if(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_ACTORS] != NULL){
+        ((u32*)(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_ACTORS]))[1] = (u32)mainPlane;
     }
 }
