@@ -1,6 +1,8 @@
 #include "global.h"
 #include "debug.h"
 
+u8 ColliderView_Draw(void* unused);
+
 #define MENU_CANT_UPDATE \
     ((gSaveContext.gameMode != GAMEMODE_NORMAL) || (this->pPlay != NULL && IS_PAUSED(&this->pPlay->pauseCtx)))
 
@@ -22,6 +24,7 @@ static MenuElement sMenuElements[MENU_MAX] = {
     { "Profiler", false, (void*)&gProfiler, (MenuFunc)Profiler_Update, (MenuFunc)Profiler_Draw },
 #endif
     { "Collision View", true, NULL, NULL, (MenuFunc)CollisionView_Draw },
+    { "Collider View", true, NULL, NULL, (MenuFunc)ColliderView_Draw },
 };
 
 void Menu_Init(Menu* this) {
@@ -30,6 +33,7 @@ void Menu_Init(Menu* this) {
     this->bBackgroundExecution = false;
     this->nTimer = 0;
     this->bColViewEnabled = false;
+    this->bHitboxViewEnabled = false;
     this->eSelection = MENU_MIN + 1;
     this->pPlay = gDebug.play;
     this->pInput = gDebug.input;
@@ -68,13 +72,16 @@ void Menu_Update(Menu* this) {
                     }
 
                     if (CHECK_BTN_ALL(pressBtn, BTN_L)) {
-                        this->nTimer = 1;
                         if (this->eSelection == MENU_COLVIEW) {
                             this->bColViewEnabled ^= 1;
-                            this->bBackgroundExecution ^= 1;
+                        } else if (this->eSelection == MENU_HITVIEW) {
+                            this->bHitboxViewEnabled ^= 1;
                         } else {
                             this->bExecute = 1;
                         }
+
+                        this->nTimer = 1;
+                        this->bBackgroundExecution = this->bColViewEnabled || this->bHitboxViewEnabled;
                     }
                 }
 
@@ -94,6 +101,12 @@ void Menu_Update(Menu* this) {
                 }
             }
         }
+    }
+}
+
+void Menu_DrawElem(MenuElement elem) {
+    if ((elem.drawFunc != NULL) && !elem.drawFunc(elem.pStruct)) {
+        PRINTF("[HackerOoT:Menu]: an error occurred while trying to run the draw function\n");
     }
 }
 
@@ -138,10 +151,16 @@ void Menu_Draw(Menu* this) {
             Print_Screen(print, 4, i + 5, color, sMenuElements[index].name);
         }
 
-        if ((this->bShow && this->bExecute) || this->bBackgroundExecution || elem.bToggle) {
-            if ((elem.drawFunc != NULL) && !elem.drawFunc(elem.pStruct)) {
-                PRINTF("[HackerOoT:Menu]: an error occurred while trying to run the draw function\n");
-            }
+        if (this->bShow && this->bExecute) {
+            Menu_DrawElem(elem);
         }
+    }
+
+    if (this->bColViewEnabled) {
+        Menu_DrawElem(sMenuElements[MENU_COLVIEW]);
+    }
+
+    if (this->bHitboxViewEnabled) {
+        Menu_DrawElem(sMenuElements[MENU_HITVIEW]);
     }
 }

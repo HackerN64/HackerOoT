@@ -12,6 +12,7 @@ typedef enum MenuSelection {
     MENU_PROFILER,
 #endif
     MENU_COLVIEW,
+    MENU_HITVIEW,
     MENU_MAX
 } MenuSelection;
 
@@ -29,6 +30,7 @@ typedef struct Menu {
     u8 bBackgroundExecution;
     u8 nTimer;
     u8 bColViewEnabled;
+    u8 bHitboxViewEnabled;
     MenuSelection eSelection;
     struct PlayState* pPlay;
     Input* pInput;
