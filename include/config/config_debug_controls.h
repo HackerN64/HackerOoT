@@ -11,26 +11,6 @@
 
 // -------------------------------------------
 
-/**** [NO CLIP CONTROLS] ****/
-// Controller port to use
-#define NOCLIP_CONTROLLER_PORT CONTROLLER_PORT_1
-
-// Set to true to use a button combo
-#define NOCLIP_USE_BTN_COMBO true
-#define NOCLIP_BTN_HOLD_FOR_COMBO BTN_L
-
-// Control to enable no clip
-#define NOCLIP_TOGGLE_BTN BTN_DRIGHT
-
-// Control to hold to go faster
-#define NOCLIP_FAST_BTN BTN_R
-
-// Controls to move Link up and down
-#define NOCLIP_GO_UP BTN_B
-#define NOCLIP_GO_DOWN BTN_A
-
-// -------------------------------------------
-
 /**** [CUTSCENE FEATURES] ****/
 // Controller port to use
 #define CS_CTRL_CONTROLLER_PORT CONTROLLER_PORT_1
