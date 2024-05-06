@@ -357,9 +357,7 @@ void GameState_Update(GameState* gameState) {
 
 #if ENABLE_HACKER_DEBUG
     gDebug.printer.gfxCtx = gameState->gfxCtx;
-    if (gDebug.menu.bShow) {
-        Menu_Draw(&gDebug.menu);
-    }
+    Menu_Draw(&gDebug.menu);
     Menu_Update(&gDebug.menu);
 #endif
 
