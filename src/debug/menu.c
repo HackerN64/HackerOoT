@@ -20,9 +20,6 @@ static Gfx sPolyGfxInit_HitBox[] = {
 };
 
 static MenuElement sMenuElements[MENU_MAX] = {
-#if ENABLE_F3DEX3
-    { "Profiler", false, (void*)&gProfiler, (MenuFunc)Profiler_Update, (MenuFunc)Profiler_Draw },
-#endif
     { "Collision View", true, NULL, NULL, (MenuFunc)CollisionView_Draw },
     { "Collider View", true, NULL, NULL, (MenuFunc)ColliderView_Draw },
 };

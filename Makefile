@@ -101,8 +101,8 @@ ifeq ($(origin PACKAGE_VERSION), undefined)
   endif
 endif
 
-# available: default, pa, pb, pc (px: profiling mode x)
-F3DEX3_MODE ?= default
+F3DEX3 := F3DEX3
+F3DEX3_BUILD := F3DEX3_BrW
 
 ifeq ($(VERSION),hackeroot-mq)
   CFLAGS += -DENABLE_HACKEROOT=1
@@ -115,25 +115,6 @@ ifeq ($(VERSION),hackeroot-mq)
   else
     CFLAGS += -DRELEASE_ROM=0 -DOOT_DEBUG=1
     CPPFLAGS += -DRELEASE_ROM=0 -DOOT_DEBUG=1
-  endif
-
-F3DEX3 := F3DEX3
-F3DEX3_BUILD := F3DEX3_BrW
-
-  ifneq ($(F3DEX3_MODE),default)
-	F3DEX3 := F3DEX3/Profiling
-  endif
-
-  ifeq ($(F3DEX3_MODE),pa)
-	F3DEX3_BUILD := $(F3DEX3_BUILD)_PA
-  else
-	ifeq ($(F3DEX3_MODE),pb)
-		F3DEX3_BUILD := $(F3DEX3_BUILD)_PB
-	else
-		ifeq ($(F3DEX3_MODE),pc)
-			F3DEX3_BUILD := $(F3DEX3_BUILD)_PC
-		endif
-	endif
   endif
 else
   ifeq ($(DEBUG),1)
@@ -400,7 +381,6 @@ patch:
 	$(call print,Success!)
 
 f3dex3_extract:
-	$(V)$(shell mkdir F3DEX3/Profiling)
 	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCD0F0 --size 0x1630 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.code
 	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCE720 --size 0x420 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.data
 
@@ -482,7 +462,7 @@ $(BUILD_DIR)/data/%.o: data/%.s
 	$(call print,Relocating:,$<,$@)
 	$(V)$(AS) $(ASFLAGS) $< -o $@
 
-$(BUILD_DIR)/data/rsp.rodata.f3dex3.o: F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data F3DEX3/Profiling/F3DEX3_BrW_PA.code F3DEX3/Profiling/F3DEX3_BrW_PB.code F3DEX3/Profiling/F3DEX3_BrW_PC.code F3DEX3/Profiling/F3DEX3_BrW_PA.data F3DEX3/Profiling/F3DEX3_BrW_PB.data F3DEX3/Profiling/F3DEX3_BrW_PC.data
+$(BUILD_DIR)/data/rsp.rodata.f3dex3.o: F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data
 
 $(BUILD_DIR)/assets/text/%.enc.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.txt
 	$(call print,Compiling:,$<,$@)

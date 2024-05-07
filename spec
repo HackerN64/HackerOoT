@@ -632,7 +632,6 @@ beginseg
     compress
     include "$(BUILD_DIR)/src/debug/print.o"
     include "$(BUILD_DIR)/src/debug/utility.o"
-    include "$(BUILD_DIR)/src/debug/profiler.o"
     include "$(BUILD_DIR)/src/debug/collider_view.o"
     include "$(BUILD_DIR)/src/debug/collision_view.o"
     include "$(BUILD_DIR)/src/debug/menu.o"

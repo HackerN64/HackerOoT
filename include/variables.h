@@ -9,12 +9,6 @@
 #include "debug.h"
 
 extern Debug gDebug;
-
-#if ENABLE_F3DEX3
-extern volatile F3DEX3YieldDataFooter gRSPProfilingResults;
-extern Profiler gProfiler;
-#endif
-
 #endif
 
 extern Mtx D_01000000;

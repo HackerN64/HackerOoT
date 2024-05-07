@@ -8,9 +8,6 @@ typedef u8 (*MenuFunc)(void*);
 
 typedef enum MenuSelection {
     MENU_MIN = -1,
-#if ENABLE_F3DEX3
-    MENU_PROFILER,
-#endif
     MENU_COLVIEW,
     MENU_HITVIEW,
     MENU_MAX

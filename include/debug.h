@@ -6,7 +6,6 @@
 #include "macros.h"
 #include "padmgr.h"
 #include "debug/print.h"
-#include "debug/profiler.h"
 #include "debug/collision_view.h"
 #include "debug/menu.h"
 

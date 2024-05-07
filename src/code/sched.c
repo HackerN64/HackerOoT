@@ -366,16 +366,6 @@ u32 Sched_TaskComplete(Scheduler* sc, OSScTask* task) {
         if (task->flags & OS_SC_SWAPBUFFER) {
             Sched_SetNextFramebufferFromTask(sc, task);
         }
-
-        if(ENABLE_HACKER_DEBUG && ENABLE_F3DEX3 && task->list.t.type == M_GFXTASK){
-            F3DEX3YieldDataFooter* footer = (F3DEX3YieldDataFooter*)(
-                (u8*)gGfxSPTaskYieldBuffer +
-                OS_YIELD_DATA_SIZE - sizeof(F3DEX3YieldDataFooter));
-            osInvalDCache(footer, sizeof(F3DEX3YieldDataFooter));
-            bcopy(footer, &gRSPProfilingResults, sizeof(F3DEX3YieldDataFooter));
-            gProfiler.results = &gRSPProfilingResults;
-        }
-
         return true;
     }
     return false;

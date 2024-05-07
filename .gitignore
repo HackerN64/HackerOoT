@@ -36,8 +36,6 @@ out.txt
 *.bin
 F3DEX3/*.code
 F3DEX3/*.data
-F3DEX3/Profiling/*.code
-F3DEX3/Profiling/*.data
 
 # Tool artifacts
 tools/mipspro7.2_compiler/

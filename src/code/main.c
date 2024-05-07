@@ -29,12 +29,6 @@ OSMesg sSerialMsgBuf[1];
 
 #if ENABLE_HACKER_DEBUG
 Debug gDebug;
-
-#if ENABLE_F3DEX3
-volatile F3DEX3YieldDataFooter gRSPProfilingResults;
-Profiler gProfiler;
-#endif
-
 #endif
 
 Rainbow gRainbow;
@@ -87,12 +81,6 @@ void Main(void* arg) {
         PRINTF("debug_InitArena(%08x, %08x)\n", debugHeapStart, debugHeapSize);
         DebugArena_Init(debugHeapStart, debugHeapSize);
     }
-
-#if ENABLE_HACKER_DEBUG
-    #if ENABLE_F3DEX3
-        Profiler_Init(&gProfiler);
-    #endif
-#endif
 
     Rainbow_Init(&gRainbow);
     Regs_Init();
