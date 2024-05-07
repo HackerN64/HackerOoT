@@ -3,21 +3,8 @@
 
 u8 ColliderView_Draw(void* unused);
 
-#define MENU_CANT_UPDATE \
-    ((gSaveContext.gameMode != GAMEMODE_NORMAL) || (this->pPlay != NULL && IS_PAUSED(&this->pPlay->pauseCtx)))
-
-static Gfx sPolyGfxInit_HitBox[] = {
-    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_LIGHTING),
-    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_OFF),
-    gsDPPipeSync(),
-    gsDPSetCycleType(G_CYC_1CYCLE),
-    gsDPSetRenderMode(
-        Z_CMP | IM_RD | CVG_DST_FULL | FORCE_BL | ZMODE_XLU | GBL_c1(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA),
-        Z_CMP | IM_RD | CVG_DST_FULL | FORCE_BL | ZMODE_XLU | GBL_c2(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)),
-    gsDPSetCombineLERP(PRIMITIVE, 0, SHADE, 0, 0, 0, 0, ENVIRONMENT, PRIMITIVE, 0, SHADE, 0, 0, 0, 0, ENVIRONMENT),
-    gsDPSetEnvColor(255, 255, 255, 128),
-    gsSPEndDisplayList(),
-};
+#define MENU_CAN_UPDATE \
+    ((gSaveContext.gameMode == GAMEMODE_NORMAL) && (gDebug.play != NULL && !IS_PAUSED(&gDebug.play->pauseCtx)))
 
 static MenuElement sMenuElements[MENU_MAX] = {
     { "Collision View", true, NULL, NULL, (MenuFunc)CollisionView_Draw },
@@ -32,12 +19,11 @@ void Menu_Init(Menu* this) {
     this->bColViewEnabled = false;
     this->bHitboxViewEnabled = false;
     this->eSelection = MENU_MIN + 1;
-    this->pPlay = gDebug.play;
     this->pInput = gDebug.input;
 }
 
 void Menu_Update(Menu* this) {
-    if (this->pInput != NULL && !MENU_CANT_UPDATE) {
+    if (this->pInput != NULL && MENU_CAN_UPDATE) {
         u16 curBtn = this->pInput->cur.button;
         u16 pressBtn = this->pInput->press.button;
         u8 isHoldingR = CHECK_BTN_ALL(curBtn, BTN_R);
@@ -114,7 +100,7 @@ void Menu_Draw(Menu* this) {
     PrintUtils* print = &gDebug.printer;
     u8 i;
 
-    if (MENU_CANT_UPDATE) {
+    if (!MENU_CAN_UPDATE) {
         return;
     }
 

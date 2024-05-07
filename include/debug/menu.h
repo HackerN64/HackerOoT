@@ -29,7 +29,6 @@ typedef struct Menu {
     u8 bColViewEnabled;
     u8 bHitboxViewEnabled;
     MenuSelection eSelection;
-    struct PlayState* pPlay;
     Input* pInput;
 } Menu;
 
