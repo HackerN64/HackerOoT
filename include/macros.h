@@ -288,3 +288,9 @@ extern struct GraphicsContext* __gfxCtx;
 #define IS_IN_RANGE(val, min, max) ((val >= min) && (val <= max))
 #define TIMER_DECR(val, target, changeBy) (((val - changeBy) < target) ? target : (val > target) ? (val - changeBy) : val)
 #define TIMER_INCR(val, target, changeBy) (((val + changeBy) > target) ? target : (val < target) ? (val + changeBy) : val)
+
+#ifdef __GNUC__
+#define NO_REORDER __attribute__((section(".data"))) __attribute__((no_reorder))
+#else
+#define NO_REORDER
+#endif
