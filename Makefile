@@ -10,7 +10,7 @@ SHELL = /bin/bash
 COMPILER := gcc
 
 # Target game version. Currently only the following version is supported:
-# 	gc-eu-mq       GameCube Europe/PAL Master Quest
+#   gc-eu-mq       GameCube Europe/PAL Master Quest
 #   gc-eu-mq-dbg   GameCube Europe/PAL Master Quest Debug
 #   hackeroot-mq   HackerOoT, based on gc-eu-mq-dbg (default)
 #
