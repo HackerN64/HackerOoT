@@ -226,7 +226,7 @@ void ViMode_Init(ViMode* viMode) {
     viMode->upperAdjust = 0;
     viMode->lowerAdjust = 0;
     viMode->viFeatures = OS_VI_DITHER_FILTER_ON | OS_VI_GAMMA_OFF;
-    viMode->tvType = osTvType;
+    viMode->tvType = OS_TV_NTSC;
     viMode->fb16Bit = true;
     viMode->modeN = true;
     viMode->antialiasOff = false;

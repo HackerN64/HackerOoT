@@ -10,9 +10,6 @@ void ViConfig_UpdateVi(u32 black) {
 
         PRINTF(VT_COL(YELLOW, BLACK) "osViSetYScale1(%f);\n" VT_RST, 1.0f);
 
-        if (osTvType == OS_TV_PAL) {
-            osViSetMode(&osViModePalLan1);
-        }
 
         // Reset the VI y scale. The VI y scale is different between NTSC (1.0) and PAL (0.833)
         // and should be reset to 1.0 during PreNMI to ensure there are no issues when restarting.
