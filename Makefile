@@ -112,6 +112,9 @@ ifeq ($(origin PACKAGE_VERSION), undefined)
   endif
 endif
 
+F3DEX3 := F3DEX3
+F3DEX3_BUILD := F3DEX3_BrW
+
 ifeq ($(VERSION),hackeroot-mq)
   CFLAGS += -DENABLE_HACKEROOT=1
   CPPFLAGS += -DENABLE_HACKEROOT=1
@@ -399,7 +402,7 @@ distclean: assetclean
 	$(V)$(RM) -r extracted/
 	$(V)$(RM) -r build/
 	$(V)$(MAKE) -C tools distclean
-	$(V)$(RM) -r F3DEX3/F3DEX3.code F3DEX3/F3DEX3.data
+	$(V)$(RM) -r F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data
 	$(call print,Success!)
 
 venv:
@@ -442,14 +445,28 @@ patch:
 	$(V)$(FLIPS) --create --bps $(BASEROM_PATCH) $(ROM) $(BPS)
 	$(call print,Success!)
 
-f3dex3:
-	$(call print,Patching the microcode...)
+f3dex3_extract:
 	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCD0F0 --size 0x1630 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.code
 	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCE720 --size 0x420 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.data
-	$(V)$(FLIPS) --apply F3DEX3/F3DEX3.code.bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3.code
-	$(V)$(FLIPS) --apply F3DEX3/F3DEX3.data.bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3.data
+
+f3dex3_clean:
 	$(V)$(RM) -r F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
+
+f3dex3:
+	$(call print,Patching the microcode...)
+	$(V)$(MAKE) f3dex3_extract
+	$(V)$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).code.bps F3DEX3/f3dzex2.code $(F3DEX3)/$(F3DEX3_BUILD).code
+	$(V)$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).data.bps F3DEX3/f3dzex2.data $(F3DEX3)/$(F3DEX3_BUILD).data
+	$(V)$(MAKE) f3dex3_clean
 	$(call print,Success!)
+
+f3dex3_patch:
+	$(V)$(MAKE) f3dex3_extract
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code $(F3DEX3)/$(F3DEX3_BUILD).code F3DEX3/Patch/$(F3DEX3_BUILD).code.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data $(F3DEX3)/$(F3DEX3_BUILD).data F3DEX3/Patch/$(F3DEX3_BUILD).data.bps
+	$(V)$(MAKE) f3dex3_clean
+
+.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3 f3dex3_patch f3dex3_extract f3dex3_clean verify
 
 verify:
 	$(V)$(MAKE) clean
@@ -510,7 +527,7 @@ $(BUILD_DIR)/data/%.o: data/%.s
 	$(call print,Relocating:,$<,$@)
 	$(V)$(AS) $(ASFLAGS) $< -o $@
 
-$(BUILD_DIR)/data/rsp.rodata.f3dex3.o: F3DEX3/F3DEX3.code F3DEX3/F3DEX3.data
+$(BUILD_DIR)/data/rsp.rodata.f3dex3.o: F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data
 
 $(BUILD_DIR)/assets/text/%.enc.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.txt
 	$(call print,Compiling:,$<,$@)

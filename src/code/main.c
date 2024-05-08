@@ -27,6 +27,10 @@ AudioMgr gAudioMgr;
 OSMesgQueue sSerialEventQueue;
 OSMesg sSerialMsgBuf[1];
 
+#if ENABLE_HACKER_DEBUG
+Debug gDebug;
+#endif
+
 Rainbow gRainbow;
 
 u8 gGPUTimingsExist;

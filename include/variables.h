@@ -3,6 +3,13 @@
 
 #include "z64.h"
 #include "segment_symbols.h"
+#include "config.h"
+
+#if ENABLE_HACKER_DEBUG
+#include "debug.h"
+
+extern Debug gDebug;
+#endif
 
 extern Mtx D_01000000;
 

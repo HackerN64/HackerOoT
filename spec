@@ -626,6 +626,18 @@ beginseg
     include "$(BUILD_DIR)/src/code/rainbow.o"
 endseg
 
+#if ENABLE_HACKER_DEBUG
+beginseg
+    name "debug"
+    compress
+    include "$(BUILD_DIR)/src/debug/print.o"
+    include "$(BUILD_DIR)/src/debug/utility.o"
+    include "$(BUILD_DIR)/src/debug/collider_view.o"
+    include "$(BUILD_DIR)/src/debug/collision_view.o"
+    include "$(BUILD_DIR)/src/debug/menu.o"
+endseg
+#endif
+
 beginseg
     name "buffers"
     flags NOLOAD

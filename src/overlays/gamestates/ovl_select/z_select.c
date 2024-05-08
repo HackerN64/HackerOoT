@@ -13,6 +13,7 @@ void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;
     u8 i;
 
+    gSaveContext.gameMode = GAMEMODE_MAP_SELECT;
     this->state.main = MapSelect_Main;
     this->state.destroy = MapSelect_Destroy;
     this->scenes = sScenes;
