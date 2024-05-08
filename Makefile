@@ -40,6 +40,17 @@ RUN_CC_CHECK := 1
 
 CFLAGS ?=
 CPPFLAGS ?=
+CFLAGS_IDO ?=
+
+TARGET ?=
+
+ifeq ($(TARGET),wad)
+CFLAGS := -DCONSOLE_WIIVC -fno-reorder-blocks -fno-optimize-sibling-calls
+CPPFLAGS := -DCONSOLE_WIIVC
+else ifeq ($(TARGET),iso)
+CFLAGS := -DCONSOLE_GC -fno-reorder-blocks -fno-optimize-sibling-calls
+CPPFLAGS := -DCONSOLE_GC
+endif
 
 ifeq ($(COMPILER),gcc)
   CFLAGS += -DCOMPILER_GCC -DNON_MATCHING -DAVOID_UB
@@ -104,28 +115,34 @@ endif
 ifeq ($(VERSION),hackeroot-mq)
   CFLAGS += -DENABLE_HACKEROOT=1
   CPPFLAGS += -DENABLE_HACKEROOT=1
+  CFLAGS_IDO += -DENABLE_HACKEROOT=1
   OPTFLAGS := -Os
 
   ifeq ($(RELEASE),1)
     CFLAGS += -DRELEASE_ROM=1 -DOOT_DEBUG=0
     CPPFLAGS += -DRELEASE_ROM=1 -DOOT_DEBUG=0
+    CFLAGS_IDO += -DOOT_DEBUG=0
   else
     CFLAGS += -DRELEASE_ROM=0 -DOOT_DEBUG=1
     CPPFLAGS += -DRELEASE_ROM=0 -DOOT_DEBUG=1
+    CFLAGS_IDO += -DRELEASE_ROM=0 -DOOT_DEBUG=1
   endif
 else
   ifeq ($(DEBUG),1)
     CFLAGS += -DOOT_DEBUG=1
     CPPFLAGS += -DOOT_DEBUG=1
+    CFLAGS_IDO += -DOOT_DEBUG=1
     OPTFLAGS := -O2
   else
     CFLAGS += -DNDEBUG -DOOT_DEBUG=0
     CPPFLAGS += -DNDEBUG -DOOT_DEBUG=0
+    CFLAGS_IDO += -DNDEBUG -DOOT_DEBUG=0
     OPTFLAGS := -O2 -g3
   endif
 
   CFLAGS += -DENABLE_HACKEROOT=0
   CPPFLAGS += -DENABLE_HACKEROOT=0
+  CFLAGS_IDO += -DENABLE_HACKEROOT=0
 endif
 
 # Override optimization flags if using GDB
@@ -137,6 +154,7 @@ endif
 # Note: this won't be used if not using HackerOoT
 CFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
 CPPFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
+CFLAGS_IDO += -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
 OPTFLAGS += -ffast-math -fno-unsafe-math-optimizations
 
 ifeq ($(OS),Windows_NT)
@@ -207,6 +225,8 @@ ZAPD       := tools/ZAPD/ZAPD.out
 FADO       := tools/fado/fado.elf
 PYTHON     ?= $(VENV)/bin/python3
 FLIPS      := tools/Flips/flips
+GZINJECT   := tools/gzinject/gzinject
+CC_IDO     := tools/ido_recomp/linux/5.3/cc
 
 # Command to replace path variables in the spec file. We can't use the C
 # preprocessor for this because it won't substitute inside string literals.
@@ -232,10 +252,12 @@ else
 endif
 ROMC     := $(ROM:.z64=-compressed-$(COMPRESSION).z64)
 WAD      := $(ROM:.z64=.wad)
+ISO      := $(ROM:.z64=.iso)
 BPS      := $(ROM:.z64=.bps)
 ELF      := $(ROM:.z64=.elf)
 MAP      := $(ROM:.z64=.map)
 LDSCRIPT := $(ROM:.z64=.ld)
+DMA_CONFIG_FILE := dma_config.txt
 # description of ROM segments
 SPEC := spec
 
@@ -290,6 +312,36 @@ ifeq ($(COMPILER),gcc)
   $(BUILD_DIR)/src/overlays/actors/ovl_En_Part/%.o: OPTFLAGS := -O2
   $(BUILD_DIR)/src/overlays/actors/ovl_Item_B_Heart/%.o: OPTFLAGS := -O0
   $(BUILD_DIR)/src/overlays/actors/ovl_Bg_Mori_Hineri/%.o: OPTFLAGS := -O0
+
+# library overrides for Gamecube
+ifeq ($(TARGET),iso)
+  MIPS_VERSION_IDO := -mips2
+  CFLAGS_IDO += -G 0 -non_shared -fullwarn -verbose -Xcpluscomm $(INC) -Wab,-r4300_mul -woff 516,609,649,838,712
+  $(BUILD_DIR)/src/libultra/io/viswapbuf.o: OPTFLAGS := -O2
+  $(BUILD_DIR)/src/libultra/io/viswapbuf.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
+  $(BUILD_DIR)/src/libultra/io/viswapbuf.o: CFLAGS := $(CFLAGS_IDO)
+  $(BUILD_DIR)/src/libultra/io/viswapbuf.o: CC := $(CC_IDO)
+  $(BUILD_DIR)/src/libultra/gu/sinf.o: OPTFLAGS := -O2
+  $(BUILD_DIR)/src/libultra/gu/sinf.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
+  $(BUILD_DIR)/src/libultra/gu/sinf.o: CFLAGS := $(CFLAGS_IDO)
+  $(BUILD_DIR)/src/libultra/gu/sinf.o: CC := $(CC_IDO)
+  $(BUILD_DIR)/src/libultra/gu/cosf.o: OPTFLAGS := -O2
+  $(BUILD_DIR)/src/libultra/gu/cosf.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
+  $(BUILD_DIR)/src/libultra/gu/cosf.o: CFLAGS := $(CFLAGS_IDO)
+  $(BUILD_DIR)/src/libultra/gu/cosf.o: CC := $(CC_IDO)
+  $(BUILD_DIR)/src/libultra/gu/perspective.o: OPTFLAGS := -O2
+  $(BUILD_DIR)/src/libultra/gu/perspective.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
+  $(BUILD_DIR)/src/libultra/gu/perspective.o: CFLAGS := $(CFLAGS_IDO)
+  $(BUILD_DIR)/src/libultra/gu/perspective.o: CC := $(CC_IDO)
+  $(BUILD_DIR)/src/libultra/os/getmemsize.o: OPTFLAGS := -O1
+  $(BUILD_DIR)/src/libultra/os/getmemsize.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
+  $(BUILD_DIR)/src/libultra/os/getmemsize.o: CFLAGS := $(CFLAGS_IDO)
+  $(BUILD_DIR)/src/libultra/os/getmemsize.o: CC := $(CC_IDO)
+  $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: OPTFLAGS := -O1
+  $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
+  $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: CFLAGS := $(CFLAGS_IDO)
+  $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: CC := $(CC_IDO)
+endif
 endif
 
 #### Main Targets ###
@@ -314,9 +366,22 @@ wad:
 ifeq ("$(wildcard baseroms/$(VERSION)/common-key.bin)", "")
 	$(error Please provide the common-key.bin file.)
 endif
-	$(V)$(MAKE) compress CFLAGS="-DCONSOLE_WIIVC $(CFLAGS) -fno-reorder-blocks -fno-optimize-sibling-calls" CPPFLAGS="-DCONSOLE_WIIVC $(CPPFLAGS)"
-	$(V)tools/gzinject/gzinject -a inject -r 1 -k baseroms/$(VERSION)/common-key.bin -w baseroms/$(VERSION)/basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
+	$(V)$(MAKE) compress TARGET=wad
+	$(V)$(GZINJECT) -a inject -r 1 -k baseroms/$(VERSION)/common-key.bin -w baseroms/$(VERSION)/basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
 	$(V)$(RM) -r wadextract/
+	$(call print,Success!)
+
+iso:
+	$(V)$(MAKE) compress TARGET=iso
+	$(call print,Patching ISO...)
+	$(V)$(PYTHON) tools/gc_utility.py -v $(VERSION) -c $(COMPRESSION)
+	$(V)$(GZINJECT) -a extract -s baseroms/$(VERSION)/baseiso.iso
+	$(V)cp $(BUILD_DIR)/$(DMA_CONFIG_FILE) isoextract/zlj_f.tgc/$(DMA_CONFIG_FILE)
+	$(V)cp $(ROMC) isoextract/zlj_f.tgc/zlj_f.n64
+	$(V)$(RM) -r isoextract/S_*.tgc/ isoextract/zlj_f.tgc/*.thp
+	$(V)$(FLIPS) --apply tools/gamecube.bps isoextract/zlj_f.tgc/main.dol isoextract/zlj_f.tgc/main.dol
+	$(V)$(GZINJECT) -a pack -s $(ISO)
+	$(V)$(RM) -r isoextract/
 	$(call print,Success!)
 
 clean:
@@ -391,7 +456,7 @@ verify:
 	$(V)$(MAKE) rom
 	@md5sum $(ROM)
 
-.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3 verify
+.PHONY: all rom compress clean assetclean distclean venv setup run wad iso patch f3dex3 verify
 .DEFAULT_GOAL := rom
 
 #### Various Recipes ####

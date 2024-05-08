@@ -141,6 +141,11 @@
     #define ENABLE_MOTION_BLUR false
 #endif
 
+#ifdef CONSOLE_GC
+    #undef ENABLE_F3DEX3
+    #define ENABLE_F3DEX3 false
+#endif
+
 
 /**
  * Default settings if not using HackerOoT mode

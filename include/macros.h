@@ -284,3 +284,9 @@ extern struct GraphicsContext* __gfxCtx;
 #endif
 
 #define IS_DEBUG_CAM_ENABLED (IS_CAMERA_DEBUG_ENABLED ? gDebugCamEnabled : false)
+
+#ifdef __GNUC__
+#define NO_REORDER __attribute__((section(".data"))) __attribute__((no_reorder))
+#else
+#define NO_REORDER
+#endif
