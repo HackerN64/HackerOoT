@@ -169,6 +169,7 @@ extern struct GraphicsContext* __gfxCtx;
 #define POLY_OPA_DISP   __gfxCtx->polyOpa.p
 #define POLY_XLU_DISP   __gfxCtx->polyXlu.p
 #define OVERLAY_DISP    __gfxCtx->overlay.p
+#define DEBUG_DISP      __gfxCtx->debug.p
 
 #if IS_DEBUG
 
