@@ -635,6 +635,89 @@ beginseg
     include "$(BUILD_DIR)/src/buffers/audio_heap.o"
 endseg
 
+#if ENABLE_F3DEX3
+beginseg
+    name "F3DEX3_BrW_Text"
+    compress
+    include "F3DEX3/F3DEX3_BrW.code"
+endseg
+beginseg
+    name "F3DEX3_BrW_Data"
+    compress
+    include "F3DEX3/F3DEX3_BrW.data"
+endseg
+beginseg
+    name "F3DEX3_BrW_PA_Text"
+    compress
+    include "F3DEX3/F3DEX3_BrW_PA.code"
+endseg
+beginseg
+    name "F3DEX3_BrW_PA_Data"
+    compress
+    include "F3DEX3/F3DEX3_BrW_PA.data"
+endseg
+beginseg
+    name "F3DEX3_BrW_PB_Text"
+    compress
+    include "F3DEX3/F3DEX3_BrW_PB.code"
+endseg
+beginseg
+    name "F3DEX3_BrW_PB_Data"
+    compress
+    include "F3DEX3/F3DEX3_BrW_PB.data"
+endseg
+beginseg
+    name "F3DEX3_BrW_PC_Text"
+    compress
+    include "F3DEX3/F3DEX3_BrW_PC.code"
+endseg
+beginseg
+    name "F3DEX3_BrW_PC_Data"
+    compress
+    include "F3DEX3/F3DEX3_BrW_PC.data"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_Text"
+    compress
+    include "F3DEX3/F3DEX3_BrW_NOC.code"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_Data"
+    compress
+    include "F3DEX3/F3DEX3_BrW_NOC.data"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_PA_Text"
+    compress
+    include "F3DEX3/F3DEX3_BrW_NOC_PA.code"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_PA_Data"
+    compress
+    include "F3DEX3/F3DEX3_BrW_NOC_PA.data"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_PB_Text"
+    compress
+    include "F3DEX3/F3DEX3_BrW_NOC_PB.code"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_PB_Data"
+    compress
+    include "F3DEX3/F3DEX3_BrW_NOC_PB.data"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_PC_Text"
+    compress
+    include "F3DEX3/F3DEX3_BrW_NOC_PC.code"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_PC_Data"
+    compress
+    include "F3DEX3/F3DEX3_BrW_NOC_PC.data"
+endseg
+#endif
+
 beginseg
     name "ovl_title"
     compress

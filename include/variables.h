@@ -210,6 +210,11 @@ extern volatile OSTime gRSPGfxTimeAcc;
 extern volatile OSTime gRSPOtherTimeAcc;
 extern volatile OSTime gRDPTimeAcc;
 
+#if ENABLE_F3DEX3
+extern volatile s8 gF3DEX3ProfVersion;
+extern volatile s8 gF3DEX3NOCVersion;
+#endif
+
 extern SfxBankEntry D_8016BAD0[9];
 extern SfxBankEntry D_8016BC80[12];
 extern SfxBankEntry D_8016BEC0[22];
