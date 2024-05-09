@@ -24,8 +24,9 @@ void KaleidoSetup_Update(PlayState* play) {
             if (BREG(0)) {
                 pauseCtx->debugState = 3;
             }
-        } else if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
+        } else if (CHECK_BTN_ALL(input->press.button, BTN_START) && !IS_INV_EDITOR_ACTIVE) {
             // The start button was pressed, pause
+            // doesn't run if the inventory editor is active
             gSaveContext.prevHudVisibilityMode = gSaveContext.hudVisibilityMode;
 
             WREG(16) = -175;
