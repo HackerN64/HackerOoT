@@ -14,9 +14,9 @@ UNK_TYPE D_8012D1F4 = 0; // unused
 
 Input* D_8012D1F8 = NULL;
 
-TransitionTile sTransitionTile;
+TransitionTile gTransitionTile;
 s32 gTransitionTileState;
-VisMono sPlayVisMono;
+VisMono gPlayVisMono;
 Color_RGBA8_u32 gVisMonoColor;
 
 #if IS_DEBUG
@@ -208,7 +208,7 @@ void Play_Destroy(GameState* thisx) {
     CollisionCheck_DestroyContext(this, &this->colChkCtx);
 
     if (gTransitionTileState == TRANS_TILE_READY) {
-        TransitionTile_Destroy(&sTransitionTile);
+        TransitionTile_Destroy(&gTransitionTile);
         gTransitionTileState = TRANS_TILE_OFF;
     }
 
@@ -220,7 +220,7 @@ void Play_Destroy(GameState* thisx) {
 
     Letterbox_Destroy();
     TransitionFade_Destroy(&this->transitionFadeFlash);
-    VisMono_Destroy(&sPlayVisMono);
+    VisMono_Destroy(&gPlayVisMono);
 
     if (gSaveContext.save.linkAge != this->linkAgeOnLoad) {
         Inventory_SwapAgeEquipment();
@@ -430,7 +430,7 @@ void Play_Init(GameState* thisx) {
     TransitionFade_SetType(&this->transitionFadeFlash, TRANS_INSTANCE_TYPE_FADE_FLASH);
     TransitionFade_SetColor(&this->transitionFadeFlash, RGBA8(160, 160, 160, 255));
     TransitionFade_Start(&this->transitionFadeFlash);
-    VisMono_Init(&sPlayVisMono);
+    VisMono_Init(&gPlayVisMono);
     gVisMonoColor.a = 0;
     CutsceneFlags_UnsetAll(this);
 
@@ -546,18 +546,18 @@ void Play_Update(PlayState* this) {
         if (gTransitionTileState != TRANS_TILE_OFF) {
             switch (gTransitionTileState) {
                 case TRANS_TILE_PROCESS:
-                    if (TransitionTile_Init(&sTransitionTile, 10, 7) == NULL) {
+                    if (TransitionTile_Init(&gTransitionTile, 10, 7) == NULL) {
                         PRINTF("fbdemo_init呼出し失敗！\n"); // "fbdemo_init call failed!"
                         gTransitionTileState = TRANS_TILE_OFF;
                     } else {
-                        sTransitionTile.zBuffer = (u16*)gZBuffer;
+                        gTransitionTile.zBuffer = (u16*)gZBuffer;
                         gTransitionTileState = TRANS_TILE_READY;
                         R_UPDATE_RATE = 1;
                     }
                     break;
 
                 case TRANS_TILE_READY:
-                    TransitionTile_Update(&sTransitionTile);
+                    TransitionTile_Update(&gTransitionTile);
                     break;
 
                 default:
@@ -712,7 +712,7 @@ void Play_Update(PlayState* this) {
                             this->transitionMode = TRANS_MODE_OFF;
 
                             if (gTransitionTileState == TRANS_TILE_READY) {
-                                TransitionTile_Destroy(&sTransitionTile);
+                                TransitionTile_Destroy(&gTransitionTile);
                                 gTransitionTileState = TRANS_TILE_OFF;
                                 R_UPDATE_RATE = 3;
                             }
@@ -1299,8 +1299,8 @@ void Play_Draw(PlayState* this) {
             TransitionFade_Draw(&this->transitionFadeFlash, &gfxP);
 
             if (gVisMonoColor.a > 0) {
-                sPlayVisMono.vis.primColor.rgba = gVisMonoColor.rgba;
-                VisMono_Draw(&sPlayVisMono, &gfxP);
+                gPlayVisMono.vis.primColor.rgba = gVisMonoColor.rgba;
+                VisMono_Draw(&gPlayVisMono, &gfxP);
             }
 
             gSPEndDisplayList(gfxP++);
@@ -1311,7 +1311,7 @@ void Play_Draw(PlayState* this) {
         if (gTransitionTileState == TRANS_TILE_READY) {
             Gfx* sp88 = POLY_OPA_DISP;
 
-            TransitionTile_Draw(&sTransitionTile, &sp88);
+            TransitionTile_Draw(&gTransitionTile, &sp88);
             POLY_OPA_DISP = sp88;
             goto Play_Draw_DrawOverlayElements;
         }
