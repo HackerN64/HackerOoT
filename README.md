@@ -45,6 +45,24 @@ This project includes an example scene, available if ``INCLUDE_EXAMPLE_SCENE`` i
 
 This also includes an example cutscene, playable in the example scene when holding ``L`` + ``R`` and pressing ``A``.
 
+## Debugging with GDB
+
+Using [the Ares emulator](https://github.com/ares-emulator/ares) you can debug the code using GDB.
+
+The only thing you need to change is the decomp path inside [``tools/gdb_load_ovl.py``](tools/gdb_load_ovl.py):
+- Linux: set the ``decomp_path`` at the top of file to your decomp path like a normal Linux path
+- Windows (WSL): set this path to ``Z:`` with the Linux path (for instance: ``Z:/home/user/path/to/HackerOoT/``)
+
+Note: the path needs to end by a ``/``, if you don't have a filesystem drive already setup to access WSL you can follow [this guide](https://github.com/Dragorn421/z64-romhack-tutorials/blob/master/debugging/gdb/windows_mount_wsl_network_drive.md) to do it. If for some reasons you can't use ``Z:`` you will need to update [``.vscode/launch.json``](.vscode/launch.json) and [``tools/gdb_load_ovl.py``](tools/gdb_load_ovl.py)
+
+Next, you need to install ``gdb-multiarch``:
+- Linux: you can just run ``sudo apt-get update && sudo apt-get install gdb-multiarch``
+- Windows (WSL): install [MSYS2](https://www.msys2.org) then open a MSYS2 terminal and run ``pacman -S mingw-w64-x86_64-gdb-multiarch``
+
+Finally, you can run the "Ares GDB" configuration targeting the platform you are using. Make sure to have the rom started in Ares. You can build a rom for GDB debugging with ``make ARES_GDB=1`` (set to 1 by default)
+
+You can find Dragorn's guide about how to use this [here](https://github.com/Dragorn421/z64-romhack-tutorials/blob/master/debugging/gdb/vscode.md#running).
+
 ## Contributing
 
 All contributions are welcome. This is a group effort, and even small contributions can make a difference.

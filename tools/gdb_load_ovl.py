@@ -14,6 +14,12 @@ TYPE_U32 = gdb.lookup_type('u32')
 # address to object-path map, used to unload entire .o files by an address
 obj_address_map = {}
 
+# set the path to the build folder
+# for Linux users simply use ``build/hackeroot-mq``
+# for Windows users add the full path to your HackerOoT repo
+# don't forget the ``/`` at the end!
+decomp_path = "Z:/home/github/hackeroot/"
+
 def get_section_address(ovl_name, section_name):
   section_start_name = "_" + ovl_name + "Segment" + section_name + "Start"
   # 'section_start_name' is a 'text variable' according to gdb, this can not be resolved via python directly
@@ -29,7 +35,11 @@ def AddOverlaySymbols(overlay_table, index):
     vram_address = int(overlay_table[index]["vramStart"].cast(TYPE_U32))
     
     # get first symbol-name starting from vramStart (usually the first function in the overlay)
-    target_func_name = gdb.execute(f"info symbol {vram_address}", False, True).partition(' ')[0].rstrip()
+    target_func_name = gdb.execute(f"info symbol 0x{vram_address:08X}", False, True)
+    if "No symbol matches" in target_func_name:
+        print(f"ERROR: symbol not found! (0x{vram_address:08X})")
+        return
+    target_func_name = target_func_name.partition(' ')[0].rstrip()
 
     # get section in main ELF (returns: "EnKusa_SetupAction in section ..ovl_En_Kusa of zelda_ocarina_mq_dbg.elf")
     ovl_sec_name = gdb.execute("info sym " + target_func_name, False, True)
@@ -48,7 +58,7 @@ def AddOverlaySymbols(overlay_table, index):
 
     # get full object-file path that contains the first symbol
     target_filename = gdb.lookup_symbol(target_func_name)[0].symtab.filename
-    obj_name = "build/hackeroot-mq/" + target_filename[:-1] + "o"
+    obj_name = decomp_path + target_filename[:-1] + "o"
 
     pattern = r'[^/]*$'
     matches = re.findall(pattern, obj_name)
