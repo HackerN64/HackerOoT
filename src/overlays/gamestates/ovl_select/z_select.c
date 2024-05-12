@@ -388,6 +388,7 @@ void MapSelect_LoadTitle(MapSelectState* this) {
 }
 
 void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex) {
+    gSaveContext.gameMode = GAMEMODE_NORMAL;
     PRINTF(VT_FGCOL(BLUE));
     PRINTF("\n\n\nＦＩＬＥ＿ＮＯ＝%x\n\n\n", gSaveContext.fileNum);
     PRINTF(VT_RST);
