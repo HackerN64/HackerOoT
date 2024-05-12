@@ -1,4 +1,4 @@
-MAKEFLAGS += --no-builtin-rules
+MAKEFLAGS += --no-builtin-rules --no-print-directory
 
 # Ensure the build fails if a piped command fails
 SHELL = /bin/bash
@@ -628,6 +628,8 @@ F3DEX3/F3DEX3%.code: F3DEX3/F3DEX3%.code.bps F3DEX3/f3dzex2.code
 	
 F3DEX3/F3DEX3%.data: F3DEX3/F3DEX3%.data.bps F3DEX3/f3dzex2.data
 	$(V)$(FLIPS) --apply F3DEX3/F3DEX3$*.data.bps F3DEX3/f3dzex2.data $@
+
+.PRECIOUS: $(UCODE_FILES)
 
 -include $(DEP_FILES)
 
