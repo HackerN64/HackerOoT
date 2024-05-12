@@ -1,5 +1,5 @@
-#ifndef CONFIG_BOOTUP_H
-#define CONFIG_BOOTUP_H
+#ifndef CONFIG_DEBUG_H
+#define CONFIG_DEBUG_H
 
 /******************
  * DEBUG SETTINGS *
@@ -18,10 +18,10 @@
 /**
  * Options for booting directly into a scene, the map select or the file select, instead of the title screen.
  */
-#define BOOT_TO_SCENE true
+#define BOOT_TO_SCENE false
 #define BOOT_TO_SCENE_NEW_GAME_ONLY false
 #define BOOT_TO_FILE_SELECT false
-#define BOOT_TO_MAP_SELECT false
+#define BOOT_TO_MAP_SELECT true
 
 /**
  * Use file 1 to load the map select from the file select

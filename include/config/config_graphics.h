@@ -1,3 +1,6 @@
+#ifndef CONFIG_GRAPHICS_H
+#define CONFIG_GRAPHICS_H
+
 /*****************
  * GAME SETTINGS *
  *****************/
@@ -50,3 +53,5 @@
 
 // Force widescreen mode regardless of SaveContext
 #define FORCE_WIDESCREEN false
+
+#endif
