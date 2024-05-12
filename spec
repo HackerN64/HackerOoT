@@ -639,82 +639,82 @@ endseg
 beginseg
     name "F3DEX3_BrW_Text"
     compress
-    include "F3DEX3/F3DEX3_BrW.code"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_Data"
     compress
-    include "F3DEX3/F3DEX3_BrW.data"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_PA_Text"
     compress
-    include "F3DEX3/F3DEX3_BrW_PA.code"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PA.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_PA_Data"
     compress
-    include "F3DEX3/F3DEX3_BrW_PA.data"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PA.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_PB_Text"
     compress
-    include "F3DEX3/F3DEX3_BrW_PB.code"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PB.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_PB_Data"
     compress
-    include "F3DEX3/F3DEX3_BrW_PB.data"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PB.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_PC_Text"
     compress
-    include "F3DEX3/F3DEX3_BrW_PC.code"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PC.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_PC_Data"
     compress
-    include "F3DEX3/F3DEX3_BrW_PC.data"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PC.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_Text"
     compress
-    include "F3DEX3/F3DEX3_BrW_NOC.code"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_Data"
     compress
-    include "F3DEX3/F3DEX3_BrW_NOC.data"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_PA_Text"
     compress
-    include "F3DEX3/F3DEX3_BrW_NOC_PA.code"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PA.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_PA_Data"
     compress
-    include "F3DEX3/F3DEX3_BrW_NOC_PA.data"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PA.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_PB_Text"
     compress
-    include "F3DEX3/F3DEX3_BrW_NOC_PB.code"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PB.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_PB_Data"
     compress
-    include "F3DEX3/F3DEX3_BrW_NOC_PB.data"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PB.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_PC_Text"
     compress
-    include "F3DEX3/F3DEX3_BrW_NOC_PC.code"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PC.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_PC_Data"
     compress
-    include "F3DEX3/F3DEX3_BrW_NOC_PC.data"
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PC.data.o"
 endseg
 #endif
 

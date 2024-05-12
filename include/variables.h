@@ -211,6 +211,7 @@ extern volatile OSTime gRSPOtherTimeAcc;
 extern volatile OSTime gRDPTimeAcc;
 
 #if ENABLE_F3DEX3
+extern u8 gF3DEX3TextBuffer[];
 extern volatile s8 gF3DEX3ProfVersion;
 extern volatile s8 gF3DEX3NOCVersion;
 #endif
