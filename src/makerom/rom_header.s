@@ -10,7 +10,7 @@
 /* 0x20 */ ROM_NAME("THE LEGEND OF ZELDA")
 /* 0x34 */ PADDING(7)
 
-#ifdef CONSOLE_WIIVC
+#if (defined CONSOLE_WIIVC) || (defined CONSOLE_GC)
 /* 0x3B */ MEDIUM(CARTRIDGE_EXPANDABLE)
 #else
 /* 0x3B */ MEDIUM(CARTRIDGE)
@@ -19,7 +19,7 @@
 /* 0x3C */ GAME_ID("ZL")
 /* 0x3E */ REGION(US)
 
-#ifdef CONSOLE_WIIVC
+#if (defined CONSOLE_WIIVC) || (defined CONSOLE_GC)
 /* 0x3F */ GAME_REVISION(0)
 #else
 /* 0x3F */ GAME_REVISION(15)

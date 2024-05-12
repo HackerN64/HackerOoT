@@ -349,7 +349,8 @@ typedef enum {
     /* 0 */ GAMEMODE_NORMAL,
     /* 1 */ GAMEMODE_TITLE_SCREEN,
     /* 2 */ GAMEMODE_FILE_SELECT, // Note: only instance type transitions swap to file select
-    /* 3 */ GAMEMODE_END_CREDITS
+    /* 3 */ GAMEMODE_END_CREDITS,
+    /* 4 */ GAMEMODE_MAP_SELECT
 } GameMode;
 
 typedef enum {

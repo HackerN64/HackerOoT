@@ -1,7 +1,12 @@
 #include "global.h"
 #include "terminal.h"
 
-OSThread gMainThread;
+// For retail BSS ordering, the block number of sMainThread must be 0 or
+// just above (the exact upper bound depends on the block numbers assigned to
+// extern variables declared in headers).
+#pragma increment_block_number 60
+
+OSThread sMainThread;
 STACK(sMainStack, 0x900);
 StackEntry sMainStackInfo;
 OSMesg sPiMgrCmdBuff[50];
@@ -30,6 +35,15 @@ void Main_ThreadEntry(void* arg) {
     PRINTF("転送時間 %6.3f\n");
     bzero(_codeSegmentBssStart, _codeSegmentBssEnd - _codeSegmentBssStart);
     PRINTF("codeセグメントBSSクリア完了\n");
+
+#if ENABLE_HACKER_DEBUG
+    PRINTF("[HackerOoT:Info]: Loading 'debug' segment...\n");
+    DMA_REQUEST_SYNC(_debugSegmentStart, (uintptr_t)_debugSegmentRomStart, _debugSegmentRomEnd - _debugSegmentRomStart,
+                        __BASE_FILE__, __LINE__);
+    bzero(_debugSegmentBssStart, _debugSegmentBssEnd - _debugSegmentBssStart);
+    PRINTF("[HackerOoT:Info]: Completed!\n");
+#endif
+
     Main(arg);
     PRINTF("mainx 実行終了\n");
 }
@@ -85,8 +99,8 @@ void Idle_ThreadEntry(void* arg) {
     osViSwapBuffer((void*)0x803DA80); //! @bug Invalid vram address (probably intended to be 0x803DA800)
     osCreatePiManager(OS_PRIORITY_PIMGR, &gPiMgrCmdQueue, sPiMgrCmdBuff, ARRAY_COUNT(sPiMgrCmdBuff));
     StackCheck_Init(&sMainStackInfo, sMainStack, STACK_TOP(sMainStack), 0, 0x400, "main");
-    osCreateThread(&gMainThread, THREAD_ID_MAIN, Main_ThreadEntry, arg, STACK_TOP(sMainStack), THREAD_PRI_MAIN_INIT);
-    osStartThread(&gMainThread);
+    osCreateThread(&sMainThread, THREAD_ID_MAIN, Main_ThreadEntry, arg, STACK_TOP(sMainStack), THREAD_PRI_MAIN_INIT);
+    osStartThread(&sMainThread);
     osSetThreadPri(NULL, OS_PRIORITY_IDLE);
 
     for (;;) {}
