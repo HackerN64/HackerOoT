@@ -66,6 +66,10 @@
 #include "debug.h"
 #endif
 
+#if ENABLE_F3DEX3
+#include "occlusionplanes.h"
+#endif
+
 #define SCREEN_WIDTH  320
 #define SCREEN_HEIGHT 240
 

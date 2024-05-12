@@ -84,6 +84,7 @@ __attribute__((aligned(16))) u8 gF3DEX3DataBuffer[F3DEX3_DATA_MAX_SIZE];
 static s8 sLoadedF3DEX3Version = -1;
 volatile s8 gF3DEX3ProfVersion = 0;
 volatile s8 gF3DEX3NOCVersion = 0;
+s8 gF3DEX3OccMode = 0;
 
 void SysUcode_LoadNewUcodeIfChanged() {
     s8 ver = gF3DEX3ProfVersion | (gF3DEX3NOCVersion << 2);
