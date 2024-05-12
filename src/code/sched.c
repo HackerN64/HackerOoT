@@ -398,7 +398,7 @@ void Sched_RunTask(Scheduler* sc, OSScTask* spTask, OSScTask* dpTask) {
         }
         
         #if ENABLE_F3DEX3
-        if (spTask->list.t.type == M_GFXTASK) {
+        if (spTask->list.t.type == M_GFXTASK && !(spTask->state & OS_SC_YIELDED)) {
             SysUcode_LoadNewUcodeIfChanged();
         }
         #endif
