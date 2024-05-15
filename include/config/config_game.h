@@ -51,9 +51,6 @@
 */
 #define GS_COUNT_IN_TEXT true
 
-// Increase the size of small elements (improves readability on N64)
-#define WIDESCREEN_N64_MODE true
-
 /**
  * Skips the N64 logo and boots directly into the game if defined (may already be skipped by the options below)
  */
