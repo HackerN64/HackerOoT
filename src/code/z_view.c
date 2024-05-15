@@ -182,9 +182,17 @@ void View_ApplyLetterbox(View* view) {
     OPEN_DISPS(gfxCtx, "../z_view.c", 459);
 
     gDPPipeSync(POLY_OPA_DISP++);
-    gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
+    if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
+        gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, CLAMP_MAX(lry, 235));
+    } else {
+        gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
+    }
     gDPPipeSync(POLY_XLU_DISP++);
-    gDPSetScissor(POLY_XLU_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
+    if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
+        gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, CLAMP_MAX(lry,235));
+    } else {
+        gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
+    }
 
     CLOSE_DISPS(gfxCtx, "../z_view.c", 472);
 }
@@ -450,8 +458,14 @@ s32 View_ApplyOrthoToOverlay(View* view) {
     view->vp = *vp;
 
     gDPPipeSync(OVERLAY_DISP++);
+    if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
+    gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
+                  CLAMP_MAX(view->viewport.bottomY,235));
+    } else {
     gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
                   view->viewport.bottomY);
+    }
+
     gSPViewport(OVERLAY_DISP++, vp);
 
     projection = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
@@ -494,8 +508,14 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
     view->vp = *vp;
 
     gDPPipeSync(OVERLAY_DISP++);
+    if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
     gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
-                  view->viewport.bottomY);
+                  CLAMP_MAX(view->viewport.bottomY,235));  
+    } else {
+    gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
+                  view->viewport.bottomY);      
+    }
+
     gSPViewport(OVERLAY_DISP++, vp);
 
     projection = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
@@ -574,8 +594,14 @@ s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP) {
         view->vp = *vp;
 
         gDPPipeSync(gfx++);
-        gDPSetScissor(gfx++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
+        if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
+            gDPSetScissor(gfx++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
+                      CLAMP_MAX(view->viewport.bottomY,235));
+        } else {
+            gDPSetScissor(gfx++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
                       view->viewport.bottomY);
+        }
+
         gSPViewport(gfx++, vp);
     }
 

@@ -97,6 +97,8 @@
 #define THREAD_ID_DMAMGR     18
 #define THREAD_ID_IRQMGR     19
 
+#define VI_CUSTOM_PAL60_LAN1 56 // Custom PAL60 VI mode
+
 #define STACK(stack, size) \
     u64 stack[ALIGN8(size) / sizeof(u64)]
 
