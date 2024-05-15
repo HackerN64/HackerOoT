@@ -17,7 +17,7 @@
  * in that case just use an NTSC mode instead, such an emulator surely doesn't care about the differences.
  */
 OSViMode gCustomViModePal60Lan1 = {
-    OS_VI_FPAL_LAN1, // type
+    VI_CUSTOM_PAL60_LAN1, // type
     {
         // comRegs
         VI_CTRL_TYPE_16 | VI_CTRL_GAMMA_DITHER_ON | VI_CTRL_GAMMA_ON | VI_CTRL_DIVOT_ON | VI_CTRL_ANTIALIAS_MODE_1 |
