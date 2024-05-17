@@ -131,7 +131,6 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/os/sethwintrroutine.o"
     include "$(BUILD_DIR)/src/libultra/os/gethwintrroutine.o"
     include "$(BUILD_DIR)/src/libultra/os/setwatchlo.o"
-    include "$(BUILD_DIR)/data/rsp_boot.text.o"
 #ifdef COMPILER_GCC
     include "$(BUILD_DIR)/src/gcc_fix/missing_gcc_functions.o"
 #endif
@@ -615,11 +614,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_game_over.o"
     include "$(BUILD_DIR)/src/code/z_construct.o"
     include "$(BUILD_DIR)/data/audio_tables.rodata.o"
-    include "$(BUILD_DIR)/data/rsp.text.o"
-#if ENABLE_F3DEX3
-    include "$(BUILD_DIR)/data/rsp.rodata.f3dex3.o"
-#else
     include "$(BUILD_DIR)/data/rsp.rodata.o"
+#if !ENABLE_F3DEX3
+    include "$(BUILD_DIR)/data/f3dzex2.rodata.o"
 #endif
     include "$(BUILD_DIR)/src/code/rainbow.o"
 endseg
