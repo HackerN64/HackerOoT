@@ -1465,6 +1465,9 @@ u64* SysUcode_GetUCodeBoot(void);
 size_t SysUcode_GetUCodeBootSize(void);
 u64* SysUcode_GetUCode(void);
 u64* SysUcode_GetUCodeData(void);
+#if ENABLE_F3DEX3
+void SysUcode_LoadNewUcodeIfChanged();
+#endif
 NORETURN void func_800D31A0(void);
 void func_800D31F0(void);
 void func_800D3210(void);

@@ -8,6 +8,24 @@ void Locale_Init(void) {
     osEPiReadIo(gCartHandle, 0x38, &sCartInfo.mediaFormat);
     osEPiReadIo(gCartHandle, 0x3C, &sCartInfo.regionInfo);
 
+    if (sCartInfo.countryCode == '\0') {
+        // Fix-up for region free header
+
+        switch (osTvType) {
+            case OS_TV_NTSC:
+            case OS_TV_MPAL:
+                sCartInfo.countryCode = 'E';
+                break;
+            case OS_TV_PAL:
+                sCartInfo.countryCode = 'P';
+                break;
+            default:
+                PRINTF("z_locale_init: Bad TV Type? (%u)\n", osTvType);
+                LogUtils_HungupThread("../z_locale.c", 118);
+                break;
+        }
+    }
+
     switch (sCartInfo.countryCode) {
         case 'J': // "NTSC-J (Japan)"
             gCurrentRegion = REGION_JP;

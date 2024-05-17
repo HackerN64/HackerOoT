@@ -4,7 +4,7 @@
 typedef void (*AudioCustomUpdateFunction)(void);
 
 
-#define REFRESH_RATE_PAL 50
+#define REFRESH_RATE_PAL 60
 #define REFRESH_RATE_MPAL 60
 #define REFRESH_RATE_NTSC 60
 

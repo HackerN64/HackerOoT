@@ -11,15 +11,14 @@
 
 void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;
-    u32 size;
-    s32 pad;
     u8 i;
 
+    gSaveContext.gameMode = GAMEMODE_MAP_SELECT;
     this->state.main = MapSelect_Main;
     this->state.destroy = MapSelect_Destroy;
     this->scenes = sScenes;
-    this->topDisplayedScene = 0;
-    this->currentScene = 0;
+    this->topDisplayedScene = SCENE_HYRULE_FIELD;
+    this->currentScene = SCENE_HYRULE_FIELD;
     this->pageDownStops[0] = 0;  // Hyrule Field
     this->pageDownStops[1] = 19; // Temple Of Time
     this->pageDownStops[2] = 37; // Treasure Chest Game
@@ -44,8 +43,6 @@ void MapSelect_Init(GameState* thisx) {
     this->sceneLayer = 0;
     this->selectedSceneColor = 5; // Red by default
 
-    size = (uintptr_t)_z_select_staticSegmentRomEnd - (uintptr_t)_z_select_staticSegmentRomStart;
-
     if ((dREG(80) >= 0) && (dREG(80) < this->sceneTotal)) {
         this->currentScene = dREG(80);
         this->topDisplayedScene = dREG(81);
@@ -59,7 +56,7 @@ void MapSelect_Init(GameState* thisx) {
     // turning the sfx volume back on
     SEQCMD_SET_SEQPLAYER_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 10);
 
-#ifdef BOOT_TO_MAP_SELECT
+#if BOOT_TO_MAP_SELECT
     gSaveContext.fileNum = 0xFF;
     gSaveContext.save.linkAge = BOOT_AGE;
     this->sceneLayer = (BOOT_CUTSCENE > 1) ? (BOOT_CUTSCENE & 0x000F) + 2 : BOOT_CUTSCENE;
@@ -391,6 +388,7 @@ void MapSelect_LoadTitle(MapSelectState* this) {
 }
 
 void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex) {
+    gSaveContext.gameMode = GAMEMODE_NORMAL;
     PRINTF(VT_FGCOL(BLUE));
     PRINTF("\n\n\nＦＩＬＥ＿ＮＯ＝%x\n\n\n", gSaveContext.fileNum);
     PRINTF(VT_RST);

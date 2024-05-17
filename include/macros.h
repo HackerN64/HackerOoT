@@ -169,6 +169,7 @@ extern struct GraphicsContext* __gfxCtx;
 #define POLY_OPA_DISP   __gfxCtx->polyOpa.p
 #define POLY_XLU_DISP   __gfxCtx->polyXlu.p
 #define OVERLAY_DISP    __gfxCtx->overlay.p
+#define DEBUG_DISP      __gfxCtx->debug.p
 
 #if IS_DEBUG
 
@@ -283,3 +284,13 @@ extern struct GraphicsContext* __gfxCtx;
 #endif
 
 #define IS_DEBUG_CAM_ENABLED (IS_CAMERA_DEBUG_ENABLED ? gDebugCamEnabled : false)
+
+#define IS_IN_RANGE(val, min, max) ((val >= min) && (val <= max))
+#define TIMER_DECR(val, target, changeBy) (((val - changeBy) < target) ? target : (val > target) ? (val - changeBy) : val)
+#define TIMER_INCR(val, target, changeBy) (((val + changeBy) > target) ? target : (val < target) ? (val + changeBy) : val)
+
+#ifdef __GNUC__
+#define NO_REORDER __attribute__((section(".data"))) __attribute__((no_reorder))
+#else
+#define NO_REORDER
+#endif

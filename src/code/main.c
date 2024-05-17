@@ -27,7 +27,13 @@ AudioMgr gAudioMgr;
 OSMesgQueue sSerialEventQueue;
 OSMesg sSerialMsgBuf[1];
 
+#if ENABLE_HACKER_DEBUG
+Debug gDebug;
+#endif
+
 Rainbow gRainbow;
+
+u8 gGPUTimingsExist;
 
 #if IS_DEBUG
 void Main_LogSystemHeap(void) {
@@ -78,6 +84,12 @@ void Main(void* arg) {
 
     Rainbow_Init(&gRainbow);
     Regs_Init();
+
+    if (IO_READ(DPC_PIPEBUSY_REG) == 0) {
+        gGPUTimingsExist = 0;
+    } else {
+        gGPUTimingsExist = 1;
+    }       
 
     R_ENABLE_ARENA_DBG = 0; // ENABLE_SPEEDMETER
 

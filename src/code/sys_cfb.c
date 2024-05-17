@@ -1,4 +1,5 @@
 #include "global.h"
+#include "config.h"
 
 uintptr_t sSysCfbFbPtr[2];
 uintptr_t sSysCfbEnd;
@@ -10,7 +11,7 @@ void SysCfb_Init(s32 n64dd) {
     if (osMemSize >= 0x800000) {
         // "8MB or more memory is installed"
         PRINTF("８Ｍバイト以上のメモリが搭載されています\n");
-        tmpFbEnd = 0x8044BE80;
+        tmpFbEnd = IS_DEBUG_HEAP_ENABLED ? 0x8044BE80 : SYS_CFB_END;
         if (n64dd == 1) {
             PRINTF("RAM 8M mode (N64DD対応)\n"); // "RAM 8M mode (N64DD compatible)"
 #if IS_DEBUG
@@ -21,11 +22,7 @@ void SysCfb_Init(s32 n64dd) {
         } else {
             // "The margin for this version is %dK bytes"
             PRINTF("このバージョンのマージンは %dK バイトです\n", (0x4BC00 / 1024));
-#if IS_DEBUG
             sSysCfbEnd = tmpFbEnd;
-#else
-            sSysCfbEnd = 0x80400000;
-#endif
         }
     } else if (osMemSize >= 0x400000) {
         PRINTF("RAM4M mode\n");

@@ -23,14 +23,20 @@ CfbInfo sGraphCfbInfos[3];
 #if IS_DEBUG
 FaultClient sGraphUcodeFaultClient;
 
+#if ENABLE_F3DEX3
+#define GRAPH_UCODE_GLOBAL_SYMBOL gF3DEX3TextBuffer
+#else
+#define GRAPH_UCODE_GLOBAL_SYMBOL gspF3DZEX2_NoN_PosLight_fifoTextStart
+#endif
+
 UCodeInfo D_8012D230[3] = {
-    { UCODE_F3DZEX, gspF3DZEX2_NoN_PosLight_fifoTextStart },
+    { UCODE_F3DZEX, GRAPH_UCODE_GLOBAL_SYMBOL },
     { UCODE_UNK, NULL },
     { UCODE_S2DEX, gspS2DEX2d_fifoTextStart },
 };
 
 UCodeInfo D_8012D248[3] = {
-    { UCODE_F3DZEX, gspF3DZEX2_NoN_PosLight_fifoTextStart },
+    { UCODE_F3DZEX, GRAPH_UCODE_GLOBAL_SYMBOL },
     { UCODE_UNK, NULL },
     { UCODE_S2DEX, gspS2DEX2d_fifoTextStart },
 };
@@ -59,7 +65,7 @@ void Graph_DisassembleUCode(Gfx* workBuf) {
         disassembler.enableLog = R_UCODE_DISAS_LOG_LEVEL;
 
         UCodeDisas_RegisterUCode(&disassembler, ARRAY_COUNT(D_8012D230), D_8012D230);
-        UCodeDisas_SetCurUCode(&disassembler, gspF3DZEX2_NoN_PosLight_fifoTextStart);
+        UCodeDisas_SetCurUCode(&disassembler, GRAPH_UCODE_GLOBAL_SYMBOL);
 
         UCodeDisas_Disassemble(&disassembler, workBuf);
 
@@ -98,7 +104,7 @@ void Graph_UCodeFaultClient(Gfx* workBuf) {
     UCodeDisas_Init(&disassembler);
     disassembler.enableLog = true;
     UCodeDisas_RegisterUCode(&disassembler, ARRAY_COUNT(D_8012D248), D_8012D248);
-    UCodeDisas_SetCurUCode(&disassembler, gspF3DZEX2_NoN_PosLight_fifoTextStart);
+    UCodeDisas_SetCurUCode(&disassembler, GRAPH_UCODE_GLOBAL_SYMBOL);
     UCodeDisas_Disassemble(&disassembler, workBuf);
     UCodeDisas_Destroy(&disassembler);
 }
@@ -113,11 +119,13 @@ void Graph_InitTHGA(GraphicsContext* gfxCtx) {
     THGA_Init(&gfxCtx->polyXlu, pool->polyXluBuffer, sizeof(pool->polyXluBuffer));
     THGA_Init(&gfxCtx->overlay, pool->overlayBuffer, sizeof(pool->overlayBuffer));
     THGA_Init(&gfxCtx->work, pool->workBuffer, sizeof(pool->workBuffer));
+    THGA_Init(&gfxCtx->debug, pool->debugBuffer, sizeof(pool->debugBuffer));
 
     gfxCtx->polyOpaBuffer = pool->polyOpaBuffer;
     gfxCtx->polyXluBuffer = pool->polyXluBuffer;
     gfxCtx->overlayBuffer = pool->overlayBuffer;
     gfxCtx->workBuffer = pool->workBuffer;
+    gfxCtx->debugBuffer = pool->debugBuffer;
 
     gfxCtx->curFrameBuffer = SysCfb_GetFbPtr(gfxCtx->fbIdx % 2);
     gfxCtx->unk_014 = 0;
@@ -308,6 +316,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gDPNoOpString(POLY_OPA_DISP++, "POLY_OPA_DISP 開始", 0);
     gDPNoOpString(POLY_XLU_DISP++, "POLY_XLU_DISP 開始", 0);
     gDPNoOpString(OVERLAY_DISP++, "OVERLAY_DISP 開始", 0);
+    gDPNoOpString(DEBUG_DISP++, "DEBUG_DISP 開始", 0);
 
     CLOSE_DISPS(gfxCtx, "../graph.c", 975);
 #endif
@@ -322,6 +331,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gDPNoOpString(POLY_OPA_DISP++, "POLY_OPA_DISP 終了", 0);
     gDPNoOpString(POLY_XLU_DISP++, "POLY_XLU_DISP 終了", 0);
     gDPNoOpString(OVERLAY_DISP++, "OVERLAY_DISP 終了", 0);
+    gDPNoOpString(DEBUG_DISP++, "DEBUG_DISP 終了", 0);
 
     CLOSE_DISPS(gfxCtx, "../graph.c", 996);
 #endif
@@ -331,9 +341,17 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gSPBranchList(WORK_DISP++, gfxCtx->polyOpaBuffer);
     gSPBranchList(POLY_OPA_DISP++, gfxCtx->polyXluBuffer);
     gSPBranchList(POLY_XLU_DISP++, gfxCtx->overlayBuffer);
+#if IS_DEBUG
+    gSPBranchList(OVERLAY_DISP++, gfxCtx->debugBuffer);
+    gSPBranchList(DEBUG_DISP++, WORK_DISP);
+    gDPPipeSync(WORK_DISP++);
+    gDPFullSync(WORK_DISP++);
+    gSPEndDisplayList(WORK_DISP++);
+#else
     gDPPipeSync(OVERLAY_DISP++);
     gDPFullSync(OVERLAY_DISP++);
     gSPEndDisplayList(OVERLAY_DISP++);
+#endif
 
     CLOSE_DISPS(gfxCtx, "../graph.c", 1028);
 

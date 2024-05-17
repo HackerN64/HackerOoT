@@ -306,13 +306,13 @@ void GameState_Update(GameState* gameState) {
         }
 
         if (SREG(63) == 4 || (SREG(63) == 2u && osTvType == OS_TV_PAL)) {
-            gfxCtx->viMode = &osViModePalLan1;
+            gfxCtx->viMode = &gCustomViModePal60Lan1;
             gfxCtx->yScale = 1.0f;
         }
 
         if (SREG(63) == 3 || (SREG(63) == 2u && osTvType == OS_TV_PAL)) {
-            gfxCtx->viMode = &osViModeFpalLan1;
-            gfxCtx->yScale = 0.833f;
+            gfxCtx->viMode = &gCustomViModePal60Lan1;
+            gfxCtx->yScale = 1.0f;
         }
     } else {
         gfxCtx->viMode = NULL;
@@ -354,6 +354,12 @@ void GameState_Update(GameState* gameState) {
         GameState_Draw(gameState, gfxCtx);
         func_800C49F4(gfxCtx);
     }
+
+#if ENABLE_HACKER_DEBUG
+    gDebug.printer.gfxCtx = gameState->gfxCtx;
+    Menu_Draw(&gDebug.menu);
+    Menu_Update(&gDebug.menu);
+#endif
 
     gameState->frames++;
 }
@@ -443,7 +449,7 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
     // "gamealloc_init processing time %d us"
     PRINTF("gamealloc_init 処理時間 %d us\n", OS_CYCLES_TO_USEC(endTime - startTime));
     startTime = endTime;
-    GameState_InitArena(gameState, 0x100000);
+    GameState_InitArena(gameState, GAMESTATE_ALLOC_SIZE);
 
     R_UPDATE_RATE = 3;
     init(gameState);
@@ -472,6 +478,11 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
 
 #if IS_DEBUG
     Fault_AddClient(&sGameFaultClient, GameState_FaultPrint, NULL, NULL);
+#endif
+
+#if ENABLE_HACKER_DEBUG
+    gDebug.input = &gameState->input[0];
+    Menu_Init(&gDebug.menu);
 #endif
 
     PRINTF("game コンストラクタ終了\n"); // "game constructor end"
