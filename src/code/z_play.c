@@ -261,10 +261,6 @@ void Play_Init(GameState* thisx) {
         return;
     }
 
-    if (IS_SPEEDMETER_ENABLED) {
-        SystemArena_Display();
-    }
-
     GameState_Realloc(&this->state, IS_DEBUG_HEAP_ENABLED ? 0x1D4790 : PLAY_ALLOC_SIZE);
     KaleidoManager_Init(this);
     View_Init(&this->view, gfxCtx);

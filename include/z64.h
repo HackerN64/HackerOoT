@@ -55,7 +55,6 @@
 #include "mempak.h"
 #include "tha.h"
 #include "thga.h"
-#include "speedmeter.h"
 #include "gfx.h"
 #include "jpeg.h"
 #include "prerender.h"
@@ -64,6 +63,10 @@
 
 #if ENABLE_HACKER_DEBUG
 #include "debug.h"
+#endif
+
+#if ENABLE_PROFILER
+#include "profiler.h"
 #endif
 
 #if ENABLE_F3DEX3

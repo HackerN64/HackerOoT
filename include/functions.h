@@ -1792,7 +1792,6 @@ void* SystemArena_ReallocDebug(void* ptr, u32 newSize, const char* file, int lin
 void SystemArena_FreeDebug(void* ptr, const char* file, int line);
 void SystemArena_Display(void);
 #endif
-void SystemArena_Display(void); // IS_SPEEDMETER_ENABLED
 
 u32 Rand_Next(void);
 void Rand_Seed(u32 seed);

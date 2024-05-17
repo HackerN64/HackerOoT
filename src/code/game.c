@@ -1,9 +1,6 @@
 #include "global.h"
 #include "terminal.h"
 
-// ENABLE_SPEEDMETER
-SpeedMeter D_801664D0;
-
 VisCvg sVisCvg;
 VisZBuf sVisZBuf;
 VisMono sVisMono;
@@ -193,19 +190,6 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 
 #endif
 
-    if (IS_SPEEDMETER_ENABLED && (R_ENABLE_ARENA_DBG < 0)) {
-        s32 pad;
-
-        if (IS_DEBUG_HEAP_ENABLED) {
-            DebugArena_Display();
-        }
-
-        SystemArena_Display();
-        // "%08x bytes left until the death of Hyrule (game_alloc)"
-        PRINTF("ハイラル滅亡まであと %08x バイト(game_alloc)\n", THA_GetRemaining(&gameState->tha));
-        R_ENABLE_ARENA_DBG = 0;
-    }
-
     gSPEndDisplayList(newDList++);
     Gfx_Close(polyOpaP, newDList);
     POLY_OPA_DISP = newDList;
@@ -218,10 +202,9 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
         Debug_DrawText(gfxCtx);
     }
 
-    if (IS_SPEEDMETER_ENABLED && (R_ENABLE_ARENA_DBG != 0)) {
-        SpeedMeter_DrawTimeEntries(&D_801664D0, gfxCtx);
-        SpeedMeter_DrawAllocEntries(&D_801664D0, gfxCtx, gameState);
-    }
+#if ENABLE_PROFILER
+    Profiler_Draw();
+#endif
 }
 
 void GameState_SetFrameBuffer(GraphicsContext* gfxCtx) {
@@ -412,10 +395,6 @@ void GameState_Realloc(GameState* gameState, size_t size) {
     } else {
         THA_Init(&gameState->tha, NULL, 0);
         PRINTF("ハイラル再確保失敗\n"); // "Failure to secure Hyral"
-
-        if (IS_SPEEDMETER_ENABLED) {
-            SystemArena_Display();
-        }
         HUNGUP_AND_CRASH("../game.c", 1044);
     }
 }
@@ -466,9 +445,9 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
         ViMode_Init(&sViMode);
     }
 
-    if (IS_SPEEDMETER_ENABLED) {
-        SpeedMeter_Init(&D_801664D0);
-    }
+#if ENABLE_PROFILER
+    Profiler_Init();
+#endif
 
     Rumble_Init();
     osSendMesg(&gameState->gfxCtx->queue, NULL, OS_MESG_BLOCK);
@@ -499,9 +478,9 @@ void GameState_Destroy(GameState* gameState) {
     }
     Rumble_Destroy();
 
-    if (IS_SPEEDMETER_ENABLED) {
-        SpeedMeter_Destroy(&D_801664D0);
-    }
+#if ENABLE_PROFILER
+    Profiler_Destroy();
+#endif
 
     VisCvg_Destroy(&sVisCvg);
     VisZBuf_Destroy(&sVisZBuf);
@@ -511,11 +490,6 @@ void GameState_Destroy(GameState* gameState) {
     }
     THA_Destroy(&gameState->tha);
     GameAlloc_Cleanup(&gameState->alloc);
-
-    if (IS_SPEEDMETER_ENABLED) {
-        SystemArena_Display();
-        Fault_RemoveClient(&sGameFaultClient);
-    }
 
     PRINTF("game デストラクタ終了\n"); // "game destructor end"
 }

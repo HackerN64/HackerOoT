@@ -89,9 +89,7 @@ void Main(void* arg) {
         gGPUTimingsExist = 0;
     } else {
         gGPUTimingsExist = 1;
-    }       
-
-    R_ENABLE_ARENA_DBG = 0; // ENABLE_SPEEDMETER
+    }
 
     osCreateMesgQueue(&sSerialEventQueue, sSerialMsgBuf, ARRAY_COUNT(sSerialMsgBuf));
     osSetEventMesg(OS_EVENT_SI, &sSerialEventQueue, NULL);

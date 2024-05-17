@@ -16,6 +16,12 @@
 #define ENABLE_HACKER_DEBUG true
 
 /**
+ * Enables HackerOoT profiler. There is not much reason to disable this--of
+ * course by default nothing is shown on screen.
+ */
+#define ENABLE_PROFILER true
+
+/**
  * Options for booting directly into a scene, the map select or the file select, instead of the title screen.
  */
 #define BOOT_TO_SCENE true

@@ -518,16 +518,9 @@ void Sched_HandleRSPDone(Scheduler* sc) {
 
     ASSERT(sc->curRSPTask != NULL, "sc->curRSPTask", "../sched.c", 819);
 
-    if (IS_SPEEDMETER_ENABLED) {
-        // Task profiling
-        if (sc->curRSPTask->list.t.type == M_AUDTASK) {
-            gRSPAudioTimeAcc += osGetTime() - sRSPAudioTimeStart;
-        } else if (sc->curRSPTask->list.t.type == M_GFXTASK) {
-            gRSPGfxTimeAcc += osGetTime() - sRSPGfxTimeStart;
-        } else {
-            gRSPOtherTimeAcc += osGetTime() - sRSPOtherTimeStart;
-        }
-    }
+#if ENABLE_PROFILER
+    Profiler_RSPDone(sc->curRSPTask->list.t.type);
+#endif
 
     // Clear current RSP task
     curRSPTask = sc->curRSPTask;
@@ -570,10 +563,9 @@ void Sched_HandleRDPDone(Scheduler* sc) {
     OSScTask* nextRDP = NULL;
     s32 state;
 
-    if (IS_SPEEDMETER_ENABLED) {
-        // Task profiling
-        gRDPTimeAcc = osGetTime() - sRDPTimeStart;
-    }
+#if ENABLE_PROFILER
+    Profiler_RDPDone();
+#endif
 
     // Sanity check
     ASSERT(sc->curRDPTask != NULL, "sc->curRDPTask", "../sched.c", 878);

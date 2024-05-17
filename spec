@@ -445,9 +445,6 @@ beginseg
     include "$(BUILD_DIR)/src/code/main.o"
     include "$(BUILD_DIR)/src/code/padmgr.o"
     include "$(BUILD_DIR)/src/code/sched.o"
-#if IS_SPEEDMETER_ENABLED
-    include "$(BUILD_DIR)/src/code/speed_meter.o"
-#endif
     include "$(BUILD_DIR)/src/code/sys_cfb.o"
     include "$(BUILD_DIR)/src/code/sys_math.o"
     include "$(BUILD_DIR)/src/code/sys_math3d.o"
@@ -631,6 +628,9 @@ beginseg
     include "$(BUILD_DIR)/src/debug/collider_view.o"
     include "$(BUILD_DIR)/src/debug/collision_view.o"
     include "$(BUILD_DIR)/src/debug/menu.o"
+#if ENABLE_PROFILER
+    include "$(BUILD_DIR)/src/debug/profiler.o"
+#endif
 endseg
 #endif
 
