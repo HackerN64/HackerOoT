@@ -44,6 +44,7 @@ extern OSViMode osViModeMpalLan1;
 extern OSViContext* __osViCurr;
 extern OSViContext* __osViNext;
 extern OSViMode osViModeFpalLan1;
+extern OSViMode gCustomViModePal60Lan1;
 extern u32 __additional_scanline;
 extern const char gBuildMakeOption[];
 extern const char gBuildGitVersion[];

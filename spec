@@ -17,6 +17,7 @@ beginseg
     include "$(BUILD_DIR)/src/boot/boot_main.o"
     include "$(BUILD_DIR)/data/unk_800093F0.data.o"
     include "$(BUILD_DIR)/data/unk_80009410.data.o"
+    include "$(BUILD_DIR)/src/boot/vimodepal60lan1.o"
     include "$(BUILD_DIR)/src/boot/idle.o"
     include "$(BUILD_DIR)/src/boot/viconfig.o"
     include "$(BUILD_DIR)/src/boot/z_std_dma.o"

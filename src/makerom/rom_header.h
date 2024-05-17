@@ -16,6 +16,7 @@
 #define REGION_CODE_PAL      "P"
 #define REGION_CODE_GATEWAY  "G"
 #define REGION_CODE_LODGENET "L"
+#define REGION_CODE_FREE     "\0"
 
 /**
  * Magic value to determine if the ROM is byteswapped.
