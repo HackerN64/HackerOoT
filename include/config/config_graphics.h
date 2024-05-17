@@ -56,3 +56,5 @@
 
 // Increase the size of small elements (improves readability on N64)
 #define WIDESCREEN_N64_MODE true
+
+#endif
