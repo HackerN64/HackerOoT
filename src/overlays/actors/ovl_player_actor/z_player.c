@@ -10461,7 +10461,7 @@ void Player_ProcessSceneCollision(PlayState* play, Player* this) {
         yawDiff = this->actor.shape.rot.y - (s16)(this->actor.wallYaw + 0x8000);
         sTouchedWallFlags = SurfaceType_GetWallFlags(&play->colCtx, this->actor.wallPoly, this->actor.wallBgId);
 
-#ifdef ENABLE_VINE_CLIMB_FIX
+#if ENABLE_VINE_CLIMB_FIX
         // This fixes the "started climbing a wall and then immediately fell off" bug.
         // The main idea is if a climbing wall is detected, double-check that it will
         // still be valid once climbing begins by doing a second raycast with a small
