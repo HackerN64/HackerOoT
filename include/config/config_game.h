@@ -111,4 +111,9 @@
 */
 #define ENABLE_MOTION_BLUR true
 
+/*
+ * Fix climbing on vine edges
+*/
+#define ENABLE_VINE_CLIMB_FIX true
+
 #endif
