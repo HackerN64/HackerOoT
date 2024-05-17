@@ -23,14 +23,20 @@ CfbInfo sGraphCfbInfos[3];
 #if IS_DEBUG
 FaultClient sGraphUcodeFaultClient;
 
+#if ENABLE_F3DEX3
+#define GRAPH_UCODE_GLOBAL_SYMBOL gF3DEX3TextBuffer
+#else
+#define GRAPH_UCODE_GLOBAL_SYMBOL gspF3DZEX2_NoN_PosLight_fifoTextStart
+#endif
+
 UCodeInfo D_8012D230[3] = {
-    { UCODE_F3DZEX, gspF3DZEX2_NoN_PosLight_fifoTextStart },
+    { UCODE_F3DZEX, GRAPH_UCODE_GLOBAL_SYMBOL },
     { UCODE_UNK, NULL },
     { UCODE_S2DEX, gspS2DEX2d_fifoTextStart },
 };
 
 UCodeInfo D_8012D248[3] = {
-    { UCODE_F3DZEX, gspF3DZEX2_NoN_PosLight_fifoTextStart },
+    { UCODE_F3DZEX, GRAPH_UCODE_GLOBAL_SYMBOL },
     { UCODE_UNK, NULL },
     { UCODE_S2DEX, gspS2DEX2d_fifoTextStart },
 };
@@ -59,7 +65,7 @@ void Graph_DisassembleUCode(Gfx* workBuf) {
         disassembler.enableLog = R_UCODE_DISAS_LOG_LEVEL;
 
         UCodeDisas_RegisterUCode(&disassembler, ARRAY_COUNT(D_8012D230), D_8012D230);
-        UCodeDisas_SetCurUCode(&disassembler, gspF3DZEX2_NoN_PosLight_fifoTextStart);
+        UCodeDisas_SetCurUCode(&disassembler, GRAPH_UCODE_GLOBAL_SYMBOL);
 
         UCodeDisas_Disassemble(&disassembler, workBuf);
 
@@ -98,7 +104,7 @@ void Graph_UCodeFaultClient(Gfx* workBuf) {
     UCodeDisas_Init(&disassembler);
     disassembler.enableLog = true;
     UCodeDisas_RegisterUCode(&disassembler, ARRAY_COUNT(D_8012D248), D_8012D248);
-    UCodeDisas_SetCurUCode(&disassembler, gspF3DZEX2_NoN_PosLight_fifoTextStart);
+    UCodeDisas_SetCurUCode(&disassembler, GRAPH_UCODE_GLOBAL_SYMBOL);
     UCodeDisas_Disassemble(&disassembler, workBuf);
     UCodeDisas_Destroy(&disassembler);
 }

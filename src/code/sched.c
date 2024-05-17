@@ -396,6 +396,12 @@ void Sched_RunTask(Scheduler* sc, OSScTask* spTask, OSScTask* dpTask) {
             Sched_TaskComplete(sc, spTask);
             return;
         }
+        
+        #if ENABLE_F3DEX3
+        if (spTask->list.t.type == M_GFXTASK && !(spTask->state & OS_SC_YIELDED)) {
+            SysUcode_LoadNewUcodeIfChanged();
+        }
+        #endif
 
         spTask->state &= ~(OS_SC_YIELD | OS_SC_YIELDED);
         // Write back data cache and load the OSTask into the RSP

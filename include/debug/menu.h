@@ -10,6 +10,10 @@ typedef enum MenuSelection {
     MENU_MIN = -1,
     MENU_COLVIEW,
     MENU_HITVIEW,
+#if ENABLE_F3DEX3
+    MENU_F3DEX3_PROF,
+    MENU_F3DEX3_OCC,
+#endif
     MENU_MAX
 } MenuSelection;
 

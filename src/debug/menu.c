@@ -9,6 +9,10 @@ u8 ColliderView_Draw(void* unused);
 static MenuElement sMenuElements[MENU_MAX] = {
     { "Collision View", true, NULL, NULL, (MenuFunc)CollisionView_Draw },
     { "Collider View", true, NULL, NULL, (MenuFunc)ColliderView_Draw },
+#if ENABLE_F3DEX3
+    { "F3DEX3 profiling: ", false, NULL, NULL, NULL },
+    { "F3DEX3 occ plane: ", false, NULL, NULL, NULL },
+#endif
 };
 
 void Menu_Init(Menu* this) {
@@ -23,65 +27,92 @@ void Menu_Init(Menu* this) {
 }
 
 void Menu_Update(Menu* this) {
-    if (this->pInput != NULL && MENU_CAN_UPDATE) {
-        u16 curBtn = this->pInput->cur.button;
-        u16 pressBtn = this->pInput->press.button;
-        u8 isHoldingR = CHECK_BTN_ALL(curBtn, BTN_R);
-        u8 i;
+    if (this->pInput == NULL || !MENU_CAN_UPDATE) {
+        return;
+    }
+    u16 curBtn = this->pInput->cur.button;
+    u16 pressBtn = this->pInput->press.button;
+    u8 isHoldingR = CHECK_BTN_ALL(curBtn, BTN_R);
+    u8 pressDLeft = CHECK_BTN_ALL(pressBtn, BTN_DLEFT);
+    u8 pressDRight = CHECK_BTN_ALL(pressBtn, BTN_DRIGHT);
+    u8 i;
 
-        if (isHoldingR && CHECK_BTN_ALL(pressBtn, BTN_L)) {
-            this->bShow ^= 1;
-        }
-
-        if (this->bShow && isHoldingR && CHECK_BTN_ALL(pressBtn, BTN_DLEFT)) {
-            this->bExecute = 0;
-        }
-
-        if ((this->bShow && !isHoldingR) || this->bBackgroundExecution) {
-            if (!this->bExecute || this->bBackgroundExecution) {
-                if (this->bShow && !isHoldingR) {
-                    if (CHECK_BTN_ALL(pressBtn, BTN_DUP)) {
-                        this->eSelection--;
-                        if (this->eSelection == MENU_MIN) {
-                            this->eSelection = MENU_MAX - 1;
-                        }
-                    }
-
-                    if (CHECK_BTN_ALL(pressBtn, BTN_DDOWN)) {
-                        this->eSelection++;
-                        if (this->eSelection == MENU_MAX) {
-                            this->eSelection = MENU_MIN + 1;
-                        }
-                    }
-
-                    if (CHECK_BTN_ALL(pressBtn, BTN_L)) {
-                        if (this->eSelection == MENU_COLVIEW) {
-                            this->bColViewEnabled ^= 1;
-                        } else if (this->eSelection == MENU_HITVIEW) {
-                            this->bHitboxViewEnabled ^= 1;
-                        } else {
-                            this->bExecute = 1;
-                        }
-
-                        this->nTimer = 1;
-                        this->bBackgroundExecution = this->bColViewEnabled || this->bHitboxViewEnabled;
-                    }
-                }
-
-                if (this->nTimer > 0) {
-                    this->nTimer--;
+    if (isHoldingR && CHECK_BTN_ALL(pressBtn, BTN_L)) {
+        this->bShow ^= 1;
+    }
+    if (this->bShow && isHoldingR && CHECK_BTN_ALL(pressBtn, BTN_DLEFT)) {
+        this->bExecute = 0;
+    }
+    u8 editActive = this->bShow && !isHoldingR;
+    if (!editActive && !this->bBackgroundExecution) {
+        return;
+    }
+    
+    if (!this->bExecute || this->bBackgroundExecution) {
+        if (editActive) {
+            if (CHECK_BTN_ALL(pressBtn, BTN_DUP)) {
+                this->eSelection--;
+                if (this->eSelection == MENU_MIN) {
+                    this->eSelection = MENU_MAX - 1;
                 }
             }
 
-            if (this->bExecute || this->bBackgroundExecution) {
-                for (i = 0; i < ARRAY_COUNT(sMenuElements); i++) {
-                    MenuElement elem = sMenuElements[this->eSelection];
-
-                    this->bBackgroundExecution = elem.bToggle;
-                    if ((elem.updateFunc != NULL) && (elem.pStruct != NULL) && !elem.updateFunc(elem.pStruct)) {
-                        PRINTF("[HackerOoT:Menu]: an error occurred while trying to run the update function\n");
-                    }
+            if (CHECK_BTN_ALL(pressBtn, BTN_DDOWN)) {
+                this->eSelection++;
+                if (this->eSelection == MENU_MAX) {
+                    this->eSelection = MENU_MIN + 1;
                 }
+            }
+            
+            #if ENABLE_F3DEX3
+            if(this->eSelection == MENU_F3DEX3_PROF){
+                if(pressDLeft && gF3DEX3ProfVersion > 0){
+                    gF3DEX3ProfVersion--;
+                }
+                if(pressDRight && gF3DEX3ProfVersion < 3){
+                    gF3DEX3ProfVersion++;
+                }
+            }else if(this->eSelection == MENU_F3DEX3_OCC){
+                if(pressDLeft && gF3DEX3OccMode > 0){
+                    gF3DEX3OccMode--;
+                }
+                if(pressDRight && gF3DEX3OccMode < F3DEX3_OCC_MODE_COUNT-1){
+                    gF3DEX3OccMode++;
+                }
+                if(gF3DEX3OccMode == F3DEX3_OCC_MODE_ALWAYS){
+                    gF3DEX3NOCVersion = 0;
+                }else if(gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER){
+                    gF3DEX3NOCVersion = 1;
+                }
+            }
+            #endif
+
+            if (CHECK_BTN_ALL(pressBtn, BTN_L)) {
+                if (this->eSelection == MENU_COLVIEW) {
+                    this->bColViewEnabled ^= 1;
+                } else if (this->eSelection == MENU_HITVIEW) {
+                    this->bHitboxViewEnabled ^= 1;
+                } else {
+                    this->bExecute = 1;
+                }
+
+                this->nTimer = 1;
+                this->bBackgroundExecution = this->bColViewEnabled || this->bHitboxViewEnabled;
+            }
+        }
+
+        if (this->nTimer > 0) {
+            this->nTimer--;
+        }
+    }
+
+    if (this->bExecute || this->bBackgroundExecution) {
+        for (i = 0; i < ARRAY_COUNT(sMenuElements); i++) {
+            MenuElement elem = sMenuElements[this->eSelection];
+
+            this->bBackgroundExecution = elem.bToggle;
+            if ((elem.updateFunc != NULL) && (elem.pStruct != NULL) && !elem.updateFunc(elem.pStruct)) {
+                PRINTF("[HackerOoT:Menu]: an error occurred while trying to run the update function\n");
             }
         }
     }
@@ -123,6 +154,7 @@ void Menu_Draw(Menu* this) {
 
         if (this->bShow && !this->bExecute) {
             u32 color;
+            const char* text = sMenuElements[index].name;
 
             if (this->pInput != NULL && !CHECK_BTN_ALL(this->pInput->cur.button, BTN_R) &&
                 CHECK_BTN_ALL(this->pInput->cur.button, BTN_L)) {
@@ -130,8 +162,30 @@ void Menu_Draw(Menu* this) {
             } else {
                 color = i == this->eSelection ? COLOR_BLUE2 : COLOR_WHITE;
             }
+            
+            #if ENABLE_F3DEX3
+            char tempBuffer[100];
+            if(i == MENU_F3DEX3_PROF){
+                static const char* const profStrings[4] = {
+                    "Default >",
+                    "< A >",
+                    "< B >",
+                    "< C",
+                };
+                sprintf(tempBuffer, "%s%s", text, profStrings[gF3DEX3ProfVersion]);
+                text = tempBuffer;
+            }else if(i == MENU_F3DEX3_OCC){
+                static const char* const occStrings[F3DEX3_OCC_MODE_COUNT] = {
+                    "Auto >",
+                    "< Always >",
+                    "< Never",
+                };
+                sprintf(tempBuffer, "%s%s", text, occStrings[gF3DEX3OccMode]);
+                text = tempBuffer;
+            }
+            #endif
 
-            Print_Screen(print, 4, i + 5, color, sMenuElements[index].name);
+            Print_Screen(print, 4, i + 5, color, text);
         }
 
         if (this->bShow && this->bExecute) {

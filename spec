@@ -132,7 +132,6 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/os/sethwintrroutine.o"
     include "$(BUILD_DIR)/src/libultra/os/gethwintrroutine.o"
     include "$(BUILD_DIR)/src/libultra/os/setwatchlo.o"
-    include "$(BUILD_DIR)/data/rsp_boot.text.o"
 #ifdef COMPILER_GCC
     include "$(BUILD_DIR)/src/gcc_fix/missing_gcc_functions.o"
 #endif
@@ -616,11 +615,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_game_over.o"
     include "$(BUILD_DIR)/src/code/z_construct.o"
     include "$(BUILD_DIR)/data/audio_tables.rodata.o"
-    include "$(BUILD_DIR)/data/rsp.text.o"
-#if ENABLE_F3DEX3
-    include "$(BUILD_DIR)/data/rsp.rodata.f3dex3.o"
-#else
     include "$(BUILD_DIR)/data/rsp.rodata.o"
+#if !ENABLE_F3DEX3
+    include "$(BUILD_DIR)/data/f3dzex2.rodata.o"
 #endif
     include "$(BUILD_DIR)/src/code/rainbow.o"
 endseg
@@ -645,6 +642,89 @@ beginseg
     include "$(BUILD_DIR)/src/buffers/gfxbuffers.o"
     include "$(BUILD_DIR)/src/buffers/audio_heap.o"
 endseg
+
+#if ENABLE_F3DEX3
+beginseg
+    name "F3DEX3_BrW_Text"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW.code.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_Data"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW.data.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_PA_Text"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PA.code.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_PA_Data"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PA.data.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_PB_Text"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PB.code.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_PB_Data"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PB.data.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_PC_Text"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PC.code.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_PC_Data"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PC.data.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_Text"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC.code.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_Data"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC.data.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_PA_Text"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PA.code.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_PA_Data"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PA.data.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_PB_Text"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PB.code.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_PB_Data"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PB.data.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_PC_Text"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PC.code.o"
+endseg
+beginseg
+    name "F3DEX3_BrW_NOC_PC_Data"
+    compress
+    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PC.data.o"
+endseg
+#endif
 
 beginseg
     name "ovl_title"
