@@ -1,4 +1,4 @@
-MAKEFLAGS += --no-builtin-rules
+MAKEFLAGS += --no-builtin-rules --no-print-directory
 
 # Ensure the build fails if a piped command fails
 SHELL = /bin/bash
@@ -10,11 +10,12 @@ SHELL = /bin/bash
 COMPILER := gcc
 
 # Target game version. Currently only the following version is supported:
+#   gc-eu-mq       GameCube Europe/PAL Master Quest
 #   gc-eu-mq-dbg   GameCube Europe/PAL Master Quest Debug
 #   hackeroot-mq   HackerOoT, based on gc-eu-mq-dbg (default)
 #
 # The following versions are work-in-progress and not yet matching:
-#   gc-eu-mq       GameCube Europe/PAL Master Quest
+#   gc-eu          GameCube Europe/PAL
 #
 # Note: choosing hackeroot-mq will enable HackerOoT features,
 #       if another version is chosen, this repo will be like
@@ -82,13 +83,22 @@ else
 endif
 
 # Version-specific settings
-ifeq ($(VERSION),gc-eu-mq)
+ifeq ($(VERSION),gc-eu)
   DEBUG := 0
+  HACKEROOT := 0
+else ifeq ($(VERSION),gc-eu-mq)
+  DEBUG := 0
+  CFLAGS += -DOOT_MQ
+  CPPFLAGS += -DOOT_MQ
   HACKEROOT := 0
 else ifeq ($(VERSION),gc-eu-mq-dbg)
   DEBUG := 1
+  CFLAGS += -DOOT_MQ
+  CPPFLAGS += -DOOT_MQ
   HACKEROOT := 0
 else ifeq ($(VERSION),hackeroot-mq)
+  CFLAGS += -DOOT_MQ
+  CPPFLAGS += -DOOT_MQ
   HACKEROOT := 1
 else
 $(error Unsupported version $(VERSION))
@@ -111,9 +121,6 @@ ifeq ($(origin PACKAGE_VERSION), undefined)
     PACKAGE_VERSION = Unknown version
   endif
 endif
-
-F3DEX3 := F3DEX3
-F3DEX3_BUILD := F3DEX3_BrW
 
 ifeq ($(VERSION),hackeroot-mq)
   CFLAGS += -DENABLE_HACKEROOT=1
@@ -288,6 +295,9 @@ S_FILES       := $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS),$(wildcard 
 O_FILES       := $(foreach f,$(S_FILES:.s=.o),$(BUILD_DIR)/$f) \
                  $(foreach f,$(C_FILES:.c=.o),$(BUILD_DIR)/$f) \
                  $(foreach f,$(BASEROM_BIN_FILES),$(BUILD_DIR)/baserom/$(notdir $f).o)
+UCODE_PATCHES := $(wildcard F3DEX3/*.bps)
+UCODE_FILES   := $(foreach f,$(UCODE_PATCHES:.bps=),$f)
+UCODE_O_FILES := $(foreach f,$(UCODE_FILES),$(BUILD_DIR)/$f.o)
 
 OVL_RELOC_FILES := $(shell $(CPP) $(CPPFLAGS) $(SPEC) | $(SPEC_REPLACE_VARS) | grep -o '[^"]*_reloc.o' )
 
@@ -402,7 +412,7 @@ distclean: assetclean
 	$(V)$(RM) -r extracted/
 	$(V)$(RM) -r build/
 	$(V)$(MAKE) -C tools distclean
-	$(V)$(RM) -r F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data
+	$(V)$(RM) -r F3DEX3/*.code F3DEX3/*.data
 	$(call print,Success!)
 
 venv:
@@ -427,8 +437,6 @@ ifneq ($(VERSION),gc-eu-mq)
 	$(V)$(PYTHON) extract_assets.py -j$(N_THREADS) -v $(VERSION)
 endif
 	$(call print,Extracting files: Done!)
-	$(MAKE) f3dex3
-	$(call print,Success!)
 ifeq ($(VERSION),hackeroot-mq)
 # TODO: proper fix (for .s files)
 	cp baseroms/hackeroot-mq/baserom-decompressed.z64 baseroms/gc-eu-mq-dbg/baserom-decompressed.z64
@@ -445,35 +453,33 @@ patch:
 	$(V)$(FLIPS) --create --bps $(BASEROM_PATCH) $(ROM) $(BPS)
 	$(call print,Success!)
 
-f3dex3_extract:
-	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCD0F0 --size 0x1630 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.code
-	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCE720 --size 0x420 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output F3DEX3/f3dzex2.data
-
-f3dex3_clean:
-	$(V)$(RM) -r F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
-
-f3dex3:
-	$(call print,Patching the microcode...)
-	$(V)$(MAKE) f3dex3_extract
-	$(V)$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).code.bps F3DEX3/f3dzex2.code $(F3DEX3)/$(F3DEX3_BUILD).code
-	$(V)$(FLIPS) --apply F3DEX3/Patch/$(F3DEX3_BUILD).data.bps F3DEX3/f3dzex2.data $(F3DEX3)/$(F3DEX3_BUILD).data
-	$(V)$(MAKE) f3dex3_clean
+create_f3dex3_patches: F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
+	$(call print,Creating F3DEX3 patches...)
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.code.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW.data F3DEX3/F3DEX3_BrW.data.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_PA.code F3DEX3/F3DEX3_BrW_PA.code.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_PA.data F3DEX3/F3DEX3_BrW_PA.data.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_PB.code F3DEX3/F3DEX3_BrW_PB.code.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_PB.data F3DEX3/F3DEX3_BrW_PB.data.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_PC.code F3DEX3/F3DEX3_BrW_PC.code.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_PC.data F3DEX3/F3DEX3_BrW_PC.data.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC.code F3DEX3/F3DEX3_BrW_NOC.code.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC.data F3DEX3/F3DEX3_BrW_NOC.data.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC_PA.code F3DEX3/F3DEX3_BrW_NOC_PA.code.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC_PA.data F3DEX3/F3DEX3_BrW_NOC_PA.data.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC_PB.code F3DEX3/F3DEX3_BrW_NOC_PB.code.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC_PB.data F3DEX3/F3DEX3_BrW_NOC_PB.data.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC_PC.code F3DEX3/F3DEX3_BrW_NOC_PC.code.bps
+	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC_PC.data F3DEX3/F3DEX3_BrW_NOC_PC.data.bps
 	$(call print,Success!)
-
-f3dex3_patch:
-	$(V)$(MAKE) f3dex3_extract
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code $(F3DEX3)/$(F3DEX3_BUILD).code F3DEX3/Patch/$(F3DEX3_BUILD).code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data $(F3DEX3)/$(F3DEX3_BUILD).data F3DEX3/Patch/$(F3DEX3_BUILD).data.bps
-	$(V)$(MAKE) f3dex3_clean
-
-.PHONY: all rom compress clean assetclean distclean venv setup run wad patch f3dex3 f3dex3_patch f3dex3_extract f3dex3_clean verify
 
 verify:
 	$(V)$(MAKE) clean
 	$(V)$(MAKE) rom
 	@md5sum $(ROM)
 
-.PHONY: all rom compress clean assetclean distclean venv setup run wad iso patch f3dex3 verify
+.PHONY: all rom compress clean assetclean distclean venv setup run wad iso patch create_f3dex3_patches verify
+
 .DEFAULT_GOAL := rom
 
 #### Various Recipes ####
@@ -493,7 +499,7 @@ else
 endif
 	$(V)$(PYTHON) -m ipl3checksum sum --cic 6105 --update $@
 
-$(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(LDSCRIPT) $(BUILD_DIR)/undefined_syms.txt
+$(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(UCODE_O_FILES) $(LDSCRIPT) $(BUILD_DIR)/undefined_syms.txt
 	$(V)$(LD) -T $(LDSCRIPT) -T $(BUILD_DIR)/undefined_syms.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP) -o $@
 
 ## Order-only prerequisites
@@ -509,28 +515,32 @@ $(O_FILES): | asset_files
 .PHONY: o_files asset_files
 
 $(BUILD_DIR)/$(SPEC): $(SPEC)
-	$(call print,Compiling:,$<,$@)
+	$(call print,Preprocessing:,$<,$@)
 	$(V)$(CPP) $(CPPFLAGS) $< | $(SPEC_REPLACE_VARS) > $@
 
 $(LDSCRIPT): $(BUILD_DIR)/$(SPEC)
-	$(call print,Linking:,$<,$@)
+	$(call print,Creating linker script:,$<,$@)
 	$(V)$(MKLDSCRIPT) $< $@
 
 $(BUILD_DIR)/undefined_syms.txt: undefined_syms.txt
-	$(call print,Compiling:,$<,$@)
+	$(call print,Preprocessing:,$<,$@)
 	$(V)$(CPP) $(CPPFLAGS) $< > $@
 
 $(BUILD_DIR)/baserom/%.o: $(EXTRACTED_DIR)/baserom/%
+	$(call print,Wrapping binary to ELF:,$<,$@)
+	$(V)$(OBJCOPY) -I binary -O elf32-big $< $@
+	
+$(BUILD_DIR)/F3DEX3/%.o: F3DEX3/%
+	$(call print,Wrapping binary to ELF:,$<,$@)
+	$(V)mkdir -p $(BUILD_DIR)/F3DEX3
 	$(V)$(OBJCOPY) -I binary -O elf32-big $< $@
 
 $(BUILD_DIR)/data/%.o: data/%.s
-	$(call print,Relocating:,$<,$@)
+	$(call print,Assembling:,$<,$@)
 	$(V)$(AS) $(ASFLAGS) $< -o $@
 
-$(BUILD_DIR)/data/rsp.rodata.f3dex3.o: F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.data
-
 $(BUILD_DIR)/assets/text/%.enc.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.txt
-	$(call print,Compiling:,$<,$@)
+	$(call print,Encoding:,$<,$@)
 	$(V)$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) $< | $(PYTHON) tools/msgenc.py - --output $@ --charmap assets/text/charmap.txt
 
 # Dependencies for files including message data headers
@@ -606,6 +616,20 @@ $(BUILD_DIR)/assets/%.bin.inc.c: assets/%.bin
 
 $(BUILD_DIR)/assets/%.jpg.inc.c: assets/%.jpg
 	$(V)$(ZAPD) bren -eh -i $< -o $@
+
+F3DEX3/f3dzex2.code:
+	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCD0F0 --size 0x1630 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output $@
+
+F3DEX3/f3dzex2.data:
+	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCE720 --size 0x420 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output $@
+
+F3DEX3/F3DEX3%.code: F3DEX3/F3DEX3%.code.bps F3DEX3/f3dzex2.code
+	$(V)$(FLIPS) --apply F3DEX3/F3DEX3$*.code.bps F3DEX3/f3dzex2.code $@
+	
+F3DEX3/F3DEX3%.data: F3DEX3/F3DEX3%.data.bps F3DEX3/f3dzex2.data
+	$(V)$(FLIPS) --apply F3DEX3/F3DEX3$*.data.bps F3DEX3/f3dzex2.data $@
+
+.PRECIOUS: $(UCODE_FILES)
 
 -include $(DEP_FILES)
 

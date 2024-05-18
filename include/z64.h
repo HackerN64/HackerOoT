@@ -66,6 +66,10 @@
 #include "debug.h"
 #endif
 
+#if ENABLE_F3DEX3
+#include "occlusionplanes.h"
+#endif
+
 #define SCREEN_WIDTH  320
 #define SCREEN_HEIGHT 240
 
@@ -96,6 +100,8 @@
 #define THREAD_ID_AUDIOMGR   10
 #define THREAD_ID_DMAMGR     18
 #define THREAD_ID_IRQMGR     19
+
+#define VI_CUSTOM_PAL60_LAN1 56 // Custom PAL60 VI mode
 
 #define STACK(stack, size) \
     u64 stack[ALIGN8(size) / sizeof(u64)]

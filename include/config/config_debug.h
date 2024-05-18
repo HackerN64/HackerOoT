@@ -1,5 +1,5 @@
-#ifndef CONFIG_BOOTUP_H
-#define CONFIG_BOOTUP_H
+#ifndef CONFIG_DEBUG_H
+#define CONFIG_DEBUG_H
 
 /******************
  * DEBUG SETTINGS *

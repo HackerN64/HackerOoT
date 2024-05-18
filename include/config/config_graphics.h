@@ -1,3 +1,6 @@
+#ifndef CONFIG_GRAPHICS_H
+#define CONFIG_GRAPHICS_H
+
 /*****************
  * GAME SETTINGS *
  *****************/
@@ -50,3 +53,8 @@
 
 // Force widescreen mode regardless of SaveContext
 #define FORCE_WIDESCREEN false
+
+// Increase the size of small elements (improves readability on N64)
+#define WIDESCREEN_N64_MODE true
+
+#endif

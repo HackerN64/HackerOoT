@@ -1,7 +1,12 @@
 #include "global.h"
 #include "terminal.h"
 
-OSThread gMainThread;
+// For retail BSS ordering, the block number of sMainThread must be 0 or
+// just above (the exact upper bound depends on the block numbers assigned to
+// extern variables declared in headers).
+#pragma increment_block_number 60
+
+OSThread sMainThread;
 STACK(sMainStack, 0x900);
 StackEntry sMainStackInfo;
 OSMesg sPiMgrCmdBuff[50];
@@ -65,12 +70,14 @@ void Idle_ThreadEntry(void* arg) {
     gViConfigYScale = 1.0f;
 
     switch (osTvType) {
-#if !IS_DEBUG
-        case OS_TV_PAL:
-#endif
         case OS_TV_NTSC:
             gViConfigModeType = OS_VI_NTSC_LAN1;
             gViConfigMode = osViModeNtscLan1;
+            break;
+
+        case OS_TV_PAL:
+            gViConfigModeType = OS_VI_FPAL_LAN1;
+            gViConfigMode = gCustomViModePal60Lan1;
             break;
 
         case OS_TV_MPAL:
@@ -78,13 +85,6 @@ void Idle_ThreadEntry(void* arg) {
             gViConfigMode = osViModeMpalLan1;
             break;
 
-#if IS_DEBUG
-        case OS_TV_PAL:
-            gViConfigModeType = OS_VI_FPAL_LAN1;
-            gViConfigMode = osViModeFpalLan1;
-            gViConfigYScale = 0.833f;
-            break;
-#endif
     }
 
     D_80009430 = 1;
@@ -94,8 +94,8 @@ void Idle_ThreadEntry(void* arg) {
     osViSwapBuffer((void*)0x803DA80); //! @bug Invalid vram address (probably intended to be 0x803DA800)
     osCreatePiManager(OS_PRIORITY_PIMGR, &gPiMgrCmdQueue, sPiMgrCmdBuff, ARRAY_COUNT(sPiMgrCmdBuff));
     StackCheck_Init(&sMainStackInfo, sMainStack, STACK_TOP(sMainStack), 0, 0x400, "main");
-    osCreateThread(&gMainThread, THREAD_ID_MAIN, Main_ThreadEntry, arg, STACK_TOP(sMainStack), THREAD_PRI_MAIN_INIT);
-    osStartThread(&gMainThread);
+    osCreateThread(&sMainThread, THREAD_ID_MAIN, Main_ThreadEntry, arg, STACK_TOP(sMainStack), THREAD_PRI_MAIN_INIT);
+    osStartThread(&sMainThread);
     osSetThreadPri(NULL, OS_PRIORITY_IDLE);
 
     for (;;) {}
