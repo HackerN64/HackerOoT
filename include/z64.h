@@ -66,7 +66,7 @@
 #endif
 
 #if ENABLE_PROFILER
-#include "profiler.h"
+#include "debug/profiler.h"
 #endif
 
 #if ENABLE_F3DEX3

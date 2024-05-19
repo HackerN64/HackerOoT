@@ -81,14 +81,14 @@ known at link time, whereas these sizes have to be known at compile time. */
 __attribute__((aligned(16))) u8 gF3DEX3TextBuffer[F3DEX3_TEXT_MAX_SIZE];
 __attribute__((aligned(16))) u8 gF3DEX3DataBuffer[F3DEX3_DATA_MAX_SIZE];
 
-static s8 sLoadedF3DEX3Version = -1;
+volatile s8 gLoadedF3DEX3Version = -1;
 volatile s8 gF3DEX3ProfVersion = 0;
 volatile s8 gF3DEX3NOCVersion = 0;
 s8 gF3DEX3OccMode = 0;
 
 void SysUcode_LoadNewUcodeIfChanged() {
     s8 ver = gF3DEX3ProfVersion | (gF3DEX3NOCVersion << 2);
-    if(sLoadedF3DEX3Version == ver) return;
+    if(gLoadedF3DEX3Version == ver) return;
     ver &= 7; // make sure valid
     
     u8* vrom = sF3DEX3TextRomStartAddrs[ver];
@@ -107,7 +107,7 @@ void SysUcode_LoadNewUcodeIfChanged() {
     }
     DMA_REQUEST_SYNC(gF3DEX3DataBuffer, vrom, size, "sys_ucode.c", __LINE__);
     
-    sLoadedF3DEX3Version = ver;
+    gLoadedF3DEX3Version = ver;
 }
 
 #endif

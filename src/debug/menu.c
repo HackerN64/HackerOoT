@@ -9,6 +9,7 @@ u8 ColliderView_Draw(void* unused);
 static MenuElement sMenuElements[MENU_MAX] = {
     { "Collision View", true, NULL, NULL, (MenuFunc)CollisionView_Draw },
     { "Collider View", true, NULL, NULL, (MenuFunc)ColliderView_Draw },
+    { "Profiler: ", false, NULL, NULL, NULL },
 #if ENABLE_F3DEX3
     { "F3DEX3 profiling: ", false, NULL, NULL, NULL },
     { "F3DEX3 occ plane: ", false, NULL, NULL, NULL },
@@ -84,6 +85,13 @@ void Menu_Update(Menu* this) {
                 }else if(gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER){
                     gF3DEX3NOCVersion = 1;
                 }
+            }else if(this->eSelection == MENU_PROFILER){
+                if(pressDLeft && gProfilerMode > 0){
+                    gProfilerMode--;
+                }
+                if(pressDRight && gProfilerMode < PROFILER_MODE_COUNT-1){
+                    gProfilerMode++;
+                }
             }
             #endif
 
@@ -93,7 +101,8 @@ void Menu_Update(Menu* this) {
                 } else if (this->eSelection == MENU_HITVIEW) {
                     this->bHitboxViewEnabled ^= 1;
                 } else {
-                    this->bExecute = 1;
+                    // Nothing actually uses "execute" now.
+                    // this->bExecute = 1;
                 }
 
                 this->nTimer = 1;
@@ -130,7 +139,7 @@ void Menu_Draw(Menu* this) {
     Vec2s right = { 300, 220 };
     PrintUtils* print = &gDebug.printer;
     u8 i;
-
+    
     if (!MENU_CAN_UPDATE) {
         return;
     }
@@ -184,6 +193,20 @@ void Menu_Draw(Menu* this) {
                 text = tempBuffer;
             }
             #endif
+            if(i == MENU_PROFILER){
+                static const char* const profStrings[PROFILER_MODE_COUNT] = {
+                    "Disable >",
+                    "< Real FPS >",
+                    "< Virtual FPS >",
+                    "< Gfx >",
+                    "< Gfx Trace >",
+                    "< CPU >",
+                    "< CPU Trace >",
+                    "< All Trace",
+                };
+                sprintf(tempBuffer, "%s%s", text, profStrings[gProfilerMode]);
+                text = tempBuffer;
+            }
 
             Print_Screen(print, 4, i + 5, color, text);
         }

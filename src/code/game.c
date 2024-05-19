@@ -203,7 +203,7 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     }
 
 #if ENABLE_PROFILER
-    Profiler_Draw();
+    Profiler_Draw(gfxCtx);
 #endif
 }
 

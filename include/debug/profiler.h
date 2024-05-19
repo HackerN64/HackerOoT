@@ -1,10 +1,7 @@
 #ifndef PROFILER_H
 #define PROFILER_H
 
-#define F3DEX3_PROF_DEF 0
-#define F3DEX3_PROF_A 1
-#define F3DEX3_PROF_B 2
-#define F3DEX3_PROF_C 3
+#if ENABLE_F3DEX3
 
 typedef struct {  /* Default performance counters, if no CFG_PROFILING_* is enabled */
     /* Number of vertices processed by the RSP */
@@ -85,120 +82,55 @@ typedef struct {
     u32 ucode; /* Not a perf counter, can ignore */
 } F3DEX3YieldDataFooter;
 
+#endif
+
+#define PROFILER_EVENT_COUNT 128
+
+typedef enum {
+    PROFILER_EVENT_TYPE_MAINGFXSTART,
+    PROFILER_EVENT_TYPE_RDPEND,
+    PROFILER_EVENT_TYPE_MAINGFXEND,
+    PROFILER_EVENT_TYPE_RSPGFXSTART,
+    PROFILER_EVENT_TYPE_RSPGFXEND,
+    PROFILER_EVENT_TYPE_RSPAUDIOSTART,
+    PROFILER_EVENT_TYPE_RSPAUDIOEND,
+    PROFILER_EVENT_TYPE_RSPOTHERSTART,
+    PROFILER_EVENT_TYPE_RSPOTHEREND,
+    PROFILER_EVENT_TYPE_THREADSTART = 50,
+    PROFILER_EVENT_TYPE_THREADEND = 100,
+} ProfilerEventType;
+
 typedef struct {
-    OSTime gfxTaskStartTime;
-    OSTime gfxRspDoneTime;
-    OSTime gfxTaskAllDoneTime;
-    OSTime rspRecentStartTime;
-    OSTime rspGfxTotalTime;
-    OSTime rspAudioTotalTime;
-    OSTime rspJpegTotalTime;
+    OSTime eventTimes[PROFILER_EVENT_COUNT];
+    u8 eventTypes[PROFILER_EVENT_COUNT];
+    s32 eventIndex;
+    OSTime lastRSPStartTime;
+    OSTime lastRDPStartTime;
     u32 rdpClockCount; // counts clock (not gclk)
     u32 rdpCmdCount;  // counts cmd_busy "DP CMDBUF is not empty". RDP command shuffle FIFO not empty.
     u32 rdpPipeCount; // counts pipe_busy, which is true until fullsync is complete.
     u32 rdpTmemCount; // counts tmem_busy "DP TMEM is loading". Cycles valid tex data on copy bus, doesn't count waiting for RDRAM.
+#if ENABLE_F3DEX3
     F3DEX3YieldDataFooter footer;
     s8 f3dex3Version;
-} SchedPerfInfo;
+#endif
+} ProfilerState;
 
-extern SchedPerfInfo* volatile lastSchedPerfInfo;
-extern SchedPerfInfo* volatile activeSchedPerfInfo;
+extern ProfilerState* lastProfilerState;
+extern ProfilerState* activeProfilerState;
 
-// These are all inline functions because they're only called once. They would
-// have just been directly included in the calling code, but this approach lets
-// their functionality be separated visually.
+typedef enum {
+    PROFILER_MODE_DISABLE,
+    PROFILER_MODE_REAL_FPS,
+    PROFILER_MODE_VIRTUAL_FPS,
+    PROFILER_MODE_GFX,
+    PROFILER_MODE_GFX_TRACE,
+    PROFILER_MODE_CPU,
+    PROFILER_MODE_CPU_TRACE,
+    PROFILER_MODE_ALL_TRACE,
+    PROFILER_MODE_COUNT
+} ProfilerMode;
 
-static inline void Profiler_AudioCPUStart(){
-    // TODO
-}
-
-static inline void Profiler_AudioCPUEnd(){
-    // TODO
-}
-
-static inline void Profiler_GraphUpdateStart(){
-    // TODO
-}
-
-static inline void Profiler_GraphWaitPrevFrameStart(){
-    // TODO
-}
-
-static inline void Profiler_GraphWaitPrevFrameEnd(){
-    // TODO
-}
-
-static inline void Profiler_GraphUpdateEnd(){
-    // TODO
-}
-
-static inline void Profiler_RSPStart(u32 type, bool isFirstStartOfMainGfxTask){
-    OSTime t = osGetTime();
-    activeSchedPerfInfo->rspRecentStartTime = t;
-    if(isFirstStartOfMainGfxTask){
-        activeSchedPerfInfo->gfxTaskStartTime = t;
-        activeSchedPerfInfo->rspGfxTotalTime = 0;
-        activeSchedPerfInfo->rspAudioTotalTime = 0;
-        activeSchedPerfInfo->rspJpegTotalTime = 0;
-        activeSchedPerfInfo->f3dex3Version = TODO;
-        osDpSetStatus(DPC_CLR_CLOCK_CTR | DPC_CLR_CMD_CTR | DPC_CLR_PIPE_CTR | DPC_CLR_TMEM_CTR);
-    }
-}
-
-static inline void Profiler_RSPDone(OSTime t, u32 type){
-    OSTime dt = t - activeSchedPerfInfo->rspRecentStartTime;
-    activeSchedPerfInfo->rspRecentStartTime = 0;
-    if (sc->curRSPTask->list.t.type == M_AUDTASK) {
-        activeSchedPerfInfo->rspAudioTotalTime += dt;
-    }else if(sc->curRSPTask->flags & OS_SC_NEEDS_RDP){
-        activeSchedPerfInfo->rspGfxTotalTime += dt;
-    }else{
-        activeSchedPerfInfo->rspJpegTotalTime += dt;
-    }
-}
-
-static inline void Profiler_RSPDoneNotYield(OSTime t, u32 flags){
-    if((flags & OS_SC_NEEDS_RDP)){
-        // This is the main graphics task, and it's done with the RSP
-        activeSchedPerfInfo->gfxRspDoneTime = t;
-        
-        // Get F3DEX3 perf counters
-        F3DEX3YieldDataFooter* footer = (F3DEX3YieldDataFooter*)(
-            (u8*)gGfxSPTaskYieldBuffer +
-            OS_YIELD_DATA_SIZE - sizeof(F3DEX3YieldDataFooter));
-        osInvalDCache(footer, sizeof(F3DEX3YieldDataFooter));
-        bcopy(footer, &activeSchedPerfInfo->footer, sizeof(F3DEX3YieldDataFooter));
-    }
-}
-
-static inline void Profiler_RDPDone(){
-    activeSchedPerfInfo->rdpTmemCount = IO_READ(DPC_TMEM_REG);
-    activeSchedPerfInfo->rdpPipeCount = IO_READ(DPC_PIPEBUSY_REG);
-    activeSchedPerfInfo->rdpCmdCount = IO_READ(DPC_BUFBUSY_REG);
-    activeSchedPerfInfo->rdpClockCount = IO_READ(DPC_CLOCK_REG);
-}
-
-static inline void Profiler_TaskAllDone(u32 flags){
-    if((flags & OS_SC_NEEDS_RDP)){
-        // This is the main graphics task
-        OSTime t = osGetTime();
-        activeSchedPerfInfo->gfxTaskAllDoneTime = t;
-        
-        SchedPerfInfo* temp = activeSchedPerfInfo;
-        activeSchedPerfInfo = lastSchedPerfInfo;
-        lastSchedPerfInfo = temp;
-        
-        activeSchedPerfInfo->rspRecentStartTime = 0;
-        activeSchedPerfInfo->gfxTaskStartTime = 0;
-    }
-}
-
-static inline bool Profiler_GfxIsHung(){
-    return OS_CYCLES_TO_USEC(osGetTime() - activeSchedPerfInfo->gfxTaskStartTime) > 1000000;
-}
-
-extern void Profiler_Init();
-extern void Profiler_Draw();
-extern void Profiler_Destroy();
+extern u8 gProfilerMode;
 
 #endif

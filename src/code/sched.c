@@ -543,8 +543,7 @@ void Sched_HandleRSPDone(Scheduler* sc) {
     ASSERT(sc->curRSPTask != NULL, "sc->curRSPTask", "../sched.c", 819);
 
 #if ENABLE_PROFILER
-    OSTime t = osGetTime();
-    Profiler_RSPDone(t, sc->curRSPTask->list.t.type);
+    Profiler_RSPDone(sc->curRSPTask->list.t.type);
 #endif
 
     // Clear current RSP task
@@ -567,7 +566,7 @@ void Sched_HandleRSPDone(Scheduler* sc) {
     } else {
         SCHED_DEBUG_PRINTF("[NOT YIELDED]\n");
 #if ENABLE_PROFILER
-        Profiler_RSPDoneNotYield(t, curRSPTask->flags);
+        Profiler_RSPDoneNotYield(curRSPTask->flags);
 #endif
         
         // Task has completed on the RSP, unset RSP flag and check if the task is fully complete
