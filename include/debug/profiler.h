@@ -3,6 +3,13 @@
 
 #if ENABLE_F3DEX3
 
+typedef enum {
+    F3DEX3_PROF_DEF,
+    F3DEX3_PROF_A,
+    F3DEX3_PROF_B,
+    F3DEX3_PROF_C,
+} F3DEX3ProfType;
+
 typedef struct {  /* Default performance counters, if no CFG_PROFILING_* is enabled */
     /* Number of vertices processed by the RSP */
     u16 vertexCount;
