@@ -112,7 +112,8 @@ typedef struct {
     u8 eventTypes[PROFILER_EVENT_COUNT];
     s32 eventIndex;
     OSTime lastRSPStartTime;
-    OSTime lastRDPStartTime;
+    OSTime traceStartTime;
+    OSTime traceEndTime;
     u32 rdpClockCount; // counts clock (not gclk)
     u32 rdpCmdCount;  // counts cmd_busy "DP CMDBUF is not empty". RDP command shuffle FIFO not empty.
     u32 rdpPipeCount; // counts pipe_busy, which is true until fullsync is complete.

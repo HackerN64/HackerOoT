@@ -39,6 +39,8 @@ static inline void Profiler_RSPStart(u32 type, bool isFirstStartOfMainGfxTask){
     OSTime t = osGetTime();
     u8 eventType;
     if(isFirstStartOfMainGfxTask){
+        activeProfilerState->traceEndTime = t;
+        
         u32 prevInt = __osDisableInt();
         ProfilerState* temp = activeProfilerState;
         activeProfilerState = lastProfilerState;
@@ -49,7 +51,7 @@ static inline void Profiler_RSPStart(u32 type, bool isFirstStartOfMainGfxTask){
 #if ENABLE_F3DEX3
         activeProfilerState->f3dex3Version = gLoadedF3DEX3Version;
 #endif
-        activeProfilerState->lastRDPStartTime = t;
+        activeProfilerState->traceStartTime = t;
         
         osDpSetStatus(DPC_CLR_CLOCK_CTR | DPC_CLR_CMD_CTR | DPC_CLR_PIPE_CTR | DPC_CLR_TMEM_CTR);
         
@@ -108,7 +110,7 @@ static inline void Profiler_TaskAllDone(u32 flags){
 static inline bool Profiler_GfxIsHung(){
     OSTime t = osGetTime();
     return OS_CYCLES_TO_USEC(t - activeProfilerState->lastRSPStartTime) > 1000000
-        || OS_CYCLES_TO_USEC(t - activeProfilerState->lastRDPStartTime) > 1000000;
+        || OS_CYCLES_TO_USEC(t - activeProfilerState->traceStartTime) > 1000000;
 }
 
 extern void Profiler_Init();
