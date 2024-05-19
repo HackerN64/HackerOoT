@@ -529,7 +529,7 @@ void KaleidoScope_HandlePageToggles(PauseContext* pauseCtx, Input* input) {
         return;
     }
 
-    if (IS_INV_EDITOR_ACTIVE && gDebug.invDebug.miscDebug.showMiscScreen) {
+    if (IS_INV_EDITOR_ACTIVE && (gDebug.invDebug.miscDebug.showMiscScreen || gDebug.invDebug.showInfoScreen)) {
         return;
     }
 
@@ -3736,7 +3736,7 @@ void KaleidoScope_Update(PlayState* play) {
             break;
     }
 
-    if (IS_INV_EDITOR_ENABLED) {
+    if (IS_INV_EDITOR_ENABLED && pauseCtx->state != PAUSE_STATE_SAVE_PROMPT && !IS_PAUSE_STATE_GAMEOVER(pauseCtx)) {
         if (!IS_INV_EDITOR_ACTIVE && CHECK_BTN_ALL(play->state.input[0].press.button, BTN_L) &&
             (pauseCtx->debugState == 0)) {
             gDebug.invDebug.state = INVEDITOR_STATE_INIT;
