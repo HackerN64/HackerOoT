@@ -24,7 +24,7 @@ static u8 sSlotToItems[] = {
 };
 
 static u8 sUpgradeTypes[] = { UPG_QUIVER,     UPG_BOMB_BAG,    UPG_STRENGTH,  UPG_SCALE,
-                             UPG_BULLET_BAG, UPG_DEKU_STICKS, UPG_DEKU_NUTS, UPG_WALLET };
+                              UPG_BULLET_BAG, UPG_DEKU_STICKS, UPG_DEKU_NUTS, UPG_WALLET };
 
 u8 InventoryEditor_GetItemFromSlot(InventoryEditor* this) {
     if (IS_INV_EDITOR_ACTIVE && this->pauseCtx->pageIndex == PAUSE_ITEM) {
@@ -514,7 +514,7 @@ void InventoryEditor_UpdateItemScreen(InventoryEditor* this) {
                 break;
         }
 
-        if ((min != ITEM_NONE) && (max != ITEM_NONE)) {
+        if (min != ITEM_NONE && max != ITEM_NONE) {
             INVEDITOR_UPDATE_ITEM(this->common, min, max)
         }
     }
@@ -645,6 +645,18 @@ void InventoryEditor_DrawMiscScreen(InventoryEditor* this) {
     CLOSE_DISPS(this->gfxCtx, __FILE__, __LINE__);
 }
 
+void InventoryEditor_DrawDigit(InventoryEditor* this, void* texture, u8 posX, u8 posY, s16 alpha) {
+    //! @bug: the digits aren't moving with the rest of the equipment screen
+    //! for now we stop drawing the digit if the current screen isn't the equipment one
+    if (this->pauseCtx->pageIndex == PAUSE_EQUIP) {
+        OPEN_DISPS(this->gfxCtx, __FILE__, __LINE__);
+
+        DEBUG_DISP = Gfx_TextureIA8(DEBUG_DISP, texture, 8, 8, posX, posY, 8, 8, 1 << 10, 1 << 10);
+        
+        CLOSE_DISPS(this->gfxCtx, __FILE__, __LINE__);
+    }
+}
+
 void InventoryEditor_DrawEquipmentUpgrades(InventoryEditor* this, u16 i, s16 alpha) {
     static u8 sUpgradeItems[] = { ITEM_QUIVER_30, ITEM_BOMB_BAG_20, ITEM_STRENGTH_GORONS_BRACELET, ITEM_SCALE_SILVER };
     static u8 sOtherUpgradeItem[] = { ITEM_BULLET_BAG_30, ITEM_DEKU_STICK, ITEM_DEKU_NUT, ITEM_ADULTS_WALLET };
@@ -684,9 +696,9 @@ void InventoryEditor_DrawEquipmentUpgrades(InventoryEditor* this, u16 i, s16 alp
         }
     }
 
-    if (upgradeValue != 0) {
-        OPEN_DISPS(this->gfxCtx, __FILE__, __LINE__);
+    OPEN_DISPS(this->gfxCtx, __FILE__, __LINE__);
 
+    if (upgradeValue != 0) {
         if (texture != NULL) {
             gDPLoadTextureBlock(POLY_OPA_DISP++, texture, G_IM_FMT_RGBA, G_IM_SIZ_32b, ITEM_ICON_WIDTH,
                                 ITEM_ICON_HEIGHT, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
@@ -695,16 +707,19 @@ void InventoryEditor_DrawEquipmentUpgrades(InventoryEditor* this, u16 i, s16 alp
         }
 
         if (ammoTexture != NULL && posY != 0) {
-            //! @bug: the digits aren't moving with the rest of the equipment screen
             Gfx_SetupDL_39Debug(this->gfxCtx);
             gDPSetPrimColor(DEBUG_DISP++, 0, 0, 120, 255, 0, alpha);
-            DEBUG_DISP = Gfx_TextureIA8(DEBUG_DISP, ammoTexture, 8, 8, 58, posY, 8, 8, 1 << 10, 1 << 10);
-            DEBUG_DISP = Gfx_TextureIA8(DEBUG_DISP, gAmmoDigit0Tex, 8, 8, 64, posY, 8, 8, 1 << 10, 1 << 10);
-            gDPSetPrimColor(DEBUG_DISP++, 0, 0, 255, 255, 255, alpha);
+            InventoryEditor_DrawDigit(this, ammoTexture, 58, posY, alpha);
+            InventoryEditor_DrawDigit(this, gAmmoDigit0Tex, 64, posY, alpha);
         }
-
-        CLOSE_DISPS(this->gfxCtx, __FILE__, __LINE__);
     }
+
+    // draw page number
+    gDPSetPrimColor(DEBUG_DISP++, 0, 0, 255, 255, 255, alpha);
+    ammoTexture = this->equipDebug.showMiscUpgrades ? gAmmoDigit2Tex : gAmmoDigit1Tex;
+    InventoryEditor_DrawDigit(this, ammoTexture, 56, 191, alpha);
+
+    CLOSE_DISPS(this->gfxCtx, __FILE__, __LINE__);
 }
 
 void InventoryEditor_DrawInformationScreen(InventoryEditor* this) {
