@@ -1,6 +1,23 @@
 #ifndef PROFILER_H
 #define PROFILER_H
 
+#define PROFILER_EVENT_COUNT 256
+
+// These can't be an enum because they're used by asm.
+#define PROFILER_EVENT_TYPE_MAINGFXSTART  0
+#define PROFILER_EVENT_TYPE_RDPEND        1
+#define PROFILER_EVENT_TYPE_MAINGFXEND    2
+#define PROFILER_EVENT_TYPE_RSPGFXSTART   3
+#define PROFILER_EVENT_TYPE_RSPGFXEND     4
+#define PROFILER_EVENT_TYPE_RSPAUDIOSTART 5
+#define PROFILER_EVENT_TYPE_RSPAUDIOEND   6
+#define PROFILER_EVENT_TYPE_RSPOTHERSTART 7
+#define PROFILER_EVENT_TYPE_RSPOTHEREND   8
+#define PROFILER_EVENT_TYPE_THREADSTART   50
+#define PROFILER_EVENT_TYPE_THREADEND     100
+
+#ifdef _LANGUAGE_C
+
 #if ENABLE_F3DEX3
 
 typedef enum {
@@ -91,26 +108,12 @@ typedef struct {
 
 #endif
 
-#define PROFILER_EVENT_COUNT 128
-
-typedef enum {
-    PROFILER_EVENT_TYPE_MAINGFXSTART,
-    PROFILER_EVENT_TYPE_RDPEND,
-    PROFILER_EVENT_TYPE_MAINGFXEND,
-    PROFILER_EVENT_TYPE_RSPGFXSTART,
-    PROFILER_EVENT_TYPE_RSPGFXEND,
-    PROFILER_EVENT_TYPE_RSPAUDIOSTART,
-    PROFILER_EVENT_TYPE_RSPAUDIOEND,
-    PROFILER_EVENT_TYPE_RSPOTHERSTART,
-    PROFILER_EVENT_TYPE_RSPOTHEREND,
-    PROFILER_EVENT_TYPE_THREADSTART = 50,
-    PROFILER_EVENT_TYPE_THREADEND = 100,
-} ProfilerEventType;
-
 typedef struct {
+    // These fields are accessed via asm, so must maintain their layout.
     OSTime eventTimes[PROFILER_EVENT_COUNT];
     u8 eventTypes[PROFILER_EVENT_COUNT];
     s32 eventIndex;
+    // The rest are not
     OSTime lastRSPStartTime;
     OSTime traceStartTime;
     OSTime traceEndTime;
@@ -140,5 +143,7 @@ typedef enum {
 } ProfilerMode;
 
 extern u8 gProfilerMode;
+
+#endif
 
 #endif

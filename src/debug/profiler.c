@@ -3,8 +3,8 @@
 
 static ProfilerState ProfilerState1;
 static ProfilerState ProfilerState2;
-ProfilerState* lastProfilerState;
-ProfilerState* activeProfilerState;
+ProfilerState* lastProfilerState = NULL;
+ProfilerState* activeProfilerState = NULL;
 u8 gProfilerMode = PROFILER_MODE_VIRTUAL_FPS;
 
 void Profiler_RecordEventWithTime(u8 type, OSTime time){
@@ -21,6 +21,26 @@ void Profiler_RecordEventWithTime(u8 type, OSTime time){
 void Profiler_RecordEvent(u8 type){
     Profiler_RecordEventWithTime(type, osGetTime());
 }
+
+#define NUM_THREADS 11
+static const u8 sThreadIdxToThreadId[NUM_THREADS] = {
+    THREAD_ID_IDLE,
+    THREAD_ID_FAULT,
+    THREAD_ID_MAIN,
+    THREAD_ID_GRAPH,
+    THREAD_ID_SCHED,
+    THREAD_ID_PADMGR,
+    THREAD_ID_PIMGR,
+    THREAD_ID_VIMGR,
+    THREAD_ID_AUDIOMGR,
+    THREAD_ID_DMAMGR,
+    THREAD_ID_IRQMGR,
+};
+#define MAX_THREAD_ID 20
+static const s8 sThreadIdToThreadIdx[MAX_THREAD_ID] = {
+    -1, 0, 1, 2, 3, 4, -1, 5, 6, 7, // 0 to 9
+    8, -1, -1, -1, -1, -1, -1, -1, 9, 10
+};
 
 typedef enum {
     PERF_OVERALL,
@@ -41,6 +61,17 @@ typedef enum {
     PERF_RDP_STALL_RAM,
     PERF_RSP_STALL_DMA,
 #endif
+    PERF_THREAD_IDLE,
+    PERF_THREAD_FAULT,
+    PERF_THREAD_MAIN,
+    PERF_THREAD_GRAPH,
+    PERF_THREAD_SCHED,
+    PERF_THREAD_PADMGR,
+    PERF_THREAD_PIMGR,
+    PERF_THREAD_VIMGR,
+    PERF_THREAD_AUDIOMGR,
+    PERF_THREAD_DMAMGR,
+    PERF_THREAD_IRQMGR,
     PERF_COUNT
 } PerfHistoryType;
 
@@ -168,9 +199,15 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
     }else{
         OSTime tOverall = 0, tRDP = 0, tRSPOverall = 0, tRSPLastEnd = 0, tRSPGfx = 0,
             tRSPAudio = 0, tRSPOther = 0;
+        OSTime tThreads[NUM_THREADS];
+        for(s32 i=0; i<NUM_THREADS; ++i) tThreads[i] = 0;
+        // Scheduler thread should always be the one running at start and end.
+        tThreads[sThreadIdToThreadIdx[THREAD_ID_SCHED]] = -p->traceStartTime;
+        
         for(s32 e=0; e<numEvents; ++e){
             OSTime t = p->eventTimes[e];
-            switch(p->eventTypes[e]){
+            u8 type = p->eventTypes[e];
+            switch(type){
             case PROFILER_EVENT_TYPE_MAINGFXSTART:
                 tOverall = tRDP = tRSPOverall = tRSPGfx = -t;
                 break;
@@ -199,9 +236,23 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
             case PROFILER_EVENT_TYPE_RSPOTHEREND:
                 tRSPOther += t;
                 break;
+            default:
+                s32 thread = 10000;
+                if(type >= PROFILER_EVENT_TYPE_THREADEND){
+                    thread = type - PROFILER_EVENT_TYPE_THREADEND;
+                }else if(type >= PROFILER_EVENT_TYPE_THREADSTART){
+                    t = -t;
+                    thread = type - PROFILER_EVENT_TYPE_THREADSTART;
+                }
+                if(thread >= MAX_THREAD_ID) continue;
+                s32 care = sThreadIdToThreadIdx[thread];
+                if(care < 0) continue;
+                tThreads[care] += t;
             }
         }
         tRSPOverall += tRSPLastEnd;
+        // Scheduler thread should always be the one running at start and end.
+        tThreads[sThreadIdToThreadIdx[THREAD_ID_SCHED]] += p->traceEndTime;
         
         #define FIX_COUNTER(ctr) if(ctr > 1000000000) ctr = 0
         FIX_COUNTER(tOverall);
@@ -210,6 +261,7 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
         FIX_COUNTER(tRSPGfx);
         FIX_COUNTER(tRSPAudio);
         FIX_COUNTER(tRSPOther);
+        for(s32 i=0; i<NUM_THREADS; ++i) FIX_COUNTER(tThreads[i]);
         
         firIdx %= NUM_FIR;
         perfHistory[PERF_OVERALL][firIdx] = cpu_time_to_ms(tOverall);
@@ -223,6 +275,9 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
         perfHistory[PERF_RDP_NO_CMDS][firIdx] = rcp_cycles_to_ms(p->rdpClockCount - p->rdpCmdCount);
         perfHistory[PERF_FULLSYNC_WAIT][firIdx] = rcp_cycles_to_ms(p->rdpClockCount - p->rdpPipeCount);
         perfHistory[PERF_TMEM][firIdx] = rcp_cycles_to_ms(p->rdpTmemCount);
+        for(s32 i=0; i<NUM_THREADS; ++i){
+            perfHistory[PERF_THREAD_IDLE + i][firIdx] = cpu_time_to_ms(tThreads[i]);
+        }
         
 #if ENABLE_F3DEX3
         u8 ver = p->f3dex3Version & 3;
@@ -268,6 +323,9 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
             GfxPrint_Printf(&printer, "%5.2fjpg\n", perfAvgs[PERF_RSP_OTHER]);
             GfxPrint_SetColor32(&printer, 0x00FF80FF);
             GfxPrint_Printf(&printer, "%5.2fgfx\n", perfAvgs[PERF_RSP_GFX]);
+            if(gProfilerMode != PROFILER_MODE_GFX){
+                GfxPrint_Printf(&printer, "\n");
+            }
         }
         
         if(gProfilerMode == PROFILER_MODE_GFX){
@@ -359,6 +417,22 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
 #endif
         }
         
+        if(gProfilerMode == PROFILER_MODE_CPU || gProfilerMode == PROFILER_MODE_CPU_TRACE
+            || gProfilerMode == PROFILER_MODE_ALL_TRACE){
+            GfxPrint_SetColor32(&printer, 0xFFFFFFFF);
+            GfxPrint_Printf(&printer, "%5.2fidl\n", perfAvgs[PERF_THREAD_IDLE]);
+            GfxPrint_Printf(&printer, "%5.2fflt\n", perfAvgs[PERF_THREAD_FAULT]);
+            GfxPrint_Printf(&printer, "%5.2fmai\n", perfAvgs[PERF_THREAD_MAIN]);
+            GfxPrint_Printf(&printer, "%5.2fgrf\n", perfAvgs[PERF_THREAD_GRAPH]);
+            GfxPrint_Printf(&printer, "%5.2fsch\n", perfAvgs[PERF_THREAD_SCHED]);
+            GfxPrint_Printf(&printer, "%5.2fpad\n", perfAvgs[PERF_THREAD_PADMGR]);
+            GfxPrint_Printf(&printer, "%5.2fpi\n",  perfAvgs[PERF_THREAD_PIMGR]);
+            GfxPrint_Printf(&printer, "%5.2fvi\n",  perfAvgs[PERF_THREAD_VIMGR]);
+            GfxPrint_Printf(&printer, "%5.2faud\n", perfAvgs[PERF_THREAD_AUDIOMGR]);
+            GfxPrint_Printf(&printer, "%5.2fdma\n", perfAvgs[PERF_THREAD_DMAMGR]);
+            GfxPrint_Printf(&printer, "%5.2firq\n", perfAvgs[PERF_THREAD_IRQMGR]);
+        }
+        
         // Timing inconsistencies
         GfxPrint_SetBasePosPx(&printer, 100, 200);
         GfxPrint_SetColor32(&printer, 0xFF8080FF);
@@ -384,17 +458,27 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
             s32 x = TRACE_OFF_X + TRACE_WIDTH_PER_FRAME * i;
             gDPFillRectangle(OVERLAY_DISP++, x, 56, x+1, 63);
         }
+        s32 y = 66;
     
         if(gProfilerMode != PROFILER_MODE_CPU_TRACE){
-            draw_trace(__gfxCtx, p, numEvents, 64 + 2 + 1*8,
-                PROFILER_EVENT_TYPE_RSPAUDIOSTART, PROFILER_EVENT_TYPE_RSPAUDIOEND,
-                (Color_RGBA8_u32){{0xFF, 0xFF, 0x00, 0xFF}});
-            draw_trace(__gfxCtx, p, numEvents, 64 + 2 + 2*8,
-                PROFILER_EVENT_TYPE_RSPOTHERSTART, PROFILER_EVENT_TYPE_RSPOTHEREND,
-                (Color_RGBA8_u32){{0xC0, 0x60, 0x00, 0xFF}});
-            draw_trace(__gfxCtx, p, numEvents, 64 + 2 + 3*8,
-                PROFILER_EVENT_TYPE_RSPGFXSTART, PROFILER_EVENT_TYPE_RSPGFXEND,
-                (Color_RGBA8_u32){{0x00, 0xFF, 0x80, 0xFF}});
+            y += 8;
+            draw_trace(__gfxCtx, p, numEvents, y, PROFILER_EVENT_TYPE_RSPAUDIOSTART,
+                PROFILER_EVENT_TYPE_RSPAUDIOEND, (Color_RGBA8_u32){{0xFF, 0xFF, 0x00, 0xFF}});
+            y += 8;
+            draw_trace(__gfxCtx, p, numEvents, y, PROFILER_EVENT_TYPE_RSPOTHERSTART,
+                PROFILER_EVENT_TYPE_RSPOTHEREND, (Color_RGBA8_u32){{0xC0, 0x60, 0x00, 0xFF}});
+            y += 8;
+            draw_trace(__gfxCtx, p, numEvents, y, PROFILER_EVENT_TYPE_RSPGFXSTART,
+                PROFILER_EVENT_TYPE_RSPGFXEND,   (Color_RGBA8_u32){{0x00, 0xFF, 0x80, 0xFF}});
+            y += 16;
+        }
+        if(gProfilerMode != PROFILER_MODE_GFX_TRACE){
+            for(s32 i=0; i<NUM_THREADS; ++i){
+                s32 id = sThreadIdxToThreadId[i];
+                draw_trace(__gfxCtx, p, numEvents, y, PROFILER_EVENT_TYPE_THREADSTART + id,
+                    PROFILER_EVENT_TYPE_THREADEND + id, (Color_RGBA8_u32){{0xFF, 0xFF, 0xFF, 0xFF}});
+                y += 8;
+            }
         }
         
         gDPPipeSync(OVERLAY_DISP++);
