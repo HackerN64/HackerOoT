@@ -524,13 +524,14 @@ void KaleidoScope_SwitchPage(PauseContext* pauseCtx, u8 pt) {
 }
 
 void KaleidoScope_HandlePageToggles(PauseContext* pauseCtx, Input* input) {
-    if (IS_INV_EDITOR_ENABLED && IS_INV_EDITOR_ACTIVE && (pauseCtx->debugState == 0) &&
-        CHECK_BTN_ALL(input->press.button, BTN_L)) {
-        return;
-    }
+    if (IS_INV_EDITOR_ACTIVE) {
+        if (pauseCtx->debugState == 0 && CHECK_BTN_ALL(input->press.button, BTN_L)) {
+            return;
+        }
 
-    if (IS_INV_EDITOR_ACTIVE && (gDebug.invDebug.miscDebug.showMiscScreen || gDebug.invDebug.showInfoScreen)) {
-        return;
+        if (gDebug.invDebug.miscDebug.showMiscScreen || gDebug.invDebug.showInfoScreen) {
+            return;
+        }
     }
 
     if (CHECK_BTN_ALL(input->press.button, BTN_R)) {

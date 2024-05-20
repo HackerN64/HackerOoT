@@ -54,6 +54,7 @@ typedef struct InvEditorItems {
 typedef struct InvEditorEquipment {
     u8 showMiscUpgrades;
     u8 upgradeSlots[8];
+    u8 upgradeValues[8];
 } InvEditorEquipment;
 
 typedef struct InvEditorMisc {

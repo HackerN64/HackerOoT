@@ -6,9 +6,12 @@
  * - @bug where pressing A when having broken knife or BGS does nothing
  * - code cleanup
  * - @bug when switching from info to hud edit
+ * - @bug the magic bar doesn't update properly (in the misc screen and after closing it)
+ * - improvement: add the possibility to remove the magic meter (draw "None"?)
  */
 
 #include "global.h"
+
 #include "assets/textures/parameter_static/parameter_static.h"
 #include "assets/textures/icon_item_24_static/icon_item_24_static.h"
 #include "assets/textures/icon_item_static/icon_item_static.h"
@@ -19,6 +22,9 @@ static u8 sSlotToItems[] = {
     ITEM_SLINGSHOT,  ITEM_OCARINA_FAIRY, ITEM_BOMBCHU,    ITEM_HOOKSHOT, ITEM_ARROW_ICE,   ITEM_FARORES_WIND,
     ITEM_BOOMERANG,  ITEM_LENS_OF_TRUTH, ITEM_MAGIC_BEAN, ITEM_HAMMER,   ITEM_ARROW_LIGHT, ITEM_NAYRUS_LOVE,
 };
+
+static u8 sUpgradeTypes[] = { UPG_QUIVER,     UPG_BOMB_BAG,    UPG_STRENGTH,  UPG_SCALE,
+                             UPG_BULLET_BAG, UPG_DEKU_STICKS, UPG_DEKU_NUTS, UPG_WALLET };
 
 u8 InventoryEditor_GetItemFromSlot(InventoryEditor* this) {
     if (IS_INV_EDITOR_ACTIVE && this->pauseCtx->pageIndex == PAUSE_ITEM) {
@@ -321,10 +327,7 @@ void InventoryEditor_UpdateQuestScreen(InventoryEditor* this) {
 }
 
 void InventoryEditor_UpdateEquipmentScreen(InventoryEditor* this) {
-    u8 upgradeTypes[] = { UPG_QUIVER,     UPG_BOMB_BAG,    UPG_STRENGTH,  UPG_SCALE,
-                          UPG_BULLET_BAG, UPG_DEKU_STICKS, UPG_DEKU_NUTS, UPG_WALLET };
-
-    u8 slotTo[] = {
+    static u8 slotTo[] = {
         ITEM_NONE, ITEM_SWORD_KOKIRI, ITEM_SWORD_MASTER,  ITEM_SWORD_BIGGORON,
         ITEM_NONE, ITEM_SHIELD_DEKU,  ITEM_SHIELD_HYLIAN, ITEM_SHIELD_MIRROR,
         ITEM_NONE, ITEM_TUNIC_KOKIRI, ITEM_TUNIC_GORON,   ITEM_TUNIC_ZORA,
@@ -355,15 +358,16 @@ void InventoryEditor_UpdateEquipmentScreen(InventoryEditor* this) {
                 gSaveContext.save.info.inventory.equipment &= ~OWNED_EQUIP_FLAG(equip, (value % 3));
             }
         } else {
-            u8 upgradeType = upgradeTypes[this->common.selectedSlot];
             u8 slotIndex = this->common.selectedSlot / 4;
-            s32 upgradeValue = CUR_UPG_VALUE(upgradeType);
+            u8 upgradeType;
+            s32 upgradeValue;
 
             if (this->equipDebug.showMiscUpgrades) {
                 slotIndex += 4;
-                upgradeType = upgradeTypes[slotIndex];
-                upgradeValue = CUR_UPG_VALUE(upgradeType);
             }
+
+            upgradeType = sUpgradeTypes[slotIndex];
+            upgradeValue = CUR_UPG_VALUE(upgradeType);
 
             if (upgradeValue == 0) {
                 Inventory_ChangeUpgrade(upgradeType, this->equipDebug.upgradeSlots[slotIndex]);
@@ -375,7 +379,7 @@ void InventoryEditor_UpdateEquipmentScreen(InventoryEditor* this) {
     }
 
     if (this->common.changeBy != 0) {
-        u8 upgradeType = slotTo[this->common.selectedSlot / 4];
+        u8 upgradeType = sUpgradeTypes[this->common.selectedSlot / 4];
         u8 maxValue = 2; // there's only two diving scale/wallet upgrades
         s8 value;
 
@@ -387,14 +391,17 @@ void InventoryEditor_UpdateEquipmentScreen(InventoryEditor* this) {
                 FALLTHROUGH;
             case SLOT_UPG_SCALE:
                 if (this->equipDebug.showMiscUpgrades) {
-                    upgradeType = upgradeTypes[(this->common.selectedSlot / 4) + 4];
+                    upgradeType = sUpgradeTypes[(this->common.selectedSlot / 4) + 4];
                 }
 
                 value = CUR_UPG_VALUE(upgradeType) + this->common.changeBy;
-
-                if ((value - this->common.changeBy) != 0) {
-                    Inventory_ChangeUpgrade(upgradeType, ((value < 1) ? maxValue : (value > maxValue) ? 1 : value));
+                if (value < 1) {
+                    value = maxValue;
+                } else if (value > maxValue) {
+                    value = 1;
                 }
+
+                Inventory_ChangeUpgrade(upgradeType, value);
                 break;
             case SLOT_SWORD_BIGGORON: {
                 u8 equipValue = EQUIP_INV_SWORD_KOKIRI;
@@ -639,83 +646,61 @@ void InventoryEditor_DrawMiscScreen(InventoryEditor* this) {
 }
 
 void InventoryEditor_DrawEquipmentUpgrades(InventoryEditor* this, u16 i, s16 alpha) {
-    u8 upgradeTypes[] = { UPG_QUIVER, UPG_BOMB_BAG, UPG_STRENGTH, UPG_SCALE };
-    u8 sUpgradeItems[] = { ITEM_QUIVER_30, ITEM_BOMB_BAG_20, ITEM_STRENGTH_GORONS_BRACELET, ITEM_SCALE_SILVER };
-    u8 sOtherUpgradeItem[] = { ITEM_BULLET_BAG_30, ITEM_DEKU_STICK, ITEM_DEKU_NUT, ITEM_ADULTS_WALLET };
+    static u8 sUpgradeItems[] = { ITEM_QUIVER_30, ITEM_BOMB_BAG_20, ITEM_STRENGTH_GORONS_BRACELET, ITEM_SCALE_SILVER };
+    static u8 sOtherUpgradeItem[] = { ITEM_BULLET_BAG_30, ITEM_DEKU_STICK, ITEM_DEKU_NUT, ITEM_ADULTS_WALLET };
     u8 upgradeValue;
     void* texture = NULL;
     void* ammoTexture = NULL;
     u8 posY = 0;
 
     if (!this->equipDebug.showMiscUpgrades) {
-        upgradeValue = CUR_UPG_VALUE(upgradeTypes[i]);
-
-        if (upgradeValue != 0) {
-            texture = gItemIcons[sUpgradeItems[i] + upgradeValue - 1];
-        }
+        upgradeValue = CUR_UPG_VALUE(sUpgradeTypes[i]);
+        texture = gItemIcons[sUpgradeItems[i] + upgradeValue - 1];
     } else {
-        upgradeValue = CUR_UPG_VALUE(upgradeTypes[i]);
+        u8 item = sOtherUpgradeItem[i];
 
-        if (upgradeValue != 0) {
-            u8 item = sOtherUpgradeItem[i];
-            u8 iconIndex = item + upgradeValue - 1;
+        upgradeValue = CUR_UPG_VALUE(sUpgradeTypes[i + 4]);
 
-            if (item != ITEM_NONE) {
-                if (item == ITEM_DEKU_STICK || item == ITEM_DEKU_NUT) {
-                    iconIndex = item;
+        if (item == ITEM_DEKU_STICK || item == ITEM_DEKU_NUT) {
+            texture = gItemIcons[item];
+            posY = item == ITEM_DEKU_STICK ? 115 : 148;
 
-                    if (item == ITEM_DEKU_STICK) {
-                        posY = 115;
-                    } else {
-                        posY = 148;
-                    }
-
-                    switch (upgradeValue) {
-                        case 1:
-                            if (item == ITEM_DEKU_STICK) {
-                                ammoTexture = gAmmoDigit1Tex;
-                            } else {
-                                ammoTexture = gAmmoDigit2Tex;
-                            }
-                            break;
-                        case 2:
-                            if (item == ITEM_DEKU_STICK) {
-                                ammoTexture = gAmmoDigit2Tex;
-                            } else {
-                                ammoTexture = gAmmoDigit3Tex;
-                            }
-                            break;
-                        case 3:
-                            if (item == ITEM_DEKU_STICK) {
-                                ammoTexture = gAmmoDigit3Tex;
-                            } else {
-                                ammoTexture = gAmmoDigit4Tex;
-                            }
-                            break;
-                        default:
-                            ammoTexture = NULL;
-                            break;
-                    }
-                }
-                texture = gItemIcons[iconIndex];
+            switch (upgradeValue) {
+                case 1:
+                    ammoTexture = item == ITEM_DEKU_STICK ? gAmmoDigit1Tex : gAmmoDigit2Tex;
+                    break;
+                case 2:
+                    ammoTexture = item == ITEM_DEKU_STICK ? gAmmoDigit2Tex : gAmmoDigit3Tex;
+                    break;
+                case 3:
+                    ammoTexture = item == ITEM_DEKU_STICK ? gAmmoDigit3Tex : gAmmoDigit4Tex;
+                    break;
+                default:
+                    ammoTexture = NULL;
+                    break;
             }
+        } else {
+            texture = gItemIcons[item + upgradeValue - 1];
         }
     }
 
-    if (texture != NULL) {
+    if (upgradeValue != 0) {
         OPEN_DISPS(this->gfxCtx, __FILE__, __LINE__);
 
-        gDPLoadTextureBlock(POLY_OPA_DISP++, texture, G_IM_FMT_RGBA, G_IM_SIZ_32b, ITEM_ICON_WIDTH, ITEM_ICON_HEIGHT, 0,
-                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
-                            G_TX_NOLOD);
-        gSP1Quadrangle(POLY_OPA_DISP++, 0, 2, 3, 1, 0);
+        if (texture != NULL) {
+            gDPLoadTextureBlock(POLY_OPA_DISP++, texture, G_IM_FMT_RGBA, G_IM_SIZ_32b, ITEM_ICON_WIDTH,
+                                ITEM_ICON_HEIGHT, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+                                G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            gSP1Quadrangle(POLY_OPA_DISP++, 0, 2, 3, 1, 0);
+        }
 
-        if ((ammoTexture != NULL) && (posY != 0)) {
+        if (ammoTexture != NULL && posY != 0) {
             //! @bug: the digits aren't moving with the rest of the equipment screen
-            gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 120, 255, 0, alpha);
-            POLY_OPA_DISP = Gfx_TextureIA8(POLY_OPA_DISP, ammoTexture, 8, 8, 58, posY, 8, 8, 1 << 10, 1 << 10);
-            POLY_OPA_DISP = Gfx_TextureIA8(POLY_OPA_DISP, gAmmoDigit0Tex, 8, 8, 64, posY, 8, 8, 1 << 10, 1 << 10);
-            gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, alpha);
+            Gfx_SetupDL_39Debug(this->gfxCtx);
+            gDPSetPrimColor(DEBUG_DISP++, 0, 0, 120, 255, 0, alpha);
+            DEBUG_DISP = Gfx_TextureIA8(DEBUG_DISP, ammoTexture, 8, 8, 58, posY, 8, 8, 1 << 10, 1 << 10);
+            DEBUG_DISP = Gfx_TextureIA8(DEBUG_DISP, gAmmoDigit0Tex, 8, 8, 64, posY, 8, 8, 1 << 10, 1 << 10);
+            gDPSetPrimColor(DEBUG_DISP++, 0, 0, 255, 255, 255, alpha);
         }
 
         CLOSE_DISPS(this->gfxCtx, __FILE__, __LINE__);
@@ -852,29 +837,12 @@ void InventoryEditor_Update(InventoryEditor* this) {
         }
     }
 
-    // Update the current screen if the cursor isn't on the L or R icons
-    if ((this->pauseCtx->cursorSpecialPos != PAUSE_CURSOR_PAGE_LEFT) &&
-        (this->pauseCtx->cursorSpecialPos != PAUSE_CURSOR_PAGE_RIGHT) && !this->showInfoScreen &&
-        !this->miscDebug.showMiscScreen) {
-        switch (this->pauseCtx->pageIndex) {
-            case PAUSE_ITEM:
-                InventoryEditor_UpdateItemScreen(this);
-                break;
-            case PAUSE_EQUIP:
-                InventoryEditor_UpdateEquipmentScreen(this);
-                break;
-            case PAUSE_QUEST:
-                InventoryEditor_UpdateQuestScreen(this);
-                break;
-            default:
-                break;
-        }
-    }
+    //! TODO: make it so you can switch between misc and info screens
+    //! currently there's an issue where the misc elements aren't showing properly
 
     // Toggle informations screen
-    if (CHECK_BTN_ALL(gDebug.input->press.button, BTN_CDOWN)) {
+    if (!this->miscDebug.showMiscScreen && CHECK_BTN_ALL(gDebug.input->press.button, BTN_CDOWN)) {
         this->showInfoScreen ^= 1;
-        this->miscDebug.showMiscScreen = false;
 
         if (this->titleState == INVEDITOR_TITLE_STATE_MISCDBG) {
             this->titleState = INVEDITOR_TITLE_STATE_NAME;
@@ -882,9 +850,8 @@ void InventoryEditor_Update(InventoryEditor* this) {
     }
 
     // Toggle Misc Debug
-    if (CHECK_BTN_ALL(gDebug.input->press.button, BTN_B)) {
+    if (!this->showInfoScreen && CHECK_BTN_ALL(gDebug.input->press.button, BTN_B)) {
         this->miscDebug.showMiscScreen ^= 1;
-        this->showInfoScreen = false;
 
         if (this->miscDebug.showMiscScreen) {
             this->titleState = INVEDITOR_TITLE_STATE_MISCDBG;
@@ -893,9 +860,27 @@ void InventoryEditor_Update(InventoryEditor* this) {
         }
     }
 
-    if (this->miscDebug.showMiscScreen) {
+    if (!this->showInfoScreen && this->miscDebug.showMiscScreen) {
         this->miscElementsAlpha = TIMER_INCR(this->miscElementsAlpha, 255, INVEDITOR_ALPHA_TRANS_SPEED);
         InventoryEditor_UpdateMiscScreen(this);
+    } else {
+        // Update the current screen if the cursor isn't on the L or R icons
+        if ((this->pauseCtx->cursorSpecialPos != PAUSE_CURSOR_PAGE_LEFT) &&
+            (this->pauseCtx->cursorSpecialPos != PAUSE_CURSOR_PAGE_RIGHT) && !this->showInfoScreen) {
+            switch (this->pauseCtx->pageIndex) {
+                case PAUSE_ITEM:
+                    InventoryEditor_UpdateItemScreen(this);
+                    break;
+                case PAUSE_EQUIP:
+                    InventoryEditor_UpdateEquipmentScreen(this);
+                    break;
+                case PAUSE_QUEST:
+                    InventoryEditor_UpdateQuestScreen(this);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     InventoryEditor_UpdateInformationScreen(this);

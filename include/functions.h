@@ -1064,6 +1064,7 @@ void Gfx_SetupDL_37Opa(GraphicsContext* gfxCtx);
 Gfx* Gfx_SetupDL_39(Gfx* gfx);
 void Gfx_SetupDL_39Opa(GraphicsContext* gfxCtx);
 void Gfx_SetupDL_39Overlay(GraphicsContext* gfxCtx);
+void Gfx_SetupDL_39Debug(GraphicsContext* gfxCtx);
 void Gfx_SetupDL_39Ptr(Gfx** gfxP);
 void Gfx_SetupDL_40Opa(GraphicsContext* gfxCtx);
 void Gfx_SetupDL_41Opa(GraphicsContext* gfxCtx);
