@@ -12,9 +12,6 @@ There are a number of useful extensions available to make work more efficient:
 - NumberMonger (convert hex to decimal and vice versa)
 - Better MIPS Support
 
-
-
-
 ## Useful keyboard shortcuts
 
 - Ctrl + Alt + Up/Down (on Windows, on Linux it's Ctrl + Shift + Up/Down or Shift + Alt + Up/Down) gives multicursors across consecutive lines. If you want several cursors in a more diverse arrangement, middle clicking works, at least on Windows.
@@ -100,24 +97,33 @@ Add the following to (or create) the `.vscode/settings.json` file for VSCode to 
             "request": "launch",
             "program": "${workspaceFolder}/build/hackeroot-mq/hackeroot-mq.elf",
             "cwd": "${workspaceFolder}",
-            "stopAtEntry": false,
-            "externalConsole": false,
             "MIMode": "gdb",
             "miDebuggerPath": "/usr/bin/gdb-multiarch",
-            "miDebuggerServerAddress": "tcp:172.0.0.1:9123", // change this to your Linux/WSL IP address
+            "miDebuggerServerAddress": "[::1]:9123", // change this to your Linux/WSL IP address
+            "miDebuggerArgs": "-readnow",
+            "postRemoteConnectCommands": [
+                {
+                    "text": "source ${workspaceFolder}/tools/gdb_load_ovl.py"
+                }
+            ],
         },
         {
             "name": "Ares GDB (Windows)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "windows_path_to_HackerOoT.elf",
-            "cwd": "windows_path_to_folder_containing_HackerOoT.elf",
-            "stopAtEntry": true,
-            "externalConsole": false,
+            "program": "Z:/${workspaceFolder}/build/hackeroot-mq/hackeroot-mq.elf",
+            "cwd": "Z:/${workspaceFolder}", // change this and other instances to your HackerOoT path
             "MIMode": "gdb",
             "miDebuggerPath": "/mnt/c/msys64/mingw64/bin/gdb-multiarch.exe",
             "miDebuggerServerAddress": "[::1]:9123",
+            "miDebuggerArgs": "-readnow",
+            "postRemoteConnectCommands": [
+                {
+                    "text": "source ${workspaceFolder}/tools/gdb_load_ovl.py"
+                }
+            ],
         }
     ]
 }
+
 ```

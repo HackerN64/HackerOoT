@@ -5,6 +5,8 @@ __pycache__/
 
 # Text editor remnants
 .vscode/
+!.vscode/launch.json
+!.vscode/c_cpp_properties.json
 .vs/
 .idea/
 CMakeLists.txt
