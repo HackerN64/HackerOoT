@@ -36,6 +36,32 @@ static const u8 sThreadIdxToThreadId[NUM_THREADS] = {
     THREAD_ID_DMAMGR,
     THREAD_ID_IRQMGR,
 };
+static const Color_RGBA8_u32 sThreadColor[NUM_THREADS] = {
+    {{0xFF, 0xFF, 0xFF, 0xFF}},
+    {{0xFF, 0x60, 0x00, 0xFF}},
+    {{0x00, 0x00, 0xFF, 0xFF}},
+    {{0x00, 0xFF, 0x00, 0xFF}},
+    {{0xFF, 0xFF, 0x00, 0xFF}},
+    {{0x40, 0x40, 0xFF, 0xFF}},
+    {{0xFF, 0x80, 0x80, 0xFF}},
+    {{0x40, 0x40, 0x40, 0xFF}},
+    {{0xFF, 0x00, 0xB0, 0xFF}},
+    {{0x90, 0xB0, 0xD0, 0xFF}},
+    {{0x40, 0x00, 0x00, 0xFF}},
+};
+static const char* const sThreadShortName[NUM_THREADS] = {
+    "idl",
+    "flt",
+    "mai",
+    "grf",
+    "sch",
+    "pad",
+    "pi ",
+    "vi ",
+    "aud",
+    "dma",
+    "irq",
+};
 #define MAX_THREAD_ID 20
 static const s8 sThreadIdToThreadIdx[MAX_THREAD_ID] = {
     -1, 0, 1, 2, 3, 4, -1, 5, 6, 7, // 0 to 9
@@ -151,6 +177,8 @@ void draw_trace(GraphicsContext* __gfxCtx, ProfilerState* p, s32 numEvents, s32 
             continue;
         }
         if(x <= startX) x = startX + 1;
+        if(startX < 0) startX = 0;
+        if(x > 320 - TRACE_OFF_X) x = 320 - TRACE_OFF_X;
         gDPFillRectangle(OVERLAY_DISP++, TRACE_OFF_X + startX, y, TRACE_OFF_X + x, y + height);
         isActive = false;
     }
@@ -419,18 +447,11 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
         
         if(gProfilerMode == PROFILER_MODE_CPU || gProfilerMode == PROFILER_MODE_CPU_TRACE
             || gProfilerMode == PROFILER_MODE_ALL_TRACE){
-            GfxPrint_SetColor32(&printer, 0xFFFFFFFF);
-            GfxPrint_Printf(&printer, "%5.2fidl\n", perfAvgs[PERF_THREAD_IDLE]);
-            GfxPrint_Printf(&printer, "%5.2fflt\n", perfAvgs[PERF_THREAD_FAULT]);
-            GfxPrint_Printf(&printer, "%5.2fmai\n", perfAvgs[PERF_THREAD_MAIN]);
-            GfxPrint_Printf(&printer, "%5.2fgrf\n", perfAvgs[PERF_THREAD_GRAPH]);
-            GfxPrint_Printf(&printer, "%5.2fsch\n", perfAvgs[PERF_THREAD_SCHED]);
-            GfxPrint_Printf(&printer, "%5.2fpad\n", perfAvgs[PERF_THREAD_PADMGR]);
-            GfxPrint_Printf(&printer, "%5.2fpi\n",  perfAvgs[PERF_THREAD_PIMGR]);
-            GfxPrint_Printf(&printer, "%5.2fvi\n",  perfAvgs[PERF_THREAD_VIMGR]);
-            GfxPrint_Printf(&printer, "%5.2faud\n", perfAvgs[PERF_THREAD_AUDIOMGR]);
-            GfxPrint_Printf(&printer, "%5.2fdma\n", perfAvgs[PERF_THREAD_DMAMGR]);
-            GfxPrint_Printf(&printer, "%5.2firq\n", perfAvgs[PERF_THREAD_IRQMGR]);
+            for(s32 i=0; i<NUM_THREADS; ++i){
+                GfxPrint_SetColor32(&printer, sThreadColor[i].rgba);
+                GfxPrint_Printf(&printer, "%5.2f%s\n",
+                    perfAvgs[PERF_THREAD_IDLE + i], sThreadShortName[i]);
+            }
         }
         
         // Timing inconsistencies
@@ -461,6 +482,7 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
         s32 y = 66;
     
         if(gProfilerMode != PROFILER_MODE_CPU_TRACE){
+            
             y += 8;
             draw_trace(__gfxCtx, p, numEvents, y, PROFILER_EVENT_TYPE_RSPAUDIOSTART,
                 PROFILER_EVENT_TYPE_RSPAUDIOEND, (Color_RGBA8_u32){{0xFF, 0xFF, 0x00, 0xFF}});
@@ -476,7 +498,7 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
             for(s32 i=0; i<NUM_THREADS; ++i){
                 s32 id = sThreadIdxToThreadId[i];
                 draw_trace(__gfxCtx, p, numEvents, y, PROFILER_EVENT_TYPE_THREADSTART + id,
-                    PROFILER_EVENT_TYPE_THREADEND + id, (Color_RGBA8_u32){{0xFF, 0xFF, 0xFF, 0xFF}});
+                    PROFILER_EVENT_TYPE_THREADEND + id, sThreadColor[i]);
                 y += 8;
             }
         }
