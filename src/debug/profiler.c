@@ -3,17 +3,19 @@
 
 static ProfilerState ProfilerState1;
 static ProfilerState ProfilerState2;
-ProfilerState* lastProfilerState = NULL;
+static ProfilerState ProfilerState3;
 ProfilerState* activeProfilerState = NULL;
+ProfilerState* lastProfilerState = NULL;
+ProfilerState* drawProfilerState = NULL;
 u8 gProfilerMode = PROFILER_MODE_VIRTUAL_FPS;
 
 void Profiler_RecordEventWithTime(u8 type, OSTime time){
     u32 prevInt = __osDisableInt();
-    s32 e = activeProfilerState->eventIndex;
+    s32 e = activeProfilerState->numEvents;
     if(e < PROFILER_EVENT_COUNT){
         activeProfilerState->eventTimes[e] = time;
         activeProfilerState->eventTypes[e] = type;
-        (activeProfilerState->eventIndex)++;
+        (activeProfilerState->numEvents)++;
     }
     __osRestoreInt(prevInt);
 }
@@ -48,6 +50,12 @@ static const Color_RGBA8_u32 sThreadColor[NUM_THREADS] = {
     {{0xFF, 0x00, 0xB0, 0xFF}},
     {{0x90, 0xB0, 0xD0, 0xFF}},
     {{0x40, 0x00, 0x00, 0xFF}},
+};
+static const Color_RGBA8_u32 sGfxColor[4] = {
+    {{0xFF, 0x80, 0xFF, 0xFF}},
+    {{0xFF, 0xFF, 0x00, 0xFF}},
+    {{0xC0, 0x60, 0x00, 0xFF}},
+    {{0x00, 0xFF, 0x80, 0xFF}},
 };
 static const char* const sThreadShortName[NUM_THREADS] = {
     "idl",
@@ -108,8 +116,10 @@ static s32 firIdx;
 void Profiler_Init() {
     bzero(&ProfilerState1, sizeof(ProfilerState));
     bzero(&ProfilerState2, sizeof(ProfilerState));
-    lastProfilerState = &ProfilerState1;
-    activeProfilerState = &ProfilerState2;
+    bzero(&ProfilerState3, sizeof(ProfilerState));
+    activeProfilerState = &ProfilerState1;
+    lastProfilerState = &ProfilerState2;
+    drawProfilerState = &ProfilerState3;
     
     for(s32 t=0; t<PERF_COUNT; ++t){
         for(s32 f=0; f<NUM_FIR; ++f){
@@ -150,17 +160,18 @@ void check_print_inconsistency(GfxPrint* printer, float dt, const char* desc){
 #define TRACE_OFF_X 8
 #define TRACE_WIDTH_PER_FRAME 80
 
-void draw_trace(GraphicsContext* __gfxCtx, ProfilerState* p, s32 numEvents, s32 y, u8 startEvent, u8 endEvent, Color_RGBA8_u32 color){
+static Gfx* draw_trace(Gfx* gfx, s32 y, u8 startEvent, u8 endEvent, Color_RGBA8_u32 color, bool useArrows){
+    ProfilerState* p = drawProfilerState;
     // No syncs needed when changing prim color
-    gDPSetPrimColor(OVERLAY_DISP++, 0, 0, color.r, color.g, color.b, 255);
-    const s32 height = 4;
+    gDPSetPrimColor(gfx++, 0, 0, color.r, color.g, color.b, 255);
+    const s32 height = 3;
     const s32 traceScale = CPU_CLOCK / (2 * 60 * TRACE_WIDTH_PER_FRAME);
-    s32 startX = 0;
+    s32 startX = TRACE_OFF_X;
     bool isActive = false;
-    for(s32 e=0; e<=numEvents; ++e){
+    for(s32 e=0; e<=p->numEvents; ++e){
         bool isStart;
         OSTime t;
-        if(e == numEvents){
+        if(e == p->numEvents){
             if(!isActive) break;
             isStart = false;
             t = p->traceEndTime;
@@ -170,27 +181,44 @@ void draw_trace(GraphicsContext* __gfxCtx, ProfilerState* p, s32 numEvents, s32 
             if(!isStart && !isEnd) continue;
             t = p->eventTimes[e];
         }
-        s32 x = (s32)(t - p->traceStartTime) / traceScale;
+        s32 x = (s32)(t - p->traceStartTime) / traceScale + TRACE_OFF_X;
         if(isStart){
             startX = x;
             isActive = true;
             continue;
         }
         if(x <= startX) x = startX + 1;
-        if(startX < 0) startX = 0;
-        if(x > 320 - TRACE_OFF_X) x = 320 - TRACE_OFF_X;
-        gDPFillRectangle(OVERLAY_DISP++, TRACE_OFF_X + startX, y, TRACE_OFF_X + x, y + height);
+        if(startX < TRACE_OFF_X) startX = TRACE_OFF_X;
+        if(x > 320) x = 320;
+        if(useArrows){
+            gDPFillRectangle(gfx++, startX, y - 1, startX + 1, y + height + 1);
+            gDPFillRectangle(gfx++, x,      y - 1, x      + 1, y + height + 1);
+            gDPFillRectangle(gfx++, startX + 1, y + 1, startX + 4, y + 2);
+            gDPFillRectangle(gfx++, x - 3,      y + 1, x,          y + 2);
+        }else{
+            gDPFillRectangle(gfx++, startX, y, x, y + height);
+        }
         isActive = false;
     }
+    return gfx;
 }
 
 void Profiler_Draw(GraphicsContext* gfxCtx) {
-    ProfilerState* p = lastProfilerState;
-    s32 numEvents = p->eventIndex;
-    float perfAvgs[PERF_COUNT];
     if(gProfilerMode == PROFILER_MODE_DISABLE){
         return;
     }
+    
+    {
+        u32 prevInt = __osDisableInt();
+        // Atomically swap last and draw.
+        ProfilerState* temp = drawProfilerState;
+        drawProfilerState = lastProfilerState;
+        lastProfilerState = temp;
+        __osRestoreInt(prevInt);
+    }
+    
+    float perfAvgs[PERF_COUNT];
+    ProfilerState* p = drawProfilerState;
     
     OPEN_DISPS(gfxCtx, "profiler.c", __LINE__);
     
@@ -207,7 +235,7 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
         if(gProfilerMode == PROFILER_MODE_REAL_FPS){
             end = p->traceEndTime;
         }else{
-            for(s32 e=0; e<numEvents; ++e){
+            for(s32 e=0; e<p->numEvents; ++e){
                 if(p->eventTypes[e] == PROFILER_EVENT_TYPE_MAINGFXEND){
                     end = p->eventTimes[e];
                     break;
@@ -232,7 +260,7 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
         // Scheduler thread should always be the one running at start and end.
         tThreads[sThreadIdToThreadIdx[THREAD_ID_SCHED]] = -p->traceStartTime;
         
-        for(s32 e=0; e<numEvents; ++e){
+        for(s32 e=0; e<p->numEvents; ++e){
             OSTime t = p->eventTimes[e];
             u8 type = p->eventTypes[e];
             switch(type){
@@ -343,13 +371,13 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
         if(gProfilerMode == PROFILER_MODE_GFX || gProfilerMode == PROFILER_MODE_GFX_TRACE
             || gProfilerMode == PROFILER_MODE_ALL_TRACE){
             // RSP times
-            GfxPrint_SetColor32(&printer, 0xFF80FFFF);
+            GfxPrint_SetColor32(&printer, sGfxColor[0].rgba);
             GfxPrint_Printf(&printer, "%5.2fe2e\n", perfAvgs[PERF_RSP_OVERALL]);
-            GfxPrint_SetColor32(&printer, 0xFFFF00FF);
+            GfxPrint_SetColor32(&printer, sGfxColor[1].rgba);
             GfxPrint_Printf(&printer, "%5.2faud\n", perfAvgs[PERF_RSP_AUDIO]);
-            GfxPrint_SetColor32(&printer, 0xC06000FF);
+            GfxPrint_SetColor32(&printer, sGfxColor[2].rgba);
             GfxPrint_Printf(&printer, "%5.2fjpg\n", perfAvgs[PERF_RSP_OTHER]);
-            GfxPrint_SetColor32(&printer, 0x00FF80FF);
+            GfxPrint_SetColor32(&printer, sGfxColor[3].rgba);
             GfxPrint_Printf(&printer, "%5.2fgfx\n", perfAvgs[PERF_RSP_GFX]);
             if(gProfilerMode != PROFILER_MODE_GFX){
                 GfxPrint_Printf(&printer, "\n");
@@ -462,49 +490,51 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
     }
     
     gfx = GfxPrint_Close(&printer);
-    gSPEndDisplayList(gfx++);
-    Gfx_Close(opaStart, gfx);
-    POLY_OPA_DISP = gfx;
     GfxPrint_Destroy(&printer);
 
     if(gProfilerMode == PROFILER_MODE_GFX_TRACE || gProfilerMode == PROFILER_MODE_CPU_TRACE
         || gProfilerMode == PROFILER_MODE_ALL_TRACE){
         // Setup trace draw
-        gDPPipeSync(OVERLAY_DISP++);
-        gDPSetCycleType(OVERLAY_DISP++, G_CYC_1CYCLE);
-        gDPSetCombineMode(OVERLAY_DISP++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-        gDPSetRenderMode(OVERLAY_DISP++, G_RM_NOOP, G_RM_NOOP2 | CVG_DST_FULL);
-        gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 0, 0, 0, 255);
+        gDPPipeSync(gfx++);
+        gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+        gDPSetCombineMode(gfx++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+        gDPSetRenderMode(gfx++, G_RM_NOOP, G_RM_NOOP2 | CVG_DST_FULL);
+        gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, 255);
         for(s32 i=0; i<4; ++i){
             s32 x = TRACE_OFF_X + TRACE_WIDTH_PER_FRAME * i;
-            gDPFillRectangle(OVERLAY_DISP++, x, 56, x+1, 63);
+            gDPFillRectangle(gfx++, x, 56, x+1, 63);
         }
         s32 y = 66;
     
         if(gProfilerMode != PROFILER_MODE_CPU_TRACE){
-            
+            gfx = draw_trace(gfx, y, PROFILER_EVENT_TYPE_MAINGFXSTART,
+                PROFILER_EVENT_TYPE_MAINGFXEND,  sGfxColor[0], true);
             y += 8;
-            draw_trace(__gfxCtx, p, numEvents, y, PROFILER_EVENT_TYPE_RSPAUDIOSTART,
-                PROFILER_EVENT_TYPE_RSPAUDIOEND, (Color_RGBA8_u32){{0xFF, 0xFF, 0x00, 0xFF}});
+            gfx = draw_trace(gfx, y, PROFILER_EVENT_TYPE_RSPAUDIOSTART,
+                PROFILER_EVENT_TYPE_RSPAUDIOEND, sGfxColor[1], false);
             y += 8;
-            draw_trace(__gfxCtx, p, numEvents, y, PROFILER_EVENT_TYPE_RSPOTHERSTART,
-                PROFILER_EVENT_TYPE_RSPOTHEREND, (Color_RGBA8_u32){{0xC0, 0x60, 0x00, 0xFF}});
+            gfx = draw_trace(gfx, y, PROFILER_EVENT_TYPE_RSPOTHERSTART,
+                PROFILER_EVENT_TYPE_RSPOTHEREND, sGfxColor[2], false);
             y += 8;
-            draw_trace(__gfxCtx, p, numEvents, y, PROFILER_EVENT_TYPE_RSPGFXSTART,
-                PROFILER_EVENT_TYPE_RSPGFXEND,   (Color_RGBA8_u32){{0x00, 0xFF, 0x80, 0xFF}});
+            gfx = draw_trace(gfx, y, PROFILER_EVENT_TYPE_RSPGFXSTART,
+                PROFILER_EVENT_TYPE_RSPGFXEND,   sGfxColor[3], false);
             y += 16;
         }
         if(gProfilerMode != PROFILER_MODE_GFX_TRACE){
             for(s32 i=0; i<NUM_THREADS; ++i){
                 s32 id = sThreadIdxToThreadId[i];
-                draw_trace(__gfxCtx, p, numEvents, y, PROFILER_EVENT_TYPE_THREADSTART + id,
-                    PROFILER_EVENT_TYPE_THREADEND + id, sThreadColor[i]);
+                gfx = draw_trace(gfx, y, PROFILER_EVENT_TYPE_THREADSTART + id,
+                    PROFILER_EVENT_TYPE_THREADEND + id, sThreadColor[i], false);
                 y += 8;
             }
         }
         
-        gDPPipeSync(OVERLAY_DISP++);
+        gDPPipeSync(gfx++);
     }
+    
+    gSPEndDisplayList(gfx++);
+    Gfx_Close(opaStart, gfx);
+    POLY_OPA_DISP = gfx;
 
     CLOSE_DISPS(gfxCtx, "profiler.c", __LINE__);
 }

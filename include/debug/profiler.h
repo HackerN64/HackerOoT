@@ -1,7 +1,7 @@
 #ifndef PROFILER_H
 #define PROFILER_H
 
-#define PROFILER_EVENT_COUNT 256
+#define PROFILER_EVENT_COUNT 384
 
 // These can't be an enum because they're used by asm.
 #define PROFILER_EVENT_TYPE_MAINGFXSTART  0
@@ -112,7 +112,7 @@ typedef struct {
     // These fields are accessed via asm, so must maintain their layout.
     OSTime eventTimes[PROFILER_EVENT_COUNT];
     u8 eventTypes[PROFILER_EVENT_COUNT];
-    s32 eventIndex;
+    s32 numEvents;
     // The rest are not
     OSTime lastRSPStartTime;
     OSTime traceStartTime;
@@ -127,8 +127,12 @@ typedef struct {
 #endif
 } ProfilerState;
 
-extern ProfilerState* lastProfilerState;
+// These need to be triple buffered because otherwise either (a) active and last
+// may be swapped while drawing, or (b) if we skip that swap if it would happen
+// while drawing then one frame of data will be lost.
 extern ProfilerState* activeProfilerState;
+extern ProfilerState* lastProfilerState;
+extern ProfilerState* drawProfilerState;
 
 typedef enum {
     PROFILER_MODE_DISABLE,

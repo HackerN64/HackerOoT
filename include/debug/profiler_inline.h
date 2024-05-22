@@ -41,12 +41,15 @@ static inline void Profiler_RSPStart(u32 type, bool isFirstStartOfMainGfxTask){
     if(isFirstStartOfMainGfxTask){
         activeProfilerState->traceEndTime = t;
         
-        u32 prevInt = __osDisableInt();
-        ProfilerState* temp = activeProfilerState;
-        activeProfilerState = lastProfilerState;
-        lastProfilerState = temp;
-        activeProfilerState->eventIndex = 0;
-        __osRestoreInt(prevInt);
+        {
+            u32 prevInt = __osDisableInt();
+            // Atomically swap last and active, and reset the important counter.
+            ProfilerState* temp = activeProfilerState;
+            activeProfilerState = lastProfilerState;
+            lastProfilerState = temp;
+            activeProfilerState->numEvents = 0;
+            __osRestoreInt(prevInt);
+        }
         
 #if ENABLE_F3DEX3
         activeProfilerState->f3dex3Version = gLoadedF3DEX3Version;

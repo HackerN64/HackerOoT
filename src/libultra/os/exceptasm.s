@@ -876,10 +876,10 @@ LEAF(__osRecordProfilerEvent)
     lw      $t0, %lo(activeProfilerState)($t0) // activeProfilerState
     beqz    $t0, done
      mfc0   $t1, C0_COUNT // count
-    lw      $a1, (9*PROFILER_EVENT_COUNT)($t0) // ->eventIndex
+    lw      $a1, (9*PROFILER_EVENT_COUNT)($t0) // ->numEvents
     slti    $at, $a1, PROFILER_EVENT_COUNT // Profiler full?
     beqz    $at, done
-get_time_no_interrupts:
+get_time_no_interrupts: // osGetTime, but without the interrupts
      lui    $t2, %hi(__osBaseCounter)
     lw      $t2, %lo(__osBaseCounter)($t2)
     subu    $t2, $t1, $t2 // base = count - __osBaseCounter
@@ -887,13 +887,13 @@ get_time_no_interrupts:
     ld      $t3, %lo(__osCurrentTime)($t3)
     addu    $t1, $t2, $t3 // time = base + t
 record:
-    sll     $a2, $a1, 3 // eventIndex * 8 for eventTimes
+    sll     $a2, $a1, 3 // numEvents * 8 for eventTimes
     addu    $a2, $a2, $t0 // activeProfilerState->eventTimes[e]
     sd      $t1, (0)($a2)
     addu    $a3, $a1, $t0 // activeProfilerState->{null}[e]
     sb      $a0, (8*PROFILER_EVENT_COUNT)($a3) // eventTypes
-    addiu   $a1, $a1, 1 // eventIndex++
-    sw      $a1, (9*PROFILER_EVENT_COUNT)($t0) // Write back eventIndex
+    addiu   $a1, $a1, 1 // numEvents++
+    sw      $a1, (9*PROFILER_EVENT_COUNT)($t0) // Write back numEvents
 done:
     jr      $ra
      nop
