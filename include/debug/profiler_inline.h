@@ -85,6 +85,7 @@ static inline void Profiler_RSPDone(u32 type){
 static inline void Profiler_RSPDoneNotYield(u32 flags){
     if((flags & OS_SC_NEEDS_RDP)){
         // This is the main graphics task, and it's done with the RSP
+        Profiler_RecordEvent(PROFILER_EVENT_TYPE_RSPGFXLASTEND);
 #if ENABLE_F3DEX3
         // Get F3DEX3 perf counters
         F3DEX3YieldDataFooter* footer = (F3DEX3YieldDataFooter*)(
