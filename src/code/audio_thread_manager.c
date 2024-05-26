@@ -45,19 +45,11 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
 
     // Update the audio driver
 
-    if (ENABLE_PROFILER) {
-        Profiler_AudioCPUStart();
-    }
-
     if (R_AUDIOMGR_DEBUG_LEVEL >= AUDIOMGR_DEBUG_LEVEL_NO_UPDATE) {
         // Skip update, no rsp task produced
         rspTask = NULL;
     } else {
         rspTask = AudioThread_Update();
-    }
-
-    if (ENABLE_PROFILER) {
-        Profiler_AudioCPUEnd();
     }
 
     if (audioMgr->rspTask != NULL) {

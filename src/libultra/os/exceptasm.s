@@ -7,6 +7,7 @@
 
 #include "debug/profiler.h"
 #include "config/config_debug.h"
+// Without these, the assembler doesn't understand C99-style bool. Only affects this file.
 #define true 1
 #define false 0
 

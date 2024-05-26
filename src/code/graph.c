@@ -172,10 +172,6 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
     OSTask_t* task = &gfxCtx->task.list.t;
     OSScTask* scTask = &gfxCtx->task;
 
-#if ENABLE_PROFILER
-    Profiler_GraphWaitPrevFrameStart();
-#endif
-
     {
         CfbInfo* cfb;
 
@@ -215,10 +211,6 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
         if (gfxCtx->callback != NULL) {
             gfxCtx->callback(gfxCtx, gfxCtx->callbackParam);
         }
-
-#if ENABLE_PROFILER
-        Profiler_GraphWaitPrevFrameEnd();
-#endif
 
         task->type = M_GFXTASK;
         task->flags = OS_SC_DRAM_DLIST;
@@ -283,10 +275,6 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
 
 void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     u32 problem;
-
-#if ENABLE_PROFILER
-    Profiler_GraphUpdateStart();
-#endif
 
     gameState->inPreNMIState = false;
     Graph_InitTHGA(gfxCtx);
@@ -413,10 +401,6 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     }
 
     Audio_Update();
-
-#if ENABLE_PROFILER
-    Profiler_GraphUpdateEnd();
-#endif
 
 #if IS_DEBUG
     if (IS_MAP_SELECT_ENABLED && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&

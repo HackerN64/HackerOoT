@@ -9,31 +9,8 @@ extern void Profiler_RecordEvent(u8 type);
 
 // These are all inline functions because they're only called once. They would
 // have just been directly included in the calling code, but this approach lets
-// their functionality be separated visually.
-
-static inline void Profiler_AudioCPUStart(){
-    // TODO
-}
-
-static inline void Profiler_AudioCPUEnd(){
-    // TODO
-}
-
-static inline void Profiler_GraphUpdateStart(){
-    // TODO
-}
-
-static inline void Profiler_GraphWaitPrevFrameStart(){
-    // TODO
-}
-
-static inline void Profiler_GraphWaitPrevFrameEnd(){
-    // TODO
-}
-
-static inline void Profiler_GraphUpdateEnd(){
-    // TODO
-}
+// their functionality be separated visually, and lets this get ported to other
+// projects more easily.
 
 static inline void Profiler_RSPStart(u32 type, bool isFirstStartOfMainGfxTask){
     OSTime t = osGetTime();

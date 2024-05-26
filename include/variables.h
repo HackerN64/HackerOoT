@@ -267,6 +267,6 @@ extern u8 gAudioHeap[AUDIO_HEAP_SIZE]; // 0x38000 bytes
 
 extern Rainbow gRainbow;
 
-extern u8 gGPUTimingsExist; // This variable being 1 indicates that the game is running on console or an extremely accurate emulator that can be affected by GPU lag.
+extern u8 gRDPTimingsExist; // This variable being 1 indicates that the game is running on console or an extremely accurate emulator that can be affected by RDP lag.
 
 #endif

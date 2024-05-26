@@ -149,7 +149,7 @@ void draw_counter_red_if_high(GfxPrint* printer, f32 value, f32 threshold, Color
 }
 
 void check_print_inconsistency_thresh(GfxPrint* printer, float dt, const char* desc, float thresh){
-    if(fabsf(dt) > 0.03f){
+    if(fabsf(dt) > thresh){
         GfxPrint_Printf(printer, "%s %5.2f\n", desc, dt);
     }
 }
