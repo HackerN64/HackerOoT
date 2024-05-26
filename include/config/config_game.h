@@ -61,4 +61,9 @@
 */
 #define MM_N64_BOOT_LOGO false
 
+/*
+ * Fix climbing on vine edges
+*/
+#define ENABLE_VINE_CLIMB_FIX true
+
 #endif

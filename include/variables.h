@@ -225,6 +225,13 @@ extern volatile s8 gF3DEX3NOCVersion;
 extern s8 gF3DEX3OccMode;
 #endif
 
+#if ENABLE_F3DEX3
+extern u8 gF3DEX3TextBuffer[];
+extern volatile s8 gF3DEX3ProfVersion;
+extern volatile s8 gF3DEX3NOCVersion;
+extern s8 gF3DEX3OccMode;
+#endif
+
 extern SfxBankEntry D_8016BAD0[9];
 extern SfxBankEntry D_8016BC80[12];
 extern SfxBankEntry D_8016BEC0[22];
