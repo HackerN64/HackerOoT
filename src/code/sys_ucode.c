@@ -75,7 +75,7 @@ static const u8* const sF3DEX3DataRomEndAddrs[8] = {
 
 /* These can't be automatically determined from the files, because that is only
 known at link time, whereas these sizes have to be known at compile time. */
-#define F3DEX3_TEXT_MAX_SIZE 6144  /* currently 6032 bytes */
+#define F3DEX3_TEXT_MAX_SIZE 6144  /* currently 6056 bytes */
 #define F3DEX3_DATA_MAX_SIZE 768   /* currently  726 bytes */
 
 __attribute__((aligned(16))) u8 gF3DEX3TextBuffer[F3DEX3_TEXT_MAX_SIZE];
@@ -91,21 +91,20 @@ void SysUcode_LoadNewUcodeIfChanged() {
     if(sLoadedF3DEX3Version == ver) return;
     ver &= 7; // make sure valid
     
-    u8* vrom = sF3DEX3TextRomStartAddrs[ver];
-    u32 size = sF3DEX3TextRomEndAddrs[ver] - vrom;
-    if(size > F3DEX3_TEXT_MAX_SIZE){
+    u8* textVrom = sF3DEX3TextRomStartAddrs[ver];
+    u32 textSize = sF3DEX3TextRomEndAddrs[ver] - textVrom;
+    u8* dataVrom = sF3DEX3DataRomStartAddrs[ver];
+    u32 dataSize = sF3DEX3DataRomEndAddrs[ver] - dataVrom;
+    if(textSize > F3DEX3_TEXT_MAX_SIZE){
         Fault_AddHungupAndCrash("ucode_text_too_big", __LINE__);
         return;
     }
-    DMA_REQUEST_SYNC(gF3DEX3TextBuffer, vrom, size, "sys_ucode.c", __LINE__);
-    
-    vrom = sF3DEX3DataRomStartAddrs[ver];
-    size = sF3DEX3DataRomEndAddrs[ver] - vrom;
-    if(size > F3DEX3_DATA_MAX_SIZE){
+    if(dataSize > F3DEX3_DATA_MAX_SIZE){
         Fault_AddHungupAndCrash("ucode_data_too_big", __LINE__);
         return;
     }
-    DMA_REQUEST_SYNC(gF3DEX3DataBuffer, vrom, size, "sys_ucode.c", __LINE__);
+    DMA_REQUEST_SYNC(gF3DEX3TextBuffer, textVrom, textSize, "sys_ucode.c", __LINE__);
+    DMA_REQUEST_SYNC(gF3DEX3DataBuffer, dataVrom, dataSize, "sys_ucode.c", __LINE__);
     
     sLoadedF3DEX3Version = ver;
 }
