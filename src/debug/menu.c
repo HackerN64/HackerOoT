@@ -9,7 +9,9 @@ u8 ColliderView_Draw(void* unused);
 static MenuElement sMenuElements[MENU_MAX] = {
     { "Collision View", true, NULL, NULL, (MenuFunc)CollisionView_Draw },
     { "Collider View", true, NULL, NULL, (MenuFunc)ColliderView_Draw },
+#if ENABLE_PROFILER
     { "Profiler: ", false, NULL, NULL, NULL },
+#endif
 #if ENABLE_F3DEX3
     { "F3DEX3 profiling: ", false, NULL, NULL, NULL },
     { "F3DEX3 occ plane: ", false, NULL, NULL, NULL },
@@ -85,7 +87,11 @@ void Menu_Update(Menu* this) {
                 }else if(gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER){
                     gF3DEX3NOCVersion = 1;
                 }
-            }else if(this->eSelection == MENU_PROFILER){
+            }
+            #endif
+            
+            #if ENABLE_PROFILER
+            if(this->eSelection == MENU_PROFILER){
                 if(pressDLeft && gProfilerMode > 0){
                     gProfilerMode--;
                 }
@@ -172,8 +178,8 @@ void Menu_Draw(Menu* this) {
                 color = i == this->eSelection ? COLOR_BLUE2 : COLOR_WHITE;
             }
             
-            #if ENABLE_F3DEX3
             char tempBuffer[100];
+            #if ENABLE_F3DEX3
             if(i == MENU_F3DEX3_PROF){
                 static const char* const profStrings[4] = {
                     "Default >",
@@ -193,6 +199,7 @@ void Menu_Draw(Menu* this) {
                 text = tempBuffer;
             }
             #endif
+            #if ENABLE_PROFILER
             if(i == MENU_PROFILER){
                 static const char* const profStrings[PROFILER_MODE_COUNT] = {
                     "Disable >",
@@ -207,6 +214,7 @@ void Menu_Draw(Menu* this) {
                 sprintf(tempBuffer, "%s%s", text, profStrings[gProfilerMode]);
                 text = tempBuffer;
             }
+            #endif
 
             Print_Screen(print, 4, i + 5, color, text);
         }

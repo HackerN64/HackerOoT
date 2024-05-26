@@ -1,6 +1,8 @@
 #include "global.h"
 #include "z64.h"
 
+#if ENABLE_PROFILER
+
 static ProfilerState ProfilerState1;
 static ProfilerState ProfilerState2;
 static ProfilerState ProfilerState3;
@@ -557,3 +559,5 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
 void Profiler_Destroy() {
     // nothing
 }
+
+#endif
