@@ -28,6 +28,9 @@ typedef struct {
     /* 0x0A0 */ Mtx viewing;
     /* 0x0E0 */ Mtx* projectionPtr;
     /* 0x0E4 */ Mtx* viewingPtr;
+#if ENABLE_F3DEX3
+                PlainVtx* cameraWorldPosPtr;
+#endif
     /* 0x0E8 */ Vec3f distortionOrientation;
     /* 0x0F4 */ Vec3f distortionScale;
     /* 0x100 */ f32 distortionSpeed;
