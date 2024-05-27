@@ -9,6 +9,9 @@ u8 ColliderView_Draw(void* unused);
 static MenuElement sMenuElements[MENU_MAX] = {
     { "Collision View", true, NULL, NULL, (MenuFunc)CollisionView_Draw },
     { "Collider View", true, NULL, NULL, (MenuFunc)ColliderView_Draw },
+#if ENABLE_PROFILER
+    { "Profiler: ", false, NULL, NULL, NULL },
+#endif
 #if ENABLE_F3DEX3
     { "F3DEX3 profiling: ", false, NULL, NULL, NULL },
     { "F3DEX3 occ plane: ", false, NULL, NULL, NULL },
@@ -86,6 +89,17 @@ void Menu_Update(Menu* this) {
                 }
             }
             #endif
+            
+            #if ENABLE_PROFILER
+            if(this->eSelection == MENU_PROFILER){
+                if(pressDLeft && gProfilerMode > 0){
+                    gProfilerMode--;
+                }
+                if(pressDRight && gProfilerMode < PROFILER_MODE_COUNT-1){
+                    gProfilerMode++;
+                }
+            }
+            #endif
 
             if (CHECK_BTN_ALL(pressBtn, BTN_L)) {
                 if (this->eSelection == MENU_COLVIEW) {
@@ -93,7 +107,8 @@ void Menu_Update(Menu* this) {
                 } else if (this->eSelection == MENU_HITVIEW) {
                     this->bHitboxViewEnabled ^= 1;
                 } else {
-                    this->bExecute = 1;
+                    // Nothing actually uses "execute" now.
+                    // this->bExecute = 1;
                 }
 
                 this->nTimer = 1;
@@ -130,7 +145,7 @@ void Menu_Draw(Menu* this) {
     Vec2s right = { 300, 220 };
     PrintUtils* print = &gDebug.printer;
     u8 i;
-
+    
     if (!MENU_CAN_UPDATE) {
         return;
     }
@@ -163,8 +178,8 @@ void Menu_Draw(Menu* this) {
                 color = i == this->eSelection ? COLOR_BLUE2 : COLOR_WHITE;
             }
             
-            #if ENABLE_F3DEX3
             char tempBuffer[100];
+            #if ENABLE_F3DEX3
             if(i == MENU_F3DEX3_PROF){
                 static const char* const profStrings[4] = {
                     "Default >",
@@ -181,6 +196,22 @@ void Menu_Draw(Menu* this) {
                     "< Never",
                 };
                 sprintf(tempBuffer, "%s%s", text, occStrings[gF3DEX3OccMode]);
+                text = tempBuffer;
+            }
+            #endif
+            #if ENABLE_PROFILER
+            if(i == MENU_PROFILER){
+                static const char* const profStrings[PROFILER_MODE_COUNT] = {
+                    "Disable >",
+                    "< Real FPS >",
+                    "< Virtual FPS >",
+                    "< Gfx >",
+                    "< Gfx Trace >",
+                    "< CPU >",
+                    "< CPU Trace >",
+                    "< All Trace",
+                };
+                sprintf(tempBuffer, "%s%s", text, profStrings[gProfilerMode]);
                 text = tempBuffer;
             }
             #endif

@@ -33,7 +33,7 @@ Debug gDebug;
 
 Rainbow gRainbow;
 
-u8 gGPUTimingsExist;
+u8 gRDPTimingsExist;
 
 #if IS_DEBUG
 void Main_LogSystemHeap(void) {
@@ -53,6 +53,7 @@ void Main(void* arg) {
     uintptr_t fb;
 
     PRINTF("mainproc 実行開始\n"); // "Start running"
+    IO_WRITE(DPC_STATUS_REG, DPC_CLR_CLOCK_CTR);
     gScreenWidth = SCREEN_WIDTH;
     gScreenHeight = SCREEN_HEIGHT;
     gAppNmiBufferPtr = (PreNmiBuff*)osAppNMIBuffer;
@@ -85,13 +86,9 @@ void Main(void* arg) {
     Rainbow_Init(&gRainbow);
     Regs_Init();
 
-    if (IO_READ(DPC_PIPEBUSY_REG) == 0) {
-        gGPUTimingsExist = 0;
-    } else {
-        gGPUTimingsExist = 1;
-    }       
-
-    R_ENABLE_ARENA_DBG = 0; // ENABLE_SPEEDMETER
+    gRDPTimingsExist = (IO_READ(DPC_CLOCK_REG) != 0);
+    
+    R_ENABLE_ARENA_DBG = 0;
 
     osCreateMesgQueue(&sSerialEventQueue, sSerialMsgBuf, ARRAY_COUNT(sSerialMsgBuf));
     osSetEventMesg(OS_EVENT_SI, &sSerialEventQueue, NULL);

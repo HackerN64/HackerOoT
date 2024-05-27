@@ -16,6 +16,16 @@
 #define ENABLE_HACKER_DEBUG true
 
 /**
+ * Enables HackerOoT profiler. By default only an FPS counter is shown; the
+ * default behavior can be changed near the top of src/debug/profiler.c. The
+ * main profiler modes can be selected using the debug menu. If you remove the
+ * debug menu for a release version of your romhack, you can consider setting
+ * this to false to save a small amount of CPU time and memory for logging
+ * events.
+ */
+#define ENABLE_PROFILER true
+
+/**
  * Options for booting directly into a scene, the map select or the file select, instead of the title screen.
  */
 #define BOOT_TO_SCENE true

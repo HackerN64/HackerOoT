@@ -4,16 +4,6 @@
 #define GFXPOOL_HEAD_MAGIC 0x1234
 #define GFXPOOL_TAIL_MAGIC 0x5678
 
-/**
- * The time at which the previous `Graph_Update` ended.
- */
-OSTime sGraphPrevUpdateEndTime;
-
-/**
- * The time at which the previous graphics task was scheduled to run.
- */
-OSTime sGraphPrevTaskTimeStart;
-
 #if IS_DEBUG
 FaultClient sGraphFaultClient;
 #endif
@@ -182,11 +172,6 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
     OSTask_t* task = &gfxCtx->task.list.t;
     OSScTask* scTask = &gfxCtx->task;
 
-    if (IS_SPEEDMETER_ENABLED) {
-        gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime =
-            osGetTime() - sGraphPrevTaskTimeStart - gAudioThreadUpdateTimeAcc;
-    }
-
     {
         CfbInfo* cfb;
 
@@ -226,21 +211,6 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
         if (gfxCtx->callback != NULL) {
             gfxCtx->callback(gfxCtx, gfxCtx->callbackParam);
         }
-
-        if (IS_SPEEDMETER_ENABLED) {
-            timeNow = osGetTime();
-            if (gAudioThreadUpdateTimeStart != 0) {
-                // The audio thread update is running
-                // Add the time already spent to the accumulator and leave the rest for the next cycle
-
-                gAudioThreadUpdateTimeAcc += timeNow - gAudioThreadUpdateTimeStart;
-                gAudioThreadUpdateTimeStart = timeNow;
-            }
-            gAudioThreadUpdateTimeTotalPerGfxTask = gAudioThreadUpdateTimeAcc;
-            gAudioThreadUpdateTimeAcc = 0;
-        }
-
-        sGraphPrevTaskTimeStart = osGetTime();
 
         task->type = M_GFXTASK;
         task->flags = OS_SC_DRAM_DLIST;
@@ -431,26 +401,6 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     }
 
     Audio_Update();
-
-    {
-        OSTime timeNow = osGetTime();
-        s32 pad;
-
-        if (IS_SPEEDMETER_ENABLED) {
-            gRSPGfxTimeTotal = gRSPGfxTimeAcc;
-            gRSPAudioTimeTotal = gRSPAudioTimeAcc;
-            gRDPTimeTotal = gRDPTimeAcc;
-            gRSPGfxTimeAcc = 0;
-            gRSPAudioTimeAcc = 0;
-            gRDPTimeAcc = 0;
-
-            if (sGraphPrevUpdateEndTime != 0) {
-                gGraphUpdatePeriod = timeNow - sGraphPrevUpdateEndTime;
-            }
-        }
-
-        sGraphPrevUpdateEndTime = timeNow;
-    }
 
 #if IS_DEBUG
     if (IS_MAP_SELECT_ENABLED && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&

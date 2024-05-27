@@ -217,20 +217,13 @@ extern uintptr_t gSegments[NUM_SEGMENTS];
 extern Scheduler gScheduler;
 extern PadMgr gPadMgr;
 
-// ENABLE_SPEEDMETER
-extern volatile OSTime gAudioThreadUpdateTimeTotalPerGfxTask;
-extern volatile OSTime gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime;
-extern volatile OSTime gRSPAudioTimeTotal;
-extern volatile OSTime gRSPGfxTimeTotal;
-extern volatile OSTime gRDPTimeTotal;
-extern volatile OSTime gGraphUpdatePeriod;
-extern volatile OSTime gAudioThreadUpdateTimeStart;
-extern volatile OSTime gAudioThreadUpdateTimeAcc;
-extern volatile OSTime gRSPAudioTimeAcc;
-extern volatile OSTime gRSPGfxTimeAcc;
-extern volatile OSTime gRSPOtherTimeAcc;
-extern volatile OSTime D_8016A578;
-extern volatile OSTime gRDPTimeAcc;
+#if ENABLE_F3DEX3
+extern u8 gF3DEX3TextBuffer[];
+extern volatile s8 gLoadedF3DEX3Version;
+extern volatile s8 gF3DEX3ProfVersion;
+extern volatile s8 gF3DEX3NOCVersion;
+extern s8 gF3DEX3OccMode;
+#endif
 
 #if ENABLE_F3DEX3
 extern u8 gF3DEX3TextBuffer[];
@@ -274,6 +267,6 @@ extern u8 gAudioHeap[AUDIO_HEAP_SIZE]; // 0x38000 bytes
 
 extern Rainbow gRainbow;
 
-extern u8 gGPUTimingsExist; // This variable being 1 indicates that the game is running on console or an extremely accurate emulator that can be affected by GPU lag.
+extern u8 gRDPTimingsExist; // This variable being 1 indicates that the game is running on console or an extremely accurate emulator that can be affected by RDP lag.
 
 #endif
