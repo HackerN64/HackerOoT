@@ -401,9 +401,9 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
                 other -= perfAvgs[PERF_FIFO_FULL];
                 if(ver == F3DEX3_PROF_A){
                     GfxPrint_SetColor32(&printer, 0xFF00FFFF);
-                    GfxPrint_Printf(&printer, "%5.2fVcy\n", perfAvgs[PERF_VTX_PROC]);
+                    GfxPrint_Printf(&printer, "%5.2fvtx\n", perfAvgs[PERF_VTX_PROC]);
                     other -= perfAvgs[PERF_VTX_PROC];
-                    GfxPrint_Printf(&printer, "%5.2fTcy\n", perfAvgs[PERF_TRI_PROC]);
+                    GfxPrint_Printf(&printer, "%5.2ftri\n", perfAvgs[PERF_TRI_PROC]);
                     other -= perfAvgs[PERF_TRI_PROC];
                 }
             }
