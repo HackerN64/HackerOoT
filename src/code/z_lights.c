@@ -61,16 +61,21 @@ void Lights_Draw(Lights* lights, GraphicsContext* gfxCtx) {
 
     OPEN_DISPS(gfxCtx, "../z_lights.c", 339);
 
+#if ENABLE_F3DEX3
+    // Copy ambient to light slot after last light
+    lights->l.l[lights->numLights].l.col[0] = lights->l.l[lights->numLights].l.colc[0]
+        = lights->l.a.l.col[0];
+    lights->l.l[lights->numLights].l.col[1] = lights->l.l[lights->numLights].l.colc[1]
+        = lights->l.a.l.col[1];
+    lights->l.l[lights->numLights].l.col[2] = lights->l.l[lights->numLights].l.colc[2]
+        = lights->l.a.l.col[2];
+    
+    gSPSetLights(POLY_OPA_DISP++, lights->numLights, lights->l);
+    gSPSetLights(POLY_XLU_DISP++, lights->numLights, lights->l);
+#else
     gSPNumLights(POLY_OPA_DISP++, lights->numLights);
     gSPNumLights(POLY_XLU_DISP++, lights->numLights);
-
-#if ENABLE_F3DEX3_LIGHT_RECO
-    gSPSetLights(POLY_OPA_DISP++, lights->numLights, *lights);
-    gSPSetLights(POLY_XLU_DISP++, lights->numLights, *lights);
-
-    gSPAmbient(POLY_OPA_DISP++, &lights->l.a, lights->numLights);
-    gSPAmbient(POLY_XLU_DISP++, &lights->l.a, lights->numLights);
-#else
+    
     light = &lights->l.l[0];
     i = 0;
 
@@ -80,16 +85,20 @@ void Lights_Draw(Lights* lights, GraphicsContext* gfxCtx) {
     }
 
     // ambient light is total number of lights + 1
-    gSPAmbient(POLY_OPA_DISP++, &lights->l.a, ++i);
-    gSPAmbient(POLY_XLU_DISP++, &lights->l.a, i);
+    gSPLight(POLY_OPA_DISP++, &lights->l.a, ++i);
+    gSPLight(POLY_XLU_DISP++, &lights->l.a, i);
 #endif
 
     CLOSE_DISPS(gfxCtx, "../z_lights.c", 352);
 }
 
 Light* Lights_FindSlot(Lights* lights) {
-    u8 numLights = ENABLE_F3DEX3_RECOMMENDATIONS ? 9 : 7;
-    if (lights->numLights >= numLights) {
+#if ENABLE_F3DEX3
+#define MAX_LIGHTS 9
+#else
+#define MAX_LIGHTS 7
+#endif
+    if (lights->numLights >= MAX_LIGHTS) {
         return NULL;
     } else {
         return &lights->l.l[lights->numLights++];

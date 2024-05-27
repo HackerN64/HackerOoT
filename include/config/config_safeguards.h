@@ -110,20 +110,8 @@
  * config_game.h
  */
 #if !ENABLE_F3DEX3
-    #if ENABLE_F3DEX3_RECOMMENDATIONS
-        #undef ENABLE_F3DEX3_RECOMMENDATIONS
-        #define ENABLE_F3DEX3_RECOMMENDATIONS false
-    #endif
-
-    #if ENABLE_F3DEX3_NEW_FEATURES
-        #undef ENABLE_F3DEX3_NEW_FEATURES
-        #define ENABLE_F3DEX3_NEW_FEATURES false
-    #endif
-
-    #if ENABLE_F3DEX3_NOSYNCS
-        #undef ENABLE_F3DEX3_NOSYNCS
-        #define ENABLE_F3DEX3_NOSYNCS false
-    #endif
+    #undef ENABLE_F3DEX3_NOSYNCS
+    #define ENABLE_F3DEX3_NOSYNCS false
 #endif
 
 #if FORCE_WIDESCREEN

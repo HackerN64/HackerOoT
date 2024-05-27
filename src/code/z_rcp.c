@@ -818,7 +818,7 @@ Gfx sFillSetupDL[] = {
     gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_LIGHTING | G_SHADING_SMOOTH),
     gsDPSetScissor(G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
     gsDPSetBlendColor(0, 0, 0, 8),
-#if !ENABLE_F3DEX3_RECOMMENDATIONS
+#if !ENABLE_F3DEX3
     gsSPClipRatio(FRUSTRATIO_2),
 #endif
     gsSPEndDisplayList(),
