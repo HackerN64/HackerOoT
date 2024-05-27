@@ -101,6 +101,12 @@ def update_cache_time(root: str) -> int:
     return last_time
 
 
+def remove_suffix(input_string, suffix):
+    if suffix and input_string.endswith(suffix):
+        return input_string[:-len(suffix)]
+    return input_string
+
+
 def main():
     global allow_print
 
@@ -109,7 +115,7 @@ def main():
     args = parser.parse_args()
     allow_print = args.verbose
 
-    root = os.path.dirname(os.path.realpath(__file__)).removesuffix("/tools")
+    root = remove_suffix(os.path.dirname(os.path.realpath(__file__)), "/tools")
     last_cache_time = update_cache_time(root)
     copied_files = copy_all(root)
     remove_stale_assets(root, copied_files, last_cache_time)
