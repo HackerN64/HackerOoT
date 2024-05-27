@@ -320,6 +320,7 @@ Lights* Lights_NewAndDraw(GraphicsContext* gfxCtx, u8 ambientR, u8 ambientG, u8 
     for (i = 0; i < numLights; i++) {
 #if ENABLE_F3DEX3
         lights->l.l[i].l.type = 0; // directional
+        lights->l.l[i].l.size = 3; // some arbitrary specular size
 #endif
         lights->l.l[i].l.col[0] = lights->l.l[i].l.colc[0] = r;
         lights->l.l[i].l.col[1] = lights->l.l[i].l.colc[1] = g;
