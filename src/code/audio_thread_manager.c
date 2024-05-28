@@ -23,6 +23,15 @@ void AudioMgr_NotifyTaskDone(AudioMgr* audioMgr) {
 void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
     AudioTask* rspTask;
 
+    // Delay the audio update by 3ms so that gfx has time to get going before it has to yield
+    OSTimer timer;
+    OSMesgQueue mq;
+    OSMesg mbuf;
+    osCreateMesgQueue(&mq, &mbuf, 1);
+    osSetTimer(&timer, OS_USEC_TO_CYCLES(3000), 0, &mq, NULL);
+    osRecvMesg(&mq, NULL, OS_MESG_BLOCK);
+    osStopTimer(&timer);
+
     if (R_AUDIOMGR_DEBUG_LEVEL > AUDIOMGR_DEBUG_LEVEL_NONE) {
         // Inhibit audio rsp task processing
         audioMgr->rspTask = NULL;

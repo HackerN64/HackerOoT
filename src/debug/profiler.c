@@ -251,7 +251,7 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
         for (s32 e = 0; e < p->numEvents; ++e) {
             OSTime t = p->eventTimes[e];
             u8 type = p->eventTypes[e];
-            switch (type) {
+            switch(type){
                 case PROFILER_EVENT_TYPE_MAINGFXSTART:
                     tOverall = tRDP = tRSPOverall = tRSPGfx = -t;
                     break;
@@ -282,22 +282,19 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
                 case PROFILER_EVENT_TYPE_RSPOTHEREND:
                     tRSPOther += t;
                     break;
-                default:
+                default: {
                     s32 thread = 10000;
-                    if (type >= PROFILER_EVENT_TYPE_THREADEND) {
-                        tThreads = type - PROFILER_EVENT_TYPE_THREADEND;
-                    } else if (type >= PROFILER_EVENT_TYPE_THREADSTART) {
+                    if(type >= PROFILER_EVENT_TYPE_THREADEND){
+                        thread = type - PROFILER_EVENT_TYPE_THREADEND;
+                    }else if(type >= PROFILER_EVENT_TYPE_THREADSTART){
                         t = -t;
-                        tThreads = type - PROFILER_EVENT_TYPE_THREADSTART;
+                        thread = type - PROFILER_EVENT_TYPE_THREADSTART;
                     }
-                    if (tThreads >= MAX_THREAD_ID) {
-                        continue;
-                    }
-                    s32 care = sThreadIdToThreadIdx[tThreads];
-                    if (care < 0) {
-                        continue;
-                    }
+                    if(thread >= MAX_THREAD_ID) continue;
+                    s32 care = sThreadIdToThreadIdx[thread];
+                    if(care < 0) continue;
                     tThreads[care] += t;
+                }
             }
         }
         // Scheduler thread should always be the one running at start and end.

@@ -552,7 +552,9 @@ void Sched_HandleRSPDone(Scheduler* sc) {
 
     SCHED_DEBUG_PRINTF("RSP DONE %d %d", curRSPTask->state & OS_SC_YIELD, osSpTaskYielded(&curRSPTask->list));
 
-    if ((curRSPTask->state & OS_SC_YIELD) && osSpTaskYielded(&curRSPTask->list)) {
+    s32 inYield = (curRSPTask->state & OS_SC_YIELD) && osSpTaskYielded(&curRSPTask->list);
+
+    if (inYield) {
         SCHED_DEBUG_PRINTF("[YIELDED]\n");
 
         // Task yielded, set yielded state
@@ -568,10 +570,6 @@ void Sched_HandleRSPDone(Scheduler* sc) {
 #if ENABLE_PROFILER
         Profiler_RSPDoneNotYield(curRSPTask->flags);
 #endif
-
-        // Task has completed on the RSP, unset RSP flag and check if the task is fully complete
-        curRSPTask->state &= ~OS_SC_SP;
-        Sched_TaskComplete(sc, curRSPTask);
     }
 
     // Run next task in the queue if there is one and the necessary resources are available
@@ -580,6 +578,13 @@ void Sched_HandleRSPDone(Scheduler* sc) {
         Sched_RunTask(sc, nextRSP, nextRDP);
     }
     SCHED_DEBUG_PRINTF("SP sc:%08x sp:%08x dp:%08x state:%x\n", sc, nextRSP, nextRDP, state);
+
+    // Defer task completion signal until after the next task has been staged for maximum throughput
+    if (!inYield) {
+        // Task has completed on the RSP, unset RSP flag and check if the task is fully complete
+        curRSPTask->state &= ~OS_SC_SP;
+        Sched_TaskComplete(sc, curRSPTask);
+    }
 }
 
 /**

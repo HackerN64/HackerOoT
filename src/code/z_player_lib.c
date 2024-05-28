@@ -1820,9 +1820,9 @@ void Player_DrawPauseImpl(PlayState* play, void* gameplayKeep, void* linkObject,
     gSPLoadGeometryMode(POLY_OPA_DISP++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_LIGHTING | G_SHADING_SMOOTH);
     gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, 0, 0, width, height);
 
-    if (!ENABLE_F3DEX3_RECOMMENDATIONS) {
-        gSPClipRatio(POLY_OPA_DISP++, FRUSTRATIO_1);
-    }
+#if !ENABLE_F3DEX3
+    gSPClipRatio(POLY_OPA_DISP++, FRUSTRATIO_1);
+#endif
 
     gDPSetColorImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, width, depthFrameBuffer);
     gDPSetCycleType(POLY_OPA_DISP++, G_CYC_FILL);
