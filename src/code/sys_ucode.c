@@ -33,50 +33,32 @@ DECLARE_ROM_SEGMENT(F3DEX3_BrW_NOC_PC_Text)
 DECLARE_ROM_SEGMENT(F3DEX3_BrW_NOC_PC_Data)
 
 static const u8* const sF3DEX3TextRomStartAddrs[8] = {
-    _F3DEX3_BrW_TextSegmentRomStart,
-    _F3DEX3_BrW_PA_TextSegmentRomStart,
-    _F3DEX3_BrW_PB_TextSegmentRomStart,
-    _F3DEX3_BrW_PC_TextSegmentRomStart,
-    _F3DEX3_BrW_NOC_TextSegmentRomStart,
-    _F3DEX3_BrW_NOC_PA_TextSegmentRomStart,
-    _F3DEX3_BrW_NOC_PB_TextSegmentRomStart,
-    _F3DEX3_BrW_NOC_PC_TextSegmentRomStart,
+    _F3DEX3_BrW_TextSegmentRomStart,        _F3DEX3_BrW_PA_TextSegmentRomStart,
+    _F3DEX3_BrW_PB_TextSegmentRomStart,     _F3DEX3_BrW_PC_TextSegmentRomStart,
+    _F3DEX3_BrW_NOC_TextSegmentRomStart,    _F3DEX3_BrW_NOC_PA_TextSegmentRomStart,
+    _F3DEX3_BrW_NOC_PB_TextSegmentRomStart, _F3DEX3_BrW_NOC_PC_TextSegmentRomStart,
 };
 static const u8* const sF3DEX3TextRomEndAddrs[8] = {
-    _F3DEX3_BrW_TextSegmentRomEnd,
-    _F3DEX3_BrW_PA_TextSegmentRomEnd,
-    _F3DEX3_BrW_PB_TextSegmentRomEnd,
-    _F3DEX3_BrW_PC_TextSegmentRomEnd,
-    _F3DEX3_BrW_NOC_TextSegmentRomEnd,
-    _F3DEX3_BrW_NOC_PA_TextSegmentRomEnd,
-    _F3DEX3_BrW_NOC_PB_TextSegmentRomEnd,
-    _F3DEX3_BrW_NOC_PC_TextSegmentRomEnd,
+    _F3DEX3_BrW_TextSegmentRomEnd,        _F3DEX3_BrW_PA_TextSegmentRomEnd,     _F3DEX3_BrW_PB_TextSegmentRomEnd,
+    _F3DEX3_BrW_PC_TextSegmentRomEnd,     _F3DEX3_BrW_NOC_TextSegmentRomEnd,    _F3DEX3_BrW_NOC_PA_TextSegmentRomEnd,
+    _F3DEX3_BrW_NOC_PB_TextSegmentRomEnd, _F3DEX3_BrW_NOC_PC_TextSegmentRomEnd,
 };
 static const u8* const sF3DEX3DataRomStartAddrs[8] = {
-    _F3DEX3_BrW_DataSegmentRomStart,
-    _F3DEX3_BrW_PA_DataSegmentRomStart,
-    _F3DEX3_BrW_PB_DataSegmentRomStart,
-    _F3DEX3_BrW_PC_DataSegmentRomStart,
-    _F3DEX3_BrW_NOC_DataSegmentRomStart,
-    _F3DEX3_BrW_NOC_PA_DataSegmentRomStart,
-    _F3DEX3_BrW_NOC_PB_DataSegmentRomStart,
-    _F3DEX3_BrW_NOC_PC_DataSegmentRomStart,
+    _F3DEX3_BrW_DataSegmentRomStart,        _F3DEX3_BrW_PA_DataSegmentRomStart,
+    _F3DEX3_BrW_PB_DataSegmentRomStart,     _F3DEX3_BrW_PC_DataSegmentRomStart,
+    _F3DEX3_BrW_NOC_DataSegmentRomStart,    _F3DEX3_BrW_NOC_PA_DataSegmentRomStart,
+    _F3DEX3_BrW_NOC_PB_DataSegmentRomStart, _F3DEX3_BrW_NOC_PC_DataSegmentRomStart,
 };
 static const u8* const sF3DEX3DataRomEndAddrs[8] = {
-    _F3DEX3_BrW_DataSegmentRomEnd,
-    _F3DEX3_BrW_PA_DataSegmentRomEnd,
-    _F3DEX3_BrW_PB_DataSegmentRomEnd,
-    _F3DEX3_BrW_PC_DataSegmentRomEnd,
-    _F3DEX3_BrW_NOC_DataSegmentRomEnd,
-    _F3DEX3_BrW_NOC_PA_DataSegmentRomEnd,
-    _F3DEX3_BrW_NOC_PB_DataSegmentRomEnd,
-    _F3DEX3_BrW_NOC_PC_DataSegmentRomEnd,
+    _F3DEX3_BrW_DataSegmentRomEnd,        _F3DEX3_BrW_PA_DataSegmentRomEnd,     _F3DEX3_BrW_PB_DataSegmentRomEnd,
+    _F3DEX3_BrW_PC_DataSegmentRomEnd,     _F3DEX3_BrW_NOC_DataSegmentRomEnd,    _F3DEX3_BrW_NOC_PA_DataSegmentRomEnd,
+    _F3DEX3_BrW_NOC_PB_DataSegmentRomEnd, _F3DEX3_BrW_NOC_PC_DataSegmentRomEnd,
 };
 
 /* These can't be automatically determined from the files, because that is only
 known at link time, whereas these sizes have to be known at compile time. */
-#define F3DEX3_TEXT_MAX_SIZE 6144  /* currently 6056 bytes */
-#define F3DEX3_DATA_MAX_SIZE 768   /* currently  726 bytes */
+#define F3DEX3_TEXT_MAX_SIZE 6144 /* currently 6056 bytes */
+#define F3DEX3_DATA_MAX_SIZE 768  /* currently  726 bytes */
 
 __attribute__((aligned(16))) u8 gF3DEX3TextBuffer[F3DEX3_TEXT_MAX_SIZE];
 __attribute__((aligned(16))) u8 gF3DEX3DataBuffer[F3DEX3_DATA_MAX_SIZE];
@@ -88,24 +70,26 @@ s8 gF3DEX3OccMode = 0;
 
 void SysUcode_LoadNewUcodeIfChanged() {
     s8 ver = gF3DEX3ProfVersion | (gF3DEX3NOCVersion << 2);
-    if(gLoadedF3DEX3Version == ver) return;
+    if (gLoadedF3DEX3Version == ver) {
+        return;
+    }
     ver &= 7; // make sure valid
-    
+
     u8* textVrom = sF3DEX3TextRomStartAddrs[ver];
     u32 textSize = sF3DEX3TextRomEndAddrs[ver] - textVrom;
     u8* dataVrom = sF3DEX3DataRomStartAddrs[ver];
     u32 dataSize = sF3DEX3DataRomEndAddrs[ver] - dataVrom;
-    if(textSize > F3DEX3_TEXT_MAX_SIZE){
+    if (textSize > F3DEX3_TEXT_MAX_SIZE) {
         Fault_AddHungupAndCrash("ucode_text_too_big", __LINE__);
         return;
     }
-    if(dataSize > F3DEX3_DATA_MAX_SIZE){
+    if (dataSize > F3DEX3_DATA_MAX_SIZE) {
         Fault_AddHungupAndCrash("ucode_data_too_big", __LINE__);
         return;
     }
     DMA_REQUEST_SYNC(gF3DEX3TextBuffer, textVrom, textSize, "sys_ucode.c", __LINE__);
     DMA_REQUEST_SYNC(gF3DEX3DataBuffer, dataVrom, dataSize, "sys_ucode.c", __LINE__);
-    
+
     gLoadedF3DEX3Version = ver;
 }
 

@@ -34,11 +34,11 @@ void Print_DebugPos(PrintUtils* this, Input* input, s16 posXChangeBy, s16 posYCh
 
 /**
  * Draws text
- * 
+ *
  * @param this reference to a ``PrintUtils`` struct, usually ``&gDebug.printer``
  * @param fmt the text to print, can be formatted (``%d``, ``%08X``, etc...)
  * @param ... the variables to use for the format of the text
-*/
+ */
 void Print_Screen(PrintUtils* this, u8 x, u8 y, u32 rgba, const char* fmt, ...) {
     GfxPrint gfxP;
     Gfx *dl, *gfxRef;

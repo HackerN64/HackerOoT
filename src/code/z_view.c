@@ -189,7 +189,7 @@ void View_ApplyLetterbox(View* view) {
     }
     gDPPipeSync(POLY_XLU_DISP++);
     if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
-        gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, CLAMP_MAX(lry,235));
+        gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, CLAMP_MAX(lry, 235));
     } else {
         gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
     }
@@ -459,11 +459,11 @@ s32 View_ApplyOrthoToOverlay(View* view) {
 
     gDPPipeSync(OVERLAY_DISP++);
     if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
-    gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
-                  CLAMP_MAX(view->viewport.bottomY,235));
+        gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY,
+                      view->viewport.rightX, CLAMP_MAX(view->viewport.bottomY, 235));
     } else {
-    gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
-                  view->viewport.bottomY);
+        gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY,
+                      view->viewport.rightX, view->viewport.bottomY);
     }
 
     gSPViewport(OVERLAY_DISP++, vp);
@@ -509,11 +509,11 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
 
     gDPPipeSync(OVERLAY_DISP++);
     if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
-    gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
-                  CLAMP_MAX(view->viewport.bottomY,235));  
+        gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY,
+                      view->viewport.rightX, CLAMP_MAX(view->viewport.bottomY, 235));
     } else {
-    gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
-                  view->viewport.bottomY);      
+        gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY,
+                      view->viewport.rightX, view->viewport.bottomY);
     }
 
     gSPViewport(OVERLAY_DISP++, vp);
@@ -596,10 +596,10 @@ s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP) {
         gDPPipeSync(gfx++);
         if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
             gDPSetScissor(gfx++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
-                      CLAMP_MAX(view->viewport.bottomY,235));
+                          CLAMP_MAX(view->viewport.bottomY, 235));
         } else {
             gDPSetScissor(gfx++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
-                      view->viewport.bottomY);
+                          view->viewport.bottomY);
         }
 
         gSPViewport(gfx++, vp);

@@ -173,7 +173,7 @@ void GfxPrint_SetColor(GfxPrint* this, u32 r, u32 g, u32 b, u32 a) {
     gDPSetColor(this->dList++, G_SETPRIMCOLOR, this->color.rgba);
 }
 
-void GfxPrint_SetColor32(GfxPrint* this, u32 rgba){
+void GfxPrint_SetColor32(GfxPrint* this, u32 rgba) {
     this->color.rgba = rgba;
     gDPSetColor(this->dList++, G_SETPRIMCOLOR, rgba);
 }

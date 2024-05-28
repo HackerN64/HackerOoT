@@ -187,8 +187,9 @@ f32 __powisf2(f32 x, s32 m) {
 }
 
 int __ucmpdi2(unsigned long long a, unsigned long long b) {
-    if (a == b)
+    if (a == b) {
         return 1;
+    }
     return (a < b) ? 0 : 2;
 }
 
