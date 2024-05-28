@@ -652,7 +652,7 @@ void InventoryEditor_DrawDigit(InventoryEditor* this, void* texture, u8 posX, u8
         OPEN_DISPS(this->gfxCtx, __FILE__, __LINE__);
 
         DEBUG_DISP = Gfx_TextureIA8(DEBUG_DISP, texture, 8, 8, posX, posY, 8, 8, 1 << 10, 1 << 10);
-        
+
         CLOSE_DISPS(this->gfxCtx, __FILE__, __LINE__);
     }
 }
