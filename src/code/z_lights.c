@@ -61,16 +61,21 @@ void Lights_Draw(Lights* lights, GraphicsContext* gfxCtx) {
 
     OPEN_DISPS(gfxCtx, "../z_lights.c", 339);
 
+#if ENABLE_F3DEX3
+    // Copy ambient to light slot after last light
+    lights->l.l[lights->numLights].l.col[0] = lights->l.l[lights->numLights].l.colc[0]
+        = lights->l.a.l.col[0];
+    lights->l.l[lights->numLights].l.col[1] = lights->l.l[lights->numLights].l.colc[1]
+        = lights->l.a.l.col[1];
+    lights->l.l[lights->numLights].l.col[2] = lights->l.l[lights->numLights].l.colc[2]
+        = lights->l.a.l.col[2];
+    
+    gSPSetLights(POLY_OPA_DISP++, lights->numLights, lights->l);
+    gSPSetLights(POLY_XLU_DISP++, lights->numLights, lights->l);
+#else
     gSPNumLights(POLY_OPA_DISP++, lights->numLights);
     gSPNumLights(POLY_XLU_DISP++, lights->numLights);
-
-#if ENABLE_F3DEX3_LIGHT_RECO
-    gSPSetLights(POLY_OPA_DISP++, lights->numLights, *lights);
-    gSPSetLights(POLY_XLU_DISP++, lights->numLights, *lights);
-
-    gSPAmbient(POLY_OPA_DISP++, &lights->l.a, lights->numLights);
-    gSPAmbient(POLY_XLU_DISP++, &lights->l.a, lights->numLights);
-#else
+    
     light = &lights->l.l[0];
     i = 0;
 
@@ -80,16 +85,20 @@ void Lights_Draw(Lights* lights, GraphicsContext* gfxCtx) {
     }
 
     // ambient light is total number of lights + 1
-    gSPAmbient(POLY_OPA_DISP++, &lights->l.a, ++i);
-    gSPAmbient(POLY_XLU_DISP++, &lights->l.a, i);
+    gSPLight(POLY_OPA_DISP++, &lights->l.a, ++i);
+    gSPLight(POLY_XLU_DISP++, &lights->l.a, i);
 #endif
 
     CLOSE_DISPS(gfxCtx, "../z_lights.c", 352);
 }
 
 Light* Lights_FindSlot(Lights* lights) {
-    u8 numLights = ENABLE_F3DEX3_RECOMMENDATIONS ? 9 : 7;
-    if (lights->numLights >= numLights) {
+#if ENABLE_F3DEX3
+#define MAX_LIGHTS 9
+#else
+#define MAX_LIGHTS 7
+#endif
+    if (lights->numLights >= MAX_LIGHTS) {
         return NULL;
     } else {
         return &lights->l.l[lights->numLights++];
@@ -120,7 +129,13 @@ void Lights_BindPoint(Lights* lights, LightParams* params, Vec3f* vec) {
                 scale = posDiff / scale;
                 scale = 1 - SQ(scale);
 #if ENABLE_F3DEX3
-                light->l.type = 0;
+                light->l.type = 0; // directional
+                // Radius doesn't really mean the same thing as specular size;
+                // specular size is about how large the actual light emitting
+                // object is, and for a point light it's just a point. Plus it
+                // should be dependent on how rough the specular object is.
+                const s16 radius = params->point.radius;
+                light->l.size = radius > 1000 ? 1 : radius > 500 ? 2 : radius > 250 ? 3 : 4;
 #endif
                 light->l.col[0] = light->l.colc[0] = params->point.color[0] * scale;
                 light->l.col[1] = light->l.colc[1] = params->point.color[1] * scale;
@@ -141,7 +156,10 @@ void Lights_BindDirectional(Lights* lights, LightParams* params, Vec3f* vec) {
 
     if (light != NULL) {
 #if ENABLE_F3DEX3
-        light->l.type = 0;
+        light->l.type = 0; // directional
+        // The engine doesn't have a parameter in LightDirectional which
+        // represents specular size, so just make something up generally.
+        light->l.size = 3;
 #endif
         light->l.col[0] = light->l.colc[0] = params->dir.color[0];
         light->l.col[1] = light->l.colc[1] = params->dir.color[1];
@@ -301,7 +319,8 @@ Lights* Lights_NewAndDraw(GraphicsContext* gfxCtx, u8 ambientR, u8 ambientG, u8 
 
     for (i = 0; i < numLights; i++) {
 #if ENABLE_F3DEX3
-        lights->l.l[i].l.type = 0;
+        lights->l.l[i].l.type = 0; // directional
+        lights->l.l[i].l.size = 3; // some arbitrary specular size
 #endif
         lights->l.l[i].l.col[0] = lights->l.l[i].l.colc[0] = r;
         lights->l.l[i].l.col[1] = lights->l.l[i].l.colc[1] = g;
