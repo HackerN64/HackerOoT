@@ -43,7 +43,7 @@ Note: the [F3DEX3](https://github.com/HackerN64/F3DEX3) microcode is enabled by 
 
 HackerOoT features are listed in the config headers under ``include/config/``.
 
-This project includes an example scene, available if ``INCLUDE_EXAMPLE_SCENE`` is set to ``true``. It's accessible from the file select.
+This project includes an example scene, available if ``INCLUDE_EXAMPLE_SCENE`` is set to ``true``. It's accessible from the map select.
 
 This also includes an example cutscene, playable in the example scene when holding ``L`` + ``R`` and pressing ``A``.
 
