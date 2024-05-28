@@ -55,7 +55,6 @@
 #include "mempak.h"
 #include "tha.h"
 #include "thga.h"
-#include "speedmeter.h"
 #include "gfx.h"
 #include "jpeg.h"
 #include "prerender.h"
@@ -64,6 +63,10 @@
 
 #if ENABLE_HACKER_DEBUG
 #include "debug.h"
+#endif
+
+#if ENABLE_PROFILER
+#include "debug/profiler.h"
 #endif
 
 #if ENABLE_F3DEX3
@@ -97,6 +100,14 @@
 #define THREAD_ID_GRAPH       4
 #define THREAD_ID_SCHED       5
 #define THREAD_ID_PADMGR      7
+#if ENABLE_PROFILER
+#define THREAD_ID_PIMGR       8
+#define THREAD_ID_VIMGR       9
+#else
+// Not sure why these are zero in vanilla.
+#define THREAD_ID_PIMGR       0
+#define THREAD_ID_VIMGR       0
+#endif
 #define THREAD_ID_AUDIOMGR   10
 #define THREAD_ID_DMAMGR     18
 #define THREAD_ID_IRQMGR     19

@@ -10138,7 +10138,8 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     } else {
         ASSERT(giAllocSize < GI_ALLOC_SIZE, "[HackerOoT:ERROR]: GI Object larger than the allocated size.", __FILE__,
                __LINE__);
-        this->giObjectSegment = (void*)(((uintptr_t)ZELDA_ARENA_MALLOC(GI_ALLOC_SIZE, "../z_player.c", 17175) + 8) & ~0xF);
+        this->giObjectSegment =
+            (void*)(((uintptr_t)ZELDA_ARENA_MALLOC(GI_ALLOC_SIZE, "../z_player.c", 17175) + 8) & ~0xF);
     }
 
     respawnFlag = gSaveContext.respawnFlag;
@@ -10636,8 +10637,8 @@ void Player_ProcessSceneCollision(PlayState* play, Player* this) {
             checkPosB.z = this->actor.world.pos.z + (50.0f * yawCos);
             checkPosB.y = checkPosA.y = this->actor.world.pos.y + 26.0f;
 
-            s32 hitWall = BgCheck_EntityLineTest1(&play->colCtx, &checkPosA, &checkPosB, &sInteractWallCheckResult, &wallPoly, true, false,
-                                    false, true, &wallBgId);
+            s32 hitWall = BgCheck_EntityLineTest1(&play->colCtx, &checkPosA, &checkPosB, &sInteractWallCheckResult,
+                                                  &wallPoly, true, false, false, true, &wallBgId);
 
             if (hitWall) {
                 this->actor.wallPoly = wallPoly;
@@ -13923,15 +13924,19 @@ s32 Player_UpdateNoclip(Player* this, PlayState* play) {
 
             if (cameraMode == 1) {
                 if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_CRIGHT)) {
-                    cam->eye.x += Math_SinS(Camera_GetCamDirYaw(cam) + 0x3FFF) * Math_Vec3f_DistXYZ(&cam->eye, &cam->at) * 0.15f;
-                    cam->eye.z += Math_CosS(Camera_GetCamDirYaw(cam) + 0x3FFF) * Math_Vec3f_DistXYZ(&cam->eye, &cam->at) * 0.15f;
+                    cam->eye.x +=
+                        Math_SinS(Camera_GetCamDirYaw(cam) + 0x3FFF) * Math_Vec3f_DistXYZ(&cam->eye, &cam->at) * 0.15f;
+                    cam->eye.z +=
+                        Math_CosS(Camera_GetCamDirYaw(cam) + 0x3FFF) * Math_Vec3f_DistXYZ(&cam->eye, &cam->at) * 0.15f;
                     cam->eyeNext = cam->eye;
                     mod = true;
                 }
 
                 if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_CLEFT)) {
-                    cam->eye.x += Math_SinS(Camera_GetCamDirYaw(cam) - 0x3FFF) * Math_Vec3f_DistXYZ(&cam->eye, &cam->at) * 0.15f;
-                    cam->eye.z += Math_CosS(Camera_GetCamDirYaw(cam) - 0x3FFF) * Math_Vec3f_DistXYZ(&cam->eye, &cam->at) * 0.15f;
+                    cam->eye.x +=
+                        Math_SinS(Camera_GetCamDirYaw(cam) - 0x3FFF) * Math_Vec3f_DistXYZ(&cam->eye, &cam->at) * 0.15f;
+                    cam->eye.z +=
+                        Math_CosS(Camera_GetCamDirYaw(cam) - 0x3FFF) * Math_Vec3f_DistXYZ(&cam->eye, &cam->at) * 0.15f;
                     cam->eyeNext = cam->eye;
                     mod = true;
                 }
@@ -13947,7 +13952,6 @@ s32 Player_UpdateNoclip(Player* this, PlayState* play) {
                     parallel->rwData.yawTarget += DEG_TO_BINANG(7);
                     mod = true;
                 }
-
             }
 
             if (mod) {
@@ -14016,7 +14020,8 @@ s32 Player_UpdateNoclip(Player* this, PlayState* play) {
             this->actor.velocity.y = 0.0f;
             this->actor.velocity.x = 0.0f;
 
-            if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT)) {
+            if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) &&
+                CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT)) {
                 Flags_SetTempClear(play, play->roomCtx.curRoom.num);
             }
 

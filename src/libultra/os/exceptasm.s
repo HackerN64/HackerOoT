@@ -5,6 +5,12 @@
 #include "ultra64/thread.h"
 #include "ultra64/exception.h"
 
+#include "debug/profiler.h"
+#include "config/config_debug.h"
+// Without these, the assembler doesn't understand C99-style bool. Only affects this file.
+#define true 1
+#define false 0
+
 .set noat
 .set noreorder
 .set gp=64
@@ -224,6 +230,11 @@ endrcp:
     sdc1    $f30, THREAD_FP30($k0)
 
 handle_interrupt:
+#if ENABLE_PROFILER
+    lw      $a0, THREAD_ID($k0)
+    jal     __osRecordProfilerEvent
+     addiu  $a0, $a0, PROFILER_EVENT_TYPE_THREADEND
+#endif
     // Determine the cause of the exception or interrupt and
     // enter appropriate handling routine
     mfc0    $t0, C0_CAUSE
@@ -797,6 +808,11 @@ LEAF(__osEnqueueAndYield)
     jal     __osEnqueueThread
      nop
 no_enqueue:
+#if ENABLE_PROFILER
+    lw      $a0, THREAD_ID($a1)  // a1 is still the pointer to thread
+    jal     __osRecordProfilerEvent
+     addiu  $a0, $a0, PROFILER_EVENT_TYPE_THREADEND
+#endif
     j       __osDispatchThread
      nop
 END(__osEnqueueAndYield)
@@ -852,6 +868,39 @@ LEAF(__osNop)
      nop
 END(__osNop)
 
+#if ENABLE_PROFILER
+/**
+ * void __osRecordProfilerEvent(s32 type);
+ */
+LEAF(__osRecordProfilerEvent)
+    lui     $t0, %hi(activeProfilerState)
+    lw      $t0, %lo(activeProfilerState)($t0) // activeProfilerState
+    beqz    $t0, done
+     mfc0   $t1, C0_COUNT // count
+    lw      $a1, (9*PROFILER_EVENT_COUNT)($t0) // ->numEvents
+    slti    $at, $a1, PROFILER_EVENT_COUNT // Profiler full?
+    beqz    $at, done
+get_time_no_interrupts: // osGetTime, but without the interrupts
+     lui    $t2, %hi(__osBaseCounter)
+    lw      $t2, %lo(__osBaseCounter)($t2)
+    subu    $t2, $t1, $t2 // base = count - __osBaseCounter
+    lui     $t3, %hi(__osCurrentTime)
+    ld      $t3, %lo(__osCurrentTime)($t3)
+    addu    $t1, $t2, $t3 // time = base + t
+record:
+    sll     $a2, $a1, 3 // numEvents * 8 for eventTimes
+    addu    $a2, $a2, $t0 // activeProfilerState->eventTimes[e]
+    sd      $t1, (0)($a2)
+    addu    $a3, $a1, $t0 // activeProfilerState->{null}[e]
+    sb      $a0, (8*PROFILER_EVENT_COUNT)($a3) // eventTypes
+    addiu   $a1, $a1, 1 // numEvents++
+    sw      $a1, (9*PROFILER_EVENT_COUNT)($t0) // Write back numEvents
+done:
+    jr      $ra
+     nop
+END(__osRecordProfilerEvent)
+#endif
+
 /**
  *  void __osDispatchThread(void);
  *
@@ -865,6 +914,13 @@ LEAF(__osDispatchThread)
     // Set thread as running
     lui     $at, %hi(__osRunningThread)
     sw      $v0, %lo(__osRunningThread)($at)
+#if ENABLE_PROFILER
+    move    $s0, $v0
+    lw      $a0, THREAD_ID($v0)
+    jal     __osRecordProfilerEvent
+     addiu  $a0, $a0, PROFILER_EVENT_TYPE_THREADSTART
+    move    $v0, $s0
+#endif
     li      $t0, OS_STATE_RUNNING
     sh      $t0, THREAD_STATE($v0)
     // Restore SR, masking out any interrupts that are not also

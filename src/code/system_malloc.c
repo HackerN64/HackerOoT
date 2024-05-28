@@ -98,10 +98,6 @@ void* SystemArena_Calloc(u32 num, u32 size) {
 }
 
 void SystemArena_Display(void) {
-    if (IS_SPEEDMETER_ENABLED) {
-        PRINTF("システムヒープ表示\n"); // "System heap display"
-        __osDisplayArena(&gSystemArena);
-    }
 }
 
 void SystemArena_GetSizes(u32* outMaxFree, u32* outFree, u32* outAlloc) {

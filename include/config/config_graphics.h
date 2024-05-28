@@ -7,15 +7,17 @@
 
 /**
  * F3DEX3 options
- * This only works on "LLE-Emulators" like ares or ParaLLEl. It will not work on standard Project64.
- * ``ENABLE_F3DEX3_RECOMMENDATIONS`` will enable the recommended changes listed in F3DEX3's readme
- * ``ENABLE_F3DEX3_NEW_FEATURES`` will enable the required changes to use the new features from F3DEX3
+ * This only works on real console or LLE emulators like ares or ParaLLEl. It
+ * will not work on legacy HLE emulators such as Project64.
 */
-#define ENABLE_F3DEX3 false
-#define ENABLE_F3DEX3_RECOMMENDATIONS true // missing matrix stuff + fast64 re-export process
-#define ENABLE_F3DEX3_NOSYNCS false // not working properly currently
-#define ENABLE_F3DEX3_LIGHT_RECO false // unfinished, faster but experimental (reco -> recommendations)
-// #define ENABLE_F3DEX3_NEW_FEATURES true // not implemented yet
+#define ENABLE_F3DEX3 true
+// Remove usually-unnecessary syncs from texture loading commands. Only matters
+// for vanilla display lists--new ones exported from fast64 already have the
+// syncs removed. This is buggy (graphical issues / crashes) as some vanilla DLs
+// rely on the syncs within the texture loading commands for correctness. Some
+// have already had the missing syncs manually added, but some have not been
+// fixed yet.
+#define ENABLE_F3DEX3_NOSYNCS false
 
 /**
  * Other graphical settings

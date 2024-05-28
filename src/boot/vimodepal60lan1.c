@@ -11,6 +11,8 @@
 #include "global.h"
 #include "ultra64/viint.h"
 
+// clang-format off
+
 /*
  * Based on FPAL LAN1 but with (approximately) NTSC VSYNC and NTSC VSTART.
  * This mode may behave poorly on emulators (e.g. an emulator may refresh at only 50Hz);
@@ -54,3 +56,5 @@ OSViMode gCustomViModePal60Lan1 = {
           VINTR(2),            // vIntr
       } },
 };
+
+// clang-format on

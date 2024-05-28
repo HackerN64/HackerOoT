@@ -1725,6 +1725,7 @@ u8 func_800FAD34(void);
 void Audio_ResetActiveSequences(void);
 void Audio_ResetActiveSequencesAndVolume(void);
 void GfxPrint_SetColor(GfxPrint* this, u32 r, u32 g, u32 b, u32 a);
+void GfxPrint_SetColor32(GfxPrint* this, u32 rgba);
 void GfxPrint_SetPosPx(GfxPrint* this, s32 x, s32 y);
 void GfxPrint_SetPos(GfxPrint* this, s32 x, s32 y);
 void GfxPrint_SetBasePosPx(GfxPrint* this, s32 x, s32 y);
@@ -1793,7 +1794,6 @@ void* SystemArena_ReallocDebug(void* ptr, u32 newSize, const char* file, int lin
 void SystemArena_FreeDebug(void* ptr, const char* file, int line);
 void SystemArena_Display(void);
 #endif
-void SystemArena_Display(void); // IS_SPEEDMETER_ENABLED
 
 u32 Rand_Next(void);
 void Rand_Seed(u32 seed);
@@ -1991,5 +1991,9 @@ void Play_DisableMotionBlurPriority(void);
 void Play_SetMotionBlurAlpha(u32 alpha);
 void Play_EnableMotionBlur(u32 alpha);
 void Play_DisableMotionBlur(void);
+
+#if ENABLE_PROFILER
+#include "debug/profiler_inline.h"
+#endif
 
 #endif

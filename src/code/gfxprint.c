@@ -169,8 +169,13 @@ void GfxPrint_SetColor(GfxPrint* this, u32 r, u32 g, u32 b, u32 a) {
     this->color.g = g;
     this->color.b = b;
     this->color.a = a;
-    gDPPipeSync(this->dList++);
+    // Never need a pipe sync before prim color
     gDPSetColor(this->dList++, G_SETPRIMCOLOR, this->color.rgba);
+}
+
+void GfxPrint_SetColor32(GfxPrint* this, u32 rgba) {
+    this->color.rgba = rgba;
+    gDPSetColor(this->dList++, G_SETPRIMCOLOR, rgba);
 }
 
 void GfxPrint_SetPosPx(GfxPrint* this, s32 x, s32 y) {
@@ -183,8 +188,8 @@ void GfxPrint_SetPos(GfxPrint* this, s32 x, s32 y) {
 }
 
 void GfxPrint_SetBasePosPx(GfxPrint* this, s32 x, s32 y) {
-    this->baseX = x << 2;
-    this->baseY = y << 2;
+    this->posX = this->baseX = x << 2;
+    this->posY = this->baseY = y << 2;
 }
 
 void GfxPrint_PrintCharImpl(GfxPrint* this, u8 c) {

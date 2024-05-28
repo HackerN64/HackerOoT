@@ -105,9 +105,4 @@
 // ``IS_MSG_DEBUG_ENABLED``
 #define ENABLE_MSG_DEBUGGER false
 
-/**** [SPEEDMETER] ****/
-// ``IS_SPEEDMETER_ENABLED``
-// This looks like a profiler
-#define ENABLE_SPEEDMETER false
-
 #endif
