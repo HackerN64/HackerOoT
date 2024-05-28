@@ -54,8 +54,8 @@ CPPFLAGS := -DCONSOLE_GC
 endif
 
 ifeq ($(COMPILER),gcc)
-  CFLAGS += -DCOMPILER_GCC -DNON_MATCHING -DAVOID_UB
-  CPPFLAGS += -DCOMPILER_GCC -DNON_MATCHING -DAVOID_UB
+  CFLAGS += -DCOMPILER_GCC -DNON_MATCHING -DAVOID_UB -std=gnu11
+  CPPFLAGS += -DCOMPILER_GCC -DNON_MATCHING -DAVOID_UB -std=gnu11
 else
   $(error Unsupported compiler. Please use gcc as the COMPILER variable.)
 endif

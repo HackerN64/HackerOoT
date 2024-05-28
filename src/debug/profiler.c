@@ -268,48 +268,49 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
             OSTime t = p->eventTimes[e];
             u8 type = p->eventTypes[e];
             switch(type){
-            case PROFILER_EVENT_TYPE_MAINGFXSTART:
-                tOverall = tRDP = tRSPOverall = tRSPGfx = -t;
-                break;
-            case PROFILER_EVENT_TYPE_RDPEND:
-                tRDP += t;
-                break;
-            case PROFILER_EVENT_TYPE_RSPGFXLASTEND:
-                tRSPOverall += t;
-                break;
-            case PROFILER_EVENT_TYPE_MAINGFXEND:
-                tOverall += t;
-                break;
-            case PROFILER_EVENT_TYPE_RSPGFXSTART:
-                tRSPGfx -= t;
-                break;
-            case PROFILER_EVENT_TYPE_RSPGFXEND:
-                tRSPGfx += t;
-                break;
-            case PROFILER_EVENT_TYPE_RSPAUDIOSTART:
-                tRSPAudio -= t;
-                break;
-            case PROFILER_EVENT_TYPE_RSPAUDIOEND:
-                tRSPAudio += t;
-                break;
-            case PROFILER_EVENT_TYPE_RSPOTHERSTART:
-                tRSPOther -= t;
-                break;
-            case PROFILER_EVENT_TYPE_RSPOTHEREND:
-                tRSPOther += t;
-                break;
-            default:
-                s32 thread = 10000;
-                if(type >= PROFILER_EVENT_TYPE_THREADEND){
-                    thread = type - PROFILER_EVENT_TYPE_THREADEND;
-                }else if(type >= PROFILER_EVENT_TYPE_THREADSTART){
-                    t = -t;
-                    thread = type - PROFILER_EVENT_TYPE_THREADSTART;
+                case PROFILER_EVENT_TYPE_MAINGFXSTART:
+                    tOverall = tRDP = tRSPOverall = tRSPGfx = -t;
+                    break;
+                case PROFILER_EVENT_TYPE_RDPEND:
+                    tRDP += t;
+                    break;
+                case PROFILER_EVENT_TYPE_RSPGFXLASTEND:
+                    tRSPOverall += t;
+                    break;
+                case PROFILER_EVENT_TYPE_MAINGFXEND:
+                    tOverall += t;
+                    break;
+                case PROFILER_EVENT_TYPE_RSPGFXSTART:
+                    tRSPGfx -= t;
+                    break;
+                case PROFILER_EVENT_TYPE_RSPGFXEND:
+                    tRSPGfx += t;
+                    break;
+                case PROFILER_EVENT_TYPE_RSPAUDIOSTART:
+                    tRSPAudio -= t;
+                    break;
+                case PROFILER_EVENT_TYPE_RSPAUDIOEND:
+                    tRSPAudio += t;
+                    break;
+                case PROFILER_EVENT_TYPE_RSPOTHERSTART:
+                    tRSPOther -= t;
+                    break;
+                case PROFILER_EVENT_TYPE_RSPOTHEREND:
+                    tRSPOther += t;
+                    break;
+                default: {
+                    s32 thread = 10000;
+                    if(type >= PROFILER_EVENT_TYPE_THREADEND){
+                        thread = type - PROFILER_EVENT_TYPE_THREADEND;
+                    }else if(type >= PROFILER_EVENT_TYPE_THREADSTART){
+                        t = -t;
+                        thread = type - PROFILER_EVENT_TYPE_THREADSTART;
+                    }
+                    if(thread >= MAX_THREAD_ID) continue;
+                    s32 care = sThreadIdToThreadIdx[thread];
+                    if(care < 0) continue;
+                    tThreads[care] += t;
                 }
-                if(thread >= MAX_THREAD_ID) continue;
-                s32 care = sThreadIdToThreadIdx[thread];
-                if(care < 0) continue;
-                tThreads[care] += t;
             }
         }
         // Scheduler thread should always be the one running at start and end.
