@@ -251,7 +251,7 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
         for (s32 e = 0; e < p->numEvents; ++e) {
             OSTime t = p->eventTimes[e];
             u8 type = p->eventTypes[e];
-            switch(type){
+            switch (type) {
                 case PROFILER_EVENT_TYPE_MAINGFXSTART:
                     tOverall = tRDP = tRSPOverall = tRSPGfx = -t;
                     break;
@@ -284,15 +284,19 @@ void Profiler_Draw(GraphicsContext* gfxCtx) {
                     break;
                 default: {
                     s32 thread = 10000;
-                    if(type >= PROFILER_EVENT_TYPE_THREADEND){
+                    if (type >= PROFILER_EVENT_TYPE_THREADEND) {
                         thread = type - PROFILER_EVENT_TYPE_THREADEND;
-                    }else if(type >= PROFILER_EVENT_TYPE_THREADSTART){
+                    } else if (type >= PROFILER_EVENT_TYPE_THREADSTART) {
                         t = -t;
                         thread = type - PROFILER_EVENT_TYPE_THREADSTART;
                     }
-                    if(thread >= MAX_THREAD_ID) continue;
+                    if (thread >= MAX_THREAD_ID) {
+                        continue;
+                    }
                     s32 care = sThreadIdToThreadIdx[thread];
-                    if(care < 0) continue;
+                    if (care < 0) {
+                        continue;
+                    }
                     tThreads[care] += t;
                 }
             }

@@ -63,19 +63,16 @@ void Lights_Draw(Lights* lights, GraphicsContext* gfxCtx) {
 
 #if ENABLE_F3DEX3
     // Copy ambient to light slot after last light
-    lights->l.l[lights->numLights].l.col[0] = lights->l.l[lights->numLights].l.colc[0]
-        = lights->l.a.l.col[0];
-    lights->l.l[lights->numLights].l.col[1] = lights->l.l[lights->numLights].l.colc[1]
-        = lights->l.a.l.col[1];
-    lights->l.l[lights->numLights].l.col[2] = lights->l.l[lights->numLights].l.colc[2]
-        = lights->l.a.l.col[2];
-    
+    lights->l.l[lights->numLights].l.col[0] = lights->l.l[lights->numLights].l.colc[0] = lights->l.a.l.col[0];
+    lights->l.l[lights->numLights].l.col[1] = lights->l.l[lights->numLights].l.colc[1] = lights->l.a.l.col[1];
+    lights->l.l[lights->numLights].l.col[2] = lights->l.l[lights->numLights].l.colc[2] = lights->l.a.l.col[2];
+
     gSPSetLights(POLY_OPA_DISP++, lights->numLights, lights->l);
     gSPSetLights(POLY_XLU_DISP++, lights->numLights, lights->l);
 #else
     gSPNumLights(POLY_OPA_DISP++, lights->numLights);
     gSPNumLights(POLY_XLU_DISP++, lights->numLights);
-    
+
     light = &lights->l.l[0];
     i = 0;
 

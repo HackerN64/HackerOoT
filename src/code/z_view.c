@@ -7,12 +7,12 @@ s32 View_ApplyPerspective(View*);
 s32 View_ApplyOrtho(View*);
 
 #if ENABLE_F3DEX3
-void View_SetCameraWorld(PlainVtx* cameraWorldPos, View* view){
+void View_SetCameraWorld(PlainVtx* cameraWorldPos, View* view) {
     cameraWorldPos->c.pos[0] = (s16)view->eye.x;
     cameraWorldPos->c.pos[1] = (s16)view->eye.y;
     cameraWorldPos->c.pos[2] = (s16)view->eye.z;
 }
-PlainVtx* View_CreateCameraWorld(View* view){
+PlainVtx* View_CreateCameraWorld(View* view) {
     PlainVtx* cameraWorldPos = Graph_Alloc(view->gfxCtx, sizeof(PlainVtx));
     View_SetCameraWorld(cameraWorldPos, view);
     return cameraWorldPos;
@@ -382,7 +382,7 @@ s32 View_ApplyPerspective(View* view) {
     viewing = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
     LOG_UTILS_CHECK_NULL_POINTER("viewing", viewing, "../z_view.c", 667);
     view->viewingPtr = viewing;
-    
+
 #if ENABLE_F3DEX3
     PlainVtx* cameraWorldPos = View_CreateCameraWorld(view);
     view->cameraWorldPosPtr = cameraWorldPos;
@@ -559,7 +559,7 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
     viewing = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
     LOG_UTILS_CHECK_NULL_POINTER("viewing", viewing, "../z_view.c", 848);
     view->viewingPtr = viewing;
-    
+
 #if ENABLE_F3DEX3
     PlainVtx* cameraWorldPos = View_CreateCameraWorld(view);
     view->cameraWorldPosPtr = cameraWorldPos;
@@ -671,7 +671,7 @@ s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP) {
         viewing = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
         LOG_UTILS_CHECK_NULL_POINTER("viewing", viewing, "../z_view.c", 948);
         view->viewingPtr = viewing;
-        
+
 #if ENABLE_F3DEX3
         PlainVtx* cameraWorldPos = View_CreateCameraWorld(view);
         view->cameraWorldPosPtr = cameraWorldPos;
