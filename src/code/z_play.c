@@ -1172,23 +1172,24 @@ void Play_DrawMotionBlur(PlayState* this) {
     }
 }
 
-void Play_InitMotionBlur(PlayState* this){
+void Play_InitMotionBlur(PlayState* this) {
     R_MOTION_BLUR_ENABLED = false;
     R_MOTION_BLUR_PRIORITY_ENABLED = false;
     sMotionBlurStatus = MOTION_BLUR_OFF;
-    this->csCtx.originalBlurAlpha = R_MOTION_BLUR_ALPHA = 0;}
+    this->csCtx.originalBlurAlpha = R_MOTION_BLUR_ALPHA = 0;
+}
 
-void Play_DestroyMotionBlur(void){
+void Play_DestroyMotionBlur(void) {
     R_MOTION_BLUR_ENABLED = false;
     R_MOTION_BLUR_PRIORITY_ENABLED = false;
     sMotionBlurStatus = MOTION_BLUR_OFF;
 }
-                #endif
+#endif
 
-void Play_SetMotionBlurAlpha(u32 alpha){
-        #if ENABLE_MOTION_BLUR
-    R_MOTION_BLUR_ALPHA                                =         alpha        ;
-                                    #endif
+void Play_SetMotionBlurAlpha(u32 alpha) {
+#if ENABLE_MOTION_BLUR
+    R_MOTION_BLUR_ALPHA = alpha;
+#endif
 }
 
 void Play_EnableMotionBlur(u32 alpha) {
