@@ -50,7 +50,7 @@ void Menu_Update(Menu* this) {
     if (!editActive && !this->bBackgroundExecution) {
         return;
     }
-    
+
     if (!this->bExecute || this->bBackgroundExecution) {
         if (editActive) {
             if (CHECK_BTN_ALL(pressBtn, BTN_DUP)) {
@@ -66,40 +66,40 @@ void Menu_Update(Menu* this) {
                     this->eSelection = MENU_MIN + 1;
                 }
             }
-            
-            #if ENABLE_F3DEX3
-            if(this->eSelection == MENU_F3DEX3_PROF){
-                if(pressDLeft && gF3DEX3ProfVersion > 0){
+
+#if ENABLE_F3DEX3
+            if (this->eSelection == MENU_F3DEX3_PROF) {
+                if (pressDLeft && gF3DEX3ProfVersion > 0) {
                     gF3DEX3ProfVersion--;
                 }
-                if(pressDRight && gF3DEX3ProfVersion < 3){
+                if (pressDRight && gF3DEX3ProfVersion < 3) {
                     gF3DEX3ProfVersion++;
                 }
-            }else if(this->eSelection == MENU_F3DEX3_OCC){
-                if(pressDLeft && gF3DEX3OccMode > 0){
+            } else if (this->eSelection == MENU_F3DEX3_OCC) {
+                if (pressDLeft && gF3DEX3OccMode > 0) {
                     gF3DEX3OccMode--;
                 }
-                if(pressDRight && gF3DEX3OccMode < F3DEX3_OCC_MODE_COUNT-1){
+                if (pressDRight && gF3DEX3OccMode < F3DEX3_OCC_MODE_COUNT - 1) {
                     gF3DEX3OccMode++;
                 }
-                if(gF3DEX3OccMode == F3DEX3_OCC_MODE_ALWAYS){
+                if (gF3DEX3OccMode == F3DEX3_OCC_MODE_ALWAYS) {
                     gF3DEX3NOCVersion = 0;
-                }else if(gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER){
+                } else if (gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER) {
                     gF3DEX3NOCVersion = 1;
                 }
             }
-            #endif
-            
-            #if ENABLE_PROFILER
-            if(this->eSelection == MENU_PROFILER){
-                if(pressDLeft && gProfilerMode > 0){
+#endif
+
+#if ENABLE_PROFILER
+            if (this->eSelection == MENU_PROFILER) {
+                if (pressDLeft && gProfilerMode > 0) {
                     gProfilerMode--;
                 }
-                if(pressDRight && gProfilerMode < PROFILER_MODE_COUNT-1){
+                if (pressDRight && gProfilerMode < PROFILER_MODE_COUNT - 1) {
                     gProfilerMode++;
                 }
             }
-            #endif
+#endif
 
             if (CHECK_BTN_ALL(pressBtn, BTN_L)) {
                 if (this->eSelection == MENU_COLVIEW) {
@@ -145,7 +145,7 @@ void Menu_Draw(Menu* this) {
     Vec2s right = { 300, 220 };
     PrintUtils* print = &gDebug.printer;
     u8 i;
-    
+
     if (!MENU_CAN_UPDATE) {
         return;
     }
@@ -177,10 +177,10 @@ void Menu_Draw(Menu* this) {
             } else {
                 color = i == this->eSelection ? COLOR_BLUE2 : COLOR_WHITE;
             }
-            
+
             char tempBuffer[100];
-            #if ENABLE_F3DEX3
-            if(i == MENU_F3DEX3_PROF){
+#if ENABLE_F3DEX3
+            if (i == MENU_F3DEX3_PROF) {
                 static const char* const profStrings[4] = {
                     "Default >",
                     "< A >",
@@ -189,7 +189,7 @@ void Menu_Draw(Menu* this) {
                 };
                 sprintf(tempBuffer, "%s%s", text, profStrings[gF3DEX3ProfVersion]);
                 text = tempBuffer;
-            }else if(i == MENU_F3DEX3_OCC){
+            } else if (i == MENU_F3DEX3_OCC) {
                 static const char* const occStrings[F3DEX3_OCC_MODE_COUNT] = {
                     "Auto >",
                     "< Always >",
@@ -198,23 +198,17 @@ void Menu_Draw(Menu* this) {
                 sprintf(tempBuffer, "%s%s", text, occStrings[gF3DEX3OccMode]);
                 text = tempBuffer;
             }
-            #endif
-            #if ENABLE_PROFILER
-            if(i == MENU_PROFILER){
+#endif
+#if ENABLE_PROFILER
+            if (i == MENU_PROFILER) {
                 static const char* const profStrings[PROFILER_MODE_COUNT] = {
-                    "Disable >",
-                    "< Real FPS >",
-                    "< Virtual FPS >",
-                    "< Gfx >",
-                    "< Gfx Trace >",
-                    "< CPU >",
-                    "< CPU Trace >",
-                    "< All Trace",
+                    "Disable >",     "< Real FPS >", "< Virtual FPS >", "< Gfx >",
+                    "< Gfx Trace >", "< CPU >",      "< CPU Trace >",   "< All Trace",
                 };
                 sprintf(tempBuffer, "%s%s", text, profStrings[gProfilerMode]);
                 text = tempBuffer;
             }
-            #endif
+#endif
 
             Print_Screen(print, 4, i + 5, color, text);
         }

@@ -39,7 +39,7 @@ void Main_ThreadEntry(void* arg) {
 #if ENABLE_HACKER_DEBUG
     PRINTF("[HackerOoT:Info]: Loading 'debug' segment...\n");
     DMA_REQUEST_SYNC(_debugSegmentStart, (uintptr_t)_debugSegmentRomStart, _debugSegmentRomEnd - _debugSegmentRomStart,
-                        __BASE_FILE__, __LINE__);
+                     __BASE_FILE__, __LINE__);
     bzero(_debugSegmentBssStart, _debugSegmentBssEnd - _debugSegmentBssStart);
     PRINTF("[HackerOoT:Info]: Completed!\n");
 #endif
@@ -84,7 +84,6 @@ void Idle_ThreadEntry(void* arg) {
             gViConfigModeType = OS_VI_MPAL_LAN1;
             gViConfigMode = osViModeMpalLan1;
             break;
-
     }
 
     D_80009430 = 1;

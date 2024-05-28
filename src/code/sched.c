@@ -134,7 +134,7 @@ void Sched_HandlePreNMI(Scheduler* sc) {
 
     if (sc->curRSPTask != NULL) {
 #if ENABLE_PROFILER
-        if(Profiler_GfxIsHung()){
+        if (Profiler_GfxIsHung()) {
             RcpUtils_Reset();
             osSendMesg(&sc->interruptQueue, (OSMesg)RSP_DONE_MSG, OS_MESG_NOBLOCK);
             if (sc->curRDPTask != NULL) {
@@ -372,7 +372,7 @@ u32 Sched_TaskComplete(Scheduler* sc, OSScTask* task) {
 #if ENABLE_PROFILER
         Profiler_TaskAllDone(task->flags);
 #endif
-        
+
         // Send a message to the notify queue if there is one
         if (task->msgQueue != NULL) {
             osSendMesg(task->msgQueue, task->msg, OS_MESG_BLOCK);
@@ -412,12 +412,12 @@ void Sched_RunTask(Scheduler* sc, OSScTask* spTask, OSScTask* dpTask) {
             Sched_TaskComplete(sc, spTask);
             return;
         }
-        
-        #if ENABLE_F3DEX3
+
+#if ENABLE_F3DEX3
         if (spTask->list.t.type == M_GFXTASK && !(spTask->state & OS_SC_YIELDED)) {
             SysUcode_LoadNewUcodeIfChanged();
         }
-        #endif
+#endif
 
         spTask->state &= ~(OS_SC_YIELD | OS_SC_YIELDED);
         // Write back data cache and load the OSTask into the RSP

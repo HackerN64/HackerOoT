@@ -87,7 +87,7 @@ void Main(void* arg) {
     Regs_Init();
 
     gRDPTimingsExist = (IO_READ(DPC_CLOCK_REG) != 0);
-    
+
     R_ENABLE_ARENA_DBG = 0;
 
     osCreateMesgQueue(&sSerialEventQueue, sSerialMsgBuf, ARRAY_COUNT(sSerialMsgBuf));

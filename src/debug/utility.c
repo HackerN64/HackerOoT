@@ -3,17 +3,17 @@
 
 /**
  * Static variables that sets the rectangle's position when using the configurator
-*/
+ */
 static Vec2s sRectLeft = { 0, 0 };
 static Vec2s sRectRight = { SCREEN_WIDTH, SCREEN_HEIGHT };
 
 /**
  * Draws a blank rectangle with the specified coordinates containing a single color
- * 
+ *
  * @param rectLeft the position of the left corners, rectLeft.x for up-left, rectLeft.y for down-left
  * @param rectRight the position of the right corners, rectRight.x for up-right, rectRight.y for down-right
  * @param rgba the color to use for the rectangle
-*/
+ */
 void Debug_DrawColorRectangle(Vec2s rectLeft, Vec2s rectRight, Color_RGBA8 rgba) {
     u8 r = rgba.r, g = rgba.g, b = rgba.b, a = rgba.a;
     s32 x1 = rectLeft.x, y1 = rectLeft.y, x2 = rectRight.x, y2 = rectRight.y;
@@ -78,9 +78,9 @@ void Debug_DrawColorRectangle(Vec2s rectLeft, Vec2s rectRight, Color_RGBA8 rgba)
 
 /**
  * Draws a new rectangle with its coordinates to setup easily where the user wants it
- * 
+ *
  * @param controller reference to a controller input (example: ``&play->state.input[0]``)
- * 
+ *
  * @note Controls (hold):
  * @note Z + C-Up: increase ``sRectLeft.x``
  * @note Z + C-Down: decrease ``sRectLeft.x``
@@ -90,7 +90,7 @@ void Debug_DrawColorRectangle(Vec2s rectLeft, Vec2s rectRight, Color_RGBA8 rgba)
  * @note Z + C-Right: increase ``sRectLeft.y``
  * @note R + C-Left: decrease ``sRectRight.y``
  * @note R + C-Right: increase ``sRectRight.y``
-*/
+ */
 void Debug_ConfigureNewRectangle(Input* controller) {
     Color_RGBA8 rgba = { 128, 128, 128, 255 };
     GraphicsContext* gfxCtx = gDebug.printer.gfxCtx;

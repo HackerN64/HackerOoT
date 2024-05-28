@@ -1085,8 +1085,8 @@ skip:
     }
 
 #if INCLUDE_EXAMPLE_SCENE
-    if (this->sceneId == SCENE_EXAMPLE && CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_L | BTN_R)
-            && CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A) && !Play_InCsMode(this)) {
+    if (this->sceneId == SCENE_EXAMPLE && CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_L | BTN_R) &&
+        CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A) && !Play_InCsMode(this)) {
         Cutscene_SetScript(this, gExampleCS);
         gSaveContext.cutsceneTrigger = 1;
     }
@@ -1187,22 +1187,22 @@ void Play_DestroyMotionBlur(void) {
 #endif
 
 void Play_SetMotionBlurAlpha(u32 alpha) {
-    #if ENABLE_MOTION_BLUR
+#if ENABLE_MOTION_BLUR
     R_MOTION_BLUR_ALPHA = alpha;
-    #endif
+#endif
 }
 
 void Play_EnableMotionBlur(u32 alpha) {
-    #if ENABLE_MOTION_BLUR
+#if ENABLE_MOTION_BLUR
     R_MOTION_BLUR_ALPHA = alpha;
     R_MOTION_BLUR_ENABLED = true;
-    #endif
+#endif
 }
 
 void Play_DisableMotionBlur(void) {
-    #if ENABLE_MOTION_BLUR
+#if ENABLE_MOTION_BLUR
     R_MOTION_BLUR_ENABLED = false;
-    #endif
+#endif
 }
 
 #if ENABLE_MOTION_BLUR
