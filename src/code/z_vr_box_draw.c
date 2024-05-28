@@ -11,10 +11,12 @@ Mtx* Skybox_UpdateMatrix(SkyboxContext* skyboxCtx, f32 x, f32 y, f32 z) {
     return MATRIX_TO_MTX(sSkyboxDrawMatrix, "../z_vr_box_draw.c", 42);
 }
 
-void Skybox_Draw(SkyboxContext* skyboxCtx, GraphicsContext* gfxCtx, s16 skyboxId, s16 blend, f32 x, f32 y, f32 z) {
+void Skybox_Draw(SkyboxContext* skyboxCtx, GraphicsContext* gfxCtx, LightContext* lightCtx, s16 skyboxId, s16 blend,
+                 f32 x, f32 y, f32 z) {
     OPEN_DISPS(gfxCtx, "../z_vr_box_draw.c", 52);
 
     Gfx_SetupDL_40Opa(gfxCtx);
+    gDPSetRenderMode(POLY_OPA_DISP++, G_RM_FOG_PRIM_A, G_RM_OPA_SURF2);
 
     gSPSegment(POLY_OPA_DISP++, 0x7, skyboxCtx->staticSegments[0]);
     gSPSegment(POLY_OPA_DISP++, 0x8, skyboxCtx->staticSegments[1]);
@@ -65,10 +67,8 @@ void Skybox_Draw(SkyboxContext* skyboxCtx, GraphicsContext* gfxCtx, s16 skyboxId
                 gSPDisplayList(POLY_OPA_DISP++, skyboxCtx->dListBuf[4]); // +z face upper
                 gSPDisplayList(POLY_OPA_DISP++, skyboxCtx->dListBuf[5]); // +z face lower
 
-                // Note this pipesync is slightly misplaced and would be better off inside the condition
-                gDPPipeSync(POLY_OPA_DISP++);
-
                 if (skyboxCtx->drawType != SKYBOX_DRAW_256_3FACE) {
+                    gDPPipeSync(POLY_OPA_DISP++);
                     gDPLoadTLUT_pal256(POLY_OPA_DISP++, skyboxCtx->palettes[3]);
                     gSPDisplayList(POLY_OPA_DISP++, skyboxCtx->dListBuf[6]); // -x face upper
                     gSPDisplayList(POLY_OPA_DISP++, skyboxCtx->dListBuf[7]); // -x face lower
