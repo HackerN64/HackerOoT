@@ -23,7 +23,7 @@ jobs:
       run: python tools/check_format.py
 
   check-pr:
-    if: ${{ github.event_name != 'push' }}
+    if: ${{ github.event_name == 'pull_request' }}
     name: Check modified files
     runs-on: ubuntu-latest
     steps:
@@ -38,5 +38,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        git remote add upstream https://github.com/HackerN64/HackerOoT.git
+        git fetch upstream
     - name: Check file's formatting
-      run: python tools/check_format.py --verbose --compare-to origin/develop/2.1.0
+      run: python tools/check_format.py --verbose --compare-to upstream/develop/2.1.0
