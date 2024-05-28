@@ -27,7 +27,7 @@ jobs:
       run: python tools/check_format.py
 
   check-pr:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event_name != 'push' }}
     name: Check modified files
     runs-on: ubuntu-latest
     steps:
