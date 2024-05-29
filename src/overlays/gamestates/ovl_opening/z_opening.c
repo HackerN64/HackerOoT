@@ -68,7 +68,7 @@ void func_80803C5C(TitleSetupState* this) {
 void TitleSetup_Main(GameState* thisx) {
     TitleSetupState* this = (TitleSetupState*)thisx;
 
-    Gfx_SetupFrame(this->state.gfxCtx, 0, 0, 0);
+    Gfx_SetupFrame(this->state.gfxCtx, true, 0, 0, 0);
     TitleSetup_SetupTitleScreen(this);
     func_80803C5C(this);
 }
