@@ -35,6 +35,7 @@ build/*/cache/
 out.txt
 *.ram
 *.bin
+*.blend1
 F3DEX3/*.code
 F3DEX3/*.data
 wadextract/
