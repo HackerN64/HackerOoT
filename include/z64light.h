@@ -46,7 +46,7 @@ typedef struct LightNode {
 #define ENV_FOGNEAR_MAX 996
 #define ENV_ZFAR_MAX 12800
 
-typedef struct {
+typedef struct LightContext {
     /* 0x0 */ LightNode* listHead;
     /* 0x4 */ u8 ambientColor[3];
     /* 0x7 */ u8 fogColor[3];

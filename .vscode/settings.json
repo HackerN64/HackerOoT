@@ -12,4 +12,7 @@
         "*.inc": "c",
         "*.inc.c": "c",
     },
+    "editor.rulers": [
+        120
+    ],
 }
