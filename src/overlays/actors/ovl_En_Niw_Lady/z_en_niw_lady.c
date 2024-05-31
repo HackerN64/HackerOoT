@@ -273,12 +273,12 @@ void func_80ABA244(EnNiwLady* this, PlayState* play) {
                 this->unk_262 = TEXT_STATE_EVENT;
                 this->unk_26A = this->cuccosInPen;
                 PRINTF2(VT_FGCOL(CYAN) "☆☆☆☆☆ 柵内BIT変更前 ☆☆ %x\n" VT_RST,
-                       gSaveContext.save.info.infTable[INFTABLE_199_19A_19B_19C_19D_19E_19F_INDEX]);
+                        gSaveContext.save.info.infTable[INFTABLE_199_19A_19B_19C_19D_19E_19F_INDEX]);
                 gSaveContext.save.info.infTable[INFTABLE_199_19A_19B_19C_19D_19E_19F_INDEX] &=
                     (u16) ~(INFTABLE_199_MASK | INFTABLE_19A_MASK | INFTABLE_19B_MASK | INFTABLE_19C_MASK |
                             INFTABLE_19D_MASK | INFTABLE_19E_MASK | INFTABLE_19F_MASK);
                 PRINTF2(VT_FGCOL(CYAN) "☆☆☆☆☆ 柵内BIT変更後 ☆☆ %x\n" VT_RST,
-                       gSaveContext.save.info.infTable[INFTABLE_199_19A_19B_19C_19D_19E_19F_INDEX]);
+                        gSaveContext.save.info.infTable[INFTABLE_199_19A_19B_19C_19D_19E_19F_INDEX]);
                 PRINTF2("\n\n");
                 this->actionFunc = func_80ABA654;
                 return;

@@ -1151,8 +1151,8 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
 
                         // "Palette setting = [] Last palette number = []"
                         PRINTF2(VT_COL(RED, WHITE) "\n設定パレット＝[%d] 最後パレット番号＝[%d]\n" VT_RST,
-                               sTimeBasedLightConfigs[envCtx->changeLightNextConfig][i].nextLightSetting,
-                               envCtx->numLightSettings - 1);
+                                sTimeBasedLightConfigs[envCtx->changeLightNextConfig][i].nextLightSetting,
+                                envCtx->numLightSettings - 1);
                     }
 #endif
 
@@ -1230,7 +1230,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
 
                 // "Palette setting = [] Last palette number = []"
                 PRINTF2("\n" VT_FGCOL(YELLOW) "設定パレット＝[%d] パレット数＝[%d]\n" VT_RST, envCtx->lightSetting,
-                       envCtx->numLightSettings);
+                        envCtx->numLightSettings);
             }
 #endif
         }
@@ -2070,7 +2070,7 @@ void Environment_PlaySceneSequence(PlayState* play) {
     } else if (play->sequenceCtx.natureAmbienceId == NATURE_ID_NONE) {
         // "BGM Configuration"
         PRINTF2("\n\n\nBGM設定game_play->sound_info.BGM=[%d] old_bgm=[%d]\n\n", play->sequenceCtx.seqId,
-               ((void)0, gSaveContext.seqId));
+                ((void)0, gSaveContext.seqId));
         if (((void)0, gSaveContext.seqId) != play->sequenceCtx.seqId) {
             Audio_PlaySceneSequence(play->sequenceCtx.seqId);
         }

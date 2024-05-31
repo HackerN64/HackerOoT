@@ -570,7 +570,7 @@ u32 func_80096FE8(PlayState* play, RoomContext* roomCtx) {
             cumulRoomSize = (frontRoom != backRoom) ? frontRoomSize + backRoomSize : frontRoomSize;
 
             PRINTF2("DOOR%d=<%d> ROOM1=<%d, %d> ROOM2=<%d, %d>\n", j, cumulRoomSize, frontRoom, frontRoomSize, backRoom,
-                   backRoomSize);
+                    backRoomSize);
             if (maxRoomSize < cumulRoomSize) {
                 maxRoomSize = cumulRoomSize;
             }

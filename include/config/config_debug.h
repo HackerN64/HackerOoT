@@ -85,4 +85,16 @@
 */
 #define ENABLE_MOTION_BLUR_DEBUG false
 
+/**
+ * Enable the game's printf
+ * This allows users to only keep the relevant prints
+*/
+#define ENABLE_GAME_PRINTF false
+
+/**
+ * Enable the game's logs
+ * This allows users to only keep the relevant prints
+*/
+#define ENABLE_GAME_LOGS false
+
 #endif

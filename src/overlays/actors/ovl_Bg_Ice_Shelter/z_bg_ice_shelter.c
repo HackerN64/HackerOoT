@@ -126,7 +126,7 @@ void BgIceShelter_InitDynaPoly(BgIceShelter* this, PlayState* play, CollisionHea
 
         // "Warning : move BG registration failed"
         PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_ice_shelter.c", 362,
-               this->dyna.actor.id, this->dyna.actor.params);
+                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
 }

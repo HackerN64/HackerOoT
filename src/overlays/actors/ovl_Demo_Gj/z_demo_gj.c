@@ -385,7 +385,7 @@ void DemoGj_SetupRotation(DemoGj* this, PlayState* play) {
         default:
             // "Demo_Gj_common_Reflect : This arg_data is not supported = %d"
             PRINTF2(VT_FGCOL(RED) "Demo_Gj_common_Reflect : そんなarg_dataには対応していない = %d\n" VT_RST,
-                   this->dyna.actor.params);
+                    this->dyna.actor.params);
             return;
     }
 
@@ -539,7 +539,7 @@ void DemoGj_SetupMovement(DemoGj* this, PlayState* play) {
             default:
                 // "Demo_Gj_Setup_Move_common : This arg_data is not supported = %d"
                 PRINTF2(VT_FGCOL(RED) "Demo_Gj_Setup_Move_common : そんなarg_dataには対応していない = %d\n" VT_RST,
-                       actor->params);
+                        actor->params);
                 break;
         }
 

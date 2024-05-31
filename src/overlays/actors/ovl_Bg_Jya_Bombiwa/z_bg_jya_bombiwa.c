@@ -76,7 +76,7 @@ void BgJyaBombiwa_SetupDynaPoly(BgJyaBombiwa* this, PlayState* play, CollisionHe
 
         // "Warning: move BG registration failed"
         PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_jya_bombiwa.c", 174,
-               this->dyna.actor.id, this->dyna.actor.params);
+                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
 }
@@ -96,7 +96,7 @@ void BgJyaBombiwa_Init(Actor* thisx, PlayState* play) {
 
         // "Warning: Switch Number changed (%s %d)(SW %d)"
         PRINTF2("Ｗａｒｎｉｎｇ : Switch Number が変更された(%s %d)(SW %d)\n", "../z_bg_jya_bombiwa.c", 218,
-               this->dyna.actor.params & 0x3F);
+                this->dyna.actor.params & 0x3F);
         PRINTF2(VT_RST);
     }
     BgJyaBombiwa_SetupDynaPoly(this, play, &gBombiwaCol, 0);

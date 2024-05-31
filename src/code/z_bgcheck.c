@@ -88,7 +88,7 @@ s32 BgCheck_PosErrorCheck(Vec3f* pos, const char* file, int line) {
         PRINTF2(VT_FGCOL(RED));
         // "Position is invalid."
         PRINTF2("T_BGCheck_PosErrorCheck():位置が妥当ではありません。pos (%f,%f,%f) file:%s line:%d\n", pos->x, pos->y,
-               pos->z, file, line);
+                pos->z, file, line);
         PRINTF2(VT_RST);
         return true;
     }
@@ -306,7 +306,7 @@ void CollisionPoly_GetVerticesByBgId(CollisionPoly* poly, s32 bgId, CollisionCon
         PRINTF2(VT_COL(RED, WHITE));
         // "Argument not appropriate. Processing terminated."
         PRINTF2("T_Polygon_GetVertex_bg_ai(): Error %d %d %d 引数が適切ではありません。処理を終了します。\n",
-               poly == NULL, bgId > BG_ACTOR_MAX, dest == NULL);
+                poly == NULL, bgId > BG_ACTOR_MAX, dest == NULL);
         PRINTF2(VT_RST);
 
         if (dest != NULL) {
@@ -2794,14 +2794,15 @@ void DynaPoly_DeleteBgActor(PlayState* play, DynaCollisionContext* dyna, s32 bgI
         if (bgId == -1) {
             PRINTF2(VT_FGCOL(GREEN));
             // "The index that should have been deleted(? ) was(== -1), processing aborted."
-            PRINTF2("DynaPolyInfo_delReserve():削除されているはずの(?)\nインデックス(== -1)のため,処理を中止します。\n");
+            PRINTF2(
+                "DynaPolyInfo_delReserve():削除されているはずの(?)\nインデックス(== -1)のため,処理を中止します。\n");
             PRINTF2(VT_RST);
         } else {
             PRINTF2(VT_FGCOL(RED));
             // "Unable to deallocate index / index unallocated, processing aborted."
             PRINTF2("DynaPolyInfo_delReserve():"
-                   "確保していない／出来なかったインデックスの解放のため、処理を中止します。index == %d\n",
-                   bgId);
+                    "確保していない／出来なかったインデックスの解放のため、処理を中止します。index == %d\n",
+                    bgId);
             PRINTF2(VT_RST);
         }
 #endif
@@ -2864,14 +2865,14 @@ void DynaPoly_AddBgActorToLookup(PlayState* play, DynaCollisionContext* dyna, s3
         PRINTF2(VT_FGCOL(RED));
         // "do not use if %d exceeds %d"
         PRINTF2("DynaPolyInfo_expandSRT():polygon over %dが%dを越えるとダメ\n", *polyStartIndex + pbgdata->numPolygons,
-               dyna->polyListMax);
+                dyna->polyListMax);
     }
 
     if (!(dyna->vtxListMax >= *vtxStartIndex + pbgdata->numVertices)) {
         PRINTF2(VT_FGCOL(RED));
         // "do not use if %d exceeds %d"
         PRINTF2("DynaPolyInfo_expandSRT():vertex over %dが%dを越えるとダメ\n", *vtxStartIndex + pbgdata->numVertices,
-               dyna->vtxListMax);
+                dyna->vtxListMax);
     }
 
     ASSERT(dyna->polyListMax >= *polyStartIndex + pbgdata->numPolygons,

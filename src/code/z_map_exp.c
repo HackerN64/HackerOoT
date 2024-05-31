@@ -30,7 +30,7 @@ void Map_SetPaletteData(PlayState* play, s16 room) {
     PRINTF2(VT_FGCOL(YELLOW));
     // "PALETE Set"
     PRINTF2("ＰＡＬＥＴＥセット 【 i=%x : room=%x 】Room_Inf[%d][4]=%x  ( map_palete_no = %d )\n", paletteIndex, room,
-           mapIndex, gSaveContext.save.info.sceneFlags[mapIndex].rooms, interfaceCtx->mapPaletteIndex);
+            mapIndex, gSaveContext.save.info.sceneFlags[mapIndex].rooms, interfaceCtx->mapPaletteIndex);
     PRINTF2(VT_RST);
 
     interfaceCtx->mapPalette[paletteIndex * 2] = 2;
@@ -157,7 +157,7 @@ void Map_InitData(PlayState* play, s16 room) {
             PRINTF2(VT_FGCOL(YELLOW));
             // "Deku Tree Dungeon MAP Texture DMA"
             PRINTF2("デクの樹ダンジョンＭＡＰ テクスチャＤＭＡ(%x) scene_id_offset=%d  VREG(30)=%d\n", room, mapIndex,
-                   VREG(30));
+                    VREG(30));
             PRINTF2(VT_RST);
             DMA_REQUEST_SYNC(play->interfaceCtx.mapSegment,
                              (uintptr_t)_map_i_staticSegmentRomStart +
@@ -177,7 +177,7 @@ void Map_InitRoomData(PlayState* play, s16 room) {
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
 
     PRINTF2("＊＊＊＊＊＊＊\n＊＊＊＊＊＊＊\nroom_no=%d (%d)(%d)\n＊＊＊＊＊＊＊\n＊＊＊＊＊＊＊\n", room, mapIndex,
-           play->sceneId);
+            play->sceneId);
 
     if (room >= 0) {
         switch (play->sceneId) {
@@ -236,7 +236,7 @@ void Map_Init(PlayState* play) {
     interfaceCtx->mapSegment = GAME_STATE_ALLOC(&play->state, 0x1000, "../z_map_exp.c", 457);
     // "ＭＡＰ texture initialization scene_data_ID=%d mapSegment=%x"
     PRINTF2("\n\n\nＭＡＰ テクスチャ初期化   scene_data_ID=%d\nmapSegment=%x\n\n", play->sceneId,
-           interfaceCtx->mapSegment, play);
+            interfaceCtx->mapSegment, play);
     ASSERT(interfaceCtx->mapSegment != NULL, "parameter->mapSegment != NULL", "../z_map_exp.c", 459);
 
     switch (play->sceneId) {
@@ -563,7 +563,7 @@ void Map_Update(PlayState* play) {
                 if (interfaceCtx->mapRoomNum != sLastRoomNum) {
                     // "Current floor = %d Current room = %x Number of rooms = %d"
                     PRINTF2("現在階＝%d  現在部屋＝%x  部屋数＝%d\n", floor, interfaceCtx->mapRoomNum,
-                           gMapData->switchEntryCount[mapIndex]);
+                            gMapData->switchEntryCount[mapIndex]);
                     sLastRoomNum = interfaceCtx->mapRoomNum;
                 }
 

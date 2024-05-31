@@ -114,7 +114,7 @@ s32 DmaMgr_DmaRomToRam(uintptr_t rom, void* ram, size_t size) {
 
         if (gDmaMgrVerbose == 10) {
             PRINTF2("%10lld ノーマルＤＭＡ %08x %08x %08x (%d)\n", OS_CYCLES_TO_USEC(osGetTime()), ioMsg.dramAddr,
-                   ioMsg.devAddr, ioMsg.size, MQ_GET_COUNT(&gPiMgrCmdQueue));
+                    ioMsg.devAddr, ioMsg.size, MQ_GET_COUNT(&gPiMgrCmdQueue));
         }
 
         ret = osEPiStartDma(gCartHandle, &ioMsg, OS_READ);
@@ -123,7 +123,8 @@ s32 DmaMgr_DmaRomToRam(uintptr_t rom, void* ram, size_t size) {
         }
 
         if (gDmaMgrVerbose == 10) {
-            PRINTF2("%10lld ノーマルＤＭＡ START (%d)\n", OS_CYCLES_TO_USEC(osGetTime()), MQ_GET_COUNT(&gPiMgrCmdQueue));
+            PRINTF2("%10lld ノーマルＤＭＡ START (%d)\n", OS_CYCLES_TO_USEC(osGetTime()),
+                    MQ_GET_COUNT(&gPiMgrCmdQueue));
         }
 
         osRecvMesg(&queue, NULL, OS_MESG_BLOCK);
@@ -148,7 +149,7 @@ s32 DmaMgr_DmaRomToRam(uintptr_t rom, void* ram, size_t size) {
 
     if (gDmaMgrVerbose == 10) {
         PRINTF2("%10lld ノーマルＤＭＡ %08x %08x %08x (%d)\n", OS_CYCLES_TO_USEC(osGetTime()), ioMsg.dramAddr,
-               ioMsg.devAddr, ioMsg.size, MQ_GET_COUNT(&gPiMgrCmdQueue));
+                ioMsg.devAddr, ioMsg.size, MQ_GET_COUNT(&gPiMgrCmdQueue));
     }
 
     ret = osEPiStartDma(gCartHandle, &ioMsg, OS_READ);
@@ -186,8 +187,8 @@ s32 DmaMgr_AudioDmaHandler(OSPiHandle* pihandle, OSIoMesg* mb, s32 direction) {
     ASSERT(mb != NULL, "mb != NULL", "../z_std_dma.c", 532);
 
     if (gDmaMgrVerbose == 10) {
-        PRINTF2("%10lld サウンドＤＭＡ %08x %08x %08x (%d)\n", OS_CYCLES_TO_USEC(osGetTime()), mb->dramAddr, mb->devAddr,
-               mb->size, MQ_GET_COUNT(&gPiMgrCmdQueue));
+        PRINTF2("%10lld サウンドＤＭＡ %08x %08x %08x (%d)\n", OS_CYCLES_TO_USEC(osGetTime()), mb->dramAddr,
+                mb->devAddr, mb->size, MQ_GET_COUNT(&gPiMgrCmdQueue));
     }
 
     ret = osEPiStartDma(pihandle, mb, direction);
@@ -247,8 +248,8 @@ NORETURN void DmaMgr_Error(DmaRequest* req, const char* filename, const char* er
     PRINTF2(VT_FGCOL(RED));
     // "DMA Fatal Error"
     PRINTF2("DMA致命的エラー(%s)\nROM:%X RAM:%X SIZE:%X %s\n",
-           errorDesc != NULL ? errorDesc : (errorName != NULL ? errorName : "???"), vrom, ram, size,
-           filename != NULL ? filename : "???");
+            errorDesc != NULL ? errorDesc : (errorName != NULL ? errorName : "???"), vrom, ram, size,
+            filename != NULL ? filename : "???");
 
     if (req->filename != NULL) { // Source file name that issued the DMA request
         PRINTF2("DMA ERROR: %s %d", req->filename, req->line);
@@ -571,10 +572,10 @@ void DmaMgr_Init(void) {
 
         if (ENABLE_DMA_PRINTF) {
             PRINTF2("%3d %08x %08x %08x %08x %08x %c %s\n", idx, iter->file.vromStart, iter->file.vromEnd,
-                   iter->romStart, iter->romEnd,
-                   (iter->romEnd != 0) ? iter->romEnd - iter->romStart : iter->file.vromEnd - iter->file.vromStart,
-                   (((iter->romEnd != 0) ? iter->romEnd - iter->romStart : 0) > 0x10000) ? '*' : ' ',
-                   name ? *name : "");
+                    iter->romStart, iter->romEnd,
+                    (iter->romEnd != 0) ? iter->romEnd - iter->romStart : iter->file.vromEnd - iter->file.vromStart,
+                    (((iter->romEnd != 0) ? iter->romEnd - iter->romStart : 0) > 0x10000) ? '*' : ' ',
+                    name ? *name : "");
         }
 
         idx++;
@@ -589,7 +590,7 @@ void DmaMgr_Init(void) {
     // Ensure that the boot segment always follows after the makerom segment.
     if ((uintptr_t)_bootSegmentRomStart != gDmaDataTable[0].file.vromEnd) {
         PRINTF2("_bootSegmentRomStart(%08x) != dma_rom_ad[0].rom_b(%08x)\n", _bootSegmentRomStart,
-               gDmaDataTable[0].file.vromEnd);
+                gDmaDataTable[0].file.vromEnd);
         //! @bug The main code file where fault.c resides is not yet loaded
         Fault_AddHungupAndCrash("../z_std_dma.c", 1055);
     }

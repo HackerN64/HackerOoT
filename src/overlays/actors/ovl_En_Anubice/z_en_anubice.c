@@ -184,7 +184,7 @@ void EnAnubice_FindFlameCircles(EnAnubice* this, PlayState* play) {
                     // "☆☆☆☆☆ How many fires? ☆☆☆☆☆"
                     PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 火は幾つ？ ☆☆☆☆☆ %d\n" VT_RST, flameCirclesFound);
                     PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ 火は幾つ？ ☆☆☆☆☆ %x\n" VT_RST,
-                           this->flameCircles[flameCirclesFound]);
+                            this->flameCircles[flameCirclesFound]);
                     if (flameCirclesFound < ARRAY_COUNT(this->flameCircles) - 1) {
                         flameCirclesFound++;
                     }

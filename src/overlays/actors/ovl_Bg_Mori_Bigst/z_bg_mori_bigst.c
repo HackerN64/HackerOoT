@@ -64,7 +64,7 @@ void BgMoriBigst_InitDynapoly(BgMoriBigst* this, PlayState* play, CollisionHeade
 
         // "Warning : move BG login failed"
         PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_mori_bigst.c", 190,
-               this->dyna.actor.id, this->dyna.actor.params);
+                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
 }
@@ -75,9 +75,9 @@ void BgMoriBigst_Init(Actor* thisx, PlayState* play) {
 
     // "mori (bigST.keyceiling)"
     PRINTF2("mori (bigST.鍵型天井)(arg : %04x)(sw %d)(noE %d)(roomC %d)(playerPosY %f)\n", this->dyna.actor.params,
-           Flags_GetSwitch(play, (this->dyna.actor.params >> 8) & 0x3F),
-           Flags_GetTempClear(play, this->dyna.actor.room), Flags_GetClear(play, this->dyna.actor.room),
-           GET_PLAYER(play)->actor.world.pos.y);
+            Flags_GetSwitch(play, (this->dyna.actor.params >> 8) & 0x3F),
+            Flags_GetTempClear(play, this->dyna.actor.room), Flags_GetClear(play, this->dyna.actor.room),
+            GET_PLAYER(play)->actor.world.pos.y);
     BgMoriBigst_InitDynapoly(this, play, &gMoriBigstCol, 0);
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
     this->moriTexObjectSlot = Object_GetSlot(&play->objectCtx, OBJECT_MORI_TEX);

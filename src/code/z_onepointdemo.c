@@ -5190,7 +5190,7 @@ s16 OnePointCutscene_Init(PlayState* play, s16 csId, s16 timer, Actor* actor, s1
     while (vNextCamId >= CAM_ID_SUB_FIRST) {
         if ((play->cameraPtrs[vNextCamId]->csId / 100) < (play->cameraPtrs[subCamId]->csId / 100)) {
             PRINTF2(VT_COL(YELLOW, BLACK) "onepointdemo camera[%d]: killed 'coz low priority (%d < %d)\n" VT_RST,
-                   vNextCamId, play->cameraPtrs[vNextCamId]->csId, play->cameraPtrs[subCamId]->csId);
+                    vNextCamId, play->cameraPtrs[vNextCamId]->csId, play->cameraPtrs[subCamId]->csId);
             if (play->cameraPtrs[vNextCamId]->csId != 5010) {
                 if ((vParentCamId = OnePointCutscene_RemoveCamera(play, vNextCamId)) != CAM_ID_NONE) {
                     Play_ChangeCameraStatus(play, vParentCamId, CAM_STAT_ACTIVE);
@@ -5216,7 +5216,7 @@ s16 OnePointCutscene_EndCutscene(PlayState* play, s16 subCamId) {
     }
     if (play->cameraPtrs[subCamId] != NULL) {
         PRINTF2("onepointdemo camera[%d]: delete timer=%d next=%d\n", subCamId, play->cameraPtrs[subCamId]->timer,
-               play->cameraPtrs[subCamId]->parentCamId);
+                play->cameraPtrs[subCamId]->parentCamId);
         if (play->cameraPtrs[subCamId]->csId == 5010) {
             play->cameraPtrs[subCamId]->timer = 5;
         } else {
@@ -5300,12 +5300,12 @@ s32 OnePointCutscene_Attention(PlayState* play, Actor* actor) {
         case ACTORCAT_BOSS:
         default:
             PRINTF2(VT_COL(YELLOW, BLACK) "actor attention demo camera: %d: unkown part of actor %d\n" VT_RST,
-                   play->state.frames, actor->category);
+                    play->state.frames, actor->category);
             timer = 30;
             break;
     }
     PRINTF2(VT_FGCOL(CYAN) "%06u:" VT_RST " actor attention demo camera: request %d ", play->state.frames,
-           actor->category);
+            actor->category);
 
     // If the previous attention cutscene has an actor in the same category, skip this actor.
     if (actor->category == vLastHigherCat) {

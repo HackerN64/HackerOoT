@@ -73,7 +73,7 @@ s32 ObjMure_SetCullingImpl(Actor* thisx, PlayState* play) {
         default:
             // "Error : Culling is not set.(%s %d)(arg_data 0x%04x)"
             PRINTF2("Error : カリングの設定がされていません。(%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 204,
-                   this->actor.params);
+                    this->actor.params);
             return false;
     }
     return result;
@@ -108,11 +108,12 @@ void ObjMure_Init(Actor* thisx, PlayState* play) {
     }
     this->actionFunc = ObjMure_InitialAction;
     PRINTF2("群れな敵 (arg_data 0x%04x)(chNum(%d) ptn(%d) svNum(%d) type(%d))\n", thisx->params, this->chNum, this->ptn,
-           this->svNum, this->type);
+            this->svNum, this->type);
 
 #if IS_DEBUG
     if (ObjMure_GetMaxChildSpawns(this) <= 0) {
-        PRINTF2("Warning : 個体数が設定されていません(%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 268, thisx->params);
+        PRINTF2("Warning : 個体数が設定されていません(%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 268,
+                thisx->params);
     }
 #endif
 }

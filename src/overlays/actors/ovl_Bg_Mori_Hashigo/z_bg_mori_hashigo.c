@@ -90,7 +90,7 @@ void BgMoriHashigo_InitDynapoly(BgMoriHashigo* this, PlayState* play, CollisionH
 
         // "Warning : move BG login failed"
         PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_mori_hashigo.c", 164,
-               this->dyna.actor.id, this->dyna.actor.params);
+                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
 }
@@ -128,7 +128,7 @@ s32 BgMoriHashigo_SpawnLadder(BgMoriHashigo* this, PlayState* play) {
     } else {
         // "Ladder failure"
         PRINTF2("Error : 梯子の発生失敗(%s %d)(arg_data 0x%04x)\n", "../z_bg_mori_hashigo.c", 220,
-               this->dyna.actor.params);
+                this->dyna.actor.params);
         return false;
     }
 }
@@ -170,7 +170,7 @@ void BgMoriHashigo_Init(Actor* thisx, PlayState* play) {
     if (this->moriTexObjectSlot < 0) {
         // "Bank danger!"
         PRINTF2("Error : バンク危険！(arg_data 0x%04x)(%s %d)\n", this->dyna.actor.params, "../z_bg_mori_hashigo.c",
-               312);
+                312);
         Actor_Kill(&this->dyna.actor);
     } else {
         BgMoriHashigo_SetupWaitForMoriTex(this);

@@ -76,7 +76,7 @@ void BgHidanCurtain_Init(Actor* thisx, PlayState* play) {
     if (this->type > 6) {
         // "Type is not set"
         PRINTF2("Error : object のタイプが設定されていない(%s %d)(arg_data 0x%04x)\n", "../z_bg_hidan_curtain.c", 352,
-               this->actor.params);
+                this->actor.params);
         Actor_Kill(&this->actor);
         return;
     }
@@ -88,8 +88,8 @@ void BgHidanCurtain_Init(Actor* thisx, PlayState* play) {
 
     if (IS_DEBUG && ((this->actor.params < 0) || (this->actor.params > 0x3F))) {
         // "Save bit is not set"
-        PRINTF2("Warning : object のセーブビットが設定されていない(%s %d)(arg_data 0x%04x)\n", "../z_bg_hidan_curtain.c",
-               373, this->actor.params);
+        PRINTF2("Warning : object のセーブビットが設定されていない(%s %d)(arg_data 0x%04x)\n",
+                "../z_bg_hidan_curtain.c", 373, this->actor.params);
     }
 
     Actor_SetScale(&this->actor, hcParams->scale);

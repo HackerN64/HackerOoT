@@ -322,8 +322,8 @@ void Message_FindMessage(PlayState* play, u16 textId) {
                 font->msgLength = nextSeg - foundSeg;
                 // "Message found!!!"
                 PRINTF2(" メッセージが,見つかった！！！ = %x  "
-                       "(data=%x) (data0=%x) (data1=%x) (data2=%x) (data3=%x)\n",
-                       textId, font->msgOffset, font->msgLength, foundSeg, seg, nextSeg);
+                        "(data=%x) (data0=%x) (data1=%x) (data2=%x) (data3=%x)\n",
+                        textId, font->msgOffset, font->msgLength, foundSeg, seg, nextSeg);
                 return;
             }
             messageTableEntry++;
@@ -343,8 +343,8 @@ void Message_FindMessage(PlayState* play, u16 textId) {
                 font->msgLength = nextSeg - foundSeg;
                 // "Message found!!!"
                 PRINTF2(" メッセージが,見つかった！！！ = %x  "
-                       "(data=%x) (data0=%x) (data1=%x) (data2=%x) (data3=%x)\n",
-                       textId, font->msgOffset, font->msgLength, foundSeg, seg, nextSeg);
+                        "(data=%x) (data0=%x) (data1=%x) (data2=%x) (data3=%x)\n",
+                        textId, font->msgOffset, font->msgLength, foundSeg, seg, nextSeg);
                 return;
             }
             messageTableEntry++;
@@ -390,7 +390,7 @@ void Message_FindCreditsMessage(PlayState* play, u16 textId) {
             font->msgLength = nextSeg - foundSeg;
             // "Message found!!!"
             PRINTF2(" メッセージが,見つかった！！！ = %x  (data=%x) (data0=%x) (data1=%x) (data2=%x) (data3=%x)\n",
-                   textId, font->msgOffset, font->msgLength, foundSeg, seg, nextSeg);
+                    textId, font->msgOffset, font->msgLength, foundSeg, seg, nextSeg);
             return;
         }
         messageTableEntry++;
@@ -1248,7 +1248,7 @@ void Message_Decode(PlayState* play) {
             }
             if (curChar2 == MESSAGE_TEXTID) {
                 PRINTF2("NZ_NEXTMSG=%x, %x, %x\n", font->msgBuf[msgCtx->msgBufPos], font->msgBuf[msgCtx->msgBufPos + 1],
-                       font->msgBuf[msgCtx->msgBufPos + 2]);
+                        font->msgBuf[msgCtx->msgBufPos + 2]);
                 curChar = msgCtx->msgBufDecoded[++decodedBufPos] = font->msgBuf[msgCtx->msgBufPos + 1];
                 msgCtx->msgBufDecoded[++decodedBufPos] = font->msgBuf[msgCtx->msgBufPos + 2];
                 value = curChar << 8;
@@ -1436,7 +1436,7 @@ void Message_Decode(PlayState* play) {
                     value &= 0x7F;
                 } else {
                     PRINTF2("HI_SCORE( kanfont->mbuff.nes_mes_buf[message->rdp] & 0xff000000 ) = %x\n",
-                           HIGH_SCORE(font->msgBufWide[msgCtx->msgBufPos] & 0xFF000000));
+                            HIGH_SCORE(font->msgBufWide[msgCtx->msgBufPos] & 0xFF000000));
                     value = ((HIGH_SCORE((u8)font->msgBuf[msgCtx->msgBufPos]) & 0xFF000000) >> 0x18) & 0x7F;
                 }
                 value = SQ((f32)value) * 0.0036f + 0.5f;
@@ -2530,7 +2530,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                         }
                         PRINTF2(VT_FGCOL(YELLOW));
                         PRINTF2("☆☆☆ocarina=%d   message->ocarina_no=%d  ", msgCtx->lastPlayedSong,
-                               msgCtx->ocarinaAction);
+                                msgCtx->ocarinaAction);
                         if (msgCtx->ocarinaAction == OCARINA_ACTION_FREE_PLAY_DONE) {
                             play->msgCtx.ocarinaMode = OCARINA_MODE_01;
                             if (msgCtx->lastPlayedSong == OCARINA_SONG_SCARECROW_SPAWN) {
@@ -2539,7 +2539,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                         } else if (msgCtx->ocarinaAction >= OCARINA_ACTION_CHECK_MINUET) {
                             PRINTF2(VT_FGCOL(YELLOW));
                             PRINTF2("Ocarina_PC_Wind=%d(%d) ☆☆☆   ", OCARINA_ACTION_CHECK_MINUET,
-                                   msgCtx->ocarinaAction - OCARINA_ACTION_CHECK_MINUET);
+                                    msgCtx->ocarinaAction - OCARINA_ACTION_CHECK_MINUET);
                             if (msgCtx->lastPlayedSong == (msgCtx->ocarinaAction - OCARINA_ACTION_CHECK_MINUET)) {
                                 play->msgCtx.ocarinaMode = OCARINA_MODE_03;
                             } else {
@@ -2548,7 +2548,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                         } else {
                             PRINTF2(VT_FGCOL(GREEN));
                             PRINTF2("Ocarina_C_Wind=%d(%d) ☆☆☆   ", OCARINA_ACTION_PLAYBACK_MINUET,
-                                   msgCtx->ocarinaAction - OCARINA_ACTION_PLAYBACK_MINUET);
+                                    msgCtx->ocarinaAction - OCARINA_ACTION_PLAYBACK_MINUET);
                             if (msgCtx->lastPlayedSong == (msgCtx->ocarinaAction - OCARINA_ACTION_PLAYBACK_MINUET)) {
                                 play->msgCtx.ocarinaMode = OCARINA_MODE_03;
                             } else {
@@ -2570,7 +2570,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                         msgCtx->msgMode = MSGMODE_SONG_DEMONSTRATION_DONE;
                     }
                     PRINTF2("onpu_buff[%d]=%x\n", msgCtx->ocarinaStaff->pos,
-                           sOcarinaButtonIndexBuf[msgCtx->ocarinaStaff->pos]);
+                            sOcarinaButtonIndexBuf[msgCtx->ocarinaStaff->pos]);
                 } else {
                     if (sOcarinaButtonIndexBufPos != 0 && msgCtx->ocarinaStaff->pos == 1) {
                         sOcarinaButtonIndexBufPos = 0;
@@ -2597,7 +2597,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                 }
                 if (msgCtx->ocarinaStaff->state < OCARINA_SONG_MEMORY_GAME) {
                     PRINTF2("M_OCARINA20 : ocarina_no=%x    status=%x\n", msgCtx->ocarinaAction,
-                           msgCtx->ocarinaStaff->state);
+                            msgCtx->ocarinaStaff->state);
                     msgCtx->lastPlayedSong = msgCtx->ocarinaStaff->state;
                     msgCtx->msgMode = MSGMODE_SONG_PLAYBACK_SUCCESS;
                     Item_Give(play, ITEM_SONG_MINUET + gOcarinaSongItemMap[msgCtx->ocarinaStaff->state]);
@@ -3185,7 +3185,7 @@ void Message_Update(PlayState* play) {
                             averageY = ((actorFocusScreenPosY - playerFocusScreenPosY) / 2) + playerFocusScreenPosY;
                         }
                         PRINTF2("dxpos=%d   dypos=%d  dypos1  dypos2=%d\n", focusScreenPosX, averageY,
-                               playerFocusScreenPosY, actorFocusScreenPosY);
+                                playerFocusScreenPosY, actorFocusScreenPosY);
                     } else {
                         R_TEXTBOX_X = R_TEXTBOX_X_TARGET;
                         R_TEXTBOX_Y = R_TEXTBOX_Y_TARGET;
@@ -3312,7 +3312,7 @@ void Message_Update(PlayState* play) {
                             PRINTF2("OCARINA_MODE=%d -> ", play->msgCtx.ocarinaMode);
                             play->msgCtx.ocarinaMode = (msgCtx->choiceIndex == 0) ? OCARINA_MODE_02 : OCARINA_MODE_04;
                             PRINTF2("InRaceSeq=%d(%d) OCARINA_MODE=%d  -->  ", GET_EVENTINF_HORSES_STATE(), 1,
-                                   play->msgCtx.ocarinaMode);
+                                    play->msgCtx.ocarinaMode);
                             Message_CloseTextbox(play);
                             PRINTF2("OCARINA_MODE=%d\n", play->msgCtx.ocarinaMode);
                         }

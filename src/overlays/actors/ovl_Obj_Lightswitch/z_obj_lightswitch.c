@@ -190,7 +190,8 @@ void ObjLightswitch_Init(Actor* thisx, PlayState* play) {
                                (0xFF << 8) | PUSHBLOCK_SMALL_START_ON) == NULL) {
             PRINTF2(VT_COL(RED, WHITE));
             // "Push-pull block occurrence failure"
-            PRINTF2("押引ブロック発生失敗(%s %d)(arg_data 0x%04x)\n", "../z_obj_lightswitch.c", 452, this->actor.params);
+            PRINTF2("押引ブロック発生失敗(%s %d)(arg_data 0x%04x)\n", "../z_obj_lightswitch.c", 452,
+                    this->actor.params);
             PRINTF2(VT_RST);
             removeSelf = true;
         }

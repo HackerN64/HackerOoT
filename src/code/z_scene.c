@@ -24,7 +24,7 @@ s32 Object_SpawnPersistent(ObjectContext* objectCtx, s16 objectId) {
     PRINTF2("OBJECT[%d] SIZE %fK SEG=%x\n", objectId, size / 1024.0f, objectCtx->slots[objectCtx->numEntries].segment);
 
     PRINTF2("num=%d adrs=%x end=%x\n", objectCtx->numEntries,
-           (uintptr_t)objectCtx->slots[objectCtx->numEntries].segment + size, objectCtx->spaceEnd);
+            (uintptr_t)objectCtx->slots[objectCtx->numEntries].segment + size, objectCtx->spaceEnd);
 
     ASSERT(((objectCtx->numEntries < ARRAY_COUNT(objectCtx->slots)) &&
             (((uintptr_t)objectCtx->slots[objectCtx->numEntries].segment + size) < (uintptr_t)objectCtx->spaceEnd)),
@@ -148,7 +148,7 @@ void func_800981B8(ObjectContext* objectCtx) {
         size = gObjectTable[id].vromEnd - gObjectTable[id].vromStart;
         PRINTF2("OBJECT[%d] SIZE %fK SEG=%x\n", objectCtx->slots[i].id, size / 1024.0f, objectCtx->slots[i].segment);
         PRINTF2("num=%d adrs=%x end=%x\n", objectCtx->numEntries, (uintptr_t)objectCtx->slots[i].segment + size,
-               objectCtx->spaceEnd);
+                objectCtx->spaceEnd);
         DMA_REQUEST_SYNC(objectCtx->slots[i].segment, gObjectTable[id].vromStart, size, "../z_scene.c", 342);
     }
 }
@@ -180,7 +180,7 @@ s32 Scene_ExecuteCommands(PlayState* play, SceneCmd* sceneCmd) {
         u32 cmdCode = sceneCmd->base.code;
 
         PRINTF2("*** Scene_Word = { code=%d, data1=%02x, data2=%04x } ***\n", cmdCode, sceneCmd->base.data1,
-               sceneCmd->base.data2);
+                sceneCmd->base.data2);
 
         if (cmdCode == SCENE_CMD_ID_END) {
             break;
@@ -478,7 +478,7 @@ BAD_RETURN(s32) Scene_CommandMiscSettings(PlayState* play, SceneCmd* cmd) {
         if (gSaveContext.save.cutsceneIndex < 0xFFF0) {
             gSaveContext.save.info.worldMapAreaData |= gBitFlags[((void)0, gSaveContext.worldMapArea)];
             PRINTF2("０００  ａｒｅａ＿ａｒｒｉｖａｌ＝%x (%d)\n", gSaveContext.save.info.worldMapAreaData,
-                   ((void)0, gSaveContext.worldMapArea));
+                    ((void)0, gSaveContext.worldMapArea));
         }
     }
 }

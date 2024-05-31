@@ -109,8 +109,8 @@ void BgMizuWater_Init(Actor* thisx, PlayState* play) {
         case 0:
             if (bREG(15) == 0) {
                 PRINTF2("<コンストラクト>%x %x %x\n", Flags_GetSwitch(play, WATER_TEMPLE_WATER_F1_FLAG),
-                       Flags_GetSwitch(play, WATER_TEMPLE_WATER_F2_FLAG),
-                       Flags_GetSwitch(play, WATER_TEMPLE_WATER_F3_FLAG));
+                        Flags_GetSwitch(play, WATER_TEMPLE_WATER_F2_FLAG),
+                        Flags_GetSwitch(play, WATER_TEMPLE_WATER_F3_FLAG));
             }
             waterLevelActionIndex = BgMizuWater_GetWaterLevelActionIndex(-1, play);
             this->actor.world.pos.y = sWaterLevels[waterLevelActionIndex].yDiff + this->baseY;
@@ -303,7 +303,7 @@ void BgMizuWater_Update(Actor* thisx, PlayState* play) {
 #if IS_DEBUG
     if (bREG(15) == 0) {
         PRINTF2("%x %x %x\n", Flags_GetSwitch(play, WATER_TEMPLE_WATER_F1_FLAG),
-               Flags_GetSwitch(play, WATER_TEMPLE_WATER_F2_FLAG), Flags_GetSwitch(play, WATER_TEMPLE_WATER_F3_FLAG));
+                Flags_GetSwitch(play, WATER_TEMPLE_WATER_F2_FLAG), Flags_GetSwitch(play, WATER_TEMPLE_WATER_F3_FLAG));
     }
 #endif
 

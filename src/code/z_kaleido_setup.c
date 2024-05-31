@@ -48,7 +48,7 @@ void KaleidoSetup_Update(PlayState* play) {
             pauseCtx->state = PAUSE_STATE_WAIT_LETTERBOX;
 
             PRINTF2("Ｍｏｄｅ=%d  eye.x=%f,  eye.z=%f  kscp_pos=%d\n", pauseCtx->mode, pauseCtx->eye.x, pauseCtx->eye.z,
-                   pauseCtx->pageIndex);
+                    pauseCtx->pageIndex);
         }
 
         if (pauseCtx->state == PAUSE_STATE_WAIT_LETTERBOX) {

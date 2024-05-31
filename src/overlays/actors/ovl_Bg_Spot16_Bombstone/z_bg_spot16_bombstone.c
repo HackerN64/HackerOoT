@@ -254,7 +254,7 @@ void BgSpot16Bombstone_Init(Actor* thisx, PlayState* play) {
 #if IS_DEBUG
         default:
             PRINTF2("Error : arg_data おかしいな(%s %d)(arg_data 0x%04x)\n", "../z_bg_spot16_bombstone.c", 668,
-                   this->actor.params);
+                    this->actor.params);
             shouldLive = false;
             break;
 #endif
@@ -387,8 +387,8 @@ void func_808B56BC(BgSpot16Bombstone* this, PlayState* play) {
                 player->actor.world.pos.x += sinValue * this->sinRotation;
                 player->actor.world.pos.z += sinValue * this->cosRotation;
             } else {
-                PRINTF2("Error 補正出来ない(%s %d)(arg_data 0x%04x)(hosei_angY %x)\n", "../z_bg_spot16_bombstone.c", 935,
-                       this->actor.params, adjustedYawDiff);
+                PRINTF2("Error 補正出来ない(%s %d)(arg_data 0x%04x)(hosei_angY %x)\n", "../z_bg_spot16_bombstone.c",
+                        935, this->actor.params, adjustedYawDiff);
             }
         }
     }

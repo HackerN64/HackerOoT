@@ -572,7 +572,7 @@ void EnGoroiwa_Init(Actor* thisx, PlayState* play) {
     EnGoroiwa_SetupRoll(this);
     // "(Goroiwa)"
     PRINTF2("(ごろ岩)(arg 0x%04x)(rail %d)(end %d)(bgc %d)(hit %d)\n", this->actor.params, this->actor.params & 0xFF,
-           (this->actor.params >> 8) & 3, (this->actor.params >> 10) & 1, this->actor.home.rot.z & 1);
+            (this->actor.params >> 8) & 3, (this->actor.params >> 10) & 1, this->actor.home.rot.z & 1);
 }
 
 void EnGoroiwa_Destroy(Actor* thisx, PlayState* play2) {

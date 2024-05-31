@@ -218,7 +218,7 @@ void ObjWarp2block_Init(Actor* thisx, PlayState* play2) {
     }
 
     PRINTF2("時のブロック(ワープ２) (<arg> %04xH <type> color:%d range:%d)\n", this->dyna.actor.params & 0xFFFF,
-           this->dyna.actor.home.rot.z & 7, (this->dyna.actor.params >> 0xB) & 7);
+            this->dyna.actor.home.rot.z & 7, (this->dyna.actor.params >> 0xB) & 7);
 }
 
 void ObjWarp2block_Destroy(Actor* thisx, PlayState* play) {

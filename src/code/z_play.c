@@ -505,7 +505,7 @@ void Play_Update(PlayState* this) {
             s32 size = gObjectTable[i].vromEnd - gObjectTable[i].vromStart;
 
             PRINTF2("%08x-%08x %08x(%8.3fKB)\n", gObjectTable[i].vromStart, gObjectTable[i].vromEnd, size,
-                   size / 1024.0f);
+                    size / 1024.0f);
         }
 
         PRINTF2("\n");
@@ -1735,8 +1735,8 @@ s16 Play_CreateSubCamera(PlayState* this) {
     }
 
     PRINTF2("camera control: " VT_BGCOL(CYAN) " " VT_COL(WHITE, BLUE) " create new sub camera [%d] " VT_BGCOL(
-               CYAN) " " VT_RST "\n",
-           camId);
+                CYAN) " " VT_RST "\n",
+            camId);
 
     this->cameraPtrs[camId] = &this->subCameras[camId - CAM_ID_SUB_FIRST];
     Camera_Init(this->cameraPtrs[camId], &this->view, &this->colCtx, this);
@@ -1770,8 +1770,8 @@ void Play_ClearCamera(PlayState* this, s16 camId) {
         Camera_ChangeStatus(this->cameraPtrs[camIdx], CAM_STAT_UNK100);
         this->cameraPtrs[camIdx] = NULL;
         PRINTF2("camera control: " VT_BGCOL(CYAN) " " VT_COL(WHITE, BLUE) " clear sub camera [%d] " VT_BGCOL(
-                   CYAN) " " VT_RST "\n",
-               camIdx);
+                    CYAN) " " VT_RST "\n",
+                camIdx);
     } else {
         PRINTF2(VT_COL(RED, WHITE) "camera control: error: camera No.%d already cleared\n" VT_RST, camIdx);
     }
@@ -1902,8 +1902,9 @@ void Play_ReturnToMainCam(PlayState* this, s16 camId, s16 duration) {
 
     for (subCamId = CAM_ID_SUB_FIRST; subCamId < NUM_CAMS; subCamId++) {
         if (this->cameraPtrs[subCamId] != NULL) {
-            PRINTF2(VT_COL(RED, WHITE) "camera control: error: return to main, other camera left. %d cleared!!\n" VT_RST,
-                   subCamId);
+            PRINTF2(
+                VT_COL(RED, WHITE) "camera control: error: return to main, other camera left. %d cleared!!\n" VT_RST,
+                subCamId);
             Play_ClearCamera(this, subCamId);
         }
     }

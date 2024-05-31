@@ -55,7 +55,7 @@ void BgJyaAmishutter_InitDynaPoly(BgJyaAmishutter* this, PlayState* play, Collis
         s32 pad2;
 
         PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_jya_amishutter.c", 129,
-               this->dyna.actor.id, this->dyna.actor.params);
+                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
 }

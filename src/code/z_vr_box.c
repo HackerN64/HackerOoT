@@ -1022,9 +1022,9 @@ void Skybox_Init(GameState* state, SkyboxContext* skyboxCtx, s16 skyboxId) {
     // DMA required assets based on skybox id
     Skybox_Setup((PlayState*)state, skyboxCtx, skyboxId);
     PRINTF2("\n\n\n＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊\n\n\n"
-           "ＴＹＰＥ＝%d"
-           "\n\n\n＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊\n\n\n",
-           skyboxId);
+            "ＴＹＰＥ＝%d"
+            "\n\n\n＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊\n\n\n",
+            skyboxId);
 
     // Precompute vertices and display lists for drawing the skybox
     if (skyboxId != SKYBOX_NONE) {

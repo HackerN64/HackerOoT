@@ -17,7 +17,7 @@ static RainbowTarget sRainbowTarget[STATE_MAX] = {
 
 void Rainbow_Debug(Rainbow* this) {
     PRINTF2("state: %d, r: %d, g: %d, b: %d, speed: %d, sRainbowTarget.state: %d\n", this->state, this->color.r,
-           this->color.g, this->color.b, this->speed, sRainbowTarget[this->state].state);
+            this->color.g, this->color.b, this->speed, sRainbowTarget[this->state].state);
 }
 
 void Rainbow_InitColor(Rainbow* this) {

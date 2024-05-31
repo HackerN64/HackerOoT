@@ -62,7 +62,7 @@ void BgMoriHashira4_InitDynaPoly(BgMoriHashira4* this, PlayState* play, Collisio
 
         // "Warning : move BG login failed"
         PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_mori_hashira4.c", 155,
-               this->dyna.actor.id, this->dyna.actor.params);
+                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
 }
@@ -85,7 +85,7 @@ void BgMoriHashira4_Init(Actor* thisx, PlayState* play) {
         Actor_Kill(&this->dyna.actor);
         // "Bank danger!"
         PRINTF2("Error : バンク危険！(arg_data 0x%04x)(%s %d)\n", this->dyna.actor.params, "../z_bg_mori_hashira4.c",
-               196);
+                196);
         return;
     }
     if ((this->dyna.actor.params != 0) && Flags_GetSwitch(play, this->switchFlag)) {

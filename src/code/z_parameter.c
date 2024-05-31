@@ -1137,16 +1137,16 @@ void Interface_SetSceneRestrictions(PlayState* play) {
 
             PRINTF2(VT_FGCOL(YELLOW));
             PRINTF2("parameter->button_status = %x,%x,%x\n", sRestrictionFlags[i].flags1, sRestrictionFlags[i].flags2,
-                   sRestrictionFlags[i].flags3);
+                    sRestrictionFlags[i].flags3);
             PRINTF2("h_gage=%d, b_button=%d, a_button=%d, c_bottle=%d\n", interfaceCtx->restrictions.hGauge,
-                   interfaceCtx->restrictions.bButton, interfaceCtx->restrictions.aButton,
-                   interfaceCtx->restrictions.bottles);
+                    interfaceCtx->restrictions.bButton, interfaceCtx->restrictions.aButton,
+                    interfaceCtx->restrictions.bottles);
             PRINTF2("c_warasibe=%d, c_hook=%d, c_ocarina=%d, c_warp=%d\n", interfaceCtx->restrictions.tradeItems,
-                   interfaceCtx->restrictions.hookshot, interfaceCtx->restrictions.ocarina,
-                   interfaceCtx->restrictions.warpSongs);
+                    interfaceCtx->restrictions.hookshot, interfaceCtx->restrictions.ocarina,
+                    interfaceCtx->restrictions.warpSongs);
             PRINTF2("c_sunmoon=%d, m_wind=%d, m_magic=%d, another=%d\n", interfaceCtx->restrictions.sunsSong,
-                   interfaceCtx->restrictions.farores, interfaceCtx->restrictions.dinsNayrus,
-                   interfaceCtx->restrictions.all);
+                    interfaceCtx->restrictions.farores, interfaceCtx->restrictions.dinsNayrus,
+                    interfaceCtx->restrictions.all);
             PRINTF2(VT_RST);
             return;
         }
@@ -1401,7 +1401,7 @@ u8 Item_Give(PlayState* play, u8 item) {
         PRINTF2("楽譜 = %x\n", gSaveContext.save.info.inventory.questItems); // "Musical scores = %x"
         // "Musical scores = %x (%x) (%x)"
         PRINTF2("楽譜 = %x (%x) (%x)\n", gSaveContext.save.info.inventory.questItems,
-               gBitFlags[item - ITEM_SONG_MINUET + QUEST_SONG_MINUET], gBitFlags[item - ITEM_SONG_MINUET]);
+                gBitFlags[item - ITEM_SONG_MINUET + QUEST_SONG_MINUET], gBitFlags[item - ITEM_SONG_MINUET]);
         PRINTF2(VT_RST);
 
         return ITEM_NONE;
@@ -1428,7 +1428,7 @@ u8 Item_Give(PlayState* play, u8 item) {
         PRINTF2(VT_FGCOL(YELLOW));
         // "N Coins = %x(%d)"
         PRINTF2("Ｎコイン = %x(%d)\n", gSaveContext.save.info.inventory.questItems,
-               gSaveContext.save.info.inventory.gsTokens);
+                gSaveContext.save.info.inventory.gsTokens);
         PRINTF2(VT_RST);
 
         return ITEM_NONE;
@@ -1620,7 +1620,7 @@ u8 Item_Give(PlayState* play, u8 item) {
             AMMO(ITEM_DEKU_NUT) += sAmmoRefillCounts[item - ITEM_DEKU_NUTS_5];
             // "Deku Nuts %d(%d)=%d BS_count=%d"
             PRINTF2("デクの実 %d(%d)=%d  BS_count=%d\n", item, ITEM_DEKU_NUTS_5, item - ITEM_DEKU_NUTS_5,
-                   sAmmoRefillCounts[item - ITEM_DEKU_NUTS_5]);
+                    sAmmoRefillCounts[item - ITEM_DEKU_NUTS_5]);
         } else {
             AMMO(ITEM_DEKU_NUT) += sAmmoRefillCounts[item - ITEM_DEKU_NUTS_5];
             if (AMMO(ITEM_DEKU_NUT) > CUR_CAPACITY(UPG_DEKU_NUTS)) {
@@ -1795,8 +1795,9 @@ u8 Item_Give(PlayState* play, u8 item) {
                 if (gSaveContext.save.info.inventory.items[temp + i] == ITEM_BOTTLE_EMPTY) {
                     // "Item_Pt(1)=%d Item_Pt(2)=%d Item_Pt(3)=%d   Empty Bottle=%d   Content=%d"
                     PRINTF2("Item_Pt(1)=%d Item_Pt(2)=%d Item_Pt(3)=%d   空瓶=%d   中味=%d\n",
-                           gSaveContext.save.info.equips.cButtonSlots[0], gSaveContext.save.info.equips.cButtonSlots[1],
-                           gSaveContext.save.info.equips.cButtonSlots[2], temp + i, item);
+                            gSaveContext.save.info.equips.cButtonSlots[0],
+                            gSaveContext.save.info.equips.cButtonSlots[1],
+                            gSaveContext.save.info.equips.cButtonSlots[2], temp + i, item);
 
                     if ((temp + i) == gSaveContext.save.info.equips.cButtonSlots[0]) {
                         gSaveContext.save.info.equips.buttonItems[1] = item;
@@ -2049,8 +2050,8 @@ s32 Inventory_HasSpecificBottle(u8 bottleItem) {
 
 void Inventory_UpdateBottleItem(PlayState* play, u8 item, u8 button) {
     PRINTF2("item_no=%x,  c_no=%x,  Pt=%x  Item_Register=%x\n", item, button,
-           gSaveContext.save.info.equips.cButtonSlots[button - 1],
-           gSaveContext.save.info.inventory.items[gSaveContext.save.info.equips.cButtonSlots[button - 1]]);
+            gSaveContext.save.info.equips.cButtonSlots[button - 1],
+            gSaveContext.save.info.inventory.items[gSaveContext.save.info.equips.cButtonSlots[button - 1]]);
 
     // Special case to only empty half of a Lon Lon Milk Bottle
     if ((gSaveContext.save.info.inventory.items[gSaveContext.save.info.equips.cButtonSlots[button - 1]] ==
@@ -2200,7 +2201,7 @@ s32 Health_ChangeBy(PlayState* play, s16 amount) {
 
     // "＊＊＊＊＊ Fluctuation=%d (now=%d, max=%d) ＊＊＊"
     PRINTF2("＊＊＊＊＊  増減=%d (now=%d, max=%d)  ＊＊＊", amount, gSaveContext.save.info.playerData.health,
-           gSaveContext.save.info.playerData.healthCapacity);
+            gSaveContext.save.info.playerData.healthCapacity);
 
     // clang-format off
     if (amount > 0) { Audio_PlaySfxGeneral(NA_SE_SY_HP_RECOVER, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
@@ -3828,8 +3829,8 @@ void Interface_Draw(PlayState* play) {
                         case SUBTIMER_STATE_DOWN_MOVE:
                         case SUBTIMER_STATE_UP_MOVE:
                             PRINTF2("event_xp[1]=%d,  event_yp[1]=%d  TOTAL_EVENT_TM=%d\n",
-                                   ((void)0, gSaveContext.timerX[TIMER_ID_SUB]),
-                                   ((void)0, gSaveContext.timerY[TIMER_ID_SUB]), gSaveContext.subTimerSeconds);
+                                    ((void)0, gSaveContext.timerX[TIMER_ID_SUB]),
+                                    ((void)0, gSaveContext.timerY[TIMER_ID_SUB]), gSaveContext.subTimerSeconds);
                             svar1 = (gSaveContext.timerX[TIMER_ID_SUB] - 26) / sSubTimerStateTimer;
                             gSaveContext.timerX[TIMER_ID_SUB] -= svar1;
                             if (gSaveContext.save.info.playerData.healthCapacity > 0xA0) {
@@ -4181,12 +4182,12 @@ void Interface_Update(PlayState* play) {
         }
 
         PRINTF2("now_life=%d  max_life=%d\n", gSaveContext.save.info.playerData.health,
-               gSaveContext.save.info.playerData.healthCapacity);
+                gSaveContext.save.info.playerData.healthCapacity);
 
         if (gSaveContext.save.info.playerData.health >= gSaveContext.save.info.playerData.healthCapacity) {
             gSaveContext.save.info.playerData.health = gSaveContext.save.info.playerData.healthCapacity;
             PRINTF2("S_Private.now_life=%d  S_Private.max_life=%d\n", gSaveContext.save.info.playerData.health,
-                   gSaveContext.save.info.playerData.healthCapacity);
+                    gSaveContext.save.info.playerData.healthCapacity);
             gSaveContext.healthAccumulator = 0;
         }
     }

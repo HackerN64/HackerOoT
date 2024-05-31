@@ -295,7 +295,7 @@ void UCodeDisas_PrintRenderMode(UCodeDisas* this, u32 mode) {
 
     if (this->enableLog) {
         PRINTF2("\nGBL_c2(%s, %s, %s, %s)", sBlenderInputNames[0][b >> 12 & 3], sBlenderInputNames[1][b >> 8 & 3],
-               sBlenderInputNames[2][b >> 4 & 3], sBlenderInputNames[3][b >> 0 & 3]);
+                sBlenderInputNames[2][b >> 4 & 3], sBlenderInputNames[3][b >> 0 & 3]);
     }
 }
 

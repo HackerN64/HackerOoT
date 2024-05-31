@@ -480,7 +480,7 @@ void* Graph_Alloc(GraphicsContext* gfxCtx, size_t size) {
 
     if (HREG(59) == 1) {
         PRINTF2("graph_alloc siz=%d thga size=%08x bufp=%08x head=%08x tail=%08x\n", size, thga->size, thga->start,
-               thga->p, thga->d);
+                thga->p, thga->d);
     }
     return THGA_AllocTail(&gfxCtx->polyOpa, ALIGN16(size));
 }
@@ -490,7 +490,7 @@ void* Graph_Alloc2(GraphicsContext* gfxCtx, size_t size) {
 
     if (HREG(59) == 1) {
         PRINTF2("graph_alloc siz=%d thga size=%08x bufp=%08x head=%08x tail=%08x\n", size, thga->size, thga->start,
-               thga->p, thga->d);
+                thga->p, thga->d);
     }
     return THGA_AllocTail(&gfxCtx->polyOpa, ALIGN16(size));
 }

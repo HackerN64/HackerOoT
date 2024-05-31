@@ -1399,7 +1399,7 @@ Gfx* func_8002E830(Vec3f* object, Vec3f* eye, Vec3f* lightDir, GraphicsContext* 
 #if IS_DEBUG
     if (R_HREG_MODE == HREG_MODE_PRINT_HILITE_INFO) {
         PRINTF2("z_actor.c 3529 eye=[%f(%f) %f %f] object=[%f %f %f] light_direction=[%f %f %f]\n", correctedEyeX,
-               eye->x, eye->y, eye->z, object->x, object->y, object->z, lightDir->x, lightDir->y, lightDir->z);
+                eye->x, eye->y, eye->z, object->x, object->y, object->z, lightDir->x, lightDir->y, lightDir->z);
     }
 #endif
 
@@ -1450,7 +1450,7 @@ void func_8002EBCC(Actor* actor, PlayState* play, s32 flag) {
 
     if (R_HREG_MODE == HREG_MODE_PRINT_HILITE_INFO) {
         PRINTF2("z_actor.c 3637 game_play->view.eye=[%f(%f) %f %f]\n", play->view.eye.x, play->view.eye.y,
-               play->view.eye.z);
+                play->view.eye.z);
     }
 
     hilite = func_8002EABC(&actor->world.pos, &play->view.eye, &lightDir, play->state.gfxCtx);
@@ -2890,10 +2890,10 @@ Actor* Actor_Spawn(ActorContext* actorCtx, PlayState* play, s16 actorId, f32 pos
 
             PRINTF2(VT_FGCOL(GREEN));
             PRINTF2("OVL(a):Seg:%08x-%08x Ram:%08x-%08x Off:%08x %s\n", overlayEntry->vramStart, overlayEntry->vramEnd,
-                   overlayEntry->loadedRamAddr,
-                   (uintptr_t)overlayEntry->loadedRamAddr + (uintptr_t)overlayEntry->vramEnd -
-                       (uintptr_t)overlayEntry->vramStart,
-                   (uintptr_t)overlayEntry->vramStart - (uintptr_t)overlayEntry->loadedRamAddr, name);
+                    overlayEntry->loadedRamAddr,
+                    (uintptr_t)overlayEntry->loadedRamAddr + (uintptr_t)overlayEntry->vramEnd -
+                        (uintptr_t)overlayEntry->vramStart,
+                    (uintptr_t)overlayEntry->vramStart - (uintptr_t)overlayEntry->loadedRamAddr, name);
             PRINTF2(VT_RST);
 
             overlayEntry->numLoaded = 0;
@@ -2912,7 +2912,7 @@ Actor* Actor_Spawn(ActorContext* actorCtx, PlayState* play, s16 actorId, f32 pos
         ((actorInit->category == ACTORCAT_ENEMY) && Flags_GetClear(play, play->roomCtx.curRoom.num))) {
         // "No data bank!! <data bank＝%d> (profilep->bank=%d)"
         PRINTF2(VT_COL(RED, WHITE) "データバンク無し！！<データバンク＝%d>(profilep->bank=%d)\n" VT_RST, objectSlot,
-               actorInit->objectId);
+                actorInit->objectId);
         Actor_FreeOverlay(overlayEntry);
         return NULL;
     }
@@ -2922,7 +2922,7 @@ Actor* Actor_Spawn(ActorContext* actorCtx, PlayState* play, s16 actorId, f32 pos
     if (actor == NULL) {
         // "Actor class cannot be reserved! %s <size＝%d bytes>"
         PRINTF2(VT_COL(RED, WHITE) "Ａｃｔｏｒクラス確保できません！ %s <サイズ＝%dバイト>\n", VT_RST, name,
-               actorInit->instanceSize);
+                actorInit->instanceSize);
         Actor_FreeOverlay(overlayEntry);
         return NULL;
     }

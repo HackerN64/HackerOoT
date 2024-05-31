@@ -2311,8 +2311,8 @@ s32 DebugCamera_UpdateDemoControl(DebugCam* debugCam, Camera* cam) {
                 CHECK_BTN_ALL(sPlay->state.input[DEBUG_CAM_CONTROLLER_PORT].press.button, BTN_CRIGHT)) {
                 for (i = 0; i < ARRAY_COUNT(sDebugCamCuts) - 1; i++) {
                     PRINTF2("###%2d:(%c) (%d %d) %d %d %d\n", i, sDebugCamCuts[i].letter, sDebugCamCuts[i].position,
-                           sDebugCamCuts[i].lookAt, sDebugCamCuts[i].nFrames, sDebugCamCuts[i].nPoints,
-                           sDebugCamCuts[i].mode);
+                            sDebugCamCuts[i].lookAt, sDebugCamCuts[i].nFrames, sDebugCamCuts[i].nPoints,
+                            sDebugCamCuts[i].mode);
                 }
                 DebugCamera_PrintAllCuts(cam);
             } else if (CHECK_BTN_ALL(sPlay->state.input[DEBUG_CAM_CONTROLLER_PORT].cur.button, BTN_L) &&

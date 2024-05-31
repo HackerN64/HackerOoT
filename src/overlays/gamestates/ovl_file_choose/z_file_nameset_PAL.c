@@ -303,7 +303,7 @@ void FileSelect_DrawNameEntry(GameState* thisx) {
     } else {
         if (this->charIndex >= 65) {
             PRINTF2("mjp=%d  xpos=%d  ypos=%d  name_contents=%d\n", this->charIndex, this->kbdX, this->kbdY,
-                   this->kbdButton);
+                    this->kbdButton);
         }
 
         this->nameEntryVtx[40].v.ob[0] = this->nameEntryVtx[42].v.ob[0] =

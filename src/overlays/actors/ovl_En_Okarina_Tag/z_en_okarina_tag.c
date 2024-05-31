@@ -220,7 +220,7 @@ void func_80ABF28C(EnOkarinaTag* this, PlayState* play) {
                     default:
                         // "Ocarina Invisible-kun demo start check error source"
                         PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ オカリナ透明君デモ開始チェックエラー原 ☆☆☆☆☆ %d\n" VT_RST,
-                               this->type);
+                                this->type);
                         Actor_Kill(&this->actor);
                         break;
                 }

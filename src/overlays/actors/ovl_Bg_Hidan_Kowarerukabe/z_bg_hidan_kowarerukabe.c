@@ -119,7 +119,7 @@ void BgHidanKowarerukabe_Init(Actor* thisx, PlayState* play) {
         ((this->dyna.actor.params & 0xFF) > LARGE_BOMBABLE_WALL)) {
         // "Error: Fire Temple Breakable Walls. arg_data I can't determine the (%s %d)(arg_data 0x%04x)"
         PRINTF2("Error : 炎の神殿 壊れる壁 の arg_data が判別出来ない(%s %d)(arg_data 0x%04x)\n",
-               "../z_bg_hidan_kowarerukabe.c", 254, this->dyna.actor.params);
+                "../z_bg_hidan_kowarerukabe.c", 254, this->dyna.actor.params);
         Actor_Kill(&this->dyna.actor);
         return;
     }

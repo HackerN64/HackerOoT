@@ -22,11 +22,11 @@ void Print_DebugPos(PrintUtils* this, Input* input, s16 posXChangeBy, s16 posYCh
     }
 
     if (CHECK_BTN_ALL(input->cur.button, BTN_DUP) || CHECK_BTN_ALL(input->cur.button, BTN_DDOWN)) {
-        PRINTF2("[HackerOoT:Print]: Pos X: %d\n", pos.x);
+        PRINTF("[HackerOoT:Print]: Pos X: %d\n", pos.x);
     }
 
     if (CHECK_BTN_ALL(input->cur.button, BTN_DRIGHT) || CHECK_BTN_ALL(input->cur.button, BTN_DLEFT)) {
-        PRINTF2("[HackerOoT:Print]: Pos Y: %d\n", pos.y);
+        PRINTF("[HackerOoT:Print]: Pos Y: %d\n", pos.y);
     }
 
     Print_Screen(this, 3, 3, COLOR_WHITE, "current pos: x = %d, y = %d", pos.x, pos.y);

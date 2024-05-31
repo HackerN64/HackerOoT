@@ -450,8 +450,8 @@ void EnRr_CollisionCheck(EnRr* this, PlayState* play) {
                 case RR_DMG_NORMAL:
                     // "ouch"
                     PRINTF2(VT_FGCOL(RED) "いてっ( %d : LIFE %d : DAMAGE %d : %x )！！" VT_RST "\n", this->frameCount,
-                           this->actor.colChkInfo.health, this->actor.colChkInfo.damage,
-                           this->actor.colChkInfo.damageEffect);
+                            this->actor.colChkInfo.health, this->actor.colChkInfo.damage,
+                            this->actor.colChkInfo.damageEffect);
                     this->stopScroll = false;
                     Actor_ApplyDamage(&this->actor);
                     this->invincibilityTimer = 40;

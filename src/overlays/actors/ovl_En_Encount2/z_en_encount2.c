@@ -46,7 +46,7 @@ void EnEncount2_Init(Actor* thisx, PlayState* play) {
         PRINTF2("\n\n");
         // "☆☆☆☆☆ Death Mountain Encount2 set ☆☆☆☆☆"
         PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ デスマウンテンエンカウント２セットされました ☆☆☆☆☆ %d\n" VT_RST,
-               this->actor.params);
+                this->actor.params);
         if (LINK_IS_ADULT && GET_EVENTCHKINF(EVENTCHKINF_49)) { // flag for having used fire temple blue warp
             Actor_Kill(thisx);
         }
@@ -54,7 +54,7 @@ void EnEncount2_Init(Actor* thisx, PlayState* play) {
         PRINTF2("\n\n");
         // "☆☆☆☆☆ Ganon Tower Escape Encount2 set ☆☆☆☆☆"
         PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ ガノンタワー脱出エンカウント２セットされました ☆☆☆☆☆ %d\n" VT_RST,
-               this->actor.params);
+                this->actor.params);
     }
 
     this->actionFunc = EnEncount2_Wait;

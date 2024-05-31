@@ -30,7 +30,7 @@ size_t Overlay_Load(uintptr_t vromStart, uintptr_t vromEnd, void* vramStart, voi
 
     if (gOverlayLogSeverity >= 3) {
         PRINTF2("TEXT(%08x), DATA(%08x), RODATA(%08x), BSS(%08x)\n", ovlRelocs->textSize, ovlRelocs->dataSize,
-               ovlRelocs->rodataSize, ovlRelocs->bssSize);
+                ovlRelocs->rodataSize, ovlRelocs->bssSize);
     }
 
     if (gOverlayLogSeverity >= 3) {

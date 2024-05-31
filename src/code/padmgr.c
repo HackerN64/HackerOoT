@@ -31,13 +31,13 @@
 #include "global.h"
 #include "terminal.h"
 
-#define PADMGR_LOG(controllerNum, msg)                              \
-    if (IS_DEBUG) {                                                 \
+#define PADMGR_LOG(controllerNum, msg)                               \
+    if (IS_DEBUG) {                                                  \
         PRINTF2(VT_FGCOL(YELLOW));                                   \
-        /* padmgr: Controller %d: %s */                             \
+        /* padmgr: Controller %d: %s */                              \
         PRINTF2("padmgr: %dコン: %s\n", (controllerNum) + 1, (msg)); \
         PRINTF2(VT_RST);                                             \
-    }                                                               \
+    }                                                                \
     (void)0
 
 #define LOG_SEVERITY_NOLOG 0
@@ -75,7 +75,7 @@ OSMesgQueue* PadMgr_AcquireSerialEventQueue(PadMgr* padMgr) {
     if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
         // "serialMsgQ Waiting for lock"
         PRINTF2("%2d %d serialMsgQロック待ち         %08x %08x          %08x\n", osGetThreadId(NULL),
-               MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue, &serialEventQueue);
+                MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue, &serialEventQueue);
     }
 
     osRecvMesg(&padMgr->serialLockQueue, (OSMesg*)&serialEventQueue, OS_MESG_BLOCK);
@@ -83,7 +83,7 @@ OSMesgQueue* PadMgr_AcquireSerialEventQueue(PadMgr* padMgr) {
     if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
         // "serialMsgQ Locked"
         PRINTF2("%2d %d serialMsgQをロックしました                     %08x\n", osGetThreadId(NULL),
-               MQ_GET_COUNT(&padMgr->serialLockQueue), serialEventQueue);
+                MQ_GET_COUNT(&padMgr->serialLockQueue), serialEventQueue);
     }
 
     return serialEventQueue;
@@ -100,7 +100,7 @@ void PadMgr_ReleaseSerialEventQueue(PadMgr* padMgr, OSMesgQueue* serialEventQueu
     if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
         // "serialMsgQ Unlock"
         PRINTF2("%2d %d serialMsgQロック解除します   %08x %08x %08x\n", osGetThreadId(NULL),
-               MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue, serialEventQueue);
+                MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue, serialEventQueue);
     }
 
     osSendMesg(&padMgr->serialLockQueue, (OSMesg)serialEventQueue, OS_MESG_BLOCK);
@@ -108,7 +108,7 @@ void PadMgr_ReleaseSerialEventQueue(PadMgr* padMgr, OSMesgQueue* serialEventQueu
     if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
         // "serialMsgQ Unlocked"
         PRINTF2("%2d %d serialMsgQロック解除しました %08x %08x %08x\n", osGetThreadId(NULL),
-               MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue, serialEventQueue);
+                MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue, serialEventQueue);
     }
 }
 

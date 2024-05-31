@@ -121,7 +121,7 @@ s32 Mempak_Write(s32 controllerNum, char letter, void* buffer, s32 offset, s32 s
             ret = true;
         }
         PRINTF2("mempak: write %d byte '%c' (%d)->%d\n", size, letter, sMempakFiles[MEMPAK_LETTER_TO_INDEX(letter)],
-               error);
+                error);
     }
     PadMgr_ReleaseSerialEventQueue(&gPadMgr, serialEventQueue);
     return ret;
@@ -152,7 +152,7 @@ s32 Mempak_Read(s32 controllerNum, char letter, void* buffer, s32 offset, s32 si
             ret = true;
         }
         PRINTF2("mempak: read %d byte '%c' (%d)<-%d\n", size, letter, sMempakFiles[MEMPAK_LETTER_TO_INDEX(letter)],
-               error);
+                error);
     }
     PadMgr_ReleaseSerialEventQueue(&gPadMgr, serialEventQueue);
     return ret;

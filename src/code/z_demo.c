@@ -1784,7 +1784,7 @@ void CutsceneCmd_MotionBlur(PlayState* play, CutsceneContext* csCtx, CsCmdMotion
             f32 lerp = Environment_LerpWeight(cmd->endFrame, cmd->startFrame, csCtx->curFrame);
 
             if (ENABLE_MOTION_BLUR_DEBUG) {
-                PRINTF2("[HackerOoT:INFO]: originalBlurAlpha: 0x%X, lerp: %f\n", play->csCtx.originalBlurAlpha, lerp);
+                PRINTF("[HackerOoT:Info]: originalBlurAlpha: 0x%X, lerp: %f\n", play->csCtx.originalBlurAlpha, lerp);
             }
 
             if (cmd->type == CS_MOTION_BLUR_ENABLE) {
@@ -1803,7 +1803,7 @@ void CutsceneCmd_MotionBlur(PlayState* play, CutsceneContext* csCtx, CsCmdMotion
             }
         }
     } else if (ENABLE_MOTION_BLUR_DEBUG) {
-        PRINTF2("[HackerOoT:INFO]: Motion Blur disabled - type: %d, startFrame: %d, endFrame: %d, curFrame: %d\n",
+        PRINTF("[HackerOoT:Info]: Motion Blur disabled - type: %d, startFrame: %d, endFrame: %d, curFrame: %d\n",
                cmd->type, cmd->startFrame, cmd->endFrame, csCtx->curFrame);
     }
 }

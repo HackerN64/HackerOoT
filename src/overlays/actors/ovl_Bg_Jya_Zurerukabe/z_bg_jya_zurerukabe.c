@@ -72,7 +72,7 @@ void BgJyaZurerukabe_InitDynaPoly(BgJyaZurerukabe* this, PlayState* play, Collis
         s32 pad2;
 
         PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_jya_zurerukabe.c", 194,
-               this->dyna.actor.id, this->dyna.actor.params);
+                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
 }
@@ -127,7 +127,7 @@ void BgJyaZurerukabe_Init(Actor* thisx, PlayState* play) {
     if (i == ARRAY_COUNT(D_8089B9F0)) {
         PRINTF2(VT_COL(RED, WHITE));
         PRINTF2("home pos が変更されたみたい(%s %d)(arg_data 0x%04x)\n", "../z_bg_jya_zurerukabe.c", 299,
-               this->dyna.actor.params);
+                this->dyna.actor.params);
         PRINTF2(VT_RST);
     }
 

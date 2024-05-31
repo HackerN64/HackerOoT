@@ -1281,7 +1281,7 @@ s32 Camera_CalcAtForLockOn(Camera* camera, VecGeo* eyeAtDir, Vec3f* targetPos, f
 
     if (PREG(89)) {
         PRINTF2("%f (%f %f %f) %f\n", playerToTargetDir.r / distance, lookFromOffset.x, lookFromOffset.y,
-               lookFromOffset.z, camera->atLERPStepScale);
+                lookFromOffset.z, camera->atLERPStepScale);
     }
 
     playerToAtOffsetTarget.x += lookFromOffset.x;
@@ -3016,7 +3016,7 @@ s32 Camera_Battle1(Camera* camera) {
     camera->targetPosRot = Actor_GetFocus(camera->target);
     if (rwData->target != camera->target) {
         PRINTF2("camera: battle: change target %d -> " VT_FGCOL(BLUE) "%d" VT_RST "\n", rwData->target->id,
-               camera->target->id);
+                camera->target->id);
         camera->animState = 0;
         return true;
     }
@@ -5749,7 +5749,7 @@ void Camera_DebugPrintSplineArray(char* name, s16 length, CutsceneCameraPoint ca
         PRINTF2("    /*     T        */ %d,\n", cameraPoints[i].nextPointFrame);
         PRINTF2("    /*     zoom     */ %f,\n", cameraPoints[i].viewAngle);
         PRINTF2("    /*     pos      */ { %d, %d, %d }\n", cameraPoints[i].pos.x, cameraPoints[i].pos.y,
-               cameraPoints[i].pos.z);
+                cameraPoints[i].pos.z);
         PRINTF2("    },\n");
     }
     PRINTF2("};\n\n");
@@ -5817,7 +5817,7 @@ s32 Camera_Demo1(Camera* camera) {
             camera->animState++;
             // "absolute" : "relative"
             PRINTF2(VT_SGR("1") "%06u:" VT_RST " camera: spline demo: start %s \n", camera->play->state.frames,
-                   *relativeToPlayer == 0 ? "絶対" : "相対");
+                    *relativeToPlayer == 0 ? "絶対" : "相対");
 
 #if IS_CAMERA_DEBUG_ENABLED
             if (PREG(93)) {
@@ -7649,7 +7649,7 @@ s16 Camera_ChangeStatus(Camera* camera, s16 status) {
 #if IS_CAMERA_DEBUG_ENABLED
     if (PREG(82)) {
         PRINTF2("camera: change camera status: cond %c%c\n", status == CAM_STAT_ACTIVE ? 'o' : 'x',
-               camera->status != CAM_STAT_ACTIVE ? 'o' : 'x');
+                camera->status != CAM_STAT_ACTIVE ? 'o' : 'x');
     }
 
     if (PREG(82)) {
@@ -8131,7 +8131,7 @@ Vec3s Camera_Update(Camera* camera) {
 
     if (ENABLE_DEBUG_CAM_UPDATE) {
         PRINTF2("camera: engine (%d %d %d) %04x \n", camera->setting, camera->mode,
-               sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx, camera->stateFlags);
+                sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx, camera->stateFlags);
     }
 
     if (sOOBTimer < 200) {
@@ -8169,9 +8169,9 @@ Vec3s Camera_Update(Camera* camera) {
 
     if (ENABLE_DEBUG_CAM_UPDATE) {
         PRINTF2("camera: engine (%s(%d) %s(%d) %s(%d)) ok!\n", &sCameraSettingNames[camera->setting], camera->setting,
-               &sCameraModeNames[camera->mode], camera->mode,
-               &sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx],
-               sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx);
+                &sCameraModeNames[camera->mode], camera->mode,
+                &sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx],
+                sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx);
     }
 
     // enable/disable debug cam
@@ -8254,10 +8254,10 @@ Vec3s Camera_Update(Camera* camera) {
 
             if (PREG(81)) {
                 PRINTF2("dir  (%d) %d(%f) %d(%f) 0(0) \n", sUpdateCameraDirection, camera->inputDir.x,
-                       CAM_BINANG_TO_DEG(camera->inputDir.x), camera->inputDir.y,
-                       CAM_BINANG_TO_DEG(camera->inputDir.y));
+                        CAM_BINANG_TO_DEG(camera->inputDir.x), camera->inputDir.y,
+                        CAM_BINANG_TO_DEG(camera->inputDir.y));
                 PRINTF2("real (%d) %d(%f) %d(%f) 0(0) \n", sUpdateCameraDirection, camera->camDir.x,
-                       CAM_BINANG_TO_DEG(camera->camDir.x), camera->camDir.y, CAM_BINANG_TO_DEG(camera->camDir.y));
+                        CAM_BINANG_TO_DEG(camera->camDir.x), camera->camDir.y, CAM_BINANG_TO_DEG(camera->camDir.y));
             }
 
 #if IS_CAMERA_DEBUG_ENABLED
@@ -8268,13 +8268,13 @@ Vec3s Camera_Update(Camera* camera) {
 
             if (ENABLE_DEBUG_CAM_UPDATE) {
                 PRINTF2("camera: out (%f %f %f) (%f %f %f)\n", camera->at.x, camera->at.y, camera->at.z, camera->eye.x,
-                       camera->eye.y, camera->eye.z);
+                        camera->eye.y, camera->eye.z);
                 PRINTF2("camera: dir (%f %d(%f) %d(%f)) (%f)\n", eyeAtAngle.r, eyeAtAngle.pitch,
-                       CAM_BINANG_TO_DEG(eyeAtAngle.pitch), eyeAtAngle.yaw, CAM_BINANG_TO_DEG(eyeAtAngle.yaw),
-                       camera->fov);
+                        CAM_BINANG_TO_DEG(eyeAtAngle.pitch), eyeAtAngle.yaw, CAM_BINANG_TO_DEG(eyeAtAngle.yaw),
+                        camera->fov);
                 if (camera->player != NULL) {
                     PRINTF2("camera: foot(%f %f %f) dist (%f)\n", curPlayerPosRot.pos.x, curPlayerPosRot.pos.y,
-                           curPlayerPosRot.pos.z, camera->dist);
+                            curPlayerPosRot.pos.z, camera->dist);
                 }
             }
 
@@ -8342,7 +8342,7 @@ Vec3s Camera_Update(Camera* camera) {
 #if IS_CAMERA_DEBUG_ENABLED
             if (QREG(89)) {
                 PRINTF2("+=+(%d)+=+ recive request -> %s\n", camera->play->state.frames,
-                       sCameraModeNames[requestedMode]);
+                        sCameraModeNames[requestedMode]);
             }
 #endif
 
@@ -8360,7 +8360,7 @@ Vec3s Camera_Update(Camera* camera) {
                 if (camera->mode != CAM_MODE_NORMAL) {
 #if IS_CAMERA_DEBUG_ENABLED
                     PRINTF2(VT_COL(YELLOW, BLACK) "camera: change camera mode: force NORMAL: %s %s refused\n" VT_RST,
-                           sCameraSettingNames[camera->setting], sCameraModeNames[requestedMode]);
+                            sCameraSettingNames[camera->setting], sCameraModeNames[requestedMode]);
 #endif
                     camera->mode = CAM_MODE_NORMAL;
                     Camera_CopyDataToRegs(camera, camera->mode);
@@ -8509,7 +8509,7 @@ Vec3s Camera_Update(Camera* camera) {
 #if IS_CAMERA_DEBUG_ENABLED
             if (QREG(89) != 0) {
                 PRINTF2("+=+=+=+ recive asking -> %s (%s)\n", sCameraModeNames[mode],
-                       sCameraSettingNames[camera->setting]);
+                        sCameraSettingNames[camera->setting]);
             }
 #endif
 
@@ -8584,7 +8584,7 @@ Vec3s Camera_Update(Camera* camera) {
 
 #if IS_CAMERA_DEBUG_ENABLED
             PRINTF2(VT_SGR("1") "%06u:" VT_RST " camera: change camera[%d] set %s\n", camera->play->state.frames,
-                   camera->camId, sCameraSettingNames[camera->setting]);
+                    camera->camId, sCameraSettingNames[camera->setting]);
 #endif
 
             return requestedSetting;
@@ -8620,7 +8620,7 @@ Vec3s Camera_Update(Camera* camera) {
                     //! pass.
                     // The actual return of Camera_RequestSettingImpl or bgCamIndex would make more sense.
                     PRINTF2(VT_COL(RED, WHITE) "camera: error: illegal camera ID (%d) !! (%d|%d|%d)\n" VT_RST,
-                           requestedBgCamIndex, camera->camId, BGCHECK_SCENE, requestedCamSetting);
+                            requestedBgCamIndex, camera->camId, BGCHECK_SCENE, requestedCamSetting);
                 }
 #else
         if ((Camera_RequestSettingImpl(camera, requestedCamSetting,

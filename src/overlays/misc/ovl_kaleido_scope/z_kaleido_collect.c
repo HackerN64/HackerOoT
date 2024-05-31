@@ -155,7 +155,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                         } else {
                             cursorItem = ITEM_SONG_MINUET + pauseCtx->cursorPoint[PAUSE_QUEST];
                             PRINTF2("222 ccc=%d (%d, %d, %d)\n", cursorItem, pauseCtx->cursorPoint[PAUSE_QUEST], 0x12,
-                                   0x6C);
+                                    0x6C);
                         }
                     } else {
                         cursorItem = PAUSE_ITEM_NONE;
@@ -168,7 +168,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                         cursorItem = PAUSE_ITEM_NONE;
                     }
                     PRINTF2("888 ccc=%d (%d,  %d,  %x)\n", cursorItem, pauseCtx->cursorPoint[PAUSE_QUEST],
-                           ITEM_HEART_CONTAINER, gSaveContext.save.info.inventory.questItems & 0xF0000000);
+                            ITEM_HEART_CONTAINER, gSaveContext.save.info.inventory.questItems & 0xF0000000);
                 }
 
                 sp216 = pauseCtx->cursorPoint[PAUSE_QUEST];

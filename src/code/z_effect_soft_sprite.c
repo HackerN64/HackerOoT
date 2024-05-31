@@ -12,8 +12,8 @@ void EffectSs_InitInfo(PlayState* play, s32 tableSize) {
     for (i = 0; i < ARRAY_COUNT(gEffectSsOverlayTable); i++) {
         overlay = &gEffectSsOverlayTable[i];
         PRINTF2("effect index %3d:size=%6dbyte romsize=%6dbyte\n", i,
-               (uintptr_t)overlay->vramEnd - (uintptr_t)overlay->vramStart,
-               overlay->file.vromEnd - overlay->file.vromStart);
+                (uintptr_t)overlay->vramEnd - (uintptr_t)overlay->vramStart,
+                overlay->file.vromEnd - overlay->file.vromStart);
     }
 #endif
 
@@ -199,9 +199,9 @@ void EffectSs_Spawn(PlayState* play, s32 type, s32 priority, void* initParams) {
                 // "The memory of %d byte cannot be secured. Therefore, the program cannot be loaded.
                 // What a dangerous situation! Naturally, effects will not produced either."
                 PRINTF2("EffectSoftSprite2_makeEffect():zelda_malloc_r()により,%"
-                       "dbyteのメモリ確保ができま\nせん。そのため、プログラムのロードも\n出来ません。ただいま危険"
-                       "な状態です！\nもちろん,エフェクトも出ません。\n",
-                       overlaySize);
+                        "dbyteのメモリ確保ができま\nせん。そのため、プログラムのロードも\n出来ません。ただいま危険"
+                        "な状態です！\nもちろん,エフェクトも出ません。\n",
+                        overlaySize);
                 PRINTF2(VT_RST);
                 return;
             }
@@ -211,8 +211,8 @@ void EffectSs_Spawn(PlayState* play, s32 type, s32 priority, void* initParams) {
 
             PRINTF2(VT_FGCOL(GREEN));
             PRINTF2("EFFECT SS OVL:SegRom %08x %08x, Seg %08x %08x, RamStart %08x, type: %d\n",
-                   overlayEntry->file.vromStart, overlayEntry->file.vromEnd, overlayEntry->vramStart,
-                   overlayEntry->vramEnd, overlayEntry->loadedRamAddr, type);
+                    overlayEntry->file.vromStart, overlayEntry->file.vromEnd, overlayEntry->vramStart,
+                    overlayEntry->vramEnd, overlayEntry->loadedRamAddr, type);
             PRINTF2(VT_RST);
         }
 
@@ -227,8 +227,8 @@ void EffectSs_Spawn(PlayState* play, s32 type, s32 priority, void* initParams) {
         // "Effects have already been loaded, but the constructor is NULL so the addition will not occur.
         // Please fix this. (Waste of memory) %08x %d"
         PRINTF2("EffectSoftSprite2_makeEffect():すでにエフェクトはロード済みで\nすが,"
-               "コンストラクターがNULLなので追加をやめます。\n直してください。（メモリーの無駄) %08x %d\n",
-               initInfo, type);
+                "コンストラクターがNULLなので追加をやめます。\n直してください。（メモリーの無駄) %08x %d\n",
+                initInfo, type);
         return;
     }
 
@@ -243,8 +243,8 @@ void EffectSs_Spawn(PlayState* play, s32 type, s32 priority, void* initParams) {
         // "Construction failed for some reason. The constructor returned an error.
         // Ceasing effect addition."
         PRINTF2("EffectSoftSprite2_makeEffect():"
-               "何らかの理由でコンストラクト失敗。コンストラクターがエラーを返しました。エフェクトの追加を中"
-               "止します。\n");
+                "何らかの理由でコンストラクト失敗。コンストラクターがエラーを返しました。エフェクトの追加を中"
+                "止します。\n");
         PRINTF2(VT_RST);
         EffectSs_Reset(&sEffectSsInfo.table[index]);
     }
@@ -310,10 +310,10 @@ void EffectSs_DrawAll(PlayState* play) {
                 // Effect label No. %d: Please respond by the program.
                 // Here is ==> pos (%f, %f, %f) and the label is in z_effect_soft_sprite_dlftbls.decl."
                 PRINTF2("EffectSoftSprite2_disp():位置が領域外のため "
-                       "削除します。エフェクトラベルNo.%d:プログラムの方で対応をお願いします。ここです ==> "
-                       "pos(%f, %f, %f)で、ラベルはz_effect_soft_sprite_dlftbls.declにあります。\n",
-                       sEffectSsInfo.table[i].type, sEffectSsInfo.table[i].pos.x, sEffectSsInfo.table[i].pos.y,
-                       sEffectSsInfo.table[i].pos.z);
+                        "削除します。エフェクトラベルNo.%d:プログラムの方で対応をお願いします。ここです ==> "
+                        "pos(%f, %f, %f)で、ラベルはz_effect_soft_sprite_dlftbls.declにあります。\n",
+                        sEffectSsInfo.table[i].type, sEffectSsInfo.table[i].pos.x, sEffectSsInfo.table[i].pos.y,
+                        sEffectSsInfo.table[i].pos.z);
                 PRINTF2(VT_FGCOL(GREEN));
                 // "If you are using pos for something else, consult me."
                 PRINTF2("もし、posを別のことに使っている場合相談に応じます。\n");

@@ -516,7 +516,7 @@ void* GameState_Alloc(GameState* gameState, size_t size, const char* file, int l
     } else if ((u32)THA_GetRemaining(&gameState->tha) < size) {
         // "Hyral on the verge of extinction does not have %d bytes left (%d bytes until extinction)"
         PRINTF2("滅亡寸前のハイラルには %d バイトの余力もない（滅亡まであと %d バイト）\n", size,
-               THA_GetRemaining(&gameState->tha));
+                THA_GetRemaining(&gameState->tha));
         ret = NULL;
     } else {
         ret = THA_AllocTailAlign16(&gameState->tha, size);

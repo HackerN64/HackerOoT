@@ -40,7 +40,7 @@ void Main_LogSystemHeap(void) {
     PRINTF2(VT_FGCOL(GREEN));
     // "System heap size% 08x (% dKB) Start address% 08x"
     PRINTF2("システムヒープサイズ %08x(%dKB) 開始アドレス %08x\n", gSystemHeapSize, gSystemHeapSize / 1024,
-           _buffersSegmentEnd);
+            _buffersSegmentEnd);
     PRINTF2(VT_RST);
 }
 #endif

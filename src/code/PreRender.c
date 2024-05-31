@@ -754,10 +754,10 @@ void PreRender_DivotFilter(PreRender* this) {
                     u8* windowB = &buffB[x - 1];
 
                     if (PRERENDER_DIVOT_CONTROL == PRERENDER_DIVOT_PRINT_COLOR) {
-                        PRINTF2("red=%3d %3d %3d %3d grn=%3d %3d %3d %3d blu=%3d %3d %3d %3d \n", windowR[0], windowR[1],
-                               windowR[2], MEDIAN3(windowR[0], windowR[1], windowR[2]), windowG[0], windowG[1],
-                               windowG[2], MEDIAN3(windowG[0], windowG[1], windowG[2]), windowB[0], windowB[1],
-                               windowB[2], MEDIAN3(windowB[0], windowB[1], windowB[2]));
+                        PRINTF2("red=%3d %3d %3d %3d grn=%3d %3d %3d %3d blu=%3d %3d %3d %3d \n", windowR[0],
+                                windowR[1], windowR[2], MEDIAN3(windowR[0], windowR[1], windowR[2]), windowG[0],
+                                windowG[1], windowG[2], MEDIAN3(windowG[0], windowG[1], windowG[2]), windowB[0],
+                                windowB[1], windowB[2], MEDIAN3(windowB[0], windowB[1], windowB[2]));
                     }
 
                     // Sample the median value from the 3 pixel wide window

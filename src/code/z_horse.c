@@ -77,7 +77,7 @@ void func_8006D0EC(PlayState* play, Player* player) {
                (Flags_GetEventChkInf(EVENTCHKINF_EPONA_OBTAINED) || DREG(1) != 0)) {
         // "Set by existence of horse %d %d %d"
         PRINTF2("馬存在によるセット %d %d %d\n", gSaveContext.save.info.horseData.sceneId,
-               Flags_GetEventChkInf(EVENTCHKINF_EPONA_OBTAINED), DREG(1));
+                Flags_GetEventChkInf(EVENTCHKINF_EPONA_OBTAINED), DREG(1));
 
         if (func_8006CFC0(gSaveContext.save.info.horseData.sceneId)) {
             Actor* horseActor =

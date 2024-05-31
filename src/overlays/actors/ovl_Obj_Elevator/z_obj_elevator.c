@@ -56,7 +56,7 @@ void func_80B92B08(ObjElevator* this, PlayState* play, CollisionHeader* collisio
         s32 pad2;
 
         PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_obj_elevator.c", 136,
-               this->dyna.actor.id, this->dyna.actor.params);
+                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
 }

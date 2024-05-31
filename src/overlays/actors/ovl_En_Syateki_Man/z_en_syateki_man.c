@@ -343,7 +343,7 @@ void EnSyatekiMan_EndGame(EnSyatekiMan* this, PlayState* play) {
                     if (!LINK_IS_ADULT) {
                         if (!GET_ITEMGETINF(ITEMGETINF_0D)) {
                             PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ Equip_Pachinko ☆☆☆☆☆ %d\n" VT_RST,
-                                   CUR_UPG_VALUE(UPG_BULLET_BAG));
+                                    CUR_UPG_VALUE(UPG_BULLET_BAG));
                             if (CUR_UPG_VALUE(UPG_BULLET_BAG) == 1) {
                                 this->getItemId = GI_BULLET_BAG_40;
                             } else {

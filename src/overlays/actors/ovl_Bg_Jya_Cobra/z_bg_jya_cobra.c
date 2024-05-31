@@ -129,7 +129,7 @@ void BgJyaCobra_InitDynapoly(BgJyaCobra* this, PlayState* play, CollisionHeader*
 
         // "Warning : move BG Registration Failure"
         PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_jya_cobra.c", 247,
-               this->dyna.actor.id, this->dyna.actor.params);
+                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
 }
@@ -428,7 +428,7 @@ void BgJyaCobra_Init(Actor* thisx, PlayState* play) {
 
     // "(jya cobra)"
     PRINTF2("(jya コブラ)(arg_data 0x%04x)(act %x)(txt %x)(txt16 %x)\n", this->dyna.actor.params, this,
-           &this->shadowTextureBuffer, COBRA_SHADOW_TEX_PTR(this));
+            &this->shadowTextureBuffer, COBRA_SHADOW_TEX_PTR(this));
 }
 
 void BgJyaCobra_Destroy(Actor* thisx, PlayState* play) {

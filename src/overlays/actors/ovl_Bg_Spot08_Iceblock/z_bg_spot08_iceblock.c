@@ -52,7 +52,7 @@ void BgSpot08Iceblock_InitDynaPoly(BgSpot08Iceblock* this, PlayState* play, Coll
 
         // "Warning: move BG registration failed"
         PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_spot08_iceblock.c", 0xD9,
-               this->dyna.actor.id, this->dyna.actor.params);
+                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
 }
@@ -66,7 +66,7 @@ void BgSpot08Iceblock_CheckParams(BgSpot08Iceblock* this) {
         default:
             // "Error: arg_data setting error"
             PRINTF2("Error : arg_data 設定ミスです。(%s %d)(arg_data 0x%04x)\n", "../z_bg_spot08_iceblock.c", 0xF6,
-                   this->dyna.actor.params);
+                    this->dyna.actor.params);
             this->dyna.actor.params = 0x10;
             break;
         case 1:

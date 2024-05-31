@@ -6,7 +6,7 @@ f32 LogUtils_CheckFloatRange(const char* exp, int line, const char* valueName, f
                              const char* maxName, f32 max) {
     if (value < min || max < value) {
         PRINTF2("%s %d: range error %s(%f) < %s(%f) < %s(%f)\n", exp, line, minName, min, valueName, value, maxName,
-               max);
+                max);
     }
     return value;
 }
@@ -15,7 +15,7 @@ s32 LogUtils_CheckIntRange(const char* exp, int line, const char* valueName, s32
                            const char* maxName, s32 max) {
     if (value < min || max < value) {
         PRINTF2("%s %d: range error %s(%d) < %s(%d) < %s(%d)\n", exp, line, minName, min, valueName, value, maxName,
-               max);
+                max);
     }
     return value;
 }

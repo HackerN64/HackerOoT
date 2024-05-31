@@ -487,7 +487,7 @@ void __osFree_NoLock(Arena* arena, void* ptr) {
     if (arena != node->arena && arena != NULL) {
         // "__osFree:Tried to release in a different way than when it was secured (%08x:%08x)"
         PRINTF2(VT_COL(RED, WHITE) "__osFree:確保時と違う方法で解放しようとした (%08x:%08x)\n" VT_RST, arena,
-               node->arena);
+                node->arena);
         return;
     }
 #endif
@@ -552,7 +552,7 @@ void __osFree_NoLockDebug(Arena* arena, void* ptr, const char* file, int line) {
     if (arena != node->arena && arena != NULL) {
         // "__osFree:Tried to release in a different way than when it was secured (%08x:%08x)"
         PRINTF2(VT_COL(RED, WHITE) "__osFree:確保時と違う方法で解放しようとした (%08x:%08x)\n" VT_RST, arena,
-               node->arena);
+                node->arena);
         return;
     }
 

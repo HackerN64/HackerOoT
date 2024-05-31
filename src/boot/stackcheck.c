@@ -104,7 +104,7 @@ u32 StackCheck_GetState(StackEntry* entry) {
 #endif
 
     PRINTF2("head=%08x tail=%08x last=%08x used=%08x free=%08x [%s]\n", entry->head, entry->tail, last, used, free,
-           entry->name != NULL ? entry->name : "(null)");
+            entry->name != NULL ? entry->name : "(null)");
     PRINTF2(VT_RST);
 
 #if IS_DEBUG

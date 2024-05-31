@@ -37,11 +37,11 @@ void Main_ThreadEntry(void* arg) {
     PRINTF2("codeセグメントBSSクリア完了\n");
 
 #if ENABLE_HACKER_DEBUG
-    PRINTF2("[HackerOoT:Info]: Loading 'debug' segment...\n");
+    PRINTF("[HackerOoT:Info]: Loading 'debug' segment...\n");
     DMA_REQUEST_SYNC(_debugSegmentStart, (uintptr_t)_debugSegmentRomStart, _debugSegmentRomEnd - _debugSegmentRomStart,
                      __BASE_FILE__, __LINE__);
     bzero(_debugSegmentBssStart, _debugSegmentBssEnd - _debugSegmentBssStart);
-    PRINTF2("[HackerOoT:Info]: Completed!\n");
+    PRINTF("[HackerOoT:Info]: Completed!\n");
 #endif
 
     Main(arg);
@@ -60,7 +60,7 @@ void Idle_ThreadEntry(void* arg) {
     PRINTF2("ＦＩＦＯバッファのサイズは %d キロバイトです\n", 0x60);
     PRINTF2("ＹＩＥＬＤバッファのサイズは %d キロバイトです\n", 3);
     PRINTF2("オーディオヒープのサイズは %d キロバイトです\n",
-           ((intptr_t)&gAudioHeap[ARRAY_COUNT(gAudioHeap)] - (intptr_t)gAudioHeap) / 1024);
+            ((intptr_t)&gAudioHeap[ARRAY_COUNT(gAudioHeap)] - (intptr_t)gAudioHeap) / 1024);
     PRINTF2(VT_RST);
 
     osCreateViManager(OS_PRIORITY_VIMGR);

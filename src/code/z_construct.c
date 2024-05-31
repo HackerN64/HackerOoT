@@ -84,8 +84,8 @@ void Interface_Init(PlayState* play) {
     ASSERT(interfaceCtx->iconItemSegment != NULL, "parameter->icon_itemSegment != NULL", "../z_construct.c", 193);
 
     PRINTF2("Register_Item[%x, %x, %x, %x]\n", gSaveContext.save.info.equips.buttonItems[0],
-           gSaveContext.save.info.equips.buttonItems[1], gSaveContext.save.info.equips.buttonItems[2],
-           gSaveContext.save.info.equips.buttonItems[3]);
+            gSaveContext.save.info.equips.buttonItems[1], gSaveContext.save.info.equips.buttonItems[2],
+            gSaveContext.save.info.equips.buttonItems[3]);
 
     if (gSaveContext.save.info.equips.buttonItems[0] < 0xF0) {
         DMA_REQUEST_SYNC(interfaceCtx->iconItemSegment + (0 * ITEM_ICON_SIZE),
