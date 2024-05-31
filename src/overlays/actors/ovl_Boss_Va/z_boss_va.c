@@ -3155,7 +3155,7 @@ void BossVa_BariPostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s*
 }
 
 void BossVa_Draw(Actor* thisx, PlayState* play) {
-    s16* paramsPtr; // This stack slot is almost certainly actually play2, but can't make it match
+    s64* paramsPtr; // This stack slot is almost certainly actually play2, but can't make it match
     BossVa* this = (BossVa*)thisx;
     Vec3f spBC;
     Vec3f spB0 = { 0.0f, 45.0f, 0.0f };

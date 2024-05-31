@@ -258,7 +258,7 @@ typedef struct Actor {
     /* 0x003 */ s8 room; // Room number the actor is in. -1 denotes that the actor won't despawn on a room change
     /* 0x004 */ u32 flags; // Flags used for various purposes
     /* 0x008 */ PosRot home; // Initial position/rotation when spawned. Can be used for other purposes
-    /* 0x01C */ s16 params; // Configurable variable set by the actor's spawn data; original name: "args_data"
+    /* 0x01C */ s64 params; // Configurable variable set by the actor's spawn data; original name: "args_data"
     /* 0x01E */ s8 objectSlot; // Object slot (in ObjectContext) corresponding to the actor's object; original name: "bank"
     /* 0x01F */ s8 targetMode; // Controls how far the actor can be targeted from and how far it can stay locked on
     /* 0x020 */ u16 sfx; // SFX ID to play. Sfx plays when value is set, then is cleared the following update cycle
