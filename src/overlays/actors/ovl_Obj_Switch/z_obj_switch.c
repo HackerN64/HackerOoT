@@ -202,7 +202,7 @@ void ObjSwitch_InitDynaPoly(ObjSwitch* this, PlayState* play, CollisionHeader* c
         s32 pad2;
 
         // "Warning : move BG registration failure"
-        PRINTF("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_obj_switch.c", 531,
+        PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_obj_switch.c", 531,
                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
@@ -324,9 +324,9 @@ void ObjSwitch_Init(Actor* thisx, PlayState* play) {
     this->dyna.actor.colChkInfo.mass = MASS_IMMOVABLE;
 
     if (OBJSWITCH_FROZEN(&this->dyna.actor) && (ObjSwitch_SpawnIce(this, play) == NULL)) {
-        PRINTF(VT_FGCOL(RED));
-        PRINTF("Error : 氷発生失敗 (%s %d)\n", "../z_obj_switch.c", 732);
-        PRINTF(VT_RST);
+        PRINTF2(VT_FGCOL(RED));
+        PRINTF2("Error : 氷発生失敗 (%s %d)\n", "../z_obj_switch.c", 732);
+        PRINTF2(VT_RST);
         this->dyna.actor.params &= ~OBJSWITCH_FROZEN_FLAG;
     }
 
@@ -354,7 +354,7 @@ void ObjSwitch_Init(Actor* thisx, PlayState* play) {
         }
     }
 
-    PRINTF("(Dungeon switch)(arg_data 0x%04x)\n", this->dyna.actor.params);
+    PRINTF2("(Dungeon switch)(arg_data 0x%04x)\n", this->dyna.actor.params);
 }
 
 void ObjSwitch_Destroy(Actor* thisx, PlayState* play) {

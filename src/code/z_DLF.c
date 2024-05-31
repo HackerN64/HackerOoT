@@ -3,7 +3,7 @@
 
 void Overlay_LoadGameState(GameStateOverlay* overlayEntry) {
     if (overlayEntry->loadedRamAddr != NULL) {
-        PRINTF("既にリンクされています\n"); // "Already linked"
+        PRINTF2("既にリンクされています\n"); // "Already linked"
         return;
     }
 
@@ -14,16 +14,16 @@ void Overlay_LoadGameState(GameStateOverlay* overlayEntry) {
                                                               overlayEntry->vramStart, overlayEntry->vramEnd);
 
         if (overlayEntry->loadedRamAddr == NULL) {
-            PRINTF("ロードに失敗しました\n"); // "Loading failed"
+            PRINTF2("ロードに失敗しました\n"); // "Loading failed"
             return;
         }
 
-        PRINTF(VT_FGCOL(GREEN));
-        PRINTF("OVL(d):Seg:%08x-%08x Ram:%08x-%08x Off:%08x %s\n", overlayEntry->vramStart, overlayEntry->vramEnd,
+        PRINTF2(VT_FGCOL(GREEN));
+        PRINTF2("OVL(d):Seg:%08x-%08x Ram:%08x-%08x Off:%08x %s\n", overlayEntry->vramStart, overlayEntry->vramEnd,
                overlayEntry->loadedRamAddr,
                (u32)overlayEntry->loadedRamAddr + (u32)overlayEntry->vramEnd - (u32)overlayEntry->vramStart,
                (u32)overlayEntry->vramStart - (u32)overlayEntry->loadedRamAddr, "");
-        PRINTF(VT_RST);
+        PRINTF2(VT_RST);
 
         if (overlayEntry->unk_14 != NULL) {
             overlayEntry->unk_14 = (void*)((u32)overlayEntry->unk_14 -

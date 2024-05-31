@@ -158,7 +158,7 @@ void DemoEc_Init(Actor* thisx, PlayState* play) {
     DemoEc* this = (DemoEc*)thisx;
 
     if ((this->actor.params < 0) || (this->actor.params > 34)) {
-        PRINTF(VT_FGCOL(RED) "Demo_Ec_Actor_ct:arg_dataがおかしい!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "Demo_Ec_Actor_ct:arg_dataがおかしい!!!!!!!!!!!!\n" VT_RST);
         Actor_Kill(&this->actor);
     } else {
         this->updateMode = EC_UPDATE_COMMON;
@@ -691,7 +691,7 @@ Gfx* DemoEc_GetCarpenterPostLimbDList(DemoEc* this) {
         case 13:
             return object_daiku_DL_005880;
         default:
-            PRINTF(VT_FGCOL(RED) "かつらが無い!!!!!!!!!!!!!!!!\n" VT_RST);
+            PRINTF2(VT_FGCOL(RED) "かつらが無い!!!!!!!!!!!!!!!!\n" VT_RST);
             return NULL;
     }
 }
@@ -737,7 +737,7 @@ Gfx* DemoEc_GetGerudoPostLimbDList(DemoEc* this) {
         case 18:
             return gGerudoWhiteHairstyleSpikyDL;
         default:
-            PRINTF(VT_FGCOL(RED) "かつらが無い!!!!!!!!!!!!!!!!\n" VT_RST);
+            PRINTF2(VT_FGCOL(RED) "かつらが無い!!!!!!!!!!!!!!!!\n" VT_RST);
             return NULL;
     }
 }
@@ -1249,7 +1249,7 @@ void DemoEc_InitNpc(DemoEc* this, PlayState* play) {
 
     if (sInitFuncs[type] == NULL) {
         // "Demo_Ec_main_init: Initialization process is wrong arg_data"
-        PRINTF(VT_FGCOL(RED) " Demo_Ec_main_init:初期化処理がおかしいarg_data = %d!\n" VT_RST, type);
+        PRINTF2(VT_FGCOL(RED) " Demo_Ec_main_init:初期化処理がおかしいarg_data = %d!\n" VT_RST, type);
         Actor_Kill(&this->actor);
         return;
     }
@@ -1274,7 +1274,7 @@ void DemoEc_InitCommon(DemoEc* this, PlayState* play) {
 
     if ((secondaryObjectSlot < 0) || (primaryObjectSlot < 0)) {
         // "Demo_Ec_main_bank: Bank unreadable arg_data = %d!"
-        PRINTF(VT_FGCOL(RED) "Demo_Ec_main_bank:バンクを読めない arg_data = %d!\n" VT_RST, type);
+        PRINTF2(VT_FGCOL(RED) "Demo_Ec_main_bank:バンクを読めない arg_data = %d!\n" VT_RST, type);
         Actor_Kill(&this->actor);
         return;
     }
@@ -1327,7 +1327,7 @@ void DemoEc_Update(Actor* thisx, PlayState* play) {
 
     if ((updateMode < 0) || (updateMode >= ARRAY_COUNT(sUpdateFuncs)) || sUpdateFuncs[updateMode] == NULL) {
         // "The main mode is strange !!!!!!!!!!!!!!!!!!!!!!!!!"
-        PRINTF(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
     } else {
         if (updateMode != EC_UPDATE_COMMON) {
             DemoEc_UseAnimationObject(this, play);
@@ -1360,7 +1360,7 @@ void DemoEc_Draw(Actor* thisx, PlayState* play) {
 
     if ((drawConfig < 0) || (drawConfig >= ARRAY_COUNT(sDrawFuncs)) || sDrawFuncs[drawConfig] == NULL) {
         // "The main mode is strange !!!!!!!!!!!!!!!!!!!!!!!!!"
-        PRINTF(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
     } else {
         if (drawConfig != EC_DRAW_COMMON) {
             DemoEc_UseDrawObject(this, play);

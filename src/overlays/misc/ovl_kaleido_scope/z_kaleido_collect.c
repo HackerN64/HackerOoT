@@ -148,18 +148,18 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                     if (CHECK_QUEST_ITEM(pauseCtx->cursorPoint[PAUSE_QUEST])) {
                         if (pauseCtx->cursorPoint[PAUSE_QUEST] < 6) {
                             cursorItem = ITEM_MEDALLION_FOREST + pauseCtx->cursorPoint[PAUSE_QUEST];
-                            PRINTF("000 ccc=%d\n", cursorItem);
+                            PRINTF2("000 ccc=%d\n", cursorItem);
                         } else if (pauseCtx->cursorPoint[PAUSE_QUEST] < 0x12) {
                             cursorItem = ITEM_SCALE_GOLDEN + pauseCtx->cursorPoint[PAUSE_QUEST];
-                            PRINTF("111 ccc=%d\n", cursorItem);
+                            PRINTF2("111 ccc=%d\n", cursorItem);
                         } else {
                             cursorItem = ITEM_SONG_MINUET + pauseCtx->cursorPoint[PAUSE_QUEST];
-                            PRINTF("222 ccc=%d (%d, %d, %d)\n", cursorItem, pauseCtx->cursorPoint[PAUSE_QUEST], 0x12,
+                            PRINTF2("222 ccc=%d (%d, %d, %d)\n", cursorItem, pauseCtx->cursorPoint[PAUSE_QUEST], 0x12,
                                    0x6C);
                         }
                     } else {
                         cursorItem = PAUSE_ITEM_NONE;
-                        PRINTF("999 ccc=%d (%d,  %d)\n", PAUSE_ITEM_NONE, pauseCtx->cursorPoint[PAUSE_QUEST], 0x18);
+                        PRINTF2("999 ccc=%d (%d,  %d)\n", PAUSE_ITEM_NONE, pauseCtx->cursorPoint[PAUSE_QUEST], 0x18);
                     }
                 } else {
                     if ((gSaveContext.save.info.inventory.questItems & 0xF0000000) != 0) {
@@ -167,7 +167,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                     } else {
                         cursorItem = PAUSE_ITEM_NONE;
                     }
-                    PRINTF("888 ccc=%d (%d,  %d,  %x)\n", cursorItem, pauseCtx->cursorPoint[PAUSE_QUEST],
+                    PRINTF2("888 ccc=%d (%d,  %d,  %x)\n", cursorItem, pauseCtx->cursorPoint[PAUSE_QUEST],
                            ITEM_HEART_CONTAINER, gSaveContext.save.info.inventory.questItems & 0xF0000000);
                 }
 

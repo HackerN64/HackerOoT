@@ -83,11 +83,11 @@ void ActorOverlayTable_LogPrint(void) {
     ActorOverlay* overlayEntry;
     u32 i;
 
-    PRINTF("actor_dlftbls %u\n", gMaxActorId);
-    PRINTF("RomStart RomEnd   SegStart SegEnd   allocp   profile  segname\n");
+    PRINTF2("actor_dlftbls %u\n", gMaxActorId);
+    PRINTF2("RomStart RomEnd   SegStart SegEnd   allocp   profile  segname\n");
 
     for (i = 0, overlayEntry = &gActorOverlayTable[0]; i < (u32)gMaxActorId; i++, overlayEntry++) {
-        PRINTF("%08x %08x %08x %08x %08x %08x %s\n", overlayEntry->file.vromStart, overlayEntry->file.vromEnd,
+        PRINTF2("%08x %08x %08x %08x %08x %08x %s\n", overlayEntry->file.vromStart, overlayEntry->file.vromEnd,
                overlayEntry->vramStart, overlayEntry->vramEnd, overlayEntry->loadedRamAddr, &overlayEntry->initInfo->id,
                overlayEntry->name != NULL ? overlayEntry->name : "?");
     }

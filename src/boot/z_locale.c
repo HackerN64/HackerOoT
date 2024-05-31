@@ -20,7 +20,7 @@ void Locale_Init(void) {
                 sCartInfo.countryCode = 'P';
                 break;
             default:
-                PRINTF("z_locale_init: Bad TV Type? (%u)\n", osTvType);
+                PRINTF2("z_locale_init: Bad TV Type? (%u)\n", osTvType);
                 LogUtils_HungupThread("../z_locale.c", 118);
                 break;
         }
@@ -37,14 +37,14 @@ void Locale_Init(void) {
             gCurrentRegion = REGION_EU;
             break;
         default:
-            PRINTF(VT_COL(RED, WHITE));
-            PRINTF("z_locale_init: 日本用かアメリカ用か判別できません\n");
+            PRINTF2(VT_COL(RED, WHITE));
+            PRINTF2("z_locale_init: 日本用かアメリカ用か判別できません\n");
             LogUtils_HungupThread("../z_locale.c", 118);
-            PRINTF(VT_RST);
+            PRINTF2(VT_RST);
             break;
     }
 
-    PRINTF("z_locale_init:日本用かアメリカ用か３コンで判断させる\n");
+    PRINTF2("z_locale_init:日本用かアメリカ用か３コンで判断させる\n");
 }
 
 void Locale_ResetRegion(void) {

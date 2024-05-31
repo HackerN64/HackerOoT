@@ -72,7 +72,7 @@ s32 ObjMure_SetCullingImpl(Actor* thisx, PlayState* play) {
             break;
         default:
             // "Error : Culling is not set.(%s %d)(arg_data 0x%04x)"
-            PRINTF("Error : カリングの設定がされていません。(%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 204,
+            PRINTF2("Error : カリングの設定がされていません。(%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 204,
                    this->actor.params);
             return false;
     }
@@ -95,11 +95,11 @@ void ObjMure_Init(Actor* thisx, PlayState* play) {
     this->type = thisx->params & 0x1F;
 
     if (this->ptn >= 4) {
-        PRINTF("Error 群れな敵 (%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 237, thisx->params);
+        PRINTF2("Error 群れな敵 (%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 237, thisx->params);
         Actor_Kill(&this->actor);
         return;
     } else if (this->type >= 5) {
-        PRINTF("Error 群れな敵 (%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 245, thisx->params);
+        PRINTF2("Error 群れな敵 (%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 245, thisx->params);
         Actor_Kill(&this->actor);
         return;
     } else if (!ObjMure_SetCulling(thisx, play)) {
@@ -107,12 +107,12 @@ void ObjMure_Init(Actor* thisx, PlayState* play) {
         return;
     }
     this->actionFunc = ObjMure_InitialAction;
-    PRINTF("群れな敵 (arg_data 0x%04x)(chNum(%d) ptn(%d) svNum(%d) type(%d))\n", thisx->params, this->chNum, this->ptn,
+    PRINTF2("群れな敵 (arg_data 0x%04x)(chNum(%d) ptn(%d) svNum(%d) type(%d))\n", thisx->params, this->chNum, this->ptn,
            this->svNum, this->type);
 
 #if IS_DEBUG
     if (ObjMure_GetMaxChildSpawns(this) <= 0) {
-        PRINTF("Warning : 個体数が設定されていません(%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 268, thisx->params);
+        PRINTF2("Warning : 個体数が設定されていません(%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 268, thisx->params);
     }
 #endif
 }
@@ -130,7 +130,7 @@ s32 ObjMure_GetMaxChildSpawns(ObjMure* this) {
 void ObjMure_GetSpawnPos(Vec3f* outPos, Vec3f* inPos, s32 ptn, s32 idx) {
 #if IS_DEBUG
     if (ptn >= 4) {
-        PRINTF("おかしなの (%s %d)\n", "../z_obj_mure.c", 307);
+        PRINTF2("おかしなの (%s %d)\n", "../z_obj_mure.c", 307);
     }
 #endif
 
@@ -148,7 +148,7 @@ void ObjMure_SpawnActors0(ObjMure* this, PlayState* play) {
 #if IS_DEBUG
         if (this->children[i] != NULL) {
             // "Error: I already have a child(%s %d)(arg_data 0x%04x)"
-            PRINTF("Error : 既に子供がいる(%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 333, actor->params);
+            PRINTF2("Error : 既に子供がいる(%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 333, actor->params);
         }
 #endif
 
@@ -164,7 +164,7 @@ void ObjMure_SpawnActors0(ObjMure* this, PlayState* play) {
                     this->children[i]->flags |= ACTOR_FLAG_ENKUSA_CUT;
                     this->children[i]->room = actor->room;
                 } else {
-                    PRINTF("warning 発生失敗 (%s %d)\n", "../z_obj_mure.c", 359);
+                    PRINTF2("warning 発生失敗 (%s %d)\n", "../z_obj_mure.c", 359);
                 }
                 break;
             default:
@@ -175,7 +175,7 @@ void ObjMure_SpawnActors0(ObjMure* this, PlayState* play) {
                 if (this->children[i] != NULL) {
                     this->children[i]->room = actor->room;
                 } else {
-                    PRINTF("warning 発生失敗 (%s %d)\n", "../z_obj_mure.c", 382);
+                    PRINTF2("warning 発生失敗 (%s %d)\n", "../z_obj_mure.c", 382);
                 }
                 break;
         }
@@ -192,7 +192,7 @@ void ObjMure_SpawnActors1(ObjMure* this, PlayState* play2) {
     for (i = 0; i < maxChildren; i++) {
 #if IS_DEBUG
         if (this->children[i] != NULL) {
-            PRINTF("Error : 既に子供がいる(%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 407, actor->params);
+            PRINTF2("Error : 既に子供がいる(%s %d)(arg_data 0x%04x)\n", "../z_obj_mure.c", 407, actor->params);
         }
 #endif
 
@@ -205,7 +205,7 @@ void ObjMure_SpawnActors1(ObjMure* this, PlayState* play2) {
             this->children[i]->room = actor->room;
         } else {
             this->childrenStates[i] = OBJMURE_CHILD_STATE_1;
-            PRINTF("warning 発生失敗 (%s %d)\n", "../z_obj_mure.c", 438);
+            PRINTF2("warning 発生失敗 (%s %d)\n", "../z_obj_mure.c", 438);
         }
     }
 }

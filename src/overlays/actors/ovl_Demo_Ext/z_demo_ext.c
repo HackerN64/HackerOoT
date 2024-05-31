@@ -112,7 +112,7 @@ void DemoExt_HandleCues(DemoExt* this, PlayState* play) {
                     break;
                 default:
                     // "Demo_Ext_Check_DemoMode: there is no such action!"
-                    PRINTF("Demo_Ext_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF2("Demo_Ext_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
                     break;
             }
             this->cueId = nextCueId;
@@ -175,7 +175,7 @@ void DemoExt_Update(Actor* thisx, PlayState* play) {
 
     if ((this->action < EXT_WAIT) || (this->action > EXT_DISPELL) || sActionFuncs[this->action] == NULL) {
         // "Main mode is abnormal!"
-        PRINTF(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
     } else {
         sActionFuncs[this->action](this, play);
     }
@@ -230,7 +230,7 @@ void DemoExt_Draw(Actor* thisx, PlayState* play) {
     if ((this->drawMode < EXT_DRAW_NOTHING) || (this->drawMode > EXT_DRAW_VORTEX) ||
         sDrawFuncs[this->drawMode] == NULL) {
         // "Draw mode is abnormal!"
-        PRINTF(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
     } else {
         sDrawFuncs[this->drawMode](thisx, play);
     }

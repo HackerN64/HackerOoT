@@ -157,9 +157,9 @@ void EnSyatekiMan_Init(Actor* thisx, PlayState* play) {
     s32 pad;
     EnSyatekiMan* this = (EnSyatekiMan*)thisx;
 
-    PRINTF("\n\n");
+    PRINTF2("\n\n");
     // "Old man appeared!! Muhohohohohohohon"
-    PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 親父登場！！むほほほほほほほーん ☆☆☆☆☆ \n" VT_RST);
+    PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 親父登場！！むほほほほほほほーん ☆☆☆☆☆ \n" VT_RST);
     this->actor.targetMode = 1;
     Actor_SetScale(&this->actor, 0.01f);
     SkelAnime_InitFlex(play, &this->skelAnime, &gObjectOssanSkel, &gObjectOssanAnim_000338, this->jointTable,
@@ -342,7 +342,7 @@ void EnSyatekiMan_EndGame(EnSyatekiMan* this, PlayState* play) {
                     this->actor.parent = NULL;
                     if (!LINK_IS_ADULT) {
                         if (!GET_ITEMGETINF(ITEMGETINF_0D)) {
-                            PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ Equip_Pachinko ☆☆☆☆☆ %d\n" VT_RST,
+                            PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ Equip_Pachinko ☆☆☆☆☆ %d\n" VT_RST,
                                    CUR_UPG_VALUE(UPG_BULLET_BAG));
                             if (CUR_UPG_VALUE(UPG_BULLET_BAG) == 1) {
                                 this->getItemId = GI_BULLET_BAG_40;
@@ -354,7 +354,7 @@ void EnSyatekiMan_EndGame(EnSyatekiMan* this, PlayState* play) {
                         }
                     } else {
                         if (!GET_ITEMGETINF(ITEMGETINF_0E)) {
-                            PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ Equip_Bow ☆☆☆☆☆ %d\n" VT_RST, CUR_UPG_VALUE(UPG_QUIVER));
+                            PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ Equip_Bow ☆☆☆☆☆ %d\n" VT_RST, CUR_UPG_VALUE(UPG_QUIVER));
                             switch (CUR_UPG_VALUE(UPG_QUIVER)) {
                                 case 0:
                                     this->getItemId = GI_RUPEE_PURPLE;
@@ -407,7 +407,7 @@ void EnSyatekiMan_FinishPrize(EnSyatekiMan* this, PlayState* play) {
     SkelAnime_Update(&this->skelAnime);
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_DONE) && Message_ShouldAdvance(play)) {
         // "Successful completion"
-        PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 正常終了 ☆☆☆☆☆ \n" VT_RST);
+        PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 正常終了 ☆☆☆☆☆ \n" VT_RST);
         if (!LINK_IS_ADULT) {
             SET_ITEMGETINF(ITEMGETINF_0D);
         } else if ((this->getItemId == GI_QUIVER_40) || (this->getItemId == GI_QUIVER_50)) {
@@ -430,7 +430,7 @@ void EnSyatekiMan_RestartGame(EnSyatekiMan* this, PlayState* play) {
             this->gameResult = SYATEKI_RESULT_NONE;
             this->actionFunc = EnSyatekiMan_WaitForGame;
             // "Let's try again! Baby!"
-            PRINTF(VT_FGCOL(BLUE) "再挑戦だぜ！ベイビー！" VT_RST "\n", this);
+            PRINTF2(VT_FGCOL(BLUE) "再挑戦だぜ！ベイビー！" VT_RST "\n", this);
         }
     }
 }

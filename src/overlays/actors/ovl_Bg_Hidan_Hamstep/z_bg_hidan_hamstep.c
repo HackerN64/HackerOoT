@@ -180,13 +180,13 @@ void BgHidanHamstep_Init(Actor* thisx, PlayState* play) {
 
     if ((this->dyna.actor.params & 0xFF) == 0) {
         // "Fire Temple Object [Hammer Step] appears"
-        PRINTF("◯◯◯炎の神殿オブジェクト【ハンマーステップ】出現\n");
+        PRINTF2("◯◯◯炎の神殿オブジェクト【ハンマーステップ】出現\n");
         if (BgHidanHamstep_SpawnChildren(this, play) == 0) {
             step = this;
 
             // "[Hammer Step] I can't create a step!"
-            PRINTF("【ハンマーステップ】 足場産れない！！\n");
-            PRINTF("%s %d\n", "../z_bg_hidan_hamstep.c", 425);
+            PRINTF2("【ハンマーステップ】 足場産れない！！\n");
+            PRINTF2("%s %d\n", "../z_bg_hidan_hamstep.c", 425);
 
             while (step != NULL) {
                 Actor_Kill(&step->dyna.actor);
@@ -316,7 +316,7 @@ void func_80888860(BgHidanHamstep* this, PlayState* play) {
                 Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
                 Rumble_Request(this->dyna.actor.xyzDistToPlayerSq, 255, 20, 150);
                 func_80888638(this, play);
-                PRINTF("A(%d)\n", this->dyna.actor.params);
+                PRINTF2("A(%d)\n", this->dyna.actor.params);
             }
         }
     }
@@ -350,8 +350,8 @@ void func_80888A58(BgHidanHamstep* this, PlayState* play) {
 #if IS_DEBUG
     if (((this->dyna.actor.params & 0xFF) <= 0) || ((this->dyna.actor.params & 0xFF) >= 6)) {
         // "[Hammer Step] arg_data strange (arg_data = %d)"
-        PRINTF("【ハンマーステップ】 arg_data おかしい (arg_data = %d)", this->dyna.actor.params);
-        PRINTF("%s %d\n", "../z_bg_hidan_hamstep.c", 696);
+        PRINTF2("【ハンマーステップ】 arg_data おかしい (arg_data = %d)", this->dyna.actor.params);
+        PRINTF2("%s %d\n", "../z_bg_hidan_hamstep.c", 696);
     }
 #endif
 
@@ -383,7 +383,7 @@ void func_80888A58(BgHidanHamstep* this, PlayState* play) {
                     Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
                 }
 
-                PRINTF("B(%d)\n", this->dyna.actor.params);
+                PRINTF2("B(%d)\n", this->dyna.actor.params);
             }
         }
     }

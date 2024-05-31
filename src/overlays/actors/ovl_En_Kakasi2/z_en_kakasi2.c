@@ -59,9 +59,9 @@ void EnKakasi2_Init(Actor* thisx, PlayState* play) {
     f32 spawnRangeY;
     f32 spawnRangeXZ;
 
-    PRINTF("\n\n");
+    PRINTF2("\n\n");
     // "Visit Umeda"
-    PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 梅田参号見参！ ☆☆☆☆☆ \n" VT_RST);
+    PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 梅田参号見参！ ☆☆☆☆☆ \n" VT_RST);
 
     this->switchFlag = this->actor.params & 0x3F;
     spawnRangeY = (this->actor.params >> 6) & 0xFF;
@@ -74,17 +74,17 @@ void EnKakasi2_Init(Actor* thisx, PlayState* play) {
     this->maxSpawnDistance.y = (spawnRangeXZ * 40.0f) + 40.0f;
 
     // "Former? (Argument 0)"
-    PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ 元？(引数０) ☆☆☆☆ %f\n" VT_RST, spawnRangeY);
+    PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ 元？(引数０) ☆☆☆☆ %f\n" VT_RST, spawnRangeY);
     // "Former? (Z angle)"
-    PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ 元？(Ｚアングル) ☆☆ %f\n" VT_RST, spawnRangeXZ);
+    PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ 元？(Ｚアングル) ☆☆ %f\n" VT_RST, spawnRangeXZ);
     // "Correction coordinates X"
-    PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ 補正座標Ｘ ☆☆☆☆☆ %f\n" VT_RST, this->maxSpawnDistance.x);
+    PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ 補正座標Ｘ ☆☆☆☆☆ %f\n" VT_RST, this->maxSpawnDistance.x);
     // "Correction coordinates Y"
-    PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ 補正座標Ｙ ☆☆☆☆☆ %f\n" VT_RST, this->maxSpawnDistance.y);
+    PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ 補正座標Ｙ ☆☆☆☆☆ %f\n" VT_RST, this->maxSpawnDistance.y);
     // "Correction coordinates Z"
-    PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ 補正座標Ｚ ☆☆☆☆☆ %f\n" VT_RST, this->maxSpawnDistance.z);
-    PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ SAVE       ☆☆☆☆☆ %d\n" VT_RST, this->switchFlag);
-    PRINTF("\n\n");
+    PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ 補正座標Ｚ ☆☆☆☆☆ %f\n" VT_RST, this->maxSpawnDistance.z);
+    PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ SAVE       ☆☆☆☆☆ %d\n" VT_RST, this->switchFlag);
+    PRINTF2("\n\n");
 
     this->actor.colChkInfo.mass = MASS_IMMOVABLE;
     this->height = 60.0f;
@@ -134,7 +134,7 @@ void func_80A90264(EnKakasi2* this, PlayState* play) {
             Flags_SetSwitch(play, this->switchFlag);
         }
 
-        PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ SAVE 終了 ☆☆☆☆☆ %d\n" VT_RST, this->switchFlag);
+        PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ SAVE 終了 ☆☆☆☆☆ %d\n" VT_RST, this->switchFlag);
         this->actionFunc = func_80A904D8;
     } else if ((this->actor.xzDistToPlayer < this->maxSpawnDistance.x) &&
                (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < this->maxSpawnDistance.y) &&
@@ -147,7 +147,7 @@ void func_80A90264(EnKakasi2* this, PlayState* play) {
             if (this->switchFlag >= 0) {
                 Flags_SetSwitch(play, this->switchFlag);
             }
-            PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ SAVE 終了 ☆☆☆☆☆ %d\n" VT_RST, this->switchFlag);
+            PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ SAVE 終了 ☆☆☆☆☆ %d\n" VT_RST, this->switchFlag);
             play->msgCtx.ocarinaMode = OCARINA_MODE_04;
             this->actor.draw = func_80A90948;
             Collider_InitCylinder(play, &this->collider);
@@ -221,9 +221,9 @@ void EnKakasi2_Update(Actor* thisx, PlayState* play2) {
 
     if (IS_ACTOR_DEBUG_ENABLED && BREG(0) != 0) {
         if (BREG(5) != 0) {
-            PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ this->actor.player_distance ☆☆☆☆☆ %f\n" VT_RST, this->actor.xzDistToPlayer);
-            PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ this->hosei.x ☆☆☆☆☆ %f\n" VT_RST, this->maxSpawnDistance.x);
-            PRINTF("\n\n");
+            PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ this->actor.player_distance ☆☆☆☆☆ %f\n" VT_RST, this->actor.xzDistToPlayer);
+            PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ this->hosei.x ☆☆☆☆☆ %f\n" VT_RST, this->maxSpawnDistance.x);
+            PRINTF2("\n\n");
         }
         if (this->actor.draw == NULL) {
             if (this->unk_194 != 0) {

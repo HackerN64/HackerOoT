@@ -55,23 +55,23 @@ void BgMoriRakkatenjo_Init(Actor* thisx, PlayState* play) {
 
 #if IS_DEBUG
     // "Forest Temple obj. Falling Ceiling"
-    PRINTF("森の神殿 obj. 落下天井 (home posY %f)\n", this->dyna.actor.home.pos.y);
+    PRINTF2("森の神殿 obj. 落下天井 (home posY %f)\n", this->dyna.actor.home.pos.y);
     if ((fabsf(1991.0f - this->dyna.actor.home.pos.x) > 0.001f) ||
         (fabsf(683.0f - this->dyna.actor.home.pos.y) > 0.001f) ||
         (fabsf(-2520.0f - this->dyna.actor.home.pos.z) > 0.001f)) {
         // "The set position has been changed. Let's fix the program."
-        PRINTF("Warning : セット位置が変更されています。プログラムを修正しましょう。\n");
+        PRINTF2("Warning : セット位置が変更されています。プログラムを修正しましょう。\n");
     }
     if (this->dyna.actor.home.rot.y != 0x8000) {
         // "The set Angle has changed. Let's fix the program."
-        PRINTF("Warning : セット Angle が変更されています。プログラムを修正しましょう。\n");
+        PRINTF2("Warning : セット Angle が変更されています。プログラムを修正しましょう。\n");
     }
 #endif
 
     this->moriTexObjectSlot = Object_GetSlot(&play->objectCtx, OBJECT_MORI_TEX);
     if (this->moriTexObjectSlot < 0) {
         // "Forest Temple obj Falling Ceiling Bank Danger!"
-        PRINTF("Error : 森の神殿 obj 落下天井 バンク危険！(%s %d)\n", "../z_bg_mori_rakkatenjo.c", 205);
+        PRINTF2("Error : 森の神殿 obj 落下天井 バンク危険！(%s %d)\n", "../z_bg_mori_rakkatenjo.c", 205);
         Actor_Kill(&this->dyna.actor);
         return;
     }
@@ -211,13 +211,13 @@ void BgMoriRakkatenjo_Update(Actor* thisx, PlayState* play2) {
     this->actionFunc(this, play);
     if (BgMoriRakkatenjo_IsLinkUnder(this, play)) {
         if (sCamSetting == CAM_SET_NONE) {
-            PRINTF("camera changed (mori rakka tenjyo) ... \n");
+            PRINTF2("camera changed (mori rakka tenjyo) ... \n");
             sCamSetting = play->cameraPtrs[CAM_ID_MAIN]->setting;
             Camera_SetCameraData(play->cameraPtrs[CAM_ID_MAIN], 1, &this->dyna.actor, NULL, 0, 0, 0);
             Camera_RequestSetting(play->cameraPtrs[CAM_ID_MAIN], CAM_SET_FOREST_BIRDS_EYE);
         }
     } else if (sCamSetting != CAM_SET_NONE) {
-        PRINTF("camera changed (previous) ... \n");
+        PRINTF2("camera changed (previous) ... \n");
         Camera_RequestSetting(play->cameraPtrs[CAM_ID_MAIN], CAM_SET_DUNGEON1);
         sCamSetting = CAM_SET_NONE;
     }

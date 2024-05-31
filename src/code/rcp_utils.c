@@ -2,17 +2,17 @@
 
 #define printSpStatus(x, name) \
     if (x & SP_STATUS_##name)  \
-    PRINTF(#name " ")
+    PRINTF2(#name " ")
 
 #define printDpStatus(x, name) \
     if (x & DPC_STATUS_##name) \
-    PRINTF(#name " ")
+    PRINTF2(#name " ")
 
 void RcpUtils_PrintRegisterStatus(void) {
     u32 spStatus = __osSpGetStatus();
     u32 dpStatus = osDpGetStatus();
 
-    PRINTF("osSpGetStatus=%08x: ", spStatus);
+    PRINTF2("osSpGetStatus=%08x: ", spStatus);
     printSpStatus(spStatus, HALT);
     printSpStatus(spStatus, BROKE);
     printSpStatus(spStatus, DMA_BUSY);
@@ -28,9 +28,9 @@ void RcpUtils_PrintRegisterStatus(void) {
     printSpStatus(spStatus, SIG5);
     printSpStatus(spStatus, SIG6);
     printSpStatus(spStatus, SIG7);
-    PRINTF("\n");
+    PRINTF2("\n");
 
-    PRINTF("osDpGetStatus=%08x:", dpStatus);
+    PRINTF2("osDpGetStatus=%08x:", dpStatus);
     printDpStatus(dpStatus, XBUS_DMEM_DMA);
     printDpStatus(dpStatus, FREEZE);
     printDpStatus(dpStatus, FLUSH);
@@ -42,7 +42,7 @@ void RcpUtils_PrintRegisterStatus(void) {
     printDpStatus(dpStatus, DMA_BUSY);
     printDpStatus(dpStatus, END_VALID);
     printDpStatus(dpStatus, START_VALID);
-    PRINTF("\n");
+    PRINTF2("\n");
 }
 
 void RcpUtils_Reset(void) {

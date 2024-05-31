@@ -13,13 +13,13 @@ void DebugArena_CheckPointer(void* ptr, u32 size, const char* name, const char* 
     if (ptr == NULL) {
         if (gDebugArenaLogSeverity >= LOG_SEVERITY_ERROR) {
             // "%s: %u bytes %s failed\n"
-            PRINTF("%s: %u バイトの%sに失敗しました\n", name, size, action);
+            PRINTF2("%s: %u バイトの%sに失敗しました\n", name, size, action);
             __osDisplayArena(&sDebugArena);
             return;
         }
     } else if (gDebugArenaLogSeverity >= LOG_SEVERITY_VERBOSE) {
         // "%s: %u bytes %s succeeded\n"
-        PRINTF("%s: %u バイトの%sに成功しました\n", name, size, action);
+        PRINTF2("%s: %u バイトの%sに成功しました\n", name, size, action);
     }
 }
 
@@ -100,7 +100,7 @@ void* DebugArena_Calloc(u32 num, u32 size) {
 void DebugArena_Display(void) {
     if (IS_DEBUG_HEAP_ENABLED) {
         // "Zelda heap display" ("Zelda" should probably have been changed to "Debug")
-        PRINTF("ゼルダヒープ表示\n");
+        PRINTF2("ゼルダヒープ表示\n");
         __osDisplayArena(&sDebugArena);
     }
 }

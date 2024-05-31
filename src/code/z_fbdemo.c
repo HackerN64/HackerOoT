@@ -131,8 +131,8 @@ void TransitionTile_InitVtxData(TransitionTile* this) {
 }
 
 void TransitionTile_Destroy(TransitionTile* this) {
-    PRINTF("fbdemo_cleanup(%08x)\n", this);
-    PRINTF("msleep(100);\n");
+    PRINTF2("fbdemo_cleanup(%08x)\n", this);
+    PRINTF2("msleep(100);\n");
     Sleep_Msec(100);
 
     if (this->vtxData != NULL) {
@@ -154,7 +154,7 @@ void TransitionTile_Destroy(TransitionTile* this) {
 }
 
 TransitionTile* TransitionTile_Init(TransitionTile* this, s32 cols, s32 rows) {
-    PRINTF("fbdemo_init(%08x, %d, %d)\n", this, cols, rows);
+    PRINTF2("fbdemo_init(%08x, %d, %d)\n", this, cols, rows);
     bzero(this, sizeof(TransitionTile));
     this->frame = 0;
     this->cols = cols;
@@ -165,7 +165,7 @@ TransitionTile* TransitionTile_Init(TransitionTile* this, s32 cols, s32 rows) {
     this->gfx = SYSTEM_ARENA_MALLOC((this->rows * (1 + this->cols * 9) + 2) * sizeof(Gfx), "../z_fbdemo.c", 198);
 
     if ((this->vtxData == NULL) || (this->vtxFrame1 == NULL) || (this->vtxFrame2 == NULL) || (this->gfx == NULL)) {
-        PRINTF("fbdemo_init allocation error\n");
+        PRINTF2("fbdemo_init allocation error\n");
         if (this->vtxData != NULL) {
             SYSTEM_ARENA_FREE(this->vtxData, "../z_fbdemo.c", 202);
             this->vtxData = NULL;

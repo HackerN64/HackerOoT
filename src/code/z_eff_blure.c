@@ -13,7 +13,7 @@ void EffectBlure_AddVertex(EffectBlure* this, Vec3f* p1, Vec3f* p2) {
         numElements = this->numElements;
         if (numElements >= 16) {
             // "Blure vertex addition processing: Table over %d"
-            PRINTF("ブラ─頂点追加処理:テーブルオーバー %d\n", numElements);
+            PRINTF2("ブラ─頂点追加処理:テーブルオーバー %d\n", numElements);
             return;
         }
 
@@ -82,7 +82,7 @@ void EffectBlure_AddSpace(EffectBlure* this) {
         numElements = this->numElements;
         if (numElements >= 16) {
             // "Blure space addition processing: Table over %d"
-            PRINTF("ブラ─空白追加処理:テーブルオーバー %d\n", numElements);
+            PRINTF2("ブラ─空白追加処理:テーブルオーバー %d\n", numElements);
             return;
         }
 
@@ -398,7 +398,7 @@ void EffectBlure_DrawElemNoInterpolation(EffectBlure* this, EffectBlureElement* 
     vtx = GRAPH_ALLOC(gfxCtx, sizeof(Vtx[4]));
     if (vtx == NULL) {
         // "Vertices cannot be secured."
-        PRINTF("z_eff_blure.c::SQ_NoInterpolate_disp() 頂点確保できず。\n");
+        PRINTF2("z_eff_blure.c::SQ_NoInterpolate_disp() 頂点確保できず。\n");
     } else {
         vtx[0].v = baseVtx;
         vtx[1].v = baseVtx;
@@ -559,7 +559,7 @@ void EffectBlure_DrawElemHermiteInterpolation(EffectBlure* this, EffectBlureElem
     vtx = GRAPH_ALLOC(gfxCtx, sizeof(Vtx[16]));
     if (vtx == NULL) {
         // "Vertices cannot be secured."
-        PRINTF("z_eff_blure.c::SQ_HermiteInterpolate_disp() 頂点確保できず。\n");
+        PRINTF2("z_eff_blure.c::SQ_HermiteInterpolate_disp() 頂点確保できず。\n");
     } else {
         Math_Vec3f_Diff(&sp1CC, &sp138, &sp158);
         Math_Vec3f_Scale(&sp158, 10.0f);
@@ -802,7 +802,7 @@ void EffectBlure_DrawSimpleVertices(GraphicsContext* gfxCtx, EffectBlure* this, 
                     mtx = SkinMatrix_MtxFToNewMtx(gfxCtx, &sp94);
                     if (mtx == NULL) {
                         // "Forced termination because a matrix cannot be taken"
-                        PRINTF("EffectBlureInfo2_disp_makeDisplayList()マトリックス取れないので,強制終了\n");
+                        PRINTF2("EffectBlureInfo2_disp_makeDisplayList()マトリックス取れないので,強制終了\n");
                         break;
                     }
 
@@ -854,7 +854,7 @@ void EffectBlure_DrawSimple(EffectBlure* this2, GraphicsContext* gfxCtx) {
         vtx = GRAPH_ALLOC(gfxCtx, vtxCount * sizeof(Vtx));
         if (vtx == NULL) {
             // "Vertices cannot be secured. Forced termination"
-            PRINTF("ブラ─表示:頂点確保できず。強制終了\n");
+            PRINTF2("ブラ─表示:頂点確保できず。強制終了\n");
             return;
         }
 
@@ -948,7 +948,7 @@ void EffectBlure_Draw(void* thisx, GraphicsContext* gfxCtx) {
             vtx = GRAPH_ALLOC(gfxCtx, sizeof(Vtx[32]));
             if (vtx == NULL) {
                 // "Blure display: Vertex table could not be secured"
-                PRINTF("ブラ─表示:頂点テーブル確保できず\n");
+                PRINTF2("ブラ─表示:頂点テーブル確保できず\n");
             } else {
                 j = 0;
                 for (i = 0; i < this->numElements; i++) {

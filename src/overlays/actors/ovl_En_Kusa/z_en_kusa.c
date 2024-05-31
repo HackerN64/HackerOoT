@@ -115,10 +115,10 @@ s32 EnKusa_SnapToFloor(EnKusa* this, PlayState* play, f32 yOffset) {
         Math_Vec3f_Copy(&this->actor.home.pos, &this->actor.world.pos);
         return true;
     } else {
-        PRINTF(VT_COL(YELLOW, BLACK));
+        PRINTF2(VT_COL(YELLOW, BLACK));
         // "Failure attaching to ground"
-        PRINTF("地面に付着失敗(%s %d)\n", "../z_en_kusa.c", 323);
-        PRINTF(VT_RST);
+        PRINTF2("地面に付着失敗(%s %d)\n", "../z_en_kusa.c", 323);
+        PRINTF2(VT_RST);
         return false;
     }
 }
@@ -257,7 +257,7 @@ void EnKusa_Init(Actor* thisx, PlayState* play) {
 
     if (this->requiredObjectSlot < 0) {
         // "Bank danger!"
-        PRINTF("Error : バンク危険！ (arg_data 0x%04x)(%s %d)\n", thisx->params, "../z_en_kusa.c", 561);
+        PRINTF2("Error : バンク危険！ (arg_data 0x%04x)(%s %d)\n", thisx->params, "../z_en_kusa.c", 561);
         Actor_Kill(&this->actor);
         return;
     }

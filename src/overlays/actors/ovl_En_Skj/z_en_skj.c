@@ -448,12 +448,12 @@ void EnSkj_Init(Actor* thisx, PlayState* play2) {
             {
                 Player* player = GET_PLAYER(play);
 
-                PRINTF("Player_X : %f\n", player->actor.world.pos.x);
-                PRINTF("Player_Z : %f\n", player->actor.world.pos.z);
-                PRINTF("World_X  : %f\n", this->actor.world.pos.x);
-                PRINTF("World_Z  : %f\n", this->actor.world.pos.z);
-                PRINTF("Center_X : %f\n", this->center.x);
-                PRINTF("Center_Z : %f\n\n", this->center.z);
+                PRINTF2("Player_X : %f\n", player->actor.world.pos.x);
+                PRINTF2("Player_Z : %f\n", player->actor.world.pos.z);
+                PRINTF2("World_X  : %f\n", this->actor.world.pos.x);
+                PRINTF2("World_Z  : %f\n", this->actor.world.pos.z);
+                PRINTF2("Center_X : %f\n", this->center.x);
+                PRINTF2("Center_Z : %f\n\n", this->center.z);
             }
 #endif
 

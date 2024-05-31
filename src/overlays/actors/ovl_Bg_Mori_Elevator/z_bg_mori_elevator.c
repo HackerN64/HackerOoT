@@ -93,7 +93,7 @@ void BgMoriElevator_Init(Actor* thisx, PlayState* play) {
     if (this->moriTexObjectSlot < 0) {
         Actor_Kill(thisx);
         // "Forest Temple obj elevator Bank Danger!"
-        PRINTF("Error : 森の神殿 obj elevator バンク危険！(%s %d)\n", "../z_bg_mori_elevator.c", 277);
+        PRINTF2("Error : 森の神殿 obj elevator バンク危険！(%s %d)\n", "../z_bg_mori_elevator.c", 277);
         return;
     }
 #endif
@@ -101,7 +101,7 @@ void BgMoriElevator_Init(Actor* thisx, PlayState* play) {
     switch (sIsSpawned) {
         case false:
             // "Forest Temple elevator CT"
-            PRINTF("森の神殿 elevator CT\n");
+            PRINTF2("森の神殿 elevator CT\n");
             sIsSpawned = true;
             this->dyna.actor.room = -1;
             Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
@@ -121,7 +121,7 @@ void BgMoriElevator_Destroy(Actor* thisx, PlayState* play) {
 
     if (this->unk_172 == 0) {
         // "Forest Temple elevator DT"
-        PRINTF("森の神殿 elevator DT\n");
+        PRINTF2("森の神殿 elevator DT\n");
         DynaPoly_DeleteBgActor(play, &play->colCtx.dyna, this->dyna.bgId);
         sIsSpawned = false;
     }
@@ -145,7 +145,7 @@ void BgMoriElevator_WaitAfterInit(BgMoriElevator* this, PlayState* play) {
                 BgMoriElevator_SetupSetPosition(this);
             } else {
                 // "Error: Forest Temple obj elevator Room setting is dangerous"
-                PRINTF("Error : 森の神殿 obj elevator 部屋設定が危険(%s %d)\n", "../z_bg_mori_elevator.c", 371);
+                PRINTF2("Error : 森の神殿 obj elevator 部屋設定が危険(%s %d)\n", "../z_bg_mori_elevator.c", 371);
             }
         } else {
             BgMoriElevator_SetupSetPosition(this);
@@ -206,7 +206,7 @@ void BgMoriElevator_SetPosition(BgMoriElevator* this, PlayState* play) {
             BgMoriElevator_StopMovement(this);
         } else {
             // "Error:Forest Temple obj elevator Room setting is dangerous(%s %d)"
-            PRINTF("Error : 森の神殿 obj elevator 部屋設定が危険(%s %d)\n", "../z_bg_mori_elevator.c", 479);
+            PRINTF2("Error : 森の神殿 obj elevator 部屋設定が危険(%s %d)\n", "../z_bg_mori_elevator.c", 479);
         }
     } else if ((play->roomCtx.curRoom.num == 2) && (this->dyna.actor.world.pos.y < -275.0f)) {
         this->targetY = 233.0f;

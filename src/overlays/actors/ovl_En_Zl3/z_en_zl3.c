@@ -804,7 +804,7 @@ void func_80B54F18(EnZl3* this, PlayState* play) {
 }
 
 void func_80B54FB4(EnZl3* this, PlayState* play) {
-    PRINTF("ゼルダ姫のEn_Zl3_Actor_inFinal_Init通すよ!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    PRINTF2("ゼルダ姫のEn_Zl3_Actor_inFinal_Init通すよ!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     func_80B54E14(this, &gZelda2Anime2Anim_008AD0, 0, 0.0f, 0);
     EnZl3_setEyeIndex(this, 4);
     EnZl3_setMouthIndex(this, 2);
@@ -814,7 +814,7 @@ void func_80B54FB4(EnZl3* this, PlayState* play) {
     this->actor.shape.rot.z = 0;
     this->unk_3C4 = this->actor.world.rot.z;
     this->actor.world.rot.z = this->actor.shape.rot.z;
-    PRINTF("ゼルダ姫のEn_Zl3_Actor_inFinal_Initは通った!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    PRINTF2("ゼルダ姫のEn_Zl3_Actor_inFinal_Initは通った!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 }
 
 void func_80B55054(EnZl3* this) {
@@ -959,7 +959,7 @@ void func_80B55444(EnZl3* this, PlayState* play) {
                     this->unk_328 = 1;
                     FALLTHROUGH;
                 default:
-                    PRINTF("En_Zl3_inFinal_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF2("En_Zl3_inFinal_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
                     break;
             }
             this->unk_2F0 = temp_v0;
@@ -1018,11 +1018,11 @@ void func_80B5572C(EnZl3* this, PlayState* play) {
 }
 
 void func_80B55780(EnZl3* this, PlayState* play) {
-    PRINTF("ゼルダ姫のEn_Zl3_Actor_inFinal2_Init通すよ!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    PRINTF2("ゼルダ姫のEn_Zl3_Actor_inFinal2_Init通すよ!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     func_80B54E14(this, &gZelda2Anime2Anim_005A0C, 0, 0.0f, 0);
     this->action = 7;
     this->drawConfig = 1;
-    PRINTF("ゼルダ姫のEn_Zl3_Actor_inFinal2_Initは通った!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    PRINTF2("ゼルダ姫のEn_Zl3_Actor_inFinal2_Initは通った!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     EnZl3_setMouthIndex(this, 1);
     this->actor.flags &= ~ACTOR_FLAG_0;
 }
@@ -1375,7 +1375,7 @@ void func_80B564A8(EnZl3* this, PlayState* play) {
                     Actor_Kill(&this->actor);
                     break;
                 default:
-                    PRINTF("En_Zl3_inFinal2_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF2("En_Zl3_inFinal2_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
             }
             this->unk_2F0 = temp_v0;
         }
@@ -1595,9 +1595,9 @@ void func_80B56F10(EnZl3* this, PlayState* play) {
         pathHead += waypoint;
         this->unk_30C = pathHead;
         this->unk_310 = pathHead->count;
-        PRINTF("En_Zl3_Get_path_info レールデータをゲットだぜ = %d!!!!!!!!!!!!!!\n", waypoint);
+        PRINTF2("En_Zl3_Get_path_info レールデータをゲットだぜ = %d!!!!!!!!!!!!!!\n", waypoint);
     } else {
-        PRINTF("En_Zl3_Get_path_info レールデータが無い!!!!!!!!!!!!!!!!!!!!\n");
+        PRINTF2("En_Zl3_Get_path_info レールデータが無い!!!!!!!!!!!!!!!!!!!!\n");
     }
 }
 
@@ -2646,7 +2646,7 @@ void func_80B59B6C(EnZl3* this, PlayState* play) {
             func_80B59828(this, play);
             break;
         default:
-            PRINTF(VT_FGCOL(RED) " En_Oa3 の arg_data がおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+            PRINTF2(VT_FGCOL(RED) " En_Oa3 の arg_data がおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
             Actor_Kill(&this->actor);
     }
 }
@@ -2659,7 +2659,7 @@ void func_80B59DB8(EnZl3* this, PlayState* play) {
 
 #if IS_DEBUG
     if (objectSlot < 0) {
-        PRINTF(VT_FGCOL(RED) "En_Zl3_main_bankアニメーションのバンクを読めない!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "En_Zl3_main_bankアニメーションのバンクを読めない!!!!!!!!!!!!\n" VT_RST);
         return;
     }
 #endif
@@ -2684,7 +2684,7 @@ void EnZl3_Update(Actor* thisx, PlayState* play) {
     EnZl3* this = (EnZl3*)thisx;
 
     if (this->action < 0 || this->action >= ARRAY_COUNT(sActionFuncs) || sActionFuncs[this->action] == NULL) {
-        PRINTF(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
     sActionFuncs[this->action](this, play);
@@ -2695,7 +2695,7 @@ void EnZl3_Init(Actor* thisx, PlayState* play) {
     ActorShape* shape = &this->actor.shape;
     s32 pad;
 
-    PRINTF("ゼルダ姫のEn_Zl3_Actor_ct通すよ!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    PRINTF2("ゼルダ姫のEn_Zl3_Actor_ct通すよ!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     ActorShape_Init(shape, 0.0f, ActorShadow_DrawCircle, 30.0f);
     shape->shadowAlpha = 0;
     func_80B533B0(thisx, play);
@@ -2710,7 +2710,7 @@ void EnZl3_Init(Actor* thisx, PlayState* play) {
             break;
     }
 
-    PRINTF("ゼルダ姫のEn_Zl3_Actor_ctは通った!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    PRINTF2("ゼルダ姫のEn_Zl3_Actor_ctは通った!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 }
 
 static OverrideLimbDraw sOverrideLimbDrawFuncs[] = {
@@ -2724,7 +2724,7 @@ s32 EnZl3_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* p
 
     if (this->unk_308 < 0 || this->unk_308 >= ARRAY_COUNT(sOverrideLimbDrawFuncs) ||
         sOverrideLimbDrawFuncs[this->unk_308] == NULL) {
-        PRINTF(VT_FGCOL(RED) "描画前処理モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "描画前処理モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return 0;
     }
     return sOverrideLimbDrawFuncs[this->unk_308](play, limbIndex, dList, pos, rot, thisx, gfx);
@@ -2793,7 +2793,7 @@ void EnZl3_Draw(Actor* thisx, PlayState* play) {
     EnZl3* this = (EnZl3*)thisx;
 
     if (this->drawConfig < 0 || this->drawConfig >= 3 || sDrawFuncs[this->drawConfig] == NULL) {
-        PRINTF(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
     sDrawFuncs[this->drawConfig](this, play);

@@ -287,7 +287,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
     angleToTarget = RAD_TO_BINANG(Math_FAtan2F(dx, dz));
     pitchToTarget = RAD_TO_BINANG(Math_FAtan2F(dy, sqrtf(SQ(dx) + SQ(dz))));
 
-    PRINTF("MODE %d\n", this->work[BFD_ACTION_STATE]);
+    PRINTF2("MODE %d\n", this->work[BFD_ACTION_STATE]);
 
     Math_ApproachF(&this->fwork[BFD_BODY_PULSE], 0.1f, 1.0f, 0.02);
 
@@ -456,9 +456,9 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                 }
                 break;
             case BFD_CS_EMERGE:
-                PRINTF("WAY_SPD X = %f\n", this->subCamAtVel.x);
-                PRINTF("WAY_SPD Y = %f\n", this->subCamAtVel.y);
-                PRINTF("WAY_SPD Z = %f\n", this->subCamAtVel.z);
+                PRINTF2("WAY_SPD X = %f\n", this->subCamAtVel.x);
+                PRINTF2("WAY_SPD Y = %f\n", this->subCamAtVel.y);
+                PRINTF2("WAY_SPD Z = %f\n", this->subCamAtVel.z);
                 if ((this->timers[3] > 190) && !GET_EVENTCHKINF(EVENTCHKINF_73)) {
                     Audio_PlaySfxGeneral(NA_SE_EN_DODO_K_ROLL - SFX_FLAG, &this->actor.projectedPos, 4,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
@@ -526,8 +526,8 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                             break;
                     }
                 }
-                PRINTF("this->timer[2] = %d\n", this->timers[2]);
-                PRINTF("this->timer[5] = %d\n", this->timers[5]);
+                PRINTF2("this->timer[2] = %d\n", this->timers[2]);
+                PRINTF2("this->timer[5] = %d\n", this->timers[5]);
                 if (this->timers[2] == 0) {
                     mainCam->eye = this->subCamEye;
                     mainCam->eyeNext = this->subCamEye;
@@ -667,7 +667,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
             }
             Actor_UpdateBgCheckInfo(play, &this->actor, 50.0f, 50.0f, 100.0f, UPDBGCHECKINFO_FLAG_1);
             if (this->timers[1] == 0) {
-                PRINTF("BGCHECKKKKKKKKKKKKKKKKKKKKKKK\n");
+                PRINTF2("BGCHECKKKKKKKKKKKKKKKKKKKKKKK\n");
                 if (this->actor.bgCheckFlags & BGCHECKFLAG_CEILING) {
                     this->fwork[BFD_CEILING_BOUNCE] = -18384.0f;
                     this->timers[1] = 10;
@@ -1308,7 +1308,7 @@ void BossFd_Update(Actor* thisx, PlayState* play) {
     s16 i;
     BossFd* this = (BossFd*)thisx;
 
-    PRINTF("FD MOVE START \n");
+    PRINTF2("FD MOVE START \n");
     this->work[BFD_VAR_TIMER]++;
     this->work[BFD_MOVE_TIMER]++;
     this->actionFunc(this, play);
@@ -1431,9 +1431,9 @@ void BossFd_Update(Actor* thisx, PlayState* play) {
             }
         }
     }
-    PRINTF("FD MOVE END 1\n");
+    PRINTF2("FD MOVE END 1\n");
     BossFd_UpdateEffects(this, play);
-    PRINTF("FD MOVE END 2\n");
+    PRINTF2("FD MOVE END 2\n");
 }
 
 void BossFd_UpdateEffects(BossFd* this, PlayState* play) {
@@ -1646,7 +1646,7 @@ void BossFd_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     BossFd* this = (BossFd*)thisx;
 
-    PRINTF("FD DRAW START\n");
+    PRINTF2("FD DRAW START\n");
     if (this->actionFunc != BossFd_Wait) {
         OPEN_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4217);
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -1659,9 +1659,9 @@ void BossFd_Draw(Actor* thisx, PlayState* play) {
         CLOSE_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4243);
     }
 
-    PRINTF("FD DRAW END\n");
+    PRINTF2("FD DRAW END\n");
     BossFd_DrawEffects(this->effects, play);
-    PRINTF("FD DRAW END2\n");
+    PRINTF2("FD DRAW END2\n");
 }
 
 s32 BossFd_OverrideRightArmDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
@@ -1844,7 +1844,7 @@ void BossFd_DrawBody(PlayState* play, BossFd* this) {
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, 255);
     gDPSetEnvColor(POLY_OPA_DISP++, 255, 255, 255, (s8)this->fwork[BFD_BODY_TEX2_ALPHA]);
 
-    PRINTF("LH\n");
+    PRINTF2("LH\n");
     Matrix_Push();
     segIndex = (this->work[BFD_LEAD_BODY_SEG] + sBodyIndex[2]) % 100;
     Matrix_Translate(this->bodySegsPos[segIndex].x, this->bodySegsPos[segIndex].y, this->bodySegsPos[segIndex].z,
@@ -1856,7 +1856,7 @@ void BossFd_DrawBody(PlayState* play, BossFd* this) {
     SkelAnime_DrawOpa(play, this->skelAnimeRightArm.skeleton, this->skelAnimeRightArm.jointTable,
                       BossFd_OverrideRightArmDraw, NULL, this);
     Matrix_Pop();
-    PRINTF("RH\n");
+    PRINTF2("RH\n");
     Matrix_Push();
     segIndex = (this->work[BFD_LEAD_BODY_SEG] + sBodyIndex[2]) % 100;
     Matrix_Translate(this->bodySegsPos[segIndex].x, this->bodySegsPos[segIndex].y, this->bodySegsPos[segIndex].z,
@@ -1868,7 +1868,7 @@ void BossFd_DrawBody(PlayState* play, BossFd* this) {
     SkelAnime_DrawOpa(play, this->skelAnimeLeftArm.skeleton, this->skelAnimeLeftArm.jointTable,
                       BossFd_OverrideLeftArmDraw, NULL, this);
     Matrix_Pop();
-    PRINTF("BD\n");
+    PRINTF2("BD\n");
     gSPSegment(POLY_OPA_DISP++, 0x0D, tempMat);
 
     Matrix_Push();
@@ -1935,7 +1935,7 @@ void BossFd_DrawBody(PlayState* play, BossFd* this) {
         }
     }
     Matrix_Pop();
-    PRINTF("BH\n");
+    PRINTF2("BH\n");
 
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetEnvColor(POLY_OPA_DISP++, 255, 255, 255, (s8)this->fwork[BFD_HEAD_TEX2_ALPHA]);
@@ -1951,14 +1951,14 @@ void BossFd_DrawBody(PlayState* play, BossFd* this) {
     Matrix_Translate(0.0f, 0.0f, temp_float, MTXMODE_APPLY);
     Matrix_Push();
     Matrix_Translate(0.0f, 0.0f, 25.0f, MTXMODE_APPLY);
-    PRINTF("BHC\n");
+    PRINTF2("BHC\n");
     Collider_UpdateSpheres(0, &this->collider);
     Matrix_Pop();
-    PRINTF("BHCE\n");
+    PRINTF2("BHCE\n");
     Matrix_Scale(this->actor.scale.x * 0.1f, this->actor.scale.y * 0.1f, this->actor.scale.z * 0.1f, MTXMODE_APPLY);
     SkelAnime_DrawOpa(play, this->skelAnimeHead.skeleton, this->skelAnimeHead.jointTable, BossFd_OverrideHeadDraw,
                       BossFd_PostHeadDraw, &this->actor);
-    PRINTF("SK\n");
+    PRINTF2("SK\n");
     {
         Vec3f spB0 = { 0.0f, 1700.0f, 7000.0f };
         Vec3f spA4 = { -1000.0f, 700.0f, 7000.0f };
@@ -1984,6 +1984,6 @@ void BossFd_DrawBody(PlayState* play, BossFd* this) {
     }
 
     Matrix_Pop();
-    PRINTF("END\n");
+    PRINTF2("END\n");
     CLOSE_DISPS(play->state.gfxCtx, "../z_boss_fd.c", 4987);
 }

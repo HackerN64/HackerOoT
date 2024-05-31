@@ -350,7 +350,7 @@ void GfxPrint_Open(GfxPrint* this, Gfx* dList) {
         this->dList = dList;
         GfxPrint_Setup(this);
     } else {
-        PRINTF("gfxprint_open:２重オープンです\n");
+        PRINTF2("gfxprint_open:２重オープンです\n");
     }
 }
 

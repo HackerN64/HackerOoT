@@ -32,14 +32,14 @@ void EnEncount1_Init(Actor* thisx, PlayState* play) {
     f32 spawnRange;
 
     if (this->actor.params <= 0) {
-        PRINTF("\n\n");
+        PRINTF2("\n\n");
         // "Input error death!"
-        PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 入力エラーデッス！ ☆☆☆☆☆ \n" VT_RST);
-        PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 入力エラーデッス！ ☆☆☆☆☆ \n" VT_RST);
-        PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 入力エラーデッス！ ☆☆☆☆☆ \n" VT_RST);
-        PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 入力エラーデッス！ ☆☆☆☆☆ \n" VT_RST);
-        PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 入力エラーデッス！ ☆☆☆☆☆ \n" VT_RST);
-        PRINTF("\n\n");
+        PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 入力エラーデッス！ ☆☆☆☆☆ \n" VT_RST);
+        PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 入力エラーデッス！ ☆☆☆☆☆ \n" VT_RST);
+        PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 入力エラーデッス！ ☆☆☆☆☆ \n" VT_RST);
+        PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 入力エラーデッス！ ☆☆☆☆☆ \n" VT_RST);
+        PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 入力エラーデッス！ ☆☆☆☆☆ \n" VT_RST);
+        PRINTF2("\n\n");
         Actor_Kill(&this->actor);
         return;
     }
@@ -53,18 +53,18 @@ void EnEncount1_Init(Actor* thisx, PlayState* play) {
 
     if (1) {}
 
-    PRINTF("\n\n");
+    PRINTF2("\n\n");
     // "It's an enemy spawner!"
-    PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 敵発生ゾーンでた！ ☆☆☆☆☆ %x\n" VT_RST, this->actor.params);
+    PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 敵発生ゾーンでた！ ☆☆☆☆☆ %x\n" VT_RST, this->actor.params);
     // "Type"
-    PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ 種類\t\t   ☆☆☆☆☆ %d\n" VT_RST, this->spawnType);
+    PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ 種類\t\t   ☆☆☆☆☆ %d\n" VT_RST, this->spawnType);
     // "Maximum number of simultaneous spawns"
-    PRINTF(VT_FGCOL(MAGENTA) "☆☆☆☆☆ 最大同時発生数     ☆☆☆☆☆ %d\n" VT_RST, this->maxCurSpawns);
+    PRINTF2(VT_FGCOL(MAGENTA) "☆☆☆☆☆ 最大同時発生数     ☆☆☆☆☆ %d\n" VT_RST, this->maxCurSpawns);
     // "Maximum number of spawns"
-    PRINTF(VT_FGCOL(CYAN) "☆☆☆☆☆ 最大発生数  \t   ☆☆☆☆☆ %d\n" VT_RST, this->maxTotalSpawns);
+    PRINTF2(VT_FGCOL(CYAN) "☆☆☆☆☆ 最大発生数  \t   ☆☆☆☆☆ %d\n" VT_RST, this->maxTotalSpawns);
     // "Spawn check range"
-    PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生チェック範囲   ☆☆☆☆☆ %f\n" VT_RST, this->spawnRange);
-    PRINTF("\n\n");
+    PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生チェック範囲   ☆☆☆☆☆ %f\n" VT_RST, this->spawnRange);
+    PRINTF2("\n\n");
 
     this->actor.flags &= ~ACTOR_FLAG_0;
     switch (this->spawnType) {
@@ -169,9 +169,9 @@ void EnEncount1_SpawnLeevers(EnEncount1* this, PlayState* play) {
                     }
                 } else {
                     // "Cannot spawn!"
-                    PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
-                    PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
-                    PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
+                    PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
+                    PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
+                    PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
                     break;
                 }
             }
@@ -213,9 +213,9 @@ void EnEncount1_SpawnTektites(EnEncount1* this, PlayState* play) {
                     this->totalNumSpawn++;
                 } else {
                     // "Cannot spawn!"
-                    PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
-                    PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
-                    PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
+                    PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
+                    PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
+                    PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
                 }
             }
         }
@@ -318,9 +318,9 @@ void EnEncount1_SpawnStalchildOrWolfos(EnEncount1* this, PlayState* play) {
                 }
             } else {
                 // "Cannot spawn!"
-                PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
-                PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
-                PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
+                PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
+                PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
+                PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 発生できません！ ☆☆☆☆☆\n" VT_RST);
                 break;
             }
         }

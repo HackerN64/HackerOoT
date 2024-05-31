@@ -98,7 +98,7 @@ void ObjKibako_Init(Actor* thisx, PlayState* play) {
     CollisionCheck_SetInfo(&this->actor.colChkInfo, NULL, &sCCInfoInit);
     ObjKibako_SetupIdle(this);
     // "wooden box"
-    PRINTF("(dungeon keep 木箱)(arg_data 0x%04x)\n", this->actor.params);
+    PRINTF2("(dungeon keep 木箱)(arg_data 0x%04x)\n", this->actor.params);
 }
 
 void ObjKibako_Destroy(Actor* thisx, PlayState* play2) {

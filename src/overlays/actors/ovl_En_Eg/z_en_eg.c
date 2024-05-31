@@ -65,7 +65,7 @@ void EnEg_Update(Actor* thisx, PlayState* play) {
 
     if (((action < 0) || (0 < action)) || (sActionFuncs[action] == NULL)) {
         // "Main Mode is wrong!!!!!!!!!!!!!!!!!!!!!!!!!"
-        PRINTF(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
     } else {
         sActionFuncs[action](this, play);
     }

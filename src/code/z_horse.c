@@ -76,7 +76,7 @@ void func_8006D0EC(PlayState* play, Player* player) {
     } else if ((play->sceneId == gSaveContext.save.info.horseData.sceneId) &&
                (Flags_GetEventChkInf(EVENTCHKINF_EPONA_OBTAINED) || DREG(1) != 0)) {
         // "Set by existence of horse %d %d %d"
-        PRINTF("馬存在によるセット %d %d %d\n", gSaveContext.save.info.horseData.sceneId,
+        PRINTF2("馬存在によるセット %d %d %d\n", gSaveContext.save.info.horseData.sceneId,
                Flags_GetEventChkInf(EVENTCHKINF_EPONA_OBTAINED), DREG(1));
 
         if (func_8006CFC0(gSaveContext.save.info.horseData.sceneId)) {
@@ -89,10 +89,10 @@ void func_8006D0EC(PlayState* play, Player* player) {
                 horseActor->room = -1;
             }
         } else {
-            PRINTF(VT_COL(RED, WHITE));
+            PRINTF2(VT_COL(RED, WHITE));
             // "Horse_SetNormal():%d set spot is no good."
-            PRINTF("Horse_SetNormal():%d セットスポットまずいです。\n", gSaveContext.save.info.horseData.sceneId);
-            PRINTF(VT_RST);
+            PRINTF2("Horse_SetNormal():%d セットスポットまずいです。\n", gSaveContext.save.info.horseData.sceneId);
+            PRINTF2(VT_RST);
             func_8006D074(play);
         }
     } else if ((play->sceneId == SCENE_LON_LON_RANCH) && !Flags_GetEventChkInf(EVENTCHKINF_EPONA_OBTAINED) &&
@@ -245,10 +245,10 @@ void func_8006D684(PlayState* play, Player* player) {
 void func_8006DC68(PlayState* play, Player* player) {
     if (LINK_IS_ADULT) {
         if (!func_8006CFC0(gSaveContext.save.info.horseData.sceneId)) {
-            PRINTF(VT_COL(RED, WHITE));
+            PRINTF2(VT_COL(RED, WHITE));
             // "Horse_Set_Check():%d set spot is no good."
-            PRINTF("Horse_Set_Check():%d セットスポットまずいです。\n", gSaveContext.save.info.horseData.sceneId);
-            PRINTF(VT_RST);
+            PRINTF2("Horse_Set_Check():%d セットスポットまずいです。\n", gSaveContext.save.info.horseData.sceneId);
+            PRINTF2(VT_RST);
             func_8006D074(play);
         }
 

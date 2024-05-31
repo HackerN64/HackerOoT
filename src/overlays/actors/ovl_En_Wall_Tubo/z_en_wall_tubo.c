@@ -36,9 +36,9 @@ ActorInit En_Wall_Tubo_InitVars = {
 void EnWallTubo_Init(Actor* thisx, PlayState* play) {
     EnWallTubo* this = (EnWallTubo*)thisx;
 
-    PRINTF("\n\n");
+    PRINTF2("\n\n");
     // "Wall Target"
-    PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ 壁のツボ ☆☆☆☆☆ \n" VT_RST);
+    PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ 壁のツボ ☆☆☆☆☆ \n" VT_RST);
     this->unk_164 = this->actor.world.pos;
     this->actionFunc = EnWallTubo_FindGirl;
 }
@@ -127,11 +127,11 @@ void EnWallTubo_SetWallFall(EnWallTubo* this, PlayState* play) {
         if ((wall != NULL) && (wall->dyna.actor.update != NULL)) {
             wall->isHit = true;
             // "You did it field!" (repeated 5 times)
-            PRINTF(VT_FGCOL(GREEN) "☆☆☆☆ やった原！ ☆☆☆☆☆ \n" VT_RST);
-            PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆ やった原！ ☆☆☆☆☆ \n" VT_RST);
-            PRINTF(VT_FGCOL(BLUE) "☆☆☆☆ やった原！ ☆☆☆☆☆ \n" VT_RST);
-            PRINTF(VT_FGCOL(MAGENTA) "☆☆☆☆ やった原！ ☆☆☆☆☆ \n" VT_RST);
-            PRINTF(VT_FGCOL(CYAN) "☆☆☆☆ やった原！ ☆☆☆☆☆ \n" VT_RST);
+            PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆ やった原！ ☆☆☆☆☆ \n" VT_RST);
+            PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆ やった原！ ☆☆☆☆☆ \n" VT_RST);
+            PRINTF2(VT_FGCOL(BLUE) "☆☆☆☆ やった原！ ☆☆☆☆☆ \n" VT_RST);
+            PRINTF2(VT_FGCOL(MAGENTA) "☆☆☆☆ やった原！ ☆☆☆☆☆ \n" VT_RST);
+            PRINTF2(VT_FGCOL(CYAN) "☆☆☆☆ やった原！ ☆☆☆☆☆ \n" VT_RST);
         }
 
         Actor_Kill(&this->actor);

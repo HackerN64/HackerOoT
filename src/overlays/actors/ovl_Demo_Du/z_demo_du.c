@@ -908,7 +908,7 @@ void DemoDu_CsCredits_HandleCues(DemoDu* this, PlayState* play) {
                     break;
                 default:
                     // "Demo_Du_inEnding_Check_DemoMode:There is no such operation!!!!!!!!"
-                    PRINTF("Demo_Du_inEnding_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF2("Demo_Du_inEnding_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
                     break;
             }
             this->cueId = nextCueId;
@@ -965,7 +965,7 @@ void DemoDu_Update(Actor* thisx, PlayState* play) {
 
     if (this->updateIndex < 0 || this->updateIndex >= 29 || sUpdateFuncs[this->updateIndex] == NULL) {
         // "The main mode is abnormal!!!!!!!!!!!!!!!!!!!!!!!!!"
-        PRINTF(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
     sUpdateFuncs[this->updateIndex](this, play);
@@ -1036,7 +1036,7 @@ void DemoDu_Draw(Actor* thisx, PlayState* play) {
 
     if (this->drawIndex < 0 || this->drawIndex >= 3 || sDrawFuncs[this->drawIndex] == NULL) {
         // "The drawing mode is abnormal!!!!!!!!!!!!!!!!!!!!!!!!!"
-        PRINTF(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
     sDrawFuncs[this->drawIndex](thisx, play);

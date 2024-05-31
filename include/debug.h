@@ -9,7 +9,7 @@
 #include "debug/collision_view.h"
 #include "debug/menu.h"
 
-#define DEBUG_PRINT_VAR(var) PRINTF("%s: %d\n", #var, var)
+#define DEBUG_PRINT_VAR(var) PRINTF2("%s: %d\n", #var, var)
 
 #define COLOR_WHITE (0xFFFFFF)
 #define COLOR_RED (0xFF0000)

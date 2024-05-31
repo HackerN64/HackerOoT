@@ -61,7 +61,7 @@ static void* sStoneTextures[] = {
 void EnTana_Init(Actor* thisx, PlayState* play) {
     EnTana* this = (EnTana*)thisx;
 
-    PRINTF("☆☆☆ %s ☆☆☆\n", sShelfTypes[thisx->params]);
+    PRINTF2("☆☆☆ %s ☆☆☆\n", sShelfTypes[thisx->params]);
     Actor_SetScale(thisx, 1.0f);
     thisx->flags &= ~ACTOR_FLAG_0;
     thisx->draw = sDrawFuncs[thisx->params];

@@ -255,8 +255,8 @@ s32 EnGoroiwa_GetAscendDirection(EnGoroiwa* this, PlayState* play) {
 #if IS_DEBUG
         if (nextPointPos->y == currentPointPos->y) {
             // "Error: Invalid path data (points overlap)"
-            PRINTF("Error : レールデータ不正(点が重なっている)");
-            PRINTF("(%s %d)(arg_data 0x%04x)\n", "../z_en_gr.c", 559, this->actor.params);
+            PRINTF2("Error : レールデータ不正(点が重なっている)");
+            PRINTF2("(%s %d)(arg_data 0x%04x)\n", "../z_en_gr.c", 559, this->actor.params);
         }
 #endif
 
@@ -551,13 +551,13 @@ void EnGoroiwa_Init(Actor* thisx, PlayState* play) {
     pathIdx = this->actor.params & 0xFF;
     if (pathIdx == 0xFF) {
         // "Error: Invalid arg_data"
-        PRINTF("Ｅｒｒｏｒ : arg_data が不正(%s %d)(arg_data 0x%04x)\n", "../z_en_gr.c", 1033, this->actor.params);
+        PRINTF2("Ｅｒｒｏｒ : arg_data が不正(%s %d)(arg_data 0x%04x)\n", "../z_en_gr.c", 1033, this->actor.params);
         Actor_Kill(&this->actor);
         return;
     }
     if (play->pathList[pathIdx].count < 2) {
         // "Error: Invalid Path Data"
-        PRINTF("Ｅｒｒｏｒ : レールデータ が不正(%s %d)\n", "../z_en_gr.c", 1043);
+        PRINTF2("Ｅｒｒｏｒ : レールデータ が不正(%s %d)\n", "../z_en_gr.c", 1043);
         Actor_Kill(&this->actor);
         return;
     }
@@ -571,7 +571,7 @@ void EnGoroiwa_Init(Actor* thisx, PlayState* play) {
     EnGoroiwa_FaceNextWaypoint(this, play);
     EnGoroiwa_SetupRoll(this);
     // "(Goroiwa)"
-    PRINTF("(ごろ岩)(arg 0x%04x)(rail %d)(end %d)(bgc %d)(hit %d)\n", this->actor.params, this->actor.params & 0xFF,
+    PRINTF2("(ごろ岩)(arg 0x%04x)(rail %d)(end %d)(bgc %d)(hit %d)\n", this->actor.params, this->actor.params & 0xFF,
            (this->actor.params >> 8) & 3, (this->actor.params >> 10) & 1, this->actor.home.rot.z & 1);
 }
 
@@ -608,9 +608,9 @@ void EnGoroiwa_Roll(EnGoroiwa* this, PlayState* play) {
             }
         }
         func_8002F6D4(play, &this->actor, 2.0f, this->actor.yawTowardsPlayer, 0.0f, 0);
-        PRINTF(VT_FGCOL(CYAN));
-        PRINTF("Player ぶっ飛ばし\n"); // "Player knocked down"
-        PRINTF(VT_RST);
+        PRINTF2(VT_FGCOL(CYAN));
+        PRINTF2("Player ぶっ飛ばし\n"); // "Player knocked down"
+        PRINTF2(VT_RST);
         onHitSetupFuncs[(this->actor.params >> 10) & 1](this);
         Player_PlaySfx(GET_PLAYER(play), NA_SE_PL_BODY_HIT);
         if ((this->actor.home.rot.z & 1) == 1) {

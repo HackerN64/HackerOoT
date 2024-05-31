@@ -1886,14 +1886,14 @@ void BossGanon2_CollisionCheck(BossGanon2* this, PlayState* play) {
     s16 i;
     u8 phi_v1_2;
 
-    PRINTF("this->no_hit_time %d\n", this->unk_316);
+    PRINTF2("this->no_hit_time %d\n", this->unk_316);
     if (this->unk_316 != 0 || ((this->unk_334 == 0) && (this->actionFunc == func_80900890))) {
         for (i = 0; i < ARRAY_COUNT(this->unk_464); i++) {
             this->unk_424.elements[i].base.acElemFlags &= ~ACELEM_HIT;
         }
     }
 
-    PRINTF("this->look_on %d\n", this->unk_313);
+    PRINTF2("this->look_on %d\n", this->unk_313);
     if (this->unk_313) {
         if (this->actionFunc != func_808FFFE0) {
             if (this->unk_424.elements[0].base.acElemFlags & ACELEM_HIT) {

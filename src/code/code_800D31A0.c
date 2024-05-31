@@ -6,7 +6,7 @@ u32 gIsCtrlr2Valid = false;
 #endif
 
 NORETURN void func_800D31A0(void) {
-    PRINTF(VT_FGCOL(RED) "\n**** Freeze!! ****\n" VT_RST);
+    PRINTF2(VT_FGCOL(RED) "\n**** Freeze!! ****\n" VT_RST);
     for (;;) {
         Sleep_Msec(1000);
     }

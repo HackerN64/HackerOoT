@@ -1717,7 +1717,7 @@ void DemoGt_Update(Actor* thisx, PlayState* play) {
 
     if ((this->updateMode < 0) || (this->updateMode >= 19) || (updateFunc = sUpdateFuncs[this->updateMode]) == NULL) {
         // "The main mode is strange!"
-        PRINTF(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
 
@@ -1754,7 +1754,7 @@ void DemoGt_Init(Actor* thisx, PlayState* play) {
             break;
         default:
             // "Demo_Gt_Actor_ct There is no such argument !"
-            PRINTF("Demo_Gt_Actor_ct そんな引数は無い!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+            PRINTF2("Demo_Gt_Actor_ct そんな引数は無い!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
             Actor_Kill(&this->dyna.actor);
     }
 }
@@ -1773,7 +1773,7 @@ void DemoGt_Draw(Actor* thisx, PlayState* play) {
 
     if ((this->drawConfig < 0) || (this->drawConfig >= 9) || (drawFunc = sDrawFuncs[this->drawConfig]) == NULL) {
         // "The drawing mode is strange !!!!!!!!!!!!!!!!!!!!!!!!!"
-        PRINTF(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
 

@@ -57,24 +57,24 @@ void EnWeatherTag_Init(Actor* thisx, PlayState* play) {
 
     switch (this->actor.params & 0xF) {
         case EN_WEATHER_TAG_TYPE_CLOUDY_MARKET:
-            PRINTF("\n\n");
+            PRINTF2("\n\n");
             // "☆☆☆☆☆ (;o;) About ☆☆☆☆☆☆"
-            PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ （;o;) くらいよー ☆☆☆☆☆ \n" VT_RST);
+            PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ （;o;) くらいよー ☆☆☆☆☆ \n" VT_RST);
             EnWeatherTag_SetupAction(this, EnWeatherTag_DisabledCloudyHyruleMarket);
             break;
         case EN_WEATHER_TAG_TYPE_CLOUDY_LON_LON_RANCH:
-            PRINTF("\n\n");
+            PRINTF2("\n\n");
             // "☆☆☆☆☆ Cloudy (._.) Ah Melancholy ☆☆☆☆☆"
-            PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ くもり (._.) あーあ 憂鬱 ☆☆☆☆☆ \n" VT_RST);
+            PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ くもり (._.) あーあ 憂鬱 ☆☆☆☆☆ \n" VT_RST);
             if (Flags_GetEventChkInf(EVENTCHKINF_EPONA_OBTAINED)) {
                 Actor_Kill(&this->actor);
             }
             EnWeatherTag_SetupAction(this, EnWeatherTag_DisabledCloudyLonLonRanch);
             break;
         case EN_WEATHER_TAG_TYPE_SNOW_ZORAS_DOMAIN:
-            PRINTF("\n\n");
+            PRINTF2("\n\n");
             // "☆☆☆☆☆ Yukigafuru You won't come (._.) ☆☆☆☆☆"
-            PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ ゆきがふるー あなたはこないー (._.) ☆☆☆☆☆ \n" VT_RST);
+            PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ ゆきがふるー あなたはこないー (._.) ☆☆☆☆☆ \n" VT_RST);
 
             if (GET_EVENTCHKINF(EVENTCHKINF_4A)) {
                 Actor_Kill(&this->actor);
@@ -82,9 +82,9 @@ void EnWeatherTag_Init(Actor* thisx, PlayState* play) {
             EnWeatherTag_SetupAction(this, EnWeatherTag_DisabledCloudySnow);
             break;
         case EN_WEATHER_TAG_TYPE_RAIN_LAKE_HYLIA:
-            PRINTF("\n\n");
+            PRINTF2("\n\n");
             // "☆☆☆☆☆ Wow wa wa na wa saa ki ha (^o^) ☆☆☆☆☆"
-            PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ わわわわー なーがーさーきーはー (^o^) ☆☆☆☆☆ \n" VT_RST);
+            PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ わわわわー なーがーさーきーはー (^o^) ☆☆☆☆☆ \n" VT_RST);
 
             if (GET_EVENTCHKINF(EVENTCHKINF_4A)) {
                 Actor_Kill(&this->actor);
@@ -92,18 +92,18 @@ void EnWeatherTag_Init(Actor* thisx, PlayState* play) {
             EnWeatherTag_SetupAction(this, EnWeatherTag_DisabledRainLakeHylia);
             break;
         case EN_WEATHER_TAG_TYPE_CLOUDY_DEATH_MOUNTAIN:
-            PRINTF("\n\n");
+            PRINTF2("\n\n");
             // "☆☆☆☆☆ Cloudy (._.) Ah Melancholy ☆☆☆☆☆"
-            PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ くもり (._.) あーあ 憂鬱 ☆☆☆☆☆ \n" VT_RST);
+            PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ くもり (._.) あーあ 憂鬱 ☆☆☆☆☆ \n" VT_RST);
             if (GET_EVENTCHKINF(EVENTCHKINF_49)) {
                 Actor_Kill(&this->actor);
             }
             EnWeatherTag_SetupAction(this, EnWeatherTag_DisabledCloudyDeathMountain);
             break;
         case EN_WEATHER_TAG_TYPE_THUNDERSTORM_KAKARIKO:
-            PRINTF("\n\n");
+            PRINTF2("\n\n");
             // "☆☆☆☆☆ Cloudy Rain Thunder (;O;) Uo Melancholy ☆☆☆☆☆"
-            PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ くもり雨雷 (;O;) うおお 憂鬱 ☆☆☆☆☆ \n" VT_RST);
+            PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ くもり雨雷 (;O;) うおお 憂鬱 ☆☆☆☆☆ \n" VT_RST);
 
             if (!GET_EVENTCHKINF(EVENTCHKINF_48) || !GET_EVENTCHKINF(EVENTCHKINF_49) ||
                 !GET_EVENTCHKINF(EVENTCHKINF_4A) || CHECK_QUEST_ITEM(QUEST_MEDALLION_SHADOW)) {
@@ -112,15 +112,15 @@ void EnWeatherTag_Init(Actor* thisx, PlayState* play) {
             EnWeatherTag_SetupAction(this, EnWeatherTag_DisabledCloudyRainThunderKakariko);
             break;
         case EN_WEATHER_TAG_TYPE_SANDSTORM_INTENSITY:
-            PRINTF("\n\n");
+            PRINTF2("\n\n");
             // "☆☆☆☆☆ The desert becomes thicker ☆☆☆☆☆"
-            PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ 砂漠が濃くなります ☆☆☆☆☆ \n" VT_RST);
+            PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ 砂漠が濃くなります ☆☆☆☆☆ \n" VT_RST);
             EnWeatherTag_SetupAction(this, EnWeatherTag_SetSandstormIntensity);
             break;
         case EN_WEATHER_TAG_TYPE_THUNDERSTORM_GRAVEYARD:
-            PRINTF("\n\n");
+            PRINTF2("\n\n");
             // "☆☆☆☆☆ Wow wa wa na wa saa ki ha (^o^) ☆☆☆☆☆"
-            PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ わわわわー なーがーさーきーはー (^o^) ☆☆☆☆☆ \n" VT_RST);
+            PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ わわわわー なーがーさーきーはー (^o^) ☆☆☆☆☆ \n" VT_RST);
 
             EnWeatherTag_SetupAction(this, EnWeatherTag_DisabledRainThunder);
             break;

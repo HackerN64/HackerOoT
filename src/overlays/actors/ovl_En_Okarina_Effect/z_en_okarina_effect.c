@@ -47,10 +47,10 @@ void EnOkarinaEffect_Destroy(Actor* thisx, PlayState* play) {
 void EnOkarinaEffect_Init(Actor* thisx, PlayState* play) {
     EnOkarinaEffect* this = (EnOkarinaEffect*)thisx;
 
-    PRINTF("\n\n");
+    PRINTF2("\n\n");
     // "Ocarina Storm Effect"
-    PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ オカリナあらし効果ビカビカビカ〜 ☆☆☆☆☆ \n" VT_RST);
-    PRINTF("\n\n");
+    PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ オカリナあらし効果ビカビカビカ〜 ☆☆☆☆☆ \n" VT_RST);
+    PRINTF2("\n\n");
     if (play->envCtx.precipitation[PRECIP_RAIN_CUR] != 0) {
         Actor_Kill(&this->actor);
     }
@@ -79,9 +79,9 @@ void EnOkarinaEffect_ManageStorm(EnOkarinaEffect* this, PlayState* play) {
         if ((play->envCtx.lightMode != LIGHT_MODE_TIME) || play->envCtx.lightConfig != 1) {
             this->timer--;
         }
-        PRINTF("\nthis->timer=[%d]", this->timer);
+        PRINTF2("\nthis->timer=[%d]", this->timer);
         if (this->timer == 308) {
-            PRINTF("\n\n\n豆よ のびろ 指定\n\n\n"); // "Let's grow some beans"
+            PRINTF2("\n\n\n豆よ のびろ 指定\n\n\n"); // "Let's grow some beans"
             CutsceneFlags_Set(play, 5);
         }
     }
@@ -98,8 +98,8 @@ void EnOkarinaEffect_ManageStorm(EnOkarinaEffect* this, PlayState* play) {
             Audio_SetNatureAmbienceChannelIO(NATURE_CHANNEL_LIGHTNING, CHANNEL_IO_PORT_1, 0);
             Audio_SetNatureAmbienceChannelIO(NATURE_CHANNEL_RAIN, CHANNEL_IO_PORT_1, 0);
         }
-        PRINTF("\n\n\nE_wether_flg=[%d]", gWeatherMode);
-        PRINTF("\nrain_evt_trg=[%d]\n\n", play->envCtx.stormRequest);
+        PRINTF2("\n\n\nE_wether_flg=[%d]", gWeatherMode);
+        PRINTF2("\nrain_evt_trg=[%d]\n\n", play->envCtx.stormRequest);
         if (gWeatherMode == WEATHER_MODE_CLEAR && (play->envCtx.stormRequest == STORM_REQUEST_START)) {
             play->envCtx.stormRequest = STORM_REQUEST_STOP;
         } else {

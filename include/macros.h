@@ -117,11 +117,11 @@
 #define IDO_PRINTF_WORKAROUND (__sgi && !__GNUC__ && !M2CTX)
 
 #if IS_DEBUG
-#define PRINTF osSyncPrintf
+#define PRINTF2 osSyncPrintf
 #elif IDO_PRINTF_WORKAROUND
-#define PRINTF(args) (void)0
+#define PRINTF2(args) (void)0
 #else
-#define PRINTF(format, ...) (void)0
+#define PRINTF2(format, ...) (void)0
 #endif
 
 #if IS_DEBUG

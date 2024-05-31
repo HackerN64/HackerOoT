@@ -976,7 +976,7 @@ MtxF* Matrix_CheckFloats(MtxF* mf, const char* file, int line) {
     for (i = 0; i < 4; i++) {
         for (j = 0; j < 4; j++) {
             if (!(-32768.0f <= mf->mf[i][j]) || !(mf->mf[i][j] < 32768.0f)) {
-                PRINTF("%s %d: [%s] =\n"
+                PRINTF2("%s %d: [%s] =\n"
                        "/ %12.6f %12.6f %12.6f %12.6f \\\n"
                        "| %12.6f %12.6f %12.6f %12.6f |\n"
                        "| %12.6f %12.6f %12.6f %12.6f |\n"

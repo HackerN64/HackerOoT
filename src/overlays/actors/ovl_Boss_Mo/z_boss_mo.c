@@ -1741,8 +1741,8 @@ void BossMo_CoreCollisionCheck(BossMo* this, PlayState* play) {
     s16 i;
     Player* player = GET_PLAYER(play);
 
-    PRINTF(VT_FGCOL(YELLOW));
-    PRINTF("Core_Damage_check START\n");
+    PRINTF2(VT_FGCOL(YELLOW));
+    PRINTF2("Core_Damage_check START\n");
     if (this->coreCollider.base.atFlags & AT_HIT) {
         this->coreCollider.base.atFlags &= ~AT_HIT;
         if (this->work[MO_TENT_ACTION_STATE] == MO_CORE_UNDERWATER) {
@@ -1753,19 +1753,19 @@ void BossMo_CoreCollisionCheck(BossMo* this, PlayState* play) {
     if (this->coreCollider.base.acFlags & AC_HIT) {
         ColliderElement* acHitElem = this->coreCollider.elem.acHitElem;
         // "hit!!"
-        PRINTF("Core_Damage_check 当り！！\n");
+        PRINTF2("Core_Damage_check 当り！！\n");
         this->coreCollider.base.acFlags &= ~AC_HIT;
         if ((acHitElem->atDmgInfo.dmgFlags & DMG_MAGIC_FIRE) && (this->work[MO_TENT_ACTION_STATE] == MO_CORE_ATTACK)) {
             this->work[MO_TENT_ACTION_STATE] = MO_CORE_RETREAT;
         }
         // "hit 2 !!"
-        PRINTF("Core_Damage_check 当り 2 ！！\n");
+        PRINTF2("Core_Damage_check 当り 2 ！！\n");
         if ((this->work[MO_TENT_ACTION_STATE] != MO_CORE_UNDERWATER) && (this->work[MO_TENT_INVINC_TIMER] == 0)) {
             u8 damage = CollisionCheck_GetSwordDamage(acHitElem->atDmgInfo.dmgFlags);
 
             if ((damage != 0) && (this->work[MO_TENT_ACTION_STATE] < MO_CORE_ATTACK)) {
                 // "sword hit !!"
-                PRINTF("Core_Damage_check 剣 当り！！\n");
+                PRINTF2("Core_Damage_check 剣 当り！！\n");
                 this->work[MO_TENT_ACTION_STATE] = MO_CORE_STUNNED;
                 this->timers[0] = 25;
 
@@ -1836,8 +1836,8 @@ void BossMo_CoreCollisionCheck(BossMo* this, PlayState* play) {
         }
     }
     // "end !!"
-    PRINTF("Core_Damage_check 終わり ！！\n");
-    PRINTF(VT_RST);
+    PRINTF2("Core_Damage_check 終わり ！！\n");
+    PRINTF2(VT_RST);
 }
 
 void BossMo_Core(BossMo* this, PlayState* play) {
@@ -2222,7 +2222,7 @@ void BossMo_UpdateCore(Actor* thisx, PlayState* play) {
     s16 i;
     Player* player = GET_PLAYER(play);
 
-    PRINTF("CORE mode = <%d>\n", this->work[MO_TENT_ACTION_STATE]);
+    PRINTF2("CORE mode = <%d>\n", this->work[MO_TENT_ACTION_STATE]);
     if (sMorphaTent2 == NULL) {
         MO_WATER_LEVEL(play) = sMorphaTent1->waterLevelMod + (s16)this->waterLevel;
     } else {
@@ -2282,7 +2282,7 @@ void BossMo_UpdateTent(Actor* thisx, PlayState* play) {
 
     SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &this->tentPos[40], &this->tentTipPos,
                                  &this->actor.projectedW);
-    PRINTF("MO : Move mode = <%d>\n", this->work[MO_TENT_ACTION_STATE]);
+    PRINTF2("MO : Move mode = <%d>\n", this->work[MO_TENT_ACTION_STATE]);
     Math_ApproachS(&player->actor.shape.rot.x, 0, 5, 0x3E8);
     Math_ApproachS(&player->actor.shape.rot.z, 0, 5, 0x3E8);
     this->work[MO_TENT_VAR_TIMER]++;

@@ -3365,7 +3365,7 @@ void func_800F5ACC(u16 seqId) {
         if (curSeqId != NA_BGM_DISABLED) {
             sPrevMainBgmSeqId = curSeqId & 0xFFFF;
         } else {
-            PRINTF("Middle Boss BGM Start not stack \n");
+            PRINTF2("Middle Boss BGM Start not stack \n");
         }
 
         SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, seqId);

@@ -101,7 +101,7 @@ void BgBdanSwitch_InitDynaPoly(BgBdanSwitch* this, PlayState* play, CollisionHea
     if (this->dyna.bgId == BG_ACTOR_MAX) {
         s32 pad2;
 
-        PRINTF("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_bdan_switch.c", 325,
+        PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_bdan_switch.c", 325,
                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
@@ -196,11 +196,11 @@ void BgBdanSwitch_Init(Actor* thisx, PlayState* play) {
             }
             break;
         default:
-            PRINTF("不正な ARG_DATA(arg_data 0x%04x)(%s %d)\n", this->dyna.actor.params, "../z_bg_bdan_switch.c", 454);
+            PRINTF2("不正な ARG_DATA(arg_data 0x%04x)(%s %d)\n", this->dyna.actor.params, "../z_bg_bdan_switch.c", 454);
             Actor_Kill(&this->dyna.actor);
             return;
     }
-    PRINTF("(巨大魚ダンジョン 専用スイッチ)(arg_data 0x%04x)\n", this->dyna.actor.params);
+    PRINTF2("(巨大魚ダンジョン 専用スイッチ)(arg_data 0x%04x)\n", this->dyna.actor.params);
 }
 
 void BgBdanSwitch_Destroy(Actor* thisx, PlayState* play) {

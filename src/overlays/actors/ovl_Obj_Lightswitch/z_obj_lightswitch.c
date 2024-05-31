@@ -188,10 +188,10 @@ void ObjLightswitch_Init(Actor* thisx, PlayState* play) {
         if (Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_OBJ_OSHIHIKI, this->actor.home.pos.x,
                                this->actor.home.pos.y, this->actor.home.pos.z, 0, this->actor.home.rot.y, 0,
                                (0xFF << 8) | PUSHBLOCK_SMALL_START_ON) == NULL) {
-            PRINTF(VT_COL(RED, WHITE));
+            PRINTF2(VT_COL(RED, WHITE));
             // "Push-pull block occurrence failure"
-            PRINTF("押引ブロック発生失敗(%s %d)(arg_data 0x%04x)\n", "../z_obj_lightswitch.c", 452, this->actor.params);
-            PRINTF(VT_RST);
+            PRINTF2("押引ブロック発生失敗(%s %d)(arg_data 0x%04x)\n", "../z_obj_lightswitch.c", 452, this->actor.params);
+            PRINTF2(VT_RST);
             removeSelf = true;
         }
     }
@@ -201,7 +201,7 @@ void ObjLightswitch_Init(Actor* thisx, PlayState* play) {
         Actor_Kill(&this->actor);
     }
     // "Light switch"
-    PRINTF("(光スイッチ)(arg_data 0x%04x)\n", this->actor.params);
+    PRINTF2("(光スイッチ)(arg_data 0x%04x)\n", this->actor.params);
 }
 
 void ObjLightswitch_Destroy(Actor* thisx, PlayState* play2) {

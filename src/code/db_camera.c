@@ -408,24 +408,24 @@ void func_800B44E0(DebugCam* debugCam, Camera* cam) {
 void DebugCamera_PrintPoints(const char* name, s16 count, CutsceneCameraPoint* points) {
     s32 i;
 
-    PRINTF("@@@static SplinedatZ  %s[] = {\n", name);
+    PRINTF2("@@@static SplinedatZ  %s[] = {\n", name);
     for (i = 0; i < count; i++) {
-        PRINTF("@@@    /* key frame %2d */ {\n", i);
-        PRINTF("@@@    /*     code     */ %d,\n", points[i].continueFlag);
-        PRINTF("@@@    /*     z        */ %d,\n", points[i].cameraRoll);
-        PRINTF("@@@    /*     T        */ %d,\n", points[i].nextPointFrame);
-        PRINTF("@@@    /*     zoom     */ %f,\n", points[i].viewAngle);
-        PRINTF("@@@    /*     pos      */ { %d, %d, %d }\n", points[i].pos.x, points[i].pos.y, points[i].pos.z);
-        PRINTF("@@@    },\n");
+        PRINTF2("@@@    /* key frame %2d */ {\n", i);
+        PRINTF2("@@@    /*     code     */ %d,\n", points[i].continueFlag);
+        PRINTF2("@@@    /*     z        */ %d,\n", points[i].cameraRoll);
+        PRINTF2("@@@    /*     T        */ %d,\n", points[i].nextPointFrame);
+        PRINTF2("@@@    /*     zoom     */ %f,\n", points[i].viewAngle);
+        PRINTF2("@@@    /*     pos      */ { %d, %d, %d }\n", points[i].pos.x, points[i].pos.y, points[i].pos.z);
+        PRINTF2("@@@    },\n");
     }
-    PRINTF("@@@};\n@@@\n");
+    PRINTF2("@@@};\n@@@\n");
 }
 
 void DebugCamera_PrintF32Bytes(f32 value) {
     f32 b = value;
     char* a = (char*)&b;
 
-    PRINTF("\n@@@%d,%d,%d,%d,", a[0], a[1], a[2], a[3]);
+    PRINTF2("\n@@@%d,%d,%d,%d,", a[0], a[1], a[2], a[3]);
 }
 
 void DebugCamera_PrintU16Bytes(u16 value) {
@@ -433,7 +433,7 @@ void DebugCamera_PrintU16Bytes(u16 value) {
     u16 b = value;
     char* a = (char*)&b;
 
-    PRINTF("\n@@@%d,%d,", a[0], a[1]);
+    PRINTF2("\n@@@%d,%d,", a[0], a[1]);
 }
 
 void DebugCamera_PrintS16Bytes(s16 value) {
@@ -441,7 +441,7 @@ void DebugCamera_PrintS16Bytes(s16 value) {
     s16 b = value;
     char* a = (char*)&b;
 
-    PRINTF("\n@@@%d,%d,", a[0], a[1]);
+    PRINTF2("\n@@@%d,%d,", a[0], a[1]);
 }
 
 void DebugCamera_PrintCutBytes(DebugCamCut* cut) {
@@ -450,55 +450,55 @@ void DebugCamera_PrintCutBytes(DebugCamCut* cut) {
     s32 i;
 
     points = cut->lookAt;
-    PRINTF("\n@@@ 0,0,0,2,\t/* Look Camera\t*/");
-    PRINTF("\n@@@ 0,1,\t/* dousa\t*/");
+    PRINTF2("\n@@@ 0,0,0,2,\t/* Look Camera\t*/");
+    PRINTF2("\n@@@ 0,1,\t/* dousa\t*/");
 
-    PRINTF("\n@@@ 0,0,\t/* Start Flame\t*/");
+    PRINTF2("\n@@@ 0,0,\t/* Start Flame\t*/");
     DebugCamera_PrintU16Bytes(cut->nFrames);
-    PRINTF("\t/*  End   Flame\t*/");
+    PRINTF2("\t/*  End   Flame\t*/");
 
-    PRINTF("\n@@@0,0,\t/*  Dammy\t*/\n@@@ ");
+    PRINTF2("\n@@@0,0,\t/*  Dammy\t*/\n@@@ ");
     for (i = 0; i < cut->nPoints; i++) {
         point = points + i;
-        PRINTF("\n@@@    %d, /*     code     */", point->continueFlag);
-        PRINTF("\n@@@    %d,  /*     z        */", point->cameraRoll);
+        PRINTF2("\n@@@    %d, /*     code     */", point->continueFlag);
+        PRINTF2("\n@@@    %d,  /*     z        */", point->cameraRoll);
         DebugCamera_PrintU16Bytes(point->nextPointFrame);
-        PRINTF("\t/*  sokudo\t*/");
+        PRINTF2("\t/*  sokudo\t*/");
         DebugCamera_PrintF32Bytes(point->viewAngle);
-        PRINTF("\t/*  zoom\t*/");
+        PRINTF2("\t/*  zoom\t*/");
         DebugCamera_PrintS16Bytes(point->pos.x);
-        PRINTF("\t/*  x pos\t*/");
+        PRINTF2("\t/*  x pos\t*/");
         DebugCamera_PrintS16Bytes(point->pos.y);
-        PRINTF("\t/*  y pos\t*/");
+        PRINTF2("\t/*  y pos\t*/");
         DebugCamera_PrintS16Bytes(point->pos.z);
-        PRINTF("\t/*  z pos\t*/\n");
-        PRINTF("\n@@@0,0,\t/*  Dammy\t*/\n@@@ ");
+        PRINTF2("\t/*  z pos\t*/\n");
+        PRINTF2("\n@@@0,0,\t/*  Dammy\t*/\n@@@ ");
     }
 
     points = cut->position;
-    PRINTF("\n@@@ 0,0,0,1,\t/* Position Camera */");
-    PRINTF("\n@@@ 0,1,\t/* dousa\t*/");
+    PRINTF2("\n@@@ 0,0,0,1,\t/* Position Camera */");
+    PRINTF2("\n@@@ 0,1,\t/* dousa\t*/");
 
-    PRINTF("\n@@@ 0,0,\t/* Start Flame\t*/");
+    PRINTF2("\n@@@ 0,0,\t/* Start Flame\t*/");
     DebugCamera_PrintU16Bytes(cut->nFrames);
-    PRINTF("\t/*  End   Flame\t*/");
+    PRINTF2("\t/*  End   Flame\t*/");
 
-    PRINTF("\n@@@0,0,\t/*  Dammy\t*/\n@@@ ");
+    PRINTF2("\n@@@0,0,\t/*  Dammy\t*/\n@@@ ");
     for (i = 0; i < cut->nPoints; i++) {
         point = points + i;
-        PRINTF("\n@@@    %d, /*     code     */", point->continueFlag);
-        PRINTF("\n@@@    %d, /*     z        */", point->cameraRoll);
+        PRINTF2("\n@@@    %d, /*     code     */", point->continueFlag);
+        PRINTF2("\n@@@    %d, /*     z        */", point->cameraRoll);
         DebugCamera_PrintU16Bytes(point->nextPointFrame);
-        PRINTF("\t/*  sokudo\t*/");
+        PRINTF2("\t/*  sokudo\t*/");
         DebugCamera_PrintF32Bytes(point->viewAngle);
-        PRINTF("\t/*  zoom\t*/");
+        PRINTF2("\t/*  zoom\t*/");
         DebugCamera_PrintS16Bytes(point->pos.x);
-        PRINTF("\t/*  x pos\t*/");
+        PRINTF2("\t/*  x pos\t*/");
         DebugCamera_PrintS16Bytes(point->pos.y);
-        PRINTF("\t/*  y pos\t*/");
+        PRINTF2("\t/*  y pos\t*/");
         DebugCamera_PrintS16Bytes(point->pos.z);
-        PRINTF("\t/*  z pos\t*/");
-        PRINTF("\n@@@0,0,\t/*  Dammy\t*/\n@@@ ");
+        PRINTF2("\t/*  z pos\t*/");
+        PRINTF2("\n@@@0,0,\t/*  Dammy\t*/\n@@@ ");
     }
 }
 
@@ -992,13 +992,13 @@ void DebugCamera_Update(DebugCam* debugCam, Camera* cam) {
                 CHECK_BTN_ALL(sPlay->state.input[DEBUG_CAM_CONTROLLER_PORT].cur.button, BTN_L)) {
                 Audio_PlaySfxGeneral(NA_SE_SY_GET_RUPY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                PRINTF("@@@\n@@@\n@@@/* *** spline point data ** start here *** */\n@@@\n");
+                PRINTF2("@@@\n@@@\n@@@/* *** spline point data ** start here *** */\n@@@\n");
                 DebugCamera_PrintPoints("Lookat", debugCam->sub.nPoints, debugCam->sub.lookAt);
                 DebugCamera_PrintPoints("Position", debugCam->sub.nPoints, debugCam->sub.position);
-                PRINTF("@@@static short  nPoints = %d;\n@@@\n", debugCam->sub.nPoints);
-                PRINTF("@@@static short  nFrames = %d;\n@@@\n", debugCam->sub.nFrames);
-                PRINTF("@@@static short  Mode = %d;\n@@@\n", debugCam->sub.mode);
-                PRINTF("@@@\n@@@\n@@@/* *** spline point data ** finish! *** */\n@@@\n");
+                PRINTF2("@@@static short  nPoints = %d;\n@@@\n", debugCam->sub.nPoints);
+                PRINTF2("@@@static short  nFrames = %d;\n@@@\n", debugCam->sub.nFrames);
+                PRINTF2("@@@static short  Mode = %d;\n@@@\n", debugCam->sub.mode);
+                PRINTF2("@@@\n@@@\n@@@/* *** spline point data ** finish! *** */\n@@@\n");
             } else if (CHECK_BTN_ALL(sPlay->state.input[DEBUG_CAM_CONTROLLER_PORT].press.button, BTN_CLEFT)) {
                 Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
@@ -1541,14 +1541,14 @@ char DebugCamera_InitCut(s32 idx, DebugCamSub* sub) {
     sDebugCamCuts[idx].lookAt = DEBUG_ARENA_MALLOC(i, "../db_camera.c", 2748);
     if (sDebugCamCuts[idx].lookAt == NULL) {
         // "Debug camera memory allocation failure"
-        PRINTF("%s: %d: デバッグカメラ メモリ確保失敗！！\n", "../db_camera.c", 2751);
+        PRINTF2("%s: %d: デバッグカメラ メモリ確保失敗！！\n", "../db_camera.c", 2751);
         return '?';
     }
 
     sDebugCamCuts[idx].position = DEBUG_ARENA_MALLOC(i, "../db_camera.c", 2754);
     if (sDebugCamCuts[idx].position == NULL) {
         // "Debug camera memory allocation failure"
-        PRINTF("%s: %d: デバッグカメラ メモリ確保失敗！！\n", "../db_camera.c", 2757);
+        PRINTF2("%s: %d: デバッグカメラ メモリ確保失敗！！\n", "../db_camera.c", 2757);
         DEBUG_ARENA_FREE(sDebugCamCuts[idx].lookAt, "../db_camera.c", 2758);
         sDebugCamCuts[idx].lookAt = NULL;
         return '?';
@@ -1626,7 +1626,7 @@ s32 DebugCamera_LoadCallback(char* c) {
             sDebugCamCuts[i].lookAt = DEBUG_ARENA_MALLOC(ALIGN32(size), "../db_camera.c", 2844);
             if (sDebugCamCuts[i].lookAt == NULL) {
                 // "Debug camera memory allocation failure"
-                PRINTF("%s: %d: デバッグカメラ メモリ確保失敗！！\n", "../db_camera.c", 2847);
+                PRINTF2("%s: %d: デバッグカメラ メモリ確保失敗！！\n", "../db_camera.c", 2847);
                 return false;
             }
             if (!Mempak_Read(DEBUG_CAM_CONTROLLER_PORT, *c, sDebugCamCuts[i].lookAt, off, ALIGN32(size))) {
@@ -1637,7 +1637,7 @@ s32 DebugCamera_LoadCallback(char* c) {
             sDebugCamCuts[i].position = DEBUG_ARENA_MALLOC(ALIGN32(size), "../db_camera.c", 2855);
             if (sDebugCamCuts[i].position == NULL) {
                 // "Debug camera memory allocation failure"
-                PRINTF("%s: %d: デバッグカメラ メモリ確保失敗！！\n", "../db_camera.c", 2858);
+                PRINTF2("%s: %d: デバッグカメラ メモリ確保失敗！！\n", "../db_camera.c", 2858);
                 return false;
             }
             if (!Mempak_Read(DEBUG_CAM_CONTROLLER_PORT, *c, sDebugCamCuts[i].position, off, ALIGN32(size))) {
@@ -1728,24 +1728,24 @@ void DebugCamera_PrintAllCuts(Camera* cam) {
 
     Audio_PlaySfxGeneral(NA_SE_SY_GET_RUPY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-    PRINTF("@@@\n@@@\n@@@/* ****** spline point data ** start here ***** */\n@@@\n");
+    PRINTF2("@@@\n@@@\n@@@/* ****** spline point data ** start here ***** */\n@@@\n");
 
     for (i = 0; i < ARRAY_COUNT(sDebugCamCuts) - 1; i++) {
         DebugCamCut* cut = &sDebugCamCuts[i];
         if (cut->nPoints != 0) {
             if (i != 0) {
-                PRINTF("@@@\n@@@/* ** %d ** */\n@@@\n", i);
+                PRINTF2("@@@\n@@@/* ** %d ** */\n@@@\n", i);
             }
 
             DebugCamera_PrintPoints("Lookat", cut->nPoints, cut->lookAt);
             DebugCamera_PrintPoints("Position", cut->nPoints, cut->position);
-            PRINTF("@@@static short  nPoints = %d;\n@@@\n", cut->nPoints);
-            PRINTF("@@@static short  nFrames = %d;\n@@@\n", cut->nFrames);
-            PRINTF("@@@static short  Mode = %d;\n@@@\n", cut->mode);
+            PRINTF2("@@@static short  nPoints = %d;\n@@@\n", cut->nPoints);
+            PRINTF2("@@@static short  nFrames = %d;\n@@@\n", cut->nFrames);
+            PRINTF2("@@@static short  Mode = %d;\n@@@\n", cut->mode);
         }
     }
 
-    PRINTF("@@@\n@@@\n@@@/* ****** spline point data ** finish! ***** */\n@@@\n");
+    PRINTF2("@@@\n@@@\n@@@/* ****** spline point data ** finish! ***** */\n@@@\n");
 }
 
 char D_8012D114[] = GFXP_KATAKANA "ﾌﾚ-ﾑ         ";
@@ -2310,7 +2310,7 @@ s32 DebugCamera_UpdateDemoControl(DebugCam* debugCam, Camera* cam) {
             if (CHECK_BTN_ALL(sPlay->state.input[DEBUG_CAM_CONTROLLER_PORT].cur.button, BTN_L) &&
                 CHECK_BTN_ALL(sPlay->state.input[DEBUG_CAM_CONTROLLER_PORT].press.button, BTN_CRIGHT)) {
                 for (i = 0; i < ARRAY_COUNT(sDebugCamCuts) - 1; i++) {
-                    PRINTF("###%2d:(%c) (%d %d) %d %d %d\n", i, sDebugCamCuts[i].letter, sDebugCamCuts[i].position,
+                    PRINTF2("###%2d:(%c) (%d %d) %d %d %d\n", i, sDebugCamCuts[i].letter, sDebugCamCuts[i].position,
                            sDebugCamCuts[i].lookAt, sDebugCamCuts[i].nFrames, sDebugCamCuts[i].nPoints,
                            sDebugCamCuts[i].mode);
                 }
@@ -2321,7 +2321,7 @@ s32 DebugCamera_UpdateDemoControl(DebugCam* debugCam, Camera* cam) {
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 for (i = 0; i < ARRAY_COUNT(sDebugCamCuts) - 1; i++) {
                     if (sDebugCamCuts[i].nPoints != 0) {
-                        PRINTF("\n@@@ /* CUT [%d]\t*/", i);
+                        PRINTF2("\n@@@ /* CUT [%d]\t*/", i);
                         DebugCamera_PrintCutBytes(&sDebugCamCuts[i]);
                     }
                 }

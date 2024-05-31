@@ -88,11 +88,11 @@ s32 Mempak_FindFiles(s32 controllerNum, char start, char end) {
         }
 
         bit <<= 1;
-        PRINTF("mempak: find '%c' (%d)\n", letter, error);
+        PRINTF2("mempak: find '%c' (%d)\n", letter, error);
     }
 
     PadMgr_ReleaseSerialEventQueue(&gPadMgr, serialEventQueue);
-    PRINTF("mempak: find '%c' - '%c' %02x\n", start, end, bits);
+    PRINTF2("mempak: find '%c' - '%c' %02x\n", start, end, bits);
     return bits;
 }
 
@@ -120,7 +120,7 @@ s32 Mempak_Write(s32 controllerNum, char letter, void* buffer, s32 offset, s32 s
         if (error == 0) {
             ret = true;
         }
-        PRINTF("mempak: write %d byte '%c' (%d)->%d\n", size, letter, sMempakFiles[MEMPAK_LETTER_TO_INDEX(letter)],
+        PRINTF2("mempak: write %d byte '%c' (%d)->%d\n", size, letter, sMempakFiles[MEMPAK_LETTER_TO_INDEX(letter)],
                error);
     }
     PadMgr_ReleaseSerialEventQueue(&gPadMgr, serialEventQueue);
@@ -151,7 +151,7 @@ s32 Mempak_Read(s32 controllerNum, char letter, void* buffer, s32 offset, s32 si
         if (error == 0) {
             ret = true;
         }
-        PRINTF("mempak: read %d byte '%c' (%d)<-%d\n", size, letter, sMempakFiles[MEMPAK_LETTER_TO_INDEX(letter)],
+        PRINTF2("mempak: read %d byte '%c' (%d)<-%d\n", size, letter, sMempakFiles[MEMPAK_LETTER_TO_INDEX(letter)],
                error);
     }
     PadMgr_ReleaseSerialEventQueue(&gPadMgr, serialEventQueue);
@@ -190,7 +190,7 @@ s32 Mempak_CreateFile(s32 controllerNum, char* letter, s32 size) {
             if (error == 0) {
                 ret = true;
             }
-            PRINTF("mempak: alloc %d byte '%c' (%d)\n", size, *letter, error);
+            PRINTF2("mempak: alloc %d byte '%c' (%d)\n", size, *letter, error);
         } else {
             // File already exists, delete then alloc
 
@@ -204,7 +204,7 @@ s32 Mempak_CreateFile(s32 controllerNum, char* letter, s32 size) {
             if (error == 0) {
                 ret |= true;
             }
-            PRINTF("mempak: resize %d byte '%c' (%d)\n", size, *letter, error);
+            PRINTF2("mempak: resize %d byte '%c' (%d)\n", size, *letter, error);
         }
     } else {
         // Find first free letter and create a file identified by it
@@ -218,7 +218,7 @@ s32 Mempak_CreateFile(s32 controllerNum, char* letter, s32 size) {
         sMempakExtName[0] = NCH(*letter);
         error = osPfsAllocateFile(&sMempakPfsHandle, sMempakCompanyCode, sMempakGameCode, sMempakGameName,
                                   sMempakExtName, size, &sMempakFiles[i]);
-        PRINTF("mempak: alloc %d byte '%c' (%d) with search\n", size, *letter, error);
+        PRINTF2("mempak: alloc %d byte '%c' (%d) with search\n", size, *letter, error);
         if (error == 0) {
             ret = true;
         }
@@ -246,7 +246,7 @@ s32 Mempak_DeleteFile(s32 controllerNum, char letter) {
     if (error == 0) {
         ret = true;
     }
-    PRINTF("mempak: delete '%c' (%d)\n", letter, error);
+    PRINTF2("mempak: delete '%c' (%d)\n", letter, error);
 
     PadMgr_ReleaseSerialEventQueue(&gPadMgr, serialEventQueue);
     return ret;

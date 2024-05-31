@@ -589,7 +589,7 @@ void PreRender_AntiAliasFilter(PreRender* this, s32 x, s32 y) {
 
 #if IS_DEBUG
     if (buffCvg[7] == 7) {
-        PRINTF("Error, should not be in here \n");
+        PRINTF2("Error, should not be in here \n");
         return;
     }
 #endif
@@ -754,7 +754,7 @@ void PreRender_DivotFilter(PreRender* this) {
                     u8* windowB = &buffB[x - 1];
 
                     if (PRERENDER_DIVOT_CONTROL == PRERENDER_DIVOT_PRINT_COLOR) {
-                        PRINTF("red=%3d %3d %3d %3d grn=%3d %3d %3d %3d blu=%3d %3d %3d %3d \n", windowR[0], windowR[1],
+                        PRINTF2("red=%3d %3d %3d %3d grn=%3d %3d %3d %3d blu=%3d %3d %3d %3d \n", windowR[0], windowR[1],
                                windowR[2], MEDIAN3(windowR[0], windowR[1], windowR[2]), windowG[0], windowG[1],
                                windowG[2], MEDIAN3(windowG[0], windowG[1], windowG[2]), windowB[0], windowB[1],
                                windowB[2], MEDIAN3(windowB[0], windowB[1], windowB[2]));

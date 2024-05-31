@@ -127,7 +127,7 @@ void Menu_Update(Menu* this) {
 
             this->bBackgroundExecution = elem.bToggle;
             if ((elem.updateFunc != NULL) && (elem.pStruct != NULL) && !elem.updateFunc(elem.pStruct)) {
-                PRINTF("[HackerOoT:Menu]: an error occurred while trying to run the update function\n");
+                PRINTF2("[HackerOoT:Menu]: an error occurred while trying to run the update function\n");
             }
         }
     }
@@ -135,7 +135,7 @@ void Menu_Update(Menu* this) {
 
 void Menu_DrawElem(MenuElement elem) {
     if ((elem.drawFunc != NULL) && !elem.drawFunc(elem.pStruct)) {
-        PRINTF("[HackerOoT:Menu]: an error occurred while trying to run the draw function\n");
+        PRINTF2("[HackerOoT:Menu]: an error occurred while trying to run the draw function\n");
     }
 }
 

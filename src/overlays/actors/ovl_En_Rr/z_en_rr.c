@@ -323,7 +323,7 @@ void EnRr_SetupReleasePlayer(EnRr* this, PlayState* play) {
             Message_StartTextbox(play, 0x3061, NULL);
             break;
     }
-    PRINTF(VT_FGCOL(YELLOW) "%s[%d] : Rr_Catch_Cancel" VT_RST "\n", "../z_en_rr.c", 650);
+    PRINTF2(VT_FGCOL(YELLOW) "%s[%d] : Rr_Catch_Cancel" VT_RST "\n", "../z_en_rr.c", 650);
     func_8002F6D4(play, &this->actor, 4.0f, this->actor.shape.rot.y, 12.0f, 8);
     if (this->actor.colorFilterTimer == 0) {
         this->actionFunc = EnRr_Approach;
@@ -418,7 +418,7 @@ void EnRr_CollisionCheck(EnRr* this, PlayState* play) {
     if (this->collider2.base.acFlags & AC_HIT) {
         this->collider2.base.acFlags &= ~AC_HIT;
         // "Kakin" (not sure what this means)
-        PRINTF(VT_FGCOL(GREEN) "カキン(%d)！！" VT_RST "\n", this->frameCount);
+        PRINTF2(VT_FGCOL(GREEN) "カキン(%d)！！" VT_RST "\n", this->frameCount);
         hitPos.x = this->collider2.elem.acDmgInfo.hitPos.x;
         hitPos.y = this->collider2.elem.acDmgInfo.hitPos.y;
         hitPos.z = this->collider2.elem.acDmgInfo.hitPos.z;
@@ -449,7 +449,7 @@ void EnRr_CollisionCheck(EnRr* this, PlayState* play) {
                     FALLTHROUGH;
                 case RR_DMG_NORMAL:
                     // "ouch"
-                    PRINTF(VT_FGCOL(RED) "いてっ( %d : LIFE %d : DAMAGE %d : %x )！！" VT_RST "\n", this->frameCount,
+                    PRINTF2(VT_FGCOL(RED) "いてっ( %d : LIFE %d : DAMAGE %d : %x )！！" VT_RST "\n", this->frameCount,
                            this->actor.colChkInfo.health, this->actor.colChkInfo.damage,
                            this->actor.colChkInfo.damageEffect);
                     this->stopScroll = false;
@@ -508,7 +508,7 @@ void EnRr_CollisionCheck(EnRr* this, PlayState* play) {
             this->collider1.base.ocFlags1 &= ~OC1_HIT;
             this->collider2.base.ocFlags1 &= ~OC1_HIT;
             // "catch"
-            PRINTF(VT_FGCOL(GREEN) "キャッチ(%d)！！" VT_RST "\n", this->frameCount);
+            PRINTF2(VT_FGCOL(GREEN) "キャッチ(%d)！！" VT_RST "\n", this->frameCount);
             if (play->grabPlayer(play, player)) {
                 player->actor.parent = &this->actor;
                 this->stopScroll = false;
@@ -690,7 +690,7 @@ void EnRr_Death(EnRr* this, PlayState* play) {
                 break;
         }
         // "dropped"
-        PRINTF(VT_FGCOL(GREEN) "「%s」が出た！！" VT_RST "\n", sDropNames[this->dropType]);
+        PRINTF2(VT_FGCOL(GREEN) "「%s」が出た！！" VT_RST "\n", sDropNames[this->dropType]);
         switch (this->dropType) {
             case RR_DROP_MAGIC:
                 Item_DropCollectible(play, &dropPos, ITEM00_MAGIC_SMALL);

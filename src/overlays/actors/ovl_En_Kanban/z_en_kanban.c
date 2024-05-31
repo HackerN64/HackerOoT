@@ -217,7 +217,7 @@ void EnKanban_Init(Actor* thisx, PlayState* play) {
         this->actor.flags |= ACTOR_FLAG_0;
         Collider_InitCylinder(play, &this->collider);
         Collider_SetCylinder(play, &this->collider, &this->actor, &sCylinderInit);
-        PRINTF("KANBAN ARG    %x\n", this->actor.params);
+        PRINTF2("KANBAN ARG    %x\n", this->actor.params);
         if (this->actor.params == ENKANBAN_FISHING) {
             if (LINK_IS_CHILD) {
                 this->actor.textId = 0x409D;
@@ -462,7 +462,7 @@ void EnKanban_Update(Actor* thisx, PlayState* play2) {
             this->actor.bgCheckFlags = tempBgFlags;
             this->actor.depthInWater = tempDepthInWater;
 
-            PRINTF(VT_RST);
+            PRINTF2(VT_RST);
 
             if (1) {
                 u8 onGround = (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND);
@@ -517,9 +517,9 @@ void EnKanban_Update(Actor* thisx, PlayState* play2) {
                     EffectSsGRipple_Spawn(play, &this->actor.world.pos, 300, 800, 5);
                     this->actor.velocity.y = 0.0f;
                     this->actor.gravity = 0.0f;
-                    PRINTF(" WAT  Y  = %f\n", this->actor.depthInWater);
-                    PRINTF(" POS  Y  = %f\n", this->actor.world.pos.y);
-                    PRINTF(" GROUND Y  = %f\n", this->actor.floorHeight);
+                    PRINTF2(" WAT  Y  = %f\n", this->actor.depthInWater);
+                    PRINTF2(" POS  Y  = %f\n", this->actor.world.pos.y);
+                    PRINTF2(" GROUND Y  = %f\n", this->actor.floorHeight);
                     break;
                 }
 
@@ -726,9 +726,9 @@ void EnKanban_Update(Actor* thisx, PlayState* play2) {
                     bomb = bomb->next;
                 }
             }
-            PRINTF(VT_FGCOL(GREEN));
-            PRINTF("OCARINA_MODE %d\n", play->msgCtx.ocarinaMode);
-            PRINTF(VT_RST);
+            PRINTF2(VT_FGCOL(GREEN));
+            PRINTF2("OCARINA_MODE %d\n", play->msgCtx.ocarinaMode);
+            PRINTF2(VT_RST);
             switch (this->ocarinaFlag) {
                 case 0:
                     if (play->msgCtx.ocarinaMode == OCARINA_MODE_01) {

@@ -44,17 +44,17 @@ void Font_LoadOrderedFont(Font* font) {
     DMA_REQUEST_SYNC(font->msgBuf, (uintptr_t)_nes_message_data_staticSegmentRomStart + font->msgOffset, len,
                      "../z_kanfont.c", 122);
 
-    PRINTF("msg_data=%x,  msg_data0=%x   jj=%x\n", font->msgOffset, font->msgLength, len * 1);
+    PRINTF2("msg_data=%x,  msg_data0=%x   jj=%x\n", font->msgOffset, font->msgLength, len * 1);
 
     fontBufIndex = 0;
     for (codePointIndex = 0; font->msgBuf[codePointIndex] != MESSAGE_END; codePointIndex++) {
         if (codePointIndex > (len * 1)) {
-            PRINTF("ＥＲＲＯＲ！！  エラー！！！  error───！！！！\n");
+            PRINTF2("ＥＲＲＯＲ！！  エラー！！！  error───！！！！\n");
             return;
         }
 
         if (font->msgBuf[codePointIndex] != MESSAGE_NEWLINE) {
-            PRINTF("nes_mes_buf[%d]=%d\n", codePointIndex, font->msgBuf[codePointIndex]);
+            PRINTF2("nes_mes_buf[%d]=%d\n", codePointIndex, font->msgBuf[codePointIndex]);
 
             offset = (font->msgBuf[codePointIndex] - ' ') * FONT_CHAR_TEX_SIZE;
             DMA_REQUEST_SYNC(font->fontBuf + fontBufIndex * 8, (uintptr_t)_nes_font_staticSegmentRomStart + offset,

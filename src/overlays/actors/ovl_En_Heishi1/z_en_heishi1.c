@@ -80,27 +80,27 @@ void EnHeishi1_Init(Actor* thisx, PlayState* play2) {
     }
 
     // "type"
-    PRINTF(VT_FGCOL(GREEN) " 種類☆☆☆☆☆☆☆☆☆☆☆☆☆ %d\n" VT_RST, this->type);
+    PRINTF2(VT_FGCOL(GREEN) " 種類☆☆☆☆☆☆☆☆☆☆☆☆☆ %d\n" VT_RST, this->type);
     // "path data"
-    PRINTF(VT_FGCOL(YELLOW) " れえるでぇたぁ☆☆☆☆☆☆☆☆ %d\n" VT_RST, this->path);
-    PRINTF(VT_FGCOL(MAGENTA) " anime_frame_speed ☆☆☆☆☆☆ %f\n" VT_RST, this->animSpeed);
+    PRINTF2(VT_FGCOL(YELLOW) " れえるでぇたぁ☆☆☆☆☆☆☆☆ %d\n" VT_RST, this->path);
+    PRINTF2(VT_FGCOL(MAGENTA) " anime_frame_speed ☆☆☆☆☆☆ %f\n" VT_RST, this->animSpeed);
     // "interpolation frame"
-    PRINTF(VT_FGCOL(MAGENTA) " 補間フレーム☆☆☆☆☆☆☆☆☆ %f\n" VT_RST, this->animMorphFrames);
+    PRINTF2(VT_FGCOL(MAGENTA) " 補間フレーム☆☆☆☆☆☆☆☆☆ %f\n" VT_RST, this->animMorphFrames);
     // "targeted movement speed value between points"
-    PRINTF(VT_FGCOL(MAGENTA) " point間の移動スピード目標値 ☆ %f\n" VT_RST, this->moveSpeedTarget);
+    PRINTF2(VT_FGCOL(MAGENTA) " point間の移動スピード目標値 ☆ %f\n" VT_RST, this->moveSpeedTarget);
     // "maximum movement speed value between points"
-    PRINTF(VT_FGCOL(MAGENTA) " point間の移動スピード最大 ☆☆ %f\n" VT_RST, this->moveSpeedMax);
+    PRINTF2(VT_FGCOL(MAGENTA) " point間の移動スピード最大 ☆☆ %f\n" VT_RST, this->moveSpeedMax);
     // "(body) targeted turning angle speed value"
-    PRINTF(VT_FGCOL(MAGENTA) " (体)反転アングルスピード目標値 %f\n" VT_RST, this->bodyTurnSpeedTarget);
+    PRINTF2(VT_FGCOL(MAGENTA) " (体)反転アングルスピード目標値 %f\n" VT_RST, this->bodyTurnSpeedTarget);
     // "(body) maximum turning angle speed"
-    PRINTF(VT_FGCOL(MAGENTA) " (体)反転アングルスピード最大☆ %f\n" VT_RST, this->bodyTurnSpeedMax);
+    PRINTF2(VT_FGCOL(MAGENTA) " (体)反転アングルスピード最大☆ %f\n" VT_RST, this->bodyTurnSpeedMax);
     // "(head) targeted turning angle speed value"
-    PRINTF(VT_FGCOL(MAGENTA) " (頭)反転アングルスピード加算値 %f\n" VT_RST, this->headTurnSpeedScale);
+    PRINTF2(VT_FGCOL(MAGENTA) " (頭)反転アングルスピード加算値 %f\n" VT_RST, this->headTurnSpeedScale);
     // "(head) maximum turning angle speed"
-    PRINTF(VT_FGCOL(MAGENTA) " (頭)反転アングルスピード最大☆ %f\n" VT_RST, this->headTurnSpeedMax);
-    PRINTF(VT_FGCOL(GREEN) " 今時間 %d\n" VT_RST, ((void)0, gSaveContext.save.dayTime)); // "current time"
-    PRINTF(VT_FGCOL(YELLOW) " チェック時間 %d\n" VT_RST, CLOCK_TIME(17, 30) - 1);        // "check time"
-    PRINTF("\n\n");
+    PRINTF2(VT_FGCOL(MAGENTA) " (頭)反転アングルスピード最大☆ %f\n" VT_RST, this->headTurnSpeedMax);
+    PRINTF2(VT_FGCOL(GREEN) " 今時間 %d\n" VT_RST, ((void)0, gSaveContext.save.dayTime)); // "current time"
+    PRINTF2(VT_FGCOL(YELLOW) " チェック時間 %d\n" VT_RST, CLOCK_TIME(17, 30) - 1);        // "check time"
+    PRINTF2("\n\n");
 
     if (this->path == 3) {
         for (i = 0; i < ARRAY_COUNT(sRupeePositions); i++) {
@@ -183,12 +183,12 @@ void EnHeishi1_Walk(EnHeishi1* this, PlayState* play) {
         Math_ApproachF(&this->headAngle, this->headAngleTarget, this->headTurnSpeedScale, this->headTurnSpeedMax);
 
         if (IS_ACTOR_DEBUG_ENABLED && (this->path == BREG(1)) && (BREG(0) != 0)) {
-            PRINTF(VT_FGCOL(RED) " 種類  %d\n" VT_RST, this->path);
-            PRINTF(VT_FGCOL(RED) " ぱす  %d\n" VT_RST, this->waypoint);
-            PRINTF(VT_FGCOL(RED) " 反転  %d\n" VT_RST, this->bodyTurnSpeed);
-            PRINTF(VT_FGCOL(RED) " 時間  %d\n" VT_RST, this->waypointTimer);
-            PRINTF(VT_FGCOL(RED) " 点座  %d\n" VT_RST, path->count);
-            PRINTF("\n\n");
+            PRINTF2(VT_FGCOL(RED) " 種類  %d\n" VT_RST, this->path);
+            PRINTF2(VT_FGCOL(RED) " ぱす  %d\n" VT_RST, this->waypoint);
+            PRINTF2(VT_FGCOL(RED) " 反転  %d\n" VT_RST, this->bodyTurnSpeed);
+            PRINTF2(VT_FGCOL(RED) " 時間  %d\n" VT_RST, this->waypointTimer);
+            PRINTF2(VT_FGCOL(RED) " 点座  %d\n" VT_RST, path->count);
+            PRINTF2("\n\n");
         }
 
         // when 20 units away from a middle waypoint, decide whether or not to skip it
@@ -301,11 +301,11 @@ void EnHeishi1_Wait(EnHeishi1* this, PlayState* play) {
                        this->headTurnSpeedMax + this->headTurnSpeedMax);
 
         if (IS_ACTOR_DEBUG_ENABLED && (this->path == BREG(1)) && (BREG(0) != 0)) {
-            PRINTF(VT_FGCOL(GREEN) " 種類  %d\n" VT_RST, this->path);
-            PRINTF(VT_FGCOL(GREEN) " ぱす  %d\n" VT_RST, this->waypoint);
-            PRINTF(VT_FGCOL(GREEN) " 反転  %d\n" VT_RST, this->bodyTurnSpeed);
-            PRINTF(VT_FGCOL(GREEN) " 時間  %d\n" VT_RST, this->waypointTimer);
-            PRINTF("\n\n");
+            PRINTF2(VT_FGCOL(GREEN) " 種類  %d\n" VT_RST, this->path);
+            PRINTF2(VT_FGCOL(GREEN) " ぱす  %d\n" VT_RST, this->waypoint);
+            PRINTF2(VT_FGCOL(GREEN) " 反転  %d\n" VT_RST, this->bodyTurnSpeed);
+            PRINTF2(VT_FGCOL(GREEN) " 時間  %d\n" VT_RST, this->waypointTimer);
+            PRINTF2("\n\n");
         }
     }
 }
@@ -371,7 +371,7 @@ void EnHeishi1_WaitNight(EnHeishi1* this, PlayState* play) {
     if (this->actor.xzDistToPlayer < 100.0f) {
         Message_StartTextbox(play, 0x702D, &this->actor);
         Sfx_PlaySfxCentered(NA_SE_SY_FOUND);
-        PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 発見！ ☆☆☆☆☆ \n" VT_RST); // "Discovered!"
+        PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 発見！ ☆☆☆☆☆ \n" VT_RST); // "Discovered!"
         Player_SetCsActionWithHaltedActors(play, &this->actor, PLAYER_CSACTION_1);
         this->actionFunc = EnHeishi1_SetupKick;
     }
@@ -455,7 +455,7 @@ void EnHeishi1_Update(Actor* thisx, PlayState* play) {
                                 if (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 60.0f) {
                                     Sfx_PlaySfxCentered(NA_SE_SY_FOUND);
                                     // "Discovered!"
-                                    PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 発見！ ☆☆☆☆☆ \n" VT_RST);
+                                    PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 発見！ ☆☆☆☆☆ \n" VT_RST);
                                     Player_SetCsActionWithHaltedActors(play, &this->actor, PLAYER_CSACTION_1);
                                     sPlayerIsCaught = true;
                                     this->actionFunc = EnHeishi1_SetupMoveToLink;

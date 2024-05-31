@@ -172,7 +172,7 @@ void EnIceHono_Init(Actor* thisx, PlayState* play) {
         this->lightNode = LightContext_InsertLight(play, &play->lightCtx, &this->lightInfo);
         this->unk_154 = Rand_ZeroOne() * (0x1FFFF / 2.0f);
         this->unk_156 = Rand_ZeroOne() * (0x1FFFF / 2.0f);
-        PRINTF("(ice 炎)(arg_data 0x%04x)\n", this->actor.params); // "(ice flame)"
+        PRINTF2("(ice 炎)(arg_data 0x%04x)\n", this->actor.params); // "(ice flame)"
     }
 }
 
@@ -359,7 +359,7 @@ void EnIceHono_Update(Actor* thisx, PlayState* play) {
 
 #if IS_DEBUG
         if ((intensity > 0.7f) || (intensity < 0.2f)) {
-            PRINTF("ありえない値(ratio = %f)\n", intensity); // "impossible value(ratio = %f)"
+            PRINTF2("ありえない値(ratio = %f)\n", intensity); // "impossible value(ratio = %f)"
         }
 #endif
 

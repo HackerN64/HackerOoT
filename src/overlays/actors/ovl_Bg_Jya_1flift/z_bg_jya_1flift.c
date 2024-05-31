@@ -79,7 +79,7 @@ void BgJya1flift_InitDynapoly(BgJya1flift* this, PlayState* play, CollisionHeade
         s32 pad2;
 
         // "Warning : move BG login failed"
-        PRINTF("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_jya_1flift.c", 179,
+        PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_jya_1flift.c", 179,
                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
@@ -96,7 +96,7 @@ void BgJya1flift_InitCollision(Actor* thisx, PlayState* play) {
 void BgJya1flift_Init(Actor* thisx, PlayState* play) {
     BgJya1flift* this = (BgJya1flift*)thisx;
     // "1 F lift"
-    PRINTF("(１Ｆリフト)(flag %d)(room %d)\n", sIsSpawned, play->roomCtx.curRoom.num);
+    PRINTF2("(１Ｆリフト)(flag %d)(room %d)\n", sIsSpawned, play->roomCtx.curRoom.num);
     this->hasInitialized = false;
     if (sIsSpawned) {
         Actor_Kill(thisx);

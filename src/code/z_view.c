@@ -74,7 +74,7 @@ void View_Init(View* view, GraphicsContext* gfxCtx) {
     view->up.z = 0.0f;
 
     if (sLogOnNextViewInit) {
-        PRINTF("\nview: initialize ---\n");
+        PRINTF2("\nview: initialize ---\n");
         sLogOnNextViewInit = false;
     }
 
@@ -357,15 +357,15 @@ s32 View_ApplyPerspective(View* view) {
         s32 i;
         MtxF mf;
 
-        PRINTF("fovy %f near %f far %f scale %f aspect %f normal %08x\n", view->fovy, view->zNear, view->zFar,
+        PRINTF2("fovy %f near %f far %f scale %f aspect %f normal %08x\n", view->fovy, view->zNear, view->zFar,
                view->scale, aspect, view->normal);
 
         Matrix_MtxToMtxF(projection, &mf);
-        PRINTF("projection\n");
+        PRINTF2("projection\n");
         for (i = 0; i < 4; i++) {
-            PRINTF("\t%f\t%f\t%f\t%f\n", mf.mf[i][0], mf.mf[i][1], mf.mf[i][2], mf.mf[i][3]);
+            PRINTF2("\t%f\t%f\t%f\t%f\n", mf.mf[i][0], mf.mf[i][1], mf.mf[i][2], mf.mf[i][3]);
         }
-        PRINTF("\n");
+        PRINTF2("\n");
     }
 #endif
 
@@ -408,11 +408,11 @@ s32 View_ApplyPerspective(View* view) {
         MtxF mf;
         Matrix_MtxToMtxF(view->viewingPtr, &mf);
 
-        PRINTF("viewing\n");
+        PRINTF2("viewing\n");
         for (i = 0; i < 4; i++) {
-            PRINTF("\t%f\t%f\t%f\t%f\n", mf.mf[i][0], mf.mf[i][1], mf.mf[i][2], mf.mf[i][3]);
+            PRINTF2("\t%f\t%f\t%f\t%f\n", mf.mf[i][0], mf.mf[i][1], mf.mf[i][2], mf.mf[i][3]);
         }
-        PRINTF("\n");
+        PRINTF2("\n");
     }
 #endif
 
@@ -718,10 +718,10 @@ s32 View_ErrorCheckEyePosition(f32 eyeX, f32 eyeY, f32 eyeZ) {
     }
 
     if (error != 0) {
-        PRINTF(VT_FGCOL(RED));
+        PRINTF2(VT_FGCOL(RED));
         // "Is too large"
-        PRINTF("eye が大きすぎます eye=[%8.3f %8.3f %8.3f] error=%d\n", eyeX, eyeY, eyeZ, error);
-        PRINTF(VT_RST);
+        PRINTF2("eye が大きすぎます eye=[%8.3f %8.3f %8.3f] error=%d\n", eyeX, eyeY, eyeZ, error);
+        PRINTF2(VT_RST);
     }
 
     return error;

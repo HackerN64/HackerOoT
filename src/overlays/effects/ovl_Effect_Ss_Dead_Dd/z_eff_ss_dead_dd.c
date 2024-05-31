@@ -83,7 +83,7 @@ u32 EffectSsDeadDd_Init(PlayState* play, u32 index, EffectSs* this, void* initPa
             this->accel.z = this->velocity.z = (Rand_ZeroOne() - 0.5f) * 2.0f;
         }
     } else {
-        PRINTF("Effect_SS_Dd_disp_mode():mode_swが変です。\n");
+        PRINTF2("Effect_SS_Dd_disp_mode():mode_swが変です。\n");
         return 0;
     }
 

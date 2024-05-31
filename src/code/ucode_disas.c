@@ -46,7 +46,7 @@ typedef void (*UcodeDisasCallback)(UCodeDisas*, u32);
 
 #define DISAS_LOG        \
     if (this->enableLog) \
-    PRINTF
+    PRINTF2
 
 void* UCodeDisas_TranslateAddr(UCodeDisas* this, uintptr_t addr) {
     uintptr_t physical = this->segments[SEGMENT_NUMBER(addr)] + SEGMENT_OFFSET(addr);
@@ -288,13 +288,13 @@ void UCodeDisas_PrintRenderMode(UCodeDisas* this, u32 mode) {
     b = (mode >> 16) & 0x3333;
 
     // clang-format off
-    if (this->enableLog == 0) {} else { PRINTF("\nGBL_c1(%s, %s, %s, %s)|",
+    if (this->enableLog == 0) {} else { PRINTF2("\nGBL_c1(%s, %s, %s, %s)|",
         sBlenderInputNames[0][a >> 12 & 3], sBlenderInputNames[1][a >> 8 & 3], sBlenderInputNames[2][a >> 4 & 3], sBlenderInputNames[3][a >> 0 & 3]);
     }
     // clang-format on
 
     if (this->enableLog) {
-        PRINTF("\nGBL_c2(%s, %s, %s, %s)", sBlenderInputNames[0][b >> 12 & 3], sBlenderInputNames[1][b >> 8 & 3],
+        PRINTF2("\nGBL_c2(%s, %s, %s, %s)", sBlenderInputNames[0][b >> 12 & 3], sBlenderInputNames[1][b >> 8 & 3],
                sBlenderInputNames[2][b >> 4 & 3], sBlenderInputNames[3][b >> 0 & 3]);
     }
 }

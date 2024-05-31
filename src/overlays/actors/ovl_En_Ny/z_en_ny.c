@@ -127,7 +127,7 @@ void EnNy_Init(Actor* thisx, PlayState* play) {
     this->unk_1E0 = 0.25f;
     if (this->actor.params == 0) {
         // "New initials"
-        PRINTF("ニュウ イニシャル[ %d ] ！！\n", this->actor.params);
+        PRINTF2("ニュウ イニシャル[ %d ] ！！\n", this->actor.params);
         this->actor.colChkInfo.mass = 0;
         this->unk_1D4 = 0;
         this->unk_1D8 = 0xFF;
@@ -136,8 +136,8 @@ void EnNy_Init(Actor* thisx, PlayState* play) {
     } else {
         // This mode is unused in the final game
         // "Dummy new initials"
-        PRINTF("ダミーニュウ イニシャル[ %d ] ！！\n", this->actor.params);
-        PRINTF("En_Ny_actor_move2[ %x ] ！！\n", EnNy_UpdateUnused);
+        PRINTF2("ダミーニュウ イニシャル[ %d ] ！！\n", this->actor.params);
+        PRINTF2("En_Ny_actor_move2[ %x ] ！！\n", EnNy_UpdateUnused);
         this->actor.colChkInfo.mass = 0xFF;
         this->actor.update = EnNy_UpdateUnused;
         this->collider.base.colType = COLTYPE_METAL;

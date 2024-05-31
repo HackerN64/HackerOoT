@@ -233,7 +233,7 @@ void func_809839D0(DemoIk* this, PlayState* play) {
                     break;
                 default:
                     // "there is no such action"
-                    PRINTF("Demo_Ik_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF2("Demo_Ik_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
             }
             this->cueId = nextCueId;
         }
@@ -384,7 +384,7 @@ void func_80984048(DemoIk* this, PlayState* play) {
                     break;
                 default:
                     // "there is no such action"
-                    PRINTF("Demo_Ik_inFace_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF2("Demo_Ik_inFace_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
             }
             this->cueId = nextCueId;
         }
@@ -476,7 +476,7 @@ void DemoIk_Update(Actor* thisx, PlayState* play) {
     if (this->actionMode < 0 || this->actionMode >= ARRAY_COUNT(sActionFuncs) ||
         sActionFuncs[this->actionMode] == NULL) {
         // "The main mode is strange"
-        PRINTF(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
     sActionFuncs[this->actionMode](this, play);
@@ -497,7 +497,7 @@ void DemoIk_Draw(Actor* thisx, PlayState* play) {
 
     if (this->drawMode < 0 || this->drawMode >= ARRAY_COUNT(sDrawFuncs) || sDrawFuncs[this->drawMode] == NULL) {
         // "The draw mode is strange"
-        PRINTF(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
     sDrawFuncs[this->drawMode](this, play);

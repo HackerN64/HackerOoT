@@ -69,13 +69,13 @@ void BgSpot16Doughnut_Init(Actor* thisx, PlayState* play) {
                 Actor_SetScale(&this->actor, 0.1f);
                 break;
         }
-        PRINTF(VT_FGCOL(CYAN) "%f" VT_RST "\n", this->actor.scale.x);
+        PRINTF2(VT_FGCOL(CYAN) "%f" VT_RST "\n", this->actor.scale.x);
         if (!LINK_IS_ADULT || GET_EVENTCHKINF(EVENTCHKINF_2F)) {
             this->fireFlag &= ~1;
         } else {
             this->fireFlag |= 1;
         }
-        PRINTF("(ｓｐｏｔ１６ ドーナツ雲)(arg_data 0x%04x)\n", this->actor.params);
+        PRINTF2("(ｓｐｏｔ１６ ドーナツ雲)(arg_data 0x%04x)\n", this->actor.params);
     }
 }
 

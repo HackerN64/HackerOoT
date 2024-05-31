@@ -57,7 +57,7 @@ vs32 sSchedDebugPrintfEnabled = false;
 
 #define SCHED_DEBUG_PRINTF        \
     if (sSchedDebugPrintfEnabled) \
-    PRINTF
+    PRINTF2
 #elif IDO_PRINTF_WORKAROUND
 #define SCHED_DEBUG_PRINTF(args) (void)0
 #else

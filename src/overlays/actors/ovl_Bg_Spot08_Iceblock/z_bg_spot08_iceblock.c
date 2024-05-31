@@ -51,7 +51,7 @@ void BgSpot08Iceblock_InitDynaPoly(BgSpot08Iceblock* this, PlayState* play, Coll
         s32 pad2;
 
         // "Warning: move BG registration failed"
-        PRINTF("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_spot08_iceblock.c", 0xD9,
+        PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_spot08_iceblock.c", 0xD9,
                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
@@ -65,7 +65,7 @@ void BgSpot08Iceblock_CheckParams(BgSpot08Iceblock* this) {
             break;
         default:
             // "Error: arg_data setting error"
-            PRINTF("Error : arg_data 設定ミスです。(%s %d)(arg_data 0x%04x)\n", "../z_bg_spot08_iceblock.c", 0xF6,
+            PRINTF2("Error : arg_data 設定ミスです。(%s %d)(arg_data 0x%04x)\n", "../z_bg_spot08_iceblock.c", 0xF6,
                    this->dyna.actor.params);
             this->dyna.actor.params = 0x10;
             break;
@@ -288,7 +288,7 @@ void BgSpot08Iceblock_Init(Actor* thisx, PlayState* play) {
     CollisionHeader* colHeader;
 
     // "spot08 ice floe"
-    PRINTF("(spot08 流氷)(arg_data 0x%04x)\n", this->dyna.actor.params);
+    PRINTF2("(spot08 流氷)(arg_data 0x%04x)\n", this->dyna.actor.params);
     BgSpot08Iceblock_CheckParams(this);
 
     switch (this->dyna.actor.params & 0x200) {

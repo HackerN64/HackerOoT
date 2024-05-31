@@ -210,10 +210,10 @@ void EnTite_Destroy(Actor* thisx, PlayState* play) {
         if (spawner->curNumSpawn > 0) {
             spawner->curNumSpawn--;
         }
-        PRINTF("\n\n");
+        PRINTF2("\n\n");
         // "Number of simultaneous occurrences"
-        PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 同時発生数 ☆☆☆☆☆%d\n" VT_RST, spawner->curNumSpawn);
-        PRINTF("\n\n");
+        PRINTF2(VT_FGCOL(GREEN) "☆☆☆☆☆ 同時発生数 ☆☆☆☆☆%d\n" VT_RST, spawner->curNumSpawn);
+        PRINTF2("\n\n");
     }
     Collider_DestroyJntSph(play, &this->collider);
 }

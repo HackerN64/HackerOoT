@@ -134,7 +134,7 @@ void ObjTimeblock_Init(Actor* thisx, PlayState* play) {
     }
 
     // "Block of time"
-    PRINTF("時のブロック (<arg> %04xH <type> save:%d color:%d range:%d move:%d)\n", (u16)this->dyna.actor.params,
+    PRINTF2("時のブロック (<arg> %04xH <type> save:%d color:%d range:%d move:%d)\n", (u16)this->dyna.actor.params,
            this->unk_177, this->dyna.actor.home.rot.z & 7, (this->dyna.actor.params >> 11) & 7,
            (this->dyna.actor.params >> 10) & 1);
 }
@@ -218,7 +218,7 @@ void ObjTimeblock_Normal(ObjTimeblock* this, PlayState* play) {
         // Possibly points the camera to this actor
         OnePointCutscene_Attention(play, &this->dyna.actor);
         // "◯◯◯◯ Time Block Attention Camera (frame counter  %d)\n"
-        PRINTF("◯◯◯◯ Time Block 注目カメラ (frame counter  %d)\n", play->state.frames);
+        PRINTF2("◯◯◯◯ Time Block 注目カメラ (frame counter  %d)\n", play->state.frames);
 
         this->demoEffectFirstPartTimer = 12;
 
@@ -276,7 +276,7 @@ void ObjTimeblock_AltBehaviorVisible(ObjTimeblock* this, PlayState* play) {
         this->demoEffectTimer = 160;
         OnePointCutscene_Attention(play, &this->dyna.actor);
         // "Time Block Attention Camera (frame counter)"
-        PRINTF("◯◯◯◯ Time Block 注目カメラ (frame counter  %d)\n", play->state.frames);
+        PRINTF2("◯◯◯◯ Time Block 注目カメラ (frame counter  %d)\n", play->state.frames);
         ObjTimeblock_ToggleSwitchFlag(play, this->dyna.actor.params & 0x3F);
     }
 

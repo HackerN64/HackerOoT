@@ -33,10 +33,10 @@
 
 #define PADMGR_LOG(controllerNum, msg)                              \
     if (IS_DEBUG) {                                                 \
-        PRINTF(VT_FGCOL(YELLOW));                                   \
+        PRINTF2(VT_FGCOL(YELLOW));                                   \
         /* padmgr: Controller %d: %s */                             \
-        PRINTF("padmgr: %dコン: %s\n", (controllerNum) + 1, (msg)); \
-        PRINTF(VT_RST);                                             \
+        PRINTF2("padmgr: %dコン: %s\n", (controllerNum) + 1, (msg)); \
+        PRINTF2(VT_RST);                                             \
     }                                                               \
     (void)0
 
@@ -74,7 +74,7 @@ OSMesgQueue* PadMgr_AcquireSerialEventQueue(PadMgr* padMgr) {
 
     if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
         // "serialMsgQ Waiting for lock"
-        PRINTF("%2d %d serialMsgQロック待ち         %08x %08x          %08x\n", osGetThreadId(NULL),
+        PRINTF2("%2d %d serialMsgQロック待ち         %08x %08x          %08x\n", osGetThreadId(NULL),
                MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue, &serialEventQueue);
     }
 
@@ -82,7 +82,7 @@ OSMesgQueue* PadMgr_AcquireSerialEventQueue(PadMgr* padMgr) {
 
     if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
         // "serialMsgQ Locked"
-        PRINTF("%2d %d serialMsgQをロックしました                     %08x\n", osGetThreadId(NULL),
+        PRINTF2("%2d %d serialMsgQをロックしました                     %08x\n", osGetThreadId(NULL),
                MQ_GET_COUNT(&padMgr->serialLockQueue), serialEventQueue);
     }
 
@@ -99,7 +99,7 @@ OSMesgQueue* PadMgr_AcquireSerialEventQueue(PadMgr* padMgr) {
 void PadMgr_ReleaseSerialEventQueue(PadMgr* padMgr, OSMesgQueue* serialEventQueue) {
     if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
         // "serialMsgQ Unlock"
-        PRINTF("%2d %d serialMsgQロック解除します   %08x %08x %08x\n", osGetThreadId(NULL),
+        PRINTF2("%2d %d serialMsgQロック解除します   %08x %08x %08x\n", osGetThreadId(NULL),
                MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue, serialEventQueue);
     }
 
@@ -107,7 +107,7 @@ void PadMgr_ReleaseSerialEventQueue(PadMgr* padMgr, OSMesgQueue* serialEventQueu
 
     if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
         // "serialMsgQ Unlocked"
-        PRINTF("%2d %d serialMsgQロック解除しました %08x %08x %08x\n", osGetThreadId(NULL),
+        PRINTF2("%2d %d serialMsgQロック解除しました %08x %08x %08x\n", osGetThreadId(NULL),
                MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue, serialEventQueue);
     }
 }
@@ -398,7 +398,7 @@ void PadMgr_HandleRetrace(PadMgr* padMgr) {
             } else {
                 LOG_HEX("this->pad_status[i].type", padMgr->padStatus[i].type, "../padmgr.c", 458);
                 // "An unknown type of controller is connected"
-                PRINTF("知らない種類のコントローラが接続されています\n");
+                PRINTF2("知らない種類のコントローラが接続されています\n");
             }
         }
     }
@@ -422,7 +422,7 @@ void PadMgr_HandleRetrace(PadMgr* padMgr) {
 }
 
 void PadMgr_HandlePreNMI(PadMgr* padMgr) {
-    PRINTF("padmgr_HandlePreNMI()\n");
+    PRINTF2("padmgr_HandlePreNMI()\n");
     padMgr->isResetting = true;
     PadMgr_RumbleReset(padMgr);
 }
@@ -472,13 +472,13 @@ void PadMgr_ThreadEntry(PadMgr* padMgr) {
     s16* msg = NULL;
     s32 exit;
 
-    PRINTF("コントローラスレッド実行開始\n"); // "Controller thread execution start"
+    PRINTF2("コントローラスレッド実行開始\n"); // "Controller thread execution start"
 
     exit = false;
     while (!exit) {
         if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE && MQ_IS_EMPTY(&padMgr->interruptQueue)) {
             // "Waiting for controller thread event"
-            PRINTF("コントローラスレッドイベント待ち %lld\n", OS_CYCLES_TO_USEC(osGetTime()));
+            PRINTF2("コントローラスレッドイベント待ち %lld\n", OS_CYCLES_TO_USEC(osGetTime()));
         }
 
         osRecvMesg(&padMgr->interruptQueue, (OSMesg*)&msg, OS_MESG_BLOCK);
@@ -487,13 +487,13 @@ void PadMgr_ThreadEntry(PadMgr* padMgr) {
         switch (*msg) {
             case OS_SC_RETRACE_MSG:
                 if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
-                    PRINTF("padmgr_HandleRetraceMsg START %lld\n", OS_CYCLES_TO_USEC(osGetTime()));
+                    PRINTF2("padmgr_HandleRetraceMsg START %lld\n", OS_CYCLES_TO_USEC(osGetTime()));
                 }
 
                 PadMgr_HandleRetrace(padMgr);
 
                 if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
-                    PRINTF("padmgr_HandleRetraceMsg END   %lld\n", OS_CYCLES_TO_USEC(osGetTime()));
+                    PRINTF2("padmgr_HandleRetraceMsg END   %lld\n", OS_CYCLES_TO_USEC(osGetTime()));
                 }
                 break;
             case OS_SC_PRE_NMI_MSG:
@@ -507,11 +507,11 @@ void PadMgr_ThreadEntry(PadMgr* padMgr) {
 
     IrqMgr_RemoveClient(padMgr->irqMgr, &padMgr->irqClient);
 
-    PRINTF("コントローラスレッド実行終了\n"); // "Controller thread execution end"
+    PRINTF2("コントローラスレッド実行終了\n"); // "Controller thread execution end"
 }
 
 void PadMgr_Init(PadMgr* padMgr, OSMesgQueue* serialEventQueue, IrqMgr* irqMgr, OSId id, OSPri priority, void* stack) {
-    PRINTF("パッドマネージャ作成 padmgr_Create()\n"); // "Pad Manager creation"
+    PRINTF2("パッドマネージャ作成 padmgr_Create()\n"); // "Pad Manager creation"
 
     bzero(padMgr, sizeof(PadMgr));
     padMgr->irqMgr = irqMgr;

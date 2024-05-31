@@ -997,7 +997,7 @@ void func_80B50A04(EnZl2* this, PlayState* play) {
                     func_80B50644(this, play);
                     break;
                 default:
-                    PRINTF("En_Zl2_inAgain_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF2("En_Zl2_inAgain_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
             }
             this->cueId = nextCueId;
         }
@@ -1388,7 +1388,7 @@ void func_80B51948(EnZl2* this, PlayState* play) {
                     func_80B513A8(this, play);
                     break;
                 default:
-                    PRINTF("En_Zl2_inEnding_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF2("En_Zl2_inEnding_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
             }
             this->cueId = nextCueId;
         }
@@ -1552,7 +1552,7 @@ void func_80B51FA8(EnZl2* this, PlayState* play) {
                     Actor_Kill(&this->actor);
                     break;
                 default:
-                    PRINTF("En_Zl2_inRunning_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF2("En_Zl2_inRunning_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
                     break;
             }
             this->cueId = nextCueId;
@@ -1592,7 +1592,7 @@ void func_80B52114(EnZl2* this, PlayState* play) {
             break;
 #endif
         default:
-            PRINTF(VT_FGCOL(RED) " En_Oa2 の arg_data がおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+            PRINTF2(VT_FGCOL(RED) " En_Oa2 の arg_data がおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
             func_80B4FD90(this, play);
     }
 }
@@ -1605,7 +1605,7 @@ void func_80B521A0(EnZl2* this, PlayState* play) {
 
 #if IS_DEBUG
     if (objectSlot < 0) {
-        PRINTF(VT_FGCOL(RED) "En_Zl2_main_bankアニメーションのバンクを読めない!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "En_Zl2_main_bankアニメーションのバンクを読めない!!!!!!!!!!!!\n" VT_RST);
         return;
     }
 #endif
@@ -1622,7 +1622,7 @@ void EnZl2_Update(Actor* thisx, PlayState* play) {
     EnZl2* this = (EnZl2*)thisx;
 
     if (this->action < 0 || this->action >= 0x24 || sActionFuncs[this->action] == NULL) {
-        PRINTF(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
     sActionFuncs[this->action](this, play);
@@ -1653,7 +1653,7 @@ s32 EnZl2_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* p
 
     if (this->overrideLimbDrawConfig < 0 || this->overrideLimbDrawConfig > 0 ||
         sOverrideLimbDrawFuncs[this->overrideLimbDrawConfig] == NULL) {
-        PRINTF(VT_FGCOL(RED) "描画前処理モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "描画前処理モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return 0;
     }
     return sOverrideLimbDrawFuncs[this->overrideLimbDrawConfig](play, limbIndex, dList, pos, rot, thisx, gfx);
@@ -1718,7 +1718,7 @@ void EnZl2_Draw(Actor* thisx, PlayState* play) {
     EnZl2* this = (EnZl2*)thisx;
 
     if ((this->drawConfig < 0) || (this->drawConfig >= 3) || (sDrawFuncs[this->drawConfig] == NULL)) {
-        PRINTF(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
     sDrawFuncs[this->drawConfig](this, play);

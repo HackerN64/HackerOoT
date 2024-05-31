@@ -15477,7 +15477,7 @@ void func_80852C50(PlayState* play, Player* this, CsCmdActorCue* cueUnused) {
             D_80858AA0 = this->skelAnime.moveFlags;
 
             func_80832DBC(this);
-            PRINTF("TOOL MODE=%d\n", csAction);
+            PRINTF2("TOOL MODE=%d\n", csAction);
             func_80852C0C(play, this, ABS(csAction));
             func_80852B4C(play, this, cue, &D_80854B18[ABS(csAction)]);
 
@@ -15497,7 +15497,7 @@ void Player_Action_CsAction(Player* this, PlayState* play) {
 
         func_80832DBC(this);
         this->prevCsAction = this->csAction;
-        PRINTF("DEMO MODE=%d\n", this->csAction);
+        PRINTF2("DEMO MODE=%d\n", this->csAction);
         func_80852C0C(play, this, this->csAction);
         func_80852B4C(play, this, NULL, &D_80854B18[this->csAction]);
     }

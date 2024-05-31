@@ -71,7 +71,7 @@ void BgJyaZurerukabe_InitDynaPoly(BgJyaZurerukabe* this, PlayState* play, Collis
     if (this->dyna.bgId == BG_ACTOR_MAX) {
         s32 pad2;
 
-        PRINTF("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_jya_zurerukabe.c", 194,
+        PRINTF2("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_jya_zurerukabe.c", 194,
                this->dyna.actor.id, this->dyna.actor.params);
     }
 #endif
@@ -125,15 +125,15 @@ void BgJyaZurerukabe_Init(Actor* thisx, PlayState* play) {
     }
 
     if (i == ARRAY_COUNT(D_8089B9F0)) {
-        PRINTF(VT_COL(RED, WHITE));
-        PRINTF("home pos が変更されたみたい(%s %d)(arg_data 0x%04x)\n", "../z_bg_jya_zurerukabe.c", 299,
+        PRINTF2(VT_COL(RED, WHITE));
+        PRINTF2("home pos が変更されたみたい(%s %d)(arg_data 0x%04x)\n", "../z_bg_jya_zurerukabe.c", 299,
                this->dyna.actor.params);
-        PRINTF(VT_RST);
+        PRINTF2(VT_RST);
     }
 
     this->unk_16E = D_8089B9F8[this->unk_168];
     func_8089B7B4(this);
-    PRINTF("(jya ずれる壁)(arg_data 0x%04x)\n", this->dyna.actor.params);
+    PRINTF2("(jya ずれる壁)(arg_data 0x%04x)\n", this->dyna.actor.params);
 }
 
 void BgJyaZurerukabe_Destroy(Actor* thisx, PlayState* play) {

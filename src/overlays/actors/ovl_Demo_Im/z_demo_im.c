@@ -633,7 +633,7 @@ void func_809861C4(DemoIm* this, PlayState* play) {
                     this->action = 12;
                     break;
                 default:
-                    PRINTF("Demo_Im_Ocarina_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF2("Demo_Im_Ocarina_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
             }
             this->cueId = nextCueId;
         }
@@ -673,7 +673,7 @@ void func_809862E0(DemoIm* this, PlayState* play) {
                     func_80986148(this);
                     break;
                 default:
-                    PRINTF("Demo_Im_Ocarina_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF2("Demo_Im_Ocarina_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
             }
             this->cueId = nextCueId;
         }
@@ -801,7 +801,7 @@ void func_8098680C(DemoIm* this, PlayState* play) {
                     Actor_Kill(&this->actor);
                     break;
                 default:
-                    PRINTF("Demo_Im_Spot00_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF2("Demo_Im_Spot00_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
             }
             this->cueId = nextCueId;
         }
@@ -1071,7 +1071,7 @@ void func_809871E8(DemoIm* this, PlayState* play) {
                     func_80987174(this);
                     break;
                 default:
-                    PRINTF("Demo_Im_inEnding_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF2("Demo_Im_inEnding_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
             }
             this->cueId = nextCueId;
         }
@@ -1110,7 +1110,7 @@ void DemoIm_Update(Actor* thisx, PlayState* play) {
     DemoIm* this = (DemoIm*)thisx;
 
     if ((this->action < 0) || (this->action >= 31) || (sActionFuncs[this->action] == NULL)) {
-        PRINTF(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
     sActionFuncs[this->action](this, play);
@@ -1221,7 +1221,7 @@ void DemoIm_Draw(Actor* thisx, PlayState* play) {
     DemoIm* this = (DemoIm*)thisx;
 
     if ((this->drawConfig < 0) || (this->drawConfig >= 3) || (sDrawFuncs[this->drawConfig] == NULL)) {
-        PRINTF(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
     sDrawFuncs[this->drawConfig](this, play);

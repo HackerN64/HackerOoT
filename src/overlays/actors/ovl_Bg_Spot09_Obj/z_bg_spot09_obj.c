@@ -137,12 +137,12 @@ s32 func_808B1D44(BgSpot09Obj* this, PlayState* play) {
 void BgSpot09Obj_Init(Actor* thisx, PlayState* play) {
     BgSpot09Obj* this = (BgSpot09Obj*)thisx;
 
-    PRINTF("Spot09 Object [arg_data : 0x%04x](大工救出フラグ 0x%x)\n", this->dyna.actor.params,
+    PRINTF2("Spot09 Object [arg_data : 0x%04x](大工救出フラグ 0x%x)\n", this->dyna.actor.params,
            gSaveContext.save.info.eventChkInf[EVENTCHKINF_CARPENTERS_FREE_INDEX] &
                EVENTCHKINF_CARPENTERS_FREE_MASK_ALL);
     this->dyna.actor.params &= 0xFF;
     if ((this->dyna.actor.params < 0) || (this->dyna.actor.params >= 5)) {
-        PRINTF("Error : Spot 09 object の arg_data が判別出来ない(%s %d)(arg_data 0x%04x)\n", "../z_bg_spot09_obj.c",
+        PRINTF2("Error : Spot 09 object の arg_data が判別出来ない(%s %d)(arg_data 0x%04x)\n", "../z_bg_spot09_obj.c",
                322, this->dyna.actor.params);
     }
 

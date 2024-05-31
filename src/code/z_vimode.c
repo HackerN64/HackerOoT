@@ -187,15 +187,15 @@ void ViMode_Save(ViMode* viMode) {
 
         switch (SREG(59)) {
             case 1:
-                PRINTF("osViModePalLan1\n");
+                PRINTF2("osViModePalLan1\n");
                 ViMode_LogPrint(&osViModePalLan1);
                 break;
             case 2:
-                PRINTF("osViModeFpalLan1\n");
+                PRINTF2("osViModeFpalLan1\n");
                 ViMode_LogPrint(&osViModeFpalLan1);
                 break;
             default:
-                PRINTF("Custom\n");
+                PRINTF2("Custom\n");
                 ViMode_LogPrint(&viMode->customViMode);
                 break;
         }

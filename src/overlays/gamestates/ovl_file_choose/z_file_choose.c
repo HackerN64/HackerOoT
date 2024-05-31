@@ -59,9 +59,9 @@ void FileSelect_InitModeUpdate(GameState* thisx) {
         this->menuMode = FS_MENU_MODE_CONFIG;
         this->configMode = CM_FADE_IN_START;
         this->nextTitleLabel = FS_TITLE_OPEN_FILE;
-        PRINTF("Ｓｒａｍ Ｓｔａｒｔ─Ｌｏａｄ  》》》》》  ");
+        PRINTF2("Ｓｒａｍ Ｓｔａｒｔ─Ｌｏａｄ  》》》》》  ");
         Sram_VerifyAndLoadAllSaves(this, &this->sramCtx);
-        PRINTF("終了！！！\n");
+        PRINTF2("終了！！！\n");
     }
 }
 
@@ -179,7 +179,7 @@ void FileSelect_UpdateMainMenu(GameState* thisx) {
 
     if (CHECK_BTN_ALL(input->press.button, BTN_START) || CHECK_BTN_ALL(input->press.button, BTN_A)) {
         if (this->buttonIndex <= FS_BTN_MAIN_FILE_3) {
-            PRINTF("REGCK_ALL[%x]=%x,%x,%x,%x,%x,%x\n", this->buttonIndex, GET_NEWF(sramCtx, this->buttonIndex, 0),
+            PRINTF2("REGCK_ALL[%x]=%x,%x,%x,%x,%x,%x\n", this->buttonIndex, GET_NEWF(sramCtx, this->buttonIndex, 0),
                    GET_NEWF(sramCtx, this->buttonIndex, 1), GET_NEWF(sramCtx, this->buttonIndex, 2),
                    GET_NEWF(sramCtx, this->buttonIndex, 3), GET_NEWF(sramCtx, this->buttonIndex, 4),
                    GET_NEWF(sramCtx, this->buttonIndex, 5));
@@ -391,12 +391,12 @@ void FileSelect_PulsateCursor(GameState* thisx) {
         *((u8*)0x80000002) = LANGUAGE_ENG;
 
         SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, 3, OS_WRITE);
-        PRINTF("1:read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
+        PRINTF2("1:read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
                sramCtx->readBuff[SRAM_HEADER_ZTARGET], sramCtx->readBuff[SRAM_HEADER_LANGUAGE],
                sramCtx->readBuff[SRAM_HEADER_MAGIC]);
 
         SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, SRAM_SIZE, OS_READ);
-        PRINTF("read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
+        PRINTF2("read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
                sramCtx->readBuff[SRAM_HEADER_ZTARGET], sramCtx->readBuff[SRAM_HEADER_LANGUAGE],
                sramCtx->readBuff[SRAM_HEADER_MAGIC]);
     } else if (CHECK_BTN_ALL(debugInput->press.button, BTN_DUP)) {
@@ -404,11 +404,11 @@ void FileSelect_PulsateCursor(GameState* thisx) {
         *((u8*)0x80000002) = LANGUAGE_GER;
 
         SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, 3, OS_WRITE);
-        PRINTF("1:read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
+        PRINTF2("1:read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
                sramCtx->readBuff[SRAM_HEADER_ZTARGET], sramCtx->readBuff[SRAM_HEADER_LANGUAGE],
                sramCtx->readBuff[SRAM_HEADER_MAGIC]);
         SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, SRAM_SIZE, OS_READ);
-        PRINTF("read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
+        PRINTF2("read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
                sramCtx->readBuff[SRAM_HEADER_ZTARGET], sramCtx->readBuff[SRAM_HEADER_LANGUAGE],
                sramCtx->readBuff[SRAM_HEADER_MAGIC]);
     } else if (CHECK_BTN_ALL(debugInput->press.button, BTN_DRIGHT)) {
@@ -416,12 +416,12 @@ void FileSelect_PulsateCursor(GameState* thisx) {
         *((u8*)0x80000002) = LANGUAGE_FRA;
 
         SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, 3, OS_WRITE);
-        PRINTF("1:read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
+        PRINTF2("1:read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
                sramCtx->readBuff[SRAM_HEADER_ZTARGET], sramCtx->readBuff[SRAM_HEADER_LANGUAGE],
                sramCtx->readBuff[SRAM_HEADER_MAGIC]);
 
         SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, SRAM_SIZE, OS_READ);
-        PRINTF("read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
+        PRINTF2("read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
                sramCtx->readBuff[SRAM_HEADER_ZTARGET], sramCtx->readBuff[SRAM_HEADER_LANGUAGE],
                sramCtx->readBuff[SRAM_HEADER_MAGIC]);
     }
@@ -1501,10 +1501,10 @@ void FileSelect_LoadGame(GameState* thisx) {
     // capacity and `magicFillTarget`
     gSaveContext.save.info.playerData.magicLevel = gSaveContext.save.info.playerData.magic = 0;
 
-    PRINTF(VT_FGCOL(GREEN));
-    PRINTF("Z_MAGIC_NOW_NOW=%d  MAGIC_NOW=%d\n", ((void)0, gSaveContext.magicFillTarget),
+    PRINTF2(VT_FGCOL(GREEN));
+    PRINTF2("Z_MAGIC_NOW_NOW=%d  MAGIC_NOW=%d\n", ((void)0, gSaveContext.magicFillTarget),
            gSaveContext.save.info.playerData.magic);
-    PRINTF(VT_RST);
+    PRINTF2(VT_RST);
 
     gSaveContext.save.info.playerData.naviTimer = 0;
 
@@ -1884,7 +1884,7 @@ void FileSelect_Init(GameState* thisx) {
     s32 pad;
 
     SREG(30) = 1;
-    PRINTF("SIZE=%x\n", size);
+    PRINTF2("SIZE=%x\n", size);
 
     this->staticSegment = GAME_STATE_ALLOC(&this->state, size, "../z_file_choose.c", 3392);
     ASSERT(this->staticSegment != NULL, "this->staticSegment != NULL", "../z_file_choose.c", 3393);

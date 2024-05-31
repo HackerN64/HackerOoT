@@ -79,9 +79,9 @@ void EnDntJiji_Init(Actor* thisx, PlayState* play) {
     Collider_InitCylinder(play, &this->collider);
     Collider_SetCylinder(play, &this->collider, &this->actor, &sCylinderInit);
     this->stage = (EnDntDemo*)this->actor.parent;
-    PRINTF("\n\n");
+    PRINTF2("\n\n");
     // "Deku Scrub mask show elder"
-    PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ デグナッツお面品評会長老 ☆☆☆☆☆ %x\n" VT_RST, this->stage);
+    PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ デグナッツお面品評会長老 ☆☆☆☆☆ %x\n" VT_RST, this->stage);
     this->actor.flags &= ~ACTOR_FLAG_0;
     this->actor.colChkInfo.mass = 0xFF;
     this->actor.targetMode = 6;
@@ -274,23 +274,23 @@ void EnDntJiji_GivePrize(EnDntJiji* this, PlayState* play) {
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_DONE) && Message_ShouldAdvance(play)) {
         if ((this->getItemId == GI_DEKU_NUT_UPGRADE_30) || (this->getItemId == GI_DEKU_NUT_UPGRADE_40)) {
             // "nut"
-            PRINTF("実 \n");
-            PRINTF("実 \n");
-            PRINTF("実 \n");
-            PRINTF("実 \n");
-            PRINTF("実 \n");
-            PRINTF("実 \n");
-            PRINTF("実 \n");
-            PRINTF("実 \n");
+            PRINTF2("実 \n");
+            PRINTF2("実 \n");
+            PRINTF2("実 \n");
+            PRINTF2("実 \n");
+            PRINTF2("実 \n");
+            PRINTF2("実 \n");
+            PRINTF2("実 \n");
+            PRINTF2("実 \n");
             SET_ITEMGETINF(ITEMGETINF_1F);
         } else {
             // "stick"
-            PRINTF("棒 \n");
-            PRINTF("棒 \n");
-            PRINTF("棒 \n");
-            PRINTF("棒 \n");
-            PRINTF("棒 \n");
-            PRINTF("棒 \n");
+            PRINTF2("棒 \n");
+            PRINTF2("棒 \n");
+            PRINTF2("棒 \n");
+            PRINTF2("棒 \n");
+            PRINTF2("棒 \n");
+            PRINTF2("棒 \n");
             SET_ITEMGETINF(ITEMGETINF_1E);
         }
         this->actor.textId = 0;
@@ -376,7 +376,7 @@ void EnDntJiji_Update(Actor* thisx, PlayState* play) {
 
     if (IS_ACTOR_DEBUG_ENABLED && BREG(0)) {
         // "time"
-        PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ 時間 ☆☆☆☆☆ %d\n" VT_RST, this->timer);
+        PRINTF2(VT_FGCOL(YELLOW) "☆☆☆☆☆ 時間 ☆☆☆☆☆ %d\n" VT_RST, this->timer);
     }
 
     if ((this->timer > 1) && (this->timer != 0)) {

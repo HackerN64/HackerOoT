@@ -20,16 +20,16 @@ void KaleidoScopeCall_LoadPlayer(void) {
 
     if (gKaleidoMgrCurOvl != playerActorOvl) {
         if (gKaleidoMgrCurOvl != NULL) {
-            PRINTF(VT_FGCOL(GREEN));
-            PRINTF("カレイド領域 強制排除\n"); // "Kaleido area forced exclusion"
-            PRINTF(VT_RST);
+            PRINTF2(VT_FGCOL(GREEN));
+            PRINTF2("カレイド領域 強制排除\n"); // "Kaleido area forced exclusion"
+            PRINTF2(VT_RST);
 
             KaleidoManager_ClearOvl(gKaleidoMgrCurOvl);
         }
 
-        PRINTF(VT_FGCOL(GREEN));
-        PRINTF("プレイヤーアクター搬入\n"); // "Player actor import"
-        PRINTF(VT_RST);
+        PRINTF2(VT_FGCOL(GREEN));
+        PRINTF2("プレイヤーアクター搬入\n"); // "Player actor import"
+        PRINTF2(VT_RST);
 
         KaleidoManager_LoadOvl(playerActorOvl);
     }
@@ -37,7 +37,7 @@ void KaleidoScopeCall_LoadPlayer(void) {
 
 void KaleidoScopeCall_Init(PlayState* play) {
     // "Kaleidoscope replacement construction"
-    PRINTF("カレイド・スコープ入れ替え コンストラクト \n");
+    PRINTF2("カレイド・スコープ入れ替え コンストラクト \n");
 
     sKaleidoScopeUpdateFunc = KaleidoManager_GetRamAddr(KaleidoScope_Update);
     sKaleidoScopeDrawFunc = KaleidoManager_GetRamAddr(KaleidoScope_Draw);
@@ -52,7 +52,7 @@ void KaleidoScopeCall_Init(PlayState* play) {
 
 void KaleidoScopeCall_Destroy(PlayState* play) {
     // "Kaleidoscope replacement destruction"
-    PRINTF("カレイド・スコープ入れ替え デストラクト \n");
+    PRINTF2("カレイド・スコープ入れ替え デストラクト \n");
 
     KaleidoSetup_Destroy(play);
 }
@@ -85,7 +85,7 @@ void KaleidoScopeCall_Update(PlayState* play) {
             pauseCtx->unk_1EC = 0;
             pauseCtx->state = (pauseCtx->state & 0xFFFF) + 1; // PAUSE_STATE_9
         } else if ((pauseCtx->state == PAUSE_STATE_WAIT_BG_PRERENDER) || (pauseCtx->state == PAUSE_STATE_9)) {
-            PRINTF("PR_KAREIDOSCOPE_MODE=%d\n", R_PAUSE_BG_PRERENDER_STATE);
+            PRINTF2("PR_KAREIDOSCOPE_MODE=%d\n", R_PAUSE_BG_PRERENDER_STATE);
 
             if (R_PAUSE_BG_PRERENDER_STATE >= PAUSE_BG_PRERENDER_READY) {
                 pauseCtx->state++; // PAUSE_STATE_INIT or PAUSE_STATE_10
@@ -93,18 +93,18 @@ void KaleidoScopeCall_Update(PlayState* play) {
         } else if (pauseCtx->state != PAUSE_STATE_OFF) {
             if (gKaleidoMgrCurOvl != kaleidoScopeOvl) {
                 if (gKaleidoMgrCurOvl != NULL) {
-                    PRINTF(VT_FGCOL(GREEN));
+                    PRINTF2(VT_FGCOL(GREEN));
                     // "Kaleido area Player Forced Elimination"
-                    PRINTF("カレイド領域 プレイヤー 強制排除\n");
-                    PRINTF(VT_RST);
+                    PRINTF2("カレイド領域 プレイヤー 強制排除\n");
+                    PRINTF2(VT_RST);
 
                     KaleidoManager_ClearOvl(gKaleidoMgrCurOvl);
                 }
 
-                PRINTF(VT_FGCOL(GREEN));
+                PRINTF2(VT_FGCOL(GREEN));
                 // "Kaleido area Kaleidoscope loading"
-                PRINTF("カレイド領域 カレイドスコープ搬入\n");
-                PRINTF(VT_RST);
+                PRINTF2("カレイド領域 カレイドスコープ搬入\n");
+                PRINTF2(VT_RST);
 
                 KaleidoManager_LoadOvl(kaleidoScopeOvl);
             }
@@ -113,10 +113,10 @@ void KaleidoScopeCall_Update(PlayState* play) {
                 sKaleidoScopeUpdateFunc(play);
 
                 if (!IS_PAUSED(&play->pauseCtx)) {
-                    PRINTF(VT_FGCOL(GREEN));
+                    PRINTF2(VT_FGCOL(GREEN));
                     // "Kaleido area Kaleidoscope Emission"
-                    PRINTF("カレイド領域 カレイドスコープ排出\n");
-                    PRINTF(VT_RST);
+                    PRINTF2("カレイド領域 カレイドスコープ排出\n");
+                    PRINTF2(VT_RST);
 
                     KaleidoManager_ClearOvl(kaleidoScopeOvl);
                     KaleidoScopeCall_LoadPlayer();

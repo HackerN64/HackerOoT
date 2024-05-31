@@ -183,7 +183,7 @@ void DemoKankyo_Init(Actor* thisx, PlayState* play) {
     s16 i;
     s32 objectSlot = Object_GetSlot(&play->objectCtx, sObjectIds[this->actor.params]);
 
-    PRINTF("bank_ID = %d\n", objectSlot);
+    PRINTF2("bank_ID = %d\n", objectSlot);
     if (objectSlot < 0) {
         ASSERT(0, "0", "../z_demo_kankyo.c", 521);
     } else {

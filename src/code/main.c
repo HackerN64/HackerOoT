@@ -37,11 +37,11 @@ u8 gRDPTimingsExist;
 
 #if IS_DEBUG
 void Main_LogSystemHeap(void) {
-    PRINTF(VT_FGCOL(GREEN));
+    PRINTF2(VT_FGCOL(GREEN));
     // "System heap size% 08x (% dKB) Start address% 08x"
-    PRINTF("システムヒープサイズ %08x(%dKB) 開始アドレス %08x\n", gSystemHeapSize, gSystemHeapSize / 1024,
+    PRINTF2("システムヒープサイズ %08x(%dKB) 開始アドレス %08x\n", gSystemHeapSize, gSystemHeapSize / 1024,
            _buffersSegmentEnd);
-    PRINTF(VT_RST);
+    PRINTF2(VT_RST);
 }
 #endif
 
@@ -52,7 +52,7 @@ void Main(void* arg) {
     uintptr_t systemHeapStart;
     uintptr_t fb;
 
-    PRINTF("mainproc 実行開始\n"); // "Start running"
+    PRINTF2("mainproc 実行開始\n"); // "Start running"
     IO_WRITE(DPC_STATUS_REG, DPC_CLR_CLOCK_CTR);
     gScreenWidth = SCREEN_WIDTH;
     gScreenHeight = SCREEN_HEIGHT;
@@ -64,7 +64,7 @@ void Main(void* arg) {
     fb = (uintptr_t)SysCfb_GetFbPtr(0);
     gSystemHeapSize = fb - systemHeapStart;
     // "System heap initalization"
-    PRINTF("システムヒープ初期化 %08x-%08x %08x\n", systemHeapStart, fb, gSystemHeapSize);
+    PRINTF2("システムヒープ初期化 %08x-%08x %08x\n", systemHeapStart, fb, gSystemHeapSize);
     SystemHeap_Init((void*)systemHeapStart, gSystemHeapSize); // initializes the system heap
 
     if (IS_DEBUG_HEAP_ENABLED) {
@@ -79,7 +79,7 @@ void Main(void* arg) {
             debugHeapStart = SYSTEM_ARENA_MALLOC(debugHeapSize, "../main.c", 565);
         }
 
-        PRINTF("debug_InitArena(%08x, %08x)\n", debugHeapStart, debugHeapSize);
+        PRINTF2("debug_InitArena(%08x, %08x)\n", debugHeapStart, debugHeapSize);
         DebugArena_Init(debugHeapStart, debugHeapSize);
     }
 
@@ -101,7 +101,7 @@ void Main(void* arg) {
     StackCheck_Init(&sIrqMgrStackInfo, sIrqMgrStack, STACK_TOP(sIrqMgrStack), 0, 0x100, "irqmgr");
     IrqMgr_Init(&gIrqMgr, STACK_TOP(sIrqMgrStack), THREAD_PRI_IRQMGR, 1);
 
-    PRINTF("タスクスケジューラの初期化\n"); // "Initialize the task scheduler"
+    PRINTF2("タスクスケジューラの初期化\n"); // "Initialize the task scheduler"
     StackCheck_Init(&sSchedStackInfo, sSchedStack, STACK_TOP(sSchedStack), 0, 0x100, "sched");
     Sched_Init(&gScheduler, STACK_TOP(sSchedStack), THREAD_PRI_SCHED, gViConfigModeType, 1, &gIrqMgr);
 
@@ -128,13 +128,13 @@ void Main(void* arg) {
             break;
         }
         if (*msg == OS_SC_PRE_NMI_MSG) {
-            PRINTF("main.c: リセットされたみたいだよ\n"); // "Looks like it's been reset"
+            PRINTF2("main.c: リセットされたみたいだよ\n"); // "Looks like it's been reset"
             PreNmiBuff_SetReset(gAppNmiBufferPtr);
         }
     }
 
-    PRINTF("mainproc 後始末\n"); // "Cleanup"
+    PRINTF2("mainproc 後始末\n"); // "Cleanup"
     osDestroyThread(&sGraphThread);
     RcpUtils_Reset();
-    PRINTF("mainproc 実行終了\n"); // "End of execution"
+    PRINTF2("mainproc 実行終了\n"); // "End of execution"
 }

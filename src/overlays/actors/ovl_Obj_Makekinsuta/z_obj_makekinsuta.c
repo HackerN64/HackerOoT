@@ -31,15 +31,15 @@ void ObjMakekinsuta_Init(Actor* thisx, PlayState* play) {
     ObjMakekinsuta* this = (ObjMakekinsuta*)thisx;
 
     if ((this->actor.params & 0x6000) == 0x4000) {
-        PRINTF(VT_FGCOL(BLUE));
+        PRINTF2(VT_FGCOL(BLUE));
         // "Gold Star Enemy(arg_data %x)"
-        PRINTF("金スタ発生敵(arg_data %x)\n", this->actor.params);
-        PRINTF(VT_RST);
+        PRINTF2("金スタ発生敵(arg_data %x)\n", this->actor.params);
+        PRINTF2(VT_RST);
     } else {
-        PRINTF(VT_COL(YELLOW, BLACK));
+        PRINTF2(VT_COL(YELLOW, BLACK));
         // "Invalid Argument (arg_data %x)(%s %d)"
-        PRINTF("引数不正 (arg_data %x)(%s %d)\n", this->actor.params, "../z_obj_makekinsuta.c", 119);
-        PRINTF(VT_RST);
+        PRINTF2("引数不正 (arg_data %x)(%s %d)\n", this->actor.params, "../z_obj_makekinsuta.c", 119);
+        PRINTF2(VT_RST);
     }
     this->actionFunc = func_80B98320;
 }

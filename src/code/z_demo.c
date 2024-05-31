@@ -199,7 +199,7 @@ void Cutscene_UpdateScripted(PlayState* play, CutsceneContext* csCtx) {
     }
 
     if ((gSaveContext.cutsceneTrigger != 0) && (csCtx->state == CS_STATE_IDLE)) {
-        PRINTF("\nデモ開始要求 発令！"); // "Cutscene start request announcement!"
+        PRINTF2("\nデモ開始要求 発令！"); // "Cutscene start request announcement!"
         gSaveContext.save.cutsceneIndex = 0xFFFD;
         gSaveContext.cutsceneTrigger = 1;
     }
@@ -575,7 +575,7 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
         Audio_SetCutsceneFlag(0);
         gSaveContext.cutsceneTransitionControl = 1;
 
-        PRINTF("\n分岐先指定！！=[%d]番", cmd->destination); // "Future fork designation=No. [%d]"
+        PRINTF2("\n分岐先指定！！=[%d]番", cmd->destination); // "Future fork designation=No. [%d]"
 
         // `forceRisingButtonAlphas` has a secondary purpose, which is to signal to the title screen actor
         // that it should display immediately. This occurs when a title screen cutscene that is not the main
@@ -1784,7 +1784,7 @@ void CutsceneCmd_MotionBlur(PlayState* play, CutsceneContext* csCtx, CsCmdMotion
             f32 lerp = Environment_LerpWeight(cmd->endFrame, cmd->startFrame, csCtx->curFrame);
 
             if (ENABLE_MOTION_BLUR_DEBUG) {
-                PRINTF("[HackerOoT:INFO]: originalBlurAlpha: 0x%X, lerp: %f\n", play->csCtx.originalBlurAlpha, lerp);
+                PRINTF2("[HackerOoT:INFO]: originalBlurAlpha: 0x%X, lerp: %f\n", play->csCtx.originalBlurAlpha, lerp);
             }
 
             if (cmd->type == CS_MOTION_BLUR_ENABLE) {
@@ -1803,7 +1803,7 @@ void CutsceneCmd_MotionBlur(PlayState* play, CutsceneContext* csCtx, CsCmdMotion
             }
         }
     } else if (ENABLE_MOTION_BLUR_DEBUG) {
-        PRINTF("[HackerOoT:INFO]: Motion Blur disabled - type: %d, startFrame: %d, endFrame: %d, curFrame: %d\n",
+        PRINTF2("[HackerOoT:INFO]: Motion Blur disabled - type: %d, startFrame: %d, endFrame: %d, curFrame: %d\n",
                cmd->type, cmd->startFrame, cmd->endFrame, csCtx->curFrame);
     }
 }
@@ -2297,7 +2297,7 @@ void CutsceneHandler_StopScript(PlayState* play, CutsceneContext* csCtx) {
             csCtx->actorCues[i] = NULL;
         }
 
-        PRINTF("\n\n\n\n\nやっぱりここかいな"); // "Right here, huh"
+        PRINTF2("\n\n\n\n\nやっぱりここかいな"); // "Right here, huh"
 
         gSaveContext.save.cutsceneIndex = 0;
         gSaveContext.gameMode = GAMEMODE_NORMAL;
@@ -2422,7 +2422,7 @@ void Cutscene_HandleEntranceTriggers(PlayState* play) {
 }
 
 void Cutscene_HandleConditionalTriggers(PlayState* play) {
-    PRINTF("\ngame_info.mode=[%d] restart_flag", ((void)0, gSaveContext.respawnFlag));
+    PRINTF2("\ngame_info.mode=[%d] restart_flag", ((void)0, gSaveContext.respawnFlag));
 
     if ((gSaveContext.gameMode == GAMEMODE_NORMAL) && (gSaveContext.respawnFlag <= 0) &&
         (gSaveContext.save.cutsceneIndex < 0xFFF0)) {

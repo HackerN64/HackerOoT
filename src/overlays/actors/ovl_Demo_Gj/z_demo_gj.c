@@ -220,14 +220,14 @@ s32 DemoGj_FindGanon(DemoGj* this, PlayState* play) {
                 this->ganon = (BossGanon2*)actor;
 
                 // "Demo_Gj_Search_Boss_Ganon %d: Discover Ganon !!!!"
-                PRINTF("Demo_Gj_Search_Boss_Ganon %d:ガノン発見!!!!\n", this->dyna.actor.params);
+                PRINTF2("Demo_Gj_Search_Boss_Ganon %d:ガノン発見!!!!\n", this->dyna.actor.params);
                 return true;
             }
             actor = actor->next;
         }
 
         // "Demo_Gj_Search_Boss_Ganon %d: I couldn't find Ganon"
-        PRINTF("Demo_Gj_Search_Boss_Ganon %d:ガノン発見出来ず\n", this->dyna.actor.params);
+        PRINTF2("Demo_Gj_Search_Boss_Ganon %d:ガノン発見出来ず\n", this->dyna.actor.params);
         return false;
     }
     //! @bug: Missing return value when `this->ganon` is already set.
@@ -384,7 +384,7 @@ void DemoGj_SetupRotation(DemoGj* this, PlayState* play) {
 
         default:
             // "Demo_Gj_common_Reflect : This arg_data is not supported = %d"
-            PRINTF(VT_FGCOL(RED) "Demo_Gj_common_Reflect : そんなarg_dataには対応していない = %d\n" VT_RST,
+            PRINTF2(VT_FGCOL(RED) "Demo_Gj_common_Reflect : そんなarg_dataには対応していない = %d\n" VT_RST,
                    this->dyna.actor.params);
             return;
     }
@@ -538,7 +538,7 @@ void DemoGj_SetupMovement(DemoGj* this, PlayState* play) {
 
             default:
                 // "Demo_Gj_Setup_Move_common : This arg_data is not supported = %d"
-                PRINTF(VT_FGCOL(RED) "Demo_Gj_Setup_Move_common : そんなarg_dataには対応していない = %d\n" VT_RST,
+                PRINTF2(VT_FGCOL(RED) "Demo_Gj_Setup_Move_common : そんなarg_dataには対応していない = %d\n" VT_RST,
                        actor->params);
                 break;
         }
@@ -1358,7 +1358,7 @@ void DemoGj_Update(Actor* thisx, PlayState* play) {
     if (this->updateMode < 0 || this->updateMode >= ARRAY_COUNT(sUpdateFuncs) ||
         sUpdateFuncs[this->updateMode] == NULL) {
         // "The main mode is abnormal!!!!!!!!!!!!!!!!!!!!!!!!!"
-        PRINTF(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "メインモードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
 
@@ -1415,7 +1415,7 @@ void DemoGj_Init(Actor* thisx, PlayState* play) {
 
         default:
             // "Demo_Gj_Actor_ct There is no such argument!!!!!!!!!!!!!!!!!!!!!!"
-            PRINTF(VT_FGCOL(RED) "Demo_Gj_Actor_ct そんな引数は無い!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST, play, this);
+            PRINTF2(VT_FGCOL(RED) "Demo_Gj_Actor_ct そんな引数は無い!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST, play, this);
             Actor_Kill(&this->dyna.actor);
     }
 }
@@ -1450,7 +1450,7 @@ void DemoGj_Draw(Actor* thisx, PlayState* play) {
 
     if (this->drawConfig < 0 || this->drawConfig >= ARRAY_COUNT(sDrawFuncs) || sDrawFuncs[this->drawConfig] == NULL) {
         // "The drawing mode is abnormal!!!!!!!!!!!!!!!!!!!!!!!!!"
-        PRINTF(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+        PRINTF2(VT_FGCOL(RED) "描画モードがおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
         return;
     }
 

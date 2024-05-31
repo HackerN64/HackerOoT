@@ -199,7 +199,7 @@ void BossFd2_SetupEmerge(BossFd2* this, PlayState* play) {
     s16 temp_rand;
     s8 health;
 
-    PRINTF("UP INIT 1\n");
+    PRINTF2("UP INIT 1\n");
     Animation_PlayOnce(&this->skelAnime, &gHoleVolvagiaEmergeAnim);
     this->actionFunc = BossFd2_Emerge;
     this->skelAnime.playSpeed = 0.0f;
@@ -207,7 +207,7 @@ void BossFd2_SetupEmerge(BossFd2* this, PlayState* play) {
     this->actor.world.pos.x = sHoleLocations[temp_rand].x;
     this->actor.world.pos.z = sHoleLocations[temp_rand].z;
     this->work[FD2_ACTION_STATE] = 0;
-    PRINTF("UP INIT 2\n");
+    PRINTF2("UP INIT 2\n");
     this->timers[0] = 10;
     if (bossFd != NULL) {
         health = bossFd->actor.colChkInfo.health;
@@ -229,18 +229,18 @@ void BossFd2_Emerge(BossFd2* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
     s16 i;
 
-    PRINTF("UP 1    mode %d\n", this->work[FD2_ACTION_STATE]);
+    PRINTF2("UP 1    mode %d\n", this->work[FD2_ACTION_STATE]);
     SkelAnime_Update(&this->skelAnime);
-    PRINTF("UP 1.5 \n");
+    PRINTF2("UP 1.5 \n");
     switch (this->work[FD2_ACTION_STATE]) {
         case 0:
-            PRINTF("UP time %d \n", this->timers[0]);
-            PRINTF("PL time %x \n", player);
-            PRINTF("MT time %x \n", bossFd);
+            PRINTF2("UP time %d \n", this->timers[0]);
+            PRINTF2("PL time %x \n", player);
+            PRINTF2("MT time %x \n", bossFd);
             if ((this->timers[0] == 0) && (player->actor.world.pos.y > 70.0f)) {
                 s8 health;
 
-                PRINTF("UP 1.6 \n");
+                PRINTF2("UP 1.6 \n");
                 bossFd->faceExposed = 0;
                 bossFd->holePosition.x = this->actor.world.pos.x;
                 bossFd->holePosition.z = this->actor.world.pos.z;
@@ -262,7 +262,7 @@ void BossFd2_Emerge(BossFd2* this, PlayState* play) {
                 }
                 this->timers[0] = holeTime;
                 bossFd->timers[4] = this->timers[0] + 10;
-                PRINTF("UP 1.7 \n");
+                PRINTF2("UP 1.7 \n");
             }
             break;
         case 1:
@@ -303,7 +303,7 @@ void BossFd2_Emerge(BossFd2* this, PlayState* play) {
             }
             break;
     }
-    PRINTF("UP 2\n");
+    PRINTF2("UP 2\n");
 }
 
 void BossFd2_SetupIdle(BossFd2* this, PlayState* play) {
@@ -311,7 +311,7 @@ void BossFd2_SetupIdle(BossFd2* this, PlayState* play) {
     s8 health;
     s16 idleTime;
 
-    PRINTF("UP INIT 1\n");
+    PRINTF2("UP INIT 1\n");
     Animation_PlayLoop(&this->skelAnime, &gHoleVolvagiaTurnAnim);
     this->actionFunc = BossFd2_Idle;
     health = bossFd->actor.colChkInfo.health;
@@ -336,8 +336,8 @@ void BossFd2_Idle(BossFd2* this, PlayState* play) {
     prevToLink = this->work[FD2_TURN_TO_LINK];
     this->work[FD2_TURN_TO_LINK] =
         Math_SmoothStepToS(&this->actor.shape.rot.y, this->actor.yawTowardsPlayer, 3, 0x7D0, 0);
-    PRINTF("SW1 = %d\n", prevToLink);
-    PRINTF("SW2 = %d\n", this->work[FD2_TURN_TO_LINK]);
+    PRINTF2("SW1 = %d\n", prevToLink);
+    PRINTF2("SW2 = %d\n", this->work[FD2_TURN_TO_LINK]);
     if ((fabsf(prevToLink) <= 1000.0f) && (1000.0f < fabsf(this->work[FD2_TURN_TO_LINK]))) {
         Animation_MorphToLoop(&this->skelAnime, &gHoleVolvagiaTurnAnim, -5.0f);
     }
@@ -875,11 +875,11 @@ void BossFd2_CollisionCheck(BossFd2* this, PlayState* play) {
             }
             if (((s8)bossFd->actor.colChkInfo.health > 2) || canKill) {
                 bossFd->actor.colChkInfo.health -= damage;
-                PRINTF(VT_FGCOL(GREEN));
-                PRINTF("damage   %d\n", damage);
+                PRINTF2(VT_FGCOL(GREEN));
+                PRINTF2("damage   %d\n", damage);
             }
-            PRINTF(VT_RST);
-            PRINTF("hp %d\n", bossFd->actor.colChkInfo.health);
+            PRINTF2(VT_RST);
+            PRINTF2("hp %d\n", bossFd->actor.colChkInfo.health);
 
             if ((s8)bossFd->actor.colChkInfo.health <= 0) {
                 bossFd->actor.colChkInfo.health = 0;
@@ -958,7 +958,7 @@ void BossFd2_Update(Actor* thisx, PlayState* play2) {
     BossFd2* this = (BossFd2*)thisx;
     s16 i;
 
-    PRINTF("FD2 move start \n");
+    PRINTF2("FD2 move start \n");
     this->disableAT = false;
     this->actor.flags &= ~ACTOR_FLAG_10;
     this->work[FD2_VAR_TIMER]++;
@@ -1193,7 +1193,7 @@ void BossFd2_Draw(Actor* thisx, PlayState* play) {
     BossFd2* this = (BossFd2*)thisx;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_boss_fd2.c", 2617);
-    PRINTF("FD2 draw start \n");
+    PRINTF2("FD2 draw start \n");
     if (this->actionFunc != BossFd2_Wait) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         if (this->work[FD2_DAMAGE_FLASH_TIMER] & 2) {

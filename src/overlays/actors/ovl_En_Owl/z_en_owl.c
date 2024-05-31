@@ -132,10 +132,10 @@ void EnOwl_Init(Actor* thisx, PlayState* play) {
         switchFlag = 0x20;
     }
     // "conversation owl %4x no = %d, sv = %d"
-    PRINTF(VT_FGCOL(CYAN) " 会話フクロウ %4x no = %d, sv = %d\n" VT_RST, this->actor.params, owlType, switchFlag);
+    PRINTF2(VT_FGCOL(CYAN) " 会話フクロウ %4x no = %d, sv = %d\n" VT_RST, this->actor.params, owlType, switchFlag);
 
     if ((owlType != OWL_DEFAULT) && (switchFlag < 0x20) && Flags_GetSwitch(play, switchFlag)) {
-        PRINTF("savebitでフクロウ退避\n"); // "Save owl with savebit"
+        PRINTF2("savebitでフクロウ退避\n"); // "Save owl with savebit"
         Actor_Kill(&this->actor);
         return;
     }
@@ -160,7 +160,7 @@ void EnOwl_Init(Actor* thisx, PlayState* play) {
         case OWL_KAKARIKO:
             if (GET_EVENTCHKINF(EVENTCHKINF_40)) {
                 // has zelda's letter
-                PRINTF("フクロウ退避\n"); // "Owl evacuation"
+                PRINTF2("フクロウ退避\n"); // "Owl evacuation"
                 Actor_Kill(&this->actor);
                 return;
             }
@@ -170,7 +170,7 @@ void EnOwl_Init(Actor* thisx, PlayState* play) {
         case OWL_HYLIA_GERUDO:
             if (GET_EVENTCHKINF(EVENTCHKINF_43)) {
                 // has ocarina of time
-                PRINTF("フクロウ退避\n"); // "Owl evacuation"
+                PRINTF2("フクロウ退避\n"); // "Owl evacuation"
                 Actor_Kill(&this->actor);
                 return;
             }
@@ -182,7 +182,7 @@ void EnOwl_Init(Actor* thisx, PlayState* play) {
         case OWL_ZORA_RIVER:
             if (GET_EVENTCHKINF(EVENTCHKINF_39) || !GET_EVENTCHKINF(EVENTCHKINF_40)) {
                 // opened zora's domain or has zelda's letter
-                PRINTF("フクロウ退避\n"); // "Owl evacuation"
+                PRINTF2("フクロウ退避\n"); // "Owl evacuation"
                 Actor_Kill(&this->actor);
                 return;
             }
@@ -204,7 +204,7 @@ void EnOwl_Init(Actor* thisx, PlayState* play) {
             break;
         case OWL_LOST_WOODS_PRESARIA:
             if (!CHECK_QUEST_ITEM(QUEST_SONG_LULLABY)) {
-                PRINTF("フクロウ退避\n"); // "Owl evacuation"
+                PRINTF2("フクロウ退避\n"); // "Owl evacuation"
                 Actor_Kill(&this->actor);
                 return;
             }
@@ -212,7 +212,7 @@ void EnOwl_Init(Actor* thisx, PlayState* play) {
             break;
         case OWL_LOST_WOODS_POSTSARIA:
             if (!CHECK_QUEST_ITEM(QUEST_SONG_SARIA)) {
-                PRINTF("フクロウ退避\n"); // "Owl evacuation"
+                PRINTF2("フクロウ退避\n"); // "Owl evacuation"
                 Actor_Kill(&this->actor);
                 return;
             }
@@ -220,11 +220,11 @@ void EnOwl_Init(Actor* thisx, PlayState* play) {
             break;
         default:
             // Outside kokiri forest
-            PRINTF(VT_FGCOL(CYAN));
-            PRINTF("no = %d  \n", owlType);
+            PRINTF2(VT_FGCOL(CYAN));
+            PRINTF2("no = %d  \n", owlType);
             // "Unfinished owl unfinished owl unfinished owl"
-            PRINTF("未完成のフクロウ未完成のフクロウ未完成のフクロウ\n");
-            PRINTF(VT_RST);
+            PRINTF2("未完成のフクロウ未完成のフクロウ未完成のフクロウ\n");
+            PRINTF2(VT_RST);
             this->actionFlags |= 2;
             this->unk_3EE = 0x20;
             this->actionFunc = EnOwl_WaitOutsideKokiri;
@@ -306,7 +306,7 @@ void func_80ACA62C(EnOwl* this, PlayState* play) {
 
     if (switchFlag < 0x20) {
         Flags_SetSwitch(play, switchFlag);
-        PRINTF(VT_FGCOL(CYAN) " Actor_Environment_sw = %d\n" VT_RST, Flags_GetSwitch(play, switchFlag));
+        PRINTF2(VT_FGCOL(CYAN) " Actor_Environment_sw = %d\n" VT_RST, Flags_GetSwitch(play, switchFlag));
     }
     func_80ACA5C8(this);
 }
@@ -927,14 +927,14 @@ void func_80ACC00C(EnOwl* this, PlayState* play) {
     if (this->actor.xzDistToPlayer < 50.0f) {
         if (!Play_InCsMode(play)) {
             owlType = (this->actor.params & 0xFC0) >> 6;
-            PRINTF(VT_FGCOL(CYAN));
-            PRINTF("%dのフクロウ\n", owlType); // "%d owl"
-            PRINTF(VT_RST);
+            PRINTF2(VT_FGCOL(CYAN));
+            PRINTF2("%dのフクロウ\n", owlType); // "%d owl"
+            PRINTF2(VT_RST);
             switch (owlType) {
                 case 7:
-                    PRINTF(VT_FGCOL(CYAN));
-                    PRINTF("SPOT 06 の デモがはしった\n"); // "Demo of SPOT 06 has been completed"
-                    PRINTF(VT_RST);
+                    PRINTF2(VT_FGCOL(CYAN));
+                    PRINTF2("SPOT 06 の デモがはしった\n"); // "Demo of SPOT 06 has been completed"
+                    PRINTF2(VT_RST);
                     play->csCtx.script = SEGMENTED_TO_VIRTUAL(gLakeHyliaOwlCs);
                     this->actor.draw = NULL;
                     break;
@@ -1085,7 +1085,7 @@ void EnOwl_Update(Actor* thisx, PlayState* play) {
     this->actionFunc(this, play);
     if (this->actor.update == NULL) {
         // "Owl disappears"
-        PRINTF("フクロウ消滅!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+        PRINTF2("フクロウ消滅!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
         return;
     }
 
