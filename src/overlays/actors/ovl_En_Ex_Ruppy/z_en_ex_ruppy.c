@@ -403,7 +403,7 @@ void EnExRuppy_Draw(Actor* thisx, PlayState* play) {
         // skipped, so this command tells it not to skip them. However, if the
         // rupee really is the same as last time, then we can let the optimizer
         // skip the load.
-        if(this->colorIdx != lastColorIdx){
+        if (this->colorIdx != lastColorIdx) {
             gSPDontSkipTexLoadsAcross(POLY_OPA_DISP++);
             lastColorIdx = this->colorIdx;
         }

@@ -80,7 +80,7 @@ void EffectSsStone1_Draw(PlayState* play, u32 index, EffectSs* this) {
     // skipped, so this command tells it not to skip them. However, if the
     // particle really is the same as last time, then we can let the optimizer
     // skip the load.
-    if(this->life != lastTextureIndex){
+    if (this->life != lastTextureIndex) {
         gSPDontSkipTexLoadsAcross(POLY_OPA_DISP++);
         lastTextureIndex = this->life;
     }
