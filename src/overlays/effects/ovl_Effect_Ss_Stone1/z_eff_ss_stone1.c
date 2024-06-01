@@ -55,6 +55,13 @@ void EffectSsStone1_Draw(PlayState* play, u32 index, EffectSs* this) {
     Vec3f mfVec;
     f32 mfW;
     f32 scale;
+#if ENABLE_F3DEX3
+    // It might seem that we'd need to ensure this is reset every frame. But we
+    // actually only care about when this changes within a frame, as the texture
+    // loads would only ever be skipped between two or more particles drawn
+    // consecutively.
+    static s16 lastTextureIndex = -1;
+#endif
 
     OPEN_DISPS(gfxCtx, "../z_eff_ss_stone1.c", 154);
 
@@ -67,6 +74,17 @@ void EffectSsStone1_Draw(PlayState* play, u32 index, EffectSs* this) {
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     Gfx_SetupDL_61Xlu(gfxCtx);
     gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(drawParams->texture));
+#if ENABLE_F3DEX3
+    // If we have consecutive particles rendering with different textures,
+    // F3DEX3's optimizer will incorrectly believe the texture loads can be
+    // skipped, so this command tells it not to skip them. However, if the
+    // particle really is the same as last time, then we can let the optimizer
+    // skip the load.
+    if(this->life != lastTextureIndex){
+        gSPDontSkipTexLoadsAcross(POLY_OPA_DISP++);
+        lastTextureIndex = this->life;
+    }
+#endif
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, drawParams->primColor.r, drawParams->primColor.g, drawParams->primColor.b,
                     255);
     gDPSetEnvColor(POLY_XLU_DISP++, drawParams->envColor.r, drawParams->envColor.g, drawParams->envColor.b, 255);
