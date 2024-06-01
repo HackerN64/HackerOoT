@@ -4,8 +4,6 @@
 #include "terminal.h"
 #include "overlays/actors/ovl_En_Horse/z_en_horse.h"
 
-#include "config.h"
-
 // For retail BSS ordering, the block number of D_8015BD7C
 // must be between 88 and 123 inclusive.
 #pragma increment_block_number 30
@@ -1783,14 +1781,6 @@ s32 Camera_Normal1(Camera* camera) {
             camera->inputDir.y = eyeAdjustment.yaw;
             camera->inputDir.z = 0;
         }
-
-#if ENABLE_CRITICAL_WIGGLES
-        // crit wiggle
-        if (gSaveContext.save.info.playerData.health <= 16 && ((camera->play->state.frames % 256) == 0)) {
-            wiggleAdj = Rand_ZeroOne() * 10000.0f;
-            camera->inputDir.y = wiggleAdj + camera->inputDir.y;
-        }
-#endif
     } else {
         rwData->swing.swingUpdateRate = roData->unk_0C;
         rwData->swing.unk_18 = 0;

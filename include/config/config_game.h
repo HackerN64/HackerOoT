@@ -66,11 +66,4 @@
 */
 #define ENABLE_VINE_CLIMB_FIX true
 
-/**
- * Enable critical wiggles
- * This is that thing where the player can have a random stick input every 256 frames when you're at critical health
- * See ``Camera_Normal1`` in ``z_camera.c`` for more details.
-*/
-#define ENABLE_CRITICAL_WIGGLES false
-
 #endif
