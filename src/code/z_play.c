@@ -1113,8 +1113,7 @@ extern u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT];
 
 static u8 sMotionBlurStatus;
 
-typedef enum
-{
+typedef enum {
     /* 0 */ MOTION_BLUR_OFF,
     /* 1 */ MOTION_BLUR_SETUP,
     /* 2 */ MOTION_BLUR_PROCESS
