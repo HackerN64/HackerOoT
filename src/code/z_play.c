@@ -1113,7 +1113,8 @@ extern u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT];
 
 static u8 sMotionBlurStatus;
 
-typedef enum {
+typedef enum
+{
     /* 0 */ MOTION_BLUR_OFF,
     /* 1 */ MOTION_BLUR_SETUP,
     /* 2 */ MOTION_BLUR_PROCESS
@@ -1377,7 +1378,7 @@ void Play_Draw(PlayState* this) {
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SKYBOX_FILTERS)) {
             Environment_DrawSkyboxFilters(this);
         }
-        
+
         // The Z buffer has to be cleared at some point before anything using it
         // is drawn (lighting strike is the first which does). But if we are
         // using F3DEX3's SPMemset to clear it, it should be done as late as

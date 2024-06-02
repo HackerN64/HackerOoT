@@ -1557,18 +1557,18 @@ void Gfx_SetupFrame(GraphicsContext* gfxCtx, s32 clearFB, u8 r, u8 g, u8 b) {
 void Gfx_ClearZBuffer(GraphicsContext* gfxCtx) {
     s32 letterboxSize = Letterbox_GetSize();
     OPEN_DISPS(gfxCtx, "../z_rcp.c", __LINE__);
-    
+
     // Set the whole z buffer to maximum depth
     // Don't bother with pixels that are being covered by the letterbox
 #if ENABLE_F3DEX3
     if (gUseMemsetForZBuffer) {
         s32 w2 = gScreenWidth * 2; // 2 bytes per pixel
-        if(letterboxSize < 0 || letterboxSize > 100){
+        if (letterboxSize < 0 || letterboxSize > 100) {
             letterboxSize = 0;
         }
         gSPMemset(POLY_OPA_DISP++, (u8*)gZBuffer + letterboxSize * w2, GPACK_ZDZ(G_MAXFBZ, 0),
-            (gScreenHeight - 2 * letterboxSize) * w2);
-    }else{
+                  (gScreenHeight - 2 * letterboxSize) * w2);
+    } else {
 #endif
         gSPDisplayList(POLY_OPA_DISP++, sFillSetupDL);
         gDPSetColorImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gScreenWidth, gZBuffer);
