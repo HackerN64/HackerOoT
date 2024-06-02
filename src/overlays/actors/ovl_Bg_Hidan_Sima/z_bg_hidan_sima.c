@@ -258,6 +258,7 @@ Gfx* func_8088EB54(PlayState* play, BgHidanSima* this, Gfx* gfx) {
         mtxF.zz += 0.4f;
 
         gSPSegment(gfx++, 0x09, SEGMENTED_TO_VIRTUAL(sFireballsTexs[(this->timer + s3) % 7]));
+        IF_F3DEX3_ALWAYS_DONT_SKIP_TEX(gfx++);
         gSPMatrix(gfx++,
                   Matrix_MtxFToMtx(MATRIX_CHECK_FLOATS(&mtxF, "../z_bg_hidan_sima.c", 611),
                                    GRAPH_ALLOC(play->state.gfxCtx, sizeof(Mtx))),
@@ -267,6 +268,7 @@ Gfx* func_8088EB54(PlayState* play, BgHidanSima* this, Gfx* gfx) {
     mtxF.xw = this->dyna.actor.world.pos.x + (phi_s5 * 25 + 80) * sin;
     mtxF.zw = this->dyna.actor.world.pos.z + (phi_s5 * 25 + 80) * cos;
     gSPSegment(gfx++, 0x09, SEGMENTED_TO_VIRTUAL(sFireballsTexs[(this->timer + s3) % 7]));
+    IF_F3DEX3_ALWAYS_DONT_SKIP_TEX(gfx++);
     gSPMatrix(gfx++,
               Matrix_MtxFToMtx(MATRIX_CHECK_FLOATS(&mtxF, "../z_bg_hidan_sima.c", 624),
                                GRAPH_ALLOC(play->state.gfxCtx, sizeof(Mtx))),

@@ -60,6 +60,7 @@ void EffectSsExtra_Draw(PlayState* play, u32 index, EffectSs* this) {
     s32 pad;
     f32 scale = this->rScale / 100.0f;
     void* objectPtr = play->objectCtx.slots[this->rObjectSlot].segment;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_eff_ss_extra.c", 168);
 
@@ -72,6 +73,7 @@ void EffectSsExtra_Draw(PlayState* play, u32 index, EffectSs* this) {
     gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_eff_ss_extra.c", 186),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sTextures[this->rScoreIdx]));
+    IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, this->rScoreIdx);
     gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(object_yabusame_point_DL_000DC0));
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_eff_ss_extra.c", 194);

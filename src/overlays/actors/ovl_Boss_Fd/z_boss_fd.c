@@ -1529,6 +1529,7 @@ void BossFd_DrawEffects(BossFdEffect* effect, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     s16 i;
     BossFdEffect* firstEffect = effect;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(gfxCtx, "../z_boss_fd.c", 4023);
 
@@ -1591,6 +1592,7 @@ void BossFd_DrawEffects(BossFdEffect* effect, PlayState* play) {
             gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(gfxCtx, "../z_boss_fd.c", 4104),
                       G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(dustTex[effect->timer2]));
+            IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, effect->timer2);
             gSPDisplayList(POLY_XLU_DISP++, gVolvagiaDustModelDL);
         }
     }
@@ -1614,6 +1616,7 @@ void BossFd_DrawEffects(BossFdEffect* effect, PlayState* play) {
             gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(gfxCtx, "../z_boss_fd.c", 4154),
                       G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(dustTex[effect->timer2]));
+            IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, effect->timer2);
             gSPDisplayList(POLY_XLU_DISP++, gVolvagiaDustModelDL);
         }
     }

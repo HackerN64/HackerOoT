@@ -300,9 +300,11 @@ Gfx* func_8088D9F4(PlayState* play, BgHidanSekizou* this, s16 arg2, MtxF* arg3, 
     f32 temp_f0;
     f32 temp_f2;
     f32 phi_f12;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     arg6 = (((arg6 + arg2) % 8) * 7) * (1 / 7.0f);
     gSPSegment(arg7++, 9, SEGMENTED_TO_VIRTUAL(sFireballsTexs[arg6]));
+    IF_F3DEX3_DONT_SKIP_TEX_HERE(arg7++, arg6);
     arg2++;
     if (arg2 != 4) {
         phi_f12 = arg2 + ((4 - this->unk_170) / 4.0f);

@@ -752,6 +752,7 @@ void ObjectKankyo_Lightning(ObjectKankyo* this, PlayState* play) {
 void ObjectKankyo_DrawLightning(Actor* thisx, PlayState* play) {
     s32 pad;
     ObjectKankyo* this = (ObjectKankyo*)thisx;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_object_kankyo.c", 1182);
 
@@ -765,6 +766,7 @@ void ObjectKankyo_DrawLightning(Actor* thisx, PlayState* play) {
         gDPSetEnvColor(POLY_XLU_DISP++, 0, 255, 255, 128);
         gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_object_kankyo.c", 1213), G_MTX_LOAD);
         gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sEffLightningTextures[this->effects[0].timer]));
+        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, this->effects[0].timer);
         Gfx_SetupDL_61Xlu(play->state.gfxCtx);
         gSPMatrix(POLY_XLU_DISP++, &D_01000000, G_MTX_MODELVIEW | G_MTX_NOPUSH | G_MTX_MUL);
         gDPPipeSync(POLY_XLU_DISP++);

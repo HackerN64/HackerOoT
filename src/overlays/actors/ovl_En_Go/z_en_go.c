@@ -1194,6 +1194,7 @@ void EnGo_DrawEffects(EnGo* this, PlayState* play) {
     s16 materialFlag;
     s16 index;
     s16 i;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_go.c", 2626);
     materialFlag = false;
@@ -1222,6 +1223,7 @@ void EnGo_DrawEffects(EnGo* this, PlayState* play) {
 
         index = dustEffect->timer * (8.0f / dustEffect->initialTimer);
         gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(dustTex[index]));
+        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, index);
         gSPDisplayList(POLY_XLU_DISP++, gGoronDL_00FD50);
     }
 
