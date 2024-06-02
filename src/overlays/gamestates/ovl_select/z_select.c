@@ -92,6 +92,7 @@ void MapSelect_Draw(MapSelectState* this) {
     Gfx_SetupFrame(gfxCtx, true, 0, 0, 0);
     SET_FULLSCREEN_VIEWPORT(&this->view);
     View_Apply(&this->view, VIEW_ALL);
+    Gfx_SetupDL_28Opa(gfxCtx);
 
     if (!this->state.running) {
         MapSelect_DrawLoadingScreen(this);
@@ -333,12 +334,6 @@ void MapSelect_DrawMenu(MapSelectState* this) {
 
     OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
 
-    gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
-    Gfx_SetupFrame(gfxCtx, true, 0, 0, 0);
-    SET_FULLSCREEN_VIEWPORT(&this->view);
-    View_Apply(&this->view, VIEW_ALL);
-    Gfx_SetupDL_28Opa(gfxCtx);
-
     printer = alloca(sizeof(GfxPrint));
     GfxPrint_Init(printer);
     GfxPrint_Open(printer, POLY_OPA_DISP);
@@ -365,12 +360,6 @@ void MapSelect_DrawLoadingScreen(MapSelectState* this) {
     GfxPrint* printer;
 
     OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
-
-    gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
-    Gfx_SetupFrame(gfxCtx, true, 0, 0, 0);
-    SET_FULLSCREEN_VIEWPORT(&this->view);
-    View_Apply(&this->view, VIEW_ALL);
-    Gfx_SetupDL_28Opa(gfxCtx);
 
     printer = alloca(sizeof(GfxPrint));
     GfxPrint_Init(printer);

@@ -1258,7 +1258,7 @@ void Play_Draw(PlayState* this) {
             clearG = this->lightCtx.fogColor[1];
             clearB = this->lightCtx.fogColor[2];
         }
-        // Clear the fb only if we aren't drawing a skybox, but always clear zb
+        // Clear the fb only if we aren't drawing a skybox
         Gfx_SetupFrame(gfxCtx, clearFB, clearR, clearG, clearB);
     }
 
@@ -1377,6 +1377,15 @@ void Play_Draw(PlayState* this) {
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SKYBOX_FILTERS)) {
             Environment_DrawSkyboxFilters(this);
         }
+        
+        // The Z buffer has to be cleared at some point before anything using it
+        // is drawn (lighting strike is the first which does). But if we are
+        // using F3DEX3's SPMemset to clear it, it should be done as late as
+        // possible, after the RSP has already sent commands to the RDP for the
+        // skybox or framebuffer clear. This is so that the RSP can clear the Z
+        // buffer while the RDP is working on the framebuffer, without making
+        // the RDP wait for new work to be available.
+        Gfx_ClearZBuffer(gfxCtx);
 
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTNING)) {
             Environment_UpdateLightningStrike(this);

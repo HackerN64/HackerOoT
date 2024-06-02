@@ -39,7 +39,7 @@ void Menu_Update(Menu* this) {
     u8 pressDLeft = CHECK_BTN_ALL(pressBtn, BTN_DLEFT);
     u8 pressDRight = CHECK_BTN_ALL(pressBtn, BTN_DRIGHT);
     u8 i;
-
+    
     if (isHoldingR && CHECK_BTN_ALL(pressBtn, BTN_L)) {
         this->bShow ^= 1;
     }
