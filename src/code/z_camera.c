@@ -1781,12 +1781,6 @@ s32 Camera_Normal1(Camera* camera) {
             camera->inputDir.y = eyeAdjustment.yaw;
             camera->inputDir.z = 0;
         }
-
-        // crit wiggle
-        if (gSaveContext.save.info.playerData.health <= 16 && ((camera->play->state.frames % 256) == 0)) {
-            wiggleAdj = Rand_ZeroOne() * 10000.0f;
-            camera->inputDir.y = wiggleAdj + camera->inputDir.y;
-        }
     } else {
         rwData->swing.swingUpdateRate = roData->unk_0C;
         rwData->swing.unk_18 = 0;
