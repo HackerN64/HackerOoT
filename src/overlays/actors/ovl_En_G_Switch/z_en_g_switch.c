@@ -477,6 +477,7 @@ static void* sRupeeTextures[] = {
 void EnGSwitch_DrawRupee(Actor* thisx, PlayState* play) {
     s32 pad;
     EnGSwitch* this = (EnGSwitch*)thisx;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     if (1) {}
     if (!this->broken) {
@@ -486,6 +487,7 @@ void EnGSwitch_DrawRupee(Actor* thisx, PlayState* play) {
         gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_g_switch.c", 957),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sRupeeTextures[this->colorIdx]));
+        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_OPA_DISP++, this->colorIdx);
         gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
         CLOSE_DISPS(play->state.gfxCtx, "../z_en_g_switch.c", 961);
     }
@@ -556,6 +558,7 @@ void EnGSwitch_DrawEffects(EnGSwitch* this, PlayState* play) {
     s16 i;
     f32 scale;
     s32 pad;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(gfxCtx, "../z_en_g_switch.c", 1073);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -570,6 +573,7 @@ void EnGSwitch_DrawEffects(EnGSwitch* this, PlayState* play) {
             gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_g_switch.c", 1088),
                       G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sRupeeTextures[effect->colorIdx]));
+            IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_OPA_DISP++, effect->colorIdx);
             gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
         }
     }

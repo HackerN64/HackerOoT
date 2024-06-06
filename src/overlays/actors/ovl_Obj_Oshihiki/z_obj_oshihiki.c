@@ -635,6 +635,7 @@ void ObjOshihiki_Update(Actor* thisx, PlayState* play) {
 void ObjOshihiki_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     ObjOshihiki* this = (ObjOshihiki*)thisx;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_obj_oshihiki.c", 1289);
     if (ObjOshihiki_MoveWithBlockUnder(this, play)) {
@@ -643,6 +644,7 @@ void ObjOshihiki_Draw(Actor* thisx, PlayState* play) {
     this->stateFlags &= ~PUSHBLOCK_MOVE_UNDER;
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(this->texture));
+    IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_OPA_DISP++, this->texture);
 
     gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_obj_oshihiki.c", 1308),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

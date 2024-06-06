@@ -819,6 +819,7 @@ void EnItem00_Draw(Actor* thisx, PlayState* play) {
 void EnItem00_DrawRupee(EnItem00* this, PlayState* play) {
     s32 pad;
     s32 texIndex;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1546);
 
@@ -834,6 +835,7 @@ void EnItem00_DrawRupee(EnItem00* this, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_item00.c", 1562), G_MTX_MODELVIEW | G_MTX_LOAD);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sRupeeTex[texIndex]));
+    IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_OPA_DISP++, texIndex);
 
     gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
 
@@ -845,6 +847,7 @@ void EnItem00_DrawRupee(EnItem00* this, PlayState* play) {
  */
 void EnItem00_DrawCollectible(EnItem00* this, PlayState* play) {
     s32 texIndex = this->actor.params - 3;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1594);
 
@@ -859,6 +862,7 @@ void EnItem00_DrawCollectible(EnItem00* this, PlayState* play) {
     POLY_OPA_DISP = Gfx_SetupDL_66(POLY_OPA_DISP);
 
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sItemDropTex[texIndex]));
+    IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_OPA_DISP++, texIndex);
 
     gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_item00.c", 1607), G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_OPA_DISP++, gItemDropDL);

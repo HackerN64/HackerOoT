@@ -188,9 +188,11 @@ Gfx* BgHidanRsekizou_DrawFireball(PlayState* play, BgHidanRsekizou* this, s16 fr
     s32 temp;
     f32 fVar6;
     f32 tmpf7;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     temp = (((this->burnFrame + frame) % 8) * 7) * (1.0f / 7.0f);
     gSPSegment(displayList++, 0x09, SEGMENTED_TO_VIRTUAL(sFireballsTexs[temp]));
+    IF_F3DEX3_DONT_SKIP_TEX_HERE(displayList++, temp);
 
     frame++;
     fVar6 = (frame != 4) ? frame + ((3 - this->bendFrame) * (1.0f / 3.0f)) : frame;

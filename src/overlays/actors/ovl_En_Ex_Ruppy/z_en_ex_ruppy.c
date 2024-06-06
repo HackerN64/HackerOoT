@@ -379,13 +379,7 @@ void EnExRuppy_Draw(Actor* thisx, PlayState* play) {
     static void* rupeeTextures[] = {
         gRupeeGreenTex, gRupeeBlueTex, gRupeeRedTex, gRupeePinkTex, gRupeeOrangeTex,
     };
-#if ENABLE_F3DEX3
-    // It might seem that we'd need to ensure this is reset every frame. But we
-    // actually only care about when this changes within a frame, as the texture
-    // loads would only ever be skipped between two or more rupees drawn
-    // consecutively.
-    static s16 lastColorIdx = -1;
-#endif
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
     s32 pad;
     EnExRuppy* this = (EnExRuppy*)thisx;
 
@@ -397,17 +391,7 @@ void EnExRuppy_Draw(Actor* thisx, PlayState* play) {
         gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_ex_ruppy.c", 780),
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(rupeeTextures[this->colorIdx]));
-#if ENABLE_F3DEX3
-        // If we have consecutive rupees rendering with different textures,
-        // F3DEX3's optimizer will incorrectly believe the texture loads can be
-        // skipped, so this command tells it not to skip them. However, if the
-        // rupee really is the same as last time, then we can let the optimizer
-        // skip the load.
-        if (this->colorIdx != lastColorIdx) {
-            gSPDontSkipTexLoadsAcross(POLY_OPA_DISP++);
-            lastColorIdx = this->colorIdx;
-        }
-#endif
+        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_OPA_DISP++, this->colorIdx);
         gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
 
         CLOSE_DISPS(play->state.gfxCtx, "../z_en_ex_ruppy.c", 784);
