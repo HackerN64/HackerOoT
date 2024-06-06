@@ -316,7 +316,7 @@ typedef struct {
     /* 0x04 */ u32 area;
 } SCmdMiscSettings;
 
-#if ENABLE_F3DEX3_OCCLUSION_PLANES
+#if ENABLE_F3DEX3
 typedef struct {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  count;
@@ -351,7 +351,7 @@ typedef union {
     SCmdEchoSettings      echoSettings;
     SCmdMiscSettings      miscSettings;
     SCmdAltHeaders        altHeaders;
-#if ENABLE_F3DEX3_OCCLUSION_PLANES
+#if ENABLE_F3DEX3
     SCmdOccPlaneCandList  occPlaneCandList;
 #endif
 } SceneCmd; // size = 0x8
@@ -506,7 +506,7 @@ typedef enum {
     /* 0x17 */ SCENE_CMD_ID_CUTSCENE_DATA,
     /* 0x18 */ SCENE_CMD_ID_ALTERNATE_HEADER_LIST,
     /* 0x19 */ SCENE_CMD_ID_MISC_SETTINGS,
-#if ENABLE_F3DEX3_OCCLUSION_PLANES
+#if ENABLE_F3DEX3
                SCENE_CMD_ID_OCC_PLANE_CAND_LIST,
 #endif
     /* 0x1A */ SCENE_CMD_ID_MAX
@@ -591,7 +591,7 @@ typedef enum {
 #define SCENE_CMD_MISC_SETTINGS(sceneCamType, worldMapLocation) \
     { SCENE_CMD_ID_MISC_SETTINGS, sceneCamType, CMD_W(worldMapLocation) }
     
-#ifdef ENABLE_F3DEX3_OCCLUSION_PLANES
+#ifdef ENABLE_F3DEX3
 #define SCENE_CMD_OCCLUSION_PLANE_CANDIDATES_LIST(numPlanes, planeList) \
     { SCENE_CMD_ID_OCC_PLANE_CAND_LIST, numPlanes, CMD_PTR(planeList) }
 #endif

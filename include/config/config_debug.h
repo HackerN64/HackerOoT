@@ -31,7 +31,7 @@
 #define BOOT_TO_SCENE true
 #define BOOT_TO_SCENE_NEW_GAME_ONLY false
 #define BOOT_TO_FILE_SELECT false
-#define BOOT_TO_MAP_SELECT true
+#define BOOT_TO_MAP_SELECT false
 
 /**
  * Use file 1 to load the map select from the file select

@@ -431,7 +431,7 @@ typedef struct PlayState {
     /* 0x117A4 */ ObjectContext objectCtx;
     /* 0x11CBC */ RoomContext roomCtx;
     /* 0x11D34 */ TransitionActorContext transiActorCtx;
-#if ENABLE_F3DEX3_OCCLUSION_PLANES
+#if ENABLE_F3DEX3
                   OcclusionPlaneContext occPlaneCtx;
 #endif
     /* 0x11D3C */ void (*playerInit)(Player* player, struct PlayState* play, FlexSkeletonHeader* skelHeader);
