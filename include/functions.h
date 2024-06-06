@@ -1085,7 +1085,7 @@ Gfx* Gfx_TwoTexScroll(GraphicsContext* gfxCtx, s32 tile1, u32 x1, u32 y1, s32 wi
 Gfx* Gfx_TwoTexScrollEnvColor(GraphicsContext* gfxCtx, s32 tile1, u32 x1, u32 y1, s32 width1, s32 height1, s32 tile2,
                               u32 x2, u32 y2, s32 width2, s32 height2, s32 r, s32 g, s32 b, s32 a);
 Gfx* Gfx_EnvColor(GraphicsContext* gfxCtx, s32 r, s32 g, s32 b, s32 a);
-void Gfx_SetupFrame(GraphicsContext* gfxCtx, u8 r, u8 g, u8 b);
+void Gfx_SetupFrame(GraphicsContext* gfxCtx, s32 clearFB, u8 r, u8 g, u8 b);
 void func_80095974(GraphicsContext* gfxCtx);
 void func_80095AA0(PlayState* play, Room* room, Input* input, s32 arg3);
 void Room_DrawBackground2D(Gfx** gfxP, void* tex, void* tlut, u16 width, u16 height, u8 fmt, u8 siz, u16 tlutMode,
@@ -1465,6 +1465,9 @@ u64* SysUcode_GetUCodeBoot(void);
 size_t SysUcode_GetUCodeBootSize(void);
 u64* SysUcode_GetUCode(void);
 u64* SysUcode_GetUCodeData(void);
+#if ENABLE_F3DEX3
+void SysUcode_LoadNewUcodeIfChanged();
+#endif
 NORETURN void func_800D31A0(void);
 void func_800D31F0(void);
 void func_800D3210(void);
@@ -1721,6 +1724,7 @@ u8 func_800FAD34(void);
 void Audio_ResetActiveSequences(void);
 void Audio_ResetActiveSequencesAndVolume(void);
 void GfxPrint_SetColor(GfxPrint* this, u32 r, u32 g, u32 b, u32 a);
+void GfxPrint_SetColor32(GfxPrint* this, u32 rgba);
 void GfxPrint_SetPosPx(GfxPrint* this, s32 x, s32 y);
 void GfxPrint_SetPos(GfxPrint* this, s32 x, s32 y);
 void GfxPrint_SetBasePosPx(GfxPrint* this, s32 x, s32 y);
@@ -1789,7 +1793,6 @@ void* SystemArena_ReallocDebug(void* ptr, u32 newSize, const char* file, int lin
 void SystemArena_FreeDebug(void* ptr, const char* file, int line);
 void SystemArena_Display(void);
 #endif
-void SystemArena_Display(void); // IS_SPEEDMETER_ENABLED
 
 u32 Rand_Next(void);
 void Rand_Seed(u32 seed);
@@ -1988,11 +1991,15 @@ void Play_SetMotionBlurAlpha(u32 alpha);
 void Play_EnableMotionBlur(u32 alpha);
 void Play_DisableMotionBlur(void);
 
-#if ENABLE_F3DEX3_OCCLUSION_PLANES
+#if ENABLE_F3DEX3
 void OcclusionPlane_NewScene(PlayState* play);
 void OcclusionPlane_Draw_Start(PlayState* play);
 void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase loc);
 void OcclusionPlane_Draw_PostCamUpdate(PlayState* play);
+#endif
+
+#if ENABLE_PROFILER
+#include "debug/profiler_inline.h"
 #endif
 
 #endif

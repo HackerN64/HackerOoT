@@ -13,6 +13,7 @@ void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;
     u8 i;
 
+    gSaveContext.gameMode = GAMEMODE_MAP_SELECT;
     this->state.main = MapSelect_Main;
     this->state.destroy = MapSelect_Destroy;
     this->scenes = sScenes;
@@ -88,7 +89,7 @@ void MapSelect_Draw(MapSelectState* this) {
     OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
-    Gfx_SetupFrame(gfxCtx, 0, 0, 0);
+    Gfx_SetupFrame(gfxCtx, true, 0, 0, 0);
     SET_FULLSCREEN_VIEWPORT(&this->view);
     View_Apply(&this->view, VIEW_ALL);
 
@@ -333,7 +334,7 @@ void MapSelect_DrawMenu(MapSelectState* this) {
     OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
-    Gfx_SetupFrame(gfxCtx, 0, 0, 0);
+    Gfx_SetupFrame(gfxCtx, true, 0, 0, 0);
     SET_FULLSCREEN_VIEWPORT(&this->view);
     View_Apply(&this->view, VIEW_ALL);
     Gfx_SetupDL_28Opa(gfxCtx);
@@ -366,7 +367,7 @@ void MapSelect_DrawLoadingScreen(MapSelectState* this) {
     OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
-    Gfx_SetupFrame(gfxCtx, 0, 0, 0);
+    Gfx_SetupFrame(gfxCtx, true, 0, 0, 0);
     SET_FULLSCREEN_VIEWPORT(&this->view);
     View_Apply(&this->view, VIEW_ALL);
     Gfx_SetupDL_28Opa(gfxCtx);
@@ -387,6 +388,7 @@ void MapSelect_LoadTitle(MapSelectState* this) {
 }
 
 void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex) {
+    gSaveContext.gameMode = GAMEMODE_NORMAL;
     PRINTF(VT_FGCOL(BLUE));
     PRINTF("\n\n\nＦＩＬＥ＿ＮＯ＝%x\n\n\n", gSaveContext.fileNum);
     PRINTF(VT_RST);

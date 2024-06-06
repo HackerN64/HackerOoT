@@ -263,6 +263,7 @@ longer a multiple of 8 (DMA word). This was not used in any command anyway. */
 #define G_MWO_ATTR_OFFSET_Z      0x14
 #define G_MWO_ALPHA_COMPARE_CULL 0x16
 #define G_MWO_NORMALS_MODE       0x18
+#define G_MWO_LAST_MAT_DL_ADDR   0x1A
 
 /*
  * RDP command argument defines
@@ -1190,6 +1191,16 @@ typedef struct {
     short kz;
     short kc;
 } OcclusionPlane_t;
+
+typedef struct {
+    /* Four vertices of a quad, XYZ components in world space */
+    struct {
+        short x;
+        short y;
+        short z;
+    } v[4];
+    float weight; /* Higher if there's a lot of stuff behind it */
+} OcclusionPlaneCandidate;
 
 typedef union {
     Light_t l;
@@ -2844,6 +2855,38 @@ _DW({                                         \
 #define gsSPNormalsMode(mode) \
     gsMoveHalfwd(G_MW_FX, G_MWO_NORMALS_MODE, (mode) & 0xFF)
 
+/*
+ * F3DEX3 has a basic auto-batched rendering system. At a high level, if a
+ * material display list being run is the same as the last material, the texture
+ * loads are automatically skipped the second time as they should already be in
+ * TMEM.
+ * 
+ * This design generally works, but can break if you call a display list twice
+ * but in between change a segment mapping so that a referenced image inside is
+ * actually different the two times. In these cases, run the below command
+ * between the two calls (e.g. when you change the segment) and the microcode
+ * will not skip the second texture loads.
+ * 
+ * Internally, a material is defined to start with any set image command, and
+ * end on any of the following: call, branch, return, vertex, all tri commands,
+ * modify vertex, branch Z/W, or cull. The physical address of the display list
+ * --not the address of the image--is stored when a material is started. If a
+ * material starts and its physical address is the same as the stored last start
+ * address, i.e. we're executing the same material display list as the last
+ * material, material cull mode is set. In this mode, load block, load tile, and
+ * load TLUT all are skipped. This mode is cleared when the material ends.
+ * 
+ * This design has the benefit that it works correctly even with complex
+ * materials, e.g. with two CI4 textures (four loads), whereas it would be
+ * difficult to implement tracking all these loads separately. Furthermore, a
+ * design based on tracking the image addresses could break if you loaded
+ * different tile sections of the same image in consecutive materials.
+ */
+#define gSPDontSkipTexLoadsAcross(pkt) \
+    gMoveWd(pkt, G_MW_FX, G_MWO_LAST_MAT_DL_ADDR, 0xFFFFFFFF)
+#define gsSPDontSkipTexLoadsAcross() \
+    gsMoveWd(G_MW_FX, G_MWO_LAST_MAT_DL_ADDR, 0xFFFFFFFF)
+
 typedef union {
     struct {
         s16 intPart[3][4];  /* Fourth row containing translations is omitted. */
@@ -3096,12 +3139,12 @@ _DW({                                               \
  */
 #define gSPLightColor(pkt, n, col)                  \
 _DW({                                               \
-    gMoveWd(pkt, G_MW_LIGHTCOL, (((n) - 1) * 0x10) + 0, ((col) & 0xFFFFFF00));   \
-    gMoveWd(pkt, G_MW_LIGHTCOL, (((n) - 1) * 0x10) + 4, ((col) & 0xFFFFFF00));   \
+    gMoveWd(pkt, G_MW_LIGHTCOL, ((((n) - 1) * 0x10) + 0), ((col) & 0xFFFFFF00));   \
+    gMoveWd(pkt, G_MW_LIGHTCOL, ((((n) - 1) * 0x10) + 4), ((col) & 0xFFFFFF00));   \
 })
 #define gsSPLightColor(n, col)                      \
-    gsMoveWd(G_MW_LIGHTCOL, (((n) - 1) * 0x10) + 0, ((col) & 0xFFFFFF00)),       \
-    gsMoveWd(G_MW_LIGHTCOL, (((n) - 1) * 0x10) + 4, ((col) & 0xFFFFFF00))
+    gsMoveWd(G_MW_LIGHTCOL, ((((n) - 1) * 0x10) + 0), ((col) & 0xFFFFFF00)),       \
+    gsMoveWd(G_MW_LIGHTCOL, ((((n) - 1) * 0x10) + 4), ((col) & 0xFFFFFF00))
 /*
  * Version for point lights. (col1 & 0xFF) must be set to the point light constant
  * factor (must be nonzero), and (col2 & 0xFF) must be set to the point light
@@ -3110,12 +3153,12 @@ _DW({                                               \
  */
 #define _gSPLightColor2(pkt, n, col1, col2) \
 _DW({\
-  gMoveWd(pkt, G_MW_LIGHTCOL, (((n) - 1) * 0x10) + 0, col1); \
-  gMoveWd(pkt, G_MW_LIGHTCOL, (((n) - 1) * 0x10) + 4, col2); \
+  gMoveWd(pkt, G_MW_LIGHTCOL, ((((n) - 1) * 0x10) + 0), col1); \
+  gMoveWd(pkt, G_MW_LIGHTCOL, ((((n) - 1) * 0x10) + 4), col2); \
 })
 #define _gsSPLightColor2(n, col1, col2) \
-  gsMoveWd(G_MW_LIGHTCOL, (((n) - 1) * 0x10) + 0, col1), \
-  gsMoveWd(G_MW_LIGHTCOL, (((n) - 1) * 0x10) + 4, col2)
+  gsMoveWd(G_MW_LIGHTCOL, ((((n) - 1) * 0x10) + 0), col1), \
+  gsMoveWd(G_MW_LIGHTCOL, ((((n) - 1) * 0x10) + 4), col2)
 
 
 /*

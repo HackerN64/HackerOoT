@@ -4,6 +4,11 @@
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/gameplay_field_keep/gameplay_field_keep.h"
 
+// For retail BSS ordering, the block number of sLensFlareUnused must be lower
+// than the extern variables declared in the header (e.g. gLightningStrike)
+// while the block number of sNGameOverLightNode must be higher.
+#pragma increment_block_number 80
+
 typedef enum {
     /* 0x00 */ LIGHTNING_BOLT_START,
     /* 0x01 */ LIGHTNING_BOLT_WAIT,
@@ -183,7 +188,7 @@ f32 sSandstormLerpScale = 0.0f;
 
 u8 gCustomLensFlareOn;
 Vec3f gCustomLensFlarePos;
-s16 gLensFlareUnused;
+s16 sLensFlareUnused;
 s16 gLensFlareScale;
 f32 gLensFlareColorIntensity;
 s16 gLensFlareGlareStrength;
@@ -206,6 +211,11 @@ s16 sLightningFlashAlpha;
 
 s16 sSunDepthTestX;
 s16 sSunDepthTestY;
+
+// These variables could be moved farther down in the file to reduce the amount
+// of block number padding here, but currently this causes BSS ordering issues
+// for debug.
+#pragma increment_block_number 230
 
 LightNode* sNGameOverLightNode;
 LightInfo sNGameOverLightInfo;
@@ -1383,7 +1393,23 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
 }
 
 void Environment_DrawSunAndMoon(PlayState* play) {
-    f32 alpha;
+    // This replace gMoonDL in gameplay_keep. TODO make this gMoonDL once asset replacement is sophisticated enough
+    static Gfx sMoonDL[] = {
+        gsSPMatrix(0x01000000, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_MODELVIEW),
+        gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+        gsSPLoadGeometryMode(G_CULL_BACK),
+        gsDPSetCombineLERP(PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, PRIMITIVE, 0, TEXEL0, 0, 0, 0, 0, COMBINED, 0,
+                           0, 0, COMBINED),
+        gsDPSetOtherMode(G_AD_NOTPATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE |
+                             G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
+                         G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_PRIM_A | G_RM_XLU_SURF2),
+        gsDPLoadTextureBlock(gMoonTex, G_IM_FMT_IA, G_IM_SIZ_8b, 64, 64, 0, G_TX_NOMIRROR | G_TX_WRAP,
+                             G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD),
+        gsSPVertex(gameplay_keepVtx_038F70, 4, 0),
+        gsSP2Triangles(0, 1, 2, 0, 1, 3, 2, 0),
+        gsSPEndDisplayList(),
+    };
+    s32 alpha;
     f32 color;
     f32 y;
     f32 scale;
@@ -1416,14 +1442,8 @@ void Environment_DrawSunAndMoon(PlayState* play) {
         temp = y / 80.0f;
 
         alpha = temp * 255.0f;
-        if (alpha < 0.0f) {
-            alpha = 0.0f;
-        }
-        if (alpha > 255.0f) {
-            alpha = 255.0f;
-        }
-
-        alpha = 255.0f - alpha;
+        alpha = CLAMP(alpha, 0, 255);
+        alpha = 255 - alpha;
 
         color = temp;
         if (color < 0.0f) {
@@ -1441,6 +1461,7 @@ void Environment_DrawSunAndMoon(PlayState* play) {
         Matrix_Scale(scale, scale, scale, MTXMODE_APPLY);
         gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_kankyo.c", 2364), G_MTX_LOAD);
         Gfx_SetupDL_54Opa(play->state.gfxCtx);
+        gDPSetRenderMode(POLY_OPA_DISP++, G_RM_FOG_PRIM_A, G_RM_XLU_SURF2);
         gSPDisplayList(POLY_OPA_DISP++, gSunDL);
 
         Matrix_Translate(play->view.eye.x - play->envCtx.sunPos.x, play->view.eye.y - play->envCtx.sunPos.y,
@@ -1457,13 +1478,12 @@ void Environment_DrawSunAndMoon(PlayState* play) {
 
         alpha = temp * 255.0f;
 
-        if (alpha > 0.0f) {
+        if (alpha > 0) {
             gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_kankyo.c", 2406), G_MTX_LOAD);
-            Gfx_SetupDL_51Opa(play->state.gfxCtx);
             gDPPipeSync(POLY_OPA_DISP++);
             gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 240, 255, 180, alpha);
             gDPSetEnvColor(POLY_OPA_DISP++, 80, 70, 20, alpha);
-            gSPDisplayList(POLY_OPA_DISP++, gMoonDL);
+            gSPDisplayList(POLY_OPA_DISP++, sMoonDL);
         }
     }
 
@@ -1677,12 +1697,15 @@ void Environment_DrawLensFlare(PlayState* play, EnvironmentContext* envCtx, View
                     Math_SmoothStepToF(&envCtx->glareAlpha, 0.0f, 0.5f, 50.0f, 0.1f);
                 }
 
-                temp = colorIntensity / 120.0f;
-                temp = CLAMP_MIN(temp, 0.0f);
+                // The blender only uses the 5 most significant bits of alpha, ensure at least one of these bits is set
+                if (envCtx->glareAlpha >= 8.0f) {
+                    temp = colorIntensity / 120.0f;
+                    temp = CLAMP_MIN(temp, 0.0f);
 
-                gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, (u8)(temp * 75.0f) + 180, (u8)(temp * 155.0f) + 100,
-                                (u8)envCtx->glareAlpha);
-                gDPFillRectangle(POLY_XLU_DISP++, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
+                    gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, (u8)(temp * 75.0f) + 180, (u8)(temp * 155.0f) + 100,
+                                    (u8)envCtx->glareAlpha);
+                    gDPFillRectangle(POLY_XLU_DISP++, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
+                }
             } else {
                 envCtx->glareAlpha = 0.0f;
             }
@@ -1829,30 +1852,6 @@ void Environment_ChangeLightSetting(PlayState* play, u32 lightSetting) {
  * An example usage of a filter is to dim the skybox in cloudy conditions.
  */
 void Environment_DrawSkyboxFilters(PlayState* play) {
-    if (((play->skyboxId != SKYBOX_NONE) && (play->lightCtx.fogNear < 980)) || (play->skyboxId == SKYBOX_UNSET_1D)) {
-        f32 alpha;
-
-        OPEN_DISPS(play->state.gfxCtx, "../z_kankyo.c", 3032);
-
-        Gfx_SetupDL_57Opa(play->state.gfxCtx);
-
-        alpha = (1000 - play->lightCtx.fogNear) * 0.02f;
-
-        if (play->skyboxId == SKYBOX_UNSET_1D) {
-            alpha = 1.0f;
-        }
-
-        if (alpha > 1.0f) {
-            alpha = 1.0f;
-        }
-
-        gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, play->lightCtx.fogColor[0], play->lightCtx.fogColor[1],
-                        play->lightCtx.fogColor[2], 255.0f * alpha);
-        gDPFillRectangle(POLY_OPA_DISP++, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
-
-        CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 3043);
-    }
-
     if (play->envCtx.customSkyboxFilter) {
         OPEN_DISPS(play->state.gfxCtx, "../z_kankyo.c", 3048);
 
@@ -2210,7 +2209,7 @@ void Environment_DrawCustomLensFlare(PlayState* play) {
         pos.y = gCustomLensFlarePos.y;
         pos.z = gCustomLensFlarePos.z;
 
-        Environment_DrawLensFlare(play, &play->envCtx, &play->view, play->state.gfxCtx, pos, gLensFlareUnused,
+        Environment_DrawLensFlare(play, &play->envCtx, &play->view, play->state.gfxCtx, pos, sLensFlareUnused,
                                   gLensFlareScale, gLensFlareColorIntensity, gLensFlareGlareStrength, false);
     }
 }
@@ -2327,32 +2326,36 @@ void Environment_UpdateRain(PlayState* play) {
 }
 
 void Environment_FillScreen(GraphicsContext* gfxCtx, u8 red, u8 green, u8 blue, u8 alpha, u8 drawFlags) {
-    if (alpha != 0) {
-        OPEN_DISPS(gfxCtx, "../z_kankyo.c", 3835);
-
-        if (drawFlags & FILL_SCREEN_OPA) {
-            POLY_OPA_DISP = Gfx_SetupDL_57(POLY_OPA_DISP);
-            gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, red, green, blue, alpha);
-            gDPSetAlphaDither(POLY_OPA_DISP++, G_AD_DISABLE);
-            gDPSetColorDither(POLY_OPA_DISP++, G_CD_DISABLE);
-            gDPFillRectangle(POLY_OPA_DISP++, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
-        }
-
-        if (drawFlags & FILL_SCREEN_XLU) {
-            POLY_XLU_DISP = Gfx_SetupDL_57(POLY_XLU_DISP);
-            gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, red, green, blue, alpha);
-
-            if ((u32)alpha == 255) {
-                gDPSetRenderMode(POLY_XLU_DISP++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
-            }
-
-            gDPSetAlphaDither(POLY_XLU_DISP++, G_AD_DISABLE);
-            gDPSetColorDither(POLY_XLU_DISP++, G_CD_DISABLE);
-            gDPFillRectangle(POLY_XLU_DISP++, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
-        }
-
-        CLOSE_DISPS(gfxCtx, "../z_kankyo.c", 3863);
+    // The blender operates only with the 5 most significant bits of alpha, so we better have at least
+    // one bit set in that range to bother doing this
+    if (alpha < 8) {
+        return;
     }
+
+    OPEN_DISPS(gfxCtx, "../z_kankyo.c", 3835);
+
+    if (drawFlags & FILL_SCREEN_OPA) {
+        POLY_OPA_DISP = Gfx_SetupDL_57(POLY_OPA_DISP);
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, red, green, blue, alpha);
+        gDPSetAlphaDither(POLY_OPA_DISP++, G_AD_DISABLE);
+        gDPSetColorDither(POLY_OPA_DISP++, G_CD_DISABLE);
+        gDPFillRectangle(POLY_OPA_DISP++, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
+    }
+
+    if (drawFlags & FILL_SCREEN_XLU) {
+        POLY_XLU_DISP = Gfx_SetupDL_57(POLY_XLU_DISP);
+        gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, red, green, blue, alpha);
+
+        if ((u32)alpha == 255) {
+            gDPSetRenderMode(POLY_XLU_DISP++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
+        }
+
+        gDPSetAlphaDither(POLY_XLU_DISP++, G_AD_DISABLE);
+        gDPSetColorDither(POLY_XLU_DISP++, G_CD_DISABLE);
+        gDPFillRectangle(POLY_XLU_DISP++, 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
+    }
+
+    CLOSE_DISPS(gfxCtx, "../z_kankyo.c", 3863);
 }
 
 Color_RGB8 sSandstormPrimColors[] = {

@@ -55,13 +55,24 @@
 #include "mempak.h"
 #include "tha.h"
 #include "thga.h"
-#include "speedmeter.h"
 #include "gfx.h"
 #include "jpeg.h"
 #include "prerender.h"
 #include "widescreen.h"
 #include "rainbow.h"
 #include "occlusionplanes.h"
+
+#if ENABLE_HACKER_DEBUG
+#include "debug.h"
+#endif
+
+#if ENABLE_PROFILER
+#include "debug/profiler.h"
+#endif
+
+#if ENABLE_F3DEX3
+#include "occlusionplanes.h"
+#endif
 
 #define SCREEN_WIDTH  320
 #define SCREEN_HEIGHT 240
@@ -90,9 +101,19 @@
 #define THREAD_ID_GRAPH       4
 #define THREAD_ID_SCHED       5
 #define THREAD_ID_PADMGR      7
+#if ENABLE_PROFILER
+#define THREAD_ID_PIMGR       8
+#define THREAD_ID_VIMGR       9
+#else
+// Not sure why these are zero in vanilla.
+#define THREAD_ID_PIMGR       0
+#define THREAD_ID_VIMGR       0
+#endif
 #define THREAD_ID_AUDIOMGR   10
 #define THREAD_ID_DMAMGR     18
 #define THREAD_ID_IRQMGR     19
+
+#define VI_CUSTOM_PAL60_LAN1 56 // Custom PAL60 VI mode
 
 #define STACK(stack, size) \
     u64 stack[ALIGN8(size) / sizeof(u64)]

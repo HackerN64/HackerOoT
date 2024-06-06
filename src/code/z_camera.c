@@ -4,6 +4,10 @@
 #include "terminal.h"
 #include "overlays/actors/ovl_En_Horse/z_en_horse.h"
 
+// For retail BSS ordering, the block number of D_8015BD7C
+// must be between 88 and 123 inclusive.
+#pragma increment_block_number 30
+
 s16 Camera_RequestSettingImpl(Camera* camera, s16 requestedSetting, s16 flags);
 s32 Camera_RequestModeImpl(Camera* camera, s16 requestedMode, u8 forceModeChange);
 s32 Camera_UpdateWater(Camera* camera);
@@ -1776,12 +1780,6 @@ s32 Camera_Normal1(Camera* camera) {
             camera->inputDir.x = eyeAdjustment.pitch;
             camera->inputDir.y = eyeAdjustment.yaw;
             camera->inputDir.z = 0;
-        }
-
-        // crit wiggle
-        if (gSaveContext.save.info.playerData.health <= 16 && ((camera->play->state.frames % 256) == 0)) {
-            wiggleAdj = Rand_ZeroOne() * 10000.0f;
-            camera->inputDir.y = wiggleAdj + camera->inputDir.y;
         }
     } else {
         rwData->swing.swingUpdateRate = roData->unk_0C;
@@ -3627,6 +3625,8 @@ s32 Camera_KeepOn3(Camera* camera) {
     }
     return 1;
 }
+
+#pragma increment_block_number 100
 
 s32 Camera_KeepOn4(Camera* camera) {
     static Vec3f D_8015BD50;

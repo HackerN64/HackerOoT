@@ -6,4 +6,13 @@
         "build/**": true,
         "expected/**": true,
     },
+    "files.associations": {
+        "*.c": "c",
+        "*.h": "c",
+        "*.inc": "c",
+        "*.inc.c": "c",
+    },
+    "editor.rulers": [
+        120
+    ],
 }

@@ -4,6 +4,13 @@
 #include "ultra64/gbi.h"
 #include "ultra64/ultratypes.h"
 
+typedef enum F3DEX3OccMode {
+    F3DEX3_OCC_MODE_AUTO,
+    F3DEX3_OCC_MODE_ALWAYS,
+    F3DEX3_OCC_MODE_NEVER,
+    F3DEX3_OCC_MODE_COUNT
+} F3DEX3OccMode;
+
 typedef enum {
     OCCLUSION_PLANE_PHASE_PRE_SKY_1,
     OCCLUSION_PLANE_PHASE_PRE_SCENE,

@@ -14,9 +14,9 @@ UNK_TYPE D_8012D1F4 = 0; // unused
 
 Input* D_8012D1F8 = NULL;
 
-TransitionTile sTransitionTile;
+TransitionTile gTransitionTile;
 s32 gTransitionTileState;
-VisMono sPlayVisMono;
+VisMono gPlayVisMono;
 Color_RGBA8_u32 gVisMonoColor;
 
 #if IS_DEBUG
@@ -182,7 +182,12 @@ void func_800BC88C(PlayState* this) {
 }
 
 Gfx* Play_SetFog(PlayState* this, Gfx* gfx) {
-    return Gfx_SetFog2(gfx, this->lightCtx.fogColor[0], this->lightCtx.fogColor[1], this->lightCtx.fogColor[2], 0,
+    s32 fogA = 0;
+    if (this->skyboxId != SKYBOX_NONE && this->lightCtx.fogNear < 980) {
+        fogA = (255 * (1000 - this->lightCtx.fogNear) + 25) / 50;
+        fogA = CLAMP(fogA, 0, 255);
+    }
+    return Gfx_SetFog2(gfx, this->lightCtx.fogColor[0], this->lightCtx.fogColor[1], this->lightCtx.fogColor[2], fogA,
                        this->lightCtx.fogNear, 1000);
 }
 
@@ -208,7 +213,7 @@ void Play_Destroy(GameState* thisx) {
     CollisionCheck_DestroyContext(this, &this->colChkCtx);
 
     if (gTransitionTileState == TRANS_TILE_READY) {
-        TransitionTile_Destroy(&sTransitionTile);
+        TransitionTile_Destroy(&gTransitionTile);
         gTransitionTileState = TRANS_TILE_OFF;
     }
 
@@ -220,7 +225,7 @@ void Play_Destroy(GameState* thisx) {
 
     Letterbox_Destroy();
     TransitionFade_Destroy(&this->transitionFadeFlash);
-    VisMono_Destroy(&sPlayVisMono);
+    VisMono_Destroy(&gPlayVisMono);
 
     if (gSaveContext.save.linkAge != this->linkAgeOnLoad) {
         Inventory_SwapAgeEquipment();
@@ -250,15 +255,15 @@ void Play_Init(GameState* thisx) {
     u8 baseSceneLayer;
     s32 pad[2];
 
+#if ENABLE_HACKER_DEBUG
+    gDebug.play = this;
+#endif
+
     if (gSaveContext.save.entranceIndex == ENTR_LOAD_OPENING) {
         gSaveContext.save.entranceIndex = 0;
         this->state.running = false;
         SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, TitleSetupState);
         return;
-    }
-
-    if (IS_SPEEDMETER_ENABLED) {
-        SystemArena_Display();
     }
 
     GameState_Realloc(&this->state, IS_DEBUG_HEAP_ENABLED ? 0x1D4790 : PLAY_ALLOC_SIZE);
@@ -354,15 +359,6 @@ void Play_Init(GameState* thisx) {
 
     PRINTF("\nSCENE_NO=%d COUNTER=%d\n", ((void)0, gSaveContext.save.entranceIndex), gSaveContext.sceneLayer);
 
-    // When entering Gerudo Valley in the credits, trigger the GC emulator to play the ending movie.
-    // The emulator constantly checks whether PC is 0x81000000, so this works even though it's not a valid address.
-    if ((gEntranceTable[((void)0, gSaveContext.save.entranceIndex)].sceneId == SCENE_GERUDO_VALLEY) &&
-        gSaveContext.sceneLayer == 6) {
-        PRINTF("エンディングはじまるよー\n"); // "The ending starts"
-        ((void (*)(void))0x81000000)();
-        PRINTF("出戻り？\n"); // "Return?"
-    }
-
     Cutscene_HandleEntranceTriggers(this);
     KaleidoScopeCall_Init(this);
     Interface_Init(this);
@@ -426,7 +422,7 @@ void Play_Init(GameState* thisx) {
     TransitionFade_SetType(&this->transitionFadeFlash, TRANS_INSTANCE_TYPE_FADE_FLASH);
     TransitionFade_SetColor(&this->transitionFadeFlash, RGBA8(160, 160, 160, 255));
     TransitionFade_Start(&this->transitionFadeFlash);
-    VisMono_Init(&sPlayVisMono);
+    VisMono_Init(&gPlayVisMono);
     gVisMonoColor.a = 0;
     CutsceneFlags_UnsetAll(this);
 
@@ -542,18 +538,18 @@ void Play_Update(PlayState* this) {
         if (gTransitionTileState != TRANS_TILE_OFF) {
             switch (gTransitionTileState) {
                 case TRANS_TILE_PROCESS:
-                    if (TransitionTile_Init(&sTransitionTile, 10, 7) == NULL) {
+                    if (TransitionTile_Init(&gTransitionTile, 10, 7) == NULL) {
                         PRINTF("fbdemo_init呼出し失敗！\n"); // "fbdemo_init call failed!"
                         gTransitionTileState = TRANS_TILE_OFF;
                     } else {
-                        sTransitionTile.zBuffer = (u16*)gZBuffer;
+                        gTransitionTile.zBuffer = (u16*)gZBuffer;
                         gTransitionTileState = TRANS_TILE_READY;
                         R_UPDATE_RATE = 1;
                     }
                     break;
 
                 case TRANS_TILE_READY:
-                    TransitionTile_Update(&sTransitionTile);
+                    TransitionTile_Update(&gTransitionTile);
                     break;
 
                 default:
@@ -708,7 +704,7 @@ void Play_Update(PlayState* this) {
                             this->transitionMode = TRANS_MODE_OFF;
 
                             if (gTransitionTileState == TRANS_TILE_READY) {
-                                TransitionTile_Destroy(&sTransitionTile);
+                                TransitionTile_Destroy(&gTransitionTile);
                                 gTransitionTileState = TRANS_TILE_OFF;
                                 R_UPDATE_RATE = 3;
                             }
@@ -1085,8 +1081,8 @@ skip:
     }
 
 #if INCLUDE_EXAMPLE_SCENE
-    if (this->sceneId == SCENE_EXAMPLE && CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_L | BTN_R)
-            && CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A) && !Play_InCsMode(this)) {
+    if (this->sceneId == SCENE_EXAMPLE && CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_L | BTN_R) &&
+        CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A) && !Play_InCsMode(this)) {
         Cutscene_SetScript(this, gExampleCS);
         gSaveContext.cutsceneTrigger = 1;
     }
@@ -1187,22 +1183,22 @@ void Play_DestroyMotionBlur(void) {
 #endif
 
 void Play_SetMotionBlurAlpha(u32 alpha) {
-    #if ENABLE_MOTION_BLUR
+#if ENABLE_MOTION_BLUR
     R_MOTION_BLUR_ALPHA = alpha;
-    #endif
+#endif
 }
 
 void Play_EnableMotionBlur(u32 alpha) {
-    #if ENABLE_MOTION_BLUR
+#if ENABLE_MOTION_BLUR
     R_MOTION_BLUR_ALPHA = alpha;
     R_MOTION_BLUR_ENABLED = true;
-    #endif
+#endif
 }
 
 void Play_DisableMotionBlur(void) {
-    #if ENABLE_MOTION_BLUR
+#if ENABLE_MOTION_BLUR
     R_MOTION_BLUR_ENABLED = false;
-    #endif
+#endif
 }
 
 #if ENABLE_MOTION_BLUR
@@ -1247,7 +1243,24 @@ void Play_Draw(PlayState* this) {
     gSPSegment(POLY_XLU_DISP++, 0x02, this->sceneSegment);
     gSPSegment(OVERLAY_DISP++, 0x02, this->sceneSegment);
 
-    Gfx_SetupFrame(gfxCtx, 0, 0, 0);
+    {
+        // Only clear the FB if there is no skybox or it is solid color
+        s32 clearFB = this->skyboxId == SKYBOX_NONE || this->skyboxId == SKYBOX_UNSET_1D || this->envCtx.skyboxDisabled;
+
+        // For no skybox, black background
+        u8 clearR = 0;
+        u8 clearG = 0;
+        u8 clearB = 0;
+
+        if (this->skyboxId == SKYBOX_UNSET_1D) {
+            // Solid-color "skybox" matching fog color
+            clearR = this->lightCtx.fogColor[0];
+            clearG = this->lightCtx.fogColor[1];
+            clearB = this->lightCtx.fogColor[2];
+        }
+        // Clear the fb only if we aren't drawing a skybox, but always clear zb
+        Gfx_SetupFrame(gfxCtx, clearFB, clearR, clearG, clearB);
+    }
 
     if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_DRAW) {
         POLY_OPA_DISP = Play_SetFog(this, POLY_OPA_DISP);
@@ -1299,8 +1312,8 @@ void Play_Draw(PlayState* this) {
             TransitionFade_Draw(&this->transitionFadeFlash, &gfxP);
 
             if (gVisMonoColor.a > 0) {
-                sPlayVisMono.vis.primColor.rgba = gVisMonoColor.rgba;
-                VisMono_Draw(&sPlayVisMono, &gfxP);
+                gPlayVisMono.vis.primColor.rgba = gVisMonoColor.rgba;
+                VisMono_Draw(&gPlayVisMono, &gfxP);
             }
 
             gSPEndDisplayList(gfxP++);
@@ -1311,7 +1324,7 @@ void Play_Draw(PlayState* this) {
         if (gTransitionTileState == TRANS_TILE_READY) {
             Gfx* sp88 = POLY_OPA_DISP;
 
-            TransitionTile_Draw(&sTransitionTile, &sp88);
+            TransitionTile_Draw(&gTransitionTile, &sp88);
             POLY_OPA_DISP = sp88;
             goto Play_Draw_DrawOverlayElements;
         }
@@ -1347,18 +1360,17 @@ void Play_Draw(PlayState* this) {
         }
 
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
-            if (this->skyboxId && (this->skyboxId != SKYBOX_UNSET_1D) && !this->envCtx.skyboxDisabled) {
-#if ENABLE_F3DEX3_OCCLUSION_PLANES
+            if (this->skyboxId != SKYBOX_NONE && (this->skyboxId != SKYBOX_UNSET_1D) && !this->envCtx.skyboxDisabled) {
+#if ENABLE_F3DEX3
                 OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_PRE_SKY_1);
 #endif
-                
                 if ((this->skyboxId == SKYBOX_NORMAL_SKY) || (this->skyboxId == SKYBOX_CUTSCENE_MAP)) {
                     Environment_UpdateSkybox(this->skyboxId, &this->envCtx, &this->skyboxCtx);
-                    Skybox_Draw(&this->skyboxCtx, gfxCtx, this->skyboxId, this->envCtx.skyboxBlend, this->view.eye.x,
-                                this->view.eye.y, this->view.eye.z);
+                    Skybox_Draw(&this->skyboxCtx, gfxCtx, &this->lightCtx, this->skyboxId, this->envCtx.skyboxBlend,
+                                this->view.eye.x, this->view.eye.y, this->view.eye.z);
                 } else if (this->skyboxCtx.drawType == SKYBOX_DRAW_128) {
-                    Skybox_Draw(&this->skyboxCtx, gfxCtx, this->skyboxId, 0, this->view.eye.x, this->view.eye.y,
-                                this->view.eye.z);
+                    Skybox_Draw(&this->skyboxCtx, gfxCtx, &this->lightCtx, this->skyboxId, 0, this->view.eye.x,
+                                this->view.eye.y, this->view.eye.z);
                 }
             }
         }
@@ -1411,7 +1423,9 @@ void Play_Draw(PlayState* this) {
                 Vec3f quakeOffset;
 
                 quakeOffset = Camera_GetQuakeOffset(GET_ACTIVE_CAM(this));
-                Skybox_Draw(&this->skyboxCtx, gfxCtx, this->skyboxId, 0, this->view.eye.x + quakeOffset.x,
+                // lightCtx arg is NULL here since this is responsible for prerendered backgrounds, in this case we
+                // don't want them to be affected by fog
+                Skybox_Draw(&this->skyboxCtx, gfxCtx, NULL, this->skyboxId, 0, this->view.eye.x + quakeOffset.x,
                             this->view.eye.y + quakeOffset.y, this->view.eye.z + quakeOffset.z);
             }
         }

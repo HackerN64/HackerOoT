@@ -31,11 +31,15 @@ build/*/cache/
 *.map
 *.dump
 *.wad
+*.iso
 out.txt
 *.ram
 *.bin
+*.blend1
 F3DEX3/*.code
 F3DEX3/*.data
+wadextract/
+isoextract/
 
 # Tool artifacts
 tools/mipspro7.2_compiler/

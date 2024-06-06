@@ -6,6 +6,19 @@ vu32 sLogOnNextViewInit = true;
 s32 View_ApplyPerspective(View*);
 s32 View_ApplyOrtho(View*);
 
+#if ENABLE_F3DEX3
+void View_SetCameraWorld(PlainVtx* cameraWorldPos, View* view) {
+    cameraWorldPos->c.pos[0] = (s16)view->eye.x;
+    cameraWorldPos->c.pos[1] = (s16)view->eye.y;
+    cameraWorldPos->c.pos[2] = (s16)view->eye.z;
+}
+PlainVtx* View_CreateCameraWorld(View* view) {
+    PlainVtx* cameraWorldPos = Graph_Alloc(view->gfxCtx, sizeof(PlainVtx));
+    View_SetCameraWorld(cameraWorldPos, view);
+    return cameraWorldPos;
+}
+#endif
+
 void View_ViewportToVp(Vp* dest, Viewport* src) {
     s32 width = src->rightX - src->leftX;
     s32 height = src->bottomY - src->topY;
@@ -182,9 +195,17 @@ void View_ApplyLetterbox(View* view) {
     OPEN_DISPS(gfxCtx, "../z_view.c", 459);
 
     gDPPipeSync(POLY_OPA_DISP++);
-    gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
+    if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
+        gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, CLAMP_MAX(lry, 235));
+    } else {
+        gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
+    }
     gDPPipeSync(POLY_XLU_DISP++);
-    gDPSetScissor(POLY_XLU_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
+    if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
+        gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, CLAMP_MAX(lry, 235));
+    } else {
+        gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
+    }
 
     CLOSE_DISPS(gfxCtx, "../z_view.c", 472);
 }
@@ -362,6 +383,11 @@ s32 View_ApplyPerspective(View* view) {
     LOG_UTILS_CHECK_NULL_POINTER("viewing", viewing, "../z_view.c", 667);
     view->viewingPtr = viewing;
 
+#if ENABLE_F3DEX3
+    PlainVtx* cameraWorldPos = View_CreateCameraWorld(view);
+    view->cameraWorldPosPtr = cameraWorldPos;
+#endif
+
     if (view->eye.x == view->at.x && view->eye.y == view->at.y && view->eye.z == view->at.z) {
         view->eye.x += 1.0f;
         view->eye.y += 1.0f;
@@ -392,6 +418,10 @@ s32 View_ApplyPerspective(View* view) {
 
     gSPMatrix(POLY_OPA_DISP++, viewing, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_PROJECTION);
     gSPMatrix(POLY_XLU_DISP++, viewing, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_PROJECTION);
+#if ENABLE_F3DEX3
+    gSPCameraWorld(POLY_OPA_DISP++, cameraWorldPos);
+    gSPCameraWorld(POLY_XLU_DISP++, cameraWorldPos);
+#endif
 
     CLOSE_DISPS(gfxCtx, "../z_view.c", 711);
 
@@ -450,8 +480,14 @@ s32 View_ApplyOrthoToOverlay(View* view) {
     view->vp = *vp;
 
     gDPPipeSync(OVERLAY_DISP++);
-    gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
-                  view->viewport.bottomY);
+    if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
+        gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY,
+                      view->viewport.rightX, CLAMP_MAX(view->viewport.bottomY, 235));
+    } else {
+        gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY,
+                      view->viewport.rightX, view->viewport.bottomY);
+    }
+
     gSPViewport(OVERLAY_DISP++, vp);
 
     projection = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
@@ -494,8 +530,14 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
     view->vp = *vp;
 
     gDPPipeSync(OVERLAY_DISP++);
-    gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
-                  view->viewport.bottomY);
+    if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
+        gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY,
+                      view->viewport.rightX, CLAMP_MAX(view->viewport.bottomY, 235));
+    } else {
+        gDPSetScissor(OVERLAY_DISP++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY,
+                      view->viewport.rightX, view->viewport.bottomY);
+    }
+
     gSPViewport(OVERLAY_DISP++, vp);
 
     projection = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
@@ -518,6 +560,11 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
     LOG_UTILS_CHECK_NULL_POINTER("viewing", viewing, "../z_view.c", 848);
     view->viewingPtr = viewing;
 
+#if ENABLE_F3DEX3
+    PlainVtx* cameraWorldPos = View_CreateCameraWorld(view);
+    view->cameraWorldPosPtr = cameraWorldPos;
+#endif
+
     // This check avoids a divide-by-zero in guLookAt if eye == at
     if (view->eye.x == view->at.x && view->eye.y == view->at.y && view->eye.z == view->at.z) {
         view->eye.x += 1.0f;
@@ -533,6 +580,9 @@ s32 View_ApplyPerspectiveToOverlay(View* view) {
     view->viewing = *viewing;
 
     gSPMatrix(OVERLAY_DISP++, viewing, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_PROJECTION);
+#if ENABLE_F3DEX3
+    gSPCameraWorld(OVERLAY_DISP++, cameraWorldPos);
+#endif
 
     CLOSE_DISPS(gfxCtx, "../z_view.c", 871);
 
@@ -549,6 +599,10 @@ s32 View_UpdateViewingMatrix(View* view) {
 
     guLookAt(view->viewingPtr, view->eye.x, view->eye.y, view->eye.z, view->at.x, view->at.y, view->at.z, view->up.x,
              view->up.y, view->up.z);
+
+#if ENABLE_F3DEX3
+    View_SetCameraWorld(view->cameraWorldPosPtr, view);
+#endif
 
     CLOSE_DISPS(view->gfxCtx, "../z_view.c", 886);
 
@@ -574,8 +628,14 @@ s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP) {
         view->vp = *vp;
 
         gDPPipeSync(gfx++);
-        gDPSetScissor(gfx++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
-                      view->viewport.bottomY);
+        if (gViConfigMode.type == VI_CUSTOM_PAL60_LAN1) {
+            gDPSetScissor(gfx++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
+                          CLAMP_MAX(view->viewport.bottomY, 235));
+        } else {
+            gDPSetScissor(gfx++, G_SC_NON_INTERLACE, view->viewport.leftX, view->viewport.topY, view->viewport.rightX,
+                          view->viewport.bottomY);
+        }
+
         gSPViewport(gfx++, vp);
     }
 
@@ -612,6 +672,11 @@ s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP) {
         LOG_UTILS_CHECK_NULL_POINTER("viewing", viewing, "../z_view.c", 948);
         view->viewingPtr = viewing;
 
+#if ENABLE_F3DEX3
+        PlainVtx* cameraWorldPos = View_CreateCameraWorld(view);
+        view->cameraWorldPosPtr = cameraWorldPos;
+#endif
+
         VIEW_ERROR_CHECK_EYE_POS(view->eye.x, view->eye.y, view->eye.z);
 
         guLookAt(viewing, view->eye.x, view->eye.y, view->eye.z, view->at.x, view->at.y, view->at.z, view->up.x,
@@ -620,6 +685,9 @@ s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP) {
         view->viewing = *viewing;
 
         gSPMatrix(gfx++, viewing, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_PROJECTION);
+#if ENABLE_F3DEX3
+        gSPCameraWorld(gfx++, cameraWorldPos);
+#endif
     }
 
     view->flags = 0;

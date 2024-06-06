@@ -4,6 +4,8 @@
 #include "config.h"
 
 #include "assets/scenes/indoors/tokinoma/tokinoma_scene.h"
+
+#include "assets/scenes/overworld/ganon_tou/ganon_tou_scene.h"
 #include "assets/scenes/overworld/spot00/spot00_scene.h"
 #include "assets/scenes/overworld/spot01/spot01_scene.h"
 #include "assets/scenes/overworld/spot02/spot02_scene.h"
@@ -25,12 +27,10 @@
 #include "assets/scenes/dungeons/ddan/ddan_scene.h"
 #include "assets/scenes/dungeons/ydan/ydan_scene.h"
 #include "assets/scenes/dungeons/ganontika/ganontika_scene.h"
-#include "assets/scenes/dungeons/ganon_tou/ganon_tou_scene.h"
 #include "assets/scenes/dungeons/jyasinboss/jyasinboss_scene.h"
 #include "assets/scenes/dungeons/ice_doukutu/ice_doukutu_scene.h"
 
 #include "assets/scenes/misc/hakaana_ouke/hakaana_ouke_scene.h"
-
 
 u16 sCurTextId = 0;
 u16 sCurOcarinaAction = 0;
@@ -1804,8 +1804,7 @@ void CutsceneCmd_MotionBlur(PlayState* play, CutsceneContext* csCtx, CsCmdMotion
         }
     } else if (ENABLE_MOTION_BLUR_DEBUG) {
         PRINTF("[HackerOoT:INFO]: Motion Blur disabled - type: %d, startFrame: %d, endFrame: %d, curFrame: %d\n",
-            cmd->type, cmd->startFrame, cmd->endFrame, csCtx->curFrame
-        );
+               cmd->type, cmd->startFrame, cmd->endFrame, csCtx->curFrame);
     }
 }
 
@@ -2230,13 +2229,13 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_MOTION_BLUR:
-                    MemCpy(&cmdEntries, script, sizeof(cmdEntries));
-                    script += sizeof(cmdEntries);
+                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                script += sizeof(cmdEntries);
 
-                    for (j = 0; j < cmdEntries; j++) {
-                        CutsceneCmd_MotionBlur(play, csCtx, (CsCmdMotionBlur*)script);
-                        script += sizeof(CsCmdMotionBlur);
-                    }
+                for (j = 0; j < cmdEntries; j++) {
+                    CutsceneCmd_MotionBlur(play, csCtx, (CsCmdMotionBlur*)script);
+                    script += sizeof(CsCmdMotionBlur);
+                }
                 break;
 
             default:

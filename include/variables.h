@@ -3,6 +3,13 @@
 
 #include "z64.h"
 #include "segment_symbols.h"
+#include "config.h"
+
+#if ENABLE_HACKER_DEBUG
+#include "debug.h"
+
+extern Debug gDebug;
+#endif
 
 extern Mtx D_01000000;
 
@@ -37,6 +44,7 @@ extern OSViMode osViModeMpalLan1;
 extern OSViContext* __osViCurr;
 extern OSViContext* __osViNext;
 extern OSViMode osViModeFpalLan1;
+extern OSViMode gCustomViModePal60Lan1;
 extern u32 __additional_scanline;
 extern const char gBuildMakeOption[];
 extern const char gBuildGitVersion[];
@@ -176,39 +184,53 @@ extern u8 gSampleBankTable[];
 extern SaveContext gSaveContext;
 extern RegEditor* gRegEditor;
 
+extern u8 gUseCutsceneCam;
+extern u16 D_8015FCCC;
+extern char D_8015FCD0[20];
+extern u8 D_8015FCE4;
 extern u16 gCamAtSplinePointsAppliedFrame;
 extern u16 gCamEyePointAppliedFrame;
 extern u16 gCamAtPointAppliedFrame;
-extern u8 gUseCutsceneCam;
 
+extern LightningStrike gLightningStrike;
+// TODO: These variables are here for BSS ordering but ideally they should not
+// be extern. This could be fixed by putting more stuff (e.g. struct definitions)
+// between gLightningStrike and gCustomLensFlareOn.
+extern s16 sLightningFlashAlpha;
+extern s16 sSunDepthTestX;
+extern s16 sSunDepthTestY;
 extern u8 gCustomLensFlareOn;
 extern Vec3f gCustomLensFlarePos;
 extern s16 gLensFlareScale;
 extern f32 gLensFlareColorIntensity;
 extern s16 gLensFlareGlareStrength;
-extern LightningStrike gLightningStrike;
 extern MapData* gMapData;
 extern f32 gBossMarkScale;
+extern u32 D_8016139C;
 extern PauseMapMarksData* gLoadedPauseMarkDataTable;
+extern TransitionTile gTransitionTile;
 extern s32 gTransitionTileState;
+extern VisMono gPlayVisMono;
 extern Color_RGBA8_u32 gVisMonoColor;
 extern PreNmiBuff* gAppNmiBufferPtr;
-extern Scheduler gScheduler;
 extern uintptr_t gSegments[NUM_SEGMENTS];
+extern Scheduler gScheduler;
+extern PadMgr gPadMgr;
 
-// ENABLE_SPEEDMETER
-extern volatile OSTime gAudioThreadUpdateTimeTotalPerGfxTask;
-extern volatile OSTime gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime;
-extern volatile OSTime gRSPAudioTimeTotal;
-extern volatile OSTime gRSPGfxTimeTotal;
-extern volatile OSTime gRDPTimeTotal;
-extern volatile OSTime gGraphUpdatePeriod;
-extern volatile OSTime gAudioThreadUpdateTimeStart;
-extern volatile OSTime gAudioThreadUpdateTimeAcc;
-extern volatile OSTime gRSPAudioTimeAcc;
-extern volatile OSTime gRSPGfxTimeAcc;
-extern volatile OSTime gRSPOtherTimeAcc;
-extern volatile OSTime gRDPTimeAcc;
+#if ENABLE_F3DEX3
+extern u8 gF3DEX3TextBuffer[];
+extern volatile s8 gLoadedF3DEX3Version;
+extern volatile s8 gF3DEX3ProfVersion;
+extern volatile s8 gF3DEX3NOCVersion;
+extern s8 gF3DEX3OccMode;
+#endif
+
+#if ENABLE_F3DEX3
+extern u8 gF3DEX3TextBuffer[];
+extern volatile s8 gF3DEX3ProfVersion;
+extern volatile s8 gF3DEX3NOCVersion;
+extern s8 gF3DEX3OccMode;
+#endif
 
 extern SfxBankEntry D_8016BAD0[9];
 extern SfxBankEntry D_8016BC80[12];
@@ -245,6 +267,6 @@ extern u8 gAudioHeap[AUDIO_HEAP_SIZE]; // 0x38000 bytes
 
 extern Rainbow gRainbow;
 
-extern u8 gGPUTimingsExist; // This variable being 1 indicates that the game is running on console or an extremely accurate emulator that can be affected by GPU lag.
+extern u8 gRDPTimingsExist; // This variable being 1 indicates that the game is running on console or an extremely accurate emulator that can be affected by RDP lag.
 
 #endif

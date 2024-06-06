@@ -4,16 +4,6 @@
 #define GFXPOOL_HEAD_MAGIC 0x1234
 #define GFXPOOL_TAIL_MAGIC 0x5678
 
-/**
- * The time at which the previous `Graph_Update` ended.
- */
-OSTime sGraphPrevUpdateEndTime;
-
-/**
- * The time at which the previous graphics task was scheduled to run.
- */
-OSTime sGraphPrevTaskTimeStart;
-
 #if IS_DEBUG
 FaultClient sGraphFaultClient;
 #endif
@@ -23,14 +13,20 @@ CfbInfo sGraphCfbInfos[3];
 #if IS_DEBUG
 FaultClient sGraphUcodeFaultClient;
 
+#if ENABLE_F3DEX3
+#define GRAPH_UCODE_GLOBAL_SYMBOL gF3DEX3TextBuffer
+#else
+#define GRAPH_UCODE_GLOBAL_SYMBOL gspF3DZEX2_NoN_PosLight_fifoTextStart
+#endif
+
 UCodeInfo D_8012D230[3] = {
-    { UCODE_F3DZEX, gspF3DZEX2_NoN_PosLight_fifoTextStart },
+    { UCODE_F3DZEX, GRAPH_UCODE_GLOBAL_SYMBOL },
     { UCODE_UNK, NULL },
     { UCODE_S2DEX, gspS2DEX2d_fifoTextStart },
 };
 
 UCodeInfo D_8012D248[3] = {
-    { UCODE_F3DZEX, gspF3DZEX2_NoN_PosLight_fifoTextStart },
+    { UCODE_F3DZEX, GRAPH_UCODE_GLOBAL_SYMBOL },
     { UCODE_UNK, NULL },
     { UCODE_S2DEX, gspS2DEX2d_fifoTextStart },
 };
@@ -59,7 +55,7 @@ void Graph_DisassembleUCode(Gfx* workBuf) {
         disassembler.enableLog = R_UCODE_DISAS_LOG_LEVEL;
 
         UCodeDisas_RegisterUCode(&disassembler, ARRAY_COUNT(D_8012D230), D_8012D230);
-        UCodeDisas_SetCurUCode(&disassembler, gspF3DZEX2_NoN_PosLight_fifoTextStart);
+        UCodeDisas_SetCurUCode(&disassembler, GRAPH_UCODE_GLOBAL_SYMBOL);
 
         UCodeDisas_Disassemble(&disassembler, workBuf);
 
@@ -98,7 +94,7 @@ void Graph_UCodeFaultClient(Gfx* workBuf) {
     UCodeDisas_Init(&disassembler);
     disassembler.enableLog = true;
     UCodeDisas_RegisterUCode(&disassembler, ARRAY_COUNT(D_8012D248), D_8012D248);
-    UCodeDisas_SetCurUCode(&disassembler, gspF3DZEX2_NoN_PosLight_fifoTextStart);
+    UCodeDisas_SetCurUCode(&disassembler, GRAPH_UCODE_GLOBAL_SYMBOL);
     UCodeDisas_Disassemble(&disassembler, workBuf);
     UCodeDisas_Destroy(&disassembler);
 }
@@ -176,11 +172,6 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
     OSTask_t* task = &gfxCtx->task.list.t;
     OSScTask* scTask = &gfxCtx->task;
 
-    if (IS_SPEEDMETER_ENABLED) {
-        gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime =
-            osGetTime() - sGraphPrevTaskTimeStart - gAudioThreadUpdateTimeAcc;
-    }
-
     {
         CfbInfo* cfb;
 
@@ -220,21 +211,6 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
         if (gfxCtx->callback != NULL) {
             gfxCtx->callback(gfxCtx, gfxCtx->callbackParam);
         }
-
-        if (IS_SPEEDMETER_ENABLED) {
-            timeNow = osGetTime();
-            if (gAudioThreadUpdateTimeStart != 0) {
-                // The audio thread update is running
-                // Add the time already spent to the accumulator and leave the rest for the next cycle
-
-                gAudioThreadUpdateTimeAcc += timeNow - gAudioThreadUpdateTimeStart;
-                gAudioThreadUpdateTimeStart = timeNow;
-            }
-            gAudioThreadUpdateTimeTotalPerGfxTask = gAudioThreadUpdateTimeAcc;
-            gAudioThreadUpdateTimeAcc = 0;
-        }
-
-        sGraphPrevTaskTimeStart = osGetTime();
 
         task->type = M_GFXTASK;
         task->flags = OS_SC_DRAM_DLIST;
@@ -425,26 +401,6 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     }
 
     Audio_Update();
-
-    {
-        OSTime timeNow = osGetTime();
-        s32 pad;
-
-        if (IS_SPEEDMETER_ENABLED) {
-            gRSPGfxTimeTotal = gRSPGfxTimeAcc;
-            gRSPAudioTimeTotal = gRSPAudioTimeAcc;
-            gRDPTimeTotal = gRDPTimeAcc;
-            gRSPGfxTimeAcc = 0;
-            gRSPAudioTimeAcc = 0;
-            gRDPTimeAcc = 0;
-
-            if (sGraphPrevUpdateEndTime != 0) {
-                gGraphUpdatePeriod = timeNow - sGraphPrevUpdateEndTime;
-            }
-        }
-
-        sGraphPrevUpdateEndTime = timeNow;
-    }
 
 #if IS_DEBUG
     if (IS_MAP_SELECT_ENABLED && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&
