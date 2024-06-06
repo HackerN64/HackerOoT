@@ -710,6 +710,9 @@ void AudioHeap_LoadHighPassFilter(s16* filter, s32 cutoff) {
 void AudioHeap_LoadFilter(s16* filter, s32 lowPassCutoff, s32 highPassCutoff) {
     s32 i;
 
+    // Filters should always be data cache aligned
+    assert(((uintptr_t)filter & DCACHE_LINEMASK) == 0);
+
     if (lowPassCutoff == 0 && highPassCutoff == 0) {
         // Identity filter
         AudioHeap_LoadLowPassFilter(filter, 0);
@@ -725,6 +728,13 @@ void AudioHeap_LoadFilter(s16* filter, s32 lowPassCutoff, s32 highPassCutoff) {
             filter[i] = (ptr1[i] + ptr2[i]) / 2;
         }
     }
+
+    // Write back the cache line for this filter
+#if defined(CONSOLE_WIIVC) || defined(CONSOLE_GC)
+    osWritebackDCache(filter, 8 * sizeof(s16));
+#else
+    asm("cache %0, (%1)" ::"i"(CACH_PD | C_HWBINV), "r"(filter));
+#endif
 }
 
 void AudioHeap_UpdateReverb(SynthesisReverb* reverb) {
@@ -757,9 +767,8 @@ void AudioHeap_ClearCurrentAiBuffer(void) {
 
     gAudioCtx.aiBufLengths[curAiBufferIndex] = gAudioCtx.audioBufferParameters.minAiBufferLength;
 
-    for (i = 0; i < AIBUF_LEN; i++) {
-        gAudioCtx.aiBuffers[curAiBufferIndex][i] = 0;
-    }
+    bzero(gAudioCtx.aiBuffers[curAiBufferIndex], AIBUF_LEN * sizeof(s16));
+    osWritebackDCache(gAudioCtx.aiBuffers[curAiBufferIndex], AIBUF_LEN * sizeof(s16));
 }
 
 s32 AudioHeap_ResetStep(void) {
@@ -826,9 +835,8 @@ s32 AudioHeap_ResetStep(void) {
             gAudioCtx.resetStatus = 0;
             for (i = 0; i < 3; i++) {
                 gAudioCtx.aiBufLengths[i] = gAudioCtx.audioBufferParameters.maxAiBufferLength;
-                for (j = 0; j < AIBUF_LEN; j++) {
-                    gAudioCtx.aiBuffers[i][j] = 0;
-                }
+                bzero(gAudioCtx.aiBuffers[i], AIBUF_LEN * sizeof(s16));
+                osWritebackDCache(gAudioCtx.aiBuffers[i], AIBUF_LEN * sizeof(s16));
             }
             break;
     }
