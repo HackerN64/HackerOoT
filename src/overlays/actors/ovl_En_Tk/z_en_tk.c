@@ -86,6 +86,7 @@ void EnTkEff_Draw(EnTk* this, PlayState* play) {
     s16 gfxSetup;
     s16 alpha;
     s16 i;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_tk_eff.c", 114);
 
@@ -117,6 +118,7 @@ void EnTkEff_Draw(EnTk* this, PlayState* play) {
 
         imageIdx = eff->timeLeft * ((f32)ARRAY_COUNT(dustTextures) / eff->timeTotal);
         gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(dustTextures[imageIdx]));
+        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, imageIdx);
 
         gSPDisplayList(POLY_XLU_DISP++, gDampeEff2DL);
     }

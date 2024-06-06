@@ -218,6 +218,7 @@ void EnGo2_DrawEffects(EnGo2* this, PlayState* play) {
     s16 materialFlag;
     s16 index;
     s16 i;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_go2_eff.c", 111);
 
@@ -246,6 +247,7 @@ void EnGo2_DrawEffects(EnGo2* this, PlayState* play) {
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         index = dustEffect->timer * (8.0f / dustEffect->initialTimer);
         gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sDustTex[index]));
+        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, index);
         gSPDisplayList(POLY_XLU_DISP++, gGoronDL_00FD50);
     }
 

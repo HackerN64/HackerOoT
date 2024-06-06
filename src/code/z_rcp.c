@@ -1,5 +1,9 @@
 #include "global.h"
 
+#if ENABLE_F3DEX3
+u8 gUseMemsetForZBuffer = 1;
+#endif
+
 Gfx sSetupDL[SETUPDL_MAX][6] = {
     {
         /* SETUPDL_0 */
@@ -1472,7 +1476,6 @@ void Gfx_SetupFrame(GraphicsContext* gfxCtx, s32 clearFB, u8 r, u8 g, u8 b) {
 
     // Set up the framebuffer, primitives will be drawn here
     gDPSetColorImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gScreenWidth, gfxCtx->curFrameBuffer);
-    gDPSetColorImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gScreenWidth, gfxCtx->curFrameBuffer);
     gDPSetColorImage(POLY_XLU_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gScreenWidth, gfxCtx->curFrameBuffer);
     gDPSetColorImage(OVERLAY_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gScreenWidth, gfxCtx->curFrameBuffer);
 
@@ -1529,17 +1532,8 @@ void Gfx_SetupFrame(GraphicsContext* gfxCtx, s32 clearFB, u8 r, u8 g, u8 b) {
         }
 #endif
 
-        // Set the whole z buffer to maximum depth
-        // Don't bother with pixels that are being covered by the letterbox
-        gDPSetColorImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gScreenWidth, gZBuffer);
-        gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
-        gDPSetFillColor(POLY_OPA_DISP++, (GPACK_ZDZ(G_MAXFBZ, 0) << 16) | GPACK_ZDZ(G_MAXFBZ, 0));
-        gDPFillRectangle(POLY_OPA_DISP++, 0, letterboxSize, gScreenWidth - 1, gScreenHeight - letterboxSize - 1);
-        gDPPipeSync(POLY_OPA_DISP++);
-
         // Fill the whole screen with the base color, only done when there is no skybox or if it is a solid color.
         // Don't bother with pixels that are being covered by the letterbox
-        gDPSetColorImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gScreenWidth, gfxCtx->curFrameBuffer);
         if (clearFB) {
             gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
             gDPSetFillColor(POLY_OPA_DISP++, (GPACK_RGBA5551(r, g, b, 1) << 16) | GPACK_RGBA5551(r, g, b, 1));
@@ -1558,6 +1552,36 @@ void Gfx_SetupFrame(GraphicsContext* gfxCtx, s32 clearFB, u8 r, u8 g, u8 b) {
     }
 
     CLOSE_DISPS(gfxCtx, "../z_rcp.c", 2497);
+}
+
+void Gfx_ClearZBuffer(GraphicsContext* gfxCtx) {
+    s32 letterboxSize = Letterbox_GetSize();
+    OPEN_DISPS(gfxCtx, "../z_rcp.c", __LINE__);
+
+    // Set the whole z buffer to maximum depth
+    // Don't bother with pixels that are being covered by the letterbox
+#if ENABLE_F3DEX3
+    if (gUseMemsetForZBuffer) {
+        s32 w2 = gScreenWidth * 2; // 2 bytes per pixel
+        if (letterboxSize < 0 || letterboxSize > 100) {
+            letterboxSize = 0;
+        }
+        gSPMemset(POLY_OPA_DISP++, (u8*)gZBuffer + letterboxSize * w2, GPACK_ZDZ(G_MAXFBZ, 0),
+                  (gScreenHeight - 2 * letterboxSize) * w2);
+    } else {
+#endif
+        gSPDisplayList(POLY_OPA_DISP++, sFillSetupDL);
+        gDPSetColorImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gScreenWidth, gZBuffer);
+        gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
+        gDPSetFillColor(POLY_OPA_DISP++, (GPACK_ZDZ(G_MAXFBZ, 0) << 16) | GPACK_ZDZ(G_MAXFBZ, 0));
+        gDPFillRectangle(POLY_OPA_DISP++, 0, letterboxSize, gScreenWidth - 1, gScreenHeight - letterboxSize - 1);
+        gDPPipeSync(POLY_OPA_DISP++);
+        gDPSetColorImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gScreenWidth, gfxCtx->curFrameBuffer);
+#if ENABLE_F3DEX3
+    }
+#endif
+
+    CLOSE_DISPS(gfxCtx, "../z_rcp.c", __LINE__);
 }
 
 void func_80095974(GraphicsContext* gfxCtx) {

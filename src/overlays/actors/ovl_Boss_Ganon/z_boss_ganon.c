@@ -4829,6 +4829,7 @@ void BossGanon_DrawEffects(PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     GanondorfEffect* eff = play->specialEffects;
     GanondorfEffect* effFirst = eff;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(gfxCtx, "../z_boss_ganon.c", 10865);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
@@ -4945,6 +4946,7 @@ void BossGanon_DrawEffects(PlayState* play) {
             gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(gfxCtx, "../z_boss_ganon.c", 11074),
                       G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sLightningTextures[eff->timer]));
+            IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, eff->timer);
             gSPDisplayList(POLY_XLU_DISP++, gGanondorfLightningDL);
         }
     }

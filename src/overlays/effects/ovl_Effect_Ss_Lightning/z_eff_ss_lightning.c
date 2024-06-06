@@ -82,6 +82,7 @@ void EffectSsLightning_Draw(PlayState* play, u32 index, EffectSs* this) {
     f32 yScale;
     s16 texIdx;
     f32 xzScale;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(gfxCtx, "../z_eff_ss_lightning.c", 233);
 
@@ -108,6 +109,7 @@ void EffectSsLightning_Draw(PlayState* play, u32 index, EffectSs* this) {
         gSPMatrix(POLY_XLU_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         Gfx_SetupDL_61Xlu(gfxCtx);
         gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(lightningTextures[texIdx]));
+        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, texIdx);
         gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, this->rPrimColorR, this->rPrimColorG, this->rPrimColorB,
                         this->rPrimColorA);
         gDPSetEnvColor(POLY_XLU_DISP++, this->rEnvColorR, this->rEnvColorG, this->rEnvColorB, this->rEnvColorA);

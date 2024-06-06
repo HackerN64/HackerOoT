@@ -40,6 +40,7 @@ u32 EffectSsBubble_Init(PlayState* play, u32 index, EffectSs* this, void* initPa
 void EffectSsBubble_Draw(PlayState* play, u32 index, EffectSs* this) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     f32 scale = this->rScale / 100.0f;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(gfxCtx, "../z_eff_ss_bubble.c", 154);
 
@@ -51,6 +52,7 @@ void EffectSsBubble_Draw(PlayState* play, u32 index, EffectSs* this) {
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, 255);
     gDPSetEnvColor(POLY_OPA_DISP++, 150, 150, 150, 0);
     gSPSegment(POLY_OPA_DISP++, 0x08, this->gfx);
+    IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_OPA_DISP++, this->gfx);
     gSPDisplayList(POLY_OPA_DISP++, SEGMENTED_TO_VIRTUAL(gEffBubbleDL));
 
     CLOSE_DISPS(gfxCtx, "../z_eff_ss_bubble.c", 179);

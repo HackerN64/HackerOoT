@@ -1258,9 +1258,13 @@ void Play_Draw(PlayState* this) {
             clearG = this->lightCtx.fogColor[1];
             clearB = this->lightCtx.fogColor[2];
         }
-        // Clear the fb only if we aren't drawing a skybox, but always clear zb
+        // Clear the fb only if we aren't drawing a skybox
         Gfx_SetupFrame(gfxCtx, clearFB, clearR, clearG, clearB);
     }
+    
+#if ENABLE_F3DEX3
+    OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_START);
+#endif
 
     if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_DRAW) {
         POLY_OPA_DISP = Play_SetFog(this, POLY_OPA_DISP);
@@ -1284,10 +1288,6 @@ void Play_Draw(PlayState* this) {
                                               GRAPH_ALLOC(gfxCtx, sizeof(Mtx)));
 
         gSPSegment(POLY_OPA_DISP++, 0x01, this->billboardMtx);
-
-#if ENABLE_F3DEX3
-        OcclusionPlane_Draw_Start(this);
-#endif
 
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_COVER_ELEMENTS) {
             Gfx* gfxP;
@@ -1361,9 +1361,6 @@ void Play_Draw(PlayState* this) {
 
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
             if (this->skyboxId != SKYBOX_NONE && (this->skyboxId != SKYBOX_UNSET_1D) && !this->envCtx.skyboxDisabled) {
-#if ENABLE_F3DEX3
-                OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_PRE_SKY_1);
-#endif
                 if ((this->skyboxId == SKYBOX_NORMAL_SKY) || (this->skyboxId == SKYBOX_CUTSCENE_MAP)) {
                     Environment_UpdateSkybox(this->skyboxId, &this->envCtx, &this->skyboxCtx);
                     Skybox_Draw(&this->skyboxCtx, gfxCtx, &this->lightCtx, this->skyboxId, this->envCtx.skyboxBlend,
@@ -1384,10 +1381,20 @@ void Play_Draw(PlayState* this) {
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SKYBOX_FILTERS)) {
             Environment_DrawSkyboxFilters(this);
         }
+
+        // The Z buffer has to be cleared at some point before anything using it
+        // is drawn (lighting strike is the first which does). But if we are
+        // using F3DEX3's SPMemset to clear it, it should be done as late as
+        // possible, after the RSP has already sent commands to the RDP for the
+        // skybox or framebuffer clear. This is so that the RSP can clear the Z
+        // buffer while the RDP is working on the framebuffer, without making
+        // the RDP wait for new work to be available.
+        Gfx_ClearZBuffer(gfxCtx);
         
 #if ENABLE_F3DEX3
-        OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_PRE_SCENE);
+        OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_POST_SKY);
 #endif
+
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTNING)) {
             Environment_UpdateLightningStrike(this);
             Environment_DrawLightning(this, 0);
@@ -1417,9 +1424,6 @@ void Play_Draw(PlayState* this) {
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
             if ((this->skyboxCtx.drawType != SKYBOX_DRAW_128) &&
                 (GET_ACTIVE_CAM(this)->setting != CAM_SET_PREREND_FIXED)) {
-#if ENABLE_F3DEX3
-                OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_PRE_SKY_2);
-#endif
                 Vec3f quakeOffset;
 
                 quakeOffset = Camera_GetQuakeOffset(GET_ACTIVE_CAM(this));
@@ -1430,9 +1434,6 @@ void Play_Draw(PlayState* this) {
             }
         }
         
-#if ENABLE_F3DEX3
-        OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_PRE_ACTORS);
-#endif
         if (this->envCtx.precipitation[PRECIP_RAIN_CUR] != 0) {
             Environment_DrawRain(this, &this->view, gfxCtx);
         }

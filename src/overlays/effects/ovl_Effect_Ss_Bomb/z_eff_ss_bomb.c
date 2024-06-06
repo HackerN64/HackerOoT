@@ -54,6 +54,7 @@ void EffectSsBomb_Draw(PlayState* play, u32 index, EffectSs* this) {
     s32 pad;
     f32 scale;
     s16 intensity;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     if (1) {}
 
@@ -74,6 +75,7 @@ void EffectSsBomb_Draw(PlayState* play, u32 index, EffectSs* this) {
     if (mtx != NULL) {
         gSPMatrix(POLY_XLU_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sExplosionTextures[this->rTexIndex]));
+        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, this->rTexIndex);
         gDPPipeSync(POLY_XLU_DISP++);
         Gfx_SetupDL_61Xlu(gfxCtx);
         intensity = this->life * ((f32)255 / EFFSSBOMB_LIFESPAN);

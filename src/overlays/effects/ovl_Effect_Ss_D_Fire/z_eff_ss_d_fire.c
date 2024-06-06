@@ -73,6 +73,7 @@ void EffectSsDFire_Draw(PlayState* play, u32 index, EffectSs* this) {
     void* objectPtr;
     Mtx* mtx;
     f32 scale;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     objectPtr = play->objectCtx.slots[this->rObjectSlot].segment;
 
@@ -97,6 +98,7 @@ void EffectSsDFire_Draw(PlayState* play, u32 index, EffectSs* this) {
                             this->rPrimColorA);
             gSegments[6] = VIRTUAL_TO_PHYSICAL(objectPtr);
             gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sTextures[this->rTexIndex]));
+            IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, this->rTexIndex);
             gSPDisplayList(POLY_XLU_DISP++, this->gfx);
         }
     }

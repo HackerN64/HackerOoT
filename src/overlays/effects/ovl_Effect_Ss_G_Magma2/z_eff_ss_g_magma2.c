@@ -76,6 +76,7 @@ void EffectSsGMagma2_Draw(PlayState* play, u32 index, EffectSs* this) {
     s32 pad;
     f32 scale;
     void* objectPtr;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     scale = this->rScale / 100.0f;
     objectPtr = play->objectCtx.slots[this->rObjectSlot].segment;
@@ -98,6 +99,7 @@ void EffectSsGMagma2_Draw(PlayState* play, u32 index, EffectSs* this) {
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, this->rPrimColorR, this->rPrimColorG, 0, this->rPrimColorA);
     gDPSetEnvColor(POLY_XLU_DISP++, this->rEnvColorR, this->rEnvColorG, 0, this->rEnvColorA);
     gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sTextures[this->rTexIndex]));
+    IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, this->rTexIndex);
     gSPDisplayList(POLY_XLU_DISP++, this->gfx);
 
     CLOSE_DISPS(gfxCtx, "../z_eff_ss_g_magma2.c", 311);

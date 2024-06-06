@@ -518,6 +518,7 @@ void EnGb_UpdateCagedSouls(EnGb* this, PlayState* play) {
 void EnGb_DrawCagedSouls(EnGb* this, PlayState* play) {
     s32 pad;
     s32 i;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_gb.c", 914);
 
@@ -530,6 +531,7 @@ void EnGb_DrawCagedSouls(EnGb* this, PlayState* play) {
                    Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, 0, 0, 32, 64, 1, 0,
                                     (u32)(sCagedSoulInfo[idx].timerMultiplier * this->frameTimer) % 512, 32, 128));
         gSPSegment(POLY_XLU_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(sCagedSoulInfo[idx].texture));
+        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, idx);
         gDPSetPrimColor(POLY_XLU_DISP++, 0x80, 0x80, sCagedSoulInfo[idx].prim.r, sCagedSoulInfo[idx].prim.g,
                         sCagedSoulInfo[idx].prim.b, sCagedSoulInfo[idx].prim.a);
         gDPSetEnvColor(POLY_XLU_DISP++, sCagedSoulInfo[idx].env.r, sCagedSoulInfo[idx].env.g, sCagedSoulInfo[idx].env.b,

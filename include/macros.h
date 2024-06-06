@@ -294,3 +294,40 @@ extern struct GraphicsContext* __gfxCtx;
 #else
 #define NO_REORDER
 #endif
+
+// System for inserting SPDontSkipTexLoadsAcross for actors/effects which
+// manipulate segments to select texture indices. Note that this only needs to
+// be done for things which have a single material and which can appear multiple
+// times consecutively in the scene, such as Rupees and effects.
+#if ENABLE_F3DEX3
+
+// It might seem that we'd need to ensure this is reset every frame. But we
+// actually only care about when this changes within a frame, as the texture
+// loads would only ever be skipped between two or more rupees drawn
+// consecutively. This is s32 so it can hold an actual texture pointer in case
+// an "index" is not available.
+#define IF_F3DEX3_DONT_SKIP_TEX_INIT() \
+    static s32 _lastTexIndex = -1; \
+    (void)0
+
+// If we have consecutive items rendering with different textures, F3DEX3's
+// optimizer will incorrectly believe the texture loads can be skipped, so this
+// command tells it not to skip them. However, if the texture really is the same
+// as last time, then we can let the optimizer skip the load.
+#define IF_F3DEX3_DONT_SKIP_TEX_HERE(pkt, texIndex) \
+    if ((s32)(texIndex) != _lastTexIndex) { \
+        gSPDontSkipTexLoadsAcross(pkt); \
+        _lastTexIndex = (s32)(texIndex); \
+    } \
+    (void)0
+
+// In some cases we are sure things are rendered consecutively with different
+// textures, e.g. in Fire Temple fire objects.
+#define IF_F3DEX3_ALWAYS_DONT_SKIP_TEX(pkt) \
+    gSPDontSkipTexLoadsAcross(pkt)
+
+#else
+#define IF_F3DEX3_DONT_SKIP_TEX_INIT() (void)0
+#define IF_F3DEX3_DONT_SKIP_TEX_HERE(pkt, texIndex) (void)0
+#define IF_F3DEX3_ALWAYS_DONT_SKIP_TEX(pkt) (void)0
+#endif

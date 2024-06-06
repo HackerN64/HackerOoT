@@ -228,6 +228,10 @@ static bool ClipPolygon(PlayState* play, ClipVertex* verts, s8* indices, s8** id
                     // Too many generated vertices
                     return false;
                 }
+                if(idxWrite - &indices[idxSelect] >= 9){
+                    // Polygon has too many vertices
+                    return false;
+                }
                 verts[igen].clip.x = clFade2 * v19->clip.x + clFade1 * v3->clip.x;
                 verts[igen].clip.y = clFade2 * v19->clip.y + clFade1 * v3->clip.y;
                 verts[igen].w = clFade2 * v19->w + clFade1 * v3->w;
@@ -238,6 +242,10 @@ static bool ClipPolygon(PlayState* play, ClipVertex* verts, s8* indices, s8** id
                 ++igen;
             }
             if(!v2Offscreen){
+                if(idxWrite - &indices[idxSelect] >= 9){
+                    // Polygon has too many vertices
+                    return false;
+                }
                 *idxWrite = i2;
                 ++idxWrite;
             }
@@ -538,68 +546,40 @@ void OcclusionPlane_NewScene(PlayState* play){
     play->occPlaneCtx.list = NULL;
 }
 
-void OcclusionPlane_Draw_Start(PlayState* play){
-    for(s32 i=0; i<OCCLUSION_PLANE_PHASE_COUNT; ++i){
-        play->occPlaneCtx.planeCommands[i] = NULL;
-    }
+void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase phase){
+    GraphicsContext* gfxCtx = play->state.gfxCtx;
+    OPEN_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
+    play->occPlaneCtx.planeCommands[phase] = POLY_OPA_DISP;
+    gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
+    CLOSE_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
     
-    GraphicsContext* gfxCtx = play->state.gfxCtx;
-    OPEN_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
-    gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
-    CLOSE_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
-}
-
-void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase loc){
-    GraphicsContext* gfxCtx = play->state.gfxCtx;
-    OPEN_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
-    play->occPlaneCtx.planeCommands[loc] = POLY_OPA_DISP;
-    gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
-    CLOSE_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
+    if(phase == OCCLUSION_PLANE_PHASE_START){
+        // Post sky might not happen in debug
+        play->occPlaneCtx.planeCommands[OCCLUSION_PLANE_PHASE_POST_SKY] = NULL;
+    }
 }
 
 void OcclusionPlane_Draw_PostCamUpdate(PlayState* play){
     OcclusionPlaneContext* ctx = &play->occPlaneCtx;
-    
-    bool anyPlane = false;
-    for(s32 i=0; i<OCCLUSION_PLANE_PHASE_COUNT; ++i){
-        if(ctx->planeCommands[i] != NULL){
-            anyPlane = true;
-            break;
-        }
-    }
-    if(!anyPlane) return;
-    
     s32 result = OcclusionPlane_Choose(play);
     if(result != 0) return;
     OcclusionPlane* mainPlane = ComputeOcclusionPlane(play, ctx->selCandidate);
-    
-    if(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SKY_1] != NULL
-            || ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SKY_2] != NULL){
+    if(mainPlane != &sNoOcclusionPlane){
         OcclusionPlane* skyPlane = mainPlane;
-        if(mainPlane != &sNoOcclusionPlane){
-            // The skybox is not actually really far away, it's a smallish box
-            // centered on the camera. Thus, for occluding sky triangles, we will
-            // use the same computed occlusion plane coefficients for the edges, but
-            // set up the clip space plane so that all tris match the equation,
-            // effectively disabling the depth check.
-            skyPlane = Graph_Alloc(play->state.gfxCtx, sizeof(OcclusionPlane));
-            bcopy(mainPlane, skyPlane, 8*sizeof(short)); // Copy edge coeffs
-            skyPlane->o.kx = 0;
-            skyPlane->o.ky = 0;
-            skyPlane->o.kz = 0;
-            skyPlane->o.kc = 0x7FFF;
-        }
-        if(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SKY_1] != NULL){
-            ((u32*)(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SKY_1]))[1] = (u32)skyPlane;
-        }
-        if(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SKY_2] != NULL){
-            ((u32*)(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SKY_2]))[1] = (u32)skyPlane;
-        }
+        // The skybox is not actually really far away, it's a smallish box
+        // centered on the camera. Thus, for occluding sky triangles, we will
+        // use the same computed occlusion plane coefficients for the edges, but
+        // set up the clip space plane so that all tris match the equation,
+        // effectively disabling the depth check.
+        skyPlane = Graph_Alloc(play->state.gfxCtx, sizeof(OcclusionPlane));
+        bcopy(mainPlane, skyPlane, 8*sizeof(short)); // Copy edge coeffs
+        skyPlane->o.kx = 0;
+        skyPlane->o.ky = 0;
+        skyPlane->o.kz = 0;
+        skyPlane->o.kc = 0x7FFF;
+        ((u32*)(ctx->planeCommands[OCCLUSION_PLANE_PHASE_START]))[1] = (u32)skyPlane;
     }
-    if(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SCENE] != NULL){
-        ((u32*)(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_SCENE]))[1] = (u32)mainPlane;
-    }
-    if(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_ACTORS] != NULL){
-        ((u32*)(ctx->planeCommands[OCCLUSION_PLANE_PHASE_PRE_ACTORS]))[1] = (u32)mainPlane;
+    if(ctx->planeCommands[OCCLUSION_PLANE_PHASE_POST_SKY] != NULL){
+        ((u32*)(ctx->planeCommands[OCCLUSION_PLANE_PHASE_POST_SKY]))[1] = (u32)mainPlane;
     }
 }
