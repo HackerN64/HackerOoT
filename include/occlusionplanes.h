@@ -20,7 +20,7 @@ typedef enum OcclusionPlanePhase {
 typedef struct {
     OcclusionPlaneCandidate* list;
     u8 count;
-    Gfx* planeCommands[OCCLUSION_PLANE_PHASE_COUNT]
+    Gfx* planeCommands[OCCLUSION_PLANE_PHASE_COUNT];
     Vec3f selCandidate[4];
 } OcclusionPlaneContext;
 

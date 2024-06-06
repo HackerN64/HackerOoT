@@ -1433,7 +1433,7 @@ void Play_Draw(PlayState* this) {
                             this->view.eye.y + quakeOffset.y, this->view.eye.z + quakeOffset.z);
             }
         }
-        
+
         if (this->envCtx.precipitation[PRECIP_RAIN_CUR] != 0) {
             Environment_DrawRain(this, &this->view, gfxCtx);
         }
