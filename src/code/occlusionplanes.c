@@ -5,7 +5,6 @@
 
 static s32 OcclusionPlane_Choose(PlayState* play){
     OcclusionPlaneContext* ctx = &play->occPlaneCtx;
-    if(ctx->list == NULL || ctx->count == 0) return 1;
     
     Vec3f* camPos = &play->view.eye;
     Vec3f camDir = (Vec3f){play->view.at.x - camPos->x, play->view.at.y - camPos->y, play->view.at.z - camPos->z};
@@ -542,11 +541,31 @@ static OcclusionPlane* ComputeOcclusionPlane(PlayState* play, Vec3f* worldBounds
     return occ;
 }
 
+static bool ShouldBotherComputingOccPlanes(PlayState* play){
+    OcclusionPlaneContext* ctx = &play->occPlaneCtx;
+    if(ctx->list == NULL || ctx->count == 0) return false;
+    if(gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER) return false;
+    return true;
+}
+
 void OcclusionPlane_NewScene(PlayState* play){
     play->occPlaneCtx.list = NULL;
+    if(gF3DEX3OccMode == F3DEX3_OCC_MODE_AUTO){
+        gF3DEX3NOCVersion = 1;  // Enable NOC
+    }
+}
+
+void OcclusionPlane_SceneCmd(PlayState* play, OcclusionPlaneCandidate* list, u8 count){
+    play->occPlaneCtx.list = list;
+    play->occPlaneCtx.count = count;
+    if(gF3DEX3OccMode == F3DEX3_OCC_MODE_AUTO){
+        gF3DEX3NOCVersion = (count == 0);  // NOC if no planes, otherwise normal
+    }
 }
 
 void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase phase){
+    if(!ShouldBotherComputingOccPlanes(play)) return;
+    
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     OPEN_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
     play->occPlaneCtx.planeCommands[phase] = POLY_OPA_DISP;
@@ -560,9 +579,12 @@ void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase phase){
 }
 
 void OcclusionPlane_Draw_PostCamUpdate(PlayState* play){
+    if(!ShouldBotherComputingOccPlanes(play)) return;
+    
     OcclusionPlaneContext* ctx = &play->occPlaneCtx;
     s32 result = OcclusionPlane_Choose(play);
     if(result != 0) return;
+    
     OcclusionPlane* mainPlane = ComputeOcclusionPlane(play, ctx->selCandidate);
     if(mainPlane != &sNoOcclusionPlane){
         OcclusionPlane* skyPlane = mainPlane;

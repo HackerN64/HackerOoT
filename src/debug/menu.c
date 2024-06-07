@@ -40,6 +40,10 @@ void Menu_Update(Menu* this) {
     u8 pressDRight = CHECK_BTN_ALL(pressBtn, BTN_DRIGHT);
     u8 i;
 
+    if(!this->bShow && !isHoldingR && pressDLeft){
+        gF3DEX3NOCVersion ^= 1;
+    }
+
     if (isHoldingR && CHECK_BTN_ALL(pressBtn, BTN_L)) {
         this->bShow ^= 1;
     }

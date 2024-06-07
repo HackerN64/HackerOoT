@@ -1994,6 +1994,7 @@ void Play_DisableMotionBlur(void);
 
 #if ENABLE_F3DEX3
 void OcclusionPlane_NewScene(PlayState* play);
+void OcclusionPlane_SceneCmd(PlayState* play, OcclusionPlaneCandidate* list, u8 count);
 void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase phase);
 void OcclusionPlane_Draw_PostCamUpdate(PlayState* play);
 #endif
