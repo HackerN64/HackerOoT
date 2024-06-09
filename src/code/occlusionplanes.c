@@ -1,11 +1,11 @@
 #include "z64.h"
 #include "functions.h"
 
+static Gfx* planeCommands[OCCLUSION_PLANE_PHASE_COUNT];
+
 #define DEBUG_OCCLUSION_PLANES true
 
-static s32 OcclusionPlane_Choose(PlayState* play){
-    OcclusionPlaneContext* ctx = &play->occPlaneCtx;
-    
+static s32 OcclusionPlane_Choose(PlayState* play, Vec3f* selCandidate){
     Vec3f* camPos = &play->view.eye;
     Vec3f camDir = (Vec3f){play->view.at.x - camPos->x, play->view.at.y - camPos->y, play->view.at.z - camPos->z};
     float len2 = camDir.x * camDir.x + camDir.y * camDir.y + camDir.z * camDir.z;
@@ -26,8 +26,20 @@ static s32 OcclusionPlane_Choose(PlayState* play){
     GfxPrint_SetColor(&printer, 255, 255, 255, 255);
 #endif
     
-    for(s32 c=0; c<ctx->count; ++c){
-        OcclusionPlaneCandidate* cand = &ctx->list[c];
+    s32 c = -1;
+    Room* room = &play->roomCtx.curRoom;
+    while(true){
+        ++c;
+        if(c >= room->occPlaneCount){
+            if(room == &play->roomCtx.curRoom){
+                room = &play->roomCtx.prevRoom;
+                c = -1;
+                continue;
+            }
+            break;
+        }
+        
+        OcclusionPlaneCandidate* cand = room->occPlaneList[c];
         Vec3f v[4];
         for(s32 p=0; p<4; ++p){
             v[p].x = cand->v[p].x;
@@ -99,7 +111,7 @@ static s32 OcclusionPlane_Choose(PlayState* play){
 #endif
         if(score > bestScore){
             bestScore = score;
-            bcopy(v, ctx->selCandidate, 4*sizeof(Vec3f));
+            bcopy(v, selCandidate, 4*sizeof(Vec3f));
         }
     }
     
@@ -542,25 +554,9 @@ static OcclusionPlane* ComputeOcclusionPlane(PlayState* play, Vec3f* worldBounds
 }
 
 static bool ShouldBotherComputingOccPlanes(PlayState* play){
-    OcclusionPlaneContext* ctx = &play->occPlaneCtx;
-    if(ctx->list == NULL || ctx->count == 0) return false;
     if(gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER) return false;
-    return true;
-}
-
-void OcclusionPlane_NewScene(PlayState* play){
-    play->occPlaneCtx.list = NULL;
-    if(gF3DEX3OccMode == F3DEX3_OCC_MODE_AUTO){
-        gF3DEX3NOCVersion = 1;  // Enable NOC
-    }
-}
-
-void OcclusionPlane_SceneCmd(PlayState* play, OcclusionPlaneCandidate* list, u8 count){
-    play->occPlaneCtx.list = list;
-    play->occPlaneCtx.count = count;
-    if(gF3DEX3OccMode == F3DEX3_OCC_MODE_AUTO){
-        gF3DEX3NOCVersion = (count == 0);  // NOC if no planes, otherwise normal
-    }
+    return (play->roomCtx.curRoom.occPlaneCount > 0
+        || play->roomCtx.prevRoom.occPlaneCount > 0);
 }
 
 void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase phase){
@@ -568,24 +564,28 @@ void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase phase){
     
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     OPEN_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
-    play->occPlaneCtx.planeCommands[phase] = POLY_OPA_DISP;
+    planeCommands[phase] = POLY_OPA_DISP;
     gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
     CLOSE_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
     
     if(phase == OCCLUSION_PLANE_PHASE_START){
         // Post sky might not happen in debug
-        play->occPlaneCtx.planeCommands[OCCLUSION_PLANE_PHASE_POST_SKY] = NULL;
+        planeCommands[OCCLUSION_PLANE_PHASE_POST_SKY] = NULL;
     }
 }
 
 void OcclusionPlane_Draw_PostCamUpdate(PlayState* play){
-    if(!ShouldBotherComputingOccPlanes(play)) return;
+    bool enableOcc = ShouldBotherComputingOccPlanes(play);
+    if(gF3DEX3OccMode == F3DEX3_OCC_MODE_AUTO){
+        gF3DEX3NOCVersion = !enableOcc;
+    }
+    if(!enableOcc) return;
     
-    OcclusionPlaneContext* ctx = &play->occPlaneCtx;
-    s32 result = OcclusionPlane_Choose(play);
+    Vec3f selCandidate[4];
+    s32 result = OcclusionPlane_Choose(play, selCandidate);
     if(result != 0) return;
     
-    OcclusionPlane* mainPlane = ComputeOcclusionPlane(play, ctx->selCandidate);
+    OcclusionPlane* mainPlane = ComputeOcclusionPlane(play, selCandidate);
     if(mainPlane != &sNoOcclusionPlane){
         OcclusionPlane* skyPlane = mainPlane;
         // The skybox is not actually really far away, it's a smallish box
@@ -599,9 +599,9 @@ void OcclusionPlane_Draw_PostCamUpdate(PlayState* play){
         skyPlane->o.ky = 0;
         skyPlane->o.kz = 0;
         skyPlane->o.kc = 0x7FFF;
-        ((u32*)(ctx->planeCommands[OCCLUSION_PLANE_PHASE_START]))[1] = (u32)skyPlane;
+        ((u32*)(planeCommands[OCCLUSION_PLANE_PHASE_START]))[1] = (u32)skyPlane;
     }
-    if(ctx->planeCommands[OCCLUSION_PLANE_PHASE_POST_SKY] != NULL){
-        ((u32*)(ctx->planeCommands[OCCLUSION_PLANE_PHASE_POST_SKY]))[1] = (u32)mainPlane;
+    if(planeCommands[OCCLUSION_PLANE_PHASE_POST_SKY] != NULL){
+        ((u32*)(planeCommands[OCCLUSION_PLANE_PHASE_POST_SKY]))[1] = (u32)mainPlane;
     }
 }

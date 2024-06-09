@@ -1693,9 +1693,6 @@ void Play_InitScene(PlayState* this, s32 spawn) {
 
     this->numActorEntries = 0;
 
-#if ENABLE_F3DEX3
-    OcclusionPlane_NewScene(this);
-#endif
     Object_InitContext(this, &this->objectCtx);
     LightContext_Init(this, &this->lightCtx);
     TransitionActor_InitContext(&this->state, &this->transiActorCtx);

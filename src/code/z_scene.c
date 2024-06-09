@@ -485,8 +485,8 @@ BAD_RETURN(s32) Scene_CommandMiscSettings(PlayState* play, SceneCmd* cmd) {
 
 #if ENABLE_F3DEX3
 BAD_RETURN(s32) Scene_CommandOccPlaneCandList(PlayState* play, SceneCmd* cmd){
-    OcclusionPlane_SceneCmd(play, SEGMENTED_TO_VIRTUAL(cmd->occPlaneCandList.list),
-        cmd->occPlaneCandList.count);
+    play->roomCtx.curRoom.occPlaneCount = cmd->occPlaneCandList.count;
+    play->roomCtx.curRoom.occPlaneList = SEGMENTED_TO_VIRTUAL(cmd->occPlaneCandList.list);
 }
 #endif
 
