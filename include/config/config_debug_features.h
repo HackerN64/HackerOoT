@@ -56,6 +56,10 @@
 // ``IS_MAP_SELECT_ENABLED``
 #define ENABLE_MAP_SELECT true
 
+/**** [DEBUG BOOT] ****/
+// ``IS_DEBUG_BOOT_ENABLED``
+#define ENABLE_DEBUG_BOOT true
+
 /**** [DEBUG FILE 1] ****/
 // ``IS_DEBUG_SAVE_ENABLED``
 #define ENABLE_DEBUG_SAVE true

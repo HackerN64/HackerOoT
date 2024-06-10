@@ -50,8 +50,6 @@ void Main_ThreadEntry(void* arg) {
 
 void Idle_ThreadEntry(void* arg) {
     PRINTF("アイドルスレッド(idleproc)実行開始\n");
-    PRINTF("作製者    : %s\n", gBuildTeam);
-    PRINTF("MAKEOPTION: %s\n", gBuildMakeOption);
     PRINTF(VT_FGCOL(GREEN));
     PRINTF("ＲＡＭサイズは %d キロバイトです(osMemSize/osGetMemSize)\n", (s32)osMemSize / 1024);
     PRINTF("_bootSegmentEnd(%08x) 以降のＲＡＭ領域はクリアされました(boot)\n", _bootSegmentEnd);

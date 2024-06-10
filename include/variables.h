@@ -46,9 +46,13 @@ extern OSViContext* __osViNext;
 extern OSViMode osViModeFpalLan1;
 extern OSViMode gCustomViModePal60Lan1;
 extern u32 __additional_scanline;
-extern const char gBuildMakeOption[];
-extern const char gBuildGitVersion[];
-extern const char gBuildTeam[];
+#if IS_DEBUG_BOOT_ENABLED
+extern const char* gBuildAuthor;
+extern const char* gCommitAuthor;
+extern const char* gBuildDate;
+extern const char* gBuildGitVersion;
+extern const char* gCommitGitString;
+#endif
 extern OSMesgQueue gPiMgrCmdQueue;
 extern OSViMode gViConfigMode;
 extern u8 gViConfigModeType;

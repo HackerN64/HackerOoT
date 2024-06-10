@@ -1974,6 +1974,9 @@ void ConsoleLogo_Destroy(GameState* thisx);
 void MapSelect_Init(GameState* thisx);
 void MapSelect_Destroy(GameState* thisx);
 
+void DebugOpening_Init(GameState* thisx);
+void DebugOpening_Destroy(GameState* thisx);
+
 void TitleSetup_Init(GameState* thisx);
 void TitleSetup_Destroy(GameState* thisx);
 void FileSelect_Init(GameState* thisx);

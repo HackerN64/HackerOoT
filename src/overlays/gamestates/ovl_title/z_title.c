@@ -8,37 +8,6 @@
 #include "alloca.h"
 #include "assets/textures/nintendo_rogo_static/nintendo_rogo_static.h"
 
-void ConsoleLogo_PrintBuildInfo(Gfx** gfxP) {
-    if (IS_DEBUG) {
-        Gfx* gfx;
-        GfxPrint* printer;
-
-        gfx = *gfxP;
-        gfx = Gfx_SetupDL_28(gfx);
-        printer = alloca(sizeof(GfxPrint));
-        GfxPrint_Init(printer);
-        GfxPrint_Open(printer, gfx);
-
-        GfxPrint_SetColor(printer, 255, 255, 255, 255);
-
-        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 22);
-        GfxPrint_Printf(printer, "[Version:%s]", gBuildGitVersion);
-
-        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 23);
-        GfxPrint_Printf(printer, "[Build Option:%s]", gBuildMakeOption);
-
-        if (ENABLE_F3DEX3) {
-            GfxPrint_SetColor(printer, gRainbow.color.r, gRainbow.color.g, gRainbow.color.b, 255);
-            GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 25);
-            GfxPrint_Printf(printer, "Powered by F3DEX3!");
-        }
-
-        gfx = GfxPrint_Close(printer);
-        GfxPrint_Destroy(printer);
-        *gfxP = gfx;
-    }
-}
-
 // Note: In other rom versions this function also updates unk_1D4, coverAlpha, addAlpha, visibleDuration to calculate
 // the fade-in/fade-out + the duration of the n64 logo animation
 void ConsoleLogo_Calc(ConsoleLogoState* this) {
@@ -159,16 +128,41 @@ void ConsoleLogo_Main(GameState* thisx) {
     ConsoleLogo_Calc(this);
     ConsoleLogo_Draw(this);
 
-    if (IS_DEBUG) {
-        ConsoleLogo_PrintBuildInfo(&POLY_OPA_DISP);
-    }
-
     if (this->exit) {
-        gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-        gSaveContext.natureAmbienceId = 0xFF;
-        gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
-        this->state.running = false;
-        SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, TitleSetupState);
+        if (ENABLE_HACKER_DEBUG) {
+            if (BOOT_TO_SCENE) {
+                // Load debug save
+                Sram_InitDebugSave();
+
+                // Set age, time and entrance
+                gSaveContext.save.linkAge = LINK_AGE_ADULT;
+                gSaveContext.save.dayTime = CLOCK_TIME(12, 0);
+                gSaveContext.save.entranceIndex = BOOT_ENTRANCE;
+
+                gSaveContext.respawnFlag = 0;
+                gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = ENTR_LOAD_OPENING;
+
+                // Have the magic meter load correctly
+                gSaveContext.magicFillTarget = gSaveContext.save.info.playerData.magic;
+                gSaveContext.magicCapacity = 0;
+                gSaveContext.save.info.playerData.magic = 0;
+                gSaveContext.save.info.playerData.magicLevel = 0;
+
+                // Load Play state
+                gSaveContext.gameMode = GAMEMODE_NORMAL;
+                this->state.running = false;
+                SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
+            } else {
+                this->state.running = false;
+                SET_NEXT_GAMESTATE(&this->state, DebugOpening_Init, DebugOpeningState);
+            }
+        } else {
+            gSaveContext.seqId = (u8)NA_BGM_DISABLED;
+            gSaveContext.natureAmbienceId = 0xFF;
+            gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
+            this->state.running = false;
+            SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, TitleSetupState);
+        }
     }
 
     CLOSE_DISPS(this->state.gfxCtx, "../z_title.c", 541);

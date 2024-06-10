@@ -3,12 +3,24 @@
 #define STRINGIFY(s) #s
 #define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)
 
-#if RELEASE_ROM
-char const gBuildMakeOption[] = "RELEASE";
+#if (defined IS_DEBUG_BOOT_ENABLED && defined PACKAGE_AUTHOR)
+const char* gBuildAuthor = EXPAND_AND_STRINGIFY(PACKAGE_AUTHOR);
+const char* gCommitAuthor = EXPAND_AND_STRINGIFY(PACKAGE_COMMIT_AUTHOR);
 #else
-char const gBuildMakeOption[] = "DEBUG";
+const char* gBuildAuthor = "???";
+const char* gCommitAuthor = "???";
 #endif
 
-char const gBuildGitVersion[] = EXPAND_AND_STRINGIFY(PACKAGE_VERSION);
+#ifdef IS_DEBUG_BOOT_ENABLED
+const char* gBuildDate = __DATE__ " " __TIME__;
+#else
+const char* gBuildDate = "???";
+#endif
 
-char const gBuildTeam[] = "";
+#if (defined IS_DEBUG_BOOT_ENABLED && defined PACKAGE_VERSION)
+const char* gBuildGitVersion = EXPAND_AND_STRINGIFY(PACKAGE_VERSION);
+const char* gCommitGitString = EXPAND_AND_STRINGIFY(PACKAGE_NAME);
+#else
+const char* gBuildGitVersion = "???";
+const char* gCommitGitString = "???";
+#endif

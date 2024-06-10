@@ -750,6 +750,15 @@ beginseg
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_opening/ovl_opening_reloc.o"
 endseg
 
+#if IS_DEBUG_BOOT_ENABLED
+beginseg
+    name "ovl_debug_opening"
+    compress
+    include "$(BUILD_DIR)/src/overlays/gamestates/ovl_debug_opening/z_debug_opening.o"
+    include "$(BUILD_DIR)/src/overlays/gamestates/ovl_debug_opening/ovl_debug_opening_reloc.o"
+endseg
+#endif
+
 beginseg
     name "ovl_file_choose"
     compress

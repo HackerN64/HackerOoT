@@ -5,6 +5,7 @@
 #include "ultra64/ultratypes.h"
 #include "padmgr.h"
 #include "tha.h"
+#include "config.h"
 
 struct GraphicsContext;
 

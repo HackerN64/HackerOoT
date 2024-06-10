@@ -373,7 +373,11 @@ void MapSelect_DrawLoadingScreen(MapSelectState* this) {
 
 void MapSelect_LoadTitle(MapSelectState* this) {
     this->state.running = false;
-    SET_NEXT_GAMESTATE(&this->state, ConsoleLogo_Init, ConsoleLogoState);
+    if (IS_DEBUG_BOOT_ENABLED) {
+        SET_NEXT_GAMESTATE(&this->state, DebugOpening_Init, DebugOpeningState);
+    } else {
+        SET_NEXT_GAMESTATE(&this->state, ConsoleLogo_Init, ConsoleLogoState);
+    }
 }
 
 void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex) {

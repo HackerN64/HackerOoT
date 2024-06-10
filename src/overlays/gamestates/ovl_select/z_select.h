@@ -61,7 +61,7 @@ static const Color_RGBA8 sColors[] = {
 };
 
 static SceneSelectEntry sScenes[] = {
-    { "Title Screen", (void*)MapSelect_LoadTitle, 0 },
+    { "Boot Menu", (void*)MapSelect_LoadTitle, 0 },
 #if INCLUDE_EXAMPLE_SCENE
     { "Example", MapSelect_LoadGame, ENTR_EXAMPLE_0 },
 #endif
