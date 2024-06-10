@@ -48,6 +48,11 @@ static s32 OcclusionPlane_Choose(PlayState* play, Vec3f* selCandidate){
         }
         Vec3f v02 = (Vec3f){v[2].x - v[0].x, v[2].y - v[0].y, v[2].z - v[0].z};
         Vec3f v13 = (Vec3f){v[3].x - v[1].x, v[3].y - v[1].y, v[3].z - v[1].z};
+        Vec3f center = (Vec3f){
+            (v[0].x + v[1].x + v[2].x + v[3].x) * 0.25f,
+            (v[0].y + v[1].y + v[2].y + v[3].y) * 0.25f,
+            (v[0].z + v[1].z + v[2].z + v[3].z) * 0.25f
+        };
         Vec3f normal;
         Math3D_Vec3f_Cross(&v13, &v02, &normal);
         float len = sqrtf(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z);
@@ -55,9 +60,9 @@ static s32 OcclusionPlane_Choose(PlayState* play, Vec3f* selCandidate){
         if(len != 0.0f) len = 1.0f / len;
         normal.x *= len; normal.y *= len; normal.z *= len;
         
-        // vtx 0 to the camera
-        Vec3f v0c = (Vec3f){camPos->x - v[0].x, camPos->y - v[0].y, camPos->z - v[0].z};
-        float distToPlane = normal.x * v0c.x + normal.y * v0c.y + normal.z * v0c.z;
+        // center to the camera
+        Vec3f c2c = (Vec3f){camPos->x - center.x, camPos->y - center.y, camPos->z - center.z};
+        float distToPlane = normal.x * c2c.x + normal.y * c2c.y + normal.z * c2c.z;
         if(distToPlane <= 0.0f){
             // Camera on wrong side of it
 #if DEBUG_OCCLUSION_PLANES
@@ -65,7 +70,16 @@ static s32 OcclusionPlane_Choose(PlayState* play, Vec3f* selCandidate){
 #endif
             continue;
         }
+        float c2cRcpLen = 1.0f / (c2c.x * c2c.x + c2c.y * c2c.y + c2c.z * c2c.z);
+        c2c.x *= c2cRcpLen;
+        c2c.y *= c2cRcpLen;
+        c2c.z *= c2cRcpLen;
+        // How much the camera position is around towards the front of the plane
+        // Need this because dirAlignWCam would be the same if we are looking
+        // parallel to the plane regardless of how far in front or behind it
+        float planeAngleToCam = normal.x * c2c.x + normal.y * c2c.y + normal.z * c2c.z;
         
+        // How much the plane normal matches the camera look dir
         float dirAlignWCam = normal.x * camDir.x + normal.y * camDir.y + normal.z * camDir.z;
         bool lookingAway = dirAlignWCam >= -0.0001f;
         float distToPlaneAlongView = lookingAway ? 10000.0f : (distToPlane / -dirAlignWCam);
@@ -102,12 +116,12 @@ static s32 OcclusionPlane_Choose(PlayState* play, Vec3f* selCandidate){
             if(approachOutside < 0.0f) approachOutside = 0.0f;
             baseScore *= approachOutside;
         }
-        float score = baseScore * (0.5f - 0.5f * dirAlignWCam);
+        float score = baseScore * (0.5f - 0.5f * dirAlignWCam) * planeAngleToCam;
         score *= sqrtf(area);
         score *= cand->weight;
         //GfxPrint_Printf(&printer, "c%d base %6.2fm final %6.2f\n", c, baseScore*1000.0f, score);
 #if DEBUG_OCCLUSION_PLANES
-        GfxPrint_Printf(&printer, "c%d score%5.2f\n", c, score);
+        GfxPrint_Printf(&printer, "c%d score%5.2f\n", c, score * 1000.0f);
 #endif
         if(score > bestScore){
             bestScore = score;
@@ -577,7 +591,7 @@ void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase phase){
 void OcclusionPlane_Draw_PostCamUpdate(PlayState* play){
     bool enableOcc = ShouldBotherComputingOccPlanes(play);
     if(gF3DEX3OccMode == F3DEX3_OCC_MODE_AUTO){
-        gF3DEX3NOCVersion = !enableOcc;
+        //gF3DEX3NOCVersion = !enableOcc;  // TODO reenable
     }
     if(!enableOcc) return;
     

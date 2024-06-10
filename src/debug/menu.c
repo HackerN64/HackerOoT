@@ -41,11 +41,7 @@ void Menu_Update(Menu* this) {
     u8 i;
 
     if(!this->bShow && !isHoldingR && pressDLeft){
-        if(gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER){
-            gF3DEX3OccMode = F3DEX3_OCC_MODE_ALWAYS;
-        }else if(gF3DEX3OccMode == F3DEX3_OCC_MODE_ALWAYS){
-            gF3DEX3OccMode = F3DEX3_OCC_MODE_NEVER;
-        }
+        gF3DEX3NOCVersion ^= 1;
     }
 
     if (isHoldingR && CHECK_BTN_ALL(pressBtn, BTN_L)) {

@@ -57,8 +57,8 @@ static const u8* const sF3DEX3DataRomEndAddrs[8] = {
 
 /* These can't be automatically determined from the files, because that is only
 known at link time, whereas these sizes have to be known at compile time. */
-#define F3DEX3_TEXT_MAX_SIZE 6144 /* currently 6056 bytes */
-#define F3DEX3_DATA_MAX_SIZE 768  /* currently  726 bytes */
+#define F3DEX3_TEXT_MAX_SIZE 6400 /* currently 6152 bytes */
+#define F3DEX3_DATA_MAX_SIZE 768  /* currently  728 bytes */
 
 __attribute__((aligned(16))) u8 gF3DEX3TextBuffer[F3DEX3_TEXT_MAX_SIZE];
 __attribute__((aligned(16))) u8 gF3DEX3DataBuffer[F3DEX3_DATA_MAX_SIZE];
