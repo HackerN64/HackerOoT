@@ -173,9 +173,7 @@ def main():
     uncompressed_path = baserom_dir / "baserom-decompressed.z64"
 
     dmadata_start = int((baserom_dir / "dmadata_start.txt").read_text(), 16)
-    compressed_str_hash = None
-    if version != "hackeroot-mq":
-        compressed_str_hash = (baserom_dir / "checksum-compressed.md5").read_text().split()[0]
+    compressed_str_hash = (baserom_dir / "checksum-compressed.md5").read_text().split()[0]
     decompressed_str_hash = (baserom_dir / "checksum.md5").read_text().split()[0]
 
     if check_existing_rom(uncompressed_path, decompressed_str_hash):
