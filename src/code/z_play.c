@@ -1245,7 +1245,8 @@ void Play_Draw(PlayState* this) {
 
     {
         // Only clear the FB if there is no skybox or it is solid color
-        s32 clearFB = this->skyboxId == SKYBOX_NONE || this->skyboxId == SKYBOX_UNSET_1D || this->envCtx.skyboxDisabled;
+        //s32 clearFB = this->skyboxId == SKYBOX_NONE || this->skyboxId == SKYBOX_UNSET_1D || this->envCtx.skyboxDisabled;
+        const s32 clearFB = 1;
 
         // For no skybox, black background
         u8 clearR = 0;

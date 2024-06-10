@@ -41,7 +41,11 @@ void Menu_Update(Menu* this) {
     u8 i;
 
     if(!this->bShow && !isHoldingR && pressDLeft){
-        gF3DEX3NOCVersion ^= 1;
+        if(gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER){
+            gF3DEX3OccMode = F3DEX3_OCC_MODE_ALWAYS;
+        }else if(gF3DEX3OccMode == F3DEX3_OCC_MODE_ALWAYS){
+            gF3DEX3OccMode = F3DEX3_OCC_MODE_NEVER;
+        }
     }
 
     if (isHoldingR && CHECK_BTN_ALL(pressBtn, BTN_L)) {
@@ -85,11 +89,6 @@ void Menu_Update(Menu* this) {
                 }
                 if (pressDRight && gF3DEX3OccMode < F3DEX3_OCC_MODE_COUNT - 1) {
                     gF3DEX3OccMode++;
-                }
-                if (gF3DEX3OccMode == F3DEX3_OCC_MODE_ALWAYS) {
-                    gF3DEX3NOCVersion = 0;
-                } else if (gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER) {
-                    gF3DEX3NOCVersion = 1;
                 }
             }
 #endif

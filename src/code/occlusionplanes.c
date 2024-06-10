@@ -39,7 +39,7 @@ static s32 OcclusionPlane_Choose(PlayState* play, Vec3f* selCandidate){
             break;
         }
         
-        OcclusionPlaneCandidate* cand = room->occPlaneList[c];
+        OcclusionPlaneCandidate* cand = &room->occPlaneList[c];
         Vec3f v[4];
         for(s32 p=0; p<4; ++p){
             v[p].x = cand->v[p].x;

@@ -69,15 +69,20 @@ volatile s8 gF3DEX3NOCVersion = 1;
 s8 gF3DEX3OccMode = F3DEX3_OCC_MODE_AUTO;
 
 void SysUcode_LoadNewUcodeIfChanged() {
+    if (gF3DEX3OccMode == F3DEX3_OCC_MODE_ALWAYS) {
+        gF3DEX3NOCVersion = 0;
+    } else if (gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER) {
+        gF3DEX3NOCVersion = 1;
+    } // else if AUTO, controlled by occlusion planes system
     s8 ver = gF3DEX3ProfVersion | (gF3DEX3NOCVersion << 2);
     if (gLoadedF3DEX3Version == ver) {
         return;
     }
     ver &= 7; // make sure valid
 
-    u8* textVrom = sF3DEX3TextRomStartAddrs[ver];
+    const u8* textVrom = sF3DEX3TextRomStartAddrs[ver];
     u32 textSize = sF3DEX3TextRomEndAddrs[ver] - textVrom;
-    u8* dataVrom = sF3DEX3DataRomStartAddrs[ver];
+    const u8* dataVrom = sF3DEX3DataRomStartAddrs[ver];
     u32 dataSize = sF3DEX3DataRomEndAddrs[ver] - dataVrom;
     if (textSize > F3DEX3_TEXT_MAX_SIZE) {
         Fault_AddHungupAndCrash("ucode_text_too_big", __LINE__);
@@ -87,8 +92,8 @@ void SysUcode_LoadNewUcodeIfChanged() {
         Fault_AddHungupAndCrash("ucode_data_too_big", __LINE__);
         return;
     }
-    DMA_REQUEST_SYNC(gF3DEX3TextBuffer, textVrom, textSize, "sys_ucode.c", __LINE__);
-    DMA_REQUEST_SYNC(gF3DEX3DataBuffer, dataVrom, dataSize, "sys_ucode.c", __LINE__);
+    DMA_REQUEST_SYNC(gF3DEX3TextBuffer, (u32)textVrom, textSize, "sys_ucode.c", __LINE__);
+    DMA_REQUEST_SYNC(gF3DEX3DataBuffer, (u32)dataVrom, dataSize, "sys_ucode.c", __LINE__);
 
     gLoadedF3DEX3Version = ver;
 }
