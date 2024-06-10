@@ -123,12 +123,6 @@ void KaleidoSetup_Init(PlayState* play) {
     PauseContext* pauseCtx = &play->pauseCtx;
 
     pauseCtx->state = PAUSE_STATE_OFF;
-
-    pauseCtx->alpha = 0;
-    pauseCtx->unk_1EA = 0;
-    pauseCtx->mainState = PAUSE_MAIN_STATE_IDLE;
-    pauseCtx->mode = 0;
-    pauseCtx->pageIndex = PAUSE_ITEM;
     pauseCtx->debugState = 0;
 
     pauseCtx->eye.x = pauseCtx->eye.y = 0.0f;
