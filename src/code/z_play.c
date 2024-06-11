@@ -1245,7 +1245,8 @@ void Play_Draw(PlayState* this) {
 
     {
         // Only clear the FB if there is no skybox or it is solid color
-        //s32 clearFB = this->skyboxId == SKYBOX_NONE || this->skyboxId == SKYBOX_UNSET_1D || this->envCtx.skyboxDisabled;
+        // s32 clearFB = this->skyboxId == SKYBOX_NONE || this->skyboxId == SKYBOX_UNSET_1D ||
+        // this->envCtx.skyboxDisabled;
         const s32 clearFB = 1;
 
         // For no skybox, black background
@@ -1262,7 +1263,7 @@ void Play_Draw(PlayState* this) {
         // Clear the fb only if we aren't drawing a skybox
         Gfx_SetupFrame(gfxCtx, clearFB, clearR, clearG, clearB);
     }
-    
+
 #if ENABLE_F3DEX3
     OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_START);
 #endif
@@ -1391,7 +1392,7 @@ void Play_Draw(PlayState* this) {
         // buffer while the RDP is working on the framebuffer, without making
         // the RDP wait for new work to be available.
         Gfx_ClearZBuffer(gfxCtx);
-        
+
 #if ENABLE_F3DEX3
         OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_POST_SKY);
 #endif

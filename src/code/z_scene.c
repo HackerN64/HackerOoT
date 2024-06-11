@@ -484,7 +484,7 @@ BAD_RETURN(s32) Scene_CommandMiscSettings(PlayState* play, SceneCmd* cmd) {
 }
 
 #if ENABLE_F3DEX3
-BAD_RETURN(s32) Scene_CommandOccPlaneCandList(PlayState* play, SceneCmd* cmd){
+BAD_RETURN(s32) Scene_CommandOccPlaneCandList(PlayState* play, SceneCmd* cmd) {
     play->roomCtx.curRoom.occPlaneCount = cmd->occPlaneCandList.count;
     play->roomCtx.curRoom.occPlaneList = SEGMENTED_TO_VIRTUAL(cmd->occPlaneCandList.list);
 }
@@ -538,7 +538,7 @@ SceneCmdHandlerFunc gSceneCmdHandlers[SCENE_CMD_ID_MAX] = {
     Scene_CommandAlternateHeaderList,      // SCENE_CMD_ID_ALTERNATE_HEADER_LIST
     Scene_CommandMiscSettings,             // SCENE_CMD_ID_MISC_SETTINGS
 #if ENABLE_F3DEX3
-    Scene_CommandOccPlaneCandList,         // SCENE_CMD_ID_OCC_PLANE_CAND_LIST
+    Scene_CommandOccPlaneCandList, // SCENE_CMD_ID_OCC_PLANE_CAND_LIST
 #endif
 };
 
