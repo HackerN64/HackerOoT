@@ -1,6 +1,8 @@
 #include "z64.h"
 #include "functions.h"
 
+#if ENABLE_F3DEX3
+
 static Gfx* planeCommands[OCCLUSION_PLANE_PHASE_COUNT];
 
 #define DEBUG_OCCLUSION_PLANES true
@@ -664,3 +666,5 @@ void OcclusionPlane_Draw_PostCamUpdate(PlayState* play) {
         ((u32*)(planeCommands[OCCLUSION_PLANE_PHASE_POST_SKY]))[1] = (u32)mainPlane;
     }
 }
+
+#endif
