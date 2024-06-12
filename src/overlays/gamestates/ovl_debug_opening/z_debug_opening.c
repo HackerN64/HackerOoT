@@ -8,15 +8,28 @@
 #include "global.h"
 #include "config.h"
 
-#if IS_DEBUG_BOOT_ENABLED
+#if IS_MAP_SELECT_ENABLED
 
 #include "alloca.h"
 #include "debug_opening.h"
 
+void DebugOpening_ChooseSaveFile(GameState* thisx) {
+    DebugOpeningState* this = (DebugOpeningState*)thisx;
+    if (gSaveContext.fileNum != 0) {
+        gSaveContext.fileNum = 0;
+    } else {
+        gSaveContext.fileNum = 0xff;
+    }
+}
+
 void DebugOpening_LoadDefinedScene(GameState* thisx) {
     DebugOpeningState* this = (DebugOpeningState*)thisx;
 
-    Sram_InitDebugSave();
+    if (gSaveContext.fileNum == 0xff) {
+        Sram_InitDebugSave();
+    } else {
+        Sram_InitNewSave();
+    }
     // Set age, time and entrance
     gSaveContext.save.linkAge = BOOT_AGE;
     gSaveContext.save.dayTime = CLOCK_TIME(12, 0);
@@ -135,6 +148,10 @@ void DebugOpening_Destroy(GameState* thisx) {
 
 static OptionInfo sOptionInfo[] = {
     {
+        .func = DebugOpening_ChooseSaveFile,
+        .name = "Save File: "
+    },
+    {
         .func = DebugOpening_LoadDefinedScene,
         .name = "Init Defined Scene",
     },
@@ -160,7 +177,11 @@ void DebugOpening_HandleOptions(GameState* thisx, GfxPrint* printer) {
     GfxPrint_SetPos(printer, 17, 5);
     GfxPrint_Printf(printer, "PLAY");
 
-    for (i = 0; i < 4; i++) {
+    GfxPrint_SetColor(printer, 2, 205, 250, 255);
+    GfxPrint_SetPos(printer, 20, 10);
+    GfxPrint_Printf(printer, gSaveContext.fileNum == 0xff ? "Debug Save" : "New Save");
+
+    for (i = 0; i < 5; i++) {
         GfxPrint_SetColor(printer, 255, 255, 255, 255);
         GfxPrint_SetPos(printer, 9, 10 + i);
         if (i == this->currentOption) {
@@ -234,7 +255,7 @@ void DebugOpening_Main(GameState* thisx) {
     if (this->page == OPTIONS_PAGE) {
         // if dpad-up is pressed, go up in the options page
         if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_DUP) &&
-            this->currentOption > OPTION_LOAD_DEFINED_SCENE) {
+            this->currentOption > OPTION_CHOOSE_SAVE_FILE) {
             this->currentOption--;
             Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);

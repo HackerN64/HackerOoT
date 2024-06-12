@@ -334,7 +334,7 @@ typedef struct {
     /* 0x01E2 */ char unk_1E2[0x06];
 } ConsoleLogoState; // size = 0x1E8
 
-#if IS_DEBUG_BOOT_ENABLED
+#if IS_MAP_SELECT_ENABLED
 typedef struct {
     GameState state;
     View view;

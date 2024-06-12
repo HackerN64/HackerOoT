@@ -46,7 +46,7 @@ extern OSViContext* __osViNext;
 extern OSViMode osViModeFpalLan1;
 extern OSViMode gCustomViModePal60Lan1;
 extern u32 __additional_scanline;
-#if IS_DEBUG_BOOT_ENABLED
+#if IS_MAP_SELECT_ENABLED
 extern const char* gBuildAuthor;
 extern const char* gCommitAuthor;
 extern const char* gBuildDate;

@@ -750,7 +750,7 @@ beginseg
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_opening/ovl_opening_reloc.o"
 endseg
 
-#if IS_DEBUG_BOOT_ENABLED
+#if IS_MAP_SELECT_ENABLED
 beginseg
     name "ovl_debug_opening"
     compress

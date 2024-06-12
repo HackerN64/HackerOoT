@@ -56,7 +56,7 @@ void MapSelect_Init(GameState* thisx) {
     // turning the sfx volume back on
     SEQCMD_SET_SEQPLAYER_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 10);
 
-#if BOOT_TO_MAP_SELECT
+#if BOOT_TO_DEBUG_OPENING
     gSaveContext.fileNum = 0xFF;
     gSaveContext.save.linkAge = BOOT_AGE;
     this->sceneLayer = (BOOT_CUTSCENE > 1) ? (BOOT_CUTSCENE & 0x000F) + 2 : BOOT_CUTSCENE;
@@ -373,11 +373,7 @@ void MapSelect_DrawLoadingScreen(MapSelectState* this) {
 
 void MapSelect_LoadTitle(MapSelectState* this) {
     this->state.running = false;
-    if (IS_DEBUG_BOOT_ENABLED) {
-        SET_NEXT_GAMESTATE(&this->state, DebugOpening_Init, DebugOpeningState);
-    } else {
-        SET_NEXT_GAMESTATE(&this->state, ConsoleLogo_Init, ConsoleLogoState);
-    }
+    SET_NEXT_GAMESTATE(&this->state, DebugOpening_Init, DebugOpeningState);
 }
 
 void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex) {

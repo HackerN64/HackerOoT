@@ -10,10 +10,11 @@ typedef enum {
 } CurrentPage;
 
 typedef enum {
-    /* 0 */ OPTION_LOAD_DEFINED_SCENE,
-    /* 3 */ OPTION_LOAD_MAP_SELECT,
-    /* 1 */ OPTION_LOAD_TITLE_SCREEN,
-    /* 2 */ OPTION_LOAD_FILE_SELECT,
+    /* 0 */ OPTION_CHOOSE_SAVE_FILE,
+    /* 1 */ OPTION_LOAD_DEFINED_SCENE,
+    /* 2 */ OPTION_LOAD_MAP_SELECT,
+    /* 3 */ OPTION_LOAD_TITLE_SCREEN,
+    /* 4 */ OPTION_LOAD_FILE_SELECT,
 } CurrentOption;
 
 typedef void (*OptionFunc)(GameState*);

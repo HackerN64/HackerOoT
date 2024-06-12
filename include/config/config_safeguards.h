@@ -88,7 +88,7 @@
 #endif
 
 // Enable the map select feature if booting to map select or using map select for file 1
-#if (BOOT_TO_MAP_SELECT || MAP_SELECT_ON_FILE_1) && !ENABLE_MAP_SELECT
+#if (BOOT_TO_DEBUG_OPENING || MAP_SELECT_ON_FILE_1) && !ENABLE_MAP_SELECT
     #undef ENABLE_MAP_SELECT
     #define ENABLE_MAP_SELECT true
 #endif
