@@ -33,6 +33,8 @@ This project is using the following tools:
 
 ## Getting Started
 
+The Expansion Pak is required by default. While it's possible to use 4MB of memory, this is not recommended for mods (and untested) but technically possible by removing debug features.
+
 ### Installation
 
 Instructions to build this project are available [here](INSTALLATION.md).
