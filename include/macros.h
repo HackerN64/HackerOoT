@@ -125,22 +125,22 @@
 #endif
 
 #if IS_DEBUG
-#define LOG(exp, value, format, file, line)         \
+#define LOG(exp, value, format, ...)                \
     do {                                            \
-        LogUtils_LogThreadId(file, line);           \
+        LogUtils_LogThreadId(__FILE__, __LINE__);   \
         osSyncPrintf(exp " = " format "\n", value); \
     } while (0)
 #else
-#define LOG(exp, value, format, file, line) (void)(value)
+#define LOG(exp, value, format, ...) (void)(value)
 #endif
 
-#define LOG_STRING(string, file, line) LOG(#string, string, "%s", file, line)
-#define LOG_ADDRESS(exp, value, file, line) LOG(exp, value, "%08x", file, line)
-#define LOG_TIME(exp, value, file, line) LOG(exp, value, "%lld", file, line)
-#define LOG_NUM(exp, value, file, line) LOG(exp, value, "%d", file, line)
-#define LOG_HEX(exp, value, file, line) LOG(exp, value, "%x", file, line)
-#define LOG_HEX32(exp, value, file, line) LOG(exp, value, "%08x", file, line)
-#define LOG_FLOAT(exp, value, file, line) LOG(exp, value, "%f", file, line)
+#define LOG_STRING(string, ...) LOG(#string, string, "%s", __VA_ARGS__)
+#define LOG_ADDRESS(exp, value, ...) LOG(exp, value, "%08x", __VA_ARGS__)
+#define LOG_TIME(exp, value, ...) LOG(exp, value, "%lld", __VA_ARGS__)
+#define LOG_NUM(exp, value, ...) LOG(exp, value, "%d", __VA_ARGS__)
+#define LOG_HEX(exp, value, ...) LOG(exp, value, "%x", __VA_ARGS__)
+#define LOG_HEX32(exp, value, ...) LOG(exp, value, "%08x", __VA_ARGS__)
+#define LOG_FLOAT(exp, value, ...) LOG(exp, value, "%f", __VA_ARGS__)
 
 #define SET_NEXT_GAMESTATE(curState, newInit, newStruct) \
     do {                                                 \
@@ -175,72 +175,72 @@ extern struct GraphicsContext* __gfxCtx;
 
 // __gfxCtx shouldn't be used directly.
 // Use the DISP macros defined above when writing to display buffers.
-#define OPEN_DISPS(gfxCtx, file, line) \
-    {                                  \
-        GraphicsContext* __gfxCtx;     \
-        Gfx* dispRefs[4];              \
-        __gfxCtx = gfxCtx;             \
-        (void)__gfxCtx;                \
-        Graph_OpenDisps(dispRefs, gfxCtx, file, line)
+#define OPEN_DISPS(gfxCtx, ...)         \
+    {                                   \
+        GraphicsContext* __gfxCtx;      \
+        Gfx* dispRefs[4];               \
+        __gfxCtx = gfxCtx;              \
+        (void)__gfxCtx;                 \
+        Graph_OpenDisps(dispRefs, gfxCtx, __FILE__, __LINE__)
 
-#define CLOSE_DISPS(gfxCtx, file, line)                 \
-        Graph_CloseDisps(dispRefs, gfxCtx, file, line); \
-    }                                                   \
+#define CLOSE_DISPS(gfxCtx, ...)                                \
+        Graph_CloseDisps(dispRefs, gfxCtx, __FILE__, __LINE__); \
+    }                                                           \
     (void)0
 
 #define GRAPH_ALLOC(gfxCtx, size) Graph_Alloc(gfxCtx, size)
-#define MATRIX_TO_MTX(gfxCtx, file, line) Matrix_ToMtx(gfxCtx, file, line)
-#define MATRIX_NEW(gfxCtx, file, line) Matrix_NewMtx(gfxCtx, file, line)
-#define MATRIX_CHECK_FLOATS(mtx, file, line) Matrix_CheckFloats(mtx, file, line)
-#define DMA_REQUEST_SYNC(ram, vrom, size, file, line) DmaMgr_RequestSyncDebug(ram, vrom, size, file, line)
-#define DMA_REQUEST_ASYNC(req, ram, vrom, size, unk5, queue, msg, file, line) DmaMgr_RequestAsyncDebug(req, ram, vrom, size, unk5, queue, msg, file, line)
-#define GAME_STATE_ALLOC(gameState, size, file, line) GameState_Alloc(gameState, size, file, line)
-#define DEBUG_ARENA_MALLOC(size, file, line) DebugArena_MallocDebug(size, file, line)
-#define DEBUG_ARENA_MALLOC_R(size, file, line) DebugArena_MallocRDebug(size, file, line)
-#define DEBUG_ARENA_FREE(size, file, line) DebugArena_FreeDebug(size, file, line)
-#define SYSTEM_ARENA_MALLOC(size, file, line) SystemArena_MallocDebug(size, file, line)
-#define SYSTEM_ARENA_MALLOC_R(size, file, line) SystemArena_MallocRDebug(size, file, line)
-#define SYSTEM_ARENA_FREE(size, file, line) SystemArena_FreeDebug(size, file, line)
-#define ZELDA_ARENA_MALLOC(size, file, line) ZeldaArena_MallocDebug(size, file, line)
-#define ZELDA_ARENA_MALLOC_R(size, file, line) ZeldaArena_MallocRDebug(size, file, line)
-#define ZELDA_ARENA_FREE(size, file, line) ZeldaArena_FreeDebug(size, file, line)
-#define LOG_UTILS_CHECK_NULL_POINTER(exp, ptr, file, line) LogUtils_CheckNullPointer(exp, ptr, file, line)
-#define LOG_UTILS_CHECK_VALID_POINTER(exp, ptr, file, line) LogUtils_CheckValidPointer(exp, ptr, file, line)
-#define HUNGUP_AND_CRASH(file, line) Fault_AddHungupAndCrash(file, line)
-#define GAME_ALLOC_MALLOC(alloc, size, file, line) GameAlloc_MallocDebug(alloc, size, file, line)
+#define MATRIX_TO_MTX(gfxCtx, ...) Matrix_ToMtx(gfxCtx, __FILE__, __LINE__)
+#define MATRIX_NEW(gfxCtx, ...) Matrix_NewMtx(gfxCtx, __FILE__, __LINE__)
+#define MATRIX_CHECK_FLOATS(mtx, ...) Matrix_CheckFloats(mtx, __FILE__, __LINE__)
+#define DMA_REQUEST_SYNC(ram, vrom, size, ...) DmaMgr_RequestSyncDebug(ram, vrom, size, __FILE__, __LINE__)
+#define DMA_REQUEST_ASYNC(req, ram, vrom, size, unk5, queue, msg, ...) DmaMgr_RequestAsyncDebug(req, ram, vrom, size, unk5, queue, msg, __FILE__, __LINE__)
+#define GAME_STATE_ALLOC(gameState, size, ...) GameState_Alloc(gameState, size, __FILE__, __LINE__)
+#define DEBUG_ARENA_MALLOC(size, ...) DebugArena_MallocDebug(size, __FILE__, __LINE__)
+#define DEBUG_ARENA_MALLOC_R(size, ...) DebugArena_MallocRDebug(size, __FILE__, __LINE__)
+#define DEBUG_ARENA_FREE(size, ...) DebugArena_FreeDebug(size, __FILE__, __LINE__)
+#define SYSTEM_ARENA_MALLOC(size, ...) SystemArena_MallocDebug(size, __FILE__, __LINE__)
+#define SYSTEM_ARENA_MALLOC_R(size, ...) SystemArena_MallocRDebug(size, __FILE__, __LINE__)
+#define SYSTEM_ARENA_FREE(size, ...) SystemArena_FreeDebug(size, __FILE__, __LINE__)
+#define ZELDA_ARENA_MALLOC(size, ...) ZeldaArena_MallocDebug(size, __FILE__, __LINE__)
+#define ZELDA_ARENA_MALLOC_R(size, ...) ZeldaArena_MallocRDebug(size, __FILE__, __LINE__)
+#define ZELDA_ARENA_FREE(size, ...) ZeldaArena_FreeDebug(size, __FILE__, __LINE__)
+#define LOG_UTILS_CHECK_NULL_POINTER(exp, ptr, ...) LogUtils_CheckNullPointer(exp, ptr, __FILE__, __LINE__)
+#define LOG_UTILS_CHECK_VALID_POINTER(exp, ptr, ...) LogUtils_CheckValidPointer(exp, ptr, __FILE__, __LINE__)
+#define HUNGUP_AND_CRASH(...) Fault_AddHungupAndCrash(__FILE__, __LINE__)
+#define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_MallocDebug(alloc, size, __FILE__, __LINE__)
 
 #else
 
-#define OPEN_DISPS(gfxCtx, file, line)      \
+#define OPEN_DISPS(gfxCtx, ...)      \
     {                                       \
         GraphicsContext* __gfxCtx = gfxCtx; \
         s32 __dispPad
 
-#define CLOSE_DISPS(gfxCtx, file, line) \
+#define CLOSE_DISPS(gfxCtx, ...) \
     (void)0;                            \
     }                                   \
     (void)0
 
 #define GRAPH_ALLOC(gfxCtx, size) ((void*)((gfxCtx)->polyOpa.d = (Gfx*)((u8*)(gfxCtx)->polyOpa.d - ALIGN16(size))))
-#define MATRIX_TO_MTX(gfxCtx, file, line) Matrix_ToMtx(gfxCtx)
-#define MATRIX_NEW(gfxCtx, file, line) Matrix_NewMtx(gfxCtx)
-#define MATRIX_CHECK_FLOATS(mtx, file, line) (mtx)
-#define DMA_REQUEST_SYNC(ram, vrom, size, file, line) DmaMgr_RequestSync(ram, vrom, size)
-#define DMA_REQUEST_ASYNC(req, ram, vrom, size, unk5, queue, msg, file, line) DmaMgr_RequestAsync(req, ram, vrom, size, unk5, queue, msg)
-#define GAME_STATE_ALLOC(gameState, size, file, line) THA_AllocTailAlign16(&(gameState)->tha, size)
-#define DEBUG_ARENA_MALLOC(size, file, line) DebugArena_Malloc(size)
-#define DEBUG_ARENA_MALLOC_R(size, file, line) DebugArena_MallocR(size)
-#define DEBUG_ARENA_FREE(size, file, line) DebugArena_Free(size)
-#define SYSTEM_ARENA_MALLOC(size, file, line) SystemArena_Malloc(size)
-#define SYSTEM_ARENA_MALLOC_R(size, file, line) SystemArena_MallocR(size)
-#define SYSTEM_ARENA_FREE(size, file, line) SystemArena_Free(size)
-#define ZELDA_ARENA_MALLOC(size, file, line) ZeldaArena_Malloc(size)
-#define ZELDA_ARENA_MALLOC_R(size, file, line) ZeldaArena_MallocR(size)
-#define ZELDA_ARENA_FREE(size, file, line) ZeldaArena_Free(size)
-#define LOG_UTILS_CHECK_NULL_POINTER(exp, ptr, file, line) (void)0
-#define LOG_UTILS_CHECK_VALID_POINTER(exp, ptr, file, line) (void)0
-#define HUNGUP_AND_CRASH(file, line) LogUtils_HungupThread(file, line)
-#define GAME_ALLOC_MALLOC(alloc, size, file, line) GameAlloc_Malloc(alloc, size)
+#define MATRIX_TO_MTX(gfxCtx, ...) Matrix_ToMtx(gfxCtx)
+#define MATRIX_NEW(gfxCtx, ...) Matrix_NewMtx(gfxCtx)
+#define MATRIX_CHECK_FLOATS(mtx, ...) (mtx)
+#define DMA_REQUEST_SYNC(ram, vrom, size, ...) DmaMgr_RequestSync(ram, vrom, size)
+#define DMA_REQUEST_ASYNC(req, ram, vrom, size, unk5, queue, msg, ...) DmaMgr_RequestAsync(req, ram, vrom, size, unk5, queue, msg)
+#define GAME_STATE_ALLOC(gameState, size, ...) THA_AllocTailAlign16(&(gameState)->tha, size)
+#define DEBUG_ARENA_MALLOC(size, ...) DebugArena_Malloc(size)
+#define DEBUG_ARENA_MALLOC_R(size, ...) DebugArena_MallocR(size)
+#define DEBUG_ARENA_FREE(size, ...) DebugArena_Free(size)
+#define SYSTEM_ARENA_MALLOC(size, ...) SystemArena_Malloc(size)
+#define SYSTEM_ARENA_MALLOC_R(size, ...) SystemArena_MallocR(size)
+#define SYSTEM_ARENA_FREE(size, ...) SystemArena_Free(size)
+#define ZELDA_ARENA_MALLOC(size, ...) ZeldaArena_Malloc(size)
+#define ZELDA_ARENA_MALLOC_R(size, ...) ZeldaArena_MallocR(size)
+#define ZELDA_ARENA_FREE(size, ...) ZeldaArena_Free(size)
+#define LOG_UTILS_CHECK_NULL_POINTER(exp, ptr, ...) (void)0
+#define LOG_UTILS_CHECK_VALID_POINTER(exp, ptr, ...) (void)0
+#define HUNGUP_AND_CRASH(...) LogUtils_HungupThread(...)
+#define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_Malloc(alloc, size)
 
 #endif /* IS_DEBUG */
 
