@@ -5,8 +5,6 @@
 
 static Gfx* planeCommands[OCCLUSION_PLANE_PHASE_COUNT];
 
-#define DEBUG_OCCLUSION_PLANES true
-
 static s32 OcclusionPlane_Choose(PlayState* play, Vec3f* selCandidate) {
     Vec3f* camPos = &play->view.eye;
     Vec3f camDir = (Vec3f){ play->view.at.x - camPos->x, play->view.at.y - camPos->y, play->view.at.z - camPos->z };
@@ -96,8 +94,6 @@ static s32 OcclusionPlane_Choose(PlayState* play, Vec3f* selCandidate) {
         projView.y = camPos->y + camDir.y * distToPlaneAlongView;
         projView.z = camPos->z + camDir.z * distToPlaneAlongView;
 
-        // GfxPrint_Printf(&printer, "c%d area%6.1fk d%5.1f align%5.3f\n", c, area * 0.001f, distToPlane, dirAlignWCam);
-
         // Maximum distance from projView to any edge of the quad, or 0 if inside
         float maxDistProjView = lookingAway ? 10000.0f : 0.0f;
         if (!lookingAway) {
@@ -121,7 +117,6 @@ static s32 OcclusionPlane_Choose(PlayState* play, Vec3f* selCandidate) {
                 }
             }
         }
-        // GfxPrint_Printf(&printer, "c%d dpv %6.2f\n", c, maxDistProjView);
 
         float baseScore = 1.0f / (distToPlaneAlongView + maxDistProjView);
         if (maxDistProjView > 0.0f) { // projView is outside
@@ -135,7 +130,6 @@ static s32 OcclusionPlane_Choose(PlayState* play, Vec3f* selCandidate) {
         float score = baseScore * (0.5f - 0.5f * dirAlignWCam) * planeAngleToCam;
         score *= sqrtf(area);
         score *= cand->weight;
-        // GfxPrint_Printf(&printer, "c%d base %6.2fm final %6.2f\n", c, baseScore*1000.0f, score);
 #if DEBUG_OCCLUSION_PLANES
         GfxPrint_Printf(&printer, "c%d score%5.2f\n", c, score * 1000.0f);
 #endif
@@ -308,9 +302,6 @@ static bool ClipPolygon(PlayState* play, ClipVertex* verts, s8* indices, s8** id
     return true;
 }
 
-// For debugging only
-// static char occPlaneMessage[64];
-
 // The occlusion plane settings for "disable the occlusion plane". This is just
 // stored once, and the SPOcclusionPlane DL command is set to point here if the
 // occlusion plane is disabled or invalid.
@@ -318,8 +309,6 @@ static OcclusionPlane sNoOcclusionPlane = { 0x0000, 0x0000, 0x0000, 0x0000, 0x80
                                             0x8000, 0x8000, 0x0000, 0x0000, 0x0000, 0x8000 };
 
 static OcclusionPlane* ComputeOcclusionPlane(PlayState* play, Vec3f* worldBounds) {
-    // occPlaneMessage[0] = 0;
-
     ClipVertex verts[14]; // 4 initial verts, 5 tips cut off polygon with 2 gen verts each
     s8 indices[20];       // Polygon starts with 4 verts, 5 tips cut off = 9, plus 1 entry -1, times read and write
     for (s32 i = 0; i < 4; ++i) {
@@ -339,7 +328,6 @@ static OcclusionPlane* ComputeOcclusionPlane(PlayState* play, Vec3f* worldBounds
     s16 kc = (s16)(kcf * 0.5f);
     if ((kx | ky | kz) == 0) {
         // Degenerate plane, disable the clipping
-        // sprintf(occPlaneMessage, "Clip space degenerate");
         return &sNoOcclusionPlane;
     }
 
@@ -348,7 +336,6 @@ static OcclusionPlane* ComputeOcclusionPlane(PlayState* play, Vec3f* worldBounds
     s8 *idxFinalStart, *idxFinalEnd, *idx;
     if (!ClipPolygon(play, verts, indices, &idxFinalStart, &idxFinalEnd)) {
         // Resulting polygon is degenerate; occlusion plane is fully offscreen. No occlusion.
-        // sprintf(occPlaneMessage, "Offscreen");
         return &sNoOcclusionPlane;
     }
 
@@ -410,7 +397,6 @@ static OcclusionPlane* ComputeOcclusionPlane(PlayState* play, Vec3f* worldBounds
         }
         // Should only be 4 edges not along a screen edge
         if (totalEdges >= 4) {
-            // sprintf(occPlaneMessage, "Too many edges");
             return &sNoOcclusionPlane;
         }
 
@@ -461,7 +447,6 @@ static OcclusionPlane* ComputeOcclusionPlane(PlayState* play, Vec3f* worldBounds
 
             if (numCands[q] >= 3) {
                 // Each equation should have no more than 3 candidate edges
-                // sprintf(occPlaneMessage, "Eqn has too many cands");
                 return &sNoOcclusionPlane;
             }
             EdgeCandidate* cand = &cands[q][numCands[q]];
@@ -472,26 +457,21 @@ static OcclusionPlane* ComputeOcclusionPlane(PlayState* play, Vec3f* worldBounds
             ++(numCands[q]);
         }
         if (numCandsFit == 0) {
-            // sprintf(occPlaneMessage, "Edge fit in no cands");
             return &sNoOcclusionPlane;
         } else if (numCandsFit > 3) {
             // Each edge should have no more than 3 candidate equations
-            // sprintf(occPlaneMessage, "Edge fit in too many cands");
             return &sNoOcclusionPlane;
         }
         candsForEdge[totalEdges] = numCandsFit;
 
         ++totalEdges;
     }
-    // sprintf(occPlaneMessage, "%de %dv %d> %d^ %d<", totalEdges,
-    //     numCands[0], numCands[1], numCands[2], numCands[3]);
 
     // Assign candidates to equations.
     while (true) {
         // Check fail condition: if now there is some edge which has no candidates
         for (s32 e = 0; e < totalEdges; ++e) {
             if (candsForEdge[e] == 0) {
-                // sprintf(occPlaneMessage, "Edge %d now has no cands", e);
                 return &sNoOcclusionPlane;
             }
         }
@@ -582,14 +562,12 @@ static OcclusionPlane* ComputeOcclusionPlane(PlayState* play, Vec3f* worldBounds
                 --(candsForEdge[e]);
             }
             if (candsForEdge[e] != 1) {
-                // sprintf(occPlaneMessage, "Internal error 2");
                 return &sNoOcclusionPlane;
             }
             madeChange = true;
             break;
         }
         if (!madeChange) {
-            // sprintf(occPlaneMessage, "Internal error 1");
             return &sNoOcclusionPlane;
         }
     }
