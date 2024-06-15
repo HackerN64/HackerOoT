@@ -2,6 +2,7 @@
     "search.useIgnoreFiles": false,
     "search.exclude": {
         "**/.git": true,
+        ".venv/**": true,
         "baseroms/**": true,
         "build/**": true,
         "expected/**": true,
