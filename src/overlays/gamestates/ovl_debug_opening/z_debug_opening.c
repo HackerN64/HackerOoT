@@ -78,6 +78,61 @@ void DebugOpening_LoadMapSelect(GameState* thisx) {
     this->state.running = false;
 }
 
+/**
+ * sOptionInfo contains every usable option in the first page.
+ * The .name of every option is printed in DebugOpening_DrawOptions
+ * through a loop and the .func gets executed based on this->currentOption
+ * in DebugOpening_ControlOptions
+ */
+static OptionInfo sOptionInfo[] = {
+    {
+        .func = DebugOpening_ChooseSaveFile,
+        .name = "Save File: "
+    },
+    {
+        .func = DebugOpening_LoadDefinedScene,
+        .name = "Init Defined Scene",
+    },
+    {
+        .func = DebugOpening_LoadMapSelect,
+        .name = "Init Map Select",
+    },
+    {
+        .func = DebugOpening_LoadTitleScreen,
+        .name = "Init Title Screen",
+    },
+    {
+        .func = DebugOpening_LoadFileSelect,
+        .name = "Init File Select",
+    },
+};
+
+void DebugOpening_ControlOptions(GameState* thisx) {
+    DebugOpeningState* this = (DebugOpeningState*)thisx;
+
+    // if dpad-up is pressed, go up in the options page
+    if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_DUP) &&
+        this->currentOption > OPTION_CHOOSE_SAVE_FILE) {
+        this->currentOption--;
+        Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+    }
+
+    // if dpad-down is pressed, go down in the options page
+    if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_DDOWN) &&
+        this->currentOption < OPTION_LOAD_FILE_SELECT) {
+        this->currentOption++;
+        Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+    }
+
+    // Run the function of the currently selected option
+    // as soon as A is pressed
+    if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A)) {
+        sOptionInfo[this->currentOption].func(thisx);
+    }
+}
+
 #define STRINGIFY(s) #s
 #define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)
 
@@ -87,10 +142,10 @@ void DebugOpening_DrawBuildInfo(DebugOpeningState* this, GfxPrint* printer) {
     GfxPrint_Printf(printer, "BUILD");
 
     GfxPrint_SetColor(printer, 255, 255, 255, 255);
-    GfxPrint_SetPos(printer, 4, 10);
+    GfxPrint_SetPos(printer, 1, 10);
     GfxPrint_Printf(printer, "Build Author: %s", gBuildAuthor);
 
-    GfxPrint_SetPos(printer, 4, 11);
+    GfxPrint_SetPos(printer, 1, 11);
     GfxPrint_Printf(printer, "Build Date: %s", gBuildDate);
 
     GfxPrint_SetPos(printer, 1, 13);
@@ -146,30 +201,7 @@ void DebugOpening_DrawCommitInfo(DebugOpeningState* this, GfxPrint* printer) {
 void DebugOpening_Destroy(GameState* thisx) {
 }
 
-static OptionInfo sOptionInfo[] = {
-    {
-        .func = DebugOpening_ChooseSaveFile,
-        .name = "Save File: "
-    },
-    {
-        .func = DebugOpening_LoadDefinedScene,
-        .name = "Init Defined Scene",
-    },
-    {
-        .func = DebugOpening_LoadMapSelect,
-        .name = "Init Map Select",
-    },
-    {
-        .func = DebugOpening_LoadTitleScreen,
-        .name = "Init Title Screen",
-    },
-    {
-        .func = DebugOpening_LoadFileSelect,
-        .name = "Init File Select",
-    },
-};
-
-void DebugOpening_HandleOptions(GameState* thisx, GfxPrint* printer) {
+void DebugOpening_DrawOptions(GameState* thisx, GfxPrint* printer) {
     DebugOpeningState* this = (DebugOpeningState*)thisx;
     s32 i;
 
@@ -177,6 +209,7 @@ void DebugOpening_HandleOptions(GameState* thisx, GfxPrint* printer) {
     GfxPrint_SetPos(printer, 17, 5);
     GfxPrint_Printf(printer, "PLAY");
 
+    // Print the current save file option right behind the "Save File :" string
     GfxPrint_SetColor(printer, 2, 205, 250, 255);
     GfxPrint_SetPos(printer, 20, 10);
     GfxPrint_Printf(printer, gSaveContext.fileNum == 0xff ? "Debug Save" : "New Save");
@@ -185,7 +218,7 @@ void DebugOpening_HandleOptions(GameState* thisx, GfxPrint* printer) {
         GfxPrint_SetColor(printer, 255, 255, 255, 255);
         GfxPrint_SetPos(printer, 9, 10 + i);
         if (i == this->currentOption) {
-            // give the currently selected option a special color
+            // highlight the currently selected option
             GfxPrint_SetColor(printer, 237, 226, 7, 255);
         }
         GfxPrint_Printf(printer, sOptionInfo[i].name);
@@ -229,7 +262,7 @@ void DebugOpening_DrawBase(GameState* thisx) {
 
     switch (this->page) {
         case OPTIONS_PAGE:
-            DebugOpening_HandleOptions(thisx, printer);
+            DebugOpening_DrawOptions(thisx, printer);
             break;
         case COMMANDS_PAGE:
             DebugOpening_DrawCommands(this, printer);
@@ -253,29 +286,7 @@ void DebugOpening_Main(GameState* thisx) {
     DebugOpeningState* this = (DebugOpeningState*)thisx;
 
     if (this->page == OPTIONS_PAGE) {
-        // if dpad-up is pressed, go up in the options page
-        if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_DUP) &&
-            this->currentOption > OPTION_CHOOSE_SAVE_FILE) {
-            this->currentOption--;
-            Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        }
-
-        // if dpad-down is pressed, go down in the options page
-        if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_DDOWN) &&
-            this->currentOption < OPTION_LOAD_FILE_SELECT) {
-            this->currentOption++;
-            Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        }
-
-        /**
-         * initialize the final pointer-to-method function depending on
-         * the currently selected option to boot
-         */
-        if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A)) {
-            sOptionInfo[this->currentOption].func(thisx);
-        }
+        DebugOpening_ControlOptions(&this->state);
     }
     DebugOpening_DrawBase(thisx);
     if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_R) && this->page != BUILDINFO_PAGE) {
@@ -296,7 +307,7 @@ void DebugOpening_Init(GameState* thisx) {
     this->page = OPTIONS_PAGE;
     View_Init(&this->view, this->state.gfxCtx);
     SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_TITLE);
-    if (USE_WIDESCREEN) {
+    if (USE_WIDESCREEN) { // Debug boot in widescreen is not completely positioned yet
         this->controlGuideString = "[L] <--                      %d / 3                       --> [R]";
         this->seperatorString = "________________________________________________________";
     } else {

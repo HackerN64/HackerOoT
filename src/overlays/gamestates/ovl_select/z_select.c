@@ -57,7 +57,6 @@ void MapSelect_Init(GameState* thisx) {
     SEQCMD_SET_SEQPLAYER_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 10);
 
 #if BOOT_TO_DEBUG_OPENING
-    gSaveContext.fileNum = 0xFF;
     gSaveContext.save.linkAge = BOOT_AGE;
     this->sceneLayer = (BOOT_CUTSCENE > 1) ? (BOOT_CUTSCENE & 0x000F) + 2 : BOOT_CUTSCENE;
     for (i = 1; i < this->sceneTotal; i++) {
