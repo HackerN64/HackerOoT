@@ -1,8 +1,5 @@
 #include "config.h"
 
-#define STRINGIFY(s) #s
-#define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)
-
 #if (defined IS_MAP_SELECT_ENABLED && defined PACKAGE_AUTHOR)
 const char* gBuildAuthor = PACKAGE_AUTHOR;
 const char* gCommitAuthor = PACKAGE_COMMIT_AUTHOR;

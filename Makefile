@@ -116,7 +116,7 @@ CPPFLAGS += -P -xc -fno-dollars-in-identifiers
 
 # Set PACKAGE_NAME define for printing commit name
 ifeq ($(origin PACKAGE_NAME), undefined)
-  PACKAGE_NAME := "$(shell git log -1 --pretty=%s | tr -d '\n')"
+  PACKAGE_NAME := "$(shell git log -1 --pretty=%s | tr -d '\n' | sed 's/\"/\\\"/g')"
   ifeq ($(PACKAGE_NAME),"")
     PACKAGE_NAME := "Unknown name"
   endif
@@ -124,7 +124,7 @@ endif
 
 # Set PACKAGE_COMMIT_AUTHOR for printing commit author
 ifeq ($(origin PACKAGE_COMMIT_AUTHOR), undefined)
-  PACKAGE_COMMIT_AUTHOR := "$(shell git log -1 --pretty=format:'%an' | tr -d '\n')"
+  PACKAGE_COMMIT_AUTHOR := "$(shell git log -1 --pretty=format:'%an' | tr -d '\n' | sed 's/\"/\\\"/g')"
   ifeq ($(PACKAGE_COMMIT_AUTHOR),"")
     PACKAGE_COMMIT_AUTHOR := "Unknown author"
   endif
@@ -132,7 +132,7 @@ endif
 
 # Set PACKAGE_AUTHOR define for printing author's git name
 ifeq ($(origin PACKAGE_AUTHOR), undefined)
-  PACKAGE_AUTHOR := "$(shell git config --get user.name | tr -d '\n')"
+  PACKAGE_AUTHOR := "$(shell git config --get user.name | tr -d '\n' | sed 's/\"/\\\"/g')"
   ifeq ($(PACKAGE_AUTHOR),"")
     PACKAGE_AUTHOR := "Unknown author"
   endif
@@ -140,7 +140,7 @@ endif
 
 # Set PACKAGE_VERSION define for printing commit hash
 ifeq ($(origin PACKAGE_VERSION), undefined)
-  PACKAGE_VERSION := "$(shell git log -1 --pretty=%h | tr -d '\n')"
+  PACKAGE_VERSION := "$(shell git log -1 --pretty=%h | tr -d '\n' | sed 's/\"/\\\"/g')"
   ifeq ($(PACKAGE_VERSION),"")
     PACKAGE_VERSION := "Unknown version"
   endif
