@@ -881,6 +881,8 @@ void PreRender_MotionBlurImpl(PreRender* this, Gfx** gfxp, void* buf, void* bufS
     gDPSetColorImage(gfx++, G_IM_FMT_RGBA, G_IM_SIZ_16b, this->width, this->fbuf);
 
     *gfxp = gfx;
+
+    Lights_ResetDrawState();
 }
 
 // TODO this could do with a better name but whatever

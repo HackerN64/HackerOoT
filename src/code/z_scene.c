@@ -259,6 +259,8 @@ BAD_RETURN(s32) Scene_CommandRoomBehavior(PlayState* play, SceneCmd* cmd) {
     play->roomCtx.curRoom.behaviorType2 = cmd->roomBehavior.gpFlag2 & 0xFF;
     play->roomCtx.curRoom.lensMode = (cmd->roomBehavior.gpFlag2 >> 8) & 1;
     play->msgCtx.disableWarpSongs = (cmd->roomBehavior.gpFlag2 >> 0xA) & 1;
+
+    play->roomCtx.curRoom.usePointLights = (cmd->roomBehavior.gpFlag2 >> 0xB) & 1;
 }
 
 BAD_RETURN(s32) Scene_CommandRoomShape(PlayState* play, SceneCmd* cmd) {
@@ -321,10 +323,11 @@ BAD_RETURN(s32) Scene_CommandLightList(PlayState* play, SceneCmd* cmd) {
     s32 i;
     LightInfo* lightInfo = SEGMENTED_TO_VIRTUAL(cmd->lightList.data);
 
-    for (i = 0; i < cmd->lightList.length; i++) {
-        LightContext_InsertLight(play, &play->lightCtx, lightInfo);
-        lightInfo++;
-    }
+    assert(play->roomCtx.curRoom.lightList == NULL);
+
+    play->roomCtx.curRoom.numLights = cmd->lightList.length;
+    play->roomCtx.curRoom.lightList =
+        LightContext_InsertLightList(play, &play->lightCtx, lightInfo, &play->roomCtx.curRoom.numLights);
 }
 
 BAD_RETURN(s32) Scene_CommandPathList(PlayState* play, SceneCmd* cmd) {

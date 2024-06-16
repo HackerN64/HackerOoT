@@ -1204,7 +1204,8 @@ typedef struct {
 } OcclusionPlaneCandidate;
 
 typedef union {
-    Light_t l;
+    Light_t    l;
+    PosLight_t p;
     long long int force_structure_alignment[2];
 } Light;
 

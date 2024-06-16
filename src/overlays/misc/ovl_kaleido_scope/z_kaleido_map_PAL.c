@@ -538,6 +538,8 @@ void KaleidoScope_DrawWorldMap(PlayState* play, GraphicsContext* gfxCtx) {
         gSPLoadUcode(gfx++, SysUcode_GetUCode(), SysUcode_GetUCodeData());
 
         POLY_OPA_DISP = gfx;
+
+        Lights_ResetDrawState();
     }
 
 #if IS_DEBUG

@@ -294,11 +294,9 @@ void EffectSs_Draw(PlayState* play, s32 index) {
 
 // original name: "EffectSoftSprite2_disp"
 void EffectSs_DrawAll(PlayState* play) {
-    Lights* lights = LightContext_NewLights(&play->lightCtx, play->state.gfxCtx);
     s32 i;
 
-    Lights_BindAll(lights, play->lightCtx.listHead, NULL);
-    Lights_Draw(lights, play->state.gfxCtx);
+    Lights_BindAndDraw(play, NULL, false);
 
     for (i = 0; i < sEffectSsInfo.tableSize; i++) {
         if (sEffectSsInfo.table[i].life > -1) {
@@ -325,6 +323,8 @@ void EffectSs_DrawAll(PlayState* play) {
             }
         }
     }
+
+    Lights_Pop(play);
 }
 
 /**

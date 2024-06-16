@@ -1262,6 +1262,8 @@ void Play_Draw(PlayState* this) {
         Gfx_SetupFrame(gfxCtx, clearFB, clearR, clearG, clearB);
     }
 
+    Lights_ResetDrawState();
+
     if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_DRAW) {
         POLY_OPA_DISP = Play_SetFog(this, POLY_OPA_DISP);
         POLY_XLU_DISP = Play_SetFog(this, POLY_XLU_DISP);
@@ -1393,9 +1395,7 @@ void Play_Draw(PlayState* this) {
         }
 
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTS)) {
-            sp228 = LightContext_NewLights(&this->lightCtx, gfxCtx);
-            Lights_BindAll(sp228, this->lightCtx.listHead, NULL);
-            Lights_Draw(sp228, gfxCtx);
+            Lights_BindAndDraw(this, NULL, this->roomCtx.curRoom.usePointLights);
         }
 
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ROOM_FLAGS != 0)) {
@@ -1409,6 +1409,22 @@ void Play_Draw(PlayState* this) {
                 }
                 Scene_Draw(this);
                 Room_Draw(this, &this->roomCtx.curRoom, roomDrawFlags & (ROOM_DRAW_OPA | ROOM_DRAW_XLU));
+
+#if !ENABLE_F3DEX3
+                if (this->roomCtx.curRoom.usePointLights != this->roomCtx.prevRoom.usePointLights &&
+                    this->roomCtx.prevRoom.segment != NULL) {
+
+                    // Need to re-bind lights if one room has point lights and the other doesn't, otherwise the second
+                    // room may draw with corrupted lighting. Does not apply to F3DEX3 since point lighting requires no
+                    // extra cooperation from the scene display lists, unlike F3DEX2.
+
+                    if ((R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTS)) {
+                        Lights_Pop(this);
+                        Lights_BindAndDraw(this, NULL, this->roomCtx.prevRoom.usePointLights);
+                    }
+                }
+#endif
+
                 Room_Draw(this, &this->roomCtx.prevRoom, roomDrawFlags & (ROOM_DRAW_OPA | ROOM_DRAW_XLU));
             }
         }

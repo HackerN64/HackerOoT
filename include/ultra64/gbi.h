@@ -11,7 +11,20 @@
         #define NO_SYNCS_IN_TEXTURE_LOADS
     #endif
     #include "gbi.f3dex3.h"
+    #define G_MAX_LIGHTS 9
+    #define G_LIGHT_IS_POSLIGHT(lptr) ((lptr)->l.type != 0)
 #else
+/* F3DEX3 compatibility */
+#define G_MAX_LIGHTS 7
+#define gsSPBranchListHint(    dl, count)   gsSPBranchList(    dl)
+#define gSPBranchListHint(pkt, dl, count)   gSPBranchList(pkt, dl)
+#define gsSPDisplayListHint(    dl, count)  gsSPDisplayList(    dl)
+#define gSPDisplayListHint(pkt, dl, count)  gSPDisplayList(pkt, dl)
+
+/* F3DEX2 Positional Lights */
+#define F3DEX_GBI_PL
+#define G_LIGHT_IS_POSLIGHT(lptr) ((lptr)->l.pad1 != 0)
+
 /* To enable Fast3DEX grucode support, define F3DEX_GBI. */
 
 /* Types */
@@ -299,6 +312,9 @@
 #define G_TEXTURE_GEN           0x00040000
 #define G_TEXTURE_GEN_LINEAR    0x00080000
 #define G_LOD                   0x00100000  /* NOT IMPLEMENTED */
+#ifdef F3DEX_GBI_PL
+#define G_LIGHTING_POSITIONAL   0x00400000
+#endif
 #if (defined(F3DEX_GBI) || defined(F3DLP_GBI))
 # define G_CLIPPING             0x00800000
 #else
@@ -310,6 +326,9 @@
 #define G_LIGHTING_H            (G_LIGHTING/0x10000)
 #define G_TEXTURE_GEN_H         (G_TEXTURE_GEN/0x10000)
 #define G_TEXTURE_GEN_LINEAR_H  (G_TEXTURE_GEN_LINEAR/0x10000)
+#ifdef F3DEX_GBI_PL
+#define G_LIGHTING_POSITIONAL_H (G_LIGHTING_POSITIONAL/0x10000)
+#endif
 #define G_LOD_H                 (G_LOD/0x10000) /* NOT IMPLEMENTED */
 # if (defined(F3DEX_GBI) || defined(F3DLP_GBI))
 #  define G_CLIPPING_H          (G_CLIPPING/0x10000)
@@ -1318,6 +1337,18 @@ typedef struct {
     char          pad3;
 } Light_t;
 
+#ifdef F3DEX_GBI_PL
+typedef struct {
+    unsigned char col[3];   /* point light color (rgb) */
+    unsigned char kc;       /* point light enable flag (> 0) & constant attenuation Kc */
+    unsigned char colc[3];  /* copy of point light color (rgb) */
+    unsigned char kl;       /* linear attenuation Kl */
+    short pos[3];           /* light position x, y, z in world space */
+    unsigned char kq;       /* quadratic attenuation Kq */
+    unsigned char size;     /* For specular only; reasonable values are 1-4 */
+} PosLight_t;
+#endif
+
 typedef struct {
     unsigned char col[3];   /* ambient light value (rgba) */
     char          pad1;
@@ -1334,7 +1365,10 @@ typedef struct {
 } Hilite_t;
 
 typedef union {
-    Light_t l;
+    Light_t    l;
+#ifdef F3DEX_GBI_PL
+    PosLight_t p;
+#endif
     long long int force_structure_alignment[2];
 } Light;
 

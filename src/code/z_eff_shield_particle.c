@@ -63,10 +63,8 @@ void EffectShieldParticle_Destroy(void* thisx) {
     EffectShieldParticle* this = (EffectShieldParticle*)thisx;
 
     if ((this != NULL) && (this->lightDecay == true)) {
-        if (this->lightNode == Effect_GetPlayState()->lightCtx.listHead) {
-            Effect_GetPlayState()->lightCtx.listHead = this->lightNode->next;
-        }
         LightContext_RemoveLight(Effect_GetPlayState(), &Effect_GetPlayState()->lightCtx, this->lightNode);
+        this->lightNode = NULL;
     }
 }
 
@@ -100,7 +98,9 @@ s32 EffectShieldParticle_Update(void* thisx) {
     }
 
     if (this->lightDecay == true) {
-        this->lightInfo.params.point.radius /= 2;
+        Lights_PointSetColorAndRadius(&this->lightInfo, this->lightInfo.params.point.color[0],
+                                      this->lightInfo.params.point.color[0], this->lightInfo.params.point.color[0],
+                                      this->lightInfo.params.point.glowRadius / 2);
     }
 
     this->timer++;

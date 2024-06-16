@@ -276,6 +276,19 @@ extern struct GraphicsContext* __gfxCtx;
 
 // HackerOoT
 
+// assertf, print a message before abort
+#if IS_DEBUG
+# define assertf(cond, fmt, ...)                    \
+    do {                                            \
+        if (!(cond)) {                              \
+            PRINTF(fmt, __VA_ARGS__);               \
+            __assert(#cond, __FILE__, __LINE__);    \
+        }                                           \
+    } while (0)
+#else
+# define assertf(cond, fmt, ...) ((void)0)
+#endif
+
 #if IS_DEBUG
 // if using button combo check for the input, else simply return true
 #define DEBUG_BTN_COMBO(useCombo, btnToHold, btnToPress, input) ((useCombo ? CHECK_BTN_ALL(input->cur.button, btnToHold) : true) && CHECK_BTN_ALL(input->press.button, btnToPress))

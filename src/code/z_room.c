@@ -402,6 +402,7 @@ void Room_DrawImageSingle(PlayState* play, Room* room, u32 flags) {
             POLY_OPA_DISP = gfx;
 
             gSPLoadUcode(POLY_OPA_DISP++, SysUcode_GetUCode(), SysUcode_GetUCodeData());
+            Lights_ResetDrawState();
         }
     }
 
@@ -502,6 +503,7 @@ void Room_DrawImageMulti(PlayState* play, Room* room, u32 flags) {
             POLY_OPA_DISP = gfx;
 
             gSPLoadUcode(POLY_OPA_DISP++, SysUcode_GetUCode(), SysUcode_GetUCodeData());
+            Lights_ResetDrawState();
         }
     }
 
@@ -530,6 +532,10 @@ void Room_DrawImage(PlayState* play, Room* room, u32 flags) {
 void func_80096FD4(PlayState* play, Room* room) {
     room->num = -1;
     room->segment = NULL;
+
+    room->lightList = NULL;
+    room->numLights = 0;
+    room->usePointLights = false;
 }
 
 u32 func_80096FE8(PlayState* play, RoomContext* roomCtx) {
@@ -654,6 +660,11 @@ void Room_Draw(PlayState* play, Room* room, u32 flags) {
 void func_80097534(PlayState* play, RoomContext* roomCtx) {
     roomCtx->prevRoom.num = -1;
     roomCtx->prevRoom.segment = NULL;
+
+    LightContext_RemoveLightList(play, &play->lightCtx, roomCtx->prevRoom.lightList, roomCtx->prevRoom.numLights);
+    roomCtx->prevRoom.lightList = NULL;
+    roomCtx->prevRoom.numLights = 0;
+
     func_80031B14(play, &play->actorCtx);
     Actor_SpawnTransitionActors(play, &play->actorCtx);
     Map_InitRoomData(play, roomCtx->curRoom.num);
