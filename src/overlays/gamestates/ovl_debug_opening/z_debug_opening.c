@@ -85,10 +85,7 @@ void DebugOpening_LoadMapSelect(GameState* thisx) {
  * in DebugOpening_ControlOptions
  */
 static OptionInfo sOptionInfo[] = {
-    {
-        .func = DebugOpening_ChooseSaveFile,
-        .name = "Save File: "
-    },
+    { .func = DebugOpening_ChooseSaveFile, .name = "Save File: " },
     {
         .func = DebugOpening_LoadDefinedScene,
         .name = "Init Defined Scene",
@@ -111,16 +108,14 @@ void DebugOpening_ControlOptions(GameState* thisx) {
     DebugOpeningState* this = (DebugOpeningState*)thisx;
 
     // if dpad-up is pressed, go up in the options page
-    if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_DUP) &&
-        this->currentOption > OPTION_CHOOSE_SAVE_FILE) {
+    if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_DUP) && this->currentOption > OPTION_CHOOSE_SAVE_FILE) {
         this->currentOption--;
         Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 
     // if dpad-down is pressed, go down in the options page
-    if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_DDOWN) &&
-        this->currentOption < OPTION_LOAD_FILE_SELECT) {
+    if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_DDOWN) && this->currentOption < OPTION_LOAD_FILE_SELECT) {
         this->currentOption++;
         Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);

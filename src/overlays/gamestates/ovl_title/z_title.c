@@ -129,48 +129,48 @@ void ConsoleLogo_Main(GameState* thisx) {
     ConsoleLogo_Draw(this);
 
     if (this->exit) {
-    #if ENABLE_HACKER_DEBUG
-        #if BOOT_TO_SCENE 
-            // Load debug save
-            Sram_InitDebugSave();
+#if ENABLE_HACKER_DEBUG
+#if BOOT_TO_SCENE
+        // Load debug save
+        Sram_InitDebugSave();
 
-            // Set age, time and entrance
-            gSaveContext.save.linkAge = LINK_AGE_ADULT;
-            gSaveContext.save.dayTime = CLOCK_TIME(12, 0);
-            gSaveContext.save.entranceIndex = BOOT_ENTRANCE;
+        // Set age, time and entrance
+        gSaveContext.save.linkAge = LINK_AGE_ADULT;
+        gSaveContext.save.dayTime = CLOCK_TIME(12, 0);
+        gSaveContext.save.entranceIndex = BOOT_ENTRANCE;
 
-            gSaveContext.respawnFlag = 0;
-            gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = ENTR_LOAD_OPENING;
+        gSaveContext.respawnFlag = 0;
+        gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = ENTR_LOAD_OPENING;
 
-            // Have the magic meter load correctly
-            gSaveContext.magicFillTarget = gSaveContext.save.info.playerData.magic;
-            gSaveContext.magicCapacity = 0;
-            gSaveContext.save.info.playerData.magic = 0;
-            gSaveContext.save.info.playerData.magicLevel = 0;
+        // Have the magic meter load correctly
+        gSaveContext.magicFillTarget = gSaveContext.save.info.playerData.magic;
+        gSaveContext.magicCapacity = 0;
+        gSaveContext.save.info.playerData.magic = 0;
+        gSaveContext.save.info.playerData.magicLevel = 0;
 
-            // Load Play state
-            gSaveContext.gameMode = GAMEMODE_NORMAL;
-            this->state.running = false;
-            SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
-        #elif (IS_MAP_SELECT_ENABLED && BOOT_TO_DEBUG_OPENING) 
-            this->state.running = false;
-            SET_NEXT_GAMESTATE(&this->state, DebugOpening_Init, DebugOpeningState);
-        #else
-            gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-            gSaveContext.natureAmbienceId = 0xFF;
-            gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
-            this->state.running = false;
-            SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, TitleSetupState);
-        #endif
-    #else
+        // Load Play state
+        gSaveContext.gameMode = GAMEMODE_NORMAL;
+        this->state.running = false;
+        SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
+#elif (IS_MAP_SELECT_ENABLED && BOOT_TO_DEBUG_OPENING)
+        this->state.running = false;
+        SET_NEXT_GAMESTATE(&this->state, DebugOpening_Init, DebugOpeningState);
+#else
         gSaveContext.seqId = (u8)NA_BGM_DISABLED;
         gSaveContext.natureAmbienceId = 0xFF;
         gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
         this->state.running = false;
         SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, TitleSetupState);
-    #endif
-    
-    CLOSE_DISPS(this->state.gfxCtx, "../z_title.c", 541);
+#endif
+#else
+        gSaveContext.seqId = (u8)NA_BGM_DISABLED;
+        gSaveContext.natureAmbienceId = 0xFF;
+        gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
+        this->state.running = false;
+        SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, TitleSetupState);
+#endif
+
+        CLOSE_DISPS(this->state.gfxCtx, "../z_title.c", 541);
     }
 }
 
