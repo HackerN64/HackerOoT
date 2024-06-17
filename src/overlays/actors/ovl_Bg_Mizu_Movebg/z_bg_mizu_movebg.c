@@ -11,9 +11,9 @@
 #define FLAGS ACTOR_FLAG_4
 
 #define MOVEBG_TYPE(params) (((u16)(params) >> 0xC) & 0xF)
-#define MOVEBG_FLAGS(params) ((u16)(params) & 0x3F)
+#define MOVEBG_FLAGS(params) ((u16)(params)&0x3F)
 #define MOVEBG_PATH_ID(params) (((u16)(params) >> 0x8) & 0xF)
-#define MOVEBG_POINT_ID(params) ((u16)(params) & 0xF)
+#define MOVEBG_POINT_ID(params) ((u16)(params)&0xF)
 #define MOVEBG_SPEED(params) (((u16)(params) >> 0x4) & 0xF)
 
 void BgMizuMovebg_Init(Actor* thisx, PlayState* play);
