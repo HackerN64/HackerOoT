@@ -589,7 +589,7 @@ static bool ShouldBotherComputingOccPlanes(PlayState* play) {
     if (gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER) {
         return false;
     }
-    if(IS_PAUSED(&play->pauseCtx)){
+    if (IS_PAUSED(&play->pauseCtx)) {
         return false;
     }
     return (play->roomCtx.curRoom.occPlaneCount > 0 || play->roomCtx.prevRoom.occPlaneCount > 0);
