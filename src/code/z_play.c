@@ -1262,6 +1262,10 @@ void Play_Draw(PlayState* this) {
         Gfx_SetupFrame(gfxCtx, clearFB, clearR, clearG, clearB);
     }
 
+#if ENABLE_F3DEX3
+    OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_START);
+#endif
+
     if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_DRAW) {
         POLY_OPA_DISP = Play_SetFog(this, POLY_OPA_DISP);
         POLY_XLU_DISP = Play_SetFog(this, POLY_XLU_DISP);
@@ -1386,6 +1390,10 @@ void Play_Draw(PlayState* this) {
         // buffer while the RDP is working on the framebuffer, without making
         // the RDP wait for new work to be available.
         Gfx_ClearZBuffer(gfxCtx);
+
+#if ENABLE_F3DEX3
+        OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_POST_SKY);
+#endif
 
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTNING)) {
             Environment_UpdateLightningStrike(this);
@@ -1542,6 +1550,9 @@ Play_Draw_skip:
             Skybox_UpdateMatrix(&this->skyboxCtx, this->view.eye.x, this->view.eye.y, this->view.eye.z);
         }
     }
+#if ENABLE_F3DEX3
+    OcclusionPlane_Draw_PostCamUpdate(this);
+#endif
 
     Camera_Finish(GET_ACTIVE_CAM(this));
 

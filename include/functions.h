@@ -1992,6 +1992,11 @@ void Play_SetMotionBlurAlpha(u32 alpha);
 void Play_EnableMotionBlur(u32 alpha);
 void Play_DisableMotionBlur(void);
 
+#if ENABLE_F3DEX3
+void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase phase);
+void OcclusionPlane_Draw_PostCamUpdate(PlayState* play);
+#endif
+
 #if ENABLE_PROFILER
 #include "debug/profiler_inline.h"
 #endif

@@ -507,6 +507,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/sleep.o"
     include "$(BUILD_DIR)/src/code/jpegutils.o"
     include "$(BUILD_DIR)/src/code/jpegdecoder.o"
+#if ENABLE_F3DEX3
+    include "$(BUILD_DIR)/src/code/occlusionplanes.o"
+#endif
 #if IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsfreeblocks.o"
 #endif

@@ -82,11 +82,6 @@ void Menu_Update(Menu* this) {
                 if (pressDRight && gF3DEX3OccMode < F3DEX3_OCC_MODE_COUNT - 1) {
                     gF3DEX3OccMode++;
                 }
-                if (gF3DEX3OccMode == F3DEX3_OCC_MODE_ALWAYS) {
-                    gF3DEX3NOCVersion = 0;
-                } else if (gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER) {
-                    gF3DEX3NOCVersion = 1;
-                }
             }
 #endif
 

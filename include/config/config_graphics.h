@@ -18,6 +18,8 @@
 // have already had the missing syncs manually added, but some have not been
 // fixed yet.
 #define ENABLE_F3DEX3_NOSYNCS false
+// Visualize occlusion planes with some dots at the corners and text.
+#define DEBUG_OCCLUSION_PLANES false
 
 /**
  * Other graphical settings

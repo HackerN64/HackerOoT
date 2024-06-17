@@ -1,6 +1,9 @@
 #ifndef OCCLUSIONPLANES_H
 #define OCCLUSIONPLANES_H
 
+#include "ultra64/gbi.h"
+#include "ultra64/ultratypes.h"
+
 typedef enum F3DEX3OccMode {
     F3DEX3_OCC_MODE_AUTO,
     F3DEX3_OCC_MODE_ALWAYS,
@@ -8,4 +11,10 @@ typedef enum F3DEX3OccMode {
     F3DEX3_OCC_MODE_COUNT
 } F3DEX3OccMode;
 
-#endif
+typedef enum OcclusionPlanePhase {
+    OCCLUSION_PLANE_PHASE_START,
+    OCCLUSION_PLANE_PHASE_POST_SKY,
+    OCCLUSION_PLANE_PHASE_COUNT
+} OcclusionPlanePhase;
+
+#endif // OCCLUSIONPLANES_H
