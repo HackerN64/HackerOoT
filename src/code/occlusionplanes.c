@@ -599,30 +599,30 @@ void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase phase) {
 
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     OPEN_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
-    
-    switch(phase){
-    case OCCLUSION_PLANE_PHASE_START:
-        planeCommands[OCCLUSION_PLANE_STORED_CMD_SKY_OPA] = POLY_OPA_DISP;
-        gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
-        
-        // Later phases might not happen if debug registers are set up certain way
-        planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_OPA] = NULL;
-        planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_XLU] = NULL;
-        break;
-    case OCCLUSION_PLANE_PHASE_POST_SKY:
-        planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_OPA] = POLY_OPA_DISP;
-        gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
-        planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_XLU] = POLY_XLU_DISP;
-        gSPOcclusionPlane(POLY_XLU_DISP++, &sNoOcclusionPlane);
-        break;
-    case OCCLUSION_PLANE_PHASE_POST_3D:
-        // Need to turn it off in OPA to draw the pause screen
-        gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
-        // Need to turn it off at the end of XLU (for OVL) for the HUD
-        gSPOcclusionPlane(POLY_XLU_DISP++, &sNoOcclusionPlane);
-        break;
+
+    switch (phase) {
+        case OCCLUSION_PLANE_PHASE_START:
+            planeCommands[OCCLUSION_PLANE_STORED_CMD_SKY_OPA] = POLY_OPA_DISP;
+            gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
+
+            // Later phases might not happen if debug registers are set up certain way
+            planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_OPA] = NULL;
+            planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_XLU] = NULL;
+            break;
+        case OCCLUSION_PLANE_PHASE_POST_SKY:
+            planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_OPA] = POLY_OPA_DISP;
+            gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
+            planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_XLU] = POLY_XLU_DISP;
+            gSPOcclusionPlane(POLY_XLU_DISP++, &sNoOcclusionPlane);
+            break;
+        case OCCLUSION_PLANE_PHASE_POST_3D:
+            // Need to turn it off in OPA to draw the pause screen
+            gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
+            // Need to turn it off at the end of XLU (for OVL) for the HUD
+            gSPOcclusionPlane(POLY_XLU_DISP++, &sNoOcclusionPlane);
+            break;
     }
-    
+
     CLOSE_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
 }
 
