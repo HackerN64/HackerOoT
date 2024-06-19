@@ -1485,10 +1485,6 @@ void Play_Draw(PlayState* this) {
         }
 #endif
 
-#if ENABLE_F3DEX3
-        OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_POST_3D);
-#endif
-
         if ((R_PAUSE_BG_PRERENDER_STATE == PAUSE_BG_PRERENDER_SETUP) || (gTransitionTileState == TRANS_TILE_SETUP)) {
             Gfx* gfxP = OVERLAY_DISP;
 
@@ -1512,6 +1508,10 @@ void Play_Draw(PlayState* this) {
         }
 
     Play_Draw_DrawOverlayElements:
+#if ENABLE_F3DEX3
+        OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_POST_3D);
+#endif
+
         if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_OVERLAY_ELEMENTS) {
             Play_DrawOverlayElements(this);
         }
