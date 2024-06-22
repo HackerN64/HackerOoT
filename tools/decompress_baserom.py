@@ -16,6 +16,7 @@ import ipl3checksum
 import zlib
 
 import dmadata
+import version_config
 
 
 def decompress_zlib(data: bytes) -> bytes:
@@ -172,10 +173,14 @@ def main():
 
     uncompressed_path = baserom_dir / "baserom-decompressed.z64"
 
-    dmadata_start = int((baserom_dir / "dmadata_start.txt").read_text(), 16)
+    config = version_config.load_version_config(version)
+    dmadata_start = config.dmadata_start
+
     decompressed_str_hash = (baserom_dir / "checksum.md5").read_text().split()[0]
     if version != "hackeroot-mq":
-        compressed_str_hash = (baserom_dir / "checksum-compressed.md5").read_text().split()[0]
+        compressed_str_hash = (
+            (baserom_dir / "checksum-compressed.md5").read_text().split()[0]
+        )
     else:
         compressed_str_hash = decompressed_str_hash # HackerOoT change: "just so the variable is defined"
 
@@ -223,15 +228,8 @@ def main():
         correct_str_hash = compressed_str_hash
     if str_hash != correct_str_hash:
         print(
-            f"Error: Expected a hash of {correct_str_hash} but got {str_hash}. The baserom has probably been tampered, find a new one"
+            f"Error: Expected a hash of {decompressed_str_hash} after decompression but got {str_hash}!"
         )
-
-        if version in {"gc-eu-mq-dbg", "hackeroot-mq"}:
-            if str_hash == "9fede30e3239558cf3993f12b7ed7458":
-                print(
-                    "The provided baserom is a rom which has been edited with ZeldaEdit and is not suitable for use with decomp. Find a new one."
-                )
-
         exit(1)
 
     dma_entries = dmadata.read_dmadata(file_content, dmadata_start)
