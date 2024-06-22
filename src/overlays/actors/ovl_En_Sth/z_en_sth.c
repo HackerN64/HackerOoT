@@ -147,7 +147,7 @@ void EnSth_SetupShapeColliderUpdate2AndDraw(EnSth* this, PlayState* play) {
 
 void EnSth_SetupAfterObjectLoaded(EnSth* this, PlayState* play) {
     s32 pad;
-    s16* params;
+    s64* params;
 
     EnSth_SetupShapeColliderUpdate2AndDraw(this, play);
     gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[this->requiredObjectSlot].segment);
