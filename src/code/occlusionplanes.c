@@ -3,7 +3,7 @@
 
 #if ENABLE_F3DEX3
 
-static Gfx* planeCommands[OCCLUSION_PLANE_PHASE_COUNT];
+static Gfx* planeCommands[OCCLUSION_PLANE_STORED_CMD_COUNT];
 
 static s32 OcclusionPlane_Choose(PlayState* play, Vec3f* selCandidate) {
     Vec3f* camPos = &play->view.eye;
@@ -599,14 +599,31 @@ void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase phase) {
 
     GraphicsContext* gfxCtx = play->state.gfxCtx;
     OPEN_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
-    planeCommands[phase] = POLY_OPA_DISP;
-    gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
-    CLOSE_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
 
-    if (phase == OCCLUSION_PLANE_PHASE_START) {
-        // Post sky might not happen in debug
-        planeCommands[OCCLUSION_PLANE_PHASE_POST_SKY] = NULL;
+    switch (phase) {
+        case OCCLUSION_PLANE_PHASE_START:
+            planeCommands[OCCLUSION_PLANE_STORED_CMD_SKY_OPA] = POLY_OPA_DISP;
+            gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
+
+            // Later phases might not happen if debug registers are set up certain way
+            planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_OPA] = NULL;
+            planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_XLU] = NULL;
+            break;
+        case OCCLUSION_PLANE_PHASE_POST_SKY:
+            planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_OPA] = POLY_OPA_DISP;
+            gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
+            planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_XLU] = POLY_XLU_DISP;
+            gSPOcclusionPlane(POLY_XLU_DISP++, &sNoOcclusionPlane);
+            break;
+        case OCCLUSION_PLANE_PHASE_POST_3D:
+            // Need to turn it off in OPA to draw the pause screen
+            gSPOcclusionPlane(POLY_OPA_DISP++, &sNoOcclusionPlane);
+            // Need to turn it off at the end of XLU (for OVL) for the HUD
+            gSPOcclusionPlane(POLY_XLU_DISP++, &sNoOcclusionPlane);
+            break;
     }
+
+    CLOSE_DISPS(gfxCtx, "occlusionplanes.c", __LINE__);
 }
 
 void OcclusionPlane_Draw_PostCamUpdate(PlayState* play) {
@@ -638,10 +655,11 @@ void OcclusionPlane_Draw_PostCamUpdate(PlayState* play) {
         skyPlane->o.ky = 0;
         skyPlane->o.kz = 0;
         skyPlane->o.kc = 0x7FFF;
-        ((u32*)(planeCommands[OCCLUSION_PLANE_PHASE_START]))[1] = (u32)skyPlane;
+        ((u32*)(planeCommands[OCCLUSION_PLANE_STORED_CMD_SKY_OPA]))[1] = (u32)skyPlane;
     }
-    if (planeCommands[OCCLUSION_PLANE_PHASE_POST_SKY] != NULL) {
-        ((u32*)(planeCommands[OCCLUSION_PLANE_PHASE_POST_SKY]))[1] = (u32)mainPlane;
+    if (planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_OPA] != NULL) {
+        ((u32*)(planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_OPA]))[1] = (u32)mainPlane;
+        ((u32*)(planeCommands[OCCLUSION_PLANE_STORED_CMD_3D_XLU]))[1] = (u32)mainPlane;
     }
 }
 
