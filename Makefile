@@ -42,6 +42,7 @@ RUN_CC_CHECK := 1
 CFLAGS ?=
 CPPFLAGS ?=
 CFLAGS_IDO ?=
+CPP_DEFINES ?=
 
 TARGET ?=
 
@@ -54,8 +55,7 @@ CPPFLAGS := -DCONSOLE_GC
 endif
 
 ifeq ($(COMPILER),gcc)
-  CFLAGS += -DCOMPILER_GCC -DNON_MATCHING -DAVOID_UB -std=gnu11
-  CPPFLAGS += -DCOMPILER_GCC -DNON_MATCHING -DAVOID_UB -std=gnu11
+  CPP_DEFINES += -DCOMPILER_GCC -DNON_MATCHING -DAVOID_UB -std=gnu11
 else
   $(error Unsupported compiler. Please use gcc as the COMPILER variable.)
 endif
@@ -88,17 +88,14 @@ ifeq ($(VERSION),gc-eu)
   HACKEROOT := 0
 else ifeq ($(VERSION),gc-eu-mq)
   DEBUG := 0
-  CFLAGS += -DOOT_MQ
-  CPPFLAGS += -DOOT_MQ
+  CPP_DEFINES += -DOOT_MQ
   HACKEROOT := 0
 else ifeq ($(VERSION),gc-eu-mq-dbg)
   DEBUG := 1
-  CFLAGS += -DOOT_MQ
-  CPPFLAGS += -DOOT_MQ
+  CPP_DEFINES += -DOOT_MQ
   HACKEROOT := 0
 else ifeq ($(VERSION),hackeroot-mq)
-  CFLAGS += -DOOT_MQ
-  CPPFLAGS += -DOOT_MQ
+  CPP_DEFINES += -DOOT_MQ
   HACKEROOT := 1
 else
 $(error Unsupported version $(VERSION))
@@ -123,36 +120,25 @@ ifeq ($(origin PACKAGE_VERSION), undefined)
 endif
 
 ifeq ($(VERSION),hackeroot-mq)
-  CFLAGS += -DENABLE_HACKEROOT=1
-  CPPFLAGS += -DENABLE_HACKEROOT=1
-  CFLAGS_IDO += -DENABLE_HACKEROOT=1
+  CPP_DEFINES += -DENABLE_HACKEROOT=1
   OPTFLAGS := -Os
 
   ifeq ($(RELEASE),1)
-    CFLAGS += -DRELEASE_ROM=1 -DOOT_DEBUG=0
-    CPPFLAGS += -DRELEASE_ROM=1 -DOOT_DEBUG=0
+    CPP_DEFINES += -DRELEASE_ROM=1 -DOOT_DEBUG=0
     CFLAGS_IDO += -DOOT_DEBUG=0
   else
-    CFLAGS += -DRELEASE_ROM=0 -DOOT_DEBUG=1
-    CPPFLAGS += -DRELEASE_ROM=0 -DOOT_DEBUG=1
-    CFLAGS_IDO += -DRELEASE_ROM=0 -DOOT_DEBUG=1
+    CPP_DEFINES += -DRELEASE_ROM=0 -DOOT_DEBUG=1
   endif
 else
   ifeq ($(DEBUG),1)
-    CFLAGS += -DOOT_DEBUG=1
-    CPPFLAGS += -DOOT_DEBUG=1
-    CFLAGS_IDO += -DOOT_DEBUG=1
+    CPP_DEFINES += -DOOT_DEBUG=1
     OPTFLAGS := -O2
   else
-    CFLAGS += -DNDEBUG -DOOT_DEBUG=0
-    CPPFLAGS += -DNDEBUG -DOOT_DEBUG=0
-    CFLAGS_IDO += -DNDEBUG -DOOT_DEBUG=0
+    CPP_DEFINES += -DNDEBUG -DOOT_DEBUG=0
     OPTFLAGS := -O2 -g3
   endif
 
-  CFLAGS += -DENABLE_HACKEROOT=0
-  CPPFLAGS += -DENABLE_HACKEROOT=0
-  CFLAGS_IDO += -DENABLE_HACKEROOT=0
+  CPP_DEFINES += -DENABLE_HACKEROOT=0
 endif
 
 # Override optimization flags if using GDB
@@ -218,7 +204,7 @@ OBJCOPY := $(MIPS_BINUTILS_PREFIX)objcopy
 OBJDUMP := $(MIPS_BINUTILS_PREFIX)objdump
 NM      := $(MIPS_BINUTILS_PREFIX)nm
 
-N64_EMULATOR ?= 
+N64_EMULATOR ?=
 
 INC := -Iinclude -Iinclude/libc -Isrc -I$(BUILD_DIR) -I. -I$(EXTRACTED_DIR)
 
@@ -241,6 +227,10 @@ CC_IDO     := tools/ido_recomp/linux/5.3/cc
 # Command to replace path variables in the spec file. We can't use the C
 # preprocessor for this because it won't substitute inside string literals.
 SPEC_REPLACE_VARS := sed -e 's|$$(BUILD_DIR)|$(BUILD_DIR)|g'
+
+CFLAGS += $(CPP_DEFINES)
+CPPFLAGS += $(CPP_DEFINES)
+CFLAGS_IDO += $(CPP_DEFINES)
 
 ASFLAGS := -march=vr4300 -32 -no-pad-sections -Iinclude
 

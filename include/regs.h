@@ -112,6 +112,7 @@
 #define R_C_UP_ICON_Y                            YREG(89)
 #define R_EPONAS_SONG_PLAYED                     DREG(53)
 #define R_MAGIC_FILL_COLOR(i)                    ZREG(0 + (i))
+#define R_PAUSE_PAGE_SWITCH_FRAME_ADVANCE_ON     ZREG(13)
 #define R_C_BTN_COLOR(i)                         ZREG(39 + (i))
 #define R_B_BTN_COLOR(i)                         ZREG(43 + (i))
 #define R_START_LABEL_DD(i)                      ZREG(48 + (i))
@@ -359,5 +360,18 @@ typedef enum {
 #define R_MOTION_BLUR_PRIORITY_ALPHA    SREG(92)
 #define R_MOTION_BLUR_PRIORITY_ENABLED  SREG(93)
 #define R_MOTION_BLUR_ENABLED           SREG(95)
+
+typedef struct {
+    // ENABLE_REG_EDITOR
+    /* 0x00 */ s32  regPage; // 0: no page selected (reg editor is not active); 1: first page; `REG_PAGES`: last page
+    /* 0x04 */ s32  regGroup; // Indexed from 0 to `REG_GROUPS`-1. Each group has its own character to identify it.
+    /* 0x08 */ s32  regCur; // Selected reg, indexed from 0 as the page start
+    /* 0x0C */ s32  dPadInputPrev;
+    /* 0x10 */ s32  inputRepeatTimer;
+
+    /* 0x14 */ s16  data[REG_GROUPS * REGS_PER_GROUP]; // Accessed through *REG macros, see regs.h
+} RegEditor; // size = 0x15D4
+
+extern RegEditor* gRegEditor;
 
 #endif

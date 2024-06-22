@@ -48,7 +48,6 @@ mkdmadata_SOURCES    := mkdmadata.c spec.c util.c
 mkldscript_SOURCES   := mkldscript.c spec.c util.c
 reloc_prereq_SOURCES := reloc_prereq.c spec.c util.c
 
-
 define COMPILE =
 $(1): $($1_SOURCES)
 	$(CC) $(CFLAGS) $$^ -o $$@

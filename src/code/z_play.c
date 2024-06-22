@@ -298,7 +298,7 @@ void Play_Init(GameState* thisx) {
     Effect_InitContext(this);
     EffectSs_InitInfo(this, 0x55);
     CollisionCheck_InitContext(this, &this->colChkCtx);
-    AnimationContext_Reset(&this->animationCtx);
+    AnimTaskQueue_Reset(&this->animTaskQueue);
     Cutscene_InitContext(this, &this->csCtx);
 
     if (gSaveContext.nextCutsceneIndex != 0xFFEF) {
@@ -467,7 +467,7 @@ void Play_Init(GameState* thisx) {
     gSaveContext.seqId = this->sequenceCtx.seqId;
     gSaveContext.natureAmbienceId = this->sequenceCtx.natureAmbienceId;
     func_8002DF18(this, GET_PLAYER(this));
-    AnimationContext_Update(this, &this->animationCtx);
+    AnimTaskQueue_Update(this, &this->animTaskQueue);
     gSaveContext.respawnFlag = 0;
 
     if (IS_DEBUG && R_USE_DEBUG_CUTSCENE) {
@@ -900,7 +900,7 @@ void Play_Update(PlayState* this) {
             isPaused = IS_PAUSED(&this->pauseCtx);
 
             PLAY_LOG(3555);
-            AnimationContext_Reset(&this->animationCtx);
+            AnimTaskQueue_Reset(&this->animTaskQueue);
 
             if (!IS_DEBUG) {}
 
@@ -1017,7 +1017,7 @@ void Play_Update(PlayState* this) {
             Interface_Update(this);
 
             PLAY_LOG(3765);
-            AnimationContext_Update(this, &this->animationCtx);
+            AnimTaskQueue_Update(this, &this->animTaskQueue);
 
             PLAY_LOG(3771);
             SfxSource_UpdateAll(this);
