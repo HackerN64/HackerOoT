@@ -34,7 +34,11 @@ void __osInitialize_common(void) {
     u32 pifdata;
 
     __osFinalrom = true;
+#if !defined(_MIPS_SIM) || _MIPS_SIM != _ABIN32
     __osSetSR(__osGetSR() | SR_CU1);
+#else
+    __osSetSR(__osGetSR() | SR_CU1 | SR_FR);
+#endif
     __osSetFpcCsr(FPCSR_FS | FPCSR_EV);
     __osSetWatchLo(0x04900000);
 

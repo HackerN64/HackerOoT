@@ -10,26 +10,44 @@
 LEAF(guTranslate)
     li      $at, 0x47800000 // 65536.0f
     mtc1    $at, $f4
+#if defined(_MIPS_SIM) && _MIPS_SIM == _ABIO32
     mtc1    $a1, $f6
+#endif
     sw      $zero, ($a0)
     sw      $zero, 0x14($a0)
+#if defined(_MIPS_SIM) && _MIPS_SIM == _ABIO32
     mul.s   $f8, $f6, $f4
     mtc1    $a2, $f6
+#else
+    mul.s   $f8, $f12, $f4
+#endif
     sw      $zero, 8($a0)
     sw      $zero, 4($a0)
     sw      $zero, 0xC($a0)
     sw      $zero, 0x10($a0)
     sw      $zero, 0x20($a0)
     trunc.w.s $f10, $f8
+#if defined(_MIPS_SIM) && _MIPS_SIM == _ABIO32
     mul.s   $f8, $f6, $f4
     mtc1    $a3, $f6
+#elif !defined(_MIPS_SIM)
+    mul.s   $f8, $f14, $f4
+#else
+    mul.s   $f8, $f13, $f4
+#endif
     sw      $zero, 0x24($a0)
     mfc1    $t1, $f10
     sw      $zero, 0x28($a0)
     sw      $zero, 0x2C($a0)
     srl     $t2, $t1, 0x10
     trunc.w.s $f10, $f8
+#if defined(_MIPS_SIM) && _MIPS_SIM == _ABIO32
     mul.s   $f8, $f6, $f4
+#elif !defined(_MIPS_SIM)
+    mul.s   $f8, $f16, $f4
+#else
+    mul.s   $f8, $f14, $f4
+#endif
     sll     $t0, $t2, 0x10
     sw      $zero, 0x30($a0)
     mfc1    $t3, $f10

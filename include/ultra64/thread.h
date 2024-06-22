@@ -43,8 +43,15 @@ typedef struct {
     /* 0x0E8 */ u64 lo, hi;
     /* 0x0F8 */ u32 sr, pc, cause, badvaddr, rcp;
     /* 0x10C */ u32 fpcsr;
+#if !defined(_MIPS_SIM) || _MIPS_SIM != _ABIN32
     /* 0x110 */ __OSfp  fp0,  fp2,  fp4,  fp6,  fp8, fp10, fp12, fp14;
     /* 0x150 */ __OSfp fp16, fp18, fp20, fp22, fp24, fp26, fp28, fp30;
+#else
+                __OSfp  fp0,  fp1,  fp2,  fp3,  fp4,  fp5,  fp6,  fp7;
+                __OSfp  fp8,  fp9, fp10, fp11, fp12, fp13, fp14, fp15;
+                __OSfp fp16, fp17, fp18, fp19, fp20, fp21, fp22, fp23;
+                __OSfp fp24, fp25, fp26, fp27, fp28, fp29, fp30, fp31;
+#endif
 } __OSThreadContext; // size = 0x190
 
 typedef struct {
@@ -122,6 +129,7 @@ typedef struct {
 #define THREAD_BADVADDR (THREAD_CONTEXT + 0x104)
 #define THREAD_RCP      (THREAD_CONTEXT + 0x108)
 #define THREAD_FPCSR    (THREAD_CONTEXT + 0x10C)
+#if !defined(_MIPS_SIM) || _MIPS_SIM != _ABIN32
 #define THREAD_FP0      (THREAD_CONTEXT + 0x110)
 #define THREAD_FP2      (THREAD_CONTEXT + 0x118)
 #define THREAD_FP4      (THREAD_CONTEXT + 0x120)
@@ -138,6 +146,40 @@ typedef struct {
 #define THREAD_FP26     (THREAD_CONTEXT + 0x178)
 #define THREAD_FP28     (THREAD_CONTEXT + 0x180)
 #define THREAD_FP30     (THREAD_CONTEXT + 0x188)
+#else
+#define THREAD_FP0      (THREAD_CONTEXT + 0x110)
+#define THREAD_FP1      (THREAD_CONTEXT + 0x118)
+#define THREAD_FP2      (THREAD_CONTEXT + 0x120)
+#define THREAD_FP3      (THREAD_CONTEXT + 0x128)
+#define THREAD_FP4      (THREAD_CONTEXT + 0x130)
+#define THREAD_FP5      (THREAD_CONTEXT + 0x138)
+#define THREAD_FP6      (THREAD_CONTEXT + 0x140)
+#define THREAD_FP7      (THREAD_CONTEXT + 0x148)
+#define THREAD_FP8      (THREAD_CONTEXT + 0x150)
+#define THREAD_FP9      (THREAD_CONTEXT + 0x158)
+#define THREAD_FP10     (THREAD_CONTEXT + 0x160)
+#define THREAD_FP11     (THREAD_CONTEXT + 0x168)
+#define THREAD_FP12     (THREAD_CONTEXT + 0x170)
+#define THREAD_FP13     (THREAD_CONTEXT + 0x178)
+#define THREAD_FP14     (THREAD_CONTEXT + 0x180)
+#define THREAD_FP15     (THREAD_CONTEXT + 0x188)
+#define THREAD_FP16     (THREAD_CONTEXT + 0x190)
+#define THREAD_FP17     (THREAD_CONTEXT + 0x198)
+#define THREAD_FP18     (THREAD_CONTEXT + 0x1A0)
+#define THREAD_FP19     (THREAD_CONTEXT + 0x1A8)
+#define THREAD_FP20     (THREAD_CONTEXT + 0x1B0)
+#define THREAD_FP21     (THREAD_CONTEXT + 0x1B8)
+#define THREAD_FP22     (THREAD_CONTEXT + 0x1C0)
+#define THREAD_FP23     (THREAD_CONTEXT + 0x1C8)
+#define THREAD_FP24     (THREAD_CONTEXT + 0x1D0)
+#define THREAD_FP25     (THREAD_CONTEXT + 0x1D8)
+#define THREAD_FP26     (THREAD_CONTEXT + 0x1E0)
+#define THREAD_FP27     (THREAD_CONTEXT + 0x1E8)
+#define THREAD_FP28     (THREAD_CONTEXT + 0x1F0)
+#define THREAD_FP29     (THREAD_CONTEXT + 0x1F8)
+#define THREAD_FP30     (THREAD_CONTEXT + 0x200)
+#define THREAD_FP31     (THREAD_CONTEXT + 0x208)
+#endif
 
 #endif
 

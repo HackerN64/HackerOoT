@@ -228,6 +228,24 @@ endrcp:
     sdc1    $f26, THREAD_FP26($k0)
     sdc1    $f28, THREAD_FP28($k0)
     sdc1    $f30, THREAD_FP30($k0)
+#if defined(_MIPS_SIM) && _MIPS_SIM == _ABIN32
+    sdc1    $f1, THREAD_FP1($k0)
+    sdc1    $f3, THREAD_FP3($k0)
+    sdc1    $f5, THREAD_FP5($k0)
+    sdc1    $f7, THREAD_FP7($k0)
+    sdc1    $f9, THREAD_FP9($k0)
+    sdc1    $f11, THREAD_FP11($k0)
+    sdc1    $f13, THREAD_FP13($k0)
+    sdc1    $f15, THREAD_FP15($k0)
+    sdc1    $f17, THREAD_FP17($k0)
+    sdc1    $f19, THREAD_FP19($k0)
+    sdc1    $f21, THREAD_FP21($k0)
+    sdc1    $f23, THREAD_FP23($k0)
+    sdc1    $f25, THREAD_FP25($k0)
+    sdc1    $f27, THREAD_FP27($k0)
+    sdc1    $f29, THREAD_FP29($k0)
+    sdc1    $f31, THREAD_FP31($k0)
+#endif
 
 handle_interrupt:
 #if ENABLE_PROFILER
@@ -997,6 +1015,24 @@ LEAF(__osDispatchThread)
     ldc1    $f26, THREAD_FP26($k0)
     ldc1    $f28, THREAD_FP28($k0)
     ldc1    $f30, THREAD_FP30($k0)
+#if defined(_MIPS_SIM) && _MIPS_SIM == _ABIN32
+    ldc1    $f1, THREAD_FP1($k0)
+    ldc1    $f3, THREAD_FP3($k0)
+    ldc1    $f5, THREAD_FP5($k0)
+    ldc1    $f7, THREAD_FP7($k0)
+    ldc1    $f9, THREAD_FP9($k0)
+    ldc1    $f11, THREAD_FP11($k0)
+    ldc1    $f13, THREAD_FP13($k0)
+    ldc1    $f15, THREAD_FP15($k0)
+    ldc1    $f17, THREAD_FP17($k0)
+    ldc1    $f19, THREAD_FP19($k0)
+    ldc1    $f21, THREAD_FP21($k0)
+    ldc1    $f23, THREAD_FP23($k0)
+    ldc1    $f25, THREAD_FP25($k0)
+    ldc1    $f27, THREAD_FP27($k0)
+    ldc1    $f29, THREAD_FP29($k0)
+    ldc1    $f31, THREAD_FP31($k0)
+#endif
 1:
     // Restore RCP interrupt mask, masking out any RCP interrupts that
     // are not also enabled in the global interrupt mask
