@@ -276,11 +276,12 @@ ifeq ($(COMPILER),gcc)
 SRC_DIRS := $(shell find src -type d)
 endif
 
-ASSET_BIN_DIRS := $(shell find assets/* -type d -not -path "assets/xml*" -not -path "assets/text")
-ASSET_FILES_XML := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.xml))
+# create extracted directories
+$(shell mkdir -p $(EXTRACTED_DIR) $(EXTRACTED_DIR)/assets $(EXTRACTED_DIR)/text)
+
+ASSET_BIN_DIRS := $(shell find $(EXTRACTED_DIR)/assets -type d)
 ASSET_FILES_BIN := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.bin))
-ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_XML:.xml=.c),$f) \
-				   $(foreach f,$(ASSET_FILES_BIN:.bin=.bin.inc.c),$(BUILD_DIR)/$f) \
+ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_BIN:.bin=.bin.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
 				   $(foreach f,$(wildcard assets/text/*.c),$(BUILD_DIR)/$(f:.c=.o))
 
 UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
@@ -288,10 +289,12 @@ UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
 BASEROM_BIN_FILES := $(wildcard $(EXTRACTED_DIR)/baserom/*)
 
 # source files
-C_FILES       := $(filter-out %.inc.c,$(foreach dir,$(SRC_DIRS) $(ASSET_BIN_DIRS),$(wildcard $(dir)/*.c)))
+SRC_C_FILES   := $(filter-out %.inc.c,$(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c)))
+ASSET_C_FILES := $(filter-out %.inc.c,$(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.c)))
 S_FILES       := $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS),$(wildcard $(dir)/*.s))
 O_FILES       := $(foreach f,$(S_FILES:.s=.o),$(BUILD_DIR)/$f) \
-                 $(foreach f,$(C_FILES:.c=.o),$(BUILD_DIR)/$f) \
+                 $(foreach f,$(SRC_C_FILES:.c=.o),$(BUILD_DIR)/$f) \
+                 $(foreach f,$(ASSET_C_FILES:.c=.o),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
                  $(foreach f,$(BASEROM_BIN_FILES),$(BUILD_DIR)/baserom/$(notdir $f).o)
 UCODE_PATCHES := $(wildcard F3DEX3/*.bps)
 UCODE_FILES   := $(foreach f,$(UCODE_PATCHES:.bps=),$f)
@@ -306,11 +309,11 @@ DEP_FILES := $(O_FILES:.o=.asmproc.d) $(OVL_RELOC_FILES:.o=.d)
 
 TEXTURE_FILES_PNG := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.png))
 TEXTURE_FILES_JPG := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.jpg))
-TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),$(BUILD_DIR)/$f) \
-					 $(foreach f,$(TEXTURE_FILES_JPG:.jpg=.jpg.inc.c),$(BUILD_DIR)/$f) \
+TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
+					 $(foreach f,$(TEXTURE_FILES_JPG:.jpg=.jpg.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%))
 
 # create build directories
-$(shell mkdir -p $(BUILD_DIR)/baserom $(EXTRACTED_DIR)/text $(BUILD_DIR)/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS) $(ASSET_BIN_DIRS),$(BUILD_DIR)/$(dir)))
+$(shell mkdir -p $(BUILD_DIR)/baserom $(BUILD_DIR)/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS),$(BUILD_DIR)/$(dir)) $(foreach dir,$(ASSET_BIN_DIRS),$(dir:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)))
 
 ifeq ($(COMPILER),gcc)
 # Note that if adding additional assets directories for modding reasons these flags must also be used there

@@ -11,6 +11,9 @@
 #include "assets/scenes/indoors/miharigoya/miharigoya_scene.h"
 #include "assets/scenes/indoors/souko/souko_scene.h"
 
+#include "assets/scenes/indoors/miharigoya/miharigoya_scene.h"
+#include "assets/scenes/indoors/souko/souko_scene.h"
+
 #include "assets/scenes/overworld/spot00/spot00_scene.h"
 #include "assets/scenes/overworld/spot00/spot00_room_0.h"
 #include "assets/scenes/overworld/spot01/spot01_scene.h"
