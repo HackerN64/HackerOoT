@@ -117,7 +117,6 @@ def main():
     parser.add_argument("-j", "--jobs", help="Number of cpu cores to extract with.")
     parser.add_argument("-u", "--unaccounted", help="Enables ZAPD unaccounted detector warning system.", action="store_true")
     parser.add_argument("-Z", help="Pass the argument on to ZAPD, e.g. `-ZWunaccounted` to warn about unaccounted blocks in XMLs. Each argument should be passed separately, *without* the leading dash.", metavar="ZAPD_ARG", action="append")
-    parser.add_argument("-v", "--version", help="OoT Version", choices=["gc-eu-mq-dbg", "hackeroot-mq"])
     args = parser.parse_args()
 
     version: str = args.oot_version
