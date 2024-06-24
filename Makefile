@@ -232,6 +232,14 @@ CFLAGS += $(CPP_DEFINES)
 CPPFLAGS += $(CPP_DEFINES)
 CFLAGS_IDO += $(CPP_DEFINES)
 
+# TODO PL and DOWHILE should be disabled for non-gamecube
+GBI_DEFINES := -DF3DEX_GBI_2 -DF3DEX_GBI_PL -DGBI_DOWHILE
+ifeq ($(DEBUG),1)
+  GBI_DEFINES += -DGBI_DEBUG
+endif
+
+CFLAGS += $(GBI_DEFINES)
+
 ASFLAGS := -march=vr4300 -32 -no-pad-sections -Iinclude
 
 ifeq ($(COMPILER),gcc)
@@ -420,7 +428,7 @@ setup: venv
 	$(call print,Tools: Done!)
 	$(V)$(PYTHON) tools/decompress_baserom.py $(VERSION)
 	$(call print,Decompressing baserom: Done!)
-	$(V)$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 -o $(EXTRACTED_DIR)/baserom --dmadata-start `cat $(BASEROM_DIR)/dmadata_start.txt` --dmadata-names $(BASEROM_DIR)/dmadata_names.txt
+	$(V)$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 --oot-version $(VERSION) -o $(EXTRACTED_DIR)/baserom
 	$(V)$(PYTHON) tools/msgdis.py --oot-version $(VERSION) --text-out $(EXTRACTED_DIR)/text/message_data.h --staff-text-out $(EXTRACTED_DIR)/text/message_data_staff.h
 # TODO: for now, we only extract assets from the Debug ROM
 ifneq ($(VERSION),gc-eu-mq)
