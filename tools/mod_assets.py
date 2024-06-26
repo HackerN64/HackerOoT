@@ -15,6 +15,7 @@ from pathlib import Path
 
 
 allow_print = False
+oot_version = ""
 
 def log(msg: str):
     if allow_print:
@@ -44,7 +45,7 @@ def remove_stale_assets(root: str, copied_files: T.List[str], last_cache_time: i
 
 def copy_all(root: str) -> T.List[str]:
     src_root = os.path.join(root, "mod_assets")
-    dst_root = os.path.join(root, "assets")
+    dst_root = os.path.join(root, f"extracted/{oot_version}/assets")
     copied_files: T.List[str] = []
     for src_dir, _, file_names in os.walk(src_root):
         dst_dir = src_dir.replace(src_root, dst_root, 1)
@@ -109,11 +110,14 @@ def remove_suffix(input_string, suffix):
 
 def main():
     global allow_print
+    global oot_version
 
     parser = argparse.ArgumentParser(description="mod assets handler")
+    parser.add_argument("--oot-version", dest="oot_version", help="OOT game version", default="gc-eu-mq-dbg")
     parser.add_argument("-v", "--verbose", help="shows prints", action="store_true")
     args = parser.parse_args()
     allow_print = args.verbose
+    oot_version = args.oot_version
 
     root = remove_suffix(os.path.dirname(os.path.realpath(__file__)), "/tools")
     last_cache_time = update_cache_time(root)

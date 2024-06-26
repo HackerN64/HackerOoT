@@ -10,12 +10,13 @@ SHELL = /bin/bash
 COMPILER := gcc
 
 # Target game version. Currently only the following version is supported:
+#   gc-eu          GameCube Europe/PAL
 #   gc-eu-mq       GameCube Europe/PAL Master Quest
 #   gc-eu-mq-dbg   GameCube Europe/PAL Master Quest Debug
 #   hackeroot-mq   HackerOoT, based on gc-eu-mq-dbg (default)
 #
 # The following versions are work-in-progress and not yet matching:
-#   gc-eu          GameCube Europe/PAL
+#   gc-us          GameCube US
 #
 # Note: choosing hackeroot-mq will enable HackerOoT features,
 #       if another version is chosen, this repo will be like
@@ -83,7 +84,9 @@ else
 endif
 
 # Version-specific settings
-ifeq ($(VERSION),gc-eu)
+ifeq ($(VERSION),gc-us)
+  DEBUG := 0
+else ifeq ($(VERSION),gc-eu)
   DEBUG := 0
   HACKEROOT := 0
 else ifeq ($(VERSION),gc-eu-mq)
@@ -276,11 +279,15 @@ ifeq ($(COMPILER),gcc)
 SRC_DIRS := $(shell find src -type d)
 endif
 
-ASSET_BIN_DIRS := $(shell find assets/* -type d -not -path "assets/xml*" -not -path "assets/text")
-ASSET_FILES_XML := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.xml))
+# create extracted directories
+$(shell mkdir -p $(EXTRACTED_DIR) $(EXTRACTED_DIR)/assets $(EXTRACTED_DIR)/text)
+
+# create extracted directories
+$(shell mkdir -p $(EXTRACTED_DIR) $(EXTRACTED_DIR)/assets $(EXTRACTED_DIR)/text)
+
+ASSET_BIN_DIRS := $(shell find $(EXTRACTED_DIR)/assets -type d)
 ASSET_FILES_BIN := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.bin))
-ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_XML:.xml=.c),$f) \
-				   $(foreach f,$(ASSET_FILES_BIN:.bin=.bin.inc.c),$(BUILD_DIR)/$f) \
+ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_BIN:.bin=.bin.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
 				   $(foreach f,$(wildcard assets/text/*.c),$(BUILD_DIR)/$(f:.c=.o))
 
 UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
@@ -288,10 +295,12 @@ UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
 BASEROM_BIN_FILES := $(wildcard $(EXTRACTED_DIR)/baserom/*)
 
 # source files
-C_FILES       := $(filter-out %.inc.c,$(foreach dir,$(SRC_DIRS) $(ASSET_BIN_DIRS),$(wildcard $(dir)/*.c)))
+SRC_C_FILES   := $(filter-out %.inc.c,$(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c)))
+ASSET_C_FILES := $(filter-out %.inc.c,$(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.c)))
 S_FILES       := $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS),$(wildcard $(dir)/*.s))
 O_FILES       := $(foreach f,$(S_FILES:.s=.o),$(BUILD_DIR)/$f) \
-                 $(foreach f,$(C_FILES:.c=.o),$(BUILD_DIR)/$f) \
+                 $(foreach f,$(SRC_C_FILES:.c=.o),$(BUILD_DIR)/$f) \
+                 $(foreach f,$(ASSET_C_FILES:.c=.o),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
                  $(foreach f,$(BASEROM_BIN_FILES),$(BUILD_DIR)/baserom/$(notdir $f).o)
 UCODE_PATCHES := $(wildcard F3DEX3/*.bps)
 UCODE_FILES   := $(foreach f,$(UCODE_PATCHES:.bps=),$f)
@@ -306,11 +315,11 @@ DEP_FILES := $(O_FILES:.o=.asmproc.d) $(OVL_RELOC_FILES:.o=.d)
 
 TEXTURE_FILES_PNG := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.png))
 TEXTURE_FILES_JPG := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.jpg))
-TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),$(BUILD_DIR)/$f) \
-					 $(foreach f,$(TEXTURE_FILES_JPG:.jpg=.jpg.inc.c),$(BUILD_DIR)/$f) \
+TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
+					 $(foreach f,$(TEXTURE_FILES_JPG:.jpg=.jpg.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%))
 
 # create build directories
-$(shell mkdir -p $(BUILD_DIR)/baserom $(EXTRACTED_DIR)/text $(BUILD_DIR)/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS) $(ASSET_BIN_DIRS),$(BUILD_DIR)/$(dir)))
+$(shell mkdir -p $(BUILD_DIR)/baserom $(BUILD_DIR)/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS),$(BUILD_DIR)/$(dir)) $(foreach dir,$(ASSET_BIN_DIRS),$(dir:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)))
 
 ifeq ($(COMPILER),gcc)
 # Note that if adding additional assets directories for modding reasons these flags must also be used there
@@ -361,7 +370,7 @@ all: rom
 
 rom:
 	$(call print,Building the rom...)
-	$(V)python3 tools/mod_assets.py
+	$(V)python3 tools/mod_assets.py --oot-version $(VERSION)
 	$(V)$(MAKE) $(ROM)
 
 compress:
@@ -400,13 +409,10 @@ clean:
 	$(call print,Success!)
 
 assetclean:
-	$(V)$(RM) -r $(ASSET_BIN_DIRS)
 	$(V)$(RM) -r $(EXTRACTED_DIR)
-	$(V)$(RM) -r $(BUILD_DIR)/assets
-	$(V)$(RM) -r .extracted-assets.json
 	$(call print,Success!)
 
-distclean: assetclean
+distclean:
 	$(V)$(RM) -r extracted/
 	$(V)$(RM) -r build/
 	$(V)$(MAKE) -C tools distclean
@@ -430,10 +436,7 @@ setup: venv
 	$(call print,Decompressing baserom: Done!)
 	$(V)$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 --oot-version $(VERSION) -o $(EXTRACTED_DIR)/baserom
 	$(V)$(PYTHON) tools/msgdis.py --oot-version $(VERSION) --text-out $(EXTRACTED_DIR)/text/message_data.h --staff-text-out $(EXTRACTED_DIR)/text/message_data_staff.h
-# TODO: for now, we only extract assets from the Debug ROM
-ifneq ($(VERSION),gc-eu-mq)
-	$(V)$(PYTHON) extract_assets.py -j$(N_THREADS) -v $(VERSION)
-endif
+	$(V)$(PYTHON) extract_assets.py -v $(VERSION) -j$(N_THREADS)
 	$(call print,Extracting files: Done!)
 ifeq ($(VERSION),hackeroot-mq)
 # TODO: proper fix (for .s files)
@@ -550,7 +553,12 @@ $(BUILD_DIR)/assets/text/nes_message_data_static.o: $(BUILD_DIR)/assets/text/mes
 $(BUILD_DIR)/assets/text/staff_message_data_static.o: $(BUILD_DIR)/assets/text/message_data_staff.enc.h
 $(BUILD_DIR)/src/code/z_message_PAL.o: $(BUILD_DIR)/assets/text/message_data.enc.h $(BUILD_DIR)/assets/text/message_data_staff.enc.h
 
-$(BUILD_DIR)/assets/%.o: assets/%.c
+$(BUILD_DIR)/assets/text/%.o: assets/text/%.c
+	$(call print,Compiling:,$<,$@)
+	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
+	$(V)$(OBJCOPY) -O binary $@ $@.bin
+
+$(BUILD_DIR)/assets/%.o: $(EXTRACTED_DIR)/assets/%.c
 	$(call print,Compiling:,$<,$@)
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)$(OBJCOPY) -O binary $@ $@.bin
@@ -607,13 +615,13 @@ $(BUILD_DIR)/src/overlays/%_reloc.o: $(BUILD_DIR)/$(SPEC)
 	$(V)$(FADO) $$(tools/reloc_prereq $< $(notdir $*)) -n $(notdir $*) -o $(@:.o=.s) -M $(@:.o=.d)
 	$(V)$(AS) $(ASFLAGS) $(@:.o=.s) -o $@
 
-$(BUILD_DIR)/%.inc.c: %.png
+$(BUILD_DIR)/assets/%.inc.c: $(EXTRACTED_DIR)/assets/%.png
 	$(V)$(ZAPD) btex -eh -tt $(subst .,,$(suffix $*)) -i $< -o $@
 
-$(BUILD_DIR)/assets/%.bin.inc.c: assets/%.bin
+$(BUILD_DIR)/assets/%.bin.inc.c: $(EXTRACTED_DIR)/assets/%.bin
 	$(V)$(ZAPD) bblb -eh -i $< -o $@
 
-$(BUILD_DIR)/assets/%.jpg.inc.c: assets/%.jpg
+$(BUILD_DIR)/assets/%.jpg.inc.c: $(EXTRACTED_DIR)/assets/%.jpg
 	$(V)$(ZAPD) bren -eh -i $< -o $@
 
 F3DEX3/f3dzex2.code:

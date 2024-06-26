@@ -459,7 +459,7 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
     gDPSetPrimColor(gfx++, 0, 0, 255, 255, 255, (s16)this->mainAlpha);
 
     if ((s16)this->mainAlpha != 0) {
-        EnMag_DrawImageRGBA32(&gfx, WIDE_INCR(160 + LOGO_X_SHIFT, 20), 100, (u8*)gTitleZeldaShieldLogoMQTex, 160, 160);
+        EnMag_DrawImageRGBA32(&gfx, WIDE_INCR(160 + LOGO_X_SHIFT, 20), 100, (u8*)gTitleZeldaShieldLogoTex, 160, 160);
     }
 
     Gfx_SetupDL_39Ptr(&gfx);
