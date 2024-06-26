@@ -16,7 +16,7 @@ COMPILER := gcc
 #   hackeroot-mq   HackerOoT, based on gc-eu-mq-dbg (default)
 #
 # The following versions are work-in-progress and not yet matching:
-#   (none currently)
+#   gc-us          GameCube US
 #
 # Note: choosing hackeroot-mq will enable HackerOoT features,
 #       if another version is chosen, this repo will be like
@@ -84,7 +84,9 @@ else
 endif
 
 # Version-specific settings
-ifeq ($(VERSION),gc-eu)
+ifeq ($(VERSION),gc-us)
+  DEBUG := 0
+else ifeq ($(VERSION),gc-eu)
   DEBUG := 0
   HACKEROOT := 0
 else ifeq ($(VERSION),gc-eu-mq)
