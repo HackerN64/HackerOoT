@@ -1,4 +1,5 @@
 #include "z64.h"
+#include "functions.h"
 
 #if IS_DEBUG
 void Math3D_VtxF2L(Vtx* r, Vec3f* v) {

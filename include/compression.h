@@ -2,6 +2,7 @@
 #define COMPRESSION_H
 
 #include "ultra64.h"
+#include "z64dma.h"
 
 void* Yaz0_FirstDMA(void);
 void* Yaz0_NextDMA(u8* curSrcPos);
