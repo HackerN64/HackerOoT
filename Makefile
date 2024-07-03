@@ -86,19 +86,21 @@ endif
 # Version-specific settings
 ifeq ($(VERSION),gc-us)
   DEBUG := 0
+  CPP_DEFINES += -DTEXT_LANGUAGE=TEXT_LANG_US_JP
 else ifeq ($(VERSION),gc-eu)
   DEBUG := 0
+  CPP_DEFINES += -DTEXT_LANGUAGE=TEXT_LANG_EU
   HACKEROOT := 0
 else ifeq ($(VERSION),gc-eu-mq)
   DEBUG := 0
-  CPP_DEFINES += -DOOT_MQ
+  CPP_DEFINES += -DTEXT_LANGUAGE=TEXT_LANG_EU -DOOT_MQ
   HACKEROOT := 0
 else ifeq ($(VERSION),gc-eu-mq-dbg)
   DEBUG := 1
-  CPP_DEFINES += -DOOT_MQ
+  CPP_DEFINES += -DTEXT_LANGUAGE=TEXT_LANG_EU -DOOT_MQ
   HACKEROOT := 0
 else ifeq ($(VERSION),hackeroot-mq)
-  CPP_DEFINES += -DOOT_MQ
+  CPP_DEFINES += -DTEXT_LANGUAGE=TEXT_LANG_EU -DOOT_MQ
   HACKEROOT := 1
 else
 $(error Unsupported version $(VERSION))
@@ -213,6 +215,7 @@ INC := -Iinclude -Iinclude/libc -Isrc -I$(BUILD_DIR) -I. -I$(EXTRACTED_DIR)
 
 # Check code syntax with host compiler
 CHECK_WARNINGS := -Wall -Wextra -Wno-format-security -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-variable -Wno-missing-braces
+CHECK_WARNINGS += -Werror=implicit-function-declaration
 
 # The `cpp` command behaves differently on macOS (it behaves as if
 # `-traditional-cpp` was passed) so we use `gcc -E` instead.
@@ -435,7 +438,7 @@ setup: venv
 	$(V)$(PYTHON) tools/decompress_baserom.py $(VERSION)
 	$(call print,Decompressing baserom: Done!)
 	$(V)$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 --oot-version $(VERSION) -o $(EXTRACTED_DIR)/baserom
-	$(V)$(PYTHON) tools/msgdis.py --oot-version $(VERSION) --text-out $(EXTRACTED_DIR)/text/message_data.h --staff-text-out $(EXTRACTED_DIR)/text/message_data_staff.h
+	$(V)$(PYTHON) tools/msgdis.py $(VERSION)
 	$(V)$(PYTHON) extract_assets.py -v $(VERSION) -j$(N_THREADS)
 	$(call print,Extracting files: Done!)
 ifeq ($(VERSION),hackeroot-mq)
@@ -541,22 +544,27 @@ $(BUILD_DIR)/data/%.o: data/%.s
 	$(call print,Assembling:,$<,$@)
 	$(V)$(AS) $(ASFLAGS) $< -o $@
 
-$(BUILD_DIR)/assets/text/%.enc.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.txt
+$(BUILD_DIR)/assets/text/%.enc.jpn.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.txt
 	$(call print,Encoding:,$<,$@)
-	$(V)$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) $< | $(PYTHON) tools/msgenc.py - --output $@ --charmap assets/text/charmap.txt
+	$(V)$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) $< | $(PYTHON) tools/msgenc.py --encoding jpn --charmap assets/text/charmap.txt - $@
+
+$(BUILD_DIR)/assets/text/%.enc.nes.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.txt
+	$(call print,Encoding:,$<,$@)
+	$(V)$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) $< | $(PYTHON) tools/msgenc.py --encoding nes --charmap assets/text/charmap.txt - $@
 
 # Dependencies for files including message data headers
 # TODO remove when full header dependencies are used.
-$(BUILD_DIR)/assets/text/fra_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.h
-$(BUILD_DIR)/assets/text/ger_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.h
-$(BUILD_DIR)/assets/text/nes_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.h
-$(BUILD_DIR)/assets/text/staff_message_data_static.o: $(BUILD_DIR)/assets/text/message_data_staff.enc.h
-$(BUILD_DIR)/src/code/z_message_PAL.o: $(BUILD_DIR)/assets/text/message_data.enc.h $(BUILD_DIR)/assets/text/message_data_staff.enc.h
+$(BUILD_DIR)/assets/text/jpn_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.jpn.h
+$(BUILD_DIR)/assets/text/nes_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.nes.h
+$(BUILD_DIR)/assets/text/ger_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.nes.h
+$(BUILD_DIR)/assets/text/fra_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.nes.h
+$(BUILD_DIR)/assets/text/staff_message_data_static.o: $(BUILD_DIR)/assets/text/message_data_staff.enc.nes.h
+$(BUILD_DIR)/src/code/z_message_PAL.o: assets/text/message_data.h assets/text/message_data_staff.h
 
 $(BUILD_DIR)/assets/text/%.o: assets/text/%.c
 	$(call print,Compiling:,$<,$@)
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
-	$(V)$(OBJCOPY) -O binary $@ $@.bin
+	$(V)$(OBJCOPY) -O binary -j.rodata $@ $@.bin
 
 $(BUILD_DIR)/assets/%.o: $(EXTRACTED_DIR)/assets/%.c
 	$(call print,Compiling:,$<,$@)
