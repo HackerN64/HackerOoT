@@ -95,6 +95,7 @@ else ifeq ($(VERSION),gc-eu-mq-dbg)
   CPP_DEFINES += -DOOT_MQ
   HACKEROOT := 0
 else ifeq ($(VERSION),hackeroot-mq)
+  DEBUG := 1
   CPP_DEFINES += -DOOT_MQ
   HACKEROOT := 1
 else
