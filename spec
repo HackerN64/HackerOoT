@@ -158,8 +158,18 @@ beginseg
     include "$(BUILD_DIR)/baserom/Audiotable.o"
 endseg
 
+#if OOT_NTSC
+beginseg
+    name "kanji"
+    include "$(BUILD_DIR)/assets/textures/kanji/kanji.o"
+endseg
+#endif
+
 beginseg
     name "link_animetion"
+#if OOT_NTSC
+    romalign 0x1000
+#endif
     include "$(BUILD_DIR)/assets/misc/link_animetion/link_animetion.o"
     number 7
 endseg
@@ -202,6 +212,16 @@ beginseg
     number 12
 endseg
 
+#if OOT_NTSC
+beginseg
+    name "icon_item_jpn_static"
+    compress
+    romalign 0x1000
+    include "$(BUILD_DIR)/assets/textures/icon_item_jpn_static/icon_item_jpn_static.o"
+    number 13
+endseg
+#endif
+
 beginseg
     name "icon_item_nes_static"
     compress
@@ -210,6 +230,7 @@ beginseg
     number 13
 endseg
 
+#if OOT_PAL
 beginseg
     name "icon_item_ger_static"
     compress
@@ -225,6 +246,7 @@ beginseg
     include "$(BUILD_DIR)/assets/textures/icon_item_fra_static/icon_item_fra_static.o"
     number 13
 endseg
+#endif
 
 beginseg
     name "item_name_static"
@@ -268,6 +290,15 @@ beginseg
     number 10
 endseg
 
+#if OOT_NTSC
+beginseg
+    name "jpn_message_data_static"
+    romalign 0x1000
+    include "$(BUILD_DIR)/assets/text/jpn_message_data_static.o"
+    number 8
+endseg
+#endif
+
 beginseg
     name "nes_message_data_static"
     romalign 0x1000
@@ -275,6 +306,7 @@ beginseg
     number 7
 endseg
 
+#if OOT_PAL
 beginseg
     name "ger_message_data_static"
     romalign 0x1000
@@ -288,6 +320,7 @@ beginseg
     include "$(BUILD_DIR)/assets/text/fra_message_data_static.o"
     number 7
 endseg
+#endif
 
 beginseg
     name "staff_message_data_static"
@@ -611,9 +644,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/__osMemmove.o"
     // For some reason, the data sections of these files are placed here near the
     // rodata sections of the other files
-    include_data_only_within_rodata "$(BUILD_DIR)/src/code/z_message_PAL.o"
+    include_data_only_within_rodata "$(BUILD_DIR)/src/code/z_message.o"
     include_data_only_within_rodata "$(BUILD_DIR)/src/code/z_game_over.o"
-    include_no_data "$(BUILD_DIR)/src/code/z_message_PAL.o"
+    include_no_data "$(BUILD_DIR)/src/code/z_message.o"
     include_no_data "$(BUILD_DIR)/src/code/z_game_over.o"
     include "$(BUILD_DIR)/src/code/z_construct.o"
     include "$(BUILD_DIR)/data/audio_tables.rodata.o"
@@ -760,7 +793,7 @@ beginseg
     compress
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_file_choose/z_file_nameset_data.o"
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_file_choose/z_file_copy_erase.o"
-    include "$(BUILD_DIR)/src/overlays/gamestates/ovl_file_choose/z_file_nameset_PAL.o"
+    include "$(BUILD_DIR)/src/overlays/gamestates/ovl_file_choose/z_file_nameset.o"
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_file_choose/z_file_choose.o"
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_file_choose/ovl_file_choose_reloc.o"
 endseg
@@ -774,9 +807,9 @@ beginseg
 #endif
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_equipment.o"
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_item.o"
-    include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_map_PAL.o"
+    include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_map.o"
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_prompt.o"
-    include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_scope_PAL.o"
+    include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_kaleido_scope.o"
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_lmap_mark.o"
 #if !OOT_MQ
     include "$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/z_lmap_mark_data.o"

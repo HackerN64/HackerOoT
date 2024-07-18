@@ -20,7 +20,8 @@
                 "OOT_DEBUG=1", // If targeting a debug version
                 "ENABLE_HACKEROOT=1",
                 "RELEASE_ROM=0",
-                "COMPRESS_YAZ=1"
+                "COMPRESS_YAZ=1",
+                "OOT_PAL=1"
             ],
             "cStandard": "gnu11",
             "cppStandard": "${default}" // Only ZAPD uses C++, so doesn't really matter
