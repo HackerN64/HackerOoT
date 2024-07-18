@@ -643,7 +643,7 @@ typedef enum {
 
 #define SCENE_CMD_MISC_SETTINGS(sceneCamType, worldMapLocation) \
     { SCENE_CMD_ID_MISC_SETTINGS, sceneCamType, CMD_W(worldMapLocation) }
-    
+
 #if ENABLE_F3DEX3
 #define SCENE_CMD_OCCLUSION_PLANE_CANDIDATES_LIST(numPlanes, planeList) \
     { SCENE_CMD_ID_OCC_PLANE_CAND_LIST, numPlanes, CMD_PTR(planeList) }
