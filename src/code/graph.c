@@ -499,6 +499,7 @@ void* Graph_Alloc2(GraphicsContext* gfxCtx, size_t size) {
 
 #if IS_DEBUG
 void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, int line) {
+#if GBI_DEBUG
     dispRefs[0] = gfxCtx->polyOpa.p;
     dispRefs[1] = gfxCtx->polyXlu.p;
     dispRefs[2] = gfxCtx->overlay.p;
@@ -506,9 +507,11 @@ void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, 
     gDPNoOpOpenDisp(gfxCtx->polyOpa.p++, file, line);
     gDPNoOpOpenDisp(gfxCtx->polyXlu.p++, file, line);
     gDPNoOpOpenDisp(gfxCtx->overlay.p++, file, line);
+#endif
 }
 
 void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, int line) {
+#if GBI_DEBUG
     if (dispRefs[0] + 1 == gfxCtx->polyOpa.p) {
         gfxCtx->polyOpa.p = dispRefs[0];
     } else {
@@ -526,5 +529,6 @@ void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file,
     } else {
         gDPNoOpCloseDisp(gfxCtx->overlay.p++, file, line);
     }
+#endif
 }
 #endif
