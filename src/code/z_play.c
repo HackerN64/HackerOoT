@@ -7,12 +7,7 @@
 #include "assets/scenes/example/example_scene.h"
 #endif
 
-#if IS_DEBUG
-void* gDebugCutsceneScript = NULL;
-UNK_TYPE D_8012D1F4 = 0; // unused
-#endif
-
-Input* D_8012D1F8 = NULL;
+#include "z64frame_advance.h"
 
 TransitionTile gTransitionTile;
 s32 gTransitionTileState;
@@ -24,6 +19,13 @@ FaultClient D_801614B8;
 #endif
 
 s16 sTransitionFillTimer;
+
+#if IS_DEBUG
+void* gDebugCutsceneScript = NULL;
+UNK_TYPE D_8012D1F4 = 0; // unused
+#endif
+
+Input* D_8012D1F8 = NULL;
 
 void Play_SpawnScene(PlayState* this, s32 sceneId, s32 spawn);
 
@@ -464,8 +466,8 @@ void Play_Init(GameState* thisx) {
 
     Interface_SetSceneRestrictions(this);
     Environment_PlaySceneSequence(this);
-    gSaveContext.seqId = this->sequenceCtx.seqId;
-    gSaveContext.natureAmbienceId = this->sequenceCtx.natureAmbienceId;
+    gSaveContext.seqId = this->sceneSequences.seqId;
+    gSaveContext.natureAmbienceId = this->sceneSequences.natureAmbienceId;
     func_8002DF18(this, GET_PLAYER(this));
     AnimTaskQueue_Update(this, &this->animTaskQueue);
     gSaveContext.respawnFlag = 0;

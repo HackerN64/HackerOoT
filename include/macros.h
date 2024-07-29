@@ -30,10 +30,6 @@
 
 #define RGBA8(r, g, b, a) ((((r) & 0xFF) << 24) | (((g) & 0xFF) << 16) | (((b) & 0xFF) << 8) | (((a) & 0xFF) << 0))
 
-#define GET_PLAYER(play) ((Player*)(play)->actorCtx.actorLists[ACTORCAT_PLAYER].head)
-
-#define GET_ACTIVE_CAM(play) ((play)->cameraPtrs[(play)->activeCamId])
-
 #define LINK_IS_ADULT (gSaveContext.save.linkAge == LINK_AGE_ADULT)
 #define LINK_IS_CHILD (gSaveContext.save.linkAge == LINK_AGE_CHILD)
 
@@ -242,6 +238,12 @@ extern struct GraphicsContext* __gfxCtx;
 #define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_Malloc(alloc, size)
 
 #endif /* IS_DEBUG */
+
+#if OOT_NTSC
+#define LANGUAGE_ARRAY(jpn, nes, ger, fra) { jpn, nes }
+#else
+#define LANGUAGE_ARRAY(jpn, nes, ger, fra) { nes, ger, fra }
+#endif
 
 /**
  * `x` vertex x
