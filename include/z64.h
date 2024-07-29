@@ -122,8 +122,15 @@
 
 #define VI_CUSTOM_PAL60_LAN1 56 // Custom PAL60 VI mode
 
+#if !defined(_MIPS_SIM) || _MIPS_SIM == _ABIO32
+// O32 and EABI32 require 64-bit stack alignment
 #define STACK(stack, size) \
     u64 stack[ALIGN8(size) / sizeof(u64)]
+#else
+// Other ABIs require 128-bit stack alignment
+#define STACK(stack, size) \
+    __attribute__((aligned(0x10))) u64 stack[ALIGN16(size) / sizeof(u64)]
+#endif
 
 #define STACK_TOP(stack) \
     ((u8*)(stack) + sizeof(stack))

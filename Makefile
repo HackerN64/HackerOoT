@@ -8,6 +8,8 @@ SHELL = /bin/bash
 
 # currently, GCC is the only supported compiler
 COMPILER := gcc
+# MIPS ABI, can be one of "32", "n32" or "eabi"
+ABI := eabi
 
 # Target game version. Currently only the following version is supported:
 #   gc-eu          GameCube Europe/PAL
@@ -69,6 +71,8 @@ find-command = $(shell which $(1) 2>/dev/null)
 
 ifneq ($(call find-command,mips-n64-ld),)
   MIPS_BINUTILS_PREFIX := mips-n64-
+else ifneq ($(call find-command,mips64-ultra-elf-ld),)
+  MIPS_BINUTILS_PREFIX := mips64-ultra-elf-
 else ifneq ($(call find-command,mips64-ld),)
   MIPS_BINUTILS_PREFIX := mips64-
 else ifneq ($(call find-command,mips-linux-gnu-ld),)
@@ -205,11 +209,12 @@ else
 $(error Unsupported compiler. Please use gcc as the COMPILER variable.)
 endif
 
-AS      := $(MIPS_BINUTILS_PREFIX)as
-LD      := $(MIPS_BINUTILS_PREFIX)ld
-OBJCOPY := $(MIPS_BINUTILS_PREFIX)objcopy
-OBJDUMP := $(MIPS_BINUTILS_PREFIX)objdump
-NM      := $(MIPS_BINUTILS_PREFIX)nm
+AS_NOCPP := $(MIPS_BINUTILS_PREFIX)as
+AS       := $(CC) $(CPPFLAGS) -x assembler-with-cpp -c
+LD       := $(MIPS_BINUTILS_PREFIX)ld
+OBJCOPY  := $(MIPS_BINUTILS_PREFIX)objcopy
+OBJDUMP  := $(MIPS_BINUTILS_PREFIX)objdump
+NM       := $(MIPS_BINUTILS_PREFIX)nm
 
 N64_EMULATOR ?=
 
@@ -248,10 +253,20 @@ endif
 
 CFLAGS += $(GBI_DEFINES)
 
-ASFLAGS := -march=vr4300 -32 -no-pad-sections -Iinclude
-
+# Select ld output format based on toolchain default and any additional ABI-specific flags
+ifeq ($(ABI),n32)
+  LD_OUTPUT_FORMAT := $(shell $(LD) --print-output-format | sed -E 's/elf(32|64)-(n)?(trad)?(big|little)mips/elf\1-n\3\4mips/')
+else
+  ifeq ($(ABI),eabi)
+    ABI_FLAGS := -mgp32 -mfp32
+  endif
+  LD_OUTPUT_FORMAT := $(shell $(LD) --print-output-format | sed -E 's/elf(32|64)-(n)?(trad)?(big|little)mips/elf\1-\3\4mips/')
+endif
+ 
 ifeq ($(COMPILER),gcc)
-  CFLAGS += -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -mdivide-breaks -fno-PIC -fno-common -ffreestanding -fbuiltin -fno-builtin-sinf -fno-builtin-cosf $(CHECK_WARNINGS) -funsigned-char
+  CFLAGS += -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=$(ABI) $(ABI_FLAGS) -mno-abicalls -mdivide-breaks -fno-PIC -fno-common -ffreestanding -fbuiltin -fno-builtin-sinf -fno-builtin-cosf $(CHECK_WARNINGS) -funsigned-char
+  ASFLAGS := -march=vr4300 -mabi=$(ABI) $(ABI_FLAGS) -mno-abicalls -Wa,-no-pad-sections -I include
+  ASFLAGS_NOCPP := -march=vr4300 -mabi=$(ABI) $(ABI_FLAGS) -no-pad-sections -I include
   MIPS_VERSION := -mips3
   RUN_CC_CHECK := 0
 endif
@@ -495,6 +510,8 @@ $(ROM): $(ELF)
 	@$(PRINT) "${BLINK}Build succeeded.\n$(NO_COL)"
 	@$(PRINT) "==== Build Options ====$(NO_COL)\n"
 	@$(PRINT) "${GREEN}OoT Version: $(BLUE)$(VERSION)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}MIPS Toolchain: $(BLUE)$(MIPS_BINUTILS_PREFIX)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}MIPS ABI: $(BLUE)$(ABI)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Code Version: $(BLUE)$(PACKAGE_VERSION)$(NO_COL)\n"
 
 $(ROMC): $(ROM) $(ELF) $(BUILD_DIR)/compress_ranges.txt
@@ -507,7 +524,7 @@ endif
 
 $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(UCODE_O_FILES) $(LDSCRIPT) $(BUILD_DIR)/undefined_syms.txt
 	$(call print,Linking:,,$@)
-	$(V)$(LD) -T $(LDSCRIPT) -T $(BUILD_DIR)/undefined_syms.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP) -o $@
+	$(V)$(LD) --oformat $(LD_OUTPUT_FORMAT) -T $(LDSCRIPT) -T $(BUILD_DIR)/undefined_syms.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP) -o $@
 
 ## Order-only prerequisites
 # These ensure e.g. the O_FILES are built before the OVL_RELOC_FILES.
@@ -575,7 +592,7 @@ $(BUILD_DIR)/assets/%.o: $(EXTRACTED_DIR)/assets/%.c
 
 $(BUILD_DIR)/src/%.o: src/%.s
 	$(call print,Compiling:,$<,$@)
-	$(V)$(CPP) $(CPPFLAGS) -Iinclude $< | $(AS) $(ASFLAGS) -o $@
+	$(V)$(AS) $(ASFLAGS) $< -o $@
 
 $(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt: $(BUILD_DIR)/$(SPEC)
 	$(V)$(MKDMADATA) $< $(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt
@@ -608,7 +625,9 @@ ifneq ($(RUN_CC_CHECK),0)
 endif
 	$(call print,Compiling:,$<,$@)
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
+ifeq ($(ABI),32)
 	$(V)$(PYTHON) tools/set_o32abi_bit.py $@
+endif
 	$(V)@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
 $(BUILD_DIR)/src/libultra/libc/llcvt.o: src/libultra/libc/llcvt.c
@@ -617,13 +636,15 @@ ifneq ($(RUN_CC_CHECK),0)
 endif
 	$(call print,Compiling:,$<,$@)
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
+ifeq ($(ABI),32)
 	$(V)$(PYTHON) tools/set_o32abi_bit.py $@
+endif
 	$(V)@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
 $(BUILD_DIR)/src/overlays/%_reloc.o: $(BUILD_DIR)/$(SPEC)
 	$(call print,Generating Relocation:,$<,$@)
 	$(V)$(FADO) $$(tools/reloc_prereq $< $(notdir $*)) -n $(notdir $*) -o $(@:.o=.s) -M $(@:.o=.d)
-	$(V)$(AS) $(ASFLAGS) $(@:.o=.s) -o $@
+	$(V)$(AS_NOCPP) $(ASFLAGS_NOCPP) $(@:.o=.s) -o $@
 
 $(BUILD_DIR)/assets/%.inc.c: $(EXTRACTED_DIR)/assets/%.png
 	$(V)$(ZAPD) btex -eh -tt $(subst .,,$(suffix $*)) -i $< -o $@
