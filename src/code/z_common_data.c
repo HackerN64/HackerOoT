@@ -25,4 +25,7 @@ void SaveContext_Init(void) {
     gSaveContext.nextTransitionType = TRANS_NEXT_TYPE_DEFAULT;
     gSaveContext.prevHudVisibilityMode = HUD_VISIBILITY_ALL;
     gSaveContext.save.useWidescreen = false;
+#if OOT_NTSC
+    gSaveContext.language = LANGUAGE_ENG;
+#endif
 }

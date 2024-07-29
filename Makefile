@@ -85,24 +85,34 @@ endif
 
 # Version-specific settings
 ifeq ($(VERSION),gc-us)
+  REGION := US
+  PAL := 0
+  MQ := 0
   DEBUG := 0
-  COMPARE := 0
-  CPP_DEFINES += -DOOT_NTSC=1 -DOOT_PAL=0 -DOOT_MQ=0
+  HACKEROOT := 0
 else ifeq ($(VERSION),gc-eu)
+  REGION := EU
+  PAL := 1
+  MQ := 0
   DEBUG := 0
-  CPP_DEFINES += -DOOT_NTSC=0 -DOOT_PAL=1 -DOOT_MQ=0
   HACKEROOT := 0
 else ifeq ($(VERSION),gc-eu-mq)
+  REGION := EU
+  PAL := 1
+  MQ := 1
   DEBUG := 0
-  CPP_DEFINES += -DOOT_NTSC=0 -DOOT_PAL=1 -DOOT_MQ=1
   HACKEROOT := 0
 else ifeq ($(VERSION),gc-eu-mq-dbg)
+  REGION := EU
+  PAL := 1
+  MQ := 1
   DEBUG := 1
-  CPP_DEFINES += -DOOT_NTSC=0 -DOOT_PAL=1 -DOOT_MQ=1
   HACKEROOT := 0
 else ifeq ($(VERSION),hackeroot-mq)
+  REGION := NULL
+  PAL := 1
+  MQ := 1
   DEBUG := 1
-  CPP_DEFINES += -DOOT_NTSC=0 -DOOT_PAL=1 -DOOT_MQ=1
   HACKEROOT := 1
 else
 $(error Unsupported version $(VERSION))
@@ -124,6 +134,31 @@ ifeq ($(origin PACKAGE_VERSION), undefined)
   ifeq ('$(PACKAGE_VERSION)', '')
     PACKAGE_VERSION = Unknown version
   endif
+endif
+
+# Converts e.g. ntsc-1.0 to OOT_NTSC_1_0
+VERSION_MACRO := OOT_$(shell echo $(VERSION) | tr a-z-. A-Z__)
+CPP_DEFINES += -DOOT_VERSION=$(VERSION_MACRO)
+CPP_DEFINES += -DOOT_REGION=REGION_$(REGION)
+
+ifeq ($(PAL),0)
+  CPP_DEFINES += -DOOT_NTSC=1
+else
+  CPP_DEFINES += -DOOT_PAL=1
+endif
+
+ifeq ($(MQ),0)
+  CPP_DEFINES += -DOOT_MQ=0
+else
+  CPP_DEFINES += -DOOT_MQ=1
+endif
+
+ifeq ($(DEBUG),1)
+  CPP_DEFINES += -DOOT_DEBUG=1
+  OPTFLAGS := -O2
+else
+  CPP_DEFINES += -DOOT_DEBUG=0 -DNDEBUG
+  OPTFLAGS := -O2 -g3
 endif
 
 ifeq ($(VERSION),hackeroot-mq)
@@ -217,7 +252,7 @@ INC := -Iinclude -Iinclude/libc -Isrc -I$(BUILD_DIR) -I. -I$(EXTRACTED_DIR)
 
 # Check code syntax with host compiler
 CHECK_WARNINGS := -Wall -Wextra -Wno-format-security -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-variable -Wno-missing-braces
-CHECK_WARNINGS += -Werror=implicit-function-declaration -Werror=incompatible-pointer-types -Werror=int-conversion
+CHECK_WARNINGS += -Werror=implicit-int -Werror=implicit-function-declaration -Werror=int-conversion -Werror=incompatible-pointer-types
 
 # The `cpp` command behaves differently on macOS (it behaves as if
 # `-traditional-cpp` was passed) so we use `gcc -E` instead.
@@ -248,7 +283,7 @@ endif
 
 CFLAGS += $(GBI_DEFINES)
 
-ASFLAGS := -march=vr4300 -32 -no-pad-sections -Iinclude
+ASFLAGS := -march=vr4300 -32 -no-pad-sections -Iinclude -I$(EXTRACTED_DIR)
 
 ifeq ($(COMPILER),gcc)
   CFLAGS += -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -mdivide-breaks -fno-PIC -fno-common -ffreestanding -fbuiltin -fno-builtin-sinf -fno-builtin-cosf $(CHECK_WARNINGS) -funsigned-char
@@ -287,25 +322,29 @@ endif
 # create extracted directories
 $(shell mkdir -p $(EXTRACTED_DIR) $(EXTRACTED_DIR)/assets $(EXTRACTED_DIR)/text)
 
-# create extracted directories
-$(shell mkdir -p $(EXTRACTED_DIR) $(EXTRACTED_DIR)/assets $(EXTRACTED_DIR)/text)
+ASSET_BIN_DIRS_EXTRACTED := $(shell find $(EXTRACTED_DIR)/assets -type d)
+ASSET_BIN_DIRS_COMMITTED := $(shell find assets -type d -not -path "assets/xml*" -not -path assets/text)
+ASSET_BIN_DIRS := $(ASSET_BIN_DIRS_EXTRACTED) $(ASSET_BIN_DIRS_COMMITTED)
 
-ASSET_BIN_DIRS := $(shell find $(EXTRACTED_DIR)/assets -type d)
-ASSET_FILES_BIN := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.bin))
-ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_BIN:.bin=.bin.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
-				   $(foreach f,$(wildcard assets/text/*.c),$(BUILD_DIR)/$(f:.c=.o))
+ASSET_FILES_BIN_EXTRACTED := $(foreach dir,$(ASSET_BIN_DIRS_EXTRACTED),$(wildcard $(dir)/*.bin))
+ASSET_FILES_BIN_COMMITTED := $(foreach dir,$(ASSET_BIN_DIRS_COMMITTED),$(wildcard $(dir)/*.bin))
+ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_BIN_EXTRACTED:.bin=.bin.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
+                   $(foreach f,$(ASSET_FILES_BIN_COMMITTED:.bin=.bin.inc.c),$(BUILD_DIR)/$f) \
+                   $(foreach f,$(wildcard assets/text/*.c),$(BUILD_DIR)/$(f:.c=.o))
 
 UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
 
 BASEROM_BIN_FILES := $(wildcard $(EXTRACTED_DIR)/baserom/*)
 
 # source files
+ASSET_C_FILES_EXTRACTED := $(filter-out %.inc.c,$(foreach dir,$(ASSET_BIN_DIRS_EXTRACTED),$(wildcard $(dir)/*.c)))
+ASSET_C_FILES_COMMITTED := $(filter-out %.inc.c,$(foreach dir,$(ASSET_BIN_DIRS_COMMITTED),$(wildcard $(dir)/*.c)))
 SRC_C_FILES   := $(filter-out %.inc.c,$(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c)))
-ASSET_C_FILES := $(filter-out %.inc.c,$(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.c)))
 S_FILES       := $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS),$(wildcard $(dir)/*.s))
 O_FILES       := $(foreach f,$(S_FILES:.s=.o),$(BUILD_DIR)/$f) \
                  $(foreach f,$(SRC_C_FILES:.c=.o),$(BUILD_DIR)/$f) \
-                 $(foreach f,$(ASSET_C_FILES:.c=.o),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
+                 $(foreach f,$(ASSET_C_FILES_EXTRACTED:.c=.o),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
+                 $(foreach f,$(ASSET_C_FILES_COMMITTED:.c=.o),$(BUILD_DIR)/$f) \
                  $(foreach f,$(BASEROM_BIN_FILES),$(BUILD_DIR)/baserom/$(notdir $f).o)
 UCODE_PATCHES := $(wildcard F3DEX3/*.bps)
 UCODE_FILES   := $(foreach f,$(UCODE_PATCHES:.bps=),$f)
@@ -318,13 +357,26 @@ OVL_RELOC_FILES := $(shell $(CPP) $(CPPFLAGS) $(SPEC) | $(SPEC_REPLACE_VARS) | g
 DEP_FILES := $(O_FILES:.o=.asmproc.d) $(OVL_RELOC_FILES:.o=.d)
 
 
-TEXTURE_FILES_PNG := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.png))
-TEXTURE_FILES_JPG := $(foreach dir,$(ASSET_BIN_DIRS),$(wildcard $(dir)/*.jpg))
-TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG:.png=.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
-					 $(foreach f,$(TEXTURE_FILES_JPG:.jpg=.jpg.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%))
+TEXTURE_FILES_PNG_EXTRACTED := $(foreach dir,$(ASSET_BIN_DIRS_EXTRACTED),$(wildcard $(dir)/*.png))
+TEXTURE_FILES_PNG_COMMITTED := $(foreach dir,$(ASSET_BIN_DIRS_COMMITTED),$(wildcard $(dir)/*.png))
+TEXTURE_FILES_JPG_EXTRACTED := $(foreach dir,$(ASSET_BIN_DIRS_EXTRACTED),$(wildcard $(dir)/*.jpg))
+TEXTURE_FILES_JPG_COMMITTED := $(foreach dir,$(ASSET_BIN_DIRS_COMMITTED),$(wildcard $(dir)/*.jpg))
+TEXTURE_FILES_OUT := $(foreach f,$(TEXTURE_FILES_PNG_EXTRACTED:.png=.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
+                     $(foreach f,$(TEXTURE_FILES_PNG_COMMITTED:.png=.inc.c),$(BUILD_DIR)/$f) \
+                     $(foreach f,$(TEXTURE_FILES_JPG_EXTRACTED:.jpg=.jpg.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
+                     $(foreach f,$(TEXTURE_FILES_JPG_COMMITTED:.jpg=.jpg.inc.c),$(BUILD_DIR)/$f)
 
 # create build directories
-$(shell mkdir -p $(BUILD_DIR)/baserom $(BUILD_DIR)/assets/text $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS),$(BUILD_DIR)/$(dir)) $(foreach dir,$(ASSET_BIN_DIRS),$(dir:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)))
+$(shell mkdir -p $(BUILD_DIR)/baserom \
+                 $(BUILD_DIR)/assets/text \
+                 $(foreach dir, \
+                      $(SRC_DIRS) \
+                      $(UNDECOMPILED_DATA_DIRS) \
+                      $(ASSET_BIN_DIRS_COMMITTED), \
+                    $(BUILD_DIR)/$(dir)) \
+                 $(foreach dir, \
+                      $(ASSET_BIN_DIRS_EXTRACTED), \
+                    $(dir:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)))
 
 ifeq ($(COMPILER),gcc)
 # Note that if adding additional assets directories for modding reasons these flags must also be used there
@@ -440,6 +492,7 @@ setup: venv
 	$(V)$(PYTHON) tools/decompress_baserom.py $(VERSION)
 	$(call print,Decompressing baserom: Done!)
 	$(V)$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 --oot-version $(VERSION) -o $(EXTRACTED_DIR)/baserom
+	$(V)$(PYTHON) tools/extract_incbins.py $(EXTRACTED_DIR)/baserom --oot-version $(VERSION) -o $(EXTRACTED_DIR)/incbin
 	$(V)$(PYTHON) tools/msgdis.py $(VERSION)
 	$(V)$(PYTHON) extract_assets.py -v $(VERSION) -j$(N_THREADS)
 	$(call print,Extracting files: Done!)
@@ -544,7 +597,7 @@ $(BUILD_DIR)/F3DEX3/%.o: F3DEX3/%
 
 $(BUILD_DIR)/data/%.o: data/%.s
 	$(call print,Assembling:,$<,$@)
-	$(V)$(AS) $(ASFLAGS) $< -o $@
+	$(V)$(CPP) $(CPPFLAGS) -Iinclude $< | $(AS) $(ASFLAGS) -o $@
 
 $(BUILD_DIR)/assets/text/%.enc.jpn.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.txt
 	$(call print,Encoding:,$<,$@)
@@ -567,6 +620,10 @@ $(BUILD_DIR)/assets/text/%.o: assets/text/%.c
 	$(call print,Compiling:,$<,$@)
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)$(OBJCOPY) -O binary -j.rodata $@ $@.bin
+
+$(BUILD_DIR)/assets/%.o: assets/%.c
+	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
+	$(OBJCOPY) -O binary $@ $@.bin
 
 $(BUILD_DIR)/assets/%.o: $(EXTRACTED_DIR)/assets/%.c
 	$(call print,Compiling:,$<,$@)
@@ -625,11 +682,20 @@ $(BUILD_DIR)/src/overlays/%_reloc.o: $(BUILD_DIR)/$(SPEC)
 	$(V)$(FADO) $$(tools/reloc_prereq $< $(notdir $*)) -n $(notdir $*) -o $(@:.o=.s) -M $(@:.o=.d)
 	$(V)$(AS) $(ASFLAGS) $(@:.o=.s) -o $@
 
+$(BUILD_DIR)/assets/%.inc.c: assets/%.png
+	$(ZAPD) btex -eh -tt $(subst .,,$(suffix $*)) -i $< -o $@
+
 $(BUILD_DIR)/assets/%.inc.c: $(EXTRACTED_DIR)/assets/%.png
 	$(V)$(ZAPD) btex -eh -tt $(subst .,,$(suffix $*)) -i $< -o $@
 
+$(BUILD_DIR)/assets/%.bin.inc.c: assets/%.bin
+	$(ZAPD) bblb -eh -i $< -o $@
+
 $(BUILD_DIR)/assets/%.bin.inc.c: $(EXTRACTED_DIR)/assets/%.bin
 	$(V)$(ZAPD) bblb -eh -i $< -o $@
+
+$(BUILD_DIR)/assets/%.jpg.inc.c: assets/%.jpg
+	$(ZAPD) bren -eh -i $< -o $@
 
 $(BUILD_DIR)/assets/%.jpg.inc.c: $(EXTRACTED_DIR)/assets/%.jpg
 	$(V)$(ZAPD) bren -eh -i $< -o $@
