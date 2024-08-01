@@ -48,9 +48,6 @@
             ],
             "defines": [
                 "_LANGUAGE_C",
-                "ENABLE_HACKEROOT=0",
-                "RELEASE_ROM=0",
-                "COMPRESS_YAZ=1",
                 "OOT_VERSION=OOT_GC_US",
                 "OOT_REGION=REGION_US",
                 "OOT_NTSC=1",
@@ -78,9 +75,6 @@
             ],
             "defines": [
                 "_LANGUAGE_C",
-                "ENABLE_HACKEROOT=0",
-                "RELEASE_ROM=0",
-                "COMPRESS_YAZ=1",
                 "OOT_VERSION=OOT_GC_EU",
                 "OOT_REGION=REGION_EU",
                 "OOT_PAL=1",
@@ -108,9 +102,6 @@
             ],
             "defines": [
                 "_LANGUAGE_C",
-                "ENABLE_HACKEROOT=0",
-                "RELEASE_ROM=0",
-                "COMPRESS_YAZ=1",
                 "OOT_VERSION=OOT_GC_EU_MQ",
                 "OOT_REGION=REGION_EU",
                 "OOT_PAL=1",
@@ -138,9 +129,6 @@
             ],
             "defines": [
                 "_LANGUAGE_C",
-                "ENABLE_HACKEROOT=0",
-                "RELEASE_ROM=0",
-                "COMPRESS_YAZ=1",
                 "OOT_VERSION=OOT_GC_EU_MQ_DBG",
                 "OOT_REGION=REGION_EU",
                 "OOT_PAL=1",
@@ -156,4 +144,3 @@
     ],
     "version": 4
 }
-
