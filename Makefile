@@ -488,7 +488,7 @@ setup: venv
 	$(V)$(PYTHON) tools/extract_incbins.py $(EXTRACTED_DIR)/baserom --oot-version $(VERSION) -o $(EXTRACTED_DIR)/incbin
 	$(V)$(PYTHON) tools/msgdis.py $(VERSION)
 	$(V)$(PYTHON) extract_assets.py -v $(VERSION) -j$(N_THREADS)
-  $(V)$(AUDIO_EXTRACT) -o $(EXTRACTED_DIR) -v $(VERSION) --read-xml
+	$(V)$(AUDIO_EXTRACT) -o $(EXTRACTED_DIR) -v $(VERSION) --read-xml
 	$(call print,Extracting files: Done!)
 
 run: rom
