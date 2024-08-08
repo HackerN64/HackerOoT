@@ -12,9 +12,7 @@ typedef s32 (*ColChkLineFunc)(PlayState*, CollisionCheckContext*, Collider*, Vec
 
 #define SAC_ENABLE (1 << 0)
 
-// For retail BSS ordering, the block number of sparkInit in CollisionCheck_BlueBlood
-// must be between 183 and 255 inclusive.
-#pragma increment_block_number 50
+#pragma increment_block_number "gc-eu:64 gc-eu-mq:64 gc-us:64"
 
 #if IS_DEBUG
 /**
@@ -2703,7 +2701,7 @@ typedef enum {
     /* 2 */ MASSTYPE_NORMAL
 } ColChkMassType;
 
-#pragma increment_block_number 253
+#pragma increment_block_number "gc-eu:252 gc-eu-mq:252 gc-us:252"
 
 /**
  * Get mass type. Immovable colliders cannot be pushed, while heavy colliders can only be pushed by heavy and immovable
