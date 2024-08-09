@@ -1,6 +1,16 @@
 #ifndef MACROS_H
 #define MACROS_H
 
+// OOT versions in build order
+#define OOT_GC_JP 1
+#define OOT_GC_JP_MQ 2
+#define OOT_GC_US 3
+#define OOT_GC_US_MQ 4
+#define OOT_GC_EU_MQ_DBG 5
+#define OOT_GC_EU 6
+#define OOT_GC_EU_MQ 7
+#define OOT_GC_JP_CE 8
+
 #ifndef AVOID_UB
 #define BAD_RETURN(type) type
 #else
@@ -240,9 +250,9 @@ extern struct GraphicsContext* __gfxCtx;
 #endif /* IS_DEBUG */
 
 #if OOT_NTSC
-#define LANGUAGE_ARRAY(jpn, nes, ger, fra) { jpn, nes }
+#define LANGUAGE_ARRAY(jpn, eng, ger, fra) { jpn, eng }
 #else
-#define LANGUAGE_ARRAY(jpn, nes, ger, fra) { nes, ger, fra }
+#define LANGUAGE_ARRAY(jpn, eng, ger, fra) { eng, ger, fra }
 #endif
 
 /**
