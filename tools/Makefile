@@ -26,6 +26,7 @@ endif
 	$(MAKE) -C gzinject
 	$(MAKE) -C z64compress
 	$(MAKE) -C Flips TARGET=cli
+	$(MAKE) -C audio
 
 clean:
 	$(RM) $(PROGRAMS) $(addsuffix .exe,$(PROGRAMS))
@@ -37,8 +38,10 @@ endif
 	$(MAKE) -C z64compress clean
 	$(MAKE) -C Flips clean
 	rm Flips/flips
+	$(MAKE) -C audio clean
 
 distclean: clean
+	$(MAKE) -C audio distclean
 
 .PHONY: all clean distclean
 
