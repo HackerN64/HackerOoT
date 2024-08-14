@@ -246,7 +246,7 @@
 
 #define R_HREG_MODE  HREG(80) // see `HRegMode` for mode options
 
-typedef enum {
+typedef enum HRegMode {
     /*  6 */ HREG_MODE_PRINT_HILITE_INFO = 6, // print hilite information
     /*  7 */ HREG_MODE_UCODE_DISAS, // various controls for the ucode disas system
     /*  8 */ HREG_MODE_PRINT_MEMORY, // print memory at a specified address
@@ -394,7 +394,7 @@ typedef enum {
 #define R_MOTION_BLUR_PRIORITY_ENABLED  SREG(93)
 #define R_MOTION_BLUR_ENABLED           SREG(95)
 
-typedef struct {
+typedef struct RegEditor {
     // ENABLE_REG_EDITOR
     /* 0x00 */ s32  regPage; // 0: no page selected (reg editor is not active); 1: first page; `REG_PAGES`: last page
     /* 0x04 */ s32  regGroup; // Indexed from 0 to `REG_GROUPS`-1. Each group has its own character to identify it.

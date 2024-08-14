@@ -46,11 +46,9 @@ A more complete `c_cpp_properties.json` with configurations for all supported ve
     "configurations": [
         {
             "name": "hackeroot-mq",
-            "compilerPath": "/usr/bin/gcc", // Needs to not be "" for -m32 to work
             "compilerArgs": [
                 "-m32" // Removes integer truncation warnings with gbi macros
             ],
-            "intelliSenseMode": "gcc-x86", // Shouldn't matter
             "includePath": [ // Matches makefile's includes
                 "include",
                 "include/libc",
@@ -67,6 +65,8 @@ A more complete `c_cpp_properties.json` with configurations for all supported ve
                 // Version-specific
                 "OOT_VERSION=OOT_GC_EU_MQ_DBG",
                 "OOT_REGION=REGION_EU",
+                "PLATFORM_N64=0",
+                "PLATFORM_GC=1",
                 "OOT_PAL=1",
                 "OOT_MQ=1",
                 "OOT_DEBUG=1",
@@ -76,7 +76,6 @@ A more complete `c_cpp_properties.json` with configurations for all supported ve
                 "GBI_DEBUG"
             ],
             "cStandard": "gnu89", // C89 + some GNU extensions from C99 like C++ comments
-            "cppStandard": "${default}" // Only ZAPD uses C++, so doesn't really matter
         }
     ],
     "version": 4

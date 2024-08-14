@@ -2,7 +2,7 @@
 #include "config.h"
 
 // ENABLE_CAMERA_DEBUGGER
-typedef struct {
+typedef struct DebugCamTextBufferEntry {
     /* 0x0 */ u8 x;
     /* 0x1 */ u8 y;
     /* 0x2 */ u8 colorIndex;
@@ -10,7 +10,7 @@ typedef struct {
 } DebugCamTextBufferEntry; // size = 0x18
 
 // ENABLE_REG_EDITOR
-typedef struct {
+typedef struct InputCombo {
     /* 0x0 */ u16 hold;
     /* 0x2 */ u16 press;
 } InputCombo; // size = 0x4
@@ -330,8 +330,6 @@ void Debug_DrawText(GraphicsContext* gfxCtx) {
         gSPEndDisplayList(gfx++);
         Gfx_Close(opaStart, gfx);
         POLY_OPA_DISP = gfx;
-
-        if (1) {}
 
         CLOSE_DISPS(gfxCtx, "../z_debug.c", 664);
 

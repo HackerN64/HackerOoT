@@ -23,14 +23,18 @@ COMPRESSION_TYPE ?= $(shell echo $(COMPRESSION) | tr '[:lower:]' '[:upper:]')
 # If COMPILER is "gcc", compile with GCC instead of IDO.
 COMPILER ?= gcc
 # Target game version. Currently the following versions are supported:
+#   gc-jp          GameCube Japan
+#   gc-jp-mq       GameCube Japan Master Quest
+#   gc-jp-ce       GameCube Japan (Collector's Edition disc)
 #   gc-us          GameCube US
+#   gc-us-mq       GameCube US
 #   gc-eu          GameCube Europe/PAL
 #   gc-eu-mq       GameCube Europe/PAL Master Quest
 #   gc-eu-mq-dbg   GameCube Europe/PAL Master Quest Debug
 #   hackeroot-mq   HackerOoT, based on gc-eu-mq-dbg (default)
 #
 # The following versions are work-in-progress and not yet matching:
-#   (none currently)
+#   ntsc-1.2       N64 NTSC 1.2 (Japan)
 #
 # Note: choosing hackeroot-mq will enable HackerOoT features,
 #       if another version is chosen, this repo will be like
@@ -65,28 +69,64 @@ CPPFLAGS := -DCONSOLE_GC
 endif
 
 # Version-specific settings
-ifeq ($(VERSION),gc-us)
-  REGION ?= US
+ifeq ($(VERSION),ntsc-1.2)
+  REGION ?= JP
+  PLATFORM := N64
   PAL := 0
   MQ := 0
   DEBUG := 0
+  COMPARE := 0
+else ifeq ($(VERSION),gc-jp)
+  REGION ?= JP
+  PLATFORM := GC
+  PAL := 0
+  MQ := 0
+  DEBUG := 0
+else ifeq ($(VERSION),gc-jp-mq)
+  REGION ?= JP
+  PLATFORM := GC
+  PAL := 0
+  MQ := 1
+  DEBUG := 0
+else ifeq ($(VERSION),gc-jp-ce)
+  REGION ?= JP
+  PLATFORM := GC
+  PAL := 0
+  MQ := 0
+  DEBUG := 0
+else ifeq ($(VERSION),gc-us)
+  REGION ?= US
+  PLATFORM := GC
+  PAL := 0
+  MQ := 0
+  DEBUG := 0
+else ifeq ($(VERSION),gc-us-mq)
+  REGION ?= US
+  PLATFORM := GC
+  PAL := 0
+  MQ := 1
+  DEBUG := 0
 else ifeq ($(VERSION),gc-eu)
   REGION ?= EU
+  PLATFORM := GC
   PAL := 1
   MQ := 0
   DEBUG := 0
 else ifeq ($(VERSION),gc-eu-mq)
   REGION ?= EU
+  PLATFORM := GC
   PAL := 1
   MQ := 1
   DEBUG := 0
 else ifeq ($(VERSION),gc-eu-mq-dbg)
   REGION ?= EU
+  PLATFORM := GC
   PAL := 1
   MQ := 1
   DEBUG := 1
 else ifeq ($(VERSION),hackeroot-mq)
   REGION := NULL
+  PLATFORM := GC
   PAL := 1
   MQ := 1
   DEBUG := 1
@@ -128,6 +168,14 @@ endif
 VERSION_MACRO := OOT_$(shell echo $(VERSION) | tr a-z-. A-Z__)
 CPP_DEFINES += -DOOT_VERSION=$(VERSION_MACRO)
 CPP_DEFINES += -DOOT_REGION=REGION_$(REGION)
+
+ifeq ($(PLATFORM),N64)
+  CPP_DEFINES += -DPLATFORM_N64=1 -DPLATFORM_GC=0
+else ifeq ($(PLATFORM),GC)
+  CPP_DEFINES += -DPLATFORM_N64=0 -DPLATFORM_GC=1
+else
+  $(error Unsupported platform $(PLATFORM))
+endif
 
 ifeq ($(PAL),0)
   CPP_DEFINES += -DOOT_NTSC=1
@@ -259,13 +307,16 @@ SPEC_REPLACE_VARS := sed -e 's|$$(BUILD_DIR)|$(BUILD_DIR)|g'
 
 # Audio tools
 AUDIO_EXTRACT := $(PYTHON) tools/audio_extraction.py
+SAMPLECONV    := tools/audio/sampleconv/sampleconv
 
 CFLAGS += $(CPP_DEFINES)
 CPPFLAGS += $(CPP_DEFINES)
 CFLAGS_IDO += $(CPP_DEFINES)
 
-# TODO PL and DOWHILE should be disabled for non-gamecube
-GBI_DEFINES := -DF3DEX_GBI_2 -DF3DEX_GBI_PL -DGBI_DOWHILE
+GBI_DEFINES := -DF3DEX_GBI_2
+ifeq ($(PLATFORM),GC)
+  GBI_DEFINES += -DF3DEX_GBI_PL -DGBI_DOWHILE
+endif
 ifeq ($(DEBUG),1)
   GBI_DEFINES += -DGBI_DEBUG
 endif
@@ -307,6 +358,22 @@ BASEROM_PATCH ?= baseroms/$(VERSION)/baserom.z64
 ifeq ($(COMPILER),gcc)
 SRC_DIRS := $(shell find src -type d)
 endif
+
+ifneq ($(wildcard $(EXTRACTED_DIR)/assets/audio),)
+  SAMPLE_EXTRACT_DIRS := $(shell find $(EXTRACTED_DIR)/assets/audio/samples -type d)
+else
+  SAMPLE_EXTRACT_DIRS :=
+endif
+
+ifneq ($(wildcard assets/audio/samples),)
+  SAMPLE_DIRS := $(shell find assets/audio/samples -type d)
+else
+  SAMPLE_DIRS :=
+endif
+
+SAMPLE_FILES         := $(foreach dir,$(SAMPLE_DIRS),$(wildcard $(dir)/*.wav))
+SAMPLE_EXTRACT_FILES := $(foreach dir,$(SAMPLE_EXTRACT_DIRS),$(wildcard $(dir)/*.wav))
+AIFC_FILES           := $(foreach f,$(SAMPLE_FILES),$(BUILD_DIR)/$(f:.wav=.aifc)) $(foreach f,$(SAMPLE_EXTRACT_FILES:.wav=.aifc),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%))
 
 # create extracted directories
 $(shell mkdir -p $(EXTRACTED_DIR) $(EXTRACTED_DIR)/assets $(EXTRACTED_DIR)/text)
@@ -703,6 +770,30 @@ F3DEX3/F3DEX3%.data: F3DEX3/F3DEX3%.data.bps F3DEX3/f3dzex2.data
 	$(V)$(FLIPS) --apply F3DEX3/F3DEX3$*.data.bps F3DEX3/f3dzex2.data $@
 
 .PRECIOUS: $(UCODE_FILES)
+
+# Audio
+
+AUDIO_BUILD_DEBUG ?= 0
+
+# first build samples...
+
+$(BUILD_DIR)/assets/audio/samples/%.half.aifc: assets/audio/samples/%.half.wav
+	$(SAMPLECONV) vadpcm-half $< $@
+
+$(BUILD_DIR)/assets/audio/samples/%.half.aifc: $(EXTRACTED_DIR)/assets/audio/samples/%.half.wav
+	$(SAMPLECONV) vadpcm-half $< $@
+ifeq ($(AUDIO_BUILD_DEBUG),1)
+	@(cmp $(<D)/aifc/$(<F:.half.wav=.half.aifc) $@ && echo "$(<F) OK") || (mkdir -p NONMATCHINGS/$(<D) && cp $(<D)/aifc/$(<F:.half.wav=.half.aifc) NONMATCHINGS/$(<D)/$(<F:.half.wav=.half.aifc))
+endif
+
+$(BUILD_DIR)/assets/audio/samples/%.aifc: assets/audio/samples/%.wav
+	$(SAMPLECONV) vadpcm $< $@
+
+$(BUILD_DIR)/assets/audio/samples/%.aifc: $(EXTRACTED_DIR)/assets/audio/samples/%.wav
+	$(SAMPLECONV) vadpcm $< $@
+ifeq ($(AUDIO_BUILD_DEBUG),1)
+	@(cmp $(<D)/aifc/$(<F:.wav=.aifc) $@ && echo "$(<F) OK") || (mkdir -p NONMATCHINGS/$(<D) && cp $(<D)/aifc/$(<F:.wav=.aifc) NONMATCHINGS/$(<D)/$(<F:.wav=.aifc))
+endif
 
 -include $(DEP_FILES)
 
