@@ -11,8 +11,6 @@ void Interface_Init(PlayState* play) {
     u32 parameterSize;
     u16 doActionOffset;
     u8 timerId;
-    Color_RGB8 aBtnColor = { 255, 30, 30 };
-    Color_RGB8 bBtnColor = { 0, 200, 50 };
 
     gSaveContext.sunsSongState = SUNSSONG_INACTIVE;
     gSaveContext.nextHudVisibilityMode = gSaveContext.hudVisibilityMode = HUD_VISIBILITY_NO_CHANGE;
@@ -178,28 +176,21 @@ void Interface_Init(PlayState* play) {
 
     interfaceCtx->unk_23C = interfaceCtx->unk_242 = 0;
 
-    if (N64_BTN_COLORS) {
-        aBtnColor.r = aBtnColor.b = 0;
-        aBtnColor.g = 150;
-
-        bBtnColor.r = bBtnColor.g = 90;
-        bBtnColor.b = 255;
-    }
-
     R_ITEM_BTN_X(0) = B_BUTTON_X;
 
-    R_B_BTN_COLOR(0) = aBtnColor.r;
-    R_B_BTN_COLOR(1) = aBtnColor.g;
-    R_B_BTN_COLOR(2) = aBtnColor.b;
+    R_B_BTN_COLOR(0) = B_BUTTON_R;
+    R_B_BTN_COLOR(1) = B_BUTTON_G;
+    R_B_BTN_COLOR(2) = B_BUTTON_B;
 
     R_ITEM_ICON_X(0) = B_BUTTON_X;
     R_ITEM_AMMO_X(0) = B_BUTTON_X + 2;
+
     R_A_BTN_X = A_BUTTON_X;
     R_A_ICON_X = A_BUTTON_X;
 
-    R_A_BTN_COLOR(0) = bBtnColor.r;
-    R_A_BTN_COLOR(1) = bBtnColor.g;
-    R_A_BTN_COLOR(2) = bBtnColor.b;
+    R_A_BTN_COLOR(0) = A_BUTTON_R;
+    R_A_BTN_COLOR(1) = A_BUTTON_G;
+    R_A_BTN_COLOR(2) = A_BUTTON_B;
 }
 
 #define TEXTBOX_SEGMENT_SIZE \

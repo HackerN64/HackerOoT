@@ -27,9 +27,7 @@ This project is using the following tools:
 
 ## Zelda: Ocarina of Time Decompilation
 
-**Website:** <https://zelda64.dev>
-
-**Discord:** <https://discord.zelda64.dev>
+**Website:** <https://zelda.deco.mp>
 
 ## Getting Started
 

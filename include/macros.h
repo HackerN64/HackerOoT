@@ -305,12 +305,6 @@ extern struct GraphicsContext* __gfxCtx;
 #define TIMER_DECR(val, target, changeBy) (((val - changeBy) < target) ? target : (val > target) ? (val - changeBy) : val)
 #define TIMER_INCR(val, target, changeBy) (((val + changeBy) > target) ? target : (val < target) ? (val + changeBy) : val)
 
-#ifdef __GNUC__
-#define NO_REORDER __attribute__((section(".data"))) __attribute__((no_reorder))
-#else
-#define NO_REORDER
-#endif
-
 // System for inserting SPDontSkipTexLoadsAcross for actors/effects which
 // manipulate segments to select texture indices. Note that this only needs to
 // be done for things which have a single material and which can appear multiple
