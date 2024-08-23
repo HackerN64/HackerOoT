@@ -15,7 +15,9 @@ void SysCfb_Init(s32 n64dd) {
     if (osMemSize >= 0x800000) {
         // "8MB or more memory is installed"
         PRINTF("８Ｍバイト以上のメモリが搭載されています\n");
-        tmpFbEnd = IS_DEBUG_HEAP_ENABLED ? 0x8044BE80 : ((FRAMEBUFFER_SPLIT != 0) ? (0x80800000 - (FRAMEBUFFER_SPLIT)) : SYS_CFB_END);
+        tmpFbEnd = IS_DEBUG_HEAP_ENABLED
+                       ? 0x8044BE80
+                       : ((FRAMEBUFFER_SPLIT != 0) ? (0x80800000 - (FRAMEBUFFER_SPLIT)) : SYS_CFB_END);
         if (n64dd == 1) {
             PRINTF("RAM 8M mode (N64DD対応)\n"); // "RAM 8M mode (N64DD compatible)"
 #if IS_DEBUG
@@ -52,7 +54,7 @@ void SysCfb_Init(s32 n64dd) {
     sSysCfbFbPtr[0] = sSysCfbEnd - (screenSize * 4);
     sSysCfbFbPtr[1] = sSysCfbEnd - (screenSize * 2);
     sSysCfbFbPtr[2] = 0x80700000;
-#else // vanilla (split nothing)
+#else                      // vanilla (split nothing)
     sSysCfbFbPtr[0] = sSysCfbEnd - (screenSize * 4);
     sSysCfbFbPtr[1] = sSysCfbEnd - (screenSize * 2);
 #endif

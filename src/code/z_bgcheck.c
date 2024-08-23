@@ -1657,7 +1657,8 @@ void BgCheck_Allocate(CollisionContext* colCtx, PlayState* play, CollisionHeader
 #if ENABLE_DETAILED_ALLOC_ASSERTS
     if (THA_IsCrash(&play->state.tha)) {
         char buff[150];
-        sprintf(buff, "\nRequested: %d bytes\nAvailable: %d bytes", (s32)(thaRemaining - THA_GetRemaining(&play->state.tha)), thaRemaining);
+        sprintf(buff, "\nRequested: %d bytes\nAvailable: %d bytes",
+                (s32)(thaRemaining - THA_GetRemaining(&play->state.tha)), thaRemaining);
         Fault_AddHungupAndCrashImpl("BgCheck_Allocate", buff);
     }
 #endif

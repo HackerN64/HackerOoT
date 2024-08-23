@@ -535,7 +535,8 @@ void* GameState_Alloc(GameState* gameState, size_t size, const char* file, int l
     if (ret == NULL) {
         char buff1[150];
         char buff2[150];
-        sprintf(buff1, "\nGameState_Alloc:\nRequested: %d bytes\nAvailable: %d bytes", size, (int)THA_GetRemaining(&gameState->tha));
+        sprintf(buff1, "\nGameState_Alloc:\nRequested: %d bytes\nAvailable: %d bytes", size,
+                (int)THA_GetRemaining(&gameState->tha));
         sprintf(buff2, "\nIn file %s\nline %d", file, line);
         Fault_AddHungupAndCrashImpl(buff1, buff2);
     }

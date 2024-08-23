@@ -374,12 +374,12 @@ void Lights_GlowCheck(PlayState* play) {
                 wZ = (s32)((multDest.z * cappedInvWDest) * ((G_MAXZ / 2) * 32)) + ((G_MAXZ / 2) * 32);
                 // Obtain the z-buffer value for the screen pixel corresponding to the center of the glow.
 #if ENABLE_SPLIT_ZBUFFER
-                zBuf = GET_ZBUFFER[((s32)((wY * -(SCREEN_HEIGHT / 2)) + (SCREEN_HEIGHT / 2)) * SCREEN_WIDTH) + 
-                                (s32)((wX * (SCREEN_WIDTH / 2)) + (SCREEN_WIDTH / 2))] 
-                        << 2;
+                zBuf = GET_ZBUFFER[((s32)((wY * -(SCREEN_HEIGHT / 2)) + (SCREEN_HEIGHT / 2)) * SCREEN_WIDTH) +
+                                   (s32)((wX * (SCREEN_WIDTH / 2)) + (SCREEN_WIDTH / 2))]
+                       << 2;
 #else
                 zBuf = GET_ZBUFFER[(s32)((wY * -(SCREEN_HEIGHT / 2)) + (SCREEN_HEIGHT / 2))]
-                               [(s32)((wX * (SCREEN_WIDTH / 2)) + (SCREEN_WIDTH / 2))]
+                                  [(s32)((wX * (SCREEN_WIDTH / 2)) + (SCREEN_WIDTH / 2))]
                        << 2;
 #endif
                 if (1) {}

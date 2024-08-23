@@ -28,12 +28,13 @@ s32 Object_SpawnPersistent(ObjectContext* objectCtx, s16 objectId) {
 
 #if ENABLE_DETAILED_ALLOC_ASSERTS
     if (!((objectCtx->numEntries < ARRAY_COUNT(objectCtx->slots)) &&
-            (((uintptr_t)objectCtx->slots[objectCtx->numEntries].segment + size) < (uintptr_t)objectCtx->spaceEnd))) {
+          (((uintptr_t)objectCtx->slots[objectCtx->numEntries].segment + size) < (uintptr_t)objectCtx->spaceEnd))) {
         char buff1[150];
-        sprintf(buff1, "\nObject %d\nRequested: %d bytes\nAvailable: %d bytes\nNeed %d more.\n\nObject space was %d bytes", 
-                        objectId, (unsigned int)size, objectCtx->spaceEnd - objectCtx->slots[objectCtx->numEntries].segment, 
-                        (objectCtx->slots[objectCtx->numEntries].segment + size) - objectCtx->spaceEnd, 
-                        objectCtx->spaceEnd - objectCtx->spaceStart);
+        sprintf(buff1,
+                "\nObject %d\nRequested: %d bytes\nAvailable: %d bytes\nNeed %d more.\n\nObject space was %d bytes",
+                objectId, (unsigned int)size, objectCtx->spaceEnd - objectCtx->slots[objectCtx->numEntries].segment,
+                (objectCtx->slots[objectCtx->numEntries].segment + size) - objectCtx->spaceEnd,
+                objectCtx->spaceEnd - objectCtx->spaceStart);
         Fault_AddHungupAndCrashImpl("Persistent Object Alloc Failed!", buff1);
     }
 #else
@@ -181,9 +182,11 @@ void* func_800982FC(ObjectContext* objectCtx, s32 slot, s16 objectId) {
 
 #if ENABLE_DETAILED_ALLOC_ASSERTS
     if (nextPtr > objectCtx->spaceEnd) {
-    char buff1[150];
-        sprintf(buff1, "\nObject %d\nRequested: %d bytes\nAvailable: %d bytes\nNeed %d more.\n\nObject space was %d bytes", 
-                        objectId, (unsigned int)size, objectCtx->spaceEnd - entry->segment, nextPtr - objectCtx->spaceEnd, objectCtx->spaceEnd - objectCtx->spaceStart);
+        char buff1[150];
+        sprintf(buff1,
+                "\nObject %d\nRequested: %d bytes\nAvailable: %d bytes\nNeed %d more.\n\nObject space was %d bytes",
+                objectId, (unsigned int)size, objectCtx->spaceEnd - entry->segment, nextPtr - objectCtx->spaceEnd,
+                objectCtx->spaceEnd - objectCtx->spaceStart);
         Fault_AddHungupAndCrashImpl("Object Alloc Failed!", buff1);
     }
 #else
