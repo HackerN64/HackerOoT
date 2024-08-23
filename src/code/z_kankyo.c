@@ -247,7 +247,11 @@ s32 Environment_ZBufValToFixedPoint(s32 zBufferVal) {
 }
 
 u16 Environment_GetPixelDepth(s32 x, s32 y) {
-    s32 pixelDepth = gZBuffer[y][x];
+#if ENABLE_SPLIT_ZBUFFER
+    s32 pixelDepth = GET_ZBUFFER[(y * SCREEN_WIDTH) + x];
+#else
+    s32 pixelDepth = GET_ZBUFFER[y][x];
+#endif
 
     return pixelDepth;
 }

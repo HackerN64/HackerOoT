@@ -267,10 +267,10 @@ s32 Room_DecodeJpeg(void* data) {
         PRINTF("JPEGデータを展開します\n");        // "Expanding jpeg data"
         PRINTF("JPEGデータアドレス %08x\n", data); // "Jpeg data address %08x"
         // "Work buffer address (Z buffer) %08x"
-        PRINTF("ワークバッファアドレス（Ｚバッファ）%08x\n", gZBuffer);
+        PRINTF("ワークバッファアドレス（Ｚバッファ）%08x\n", GET_ZBUFFER);
 
         time = osGetTime();
-        if (!Jpeg_Decode(data, gZBuffer, gGfxSPTaskOutputBuffer, sizeof(gGfxSPTaskOutputBuffer))) {
+        if (!Jpeg_Decode(data, GET_ZBUFFER, gGfxSPTaskOutputBuffer, sizeof(gGfxSPTaskOutputBuffer))) {
             time = osGetTime() - time;
 
             // "Success... I think. time = %6.3f ms"
@@ -280,7 +280,7 @@ s32 Room_DecodeJpeg(void* data) {
             // "If the original buffer size isn't at least 150kB, it will be out of control."
             PRINTF("元のバッファのサイズが150キロバイト無いと暴走するでしょう。\n");
 
-            bcopy(gZBuffer, data, sizeof(u16[SCREEN_HEIGHT][SCREEN_WIDTH]));
+            bcopy(GET_ZBUFFER, data, sizeof(u16[SCREEN_HEIGHT][SCREEN_WIDTH]));
         } else {
             PRINTF("失敗！なんで〜\n"); // "Failure! Why is it 〜"
         }

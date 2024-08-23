@@ -544,7 +544,7 @@ void Play_Update(PlayState* this) {
                         PRINTF("fbdemo_init呼出し失敗！\n"); // "fbdemo_init call failed!"
                         gTransitionTileState = TRANS_TILE_OFF;
                     } else {
-                        gTransitionTile.zBuffer = (u16*)gZBuffer;
+                        gTransitionTile.zBuffer = (u16*)GET_ZBUFFER;
                         gTransitionTileState = TRANS_TILE_READY;
                         R_UPDATE_RATE = 1;
                     }
@@ -1331,7 +1331,7 @@ void Play_Draw(PlayState* this) {
             goto Play_Draw_DrawOverlayElements;
         }
 
-        PreRender_SetValues(&this->pauseBgPreRender, SCREEN_WIDTH, SCREEN_HEIGHT, gfxCtx->curFrameBuffer, gZBuffer);
+        PreRender_SetValues(&this->pauseBgPreRender, SCREEN_WIDTH, SCREEN_HEIGHT, gfxCtx->curFrameBuffer, GET_ZBUFFER);
 
         if (R_PAUSE_BG_PRERENDER_STATE == PAUSE_BG_PRERENDER_PROCESS) {
             // Wait for the previous frame's display list to be processed,
@@ -1493,7 +1493,7 @@ void Play_Draw(PlayState* this) {
             // Copy the frame buffer contents at this point in the display list to the zbuffer
             // The zbuffer must then stay untouched until unpausing
             this->pauseBgPreRender.fbuf = gfxCtx->curFrameBuffer;
-            this->pauseBgPreRender.fbufSave = (u16*)gZBuffer;
+            this->pauseBgPreRender.fbufSave = (u16*)GET_ZBUFFER;
             PreRender_SaveFramebuffer(&this->pauseBgPreRender, &gfxP);
             if (R_PAUSE_BG_PRERENDER_STATE == PAUSE_BG_PRERENDER_SETUP) {
                 this->pauseBgPreRender.cvgSave = (u8*)gfxCtx->curFrameBuffer;

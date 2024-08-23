@@ -85,4 +85,9 @@
 */
 #define ENABLE_MOTION_BLUR_DEBUG false
 
+/**
+ * Enable a more detailed assert when various allocations fail and crash instantly
+*/
+#define ENABLE_DETAILED_ALLOC_ASSERTS false
+
 #endif

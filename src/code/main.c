@@ -66,7 +66,11 @@ void Main(void* arg) {
     SysCfb_Init(0);
     systemHeapStart = (uintptr_t)_buffersSegmentEnd;
     fb = (uintptr_t)SysCfb_GetFbPtr(0);
+#if ENABLE_SPLIT_FRAMEBUFFERS // framebuffer 0 is not viable to mark end point of system heap because it moved
+    gSystemHeapSize = (uintptr_t)SysCfb_GetFbEnd() - systemHeapStart;
+#else
     gSystemHeapSize = fb - systemHeapStart;
+#endif
     // "System heap initalization"
     PRINTF("システムヒープ初期化 %08x-%08x %08x\n", systemHeapStart, fb, gSystemHeapSize);
     SystemHeap_Init((void*)systemHeapStart, gSystemHeapSize); // initializes the system heap

@@ -1,3 +1,5 @@
 #include "z64.h"
 
+#if !ENABLE_SPLIT_ZBUFFER
 ALIGNED(64) u16 gZBuffer[SCREEN_HEIGHT][SCREEN_WIDTH];
+#endif

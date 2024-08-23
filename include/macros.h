@@ -166,6 +166,12 @@ extern struct GraphicsContext* __gfxCtx;
 #define OVERLAY_DISP    __gfxCtx->overlay.p
 #define DEBUG_DISP      __gfxCtx->debug.p
 
+#if ENABLE_SPLIT_ZBUFFER
+#define GET_ZBUFFER ((u16*)(SysCfb_GetFbPtr(2)))
+#else
+#define GET_ZBUFFER gZBuffer
+#endif
+
 #if IS_DEBUG
 
 // __gfxCtx shouldn't be used directly.
