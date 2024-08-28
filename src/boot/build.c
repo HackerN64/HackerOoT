@@ -1,4 +1,5 @@
 #include "config.h"
+#include "versions.h"
 
 #define STRINGIFY(s) #s
 #define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)

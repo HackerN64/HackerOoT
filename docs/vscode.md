@@ -63,7 +63,7 @@ A more complete `c_cpp_properties.json` with configurations for all supported ve
                 "RELEASE_ROM=0",
                 "COMPRESS_YAZ=1",
                 // Version-specific
-                "OOT_VERSION=OOT_GC_EU_MQ_DBG",
+                "OOT_VERSION=GC_EU_MQ_DBG",
                 "OOT_REGION=REGION_EU",
                 "PLATFORM_N64=0",
                 "PLATFORM_GC=1",

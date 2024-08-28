@@ -6,7 +6,19 @@
 
 #include "global.h"
 #include "alloca.h"
+#include "versions.h"
+
+#if PLATFORM_N64
+#include "n64dd.h"
+#endif
+
 #include "assets/textures/nintendo_rogo_static/nintendo_rogo_static.h"
+
+// TODO
+void func_800014E8_unknown(void);
+s32 func_801C8090_unknown(void);
+void func_801C7BC4_unknown(void);
+s32 func_801C7ED0_unknown(void);
 
 void ConsoleLogo_PrintBuildInfo(Gfx** gfxP) {
     if (IS_DEBUG) {
@@ -39,8 +51,6 @@ void ConsoleLogo_PrintBuildInfo(Gfx** gfxP) {
     }
 }
 
-// Note: In other rom versions this function also updates unk_1D4, coverAlpha, addAlpha, visibleDuration to calculate
-// the fade-in/fade-out + the duration of the n64 logo animation
 void ConsoleLogo_Calc(ConsoleLogoState* this) {
     if (SKIP_N64_BOOT_LOGO) {
         this->exit = true;
@@ -177,12 +187,36 @@ void ConsoleLogo_Main(GameState* thisx) {
 void ConsoleLogo_Destroy(GameState* thisx) {
     ConsoleLogoState* this = (ConsoleLogoState*)thisx;
 
+#if PLATFORM_N64
+    if (this->unk_1E0) {
+        if (func_801C8090_unknown() != 0) {
+            func_800D31A0();
+        }
+        func_801C7BC4_unknown();
+    }
+#endif
+
     Sram_InitSram(&this->state, &this->sramCtx);
+
+#if PLATFORM_N64
+    func_800014E8_unknown();
+#endif
 }
 
 void ConsoleLogo_Init(GameState* thisx) {
     u32 size = (uintptr_t)_nintendo_rogo_staticSegmentRomEnd - (uintptr_t)_nintendo_rogo_staticSegmentRomStart;
     ConsoleLogoState* this = (ConsoleLogoState*)thisx;
+
+#if PLATFORM_N64
+    if ((B_80121AE0 != 0) && ((u8)B_80121AE1 != 0) && (B_80121AE2 == 0)) {
+        if (func_801C7ED0_unknown() != 0) {
+            func_800D31A0();
+        }
+        this->unk_1E0 = true;
+    } else {
+        this->unk_1E0 = false;
+    }
+#endif
 
     this->staticSegment = GAME_STATE_ALLOC(&this->state, size, "../z_title.c", 611);
     PRINTF("z_title.c\n");
@@ -195,7 +229,7 @@ void ConsoleLogo_Init(GameState* thisx) {
     this->state.destroy = ConsoleLogo_Destroy;
     this->exit = false;
 
-#if OOT_VERSION < OOT_GC_US
+#if OOT_VERSION < GC_US
     if (!(gPadMgr.validCtrlrsMask & 1)) {
         gSaveContext.fileNum = 0xFEDC;
     } else {

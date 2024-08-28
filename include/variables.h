@@ -178,7 +178,7 @@ extern s32 __osPfsLastChannel;
 extern const TempoData gTempoData;
 extern const AudioHeapInitSizes gAudioHeapInitSizes;
 extern s16 gOcarinaSongItemMap[];
-extern u8 gSoundFontTable[];
+extern AudioTable gSoundFontTable;
 extern u8 gSequenceFontTable[];
 extern u8 gSequenceTable[];
 extern AudioTable gSampleBankTable;
@@ -260,5 +260,7 @@ extern u8 gAudioHeap[AUDIO_HEAP_SIZE]; // 0x38000 bytes
 extern Rainbow gRainbow;
 
 extern u8 gRDPTimingsExist; // This variable being 1 indicates that the game is running on console or an extremely accurate emulator that can be affected by RDP lag.
+
+extern u32 gTotalAllocFailures;
 
 #endif
