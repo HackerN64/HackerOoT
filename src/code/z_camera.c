@@ -3716,13 +3716,31 @@ s32 Camera_KeepOn4(Camera* camera) {
                 break;
 
             case 9:
-                roData->unk_00 = playerHeight * 0.1f * yNormal;
-                roData->unk_04 = playerHeight * 0.5f * yNormal;
-                roData->unk_08 = -20.0f;
-                roData->unk_0C = 0.0f;
-                roData->interfaceField =
-                    CAM_INTERFACE_FIELD(CAM_LETTERBOX_MEDIUM, CAM_HUD_VISIBILITY_A_HEARTS_MAGIC_FORCE, KEEPON4_FLAG_6);
-                break;
+                if (MM_GETITEM_CAM == true) {
+                    if (LINK_IS_ADULT) {
+                        roData->unk_00 = playerHeight * -0.1f * yNormal; // Height
+                        roData->unk_04 = playerHeight * 0.7f * yNormal;  // Focal Point
+                        roData->unk_08 = 35.0f;                          // Cam Rotation
+                        roData->unk_0C = 0.0f;                           // ???
+                        // roData->unk_1C = 0x3540; Rotates cam on Y axis. Not in MM
+                        break;
+                    } else {
+                        roData->unk_00 = playerHeight * 0.06f * yNormal; // Height
+                        roData->unk_04 = playerHeight * 0.51f * yNormal; // Focal Point
+                        roData->unk_08 = 30.0f;                          // Cam Rotation
+                        roData->unk_0C = 0.0f;                           // ???
+                        // roData->unk_1C = 0x3540; Rotates cam on Y axis. Not in MM
+                        break;
+                    }
+                } else {
+                    roData->unk_00 = playerHeight * 0.1f * yNormal; // Height
+                    roData->unk_04 = playerHeight * 0.5f * yNormal; // Focal Point
+                    roData->unk_08 = -20.0f;                        // Cam Rotation
+                    roData->unk_0C = 0.0f;                          // ???
+                    roData->interfaceField = CAM_INTERFACE_FIELD(
+                        CAM_LETTERBOX_MEDIUM, CAM_HUD_VISIBILITY_A_HEARTS_MAGIC_FORCE, KEEPON4_FLAG_6);
+                    break;
+                }
 
             case 5:
                 roData->unk_00 = playerHeight * -0.4f * yNormal;
