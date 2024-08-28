@@ -42,7 +42,6 @@ void CIC6105_FaultClient(void) {
     func_800AE258_unknown("ROM_F");
     func_800AE258_unknown(" [Creator:%s]", gBuildTeam);
     func_800AE1E0_unknown(56, 192);
-    func_800AE258_unknown("[Date:%s]", gBuildDate);
     func_800AE1E0_unknown(96, 32);
     func_800AE258_unknown("I LOVE YOU %08x", func_80001714());
 }

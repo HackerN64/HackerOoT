@@ -1,5 +1,6 @@
 #include "global.h"
 #include "debug.h"
+#include "fault.h"
 
 static Gfx sPolyBuffer[MENU_BUFFER_SIZE];
 

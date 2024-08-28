@@ -730,6 +730,7 @@ beginseg
     include "$(BUILD_DIR)/src/debug/profiler.o"
 #endif
 endseg
+#endif
 
 #if PLATFORM_N64
 beginseg
