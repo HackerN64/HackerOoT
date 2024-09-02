@@ -675,11 +675,25 @@ endseg
 beginseg
     name "buffers"
     flags NOLOAD
-    align 0x40
-    include "$(BUILD_DIR)/src/buffers/zbuffer.o"
     include "$(BUILD_DIR)/src/buffers/gfxbuffers.o"
     include "$(BUILD_DIR)/src/buffers/audio_heap.o"
+#if !ENABLE_SPLIT_ZBUFFER
+    include "$(BUILD_DIR)/src/buffers/zbuffer.o"
+#endif
 endseg
+
+#if ENABLE_SPLIT_ZBUFFER
+beginseg
+    name "zbuffer"
+    flags NOLOAD
+#if ENABLE_SPLIT_FRAMEBUFFERS
+    address 0x80500000 // framebuffers 1 and 2 in last two banks
+#else
+    address 0x80700000 // framebuffers 1 and 2 are in their vanilla locations!
+#endif
+    include "$(BUILD_DIR)/src/buffers/zbuffer.o"
+endseg
+#endif
 
 #if ENABLE_F3DEX3
 beginseg

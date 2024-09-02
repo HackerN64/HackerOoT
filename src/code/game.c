@@ -212,13 +212,13 @@ void GameState_SetFrameBuffer(GraphicsContext* gfxCtx) {
 
     gSPSegment(POLY_OPA_DISP++, 0, 0);
     gSPSegment(POLY_OPA_DISP++, 0xF, gfxCtx->curFrameBuffer);
-    gSPSegment(POLY_OPA_DISP++, 0xE, GET_ZBUFFER);
+    gSPSegment(POLY_OPA_DISP++, 0xE, gZBuffer);
     gSPSegment(POLY_XLU_DISP++, 0, 0);
     gSPSegment(POLY_XLU_DISP++, 0xF, gfxCtx->curFrameBuffer);
-    gSPSegment(POLY_XLU_DISP++, 0xE, GET_ZBUFFER);
+    gSPSegment(POLY_XLU_DISP++, 0xE, gZBuffer);
     gSPSegment(OVERLAY_DISP++, 0, 0);
     gSPSegment(OVERLAY_DISP++, 0xF, gfxCtx->curFrameBuffer);
-    gSPSegment(OVERLAY_DISP++, 0xE, GET_ZBUFFER);
+    gSPSegment(OVERLAY_DISP++, 0xE, gZBuffer);
 
     CLOSE_DISPS(gfxCtx, "../game.c", 838);
 }

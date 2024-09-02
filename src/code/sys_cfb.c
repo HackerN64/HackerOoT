@@ -1,11 +1,7 @@
 #include "global.h"
 #include "config.h"
 
-#if ENABLE_SPLIT_ZBUFFER
-uintptr_t sSysCfbFbPtr[3];
-#else
 uintptr_t sSysCfbFbPtr[2];
-#endif
 uintptr_t sSysCfbEnd;
 
 void SysCfb_Init(s32 n64dd) {
@@ -47,14 +43,7 @@ void SysCfb_Init(s32 n64dd) {
 #if ENABLE_SPLIT_FRAMEBUFFERS // split framebuffers
     sSysCfbFbPtr[0] = 0x80700000;
     sSysCfbFbPtr[1] = 0x80600000;
-#if ENABLE_SPLIT_ZBUFFER // and z-buffer
-    sSysCfbFbPtr[2] = 0x80500000;
-#endif
-#elif ENABLE_SPLIT_ZBUFFER // only split z-buffer
-    sSysCfbFbPtr[0] = sSysCfbEnd - (screenSize * 4);
-    sSysCfbFbPtr[1] = sSysCfbEnd - (screenSize * 2);
-    sSysCfbFbPtr[2] = 0x80700000;
-#else                      // vanilla (split nothing)
+#else // vanilla (split nothing)
     sSysCfbFbPtr[0] = sSysCfbEnd - (screenSize * 4);
     sSysCfbFbPtr[1] = sSysCfbEnd - (screenSize * 2);
 #endif
@@ -65,22 +54,13 @@ void SysCfb_Init(s32 n64dd) {
 void SysCfb_Reset(void) {
     sSysCfbFbPtr[0] = 0;
     sSysCfbFbPtr[1] = 0;
-#if ENABLE_SPLIT_ZBUFFER
-    sSysCfbFbPtr[2] = 0;
-#endif
     sSysCfbEnd = 0;
 }
 
 void* SysCfb_GetFbPtr(s32 idx) {
-#if ENABLE_SPLIT_ZBUFFER
-    if (idx < 3) {
-        return (void*)sSysCfbFbPtr[idx];
-    }
-#else
     if (idx < 2) {
         return (void*)sSysCfbFbPtr[idx];
     }
-#endif
     return NULL;
 }
 

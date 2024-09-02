@@ -1480,9 +1480,9 @@ void Gfx_SetupFrame(GraphicsContext* gfxCtx, s32 clearFB, u8 r, u8 g, u8 b) {
     gDPSetColorImage(OVERLAY_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gScreenWidth, gfxCtx->curFrameBuffer);
 
     // Set up the z-buffer
-    gDPSetDepthImage(POLY_OPA_DISP++, GET_ZBUFFER);
-    gDPSetDepthImage(POLY_XLU_DISP++, GET_ZBUFFER);
-    gDPSetDepthImage(OVERLAY_DISP++, GET_ZBUFFER);
+    gDPSetDepthImage(POLY_OPA_DISP++, gZBuffer);
+    gDPSetDepthImage(POLY_XLU_DISP++, gZBuffer);
+    gDPSetDepthImage(OVERLAY_DISP++, gZBuffer);
 
     if ((R_PAUSE_BG_PRERENDER_STATE <= PAUSE_BG_PRERENDER_SETUP) && (gTransitionTileState <= TRANS_TILE_SETUP)) {
         s32 letterboxSize = Letterbox_GetSize();
@@ -1566,12 +1566,12 @@ void Gfx_ClearZBuffer(GraphicsContext* gfxCtx) {
         if (letterboxSize < 0 || letterboxSize > 100) {
             letterboxSize = 0;
         }
-        gSPMemset(POLY_OPA_DISP++, (u8*)GET_ZBUFFER + letterboxSize * w2, GPACK_ZDZ(G_MAXFBZ, 0),
+        gSPMemset(POLY_OPA_DISP++, (u8*)gZBuffer + letterboxSize * w2, GPACK_ZDZ(G_MAXFBZ, 0),
                   (gScreenHeight - 2 * letterboxSize) * w2);
     } else {
 #endif
         gSPDisplayList(POLY_OPA_DISP++, sFillSetupDL);
-        gDPSetColorImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gScreenWidth, GET_ZBUFFER);
+        gDPSetColorImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gScreenWidth, gZBuffer);
         gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
         gDPSetFillColor(POLY_OPA_DISP++, (GPACK_ZDZ(G_MAXFBZ, 0) << 16) | GPACK_ZDZ(G_MAXFBZ, 0));
         gDPFillRectangle(POLY_OPA_DISP++, 0, letterboxSize, gScreenWidth - 1, gScreenHeight - letterboxSize - 1);
@@ -1589,7 +1589,7 @@ void func_80095974(GraphicsContext* gfxCtx) {
 
     gSPDisplayList(POLY_OPA_DISP++, sFillSetupDL);
     gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, 0, 0, gScreenWidth, gScreenHeight);
-    gDPSetDepthImage(POLY_OPA_DISP++, GET_ZBUFFER);
+    gDPSetDepthImage(POLY_OPA_DISP++, gZBuffer);
     gDPSetColorImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gScreenWidth, gfxCtx->curFrameBuffer);
 
     CLOSE_DISPS(gfxCtx, "../z_rcp.c", 2513);
