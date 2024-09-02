@@ -530,6 +530,18 @@ void* GameState_Alloc(GameState* gameState, size_t size, const char* file, int l
         PRINTF("game_alloc(%08x) %08x-%08x [%s:%d]\n", size, ret, (uintptr_t)ret + size, file, line);
         PRINTF(VT_RST);
     }
+
+#if ENABLE_DETAILED_ALLOC_ASSERTS
+    if (ret == NULL) {
+        char buff1[150];
+        char buff2[150];
+        sprintf(buff1, "\nGameState_Alloc:\nRequested: %d bytes\nAvailable: %d bytes", size,
+                (int)THA_GetRemaining(&gameState->tha));
+        sprintf(buff2, "\nIn file %s\nline %d", file, line);
+        Fault_AddHungupAndCrashImpl(buff1, buff2);
+    }
+#endif
+
     return ret;
 }
 

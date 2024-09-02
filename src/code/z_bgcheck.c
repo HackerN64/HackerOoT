@@ -1540,6 +1540,9 @@ void BgCheck_Allocate(CollisionContext* colCtx, PlayState* play, CollisionHeader
     u32 customMemSize;
     s32 useCustomSubdivisions;
     s32 i;
+#if ENABLE_DETAILED_ALLOC_ASSERTS
+    size_t thaRemaining = THA_GetRemaining(&play->state.tha);
+#endif
 
     colCtx->colHeader = colHeader;
     customNodeListMax = -1;
@@ -1647,6 +1650,18 @@ void BgCheck_Allocate(CollisionContext* colCtx, PlayState* play, CollisionHeader
 
     DynaPoly_Init(play, &colCtx->dyna);
     DynaPoly_Alloc(play, &colCtx->dyna);
+
+    // bgcheck allocation is unsafe and could overflow.
+    // when it aligns the tail it doesn't check if it has room to do that.
+    // it is not caught, so a later assert would tell you that there is a negative amount of space remaining
+#if ENABLE_DETAILED_ALLOC_ASSERTS
+    if (THA_IsCrash(&play->state.tha)) {
+        char buff[150];
+        sprintf(buff, "\nRequested: %d bytes\nAvailable: %d bytes",
+                (s32)(thaRemaining - THA_GetRemaining(&play->state.tha)), thaRemaining);
+        Fault_AddHungupAndCrashImpl("BgCheck_Allocate", buff);
+    }
+#endif
 }
 
 /**

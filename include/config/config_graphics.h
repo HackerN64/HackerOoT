@@ -61,4 +61,23 @@
 // Increase the size of small elements (improves readability on N64)
 #define WIDESCREEN_N64_MODE true
 
+/**
+ * Framebuffer splitting
+ * This allows you to dedicate 2MB to framebuffers. Overrides SYS_CFB_END.
+ * You shouldn't enable this unless you know what you're doing!
+ * HackerOOT's default sizes in config_memory.h are not suitable for these, you have to change them
+ * Since it takes 2MB, you need to have 2MB available. Not usable in 4MB mode by default.
+*/
+#define ENABLE_SPLIT_FRAMEBUFFERS false
+
+/**
+ * Z-Buffer splitting
+ * This options allows you to dedicate 1MB to the Z-Buffer. Overrides SYS_CFB_END.
+ * You shouldn't enable this unless you know what you're doing!
+ * HackerOOT's default sizes in config_memory.h are not suitable for these, you have to change them
+ * This option can be enabled without ENABLE_SPLIT_FRAMEBUFFERS
+ * Costs 1MB. If enabled with ENABLE_SPLIT_FRAMEBUFFERS, costs 3MB. Not usable in 4MB mode by default.
+*/
+#define ENABLE_SPLIT_ZBUFFER false
+
 #endif

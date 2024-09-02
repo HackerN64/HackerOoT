@@ -26,10 +26,23 @@ s32 Object_SpawnPersistent(ObjectContext* objectCtx, s16 objectId) {
     PRINTF("num=%d adrs=%x end=%x\n", objectCtx->numEntries,
            (uintptr_t)objectCtx->slots[objectCtx->numEntries].segment + size, objectCtx->spaceEnd);
 
+#if ENABLE_DETAILED_ALLOC_ASSERTS
+    if (!((objectCtx->numEntries < ARRAY_COUNT(objectCtx->slots)) &&
+          (((uintptr_t)objectCtx->slots[objectCtx->numEntries].segment + size) < (uintptr_t)objectCtx->spaceEnd))) {
+        char buff1[150];
+        sprintf(buff1,
+                "\nObject %d\nRequested: %d bytes\nAvailable: %d bytes\nNeed %d more.\n\nObject space was %d bytes",
+                objectId, (unsigned int)size, objectCtx->spaceEnd - objectCtx->slots[objectCtx->numEntries].segment,
+                (objectCtx->slots[objectCtx->numEntries].segment + size) - objectCtx->spaceEnd,
+                objectCtx->spaceEnd - objectCtx->spaceStart);
+        Fault_AddHungupAndCrashImpl("Persistent Object Alloc Failed!", buff1);
+    }
+#else
     ASSERT(((objectCtx->numEntries < ARRAY_COUNT(objectCtx->slots)) &&
             (((uintptr_t)objectCtx->slots[objectCtx->numEntries].segment + size) < (uintptr_t)objectCtx->spaceEnd)),
            "this->num < OBJECT_EXCHANGE_BANK_MAX && (this->status[this->num].Segment + size) < this->endSegment",
            "../z_scene.c", 142);
+#endif
 
     DMA_REQUEST_SYNC(objectCtx->slots[objectCtx->numEntries].segment, gObjectTable[objectId].vromStart, size,
                      "../z_scene.c", 145);
@@ -167,7 +180,18 @@ void* func_800982FC(ObjectContext* objectCtx, s32 slot, s16 objectId) {
 
     nextPtr = (void*)ALIGN16((uintptr_t)entry->segment + size);
 
+#if ENABLE_DETAILED_ALLOC_ASSERTS
+    if (nextPtr > objectCtx->spaceEnd) {
+        char buff1[150];
+        sprintf(buff1,
+                "\nObject %d\nRequested: %d bytes\nAvailable: %d bytes\nNeed %d more.\n\nObject space was %d bytes",
+                objectId, (unsigned int)size, objectCtx->spaceEnd - entry->segment, nextPtr - objectCtx->spaceEnd,
+                objectCtx->spaceEnd - objectCtx->spaceStart);
+        Fault_AddHungupAndCrashImpl("Object Alloc Failed!", buff1);
+    }
+#else
     ASSERT(nextPtr < objectCtx->spaceEnd, "nextptr < this->endSegment", "../z_scene.c", 381);
+#endif
 
     // "Object exchange free size=%08x"
     PRINTF("オブジェクト入れ替え空きサイズ=%08x\n", (uintptr_t)objectCtx->spaceEnd - (uintptr_t)nextPtr);
