@@ -14,6 +14,12 @@ s32 Camera_UpdateWater(Camera* camera);
 s32 Camera_QRegInit(void);
 #endif
 
+#if PLATFORM_N64
+#define CAMERA_CHECK_BTN(input, btn) PadUtils_CheckPressed((input), (btn))
+#else
+#define CAMERA_CHECK_BTN(input, btn) CHECK_BTN_ALL((input)->press.button, (btn))
+#endif
+
 #if IS_CAMERA_DEBUG_ENABLED
 #define CAM_DEBUG_RELOAD_PREG(camera)        \
     if (R_RELOAD_CAM_PARAMS) {               \
