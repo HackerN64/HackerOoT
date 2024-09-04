@@ -4,7 +4,7 @@
 #define LOG_SEVERITY_ERROR 2
 #define LOG_SEVERITY_VERBOSE 3
 
-void __osDisplayArena(Arena *arena);
+void __osDisplayArena(Arena* arena);
 
 Arena sDebugArena;
 
