@@ -2,6 +2,8 @@
 #include "global.h"
 #include "debug.h"
 
+#if ENABLE_HACKER_DEBUG
+
 void Print_DebugPos(PrintUtils* this, Input* input, s16 posXChangeBy, s16 posYChangeBy) {
     Vec2s pos;
 
@@ -70,3 +72,5 @@ void Print_Screen(PrintUtils* this, u8 x, u8 y, u32 rgba, const char* fmt, ...) 
 
     CLOSE_DISPS(this->gfxCtx, __FILE__, __LINE__);
 }
+
+#endif

@@ -655,7 +655,8 @@ DECLARE_ROM_SEGMENT(spot20_room_0)
 
 DECLARE_ROM_SEGMENT(ganon_tou_room_0)
 
-#if OOT_DEBUG
+//! TODO: better fix
+#if 1 // IS_DEBUG
 DECLARE_ROM_SEGMENT(test01_room_0)
 
 DECLARE_ROM_SEGMENT(besitu_room_0)

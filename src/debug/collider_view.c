@@ -1,6 +1,8 @@
 #include "global.h"
 #include "debug.h"
 
+#if ENABLE_HACKER_DEBUG
+
 u8 ColliderView_Draw(void* unused) {
     CollisionCheckContext* colChkCtx = &gDebug.play->colChkCtx;
     u8 i;
@@ -26,3 +28,5 @@ u8 ColliderView_Draw(void* unused) {
 
     return true;
 }
+
+#endif

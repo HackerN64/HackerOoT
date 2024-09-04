@@ -980,7 +980,8 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
             gSaveContext.save.nightFlag = 0;
         }
 
-        if (CAN_SHOW_TIME_INFOS && (R_ENABLE_ARENA_DBG != 0) || (CREG(2) != 0)) {
+#if CAN_SHOW_TIME_INFOS
+        if ((R_ENABLE_ARENA_DBG != 0) || (CREG(2) != 0)) {
             Gfx* displayList;
             Gfx* prevDisplayList;
 
@@ -996,6 +997,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
             if (1) {}
             CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 1690);
         }
+#endif
 
         if ((envCtx->lightSettingOverride != LIGHT_SETTING_OVERRIDE_NONE) &&
             (envCtx->lightBlendOverride != LIGHT_BLEND_OVERRIDE_FULL_CONTROL) &&
