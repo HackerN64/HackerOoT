@@ -25,11 +25,6 @@
     #define BOOT_TO_SCENE_NEW_GAME_ONLY false
     #define BOOT_TO_FILE_SELECT false
     #define DISABLE_DEBUG_FEATURES true
-
-    #if BOOT_ENTRANCE == ENTR_EXAMPLE_0
-        #undef BOOT_ENTRANCE
-        #define BOOT_ENTRANCE ENTR_HYRULE_FIELD_0
-    #endif
 #endif
 
 #if DISABLE_DEBUG_FEATURES
@@ -78,8 +73,16 @@
     #define ENABLE_MOTION_BLUR_DEBUG false
     #define ENABLE_HACKER_DEBUG false
     #define ENABLE_PROFILER false
-#endif
 
+    #ifndef NDEBUG
+        #define NDEBUG
+    #endif
+
+    #if BOOT_ENTRANCE == ENTR_EXAMPLE_0
+        #undef BOOT_ENTRANCE
+        #define BOOT_ENTRANCE ENTR_HYRULE_FIELD_0
+    #endif
+#endif
 
 // Remove actor and camera debug draw-related code if both are disabled
 #ifndef NO_DEBUG_DISPLAY

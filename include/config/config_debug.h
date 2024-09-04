@@ -63,7 +63,7 @@
  * Disable every debug feature
  * This will enable Jumper pak compatibility
  */
-#define DISABLE_DEBUG_FEATURES false
+#define DISABLE_DEBUG_FEATURES true
 
 /**
  * Disable autoscroll on crash debugger
