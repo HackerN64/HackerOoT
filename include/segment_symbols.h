@@ -655,8 +655,9 @@ DECLARE_ROM_SEGMENT(spot20_room_0)
 
 DECLARE_ROM_SEGMENT(ganon_tou_room_0)
 
-//! TODO: better fix
-#if 1 // IS_DEBUG
+// Room symbols for compiling test scenes, these are not wrapped in an `#if OOT_DEBUG`
+// so that debug ROMs (including gc-eu-mq-dbg) can be built with OOT_DEBUG=0.
+
 DECLARE_ROM_SEGMENT(test01_room_0)
 
 DECLARE_ROM_SEGMENT(besitu_room_0)
@@ -678,6 +679,5 @@ DECLARE_ROM_SEGMENT(testroom_room_1)
 DECLARE_ROM_SEGMENT(testroom_room_2)
 DECLARE_ROM_SEGMENT(testroom_room_3)
 DECLARE_ROM_SEGMENT(testroom_room_4)
-#endif
 
 #endif
