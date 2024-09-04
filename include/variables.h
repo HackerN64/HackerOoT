@@ -2,6 +2,7 @@
 #define VARIABLES_H
 
 #include "z64.h"
+#include "osMalloc.h"
 #include "segment_symbols.h"
 #include "config.h"
 
@@ -243,7 +244,6 @@ extern ActiveSequence gActiveSeqs[4];
 extern AudioContext gAudioCtx;
 extern AudioCustomUpdateFunction gAudioCustomUpdateFunction;
 
-extern u32 __osMalloc_FreeBlockTest_Enable;
 extern Arena gSystemArena;
 extern OSPifRam __osContPifRam;
 extern u8 __osContLastCmd;
@@ -260,7 +260,5 @@ extern u8 gAudioHeap[AUDIO_HEAP_SIZE]; // 0x38000 bytes
 extern Rainbow gRainbow;
 
 extern u8 gRDPTimingsExist; // This variable being 1 indicates that the game is running on console or an extremely accurate emulator that can be affected by RDP lag.
-
-extern u32 gTotalAllocFailures;
 
 #endif

@@ -1,12 +1,10 @@
-// Include versions.h first and redefine FAULT_VERSION
-// This allows this file to compile even when versions.h uses FAULT_GC
-#include "versions.h"
-#undef FAULT_VERSION
-#define FAULT_VERSION FAULT_N64
-
 #include "global.h"
 #include "fault.h"
+#include "osMalloc.h"
+#include "stack.h"
 #include "terminal.h"
+
+#if PLATFORM_N64
 
 typedef struct FaultMgr {
     OSThread thread;
@@ -82,6 +80,7 @@ const char* sFpExceptionNames[] = {
 };
 
 u16 sFaultFontColor = GPACK_RGBA5551(255, 255, 255, 1);
+s32 D_800FF9C4[7] = { 0 }; // Unused (file padding?)
 
 Input sFaultInputs[MAXCONTROLLERS];
 
@@ -95,7 +94,8 @@ vs32 sFaultExit;
 vs32 gFaultMsgId;
 vs32 sFaultDisplayEnable;
 OSThread* sFaultFaultedThread;
-s32 B_80122570[0x10];
+s32 B_80122570[16];
+s32 B_801225B0[8]; // Unused (file padding?)
 
 void Fault_SleepImpl(u32 ms) {
     Sleep_Msec(ms);
@@ -843,3 +843,5 @@ void Fault_AddHungupAndCrash(const char* file, int line) {
     sprintf(msg, "HungUp %s:%d", file, line);
     Fault_AddHungupAndCrashImpl(msg, NULL);
 }
+
+#endif

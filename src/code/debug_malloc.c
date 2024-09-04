@@ -1,4 +1,5 @@
 #include "global.h"
+#include "osMalloc.h"
 
 #define LOG_SEVERITY_NOLOG 0
 #define LOG_SEVERITY_ERROR 2
@@ -97,8 +98,8 @@ void* DebugArena_Calloc(u32 num, u32 size) {
 
 void DebugArena_Display(void) {
     if (IS_DEBUG_HEAP_ENABLED) {
-        // "Zelda heap display" ("Zelda" should probably have been changed to "Debug")
-        PRINTF("ゼルダヒープ表示\n");
+        // Likely copypasted from ZeldaArena_Display, should say "Debug"
+        PRINTF(T("ゼルダヒープ表示\n", "Zelda heap display\n"));
         __osDisplayArena(&sDebugArena);
     }
 }
@@ -125,6 +126,6 @@ void DebugArena_Cleanup(void) {
     __osMallocCleanup(&sDebugArena);
 }
 
-u8 DebugArena_IsInitialized(void) {
+s32 DebugArena_IsInitialized(void) {
     return __osMallocIsInitialized(&sDebugArena);
 }

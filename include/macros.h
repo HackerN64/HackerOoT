@@ -213,7 +213,6 @@ extern struct GraphicsContext* __gfxCtx;
 #define ZELDA_ARENA_FREE(size, ...) ZeldaArena_FreeDebug(size, __FILE__, __LINE__)
 #define LOG_UTILS_CHECK_NULL_POINTER(exp, ptr, ...) LogUtils_CheckNullPointer(exp, ptr, __FILE__, __LINE__)
 #define LOG_UTILS_CHECK_VALID_POINTER(exp, ptr, ...) LogUtils_CheckValidPointer(exp, ptr, __FILE__, __LINE__)
-#define HUNGUP_AND_CRASH(...) Fault_AddHungupAndCrash(__FILE__, __LINE__)
 #define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_MallocDebug(alloc, size, __FILE__, __LINE__)
 
 #else
@@ -250,6 +249,12 @@ extern struct GraphicsContext* __gfxCtx;
 #define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_Malloc(alloc, size)
 
 #endif /* IS_DEBUG */
+
+#if PLATFORM_N64 || OOT_DEBUG
+#define HUNGUP_AND_CRASH(...) Fault_AddHungupAndCrash(__FILE__, __LINE__)
+#else
+#define HUNGUP_AND_CRASH(...) LogUtils_HungupThread(__FILE__, __LINE__)
+#endif
 
 #if OOT_NTSC
 #define LANGUAGE_ARRAY(jpn, eng, ger, fra) { jpn, eng }
