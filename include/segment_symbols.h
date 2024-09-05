@@ -91,6 +91,12 @@ DECLARE_ROM_SEGMENT(debug)
 DECLARE_BSS_SEGMENT(debug)
 #endif
 
+// N64-only, not wrapped in these are not wrapped in an `#if PLATFORM_N64`
+// so that the N64DD code can always be built.
+DECLARE_SEGMENT(n64dd)
+DECLARE_ROM_SEGMENT(n64dd)
+DECLARE_BSS_SEGMENT(n64dd)
+
 DECLARE_OVERLAY_SEGMENT(kaleido_scope)
 DECLARE_OVERLAY_SEGMENT(player_actor)
 DECLARE_OVERLAY_SEGMENT(map_mark_data)

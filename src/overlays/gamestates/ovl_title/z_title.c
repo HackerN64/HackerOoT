@@ -9,47 +9,42 @@
 #include "versions.h"
 
 #if PLATFORM_N64
+#include "cic6105.h"
 #include "n64dd.h"
 #endif
 
 #include "assets/textures/nintendo_rogo_static/nintendo_rogo_static.h"
 
-// TODO
-void func_800014E8_unknown(void);
-s32 func_801C8090_unknown(void);
-void func_801C7BC4_unknown(void);
-s32 func_801C7ED0_unknown(void);
-
+#if IS_DEBUG
 void ConsoleLogo_PrintBuildInfo(Gfx** gfxP) {
-    if (IS_DEBUG) {
-        Gfx* gfx;
-        GfxPrint* printer;
+    Gfx* gfx;
+    GfxPrint* printer;
 
-        gfx = *gfxP;
-        gfx = Gfx_SetupDL_28(gfx);
-        printer = alloca(sizeof(GfxPrint));
-        GfxPrint_Init(printer);
-        GfxPrint_Open(printer, gfx);
+    gfx = *gfxP;
+    gfx = Gfx_SetupDL_28(gfx);
+    printer = alloca(sizeof(GfxPrint));
+    GfxPrint_Init(printer);
+    GfxPrint_Open(printer, gfx);
 
-        GfxPrint_SetColor(printer, 255, 255, 255, 255);
+    GfxPrint_SetColor(printer, 255, 255, 255, 255);
 
-        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 22);
-        GfxPrint_Printf(printer, "[Version:%s]", gBuildGitVersion);
+    GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 22);
+    GfxPrint_Printf(printer, "[Version:%s]", gBuildGitVersion);
 
-        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 23);
-        GfxPrint_Printf(printer, "[Build Option:%s]", gBuildMakeOption);
+    GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 23);
+    GfxPrint_Printf(printer, "[Build Option:%s]", gBuildMakeOption);
 
-        if (ENABLE_F3DEX3) {
-            GfxPrint_SetColor(printer, gRainbow.color.r, gRainbow.color.g, gRainbow.color.b, 255);
-            GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 25);
-            GfxPrint_Printf(printer, "Powered by F3DEX3!");
-        }
-
-        gfx = GfxPrint_Close(printer);
-        GfxPrint_Destroy(printer);
-        *gfxP = gfx;
+    if (ENABLE_F3DEX3) {
+        GfxPrint_SetColor(printer, gRainbow.color.r, gRainbow.color.g, gRainbow.color.b, 255);
+        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 25);
+        GfxPrint_Printf(printer, "Powered by F3DEX3!");
     }
+
+    gfx = GfxPrint_Close(printer);
+    GfxPrint_Destroy(printer);
+    *gfxP = gfx;
 }
+#endif
 
 void ConsoleLogo_Calc(ConsoleLogoState* this) {
     if (SKIP_N64_BOOT_LOGO) {
@@ -169,9 +164,9 @@ void ConsoleLogo_Main(GameState* thisx) {
     ConsoleLogo_Calc(this);
     ConsoleLogo_Draw(this);
 
-    if (IS_DEBUG) {
-        ConsoleLogo_PrintBuildInfo(&POLY_OPA_DISP);
-    }
+#if IS_DEBUG
+    ConsoleLogo_PrintBuildInfo(&POLY_OPA_DISP);
+#endif
 
     if (this->exit) {
         gSaveContext.seqId = (u8)NA_BGM_DISABLED;
@@ -189,17 +184,17 @@ void ConsoleLogo_Destroy(GameState* thisx) {
 
 #if PLATFORM_N64
     if (this->unk_1E0) {
-        if (func_801C8090_unknown() != 0) {
+        if (func_801C7818() != 0) {
             func_800D31A0();
         }
-        func_801C7BC4_unknown();
+        func_801C7268();
     }
 #endif
 
     Sram_InitSram(&this->state, &this->sramCtx);
 
 #if PLATFORM_N64
-    func_800014E8_unknown();
+    func_800014E8();
 #endif
 }
 
@@ -208,8 +203,8 @@ void ConsoleLogo_Init(GameState* thisx) {
     ConsoleLogoState* this = (ConsoleLogoState*)thisx;
 
 #if PLATFORM_N64
-    if ((B_80121AE0 != 0) && ((u8)B_80121AE1 != 0) && (B_80121AE2 == 0)) {
-        if (func_801C7ED0_unknown() != 0) {
+    if ((D_80121210 != 0) && (D_80121211 != 0) && (D_80121212 == 0)) {
+        if (func_801C7658() != 0) {
             func_800D31A0();
         }
         this->unk_1E0 = true;
