@@ -165,8 +165,12 @@ ifeq ($(origin PACKAGE_VERSION), undefined)
 endif
 
 # Converts e.g. ntsc-1.0 to NTSC_1_0
+ifeq ($(VERSION),hackeroot-mq)
+CPP_DEFINES += -DOOT_VERSION=GC_EU_MQ_DBG
+else
 VERSION_MACRO := $(shell echo $(VERSION) | tr a-z-. A-Z__)
 CPP_DEFINES += -DOOT_VERSION=$(VERSION_MACRO)
+endif
 CPP_DEFINES += -DOOT_REGION=REGION_$(REGION)
 
 ifeq ($(PLATFORM),N64)

@@ -161,10 +161,6 @@
 
 #if IS_DEBUG
 
-#define GRAPH_ALLOC(gfxCtx, size) Graph_Alloc(gfxCtx, size)
-#define MATRIX_TO_MTX(gfxCtx, ...) Matrix_ToMtx(gfxCtx, __FILE__, __LINE__)
-#define MATRIX_NEW(gfxCtx, ...) Matrix_NewMtx(gfxCtx, __FILE__, __LINE__)
-#define MATRIX_CHECK_FLOATS(mtx, ...) Matrix_CheckFloats(mtx, __FILE__, __LINE__)
 #define DMA_REQUEST_SYNC(ram, vrom, size, ...) DmaMgr_RequestSyncDebug(ram, vrom, size, __FILE__, __LINE__)
 #define DMA_REQUEST_ASYNC(req, ram, vrom, size, unk5, queue, msg, ...) DmaMgr_RequestAsyncDebug(req, ram, vrom, size, unk5, queue, msg, __FILE__, __LINE__)
 #define GAME_STATE_ALLOC(gameState, size, ...) GameState_Alloc(gameState, size, __FILE__, __LINE__)
@@ -183,10 +179,6 @@
 
 #else
 
-#define GRAPH_ALLOC(gfxCtx, size) ((void*)((gfxCtx)->polyOpa.d = (Gfx*)((u8*)(gfxCtx)->polyOpa.d - ALIGN16(size))))
-#define MATRIX_TO_MTX(gfxCtx, ...) Matrix_ToMtx(gfxCtx)
-#define MATRIX_NEW(gfxCtx, ...) Matrix_NewMtx(gfxCtx)
-#define MATRIX_CHECK_FLOATS(mtx, ...) (mtx)
 #define DMA_REQUEST_SYNC(ram, vrom, size, ...) DmaMgr_RequestSync(ram, vrom, size)
 #define DMA_REQUEST_ASYNC(req, ram, vrom, size, unk5, queue, msg, ...) DmaMgr_RequestAsync(req, ram, vrom, size, unk5, queue, msg)
 #define GAME_STATE_ALLOC(gameState, size, ...) THA_AllocTailAlign16(&(gameState)->tha, size)

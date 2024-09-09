@@ -11,9 +11,9 @@
 #pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128"
 
 #if N64_BTN_COLORS
-#define OCARINA_BUTTON_A_PRIM_R 80
-#define OCARINA_BUTTON_A_PRIM_G 150
-#define OCARINA_BUTTON_A_PRIM_B 255
+#define OCARINA_BUTTON_A_PRIM_1_R 80
+#define OCARINA_BUTTON_A_PRIM_1_G 150
+#define OCARINA_BUTTON_A_PRIM_1_B 255
 #else
 #define OCARINA_BUTTON_A_PRIM_1_R 80
 #define OCARINA_BUTTON_A_PRIM_1_G 255
@@ -697,16 +697,6 @@ void Message_SetTextColor(MessageContext* msgCtx, u16 colorParameter) {
 }
 
 void Message_DrawTextboxIcon(PlayState* play, Gfx** p, s16 x, s16 y) {
-#if N64_BTN_COLORS
-    static s16 sIconPrimColors[][3] = {
-        { 0, 80, 200 },
-        { 50, 130, 255 },
-    };
-    static s16 sIconEnvColors[][3] = {
-        { 0, 0, 0 },
-        { 0, 130, 255 },
-    };
-#else
     static s16 sIconPrimColors[][3] = {
         { OCARINA_ICON_PRIM_1_R, OCARINA_ICON_PRIM_1_G, OCARINA_ICON_PRIM_1_B },
         { OCARINA_ICON_PRIM_2_R, OCARINA_ICON_PRIM_2_G, OCARINA_ICON_PRIM_2_B },

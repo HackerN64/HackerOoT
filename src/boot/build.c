@@ -12,4 +12,4 @@ char const gBuildMakeOption[] = "DEBUG";
 
 char const gBuildGitVersion[] = EXPAND_AND_STRINGIFY(PACKAGE_VERSION);
 
-char const gBuildTeam[] = "";
+char const gBuildCreator[] = "";

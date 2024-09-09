@@ -51,7 +51,7 @@ extern OSViMode gCustomViModePal60Lan1;
 extern u32 __additional_scanline;
 extern const char gBuildMakeOption[];
 extern const char gBuildGitVersion[];
-extern const char gBuildTeam[];
+extern const char gBuildCreator[];
 extern OSMesgQueue gPiMgrCmdQueue;
 extern OSViMode gViConfigMode;
 extern u8 gViConfigModeType;
@@ -204,6 +204,7 @@ extern PauseMapMarksData* gLoadedPauseMarkDataTable;
 extern PreNmiBuff* gAppNmiBufferPtr;
 extern Scheduler gScheduler;
 extern PadMgr gPadMgr;
+extern IrqMgr gIrqMgr;
 
 #if ENABLE_F3DEX3
 extern u8 gF3DEX3TextBuffer[];

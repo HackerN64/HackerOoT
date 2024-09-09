@@ -19470,6 +19470,8 @@ beginseg
     number 3
 endseg
 
+#endif
+
 #if CAN_INCLUDE_TEST_SCENES
 beginseg
     name "test01_scene"

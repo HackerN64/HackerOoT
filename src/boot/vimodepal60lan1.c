@@ -23,7 +23,7 @@ OSViMode gCustomViModePal60Lan1 = {
     {
         // comRegs
         VI_CTRL_TYPE_16 | VI_CTRL_GAMMA_DITHER_ON | VI_CTRL_GAMMA_ON | VI_CTRL_DIVOT_ON | VI_CTRL_ANTIALIAS_MODE_1 |
-            VI_CTRL_PIXEL_ADV(3), // ctrl
+            VI_CTRL_PIXEL_ADV_3, // ctrl
         WIDTH(320),               // width
         BURST(58, 30, 4, 69),     // burst
         // Ideally VSYNC would be 525 but this produces marginally-too-slow retraces. 519 is the closest value that
