@@ -42,8 +42,8 @@
  */
 #if PLATFORM_GC
 
-#pragma increment_block_number "gc-eu:240 gc-eu-mq:240 gc-eu-mq-dbg:224 gc-jp:240 gc-jp-ce:240 gc-jp-mq:240 gc-us:240" \
-                               "gc-us-mq:240"
+#pragma increment_block_number "gc-eu:208 gc-eu-mq:208 gc-eu-mq-dbg:208 gc-jp:208 gc-jp-ce:208 gc-jp-mq:208 gc-us:208" \
+                               "gc-us-mq:208"
 
 #include "global.h"
 #include "alloca.h"
@@ -144,7 +144,8 @@ void Fault_ClientRunTask(FaultClientTask* task) {
 
     // Await done
     while (true) {
-        osSetTimer(&timer, OS_SEC_TO_CYCLES(1), 0, &queue, (OSMesg)timerMsgVal);
+        // Wait for 1 second
+        osSetTimer(&timer, OS_USEC_TO_CYCLES(1000000), 0, &queue, (OSMesg)timerMsgVal);
         osRecvMesg(&queue, &recMsg, OS_MESG_BLOCK);
 
         if (recMsg != (OSMesg)666) {
@@ -214,7 +215,9 @@ void Fault_AddClient(FaultClient* client, void* callback, void* arg0, void* arg1
 end:
     osSetIntMask(mask);
     if (alreadyExists) {
-        osSyncPrintf(VT_COL(RED, WHITE) "fault_AddClient: %08x は既にリスト中にある\n" VT_RST, client);
+        osSyncPrintf(VT_COL(RED, WHITE) T("fault_AddClient: %08x は既にリスト中にある\n",
+                                          "fault_AddClient: %08x is already in the list\n") VT_RST,
+                     client);
     }
 }
 
@@ -250,7 +253,9 @@ void Fault_RemoveClient(FaultClient* client) {
     osSetIntMask(mask);
 
     if (listIsEmpty) {
-        osSyncPrintf(VT_COL(RED, WHITE) "fault_RemoveClient: %08x リスト不整合です\n" VT_RST, client);
+        osSyncPrintf(VT_COL(RED, WHITE) T("fault_RemoveClient: %08x リスト不整合です\n",
+                                          "fault_RemoveClient: %08x list inconsistency\n") VT_RST,
+                     client);
     }
 }
 
@@ -292,7 +297,9 @@ void Fault_AddAddrConvClient(FaultAddrConvClient* client, void* callback, void* 
 end:
     osSetIntMask(mask);
     if (alreadyExists) {
-        osSyncPrintf(VT_COL(RED, WHITE) "fault_AddressConverterAddClient: %08x は既にリスト中にある\n" VT_RST, client);
+        osSyncPrintf(VT_COL(RED, WHITE) T("fault_AddressConverterAddClient: %08x は既にリスト中にある\n",
+                                          "fault_AddressConverterAddClient: %08x is already in the list\n") VT_RST,
+                     client);
     }
 }
 
@@ -326,7 +333,8 @@ void Fault_RemoveAddrConvClient(FaultAddrConvClient* client) {
     osSetIntMask(mask);
 
     if (listIsEmpty) {
-        osSyncPrintf(VT_COL(RED, WHITE) "fault_AddressConverterRemoveClient: %08x は既にリスト中にある\n" VT_RST,
+        osSyncPrintf(VT_COL(RED, WHITE) T("fault_AddressConverterRemoveClient: %08x は既にリスト中にある\n",
+                                          "fault_AddressConverterRemoveClient: %08x is already in the list\n") VT_RST,
                      client);
     }
 }
@@ -642,7 +650,7 @@ void Fault_Wait5Seconds(void) {
 
     do {
         Fault_Sleep(1000 / 60);
-    } while ((osGetTime() - start) < OS_SEC_TO_CYCLES(5) + 1);
+    } while ((osGetTime() - start) <= OS_USEC_TO_CYCLES(5000000)); // 5 seconds
 
     sFaultInstance->autoScroll = !DISABLE_CRASH_DBG_AUTOSCROLL;
 }
@@ -1021,20 +1029,20 @@ void Fault_ThreadEntry(void* arg) {
 
             if (msg == FAULT_MSG_CPU_BREAK) {
                 sFaultInstance->msgId = (u32)FAULT_MSG_CPU_BREAK;
-                // Fault Manager: OS_EVENT_CPU_BREAK received
-                osSyncPrintf("フォルトマネージャ:OS_EVENT_CPU_BREAKを受信しました\n");
+                osSyncPrintf(T("フォルトマネージャ:OS_EVENT_CPU_BREAKを受信しました\n",
+                               "Fault Manager: OS_EVENT_CPU_BREAK received\n"));
             } else if (msg == FAULT_MSG_FAULT) {
                 sFaultInstance->msgId = (u32)FAULT_MSG_FAULT;
-                // Fault Manager: OS_EVENT_FAULT received
-                osSyncPrintf("フォルトマネージャ:OS_EVENT_FAULTを受信しました\n");
+                osSyncPrintf(
+                    T("フォルトマネージャ:OS_EVENT_FAULTを受信しました\n", "Fault Manager: OS_EVENT_FAULT received\n"));
             } else if (msg == FAULT_MSG_UNK) {
                 Fault_UpdatePad();
                 faultedThread = NULL;
                 continue;
             } else {
                 sFaultInstance->msgId = (u32)FAULT_MSG_UNK;
-                // Fault Manager: Unknown message received
-                osSyncPrintf("フォルトマネージャ:不明なメッセージを受信しました\n");
+                osSyncPrintf(T("フォルトマネージャ:不明なメッセージを受信しました\n",
+                               "Fault Manager: Unknown message received\n"));
             }
 
             faultedThread = __osGetCurrFaultedThread();

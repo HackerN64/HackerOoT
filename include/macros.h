@@ -19,7 +19,6 @@
 
 #define PHYSICAL_TO_VIRTUAL(addr) (void*)((uintptr_t)(addr) + 0x80000000)
 #define VIRTUAL_TO_PHYSICAL(addr) (uintptr_t)((u8*)(addr) - 0x80000000)
-#define SEGMENTED_TO_VIRTUAL(addr) PHYSICAL_TO_VIRTUAL(gSegments[SEGMENT_NUMBER(addr)] + SEGMENT_OFFSET(addr))
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 #define DECR(x) ((x) == 0 ? 0 : --(x))
@@ -105,14 +104,6 @@
                                 ? gSaveContext.save.info.equips.buttonItems[(button) + 1]       \
                                 : ITEM_NONE)
 
-#if PLATFORM_N64
-#define CHECK_BTN_ALL(state, combo) (((state) & (combo)) == (combo))
-#else
-#define CHECK_BTN_ALL(state, combo) (~((state) | ~(combo)) == 0)
-#endif
-
-#define CHECK_BTN_ANY(state, combo) (((state) & (combo)) != 0)
-
 #define CHECK_FLAG_ALL(flags, mask) (((flags) & (mask)) == (mask))
 
 // IDO doesn't support variadic macros, but it merely throws a warning for the
@@ -168,32 +159,7 @@
     }                                      \
     (void)0
 
-struct GraphicsContext;
-
-extern struct GraphicsContext* __gfxCtx;
-
-#define WORK_DISP       __gfxCtx->work.p
-#define POLY_OPA_DISP   __gfxCtx->polyOpa.p
-#define POLY_XLU_DISP   __gfxCtx->polyXlu.p
-#define OVERLAY_DISP    __gfxCtx->overlay.p
-#define DEBUG_DISP      __gfxCtx->debug.p
-
 #if IS_DEBUG
-
-// __gfxCtx shouldn't be used directly.
-// Use the DISP macros defined above when writing to display buffers.
-#define OPEN_DISPS(gfxCtx, ...)         \
-    {                                   \
-        GraphicsContext* __gfxCtx;      \
-        Gfx* dispRefs[4];               \
-        __gfxCtx = gfxCtx;              \
-        (void)__gfxCtx;                 \
-        Graph_OpenDisps(dispRefs, gfxCtx, __FILE__, __LINE__)
-
-#define CLOSE_DISPS(gfxCtx, ...)                                \
-        Graph_CloseDisps(dispRefs, gfxCtx, __FILE__, __LINE__); \
-    }                                                           \
-    (void)0
 
 #define GRAPH_ALLOC(gfxCtx, size) Graph_Alloc(gfxCtx, size)
 #define MATRIX_TO_MTX(gfxCtx, ...) Matrix_ToMtx(gfxCtx, __FILE__, __LINE__)
@@ -216,16 +182,6 @@ extern struct GraphicsContext* __gfxCtx;
 #define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_MallocDebug(alloc, size, __FILE__, __LINE__)
 
 #else
-
-#define OPEN_DISPS(gfxCtx, ...)      \
-    {                                       \
-        GraphicsContext* __gfxCtx = gfxCtx; \
-        s32 __dispPad
-
-#define CLOSE_DISPS(gfxCtx, ...) \
-    (void)0;                            \
-    }                                   \
-    (void)0
 
 #define GRAPH_ALLOC(gfxCtx, size) ((void*)((gfxCtx)->polyOpa.d = (Gfx*)((u8*)(gfxCtx)->polyOpa.d - ALIGN16(size))))
 #define MATRIX_TO_MTX(gfxCtx, ...) Matrix_ToMtx(gfxCtx)
