@@ -646,8 +646,7 @@ void ObjOshihiki_Draw(Actor* thisx, PlayState* play) {
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(this->texture));
     IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_OPA_DISP++, this->texture);
 
-    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_obj_oshihiki.c", 1308),
-              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_obj_oshihiki.c", 1308);
 
 #if IS_DEBUG
     switch (play->sceneId) {

@@ -8,7 +8,7 @@
 #include "assets/objects/object_fu/object_fu.h"
 #include "assets/scenes/indoors/hakasitarelay/hakasitarelay_scene.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_NEUTRAL | ACTOR_FLAG_4 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4 | ACTOR_FLAG_25)
 
 #define FU_RESET_LOOK_ANGLE (1 << 0)
 #define FU_WAIT (1 << 1)
@@ -42,7 +42,7 @@ ActorProfile En_Fu_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COLTYPE_NONE,
+        COL_MATERIAL_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_ENEMY,
         OC1_ON | OC1_TYPE_ALL,

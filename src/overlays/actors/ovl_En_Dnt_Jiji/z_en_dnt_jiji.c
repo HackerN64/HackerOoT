@@ -10,7 +10,7 @@
 #include "overlays/effects/ovl_Effect_Ss_Hahen/z_eff_ss_hahen.h"
 #include "terminal.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_NEUTRAL | ACTOR_FLAG_4)
+#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4)
 
 void EnDntJiji_Init(Actor* thisx, PlayState* play);
 void EnDntJiji_Destroy(Actor* thisx, PlayState* play);
@@ -53,7 +53,7 @@ ActorProfile En_Dnt_Jiji_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COLTYPE_NONE,
+        COL_MATERIAL_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -441,8 +441,7 @@ void EnDntJiji_Draw(Actor* thisx, PlayState* play) {
     Matrix_Pop();
     Matrix_Translate(this->flowerPos.x, this->flowerPos.y, this->flowerPos.z, MTXMODE_NEW);
     Matrix_Scale(0.01f, 0.01f, 0.01f, MTXMODE_APPLY);
-    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_dnt_jiji.c", 1040),
-              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_en_dnt_jiji.c", 1040);
     gSPDisplayList(POLY_OPA_DISP++, gDntJijiFlowerDL);
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_dnt_jiji.c", 1043);
 }

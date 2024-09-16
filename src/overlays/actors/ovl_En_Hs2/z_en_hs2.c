@@ -8,7 +8,7 @@
 #include "terminal.h"
 #include "assets/objects/object_hs/object_hs.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_NEUTRAL)
+#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY)
 
 void EnHs2_Init(Actor* thisx, PlayState* play);
 void EnHs2_Destroy(Actor* thisx, PlayState* play);
@@ -30,7 +30,7 @@ ActorProfile En_Hs2_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COLTYPE_NONE,
+        COL_MATERIAL_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_ENEMY,
         OC1_ON | OC1_TYPE_ALL,

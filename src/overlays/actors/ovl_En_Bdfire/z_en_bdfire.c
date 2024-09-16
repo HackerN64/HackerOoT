@@ -209,8 +209,7 @@ void EnBdfire_DrawFire(EnBdfire* this, PlayState* play) {
     gSPSegment(POLY_XLU_DISP++, 8, SEGMENTED_TO_VIRTUAL(D_809BCB10[texIndex]));
     IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, texIndex);
     Matrix_Translate(0.0f, 11.0f, 0.0f, MTXMODE_APPLY);
-    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_bdfire.c", 647),
-              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_en_bdfire.c", 647);
     gSPDisplayList(POLY_XLU_DISP++, object_kingdodongo_DL_01D950);
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_bdfire.c", 651);
 }

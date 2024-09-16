@@ -2,7 +2,7 @@
 #include "assets/objects/object_sd/object_sd.h"
 #include "terminal.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_NEUTRAL)
+#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY)
 
 void EnHeishi4_Init(Actor* thisx, PlayState* play);
 void EnHeishi4_Destroy(Actor* thisx, PlayState* play);
@@ -37,7 +37,7 @@ static u32 sMaskReactionSets[] = { MASK_REACTION_SET_HEISHI4_1, MASK_REACTION_SE
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COLTYPE_NONE,
+        COL_MATERIAL_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,

@@ -1,17 +1,8 @@
 #include "global.h"
 #include "quake.h"
-#include "config.h"
-
-#include "assets/scenes/indoors/miharigoya/miharigoya_scene.h"
-#include "assets/scenes/indoors/souko/souko_scene.h"
-
-#include "assets/scenes/indoors/miharigoya/miharigoya_scene.h"
-#include "assets/scenes/indoors/souko/souko_scene.h"
-
-#include "assets/scenes/indoors/miharigoya/miharigoya_scene.h"
-#include "assets/scenes/indoors/souko/souko_scene.h"
-
+#include "versions.h"
 #include "z64frame_advance.h"
+#include "config.h"
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
@@ -1642,7 +1633,7 @@ void Scene_DrawConfigJabuJabu(PlayState* play) {
         Matrix_Scale(1.005f, sinf(D_8012A398) * 0.8f, 1.005f, MTXMODE_NEW);
     }
 
-    gSPSegment(POLY_OPA_DISP++, 0x0D, MATRIX_NEW(play->state.gfxCtx, "../z_scene_table.c", 7809));
+    gSPSegment(POLY_OPA_DISP++, 0x0D, MATRIX_FINALIZE(play->state.gfxCtx, "../z_scene_table.c", 7809));
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_scene_table.c", 7811);
 }

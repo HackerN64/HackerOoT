@@ -5,20 +5,31 @@
 #define GFXPOOL_HEAD_MAGIC 0x1234
 #define GFXPOOL_TAIL_MAGIC 0x5678
 
-#if IS_DEBUG
-FaultClient sGraphFaultClient;
-#endif
+#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
+                               "ntsc-1.2:223"
 
-CfbInfo sGraphCfbInfos[3];
+/**
+ * The time at which the previous `Graph_Update` ended.
+ */
+OSTime sGraphPrevUpdateEndTime;
 
-#if IS_DEBUG
-FaultClient sGraphUcodeFaultClient;
+/**
+ * The time at which the previous graphics task was scheduled to run.
+ */
+OSTime sGraphPrevTaskTimeStart;
 
 #if ENABLE_F3DEX3
 #define GRAPH_UCODE_GLOBAL_SYMBOL gF3DEX3TextBuffer
 #else
 #define GRAPH_UCODE_GLOBAL_SYMBOL gspF3DZEX2_NoN_PosLight_fifoTextStart
 #endif
+
+#if ENABLE_MOTION_BLUR
+u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT]; // pointer-to-array, array itself is allocated (see below)
+#endif
+
+#if IS_DEBUG
+FaultClient sGraphFaultClient;
 
 UCodeInfo D_8012D230[3] = {
     { UCODE_F3DZEX, GRAPH_UCODE_GLOBAL_SYMBOL },
@@ -31,10 +42,6 @@ UCodeInfo D_8012D248[3] = {
     { UCODE_UNK, NULL },
     { UCODE_S2DEX, gspS2DEX2d_fifoTextStart },
 };
-
-#if ENABLE_MOTION_BLUR
-u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT]; // pointer-to-array, array itself is allocated (see below)
-#endif
 
 void Graph_FaultClient(void) {
     void* nextFb = osViGetNextFramebuffer();
@@ -161,21 +168,16 @@ void Graph_Destroy(GraphicsContext* gfxCtx) {
 #endif
 }
 
-#if IS_DEBUG
-Gfx* gPrevTaskWorkBuffer = NULL;
-#endif
-
 void Graph_TaskSet00(GraphicsContext* gfxCtx) {
-    static s32 sGraphCfbInfoIdx = 0;
-
-    OSTime timeNow;
-    OSTimer timer;
-    OSMesg msg;
+#if IS_DEBUG
+    static Gfx* sPrevTaskWorkBuffer = NULL;
+#endif
     OSTask_t* task = &gfxCtx->task.list.t;
     OSScTask* scTask = &gfxCtx->task;
 
     {
-        CfbInfo* cfb;
+        OSTimer timer;
+        OSMesg msg;
 
         // Schedule a message to be handled in 3 seconds, for RCP timeout
         osSetTimer(&timer, OS_USEC_TO_CYCLES(3000000), 0, &gfxCtx->queue, (OSMesg)666);
@@ -184,7 +186,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
         osStopTimer(&timer);
 
         if (msg == (OSMesg)666) {
-#if IS_DEBUG
+#if OOT_DEBUG
             PRINTF(VT_FGCOL(RED));
             PRINTF(T("RCPが帰ってきませんでした。", "RCP did not return."));
             PRINTF(VT_RST);
@@ -194,11 +196,11 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
             LogUtils_LogHexDump(gGfxSPTaskYieldBuffer, sizeof(gGfxSPTaskYieldBuffer));
 
             SREG(6) = -1;
-            if (gPrevTaskWorkBuffer != NULL) {
+            if (sPrevTaskWorkBuffer != NULL) {
                 R_HREG_MODE = HREG_MODE_UCODE_DISAS;
                 R_UCODE_DISAS_TOGGLE = 1;
                 R_UCODE_DISAS_LOG_LEVEL = 2;
-                Graph_DisassembleUCode(gPrevTaskWorkBuffer);
+                Graph_DisassembleUCode(sPrevTaskWorkBuffer);
             }
 #endif
 
@@ -207,48 +209,52 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
 
         osRecvMesg(&gfxCtx->queue, &msg, OS_MESG_NOBLOCK);
 
-#if IS_DEBUG
-        gPrevTaskWorkBuffer = gfxCtx->workBuffer;
+#if OOT_DEBUG
+        sPrevTaskWorkBuffer = gfxCtx->workBuffer;
 #endif
+    }
 
-        if (gfxCtx->callback != NULL) {
-            gfxCtx->callback(gfxCtx, gfxCtx->callbackParam);
-        }
+    if (gfxCtx->callback != NULL) {
+        gfxCtx->callback(gfxCtx, gfxCtx->callbackParam);
+    }
 
-        task->type = M_GFXTASK;
-        task->flags = OS_SC_DRAM_DLIST;
-        task->ucode_boot = SysUcode_GetUCodeBoot();
-        task->ucode_boot_size = SysUcode_GetUCodeBootSize();
-        task->ucode = SysUcode_GetUCode();
-        task->ucode_data = SysUcode_GetUCodeData();
-        task->ucode_size = SP_UCODE_SIZE;
-        task->ucode_data_size = SP_UCODE_DATA_SIZE;
-        task->dram_stack = gGfxSPTaskStack;
-        task->dram_stack_size = sizeof(gGfxSPTaskStack);
-        task->output_buff = gGfxSPTaskOutputBuffer;
-        task->output_buff_size = gGfxSPTaskOutputBuffer + ARRAY_COUNT(gGfxSPTaskOutputBuffer);
-        task->data_ptr = (u64*)gfxCtx->workBuffer;
+    task->type = M_GFXTASK;
+    task->flags = OS_SC_DRAM_DLIST;
+    task->ucode_boot = SysUcode_GetUCodeBoot();
+    task->ucode_boot_size = SysUcode_GetUCodeBootSize();
+    task->ucode = SysUcode_GetUCode();
+    task->ucode_data = SysUcode_GetUCodeData();
+    task->ucode_size = SP_UCODE_SIZE;
+    task->ucode_data_size = SP_UCODE_DATA_SIZE;
+    task->dram_stack = gGfxSPTaskStack;
+    task->dram_stack_size = sizeof(gGfxSPTaskStack);
+    task->output_buff = gGfxSPTaskOutputBuffer;
+    task->output_buff_size = gGfxSPTaskOutputBuffer + ARRAY_COUNT(gGfxSPTaskOutputBuffer);
+    task->data_ptr = (u64*)gfxCtx->workBuffer;
 
-        OPEN_DISPS(gfxCtx, "../graph.c", 828);
-        task->data_size = (uintptr_t)WORK_DISP - (uintptr_t)gfxCtx->workBuffer;
-        CLOSE_DISPS(gfxCtx, "../graph.c", 830);
+    OPEN_DISPS(gfxCtx, "../graph.c", 828);
+    task->data_size = (uintptr_t)WORK_DISP - (uintptr_t)gfxCtx->workBuffer;
+    CLOSE_DISPS(gfxCtx, "../graph.c", 830);
 
-        task->yield_data_ptr = gGfxSPTaskYieldBuffer;
+    task->yield_data_ptr = gGfxSPTaskYieldBuffer;
 
-        task->yield_data_size = sizeof(gGfxSPTaskYieldBuffer);
+    task->yield_data_size = sizeof(gGfxSPTaskYieldBuffer);
 
-        scTask->next = NULL;
-        scTask->flags = OS_SC_NEEDS_RSP | OS_SC_NEEDS_RDP | OS_SC_SWAPBUFFER | OS_SC_LAST_TASK;
-        if (R_GRAPH_TASKSET00_FLAGS & 1) {
-            R_GRAPH_TASKSET00_FLAGS &= ~1;
-            scTask->flags &= ~OS_SC_SWAPBUFFER;
-            gfxCtx->fbIdx--;
-        }
+    scTask->next = NULL;
+    scTask->flags = OS_SC_NEEDS_RSP | OS_SC_NEEDS_RDP | OS_SC_SWAPBUFFER | OS_SC_LAST_TASK;
+    if (R_GRAPH_TASKSET00_FLAGS & 1) {
+        R_GRAPH_TASKSET00_FLAGS &= ~1;
+        scTask->flags &= ~OS_SC_SWAPBUFFER;
+        gfxCtx->fbIdx--;
+    }
 
-        scTask->msgQueue = &gfxCtx->queue;
-        scTask->msg = NULL;
+    scTask->msgQueue = &gfxCtx->queue;
+    scTask->msg = NULL;
 
-        { s16 pad; }
+    {
+        static CfbInfo sGraphCfbInfos[3];
+        static s32 sGraphCfbInfoIdx = 0;
+        CfbInfo* cfb;
 
         cfb = &sGraphCfbInfos[sGraphCfbInfoIdx];
 
@@ -264,14 +270,12 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
         cfb->updateRate = R_UPDATE_RATE;
 
         scTask->framebuffer = cfb;
-
-        { s16 pad2; }
-
-        gfxCtx->schedMsgQueue = &gScheduler.cmdQueue;
-
-        osSendMesg(&gScheduler.cmdQueue, (OSMesg)scTask, OS_MESG_BLOCK);
-        Sched_Notify(&gScheduler);
     }
+
+    gfxCtx->schedMsgQueue = &gScheduler.cmdQueue;
+
+    osSendMesg(&gScheduler.cmdQueue, (OSMesg)scTask, OS_MESG_BLOCK);
+    Sched_Notify(&gScheduler);
 }
 
 void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
@@ -334,6 +338,8 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     }
 
     if (R_HREG_MODE == HREG_MODE_UCODE_DISAS && R_UCODE_DISAS_TOGGLE != 0) {
+        static FaultClient sGraphUcodeFaultClient;
+
         if (R_UCODE_DISAS_LOG_MODE == 3) {
             Fault_AddClient(&sGraphUcodeFaultClient, Graph_UCodeFaultClient, gfxCtx->workBuffer, "do_count_fault");
         }

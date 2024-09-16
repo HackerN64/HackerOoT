@@ -183,7 +183,7 @@ void Math3D_DrawSphereImpl(GraphicsContext* gfxCtx, Gfx** gfxP, f32 x, f32 y, f3
     Matrix_Translate(x, y, z, MTXMODE_NEW);
     Matrix_Scale(radius / 128.0f, radius / 128.0f, radius / 128.0f, MTXMODE_APPLY);
 
-    gSPMatrix((*gfxP)++, Matrix_NewMtx(gfxCtx, __FILE__, __LINE__), G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_PUSH);
+    gSPMatrix((*gfxP)++, Matrix_Finalize(gfxCtx, __FILE__, __LINE__), G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_PUSH);
     gSPDisplayList((*gfxP)++, pSphGfx);
     gSPPopMatrix((*gfxP)++, G_MTX_MODELVIEW);
 
@@ -289,7 +289,7 @@ void Math3D_DrawCylinderImpl(GraphicsContext* gfxCtx, Gfx** gfxP, f32 x, f32 y, 
     Matrix_Translate(x, y, z, MTXMODE_NEW);
     Matrix_Scale(radius / 128.0f, height / 128.0f, radius / 128.0f, MTXMODE_APPLY);
 
-    gSPMatrix((*gfxP)++, Matrix_NewMtx(gfxCtx, __FILE__, __LINE__), G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_PUSH);
+    gSPMatrix((*gfxP)++, Matrix_Finalize(gfxCtx, __FILE__, __LINE__), G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_PUSH);
     gSPDisplayList((*gfxP)++, pCylGfx);
     gSPPopMatrix((*gfxP)++, G_MTX_MODELVIEW);
 

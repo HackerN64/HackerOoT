@@ -1,6 +1,8 @@
 #ifndef MACROS_H
 #define MACROS_H
 
+#include "versions.h"
+
 #ifndef AVOID_UB
 #define BAD_RETURN(type) type
 #else
@@ -203,6 +205,9 @@
 #else
 #define HUNGUP_AND_CRASH(...) LogUtils_HungupThread(__FILE__, __LINE__)
 #endif
+
+#define MATRIX_FINALIZE_AND_LOAD(pkt, gfxCtx, file, line) \
+    gSPMatrix(pkt, MATRIX_FINALIZE(gfxCtx, file, line), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW)
 
 #if OOT_NTSC
 #define LANGUAGE_ARRAY(jpn, eng, ger, fra) { jpn, eng }

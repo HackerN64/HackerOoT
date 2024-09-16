@@ -139,7 +139,7 @@ ActorProfile En_Test_Profile = {
 
 static ColliderCylinderInit sBodyColliderInit = {
     {
-        COLTYPE_HIT5,
+        COL_MATERIAL_HIT5,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_ALL,
@@ -159,7 +159,7 @@ static ColliderCylinderInit sBodyColliderInit = {
 
 static ColliderCylinderInit sShieldColliderInit = {
     {
-        COLTYPE_METAL,
+        COL_MATERIAL_METAL,
         AT_NONE,
         AC_ON | AC_HARD | AC_TYPE_PLAYER,
         OC1_NONE,
@@ -179,7 +179,7 @@ static ColliderCylinderInit sShieldColliderInit = {
 
 static ColliderQuadInit sSwordColliderInit = {
     {
-        COLTYPE_NONE,
+        COL_MATERIAL_NONE,
         AT_ON | AT_TYPE_ENEMY,
         AC_NONE,
         OC1_NONE,
@@ -404,7 +404,7 @@ void EnTest_ChooseAction(EnTest* this, PlayState* play) {
         } else {
             if (this->actor.xzDistToPlayer < 110.0f) {
                 if (Rand_ZeroOne() > 0.2f) {
-                    if (player->stateFlags1 & PLAYER_STATE1_4) {
+                    if (player->stateFlags1 & PLAYER_STATE1_HOSTILE_LOCK_ON) {
                         if (this->actor.isLockedOn) {
                             EnTest_SetupSlashDown(this);
                         } else {
@@ -690,7 +690,7 @@ void EnTest_WalkAndBlock(EnTest* this, PlayState* play) {
 
         if (this->actor.xzDistToPlayer < 110.0f) {
             if (Rand_ZeroOne() > 0.2f) {
-                if (player->stateFlags1 & PLAYER_STATE1_4) {
+                if (player->stateFlags1 & PLAYER_STATE1_HOSTILE_LOCK_ON) {
                     if (this->actor.isLockedOn) {
                         EnTest_SetupSlashDown(this);
                     } else {
@@ -975,7 +975,7 @@ void EnTest_SlashDownEnd(EnTest* this, PlayState* play) {
             if ((ABS(yawDiff) > 0x3E80) && (this->actor.params != STALFOS_TYPE_CEILING)) {
                 this->actor.world.rot.y = this->actor.yawTowardsPlayer;
                 EnTest_SetupJumpBack(this);
-            } else if (player->stateFlags1 & PLAYER_STATE1_4) {
+            } else if (player->stateFlags1 & PLAYER_STATE1_HOSTILE_LOCK_ON) {
                 if (this->actor.isLockedOn) {
                     EnTest_SetupSlashDown(this);
                 } else if ((play->gameplayFrames % 2) != 0) {
