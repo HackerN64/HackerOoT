@@ -40,7 +40,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -248,7 +248,7 @@ u32 EnToryo_ReactToExchangeItem(EnToryo* this, PlayState* play) {
             ret = 0x200F;
         }
     }
-    //! @bug return value may be unitialized
+    //! @bug return value may be uninitialized
     return ret;
 }
 

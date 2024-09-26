@@ -26,14 +26,13 @@ COMPILER ?= gcc
 #   ntsc-1.2       N64 NTSC 1.2 (Japan/US depending on REGION)
 #   gc-jp          GameCube Japan
 #   gc-jp-mq       GameCube Japan Master Quest
-#   gc-jp-ce       GameCube Japan (Collector's Edition disc)
 #   gc-us          GameCube US
-#   gc-us-mq       GameCube US
+#   gc-us-mq       GameCube US Master Quest
+#   gc-eu-mq-dbg   GameCube Europe/PAL Master Quest Debug (default)
 #   gc-eu          GameCube Europe/PAL
 #   gc-eu-mq       GameCube Europe/PAL Master Quest
-#   gc-eu-mq-dbg   GameCube Europe/PAL Master Quest Debug
+#   gc-jp-ce       GameCube Japan (Collector's Edition disc)
 #   hackeroot-mq   HackerOoT, based on gc-eu-mq-dbg (default)
-#
 # The following versions are work-in-progress and not yet matching:
 #   (none currently)
 #
@@ -82,10 +81,6 @@ else ifeq ($(VERSION),gc-jp-mq)
   REGION ?= JP
   PLATFORM := GC
   DEBUG := 0
-else ifeq ($(VERSION),gc-jp-ce)
-  REGION ?= JP
-  PLATFORM := GC
-  DEBUG := 0
 else ifeq ($(VERSION),gc-us)
   REGION ?= US
   PLATFORM := GC
@@ -94,6 +89,10 @@ else ifeq ($(VERSION),gc-us-mq)
   REGION ?= US
   PLATFORM := GC
   DEBUG := 0
+else ifeq ($(VERSION),gc-eu-mq-dbg)
+  REGION ?= EU
+  PLATFORM := GC
+  DEBUG := 1
 else ifeq ($(VERSION),gc-eu)
   REGION ?= EU
   PLATFORM := GC
@@ -102,10 +101,10 @@ else ifeq ($(VERSION),gc-eu-mq)
   REGION ?= EU
   PLATFORM := GC
   DEBUG := 0
-else ifeq ($(VERSION),gc-eu-mq-dbg)
-  REGION ?= EU
+else ifeq ($(VERSION),gc-jp-ce)
+  REGION ?= JP
   PLATFORM := GC
-  DEBUG := 1
+  DEBUG := 0
 else ifeq ($(VERSION),hackeroot-mq)
   REGION := NULL
   PLATFORM := GC
@@ -288,7 +287,7 @@ SFPATCH       := tools/audio/sfpatch
 ATBLGEN       := tools/audio/atblgen
 # We want linemarkers in sequence assembly files for better assembler error messages
 SEQ_CPP       := $(CPP) -x assembler-with-cpp -fno-dollars-in-identifiers
-SEQ_CPPFLAGS  := -D_LANGUAGE_ASEQ -DMML_VERSION=MML_VERSION_OOT -I include -I include/audio -I include/tables/sfx -I $(BUILD_DIR)/assets/audio/soundfonts
+SEQ_CPPFLAGS  := -D_LANGUAGE_ASEQ -DMML_VERSION=MML_VERSION_OOT $(CPP_DEFINES) -I include -I include/audio -I include/tables/sfx -I $(BUILD_DIR)/assets/audio/soundfonts
 
 SBCFLAGS := --matching
 SFCFLAGS := --matching

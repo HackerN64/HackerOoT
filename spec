@@ -113,15 +113,21 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/libc/bcopy.o"
     include "$(BUILD_DIR)/src/libultra/os/resetglobalintmask.o"
     include "$(BUILD_DIR)/src/libultra/os/interrupt.o"
+#if !OOT_PAL_N64
     include "$(BUILD_DIR)/src/libultra/io/vimodentsclan1.o"
     include "$(BUILD_DIR)/src/libultra/io/vimodempallan1.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/io/vi.o"
+#if OOT_PAL_N64
+    include "$(BUILD_DIR)/src/libultra/io/vimodentsclan1.o"
+    include "$(BUILD_DIR)/src/libultra/io/vimodempallan1.o"
+#endif
     include "$(BUILD_DIR)/src/libultra/io/viswapcontext.o"
     include "$(BUILD_DIR)/src/libultra/io/pigetcmdq.o"
     include "$(BUILD_DIR)/src/libultra/io/epiread.o"
     include "$(BUILD_DIR)/src/libultra/io/visetspecial.o"
     include "$(BUILD_DIR)/src/libultra/io/cartrominit.o"
-#if IS_DEBUG
+#if OOT_PAL_N64 || IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/vimodefpallan1.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/os/setfpccsr.o"
@@ -690,7 +696,7 @@ beginseg
 #if IS_DEBUG
     include "$(BUILD_DIR)/src/code/ucode_disas.o"
 #endif
-#if OOT_VERSION <= NTSC_1_0 || PLATFORM_GC
+#if OOT_VERSION < NTSC_1_1 || PLATFORM_GC
     pad_text
 #endif
     include "$(BUILD_DIR)/src/audio/lib/data.o"
@@ -700,6 +706,11 @@ beginseg
     include "$(BUILD_DIR)/src/audio/lib/thread.o"
     include "$(BUILD_DIR)/src/audio/lib/dcache.o"
     include "$(BUILD_DIR)/src/audio/lib/aisetnextbuf.o"
+#if OOT_PAL_N64
+    pad_text
+    pad_text
+    pad_text
+#endif
     include "$(BUILD_DIR)/src/audio/lib/playback.o"
     include "$(BUILD_DIR)/src/audio/lib/effects.o"
     include "$(BUILD_DIR)/src/audio/lib/seqplayer.o"
@@ -853,8 +864,10 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/mgu/translate.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/io/contramwrite.o"
-#if !IS_DEBUG
+#if !OOT_PAL_N64 && !IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/vimodefpallan1.o"
+#endif
+#if !IS_DEBUG
     include "$(BUILD_DIR)/src/libultra/io/pfsgetstatus.o"
     include "$(BUILD_DIR)/src/libultra/io/contpfs.o"
 #endif

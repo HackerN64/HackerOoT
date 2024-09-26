@@ -61,7 +61,7 @@ static ColliderCylinderInit sHurtCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_NONE,
@@ -81,7 +81,7 @@ static ColliderCylinderInit sBlockCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00400106, 0x00, 0x00 },
         ATELEM_NONE,
@@ -101,7 +101,7 @@ static ColliderQuadInit sQuadInit = {
         COLSHAPE_QUAD,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0xFFCFFFFF, 0x00, 0x08 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NORMAL,
@@ -112,7 +112,7 @@ static ColliderQuadInit sQuadInit = {
 };
 
 typedef enum ArmosDamageEffect {
-    /*  0 */ AM_DMGEFF_NONE, // used by anything that cant kill the armos
+    /*  0 */ AM_DMGEFF_NONE, // used by anything that can't kill the armos
     /*  1 */ AM_DMGEFF_NUT,
     /*  6 */ AM_DMGEFF_STUN = 6, // doesn't include deku nuts
     /* 13 */ AM_DMGEFF_ICE = 13,

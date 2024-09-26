@@ -5,6 +5,7 @@
  */
 
 #include "z_boss_sst.h"
+#include "versions.h"
 #include "assets/objects/object_sst/object_sst.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "overlays/actors/ovl_Bg_Sst_Floor/z_bg_sst_floor.h"
@@ -51,7 +52,7 @@ typedef enum BossSstEffectMode {
 void BossSst_Init(Actor* thisx, PlayState* play2);
 void BossSst_Destroy(Actor* thisx, PlayState* play);
 void BossSst_UpdateHand(Actor* thisx, PlayState* play);
-void BossSst_UpdateHead(Actor* thisx, PlayState* play);
+void BossSst_UpdateHead(Actor* thisx, PlayState* play2);
 void BossSst_DrawHand(Actor* thisx, PlayState* play);
 void BossSst_DrawHead(Actor* thisx, PlayState* play);
 void BossSst_UpdateEffects(Actor* thisx, PlayState* play);
@@ -660,7 +661,7 @@ void BossSst_HeadNeutral(BossSst* this, PlayState* play) {
         Player* player = GET_PLAYER(play);
 
         if ((player->actor.world.pos.y > -50.0f) &&
-            !(player->stateFlags1 & (PLAYER_STATE1_7 | PLAYER_STATE1_13 | PLAYER_STATE1_14))) {
+            !(player->stateFlags1 & (PLAYER_STATE1_DEAD | PLAYER_STATE1_13 | PLAYER_STATE1_14))) {
             sHands[Rand_ZeroOne() <= 0.5f]->ready = true;
             BossSst_HeadSetupWait(this);
         } else {
@@ -768,7 +769,7 @@ void BossSst_HeadCharge(BossSst* this, PlayState* play) {
         this->colliderJntSph.base.atFlags &= ~(AT_ON | AT_HIT);
         sHands[LEFT]->colliderJntSph.base.atFlags &= ~(AT_ON | AT_HIT);
         sHands[RIGHT]->colliderJntSph.base.atFlags &= ~(AT_ON | AT_HIT);
-        func_8002F71C(play, &this->actor, 10.0f, this->actor.shape.rot.y, 5.0f);
+        Actor_SetPlayerKnockbackLargeNoDamage(play, &this->actor, 10.0f, this->actor.shape.rot.y, 5.0f);
         Player_PlaySfx(GET_PLAYER(play), NA_SE_PL_BODY_HIT);
     }
 }
@@ -1249,7 +1250,7 @@ void BossSst_HandWait(BossSst* this, PlayState* play) {
         }
 
         if ((this->timer == 0) && (player->actor.world.pos.y > -50.0f) &&
-            !(player->stateFlags1 & (PLAYER_STATE1_7 | PLAYER_STATE1_13 | PLAYER_STATE1_14))) {
+            !(player->stateFlags1 & (PLAYER_STATE1_DEAD | PLAYER_STATE1_13 | PLAYER_STATE1_14))) {
             BossSst_HandSelectAttack(this);
         }
     } else if (sHead->actionFunc == BossSst_HeadNeutral) {
@@ -1523,7 +1524,7 @@ void BossSst_HandSlam(BossSst* this, PlayState* play) {
             player->actor.world.pos.z = (Math_CosS(this->actor.yawTowardsPlayer) * 100.0f) + this->actor.world.pos.z;
 
             this->colliderJntSph.base.atFlags &= ~(AT_ON | AT_HIT);
-            func_8002F71C(play, &this->actor, 5.0f, this->actor.yawTowardsPlayer, 0.0f);
+            Actor_SetPlayerKnockbackLargeNoDamage(play, &this->actor, 5.0f, this->actor.yawTowardsPlayer, 0.0f);
         }
 
         Math_ScaledStepToS(&this->actor.shape.rot.x, 0, 0x200);
@@ -1583,7 +1584,8 @@ void BossSst_HandSweep(BossSst* this, PlayState* play) {
 
         this->colliderJntSph.base.atFlags &= ~(AT_ON | AT_HIT);
         this->ready = true;
-        func_8002F71C(play, &this->actor, 5.0f, this->actor.shape.rot.y - (this->vParity * 0x3800), 0.0f);
+        Actor_SetPlayerKnockbackLargeNoDamage(play, &this->actor, 5.0f,
+                                              this->actor.shape.rot.y - (this->vParity * 0x3800), 0.0f);
         Player_PlaySfx(player, NA_SE_PL_BODY_HIT);
         newTargetYaw = this->actor.shape.rot.y - (this->vParity * 0x1400);
         if (((s16)(newTargetYaw - this->targetYaw) * this->vParity) > 0) {
@@ -1642,7 +1644,7 @@ void BossSst_HandPunch(BossSst* this, PlayState* play) {
         BossSst_HandSetupRetreat(this);
     } else if (this->colliderJntSph.base.atFlags & AT_HIT) {
         Player_PlaySfx(GET_PLAYER(play), NA_SE_PL_BODY_HIT);
-        func_8002F71C(play, &this->actor, 10.0f, this->actor.shape.rot.y, 5.0f);
+        Actor_SetPlayerKnockbackLargeNoDamage(play, &this->actor, 10.0f, this->actor.shape.rot.y, 5.0f);
         BossSst_HandSetupRetreat(this);
     }
 
@@ -1960,7 +1962,7 @@ void BossSst_HandSwing(BossSst* this, PlayState* play) {
         BossSst_HandReleasePlayer(this, play, false);
         player->actor.world.pos.x += 70.0f * Math_SinS(this->actor.shape.rot.y);
         player->actor.world.pos.z += 70.0f * Math_CosS(this->actor.shape.rot.y);
-        func_8002F71C(play, &this->actor, 15.0f, this->actor.shape.rot.y, 2.0f);
+        Actor_SetPlayerKnockbackLargeNoDamage(play, &this->actor, 15.0f, this->actor.shape.rot.y, 2.0f);
         Player_PlaySfx(player, NA_SE_PL_BODY_HIT);
     }
 
@@ -2082,7 +2084,7 @@ void BossSst_HandReadyCharge(BossSst* this, PlayState* play) {
         this->colliderJntSph.base.atFlags &= ~(AT_ON | AT_HIT);
         OTHER_HAND(this)->colliderJntSph.base.atFlags &= ~(AT_ON | AT_HIT);
         sHead->colliderJntSph.base.atFlags &= ~(AT_ON | AT_HIT);
-        func_8002F71C(play, &this->actor, 10.0f, this->actor.shape.rot.y, 5.0f);
+        Actor_SetPlayerKnockbackLargeNoDamage(play, &this->actor, 10.0f, this->actor.shape.rot.y, 5.0f);
         Player_PlaySfx(GET_PLAYER(play), NA_SE_PL_BODY_HIT);
     }
 }
@@ -2432,7 +2434,7 @@ void BossSst_HandReleasePlayer(BossSst* this, PlayState* play, s32 dropPlayer) {
         this->colliderJntSph.base.ocFlags1 |= OC1_ON;
         OTHER_HAND(this)->colliderJntSph.base.ocFlags1 |= OC1_ON;
         if (dropPlayer) {
-            func_8002F71C(play, &this->actor, 0.0f, this->actor.shape.rot.y, 0.0f);
+            Actor_SetPlayerKnockbackLargeNoDamage(play, &this->actor, 0.0f, this->actor.shape.rot.y, 0.0f);
         }
     }
 }
@@ -2606,10 +2608,16 @@ void BossSst_UpdateHand(Actor* thisx, PlayState* play) {
         CollisionCheck_SetAT(play, &play->colChkCtx, &this->colliderJntSph.base);
     }
 
+#if OOT_VERSION < NTSC_1_2
+    if (this->colliderJntSph.base.acFlags & AC_ON) {
+        CollisionCheck_SetAC(play, &play->colChkCtx, &this->colliderJntSph.base);
+    }
+#else
     if ((sHead->actionFunc != BossSst_HeadLurk) && (sHead->actionFunc != BossSst_HeadIntro) &&
         (this->colliderJntSph.base.acFlags & AC_ON)) {
         CollisionCheck_SetAC(play, &play->colChkCtx, &this->colliderJntSph.base);
     }
+#endif
 
     if (this->colliderJntSph.base.ocFlags1 & OC1_ON) {
         CollisionCheck_SetOC(play, &play->colChkCtx, &this->colliderJntSph.base);
@@ -2638,8 +2646,8 @@ void BossSst_UpdateHand(Actor* thisx, PlayState* play) {
     BossSst_UpdateEffects(&this->actor, play);
 }
 
-void BossSst_UpdateHead(Actor* thisx, PlayState* play) {
-    s32 pad;
+void BossSst_UpdateHead(Actor* thisx, PlayState* play2) {
+    PlayState* play = (PlayState*)play2;
     BossSst* this = (BossSst*)thisx;
 
     Actor_WorldToActorCoords(&this->actor, &sHandOffsets[RIGHT], &sHands[RIGHT]->actor.world.pos);
@@ -2662,12 +2670,19 @@ void BossSst_UpdateHead(Actor* thisx, PlayState* play) {
         CollisionCheck_SetAT(play, &play->colChkCtx, &this->colliderJntSph.base);
     }
 
+#if OOT_VERSION < NTSC_1_2
+    if (this->colliderCyl.base.acFlags & AC_ON) {
+        CollisionCheck_SetAC(play, &play->colChkCtx, &this->colliderCyl.base);
+    }
+    CollisionCheck_SetAC(play, &play->colChkCtx, &this->colliderJntSph.base);
+#else
     if ((this->actionFunc != BossSst_HeadLurk) && (this->actionFunc != BossSst_HeadIntro)) {
         if (this->colliderCyl.base.acFlags & AC_ON) {
             CollisionCheck_SetAC(play, &play->colChkCtx, &this->colliderCyl.base);
         }
         CollisionCheck_SetAC(play, &play->colChkCtx, &this->colliderJntSph.base);
     }
+#endif
 
     if (this->colliderJntSph.base.ocFlags1 & OC1_ON) {
         CollisionCheck_SetOC(play, &play->colChkCtx, &this->colliderJntSph.base);

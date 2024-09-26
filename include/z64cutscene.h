@@ -5,6 +5,8 @@
 #include "z64math.h"
 #include "config.h"
 
+struct PlayState;
+
 typedef union CutsceneData {
     s32 i;
     f32 f;
@@ -530,5 +532,14 @@ typedef enum {
     /* 1 */ CS_MOTION_BLUR_ENABLE = 1,
     /* 2 */ CS_MOTION_BLUR_DISABLE
 } CsMotionBlurType;
+
+void Cutscene_InitContext(struct PlayState* play, CutsceneContext* csCtx);
+void Cutscene_StartManual(struct PlayState* play, CutsceneContext* csCtx);
+void Cutscene_StopManual(struct PlayState* play, CutsceneContext* csCtx);
+void Cutscene_UpdateManual(struct PlayState* play, CutsceneContext* csCtx);
+void Cutscene_UpdateScripted(struct PlayState* play, CutsceneContext* csCtx);
+void Cutscene_HandleEntranceTriggers(struct PlayState* play);
+void Cutscene_HandleConditionalTriggers(struct PlayState* play);
+void Cutscene_SetScript(struct PlayState* play, void* script);
 
 #endif

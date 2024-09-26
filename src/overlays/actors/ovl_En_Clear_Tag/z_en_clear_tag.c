@@ -44,7 +44,7 @@ static ColliderCylinderInit sArwingCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0xFFCFFFFF, 0x00, 0x04 },
         { 0xFFDFFFFF, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NORMAL,
@@ -64,7 +64,7 @@ static ColliderCylinderInit sLaserCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0xFFCFFFFF, 0x00, 0x04 },
         { 0xFFDFFFFF, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NORMAL,
@@ -431,7 +431,7 @@ void EnClearTag_Update(Actor* thisx, PlayState* play2) {
                     Math_ApproachZeroF(&this->roll, 0.1f, 0.2f);
                 }
 
-                // Calculate a vector towards the targetted position.
+                // Calculate a vector towards the targeted position.
                 vectorToTargetX = this->targetPosition.x - this->actor.world.pos.x;
                 vectorToTargetY = this->targetPosition.y - this->actor.world.pos.y;
                 vectorToTargetZ = this->targetPosition.z - this->actor.world.pos.z;
@@ -680,7 +680,7 @@ void EnClearTag_Update(Actor* thisx, PlayState* play2) {
 /**
  * EnClear_Tag draw function.
  * Laser clear tag type will draw two lasers.
- * Arwing clear tage types will draw the Arwing, the backfire, and a shadow.
+ * Arwing clear tag types will draw the Arwing, the backfire, and a shadow.
  */
 void EnClearTag_Draw(Actor* thisx, PlayState* play) {
     s32 pad;

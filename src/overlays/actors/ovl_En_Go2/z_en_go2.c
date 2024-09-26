@@ -74,7 +74,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000008, 0x00, 0x00 },
         ATELEM_NONE,
@@ -574,7 +574,11 @@ s16 EnGo2_UpdateTalkStateGoronDmtBiggoron(PlayState* play, EnGo2* this) {
     u8 dialogState = this->dialogState;
 
     switch (EnGo2_GetDialogState(this, play)) {
+#if OOT_VERSION < PAL_1_0
+        case TEXT_STATE_CLOSING:
+#else
         case TEXT_STATE_DONE:
+#endif
             if (this->actor.textId == 0x305E) {
                 if (!gSaveContext.save.info.playerData.bgsFlag) {
                     EnGo2_GetItem(this, play, GI_SWORD_BIGGORON);
@@ -902,7 +906,7 @@ s32 func_80A44AB0(EnGo2* this, PlayState* play) {
                 arg2 = this->actionFunc == EnGo2_ContinueRolling ? 1.5f : this->actor.speed * 1.5f;
 
                 play->damagePlayer(play, -4);
-                func_8002F71C(play, &this->actor, arg2, this->actor.yawTowardsPlayer, 6.0f);
+                Actor_SetPlayerKnockbackLargeNoDamage(play, &this->actor, arg2, this->actor.yawTowardsPlayer, 6.0f);
                 Actor_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
                 this->collider.base.ocFlags1 &= ~OC1_TYPE_PLAYER;
             }
@@ -1792,7 +1796,9 @@ void EnGo2_ReverseRolling(EnGo2* this, PlayState* play) {
 
 void EnGo2_SetupGetItem(EnGo2* this, PlayState* play) {
     if (Actor_HasParent(&this->actor, play)) {
+#if OOT_VERSION >= PAL_1_0
         this->actor.parent = NULL;
+#endif
         this->actionFunc = EnGo2_SetGetItem;
     } else {
         Actor_OfferGetItem(&this->actor, play, this->getItemId, this->actor.xzDistToPlayer + 1.0f,
@@ -1982,9 +1988,13 @@ void EnGo2_Update(Actor* thisx, PlayState* play) {
     EnGo2_RollForward(this);
     Actor_UpdateBgCheckInfo(play, &this->actor, this->collider.dim.height * 0.5f, this->collider.dim.radius * 0.6f,
                             0.0f, UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2);
+#if OOT_VERSION < PAL_1_0
+    func_80A44AB0(this, play);
+#else
     if (this->interactInfo.talkState == NPC_TALK_STATE_IDLE) {
         func_80A44AB0(this, play);
     }
+#endif
     this->actionFunc(this, play);
     if (this->unk_211 == true) {
         func_80034F54(play, this->unk_226, this->unk_24A, 18);
