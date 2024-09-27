@@ -10,14 +10,18 @@ FaultClient sGraphFaultClient;
 
 CfbInfo sGraphCfbInfos[3];
 
-#if IS_DEBUG
-FaultClient sGraphUcodeFaultClient;
-
 #if ENABLE_F3DEX3
 #define GRAPH_UCODE_GLOBAL_SYMBOL gF3DEX3TextBuffer
 #else
 #define GRAPH_UCODE_GLOBAL_SYMBOL gspF3DZEX2_NoN_PosLight_fifoTextStart
 #endif
+
+#if ENABLE_MOTION_BLUR
+u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT]; // pointer-to-array, array itself is allocated (see below)
+#endif
+
+#if IS_DEBUG
+FaultClient sGraphUcodeFaultClient;
 
 UCodeInfo D_8012D230[3] = {
     { UCODE_F3DZEX, GRAPH_UCODE_GLOBAL_SYMBOL },
@@ -30,10 +34,6 @@ UCodeInfo D_8012D248[3] = {
     { UCODE_UNK, NULL },
     { UCODE_S2DEX, gspS2DEX2d_fifoTextStart },
 };
-
-#if ENABLE_MOTION_BLUR
-u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT]; // pointer-to-array, array itself is allocated (see below)
-#endif
 
 void Graph_FaultClient(void) {
     void* nextFb = osViGetNextFramebuffer();

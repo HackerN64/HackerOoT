@@ -48,6 +48,8 @@
     #undef ENABLE_DEBUG_HEAP
     #undef INCLUDE_EXAMPLE_SCENE
     #undef ENABLE_MOTION_BLUR_DEBUG
+    #undef ENABLE_HACKER_DEBUG
+    #undef ENABLE_PROFILER
 
     #define SHOW_CS_INFOS false
     #define SHOW_INPUT_DISPLAY false
@@ -69,8 +71,18 @@
     #define ENABLE_DEBUG_HEAP false
     #define INCLUDE_EXAMPLE_SCENE false
     #define ENABLE_MOTION_BLUR_DEBUG false
-#endif
+    #define ENABLE_HACKER_DEBUG false
+    #define ENABLE_PROFILER false
 
+    #ifndef NDEBUG
+        #define NDEBUG
+    #endif
+
+    #if BOOT_ENTRANCE == ENTR_EXAMPLE_0
+        #undef BOOT_ENTRANCE
+        #define BOOT_ENTRANCE ENTR_HYRULE_FIELD_0
+    #endif
+#endif
 
 // Remove actor and camera debug draw-related code if both are disabled
 #ifndef NO_DEBUG_DISPLAY
@@ -221,7 +233,7 @@
 #define ARE_FRAMERATE_OPTIONS_ENABLED (IS_DEBUG && ENABLE_FRAMERATE_OPTIONS)
 #define IS_MAP_SELECT_ENABLED (IS_DEBUG && ENABLE_MAP_SELECT)
 #define IS_DEBUG_SAVE_ENABLED (IS_DEBUG && ENABLE_DEBUG_SAVE)
-#define CAN_INCLUDE_TEST_SCENES (!ENABLE_HACKEROOT || (IS_DEBUG && INCLUDE_TEST_SCENES))
+#define CAN_INCLUDE_TEST_SCENES (IS_DEBUG && INCLUDE_TEST_SCENES)
 
 // In-game editors
 #define IS_INV_EDITOR_ENABLED (IS_DEBUG && ENABLE_INV_EDITOR)

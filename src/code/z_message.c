@@ -3132,24 +3132,24 @@ void Message_Draw(PlayState* play) {
     Gfx* plusOne;
     Gfx* polyOpaP;
 
-#if IS_DEBUG
+#if IS_MSG_DEBUG_ENABLED
     s16 watchVar;
 #endif
 
     OPEN_DISPS(play->state.gfxCtx, "../z_message_PAL.c", 3554);
 
-    if (IS_MSG_DEBUG_ENABLED) {
-        watchVar = gSaveContext.save.info.scarecrowLongSongSet;
-        Message_DrawDebugVariableChanged(&watchVar, play->state.gfxCtx);
-        if (BREG(0) != 0 && play->msgCtx.textId != 0) {
-            plusOne = Gfx_Open(polyOpaP = POLY_OPA_DISP);
-            gSPDisplayList(OVERLAY_DISP++, plusOne);
-            Message_DrawDebugText(play, &plusOne);
-            gSPEndDisplayList(plusOne++);
-            Gfx_Close(polyOpaP, plusOne);
-            POLY_OPA_DISP = plusOne;
-        }
+#if IS_MSG_DEBUG_ENABLED
+    watchVar = gSaveContext.save.info.scarecrowLongSongSet;
+    Message_DrawDebugVariableChanged(&watchVar, play->state.gfxCtx);
+    if (BREG(0) != 0 && play->msgCtx.textId != 0) {
+        plusOne = Gfx_Open(polyOpaP = POLY_OPA_DISP);
+        gSPDisplayList(OVERLAY_DISP++, plusOne);
+        Message_DrawDebugText(play, &plusOne);
+        gSPEndDisplayList(plusOne++);
+        Gfx_Close(polyOpaP, plusOne);
+        POLY_OPA_DISP = plusOne;
     }
+#endif
 
     if (1) {}
 

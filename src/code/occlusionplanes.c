@@ -1,5 +1,6 @@
 #include "z64.h"
 #include "functions.h"
+#include "variables.h"
 
 #if ENABLE_F3DEX3
 
