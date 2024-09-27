@@ -2,6 +2,8 @@
 #include "debug.h"
 #include "fault.h"
 
+#if ENABLE_HACKER_DEBUG
+
 static Gfx sPolyBuffer[MENU_BUFFER_SIZE];
 
 static Gfx sPolyGfxInit_Collision[] = {
@@ -157,3 +159,5 @@ u8 CollisionView_Draw(void* unused) {
 
     return true;
 }
+
+#endif

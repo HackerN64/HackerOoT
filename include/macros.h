@@ -127,7 +127,7 @@
 #define ZELDA_ARENA_FREE(size, ...) ZeldaArena_Free(size)
 #define LOG_UTILS_CHECK_NULL_POINTER(exp, ptr, ...) (void)0
 #define LOG_UTILS_CHECK_VALID_POINTER(exp, ptr, ...) (void)0
-#define HUNGUP_AND_CRASH(...) LogUtils_HungupThread(...)
+#define HUNGUP_AND_CRASH(...) LogUtils_HungupThread(__FILE__, __LINE__)
 #define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_Malloc(alloc, size)
 
 #endif /* IS_DEBUG */

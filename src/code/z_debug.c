@@ -317,17 +317,21 @@ void Debug_DrawText(GraphicsContext* gfxCtx) {
         gSPDisplayList(OVERLAY_DISP++, gfx);
         GfxPrint_Open(&printer, gfx);
 
-        if (IS_CAMERA_DEBUG_ENABLED && ((OREG(0) == 1) || (OREG(0) == 8))) {
+#if IS_CAMERA_DEBUG_ENABLED
+        if (((OREG(0) == 1) || (OREG(0) == 8))) {
             DebugCamera_DrawScreenText(&printer);
         }
+#endif
 
-        if (IS_REG_EDITOR_ENABLED && gRegEditor->regPage != 0) {
+#if IS_REG_EDITOR_ENABLED
+        if (gRegEditor->regPage != 0) {
             Regs_DrawEditor(&printer);
         }
+#endif
 
-        if (IS_CAMERA_DEBUG_ENABLED) {
-            sDebugCamTextEntryCount = 0;
-        }
+#if IS_CAMERA_DEBUG_ENABLED
+        sDebugCamTextEntryCount = 0;
+#endif
 
         gfx = GfxPrint_Close(&printer);
         gSPEndDisplayList(gfx++);

@@ -515,7 +515,8 @@ void Play_Init(GameState* thisx) {
     AnimTaskQueue_Update(this, &this->animTaskQueue);
     gSaveContext.respawnFlag = 0;
 
-    if (IS_DEBUG && R_USE_DEBUG_CUTSCENE) {
+#if IS_DEBUG
+    if (R_USE_DEBUG_CUTSCENE) {
         static u64 sDebugCutsceneScriptBuf[0xA00];
 
         gDebugCutsceneScript = sDebugCutsceneScriptBuf;
@@ -525,6 +526,7 @@ void Play_Init(GameState* thisx) {
         // Presumably the ROM was larger at a previous point in development when this debug feature was used.
         DmaMgr_DmaRomToRam(0x03FEB000, gDebugCutsceneScript, sizeof(sDebugCutsceneScriptBuf));
     }
+#endif
 }
 
 void Play_Update(PlayState* this) {

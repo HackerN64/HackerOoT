@@ -1,6 +1,8 @@
 #include "global.h"
 #include "debug.h"
 
+#if ENABLE_HACKER_DEBUG
+
 u8 ColliderView_Draw(void* unused);
 
 #define MENU_CAN_UPDATE \
@@ -221,3 +223,5 @@ void Menu_Draw(Menu* this) {
         Menu_DrawElem(sMenuElements[MENU_HITVIEW]);
     }
 }
+
+#endif
