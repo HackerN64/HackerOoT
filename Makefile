@@ -162,14 +162,6 @@ else
   $(error Unsupported platform $(PLATFORM))
 endif
 
-ifeq ($(DEBUG),1)
-  CPP_DEFINES += -DOOT_DEBUG=1
-  OPTFLAGS := -O2
-else
-  CPP_DEFINES += -DOOT_DEBUG=0 -DNDEBUG
-  OPTFLAGS := -O2 -g3
-endif
-
 ifeq ($(VERSION),hackeroot-mq)
   CPP_DEFINES += -DENABLE_HACKEROOT=1
   OPTFLAGS := -Os
@@ -216,26 +208,6 @@ else
         MAKE=gmake
     endif
 endif
-
-# Verbose toggle
-V := @
-ifeq (VERBOSE, 1)
-    V=
-endif
-
-# Colors
-NO_COL  := \033[0m
-GREEN   := \033[0;32m
-BLUE    := \033[0;36m
-YELLOW  := \033[0;33m
-BLINK   := \033[32;5m
-
-PRINT := printf
-
-# Generic print function for make rules
-define print
-  $(V)echo -e "$(GREEN)$(1) $(YELLOW)$(2)$(GREEN) -> $(BLUE)$(3)$(NO_COL)"
-endef
 
 #### Tools ####
 ifneq ($(shell type $(MIPS_BINUTILS_PREFIX)ld >/dev/null 2>/dev/null; echo $$?), 0)
