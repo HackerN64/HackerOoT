@@ -530,7 +530,7 @@ void EnItem00_Collected(EnItem00* this, PlayState* play) {
 void EnItem00_Update(Actor* thisx, PlayState* play) {
     static u32 D_80157D90;
     static s16 D_80157D94[1];
-    s16* params;
+    s64* params;
     Actor* dynaActor;
     s32 getItemId = GI_NONE;
     s16 sp3A = 0;
