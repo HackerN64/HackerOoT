@@ -16,6 +16,7 @@ beginseg
     name "boot"
     address 0x80000460
     include "$(BUILD_DIR)/src/boot/boot_main.o"
+    include "$(BUILD_DIR)/src/boot/vimodepal60lan1.o"
     include "$(BUILD_DIR)/src/boot/idle.o"
 #if OOT_VERSION >= PAL_1_0
     include "$(BUILD_DIR)/src/boot/viconfig.o"

@@ -690,7 +690,6 @@ void KaleidoScope_DrawWorldMap(PlayState* play, GraphicsContext* gfxCtx) {
         POLY_OPA_DISP = gfx;
     }
 
-#if IS_DEBUG
     if (HREG(15) == 2) {
         HREG(15) = 1;
         HREG(14) = 6100;
