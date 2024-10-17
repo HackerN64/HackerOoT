@@ -12,7 +12,7 @@
 #include "assets/objects/object_bdoor/object_bdoor.h"
 
 #pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
-                               "ntsc-1.2:0"
+                               "ntsc-1.2:0 pal-1.0:0 pal-1.1:0"
 
 static CollisionPoly* sCurCeilingPoly;
 static s32 sCurCeilingBgId;
@@ -389,7 +389,7 @@ void Attention_Draw(Attention* attention, PlayState* play) {
 
         Attention_SetReticlePos(attention, attention->curReticle, projectedPos.x, projectedPos.y, projectedPos.z);
 
-        if (!(player->stateFlags1 & PLAYER_STATE1_6) || (actor != player->focusActor)) {
+        if (!(player->stateFlags1 & PLAYER_STATE1_TALKING) || (actor != player->focusActor)) {
             OVERLAY_DISP = Gfx_SetupDL(OVERLAY_DISP, SETUPDL_57);
 
             for (i = 0, curReticle = attention->curReticle; i < numReticles;
@@ -1098,7 +1098,7 @@ int func_8002DD6C(Player* player) {
 }
 
 int func_8002DD78(Player* player) {
-    return func_8002DD6C(player) && player->unk_834;
+    return func_8002DD6C(player) && (player->unk_834 != 0);
 }
 
 int func_8002DDA8(PlayState* play) {
@@ -1131,7 +1131,7 @@ void func_8002DE04(PlayState* play, Actor* actorA, Actor* actorB) {
 }
 
 void func_8002DE74(PlayState* play, Player* player) {
-    if ((play->roomCtx.curRoom.behaviorType1 != ROOM_BEHAVIOR_TYPE1_4) && Play_CamIsNotFixed(play)) {
+    if ((play->roomCtx.curRoom.type != ROOM_TYPE_4) && Play_CamIsNotFixed(play)) {
         Camera_RequestSetting(Play_GetCamera(play, CAM_ID_MAIN), CAM_SET_HORSE);
     }
 }
@@ -2071,7 +2071,8 @@ s32 func_8002F9EC(PlayState* play, Actor* actor, CollisionPoly* poly, s32 bgId, 
     return false;
 }
 
-#pragma increment_block_number "gc-eu:22 gc-eu-mq:22 gc-jp:22 gc-jp-ce:22 gc-jp-mq:22 gc-us:22 gc-us-mq:22 ntsc-1.2:22"
+#pragma increment_block_number "gc-eu:22 gc-eu-mq:22 gc-jp:22 gc-jp-ce:22 gc-jp-mq:22 gc-us:22 gc-us-mq:22" \
+                               "ntsc-1.2:22 pal-1.0:22 pal-1.1:22"
 
 // Local data used for Farore's Wind light (stored in BSS)
 LightInfo D_8015BC00;
@@ -2307,29 +2308,29 @@ void Actor_InitContext(PlayState* play, ActorContext* actorCtx, ActorEntry* play
 
 u32 sCategoryFreezeMasks[ACTORCAT_MAX] = {
     // ACTORCAT_SWITCH
-    PLAYER_STATE1_6 | PLAYER_STATE1_DEAD | PLAYER_STATE1_28,
+    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28,
     // ACTORCAT_BG
-    PLAYER_STATE1_6 | PLAYER_STATE1_DEAD | PLAYER_STATE1_28,
+    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28,
     // ACTORCAT_PLAYER
     0,
     // ACTORCAT_EXPLOSIVE
-    PLAYER_STATE1_6 | PLAYER_STATE1_DEAD | PLAYER_STATE1_10 | PLAYER_STATE1_28,
+    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_10 | PLAYER_STATE1_28,
     // ACTORCAT_NPC
     PLAYER_STATE1_DEAD,
     // ACTORCAT_ENEMY
-    PLAYER_STATE1_6 | PLAYER_STATE1_DEAD | PLAYER_STATE1_28 | PLAYER_STATE1_29,
+    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28 | PLAYER_STATE1_29,
     // ACTORCAT_PROP
     PLAYER_STATE1_DEAD | PLAYER_STATE1_28,
     // ACTORCAT_ITEMACTION
     0,
     // ACTORCAT_MISC
-    PLAYER_STATE1_6 | PLAYER_STATE1_DEAD | PLAYER_STATE1_28 | PLAYER_STATE1_29,
+    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28 | PLAYER_STATE1_29,
     // ACTORCAT_BOSS
-    PLAYER_STATE1_6 | PLAYER_STATE1_DEAD | PLAYER_STATE1_10 | PLAYER_STATE1_28,
+    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_10 | PLAYER_STATE1_28,
     // ACTORCAT_DOOR
     0,
     // ACTORCAT_CHEST
-    PLAYER_STATE1_6 | PLAYER_STATE1_DEAD | PLAYER_STATE1_28,
+    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28,
 };
 
 void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
@@ -2380,7 +2381,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
         requiredActorFlag = ACTOR_FLAG_25;
     }
 
-    if ((player->stateFlags1 & PLAYER_STATE1_6) && ((player->actor.textId & 0xFF00) != 0x600)) {
+    if ((player->stateFlags1 & PLAYER_STATE1_TALKING) && ((player->actor.textId & 0xFF00) != 0x600)) {
         sp74 = player->talkActor;
     }
 
@@ -3568,7 +3569,12 @@ s32 BodyBreak_SpawnParts(Actor* actor, BodyBreak* bodyBreak, PlayState* play, s1
                                                     mtx->zw, 0, 0, objectSlot, type);
 
         if (spawnedEnPart != NULL) {
+#if OOT_VERSION < PAL_1_0
+            //! @bug Wrong rotation order compared to Actor_Draw
+            Matrix_MtxFToZYXRotS(&bodyBreak->matrices[bodyBreak->count], &spawnedEnPart->actor.shape.rot, 0);
+#else
             Matrix_MtxFToYXZRotS(&bodyBreak->matrices[bodyBreak->count], &spawnedEnPart->actor.shape.rot, 0);
+#endif
             spawnedEnPart->displayList = bodyBreak->dLists[bodyBreak->count];
             spawnedEnPart->actor.scale = actor->scale;
         }

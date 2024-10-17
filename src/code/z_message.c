@@ -1929,7 +1929,7 @@ void Message_Decode(PlayState* play) {
                 decodedBufPos--;
             } else if (curCharWide == MESSAGE_WIDE_HIGHSCORE) {
                 value = HIGH_SCORE(font->msgBufWide[++msgCtx->msgBufPos] & 0xFF);
-                if ((font->msgBufWide[msgCtx->msgBufPos] & 0xFF) == 2) {
+                if ((font->msgBufWide[msgCtx->msgBufPos] & 0xFF) == HS_FISHING) {
                     if (LINK_AGE_IN_YEARS == YEARS_CHILD) {
                         value &= 0x7F;
                     } else {
@@ -2088,8 +2088,9 @@ void Message_Decode(PlayState* play) {
             decodedBufPos++;
             msgCtx->msgBufPos++;
         }
-    } else {
+    } else
 #endif
+    {
         // English text for NTSC, eng/ger/fra text for PAL
         while (true) {
             curChar = msgCtx->msgBufDecoded[decodedBufPos] = font->msgBuf[msgCtx->msgBufPos];
@@ -2290,10 +2291,13 @@ void Message_Decode(PlayState* play) {
             } else if (curChar == MESSAGE_HIGHSCORE) {
                 value = HIGH_SCORE((u8)font->msgBuf[++msgCtx->msgBufPos]);
                 PRINTF(T("ランキング＝%d\n", "Highscore=%d\n"), font->msgBuf[msgCtx->msgBufPos]);
-                if ((font->msgBuf[msgCtx->msgBufPos] & 0xFF) == 2) {
+                if ((font->msgBuf[msgCtx->msgBufPos] & 0xFF) == HS_FISHING) {
                     if (LINK_AGE_IN_YEARS == YEARS_CHILD) {
                         value &= 0x7F;
                     } else {
+                        //! @bug Should use msgBuf instead of msgBufWide (copy-paste error from Japanese text
+                        //! handling?), and the mask is applied to the high score index instead of the high score value
+                        //! so this always shows HIGH_SCORE(0). Only the PRINTF is wrong, the following line is correct.
                         PRINTF("HI_SCORE( kanfont->mbuff.nes_mes_buf[message->rdp] & 0xff000000 ) = %x\n",
                                HIGH_SCORE(font->msgBufWide[msgCtx->msgBufPos] & 0xFF000000));
                         value = ((HIGH_SCORE((u8)font->msgBuf[msgCtx->msgBufPos]) & 0xFF000000) >> 0x18) & 0x7F;
@@ -2411,8 +2415,15 @@ void Message_Decode(PlayState* play) {
                 Message_LoadItemIcon(play, font->msgBuf[msgCtx->msgBufPos + 1], R_TEXTBOX_Y + 10);
             } else if (curChar == MESSAGE_BACKGROUND) {
                 msgCtx->textboxBackgroundIdx = font->msgBuf[msgCtx->msgBufPos + 1] * 2;
+#if OOT_VERSION < PAL_1_0
+                //! @bug Wrong shift amounts cause textboxBackgroundForeColorIdx and textboxBackgroundBackColorIdx
+                //! to always be 0. Fortunately MESSAGE_BACKGROUND is only present in unused messages.
+                msgCtx->textboxBackgroundForeColorIdx = (font->msgBuf[msgCtx->msgBufPos + 2] & 0xF0) >> 12;
+                msgCtx->textboxBackgroundBackColorIdx = (font->msgBuf[msgCtx->msgBufPos + 2] & 0xF) >> 8;
+#else
                 msgCtx->textboxBackgroundForeColorIdx = (font->msgBuf[msgCtx->msgBufPos + 2] & 0xF0) >> 4;
                 msgCtx->textboxBackgroundBackColorIdx = font->msgBuf[msgCtx->msgBufPos + 2] & 0xF;
+#endif
                 msgCtx->textboxBackgroundYOffsetIdx = (font->msgBuf[msgCtx->msgBufPos + 3] & 0xF0) >> 4;
                 msgCtx->textboxBackgroundUnkArg = font->msgBuf[msgCtx->msgBufPos + 3] & 0xF;
                 DMA_REQUEST_SYNC(msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE,
@@ -2462,9 +2473,7 @@ void Message_Decode(PlayState* play) {
             decodedBufPos++;
             msgCtx->msgBufPos++;
         }
-#if OOT_NTSC
     }
-#endif
 }
 
 void Message_OpenText(PlayState* play, u16 textId) {
@@ -3090,9 +3099,11 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                 msgCtx->ocarinaStaff = AudioOcarina_GetPlayingStaff();
                 if (msgCtx->ocarinaStaff->pos) {
                     PRINTF("locate=%d  onpu_pt=%d\n", msgCtx->ocarinaStaff->pos, sOcarinaButtonIndexBufPos);
+#if OOT_VERSION >= PAL_1_0
                     if (msgCtx->ocarinaStaff->pos == 1 && sOcarinaButtonIndexBufPos == 8) {
                         sOcarinaButtonIndexBufPos = 0;
                     }
+#endif
                     if (sOcarinaButtonIndexBufPos == msgCtx->ocarinaStaff->pos - 1) {
                         msgCtx->lastOcarinaButtonIndex = sOcarinaButtonIndexBuf[msgCtx->ocarinaStaff->pos - 1] =
                             msgCtx->ocarinaStaff->buttonIndex;
@@ -3908,7 +3919,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
 
                     if (1) {}
                     if (sOcarinaButtonAlphaValues[i] != 255) {
-                        sOcarinaButtonAlphaValues[i] += VREG(50);
+                        sOcarinaButtonAlphaValues[i] += R_OCARINA_BUTTONS_APPEAR_ALPHA_STEP;
                         if (sOcarinaButtonAlphaValues[i] >= 255) {
                             sOcarinaButtonAlphaValues[i] = 255;
                         }
@@ -4356,7 +4367,7 @@ void Message_Update(PlayState* play) {
                         //       Later, if the ocarina has not been played and another textbox is closed, this handling
                         //       for Saria's song will be carried out.
                         player->naviTextId = -0xE0;
-                        player->naviActor->flags |= ACTOR_FLAG_16;
+                        player->naviActor->flags |= ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
                     }
                     if (msgCtx->ocarinaAction == OCARINA_ACTION_FREE_PLAY_DONE &&
                         (play->msgCtx.ocarinaMode == OCARINA_MODE_01 || play->msgCtx.ocarinaMode == OCARINA_MODE_0B)) {

@@ -10,7 +10,8 @@
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "terminal.h"
 
-#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128"
+#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
+                               "pal-1.0:128 pal-1.1:128"
 
 #define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE | ACTOR_FLAG_4 | ACTOR_FLAG_5)
 
@@ -380,7 +381,7 @@ void BossMo_Init(Actor* thisx, PlayState* play2) {
     } else {
         Actor_SetScale(&this->actor, 0.01f);
         BossMo_SetupTentacle(this, play);
-        this->actor.colChkInfo.mass = 0xFF;
+        this->actor.colChkInfo.mass = MASS_IMMOVABLE;
         MO_WATER_LEVEL(play) = -50;
         this->waterTexAlpha = 90.0f;
         this->actor.world.pos.y = MO_WATER_LEVEL(play);

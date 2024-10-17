@@ -1,13 +1,15 @@
+#pragma increment_block_number "gc-eu:244 gc-eu-mq:244 gc-jp:224 gc-jp-ce:224 gc-jp-mq:224 gc-us:224 gc-us-mq:224" \
+                               "ntsc-1.2:224 pal-1.0:252 pal-1.1:252"
+
 #include "global.h"
 #include "ultra64.h"
 #include "terminal.h"
+#include "versions.h"
 
 #include "z64frame_advance.h"
 
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/gameplay_field_keep/gameplay_field_keep.h"
-
-#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0 ntsc-1.2:0"
 
 typedef enum LightningBoltState {
     /* 0x00 */ LIGHTNING_BOLT_START,
@@ -212,8 +214,8 @@ s16 sLightningFlashAlpha;
 s16 sSunDepthTestX;
 s16 sSunDepthTestY;
 
-#pragma increment_block_number "gc-eu:239 gc-eu-mq:239 gc-jp:216 gc-jp-ce:216 gc-jp-mq:216 gc-us:216 gc-us-mq:216" \
-                               "ntsc-1.2:216"
+#pragma increment_block_number "gc-eu:240 gc-eu-mq:240 gc-jp:224 gc-jp-ce:224 gc-jp-mq:224 gc-us:224 gc-us-mq:224" \
+                               "ntsc-1.2:224 pal-1.0:240 pal-1.1:240"
 
 LightNode* sNGameOverLightNode;
 LightInfo sNGameOverLightInfo;
@@ -960,9 +962,15 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
         }
 
         //! @bug `gTimeSpeed` is unsigned, it can't be negative
+#if OOT_VERSION < PAL_1_0
+        if ((((void)0, gSaveContext.save.dayTime) > ((void)0, gSaveContext.skyboxTime)) ||
+            (((void)0, gSaveContext.save.dayTime) < CLOCK_TIME(1, 0) || gTimeSpeed < 0))
+#else
         if (((((void)0, gSaveContext.sceneLayer) >= 5 || gTimeSpeed != 0) &&
-             ((void)0, gSaveContext.save.dayTime) > gSaveContext.skyboxTime) ||
-            (((void)0, gSaveContext.save.dayTime) < CLOCK_TIME(1, 0) || gTimeSpeed < 0)) {
+             ((void)0, gSaveContext.save.dayTime) > ((void)0, gSaveContext.skyboxTime)) ||
+            (((void)0, gSaveContext.save.dayTime) < CLOCK_TIME(1, 0) || gTimeSpeed < 0))
+#endif
+        {
 
             gSaveContext.skyboxTime = ((void)0, gSaveContext.save.dayTime);
         }
@@ -1740,8 +1748,13 @@ void Environment_DrawRain(PlayState* play, View* view, GraphicsContext* gfxCtx) 
     Vec3f windDirection = { 0.0f, 0.0f, 0.0f };
     Player* player = GET_PLAYER(play);
 
+#if OOT_VERSION < PAL_1_0
+    if (!(play->cameraPtrs[CAM_ID_MAIN]->stateFlags & CAM_STATE_CAMERA_IN_WATER))
+#else
     if (!(play->cameraPtrs[CAM_ID_MAIN]->stateFlags & CAM_STATE_CAMERA_IN_WATER) &&
-        (play->envCtx.precipitation[PRECIP_SNOW_CUR] == 0)) {
+        (play->envCtx.precipitation[PRECIP_SNOW_CUR] == 0))
+#endif
+    {
         OPEN_DISPS(gfxCtx, "../z_kankyo.c", 2799);
 
         vec.x = view->at.x - view->eye.x;
@@ -2517,7 +2530,7 @@ void Environment_AdjustLights(PlayState* play, f32 arg1, f32 arg2, f32 arg3, f32
     f32 temp;
     s32 i;
 
-    if (play->roomCtx.curRoom.behaviorType1 != ROOM_BEHAVIOR_TYPE1_5 && Play_CamIsNotFixed(play)) {
+    if (play->roomCtx.curRoom.type != ROOM_TYPE_BOSS && Play_CamIsNotFixed(play)) {
         arg1 = CLAMP_MIN(arg1, 0.0f);
         arg1 = CLAMP_MAX(arg1, 1.0f);
 

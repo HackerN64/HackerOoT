@@ -18,6 +18,7 @@
 
 #define ARRAY_COUNT(arr) (s32)(sizeof(arr) / sizeof(arr[0]))
 #define ARRAY_COUNTU(arr) (u32)(sizeof(arr) / sizeof(arr[0]))
+#define ARRAY_COUNT_2D(arr) (s32)(sizeof(arr) / sizeof(arr[0][0]))
 
 #define PHYSICAL_TO_VIRTUAL(addr) (void*)((uintptr_t)(addr) + 0x80000000)
 #define VIRTUAL_TO_PHYSICAL(addr) (uintptr_t)((u8*)(addr) - 0x80000000)
@@ -82,34 +83,20 @@
         (state)->size = sizeof(newStruct);               \
     } while (0)
 
-#define SET_FULLSCREEN_VIEWPORT(view)      \
-    {                                      \
-        Viewport viewport;                 \
-        viewport.bottomY = SCREEN_HEIGHT;  \
-        viewport.rightX = SCREEN_WIDTH;    \
-        viewport.topY = 0;                 \
-        viewport.leftX = 0;                \
-        View_SetViewport(view, &viewport); \
-    }                                      \
-    (void)0
-
 #if IS_DEBUG
 
-#define DMA_REQUEST_SYNC(ram, vrom, size, ...) DmaMgr_RequestSyncDebug(ram, vrom, size, __FILE__, __LINE__)
-#define DMA_REQUEST_ASYNC(req, ram, vrom, size, unk5, queue, msg, ...) DmaMgr_RequestAsyncDebug(req, ram, vrom, size, unk5, queue, msg, __FILE__, __LINE__)
-#define GAME_STATE_ALLOC(gameState, size, ...) GameState_Alloc(gameState, size, __FILE__, __LINE__)
-#define DEBUG_ARENA_MALLOC(size, ...) DebugArena_MallocDebug(size, __FILE__, __LINE__)
-#define DEBUG_ARENA_MALLOC_R(size, ...) DebugArena_MallocRDebug(size, __FILE__, __LINE__)
-#define DEBUG_ARENA_FREE(size, ...) DebugArena_FreeDebug(size, __FILE__, __LINE__)
-#define SYSTEM_ARENA_MALLOC(size, ...) SystemArena_MallocDebug(size, __FILE__, __LINE__)
-#define SYSTEM_ARENA_MALLOC_R(size, ...) SystemArena_MallocRDebug(size, __FILE__, __LINE__)
-#define SYSTEM_ARENA_FREE(size, ...) SystemArena_FreeDebug(size, __FILE__, __LINE__)
-#define ZELDA_ARENA_MALLOC(size, ...) ZeldaArena_MallocDebug(size, __FILE__, __LINE__)
-#define ZELDA_ARENA_MALLOC_R(size, ...) ZeldaArena_MallocRDebug(size, __FILE__, __LINE__)
-#define ZELDA_ARENA_FREE(size, ...) ZeldaArena_FreeDebug(size, __FILE__, __LINE__)
-#define LOG_UTILS_CHECK_NULL_POINTER(exp, ptr, ...) LogUtils_CheckNullPointer(exp, ptr, __FILE__, __LINE__)
-#define LOG_UTILS_CHECK_VALID_POINTER(exp, ptr, ...) LogUtils_CheckValidPointer(exp, ptr, __FILE__, __LINE__)
-#define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_MallocDebug(alloc, size, __FILE__, __LINE__)
+#define DMA_REQUEST_SYNC(ram, vrom, size, ...) DmaMgr_RequestSyncDebug(ram, vrom, size,  __FILE__, __LINE__)
+#define DMA_REQUEST_ASYNC(req, ram, vrom, size, unk5, queue, msg, ...) DmaMgr_RequestAsyncDebug(req, ram, vrom, size, unk5, queue, msg,  __FILE__, __LINE__)
+#define GAME_STATE_ALLOC(gameState, size, ...) GameState_Alloc(gameState, size,  __FILE__, __LINE__)
+#define DEBUG_ARENA_MALLOC(size, ...) DebugArena_MallocDebug(size,  __FILE__, __LINE__)
+#define DEBUG_ARENA_MALLOC_R(size, ...) DebugArena_MallocRDebug(size,  __FILE__, __LINE__)
+#define DEBUG_ARENA_FREE(size, ...) DebugArena_FreeDebug(size,  __FILE__, __LINE__)
+#define SYSTEM_ARENA_MALLOC(size, ...) SystemArena_MallocDebug(size,  __FILE__, __LINE__)
+#define SYSTEM_ARENA_MALLOC_R(size, ...) SystemArena_MallocRDebug(size,  __FILE__, __LINE__)
+#define SYSTEM_ARENA_FREE(size, ...) SystemArena_FreeDebug(size,  __FILE__, __LINE__)
+#define LOG_UTILS_CHECK_NULL_POINTER(exp, ptr, ...) LogUtils_CheckNullPointer(exp, ptr,  __FILE__, __LINE__)
+#define LOG_UTILS_CHECK_VALID_POINTER(exp, ptr, ...) LogUtils_CheckValidPointer(exp, ptr,  __FILE__, __LINE__)
+#define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_MallocDebug(alloc, size,  __FILE__, __LINE__)
 
 #else
 
@@ -122,12 +109,8 @@
 #define SYSTEM_ARENA_MALLOC(size, ...) SystemArena_Malloc(size)
 #define SYSTEM_ARENA_MALLOC_R(size, ...) SystemArena_MallocR(size)
 #define SYSTEM_ARENA_FREE(size, ...) SystemArena_Free(size)
-#define ZELDA_ARENA_MALLOC(size, ...) ZeldaArena_Malloc(size)
-#define ZELDA_ARENA_MALLOC_R(size, ...) ZeldaArena_MallocR(size)
-#define ZELDA_ARENA_FREE(size, ...) ZeldaArena_Free(size)
 #define LOG_UTILS_CHECK_NULL_POINTER(exp, ptr, ...) (void)0
 #define LOG_UTILS_CHECK_VALID_POINTER(exp, ptr, ...) (void)0
-#define HUNGUP_AND_CRASH(...) LogUtils_HungupThread(__FILE__, __LINE__)
 #define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_Malloc(alloc, size)
 
 #endif /* IS_DEBUG */

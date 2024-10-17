@@ -2,12 +2,13 @@
 #include "fault.h"
 #include "terminal.h"
 #include "ucode_disas.h"
+#include "versions.h"
 
 #define GFXPOOL_HEAD_MAGIC 0x1234
 #define GFXPOOL_TAIL_MAGIC 0x5678
 
 #pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
-                               "ntsc-1.2:192"
+                               "ntsc-1.2:192 pal-1.0:192 pal-1.1:192"
 
 /**
  * The time at which the previous `Graph_Update` ended.
@@ -152,10 +153,17 @@ void Graph_Init(GraphicsContext* gfxCtx) {
     gfxCtx->gfxPoolIdx = 0;
     gfxCtx->fbIdx = 0;
     gfxCtx->viMode = NULL;
+
+#if OOT_VERSION < PAL_1_0
+    gfxCtx->viFeatures = 0;
+#else
     gfxCtx->viFeatures = gViConfigFeatures;
     gfxCtx->xScale = gViConfigXScale;
     gfxCtx->yScale = gViConfigYScale;
+#endif
+
     osCreateMesgQueue(&gfxCtx->queue, gfxCtx->msgBuff, ARRAY_COUNT(gfxCtx->msgBuff));
+
 #if IS_DEBUG
     func_800D31F0();
     Fault_AddClient(&sGraphFaultClient, Graph_FaultClient, NULL, NULL);
@@ -265,8 +273,10 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
 
         cfb->viMode = gfxCtx->viMode;
         cfb->viFeatures = gfxCtx->viFeatures;
+#if OOT_VERSION >= PAL_1_0
         cfb->xScale = gfxCtx->xScale;
         cfb->yScale = gfxCtx->yScale;
+#endif
         cfb->unk_10 = 0;
         cfb->updateRate = R_UPDATE_RATE;
 
@@ -372,7 +382,11 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
             PRINTF("%c", BEL);
             PRINTF(VT_COL(RED, WHITE) T("ダイナミック領域先頭が破壊されています\n", "Dynamic area head is destroyed\n")
                        VT_RST);
-#if PLATFORM_N64
+#if OOT_VERSION < NTSC_1_1
+            Fault_AddHungupAndCrash("../graph.c", 937);
+#elif OOT_VERSION < PAL_1_0
+            Fault_AddHungupAndCrash("../graph.c", 940);
+#elif OOT_VERSION < GC_JP
             Fault_AddHungupAndCrash("../graph.c", 951);
 #else
             Fault_AddHungupAndCrash("../graph.c", 1070);
@@ -383,7 +397,11 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
             PRINTF("%c", BEL);
             PRINTF(VT_COL(RED, WHITE)
                        T("ダイナミック領域末尾が破壊されています\n", "Dynamic region tail is destroyed\n") VT_RST);
-#if PLATFORM_N64
+#if OOT_VERSION < NTSC_1_1
+            Fault_AddHungupAndCrash("../graph.c", 943);
+#elif OOT_VERSION < PAL_1_0
+            Fault_AddHungupAndCrash("../graph.c", 946);
+#elif OOT_VERSION < GC_JP
             Fault_AddHungupAndCrash("../graph.c", 957);
 #else
             Fault_AddHungupAndCrash("../graph.c", 1076);
@@ -472,7 +490,11 @@ void Graph_ThreadEntry(void* arg0) {
 
             sprintf(faultMsg, "CLASS SIZE= %d bytes", size);
             Fault_AddHungupAndCrashImpl("GAME CLASS MALLOC FAILED", faultMsg);
-#elif PLATFORM_N64
+#elif OOT_VERSION < NTSC_1_1
+            Fault_AddHungupAndCrash("../graph.c", 1067);
+#elif OOT_VERSION < PAL_1_0
+            Fault_AddHungupAndCrash("../graph.c", 1070);
+#elif OOT_VERSION < GC_JP
             Fault_AddHungupAndCrash("../graph.c", 1081);
 #else
             Fault_AddHungupAndCrash("../graph.c", 1200);

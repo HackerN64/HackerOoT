@@ -4,26 +4,25 @@ MAKEFLAGS += --no-builtin-rules --no-print-directory
 SHELL = /bin/bash
 .SHELLFLAGS = -o pipefail -c
 
-# Build options can either be changed by modifying the makefile, or by building with 'make SETTING=value'
-# It is also possible to override default settings in a file called .make_options.mk with 'SETTING=value'.
+#### Build options ####
+
+# Build options can be changed by modifying them below, or by appending 'SETTING=value' to all 'make' commands
+# (e.g. 'make setup VERSION=ntsc-1.0' and 'make VERSION=ntsc-1.0' to build the NTSC 1.0 version).
+# Alternatively, you can create a file called .make_options.mk (gitignored by default) and add 'SETTING=value'
+# there to avoid modifying the Makefile directly.
 
 -include .make_options.mk
 
-# Enable optimization flags to use GDB on Ares
-ARES_GDB := 1
+# HackerOoT options
+-include .make_hackeroot.mk
 
-# Toggle release or debug mode. 1=Release, 0=Debug
-# Note: currently only used for HackerOoT
-RELEASE := 0
-
-# Valid compression algorithms are 'yaz', 'lzo' and 'aplib'
-COMPRESSION ?= yaz
-COMPRESSION_TYPE ?= $(shell echo $(COMPRESSION) | tr '[:lower:]' '[:upper:]')
-
-# If COMPILER is "gcc", compile with GCC instead of IDO.
 COMPILER ?= gcc
-# Target game version. Currently the following versions are supported:
+
+# Target game version. Ensure the corresponding input ROM is placed in baseroms/$(VERSION)/baserom.z64.
+# Currently the following versions are supported:
+#   pal-1.0        N64 PAL 1.0 (Europe)
 #   ntsc-1.2       N64 NTSC 1.2 (Japan/US depending on REGION)
+#   pal-1.1        N64 PAL 1.1 (Europe)
 #   gc-jp          GameCube Japan
 #   gc-jp-mq       GameCube Japan Master Quest
 #   gc-us          GameCube US
@@ -34,23 +33,25 @@ COMPILER ?= gcc
 #   gc-jp-ce       GameCube Japan (Collector's Edition disc)
 #   hackeroot-mq   HackerOoT, based on gc-eu-mq-dbg (default)
 # The following versions are work-in-progress and not yet matching:
-#   (none currently)
+#   ntsc-1.0       N64 NTSC 1.0 (Japan/US depending on REGION)
+#   ntsc-1.1       N64 NTSC 1.1 (Japan/US depending on REGION)
 #
 # Note: choosing hackeroot-mq will enable HackerOoT features,
 #       if another version is chosen, this repo will be like
 #       zeldaret/main decomp but without the disassembly, decompilation
 #       and matching tools, including the IDO compiler
 VERSION ?= hackeroot-mq
-# Number of threads to extract and compress with
+# Number of threads to extract and compress with.
 N_THREADS ?= $(shell nproc)
-# Check code syntax with host compiler
+# Check code syntax with host compiler.
 RUN_CC_CHECK ?= 1
 # Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
-# In nearly all cases, not having 'mips-linux-gnu-*' binaries on the PATH is indicative of missing dependencies
+# In nearly all cases, not having 'mips-linux-gnu-*' binaries on the PATH indicates missing dependencies.
 MIPS_BINUTILS_PREFIX ?= mips-linux-gnu-
-# Emulator w/ flags
+# Emulator w/ flags for 'make run'.
 N64_EMULATOR ?=
-# Set to override game region in the ROM header. Options: JP, US, EU
+# Set to override game region in the ROM header (options: JP, US, EU). This can be used to build a fake US version
+# of the debug ROM for better emulator compatibility, or to build US versions of NTSC N64 ROMs.
 # REGION ?= US
 
 CFLAGS ?=
@@ -58,19 +59,31 @@ CPPFLAGS ?=
 CFLAGS_IDO ?=
 CPP_DEFINES ?=
 
-TARGET ?=
-
-ifeq ($(TARGET),wad)
-CFLAGS := -DCONSOLE_WIIVC -fno-reorder-blocks -fno-optimize-sibling-calls
-CPPFLAGS := -DCONSOLE_WIIVC
-else ifeq ($(TARGET),iso)
-CFLAGS := -DCONSOLE_GC -fno-reorder-blocks -fno-optimize-sibling-calls
-CPPFLAGS := -DCONSOLE_GC
-endif
-
 # Version-specific settings
-ifeq ($(VERSION),ntsc-1.2)
+REGIONAL_CHECKSUM := 0
+ifeq ($(VERSION),ntsc-1.0)
+  REGIONAL_CHECKSUM := 1
   REGION ?= JP
+  PLATFORM := N64
+  DEBUG := 0
+  COMPARE := 0
+else ifeq ($(VERSION),ntsc-1.1)
+  REGIONAL_CHECKSUM := 1
+  REGION ?= JP
+  PLATFORM := N64
+  DEBUG := 0
+  COMPARE := 0
+else ifeq ($(VERSION),pal-1.0)
+  REGION ?= EU
+  PLATFORM := N64
+  DEBUG := 0
+else ifeq ($(VERSION),ntsc-1.2)
+  REGIONAL_CHECKSUM := 1
+  REGION ?= JP
+  PLATFORM := N64
+  DEBUG := 0
+else ifeq ($(VERSION),pal-1.1)
+  REGION ?= EU
   PLATFORM := N64
   DEBUG := 0
 else ifeq ($(VERSION),gc-jp)

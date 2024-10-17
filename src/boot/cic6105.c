@@ -37,7 +37,6 @@ void CIC6105_FaultClient(void) {
     Fault_SetCursor(40, 184);
     Fault_Printf("ROM_F");
     Fault_Printf(" [Creator:%s]", gBuildCreator);
-    Fault_SetCursor(56, 192);
     Fault_SetCursor(96, 32);
     Fault_Printf("I LOVE YOU %08x", func_80001714());
 }

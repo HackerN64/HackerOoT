@@ -635,7 +635,7 @@ void Interface_UpdateHudAlphas(PlayState* play, s16 dimmingAlpha) {
             break;
     }
 
-    if ((play->roomCtx.curRoom.behaviorType1 == ROOM_BEHAVIOR_TYPE1_1) && (interfaceCtx->minimapAlpha >= 255)) {
+    if ((play->roomCtx.curRoom.type == ROOM_TYPE_DUNGEON) && (interfaceCtx->minimapAlpha >= 255)) {
         interfaceCtx->minimapAlpha = 255;
     }
 }
@@ -1738,12 +1738,16 @@ u8 Item_Give(PlayState* play, u8 item) {
         Health_ChangeBy(play, 0x10);
         return item;
     } else if (item == ITEM_MAGIC_JAR_SMALL) {
+        // Magic_Fill is only used to store the magicState.
+        // Setting the state to FILL gets immediately overwritten in Magic_RequestChange.
+        // I.e. magic is added not filled.
+#if OOT_VERSION < PAL_1_0
+        Magic_Fill(play);
+#else
         if (gSaveContext.magicState != MAGIC_STATE_ADD) {
-            // This function is only used to store the magicState.
-            // Setting the state to FILL gets immediately overwritten in Magic_RequestChange.
-            // I.e. magic is added not filled
             Magic_Fill(play);
         }
+#endif
 
         Magic_RequestChange(play, 12, MAGIC_ADD);
 
@@ -1754,12 +1758,16 @@ u8 Item_Give(PlayState* play, u8 item) {
 
         return item;
     } else if (item == ITEM_MAGIC_JAR_BIG) {
+        // Magic_Fill is only used to store the magicState.
+        // Setting the state to FILL gets immediately overwritten in Magic_RequestChange.
+        // I.e. magic is added not filled.
+#if OOT_VERSION < PAL_1_0
+        Magic_Fill(play);
+#else
         if (gSaveContext.magicState != MAGIC_STATE_ADD) {
-            // This function is only used to store the magicState.
-            // Setting the state to FILL gets immediately overwritten in Magic_RequestChange.
-            // I.e. magic is added not filled.
             Magic_Fill(play);
         }
+#endif
 
         Magic_RequestChange(play, 24, MAGIC_ADD);
 
@@ -2115,12 +2123,19 @@ void Interface_LoadActionLabel(InterfaceContext* interfaceCtx, u16 action, s16 l
         action += DO_ACTION_MAX;
     }
 
+#if OOT_VERSION >= PAL_1_0
     if (gSaveContext.language == 2) { // LANGUAGE_FRA for PAL versions
         action += DO_ACTION_MAX;
     }
+#endif
 
-    if ((action != DO_ACTION_NONE) && (action != DO_ACTION_MAX + DO_ACTION_NONE) &&
-        (action != 2 * DO_ACTION_MAX + DO_ACTION_NONE)) {
+#if OOT_VERSION < PAL_1_0
+    if ((action != 0 * DO_ACTION_MAX + DO_ACTION_NONE) && (action != 1 * DO_ACTION_MAX + DO_ACTION_NONE))
+#else
+    if ((action != 0 * DO_ACTION_MAX + DO_ACTION_NONE) && (action != 1 * DO_ACTION_MAX + DO_ACTION_NONE) &&
+        (action != 2 * DO_ACTION_MAX + DO_ACTION_NONE))
+#endif
+    {
         osCreateMesgQueue(&interfaceCtx->loadQueue, &interfaceCtx->loadMsg, 1);
         DMA_REQUEST_ASYNC(&interfaceCtx->dmaRequest_160,
                           interfaceCtx->doActionSegment + (loadOffset * DO_ACTION_TEX_SIZE),
@@ -2179,9 +2194,11 @@ void Interface_LoadActionLabelB(PlayState* play, u16 action) {
         action += DO_ACTION_MAX;
     }
 
+#if OOT_VERSION >= PAL_1_0
     if (gSaveContext.language == 2) { // LANGUAGE_FRA for PAL versions
         action += DO_ACTION_MAX;
     }
+#endif
 
     interfaceCtx->unk_1FC = action;
 
@@ -2795,7 +2812,9 @@ void Interface_DrawActionLabel(GraphicsContext* gfxCtx, void* texture) {
 
 void Interface_DrawItemButtons(PlayState* play) {
     static void* cUpLabelTextures[] = LANGUAGE_ARRAY(gNaviCUpJPNTex, gNaviCUpENGTex, gNaviCUpENGTex, gNaviCUpENGTex);
+#if OOT_VERSION >= PAL_1_0
     static s16 startButtonLeftPos[] = { 132, 130, 130 };
+#endif
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
     Player* player = GET_PLAYER(play);
     PauseContext* pauseCtx = &play->pauseCtx;
@@ -2850,10 +2869,14 @@ void Interface_DrawItemButtons(PlayState* play) {
             gDPSetPrimColor(OVERLAY_DISP++, 0, 0, START_BUTTON_R, START_BUTTON_G, START_BUTTON_B,
                             interfaceCtx->startAlpha);
 
-#if OOT_NTSC
+#if OOT_VERSION < PAL_1_0
+            gSPTextureRectangle(OVERLAY_DISP++, R_START_BTN_X << 2, R_START_BTN_Y << 2, (R_START_BTN_X + 22) << 2,
+                                (R_START_BTN_Y + 22) << 2, G_TX_RENDERTILE, 0, 0, (s32)(1.4277344 * (1 << 10)),
+                                (s32)(1.4277344 * (1 << 10)));
+#elif OOT_NTSC
             // TODO: widescreen stuff for NTSC
-            gSPTextureRectangle(OVERLAY_DISP++, 132 << 2, 17 << 2, (132 + 22) << 2, 39 << 2, G_TX_RENDERTILE, 0, 0,
-                                (s32)(1.4277344 * (1 << 10)), (s32)(1.4277344 * (1 << 10)));
+            gSPTextureRectangle(OVERLAY_DISP++, 132 << 2, 17 << 2, (132 + 22) << 2, (17 + 22) << 2, G_TX_RENDERTILE, 0,
+                                0, (s32)(1.4277344 * (1 << 10)), (s32)(1.4277344 * (1 << 10)));
 #else
             gSPTextureRectangle(
                 OVERLAY_DISP++,
@@ -3593,10 +3616,12 @@ void Interface_Draw(PlayState* play) {
             // Revert any spoiling trade quest items
             for (svar1 = 0; svar1 < ARRAY_COUNT(gSpoilingItems); svar1++) {
                 if (INV_CONTENT(ITEM_TRADE_ADULT) == gSpoilingItems[svar1]) {
+#if OOT_VERSION >= NTSC_1_1
                     gSaveContext.eventInf[EVENTINF_HORSES_INDEX] &=
                         (u16) ~(EVENTINF_HORSES_STATE_MASK | EVENTINF_HORSES_HORSETYPE_MASK | EVENTINF_HORSES_05_MASK |
                                 EVENTINF_HORSES_06_MASK | EVENTINF_HORSES_0F_MASK);
                     PRINTF("EVENT_INF=%x\n", gSaveContext.eventInf[EVENTINF_HORSES_INDEX]);
+#endif
                     play->nextEntranceIndex = spoilingItemEntrances[svar1];
                     INV_CONTENT(gSpoilingItemReverts[svar1]) = gSpoilingItemReverts[svar1];
 
@@ -3896,7 +3921,12 @@ void Interface_Draw(PlayState* play) {
                                         gSaveContext.subTimerSeconds--;
                                         PRINTF("TOTAL_EVENT_TM=%d\n", gSaveContext.subTimerSeconds);
 
-                                        if (gSaveContext.subTimerSeconds <= 0) {
+#if OOT_VERSION < PAL_1_0
+                                        if (gSaveContext.subTimerSeconds == 0)
+#else
+                                        if (gSaveContext.subTimerSeconds <= 0)
+#endif
+                                        {
                                             // Out of time
                                             if (!Flags_GetSwitch(play, 0x37) ||
                                                 ((play->sceneId != SCENE_GANON_BOSS) &&
@@ -4411,8 +4441,7 @@ void Interface_Update(PlayState* play) {
                 gTimeSpeed = sPrevTimeSpeed;
                 play->msgCtx.ocarinaMode = OCARINA_MODE_04;
             }
-        } else if ((play->roomCtx.curRoom.behaviorType1 != ROOM_BEHAVIOR_TYPE1_1) &&
-                   (interfaceCtx->restrictions.sunsSong != 3)) {
+        } else if ((play->roomCtx.curRoom.type != ROOM_TYPE_DUNGEON) && (interfaceCtx->restrictions.sunsSong != 3)) {
             if ((gSaveContext.save.dayTime >= CLOCK_TIME(6, 30)) &&
                 (gSaveContext.save.dayTime < CLOCK_TIME(18, 0) + 1)) {
                 gSaveContext.nextDayTime = NEXT_TIME_NIGHT;
@@ -4435,9 +4464,11 @@ void Interface_Update(PlayState* play) {
             play->nextEntranceIndex = gSaveContext.save.entranceIndex;
             play->transitionTrigger = TRANS_TRIGGER_START;
             gSaveContext.sunsSongState = SUNSSONG_INACTIVE;
+#if OOT_VERSION >= PAL_1_0
             func_800F6964(30);
             gSaveContext.seqId = (u8)NA_BGM_DISABLED;
             gSaveContext.natureAmbienceId = NATURE_ID_DISABLED;
+#endif
         } else {
             gSaveContext.sunsSongState = SUNSSONG_SPECIAL;
         }

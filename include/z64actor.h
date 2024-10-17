@@ -161,14 +161,20 @@ typedef struct ActorShape {
 //
 #define ACTOR_FLAG_15 (1 << 15)
 
-//
-#define ACTOR_FLAG_16 (1 << 16)
+// Player automatically accepts a Talk Offer without needing to press the A button.
+// Player still has to meet all conditions to be able to receive a talk offer (for example, being in range).
+#define ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED (1 << 16)
 
-//
-#define ACTOR_FLAG_17 (1 << 17)
+// Actor will be influenced by the pitch (x rot) of Player's left hand when being carried,
+// instead of Player's yaw which is the default actor carry behavior.
+// This flag is helpful for something like the `BG_HEAVY_BLOCK` actor which Player carries underhanded.
+#define ACTOR_FLAG_CARRY_X_ROT_INFLUENCE (1 << 17)
 
-//
-#define ACTOR_FLAG_18 (1 << 18)
+// When locked onto an actor with this flag set, the C-Up button can be used to talk to this actor.
+// A C-Up button labeled "Navi" will appear on the HUD when locked on which indicates the actor can be checked with Navi.
+// With this flag Player talks directly to the actor with C-Up. It is expected that the resulting dialog should appear
+// to be coming from Navi, even though she is not involved at all with this interaction.
+#define ACTOR_FLAG_TALK_WITH_C_UP (1 << 18)
 
 // Flags controlling the use of `Actor.sfx`. Do not use directly.
 #define ACTOR_FLAG_SFX_ACTOR_POS_2 (1 << 19) // see Actor_PlaySfx_Flagged2
@@ -178,8 +184,9 @@ typedef struct ActorShape {
 // ignores point lights but not directional lights (such as environment lights)
 #define ACTOR_FLAG_IGNORE_POINT_LIGHTS (1 << 22)
 
-//
-#define ACTOR_FLAG_23 (1 << 23)
+// When Player is carrying this actor, it can only be thrown, not dropped/placed.
+// Typically an actor can only be thrown when moving, but this allows an actor to be thrown when standing still.
+#define ACTOR_FLAG_THROW_ONLY (1 << 23)
 
 //
 #define ACTOR_FLAG_24 (1 << 24)
@@ -908,8 +915,10 @@ void func_80034CC4(struct PlayState* play, SkelAnime* skelAnime, OverrideLimbDra
 s16 func_80034DD4(Actor* actor, struct PlayState* play, s16 arg2, f32 arg3);
 void func_80034F54(struct PlayState* play, s16* arg1, s16* arg2, s32 arg3);
 void Actor_Noop(Actor* actor, struct PlayState* play);
+
 void Gfx_DrawDListOpa(struct PlayState* play, Gfx* dlist);
 void Gfx_DrawDListXlu(struct PlayState* play, Gfx* dlist);
+
 Actor* Actor_FindNearby(struct PlayState* play, Actor* refActor, s16 actorId, u8 actorCategory, f32 range);
 s32 func_800354B4(struct PlayState* play, Actor* actor, f32 range, s16 arg3, s16 arg4, s16 arg5);
 void func_8003555C(struct PlayState* play, Vec3f* pos, Vec3f* velocity, Vec3f* accel);

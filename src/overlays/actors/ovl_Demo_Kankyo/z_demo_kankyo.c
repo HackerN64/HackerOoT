@@ -1,9 +1,13 @@
 #include "z_demo_kankyo.h"
+#include "global.h"
 #include "versions.h"
 #include "z64cutscene_commands.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/object_efc_star_field/object_efc_star_field.h"
 #include "assets/objects/object_toki_objects/object_toki_objects.h"
+
+#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
+                               "ntsc-1.2:128"
 
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5)
 

@@ -39,3 +39,25 @@ PRINT := printf
 define print
   $(V)echo -e "$(GREEN)$(1) $(YELLOW)$(2)$(GREEN) -> $(BLUE)$(3)$(NO_COL)"
 endef
+
+# Enable optimization flags to use GDB on Ares
+ARES_GDB := 1
+
+# Toggle release or debug mode. 1=Release, 0=Debug
+# Note: currently only used for HackerOoT
+RELEASE := 0
+
+# Valid compression algorithms are 'yaz', 'lzo' and 'aplib'
+COMPRESSION ?= yaz
+COMPRESSION_TYPE ?= $(shell echo $(COMPRESSION) | tr '[:lower:]' '[:upper:]')
+
+# Platform compatibility flags
+TARGET ?=
+
+ifeq ($(TARGET),wad)
+CFLAGS := -DCONSOLE_WIIVC -fno-reorder-blocks -fno-optimize-sibling-calls
+CPPFLAGS := -DCONSOLE_WIIVC
+else ifeq ($(TARGET),iso)
+CFLAGS := -DCONSOLE_GC -fno-reorder-blocks -fno-optimize-sibling-calls
+CPPFLAGS := -DCONSOLE_GC
+endif

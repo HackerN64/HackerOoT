@@ -11,6 +11,7 @@ __pycache__/
 compile_commands.json
 
 # Project-specific ignores
+.make_options.mk
 extracted/
 build/
 expected/
