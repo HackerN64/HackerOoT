@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    container: ghcr.io/yanis42/hackeroot-build-test:main
+    container: ghcr.io/HackerN64/HackerBuild:main
     runs-on: ubuntu-22.04
     strategy:
       matrix:
