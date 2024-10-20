@@ -6,6 +6,7 @@
 
 #include "z_en_okarina_effect.h"
 #include "terminal.h"
+#include "versions.h"
 
 #include "z64frame_advance.h"
 
@@ -18,7 +19,7 @@ void EnOkarinaEffect_Update(Actor* thisx, PlayState* play);
 void EnOkarinaEffect_TriggerStorm(EnOkarinaEffect* this, PlayState* play);
 void EnOkarinaEffect_ManageStorm(EnOkarinaEffect* this, PlayState* play);
 
-ActorInit En_Okarina_Effect_InitVars = {
+ActorProfile En_Okarina_Effect_Profile = {
     /**/ ACTOR_EN_OKARINA_EFFECT,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,
@@ -38,8 +39,13 @@ void EnOkarinaEffect_Destroy(Actor* thisx, PlayState* play) {
     EnOkarinaEffect* this = (EnOkarinaEffect*)thisx;
 
     play->envCtx.precipitation[PRECIP_SOS_MAX] = 0;
+#if OOT_VERSION < PAL_1_0
+    if ((gWeatherMode == WEATHER_MODE_CLEAR) && (play->envCtx.stormRequest == STORM_REQUEST_START))
+#else
     if ((gWeatherMode != WEATHER_MODE_RAIN) && (gWeatherMode != WEATHER_MODE_HEAVY_RAIN) &&
-        (play->envCtx.stormRequest == STORM_REQUEST_START)) {
+        (play->envCtx.stormRequest == STORM_REQUEST_START))
+#endif
+    {
         play->envCtx.stormRequest = STORM_REQUEST_STOP;
         Environment_StopStormNatureAmbience(play);
     }

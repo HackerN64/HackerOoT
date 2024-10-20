@@ -3,8 +3,9 @@
 #include "assets/objects/object_os_anime/object_os_anime.h"
 #include "overlays/actors/ovl_En_Niw/z_en_niw.h"
 #include "terminal.h"
+#include "versions.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4)
+#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4)
 
 void EnNiwLady_Init(Actor* thisx, PlayState* play);
 void EnNiwLady_Destroy(Actor* thisx, PlayState* play);
@@ -25,7 +26,7 @@ void func_80ABA244(EnNiwLady* this, PlayState* play);
 void func_80ABA654(EnNiwLady* this, PlayState* play);
 void func_80ABAD7C(EnNiwLady* this, PlayState* play);
 
-ActorInit En_Niw_Lady_InitVars = {
+ActorProfile En_Niw_Lady_Profile = {
     /**/ ACTOR_EN_NIW_LADY,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -48,7 +49,7 @@ static s16 D_80ABB3B4[] = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COLTYPE_NONE,
+        COL_MATERIAL_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -56,7 +57,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -165,7 +166,7 @@ void func_80AB9F24(EnNiwLady* this, PlayState* play) {
         Collider_InitCylinder(play, &this->collider);
         Collider_SetCylinder(play, &this->collider, &this->actor, &sCylinderInit);
         this->unk_272 = 0;
-        this->actor.targetMode = 6;
+        this->actor.attentionRangeType = ATTENTION_RANGE_6;
         this->actor.draw = EnNiwLady_Draw;
         switch (this->unk_278) {
             case 0:
@@ -259,6 +260,7 @@ void func_80ABA244(EnNiwLady* this, PlayState* play) {
         PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ this->message_end_code   ☆☆ %d\n" VT_RST, this->unk_262);
         PRINTF("\n\n");
         if (MaskReaction_GetTextId(play, MASK_REACTION_SET_CUCCO_LADY) == 0) {
+#if OOT_VERSION >= NTSC_1_1
             if (this->actor.textId == 0x503C) {
                 Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
                 this->unk_26C = 2;
@@ -266,6 +268,7 @@ void func_80ABA244(EnNiwLady* this, PlayState* play) {
                 this->actionFunc = func_80ABA654;
                 return;
             }
+#endif
             this->unk_26E = phi_s1 + 1;
             if (phi_s1 == 7) {
                 Sfx_PlaySfxCentered(NA_SE_SY_TRE_BOX_APPEAR);
@@ -286,6 +289,13 @@ void func_80ABA244(EnNiwLady* this, PlayState* play) {
             if (this->unk_26A != this->cuccosInPen) {
                 if (this->cuccosInPen < this->unk_26A) {
                     Sfx_PlaySfxCentered(NA_SE_SY_ERROR);
+#if OOT_VERSION < NTSC_1_1
+                    if (phi_s1 == 9) {
+                        this->unk_26C = 2;
+                        this->unk_262 = TEXT_STATE_EVENT;
+                        this->actionFunc = func_80ABA654;
+                    }
+#endif
                 } else if (phi_s1 + 1 < 9) {
                     Sfx_PlaySfxCentered(NA_SE_SY_TRE_BOX_APPEAR);
                 }

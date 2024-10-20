@@ -44,7 +44,7 @@ void DemoEc_Destroy(Actor* thisx, PlayState* play);
 void DemoEc_Update(Actor* thisx, PlayState* play);
 void DemoEc_Draw(Actor* thisx, PlayState* play);
 
-typedef enum {
+typedef enum DemoEcUpdateMode {
     /* 00 */ EC_UPDATE_COMMON,
     /* 01 */ EC_UPDATE_INGO,
     /* 02 */ EC_UPDATE_TALON,
@@ -76,7 +76,7 @@ typedef enum {
     /* 28 */ EC_UPDATE_MALON
 } DemoEcUpdateMode;
 
-typedef enum {
+typedef enum DemoEcDrawconfig {
     /* 00 */ EC_DRAW_COMMON,
     /* 01 */ EC_DRAW_INGO,
     /* 02 */ EC_DRAW_TALON,
@@ -176,20 +176,20 @@ void DemoEc_UpdateBgFlags(DemoEc* this, PlayState* play) {
 }
 
 void func_8096D594(DemoEc* this, PlayState* play) {
-    this->skelAnime.moveFlags |= ANIM_FLAG_UPDATE_XZ | ANIM_FLAG_UPDATE_Y;
-    AnimTaskQueue_AddActorMove(play, &this->actor, &this->skelAnime, 1.0f);
+    this->skelAnime.movementFlags |= ANIM_FLAG_UPDATE_XZ | ANIM_FLAG_UPDATE_Y;
+    AnimTaskQueue_AddActorMovement(play, &this->actor, &this->skelAnime, 1.0f);
 }
 
 void func_8096D5D4(DemoEc* this, PlayState* play) {
     this->skelAnime.baseTransl = this->skelAnime.jointTable[0];
     this->skelAnime.prevTransl = this->skelAnime.jointTable[0];
-    this->skelAnime.moveFlags |= ANIM_FLAG_UPDATE_XZ | ANIM_FLAG_UPDATE_Y;
-    AnimTaskQueue_AddActorMove(play, &this->actor, &this->skelAnime, 1.0f);
+    this->skelAnime.movementFlags |= ANIM_FLAG_UPDATE_XZ | ANIM_FLAG_UPDATE_Y;
+    AnimTaskQueue_AddActorMovement(play, &this->actor, &this->skelAnime, 1.0f);
 }
 
 void func_8096D64C(DemoEc* this, PlayState* play) {
-    this->skelAnime.moveFlags |= ANIM_FLAG_UPDATE_XZ | ANIM_FLAG_UPDATE_Y;
-    AnimTaskQueue_AddActorMove(play, &this->actor, &this->skelAnime, 1.0f);
+    this->skelAnime.movementFlags |= ANIM_FLAG_UPDATE_XZ | ANIM_FLAG_UPDATE_Y;
+    AnimTaskQueue_AddActorMovement(play, &this->actor, &this->skelAnime, 1.0f);
 }
 
 void DemoEc_UpdateEyes(DemoEc* this) {
@@ -504,7 +504,7 @@ void DemoEc_DrawKokiriGirl(DemoEc* this, PlayState* play) {
 }
 void DemoEc_InitOldMan(DemoEc* this, PlayState* play) {
     DemoEc_UseDrawObject(this, play);
-    DemoEc_InitSkelAnime(this, play, &object_bji_Skel_0000F0);
+    DemoEc_InitSkelAnime(this, play, &gHylianOldManSkel);
     DemoEc_UseAnimationObject(this, play);
     DemoEc_ChangeAnimation(this, &gDemoEcOldManAnim, 0, 0.0f, false);
     func_8096D5D4(this, play);
@@ -522,9 +522,9 @@ void DemoEc_UpdateOldMan(DemoEc* this, PlayState* play) {
 
 void DemoEc_DrawOldMan(DemoEc* this, PlayState* play) {
     static void* eyeTextures[] = {
-        object_bji_Tex_0005FC,
-        object_bji_Tex_0009FC,
-        object_bji_Tex_000DFC,
+        gHylianOldManEyeOpenTex,
+        gHylianOldManEyeHalfTex,
+        gHylianOldManEyeClosedTex,
     };
     static u8 color1[] = { 0, 50, 100, 255 };
     static u8 color2[] = { 0, 50, 160, 255 };
@@ -536,7 +536,7 @@ void DemoEc_DrawOldMan(DemoEc* this, PlayState* play) {
 
 void DemoEc_InitBeardedMan(DemoEc* this, PlayState* play) {
     DemoEc_UseDrawObject(this, play);
-    DemoEc_InitSkelAnime(this, play, &object_ahg_Skel_0000F0);
+    DemoEc_InitSkelAnime(this, play, &gHylianMan1Skel);
     DemoEc_UseAnimationObject(this, play);
     DemoEc_ChangeAnimation(this, &gDemoEcOldManAnim, 0, 0.0f, false);
     func_8096D5D4(this, play);
@@ -554,9 +554,9 @@ void DemoEc_UpdateBeardedMan(DemoEc* this, PlayState* play) {
 
 void DemoEc_DrawBeardedMan(DemoEc* this, PlayState* play) {
     static void* eyeTextures[] = {
-        object_ahg_Tex_00057C,
-        object_ahg_Tex_00067C,
-        object_ahg_Tex_00077C,
+        gHylianMan1BeardedEyeOpenTex,
+        gHylianMan1BeardedEyeHalfTex,
+        gHylianMan1BeardedEyeClosedTex,
     };
     static u8 color1[] = { 255, 255, 255, 255 };
     static u8 color2[] = { 255, 255, 255, 255 };
@@ -568,7 +568,7 @@ void DemoEc_DrawBeardedMan(DemoEc* this, PlayState* play) {
 
 void DemoEc_InitWoman(DemoEc* this, PlayState* play) {
     DemoEc_UseDrawObject(this, play);
-    DemoEc_InitSkelAnime(this, play, &object_bob_Skel_0000F0);
+    DemoEc_InitSkelAnime(this, play, &gHylianWoman2Skel);
     DemoEc_UseAnimationObject(this, play);
     DemoEc_ChangeAnimation(this, &gDemoEcOldManAnim, 0, 0.0f, false);
     func_8096D5D4(this, play);
@@ -586,9 +586,9 @@ void DemoEc_UpdateWoman(DemoEc* this, PlayState* play) {
 
 void DemoEc_DrawWoman(DemoEc* this, PlayState* play) {
     static void* eyeTextures[] = {
-        object_bob_Tex_0007C8,
-        object_bob_Tex_000FC8,
-        object_bob_Tex_0017C8,
+        gHylianWoman2EyeOpenTex,
+        gHylianWoman2EyeHalfTex,
+        gHylianWoman2EyeClosedTex,
     };
     s32 eyeTexIndex = this->eyeTexIndex;
     void* eyeTexture = eyeTextures[eyeTexIndex];
@@ -598,7 +598,7 @@ void DemoEc_DrawWoman(DemoEc* this, PlayState* play) {
 
 void DemoEc_InitOldWoman(DemoEc* this, PlayState* play) {
     DemoEc_UseDrawObject(this, play);
-    DemoEc_InitSkelAnime(this, play, &object_bba_Skel_0000F0);
+    DemoEc_InitSkelAnime(this, play, &gHylianOldWomanSkel);
     DemoEc_UseAnimationObject(this, play);
     DemoEc_ChangeAnimation(this, &gDemoEcOldManAnim, 0, 0.0f, false);
     func_8096D5D4(this, play);
@@ -614,7 +614,7 @@ void DemoEc_UpdateOldWoman(DemoEc* this, PlayState* play) {
 }
 
 void DemoEc_DrawOldWoman(DemoEc* this, PlayState* play) {
-    DemoEc_DrawSkeleton(this, play, &object_bba_Tex_0004C8, NULL, NULL, NULL);
+    DemoEc_DrawSkeleton(this, play, &gHylianOldWomanEyeTex, NULL, NULL, NULL);
 }
 
 void DemoEc_InitBossCarpenter(DemoEc* this, PlayState* play) {
@@ -1369,7 +1369,7 @@ void DemoEc_Draw(Actor* thisx, PlayState* play) {
     }
 }
 
-ActorInit Demo_Ec_InitVars = {
+ActorProfile Demo_Ec_Profile = {
     /**/ ACTOR_DEMO_EC,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,

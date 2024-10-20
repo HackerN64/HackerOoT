@@ -1,5 +1,30 @@
+#include "ultra64.h"
+#include "versions.h"
+
+// Declared before including other headers for BSS ordering
+extern uintptr_t gSegments[NUM_SEGMENTS];
+
+#pragma increment_block_number "gc-eu:252 gc-eu-mq:252 gc-jp:252 gc-jp-ce:252 gc-jp-mq:252 gc-us:252 gc-us-mq:252" \
+                               "ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
+
+extern struct PreNmiBuff* gAppNmiBufferPtr;
+extern struct Scheduler gScheduler;
+extern struct PadMgr gPadMgr;
+extern struct IrqMgr gIrqMgr;
+
 #include "global.h"
+#include "fault.h"
+#include "segmented_address.h"
+#include "stack.h"
 #include "terminal.h"
+#include "versions.h"
+#if PLATFORM_N64
+#include "cic6105.h"
+#include "n64dd.h"
+#endif
+
+#pragma increment_block_number "gc-eu:160 gc-eu-mq:160 gc-jp:160 gc-jp-ce:160 gc-jp-mq:160 gc-us:160 gc-us-mq:160" \
+                               "ntsc-1.2:151 pal-1.0:149 pal-1.1:149"
 
 extern u8 _buffersSegmentEnd[];
 
@@ -7,18 +32,19 @@ s32 gScreenWidth = SCREEN_WIDTH;
 s32 gScreenHeight = SCREEN_HEIGHT;
 u32 gSystemHeapSize = 0;
 
-// For retail BSS ordering, the block number of gIrqMgr must be greater than the
-// the block numbers assigned to extern variables above (declared in variables.h).
-#pragma increment_block_number 220
-
 PreNmiBuff* gAppNmiBufferPtr;
 Scheduler gScheduler;
 PadMgr gPadMgr;
 IrqMgr gIrqMgr;
 uintptr_t gSegments[NUM_SEGMENTS];
+
 OSThread sGraphThread;
 STACK(sGraphStack, 0x1800);
+#if OOT_VERSION < PAL_1_0
+STACK(sSchedStack, 0x400);
+#else
 STACK(sSchedStack, 0x600);
+#endif
 STACK(sAudioStack, 0x800);
 STACK(sPadMgrStack, 0x500);
 STACK(sIrqMgrStack, 0x500);
@@ -27,7 +53,7 @@ StackEntry sSchedStackInfo;
 StackEntry sAudioStackInfo;
 StackEntry sPadMgrStackInfo;
 StackEntry sIrqMgrStackInfo;
-AudioMgr gAudioMgr;
+AudioMgr sAudioMgr;
 OSMesgQueue sSerialEventQueue;
 OSMesg sSerialMsgBuf[1];
 
@@ -42,9 +68,9 @@ u8 gRDPTimingsExist;
 #if IS_DEBUG
 void Main_LogSystemHeap(void) {
     PRINTF(VT_FGCOL(GREEN));
-    // "System heap size% 08x (% dKB) Start address% 08x"
-    PRINTF("システムヒープサイズ %08x(%dKB) 開始アドレス %08x\n", gSystemHeapSize, gSystemHeapSize / 1024,
-           _buffersSegmentEnd);
+    PRINTF(
+        T("システムヒープサイズ %08x(%dKB) 開始アドレス %08x\n", "System heap size %08x (%dKB) Start address %08x\n"),
+        gSystemHeapSize, gSystemHeapSize / 1024, _buffersSegmentEnd);
     PRINTF(VT_RST);
 }
 #endif
@@ -56,19 +82,31 @@ void Main(void* arg) {
     uintptr_t systemHeapStart;
     uintptr_t fb;
 
-    PRINTF("mainproc 実行開始\n"); // "Start running"
+    PRINTF(T("mainproc 実行開始\n", "mainproc Start running\n"));
     IO_WRITE(DPC_STATUS_REG, DPC_CLR_CLOCK_CTR);
     gScreenWidth = SCREEN_WIDTH;
     gScreenHeight = SCREEN_HEIGHT;
     gAppNmiBufferPtr = (PreNmiBuff*)osAppNMIBuffer;
     PreNmiBuff_Init(gAppNmiBufferPtr);
     Fault_Init();
+#if PLATFORM_N64
+    func_800AD410();
+    if (D_80121211 != 0) {
+        systemHeapStart = (uintptr_t)_n64ddSegmentEnd;
+        SysCfb_Init(1);
+    } else {
+        func_800AD488();
+        systemHeapStart = (uintptr_t)_buffersSegmentEnd;
+        SysCfb_Init(0);
+    }
+#else
     SysCfb_Init(0);
     systemHeapStart = (uintptr_t)_buffersSegmentEnd;
+#endif
     fb = (uintptr_t)SysCfb_GetFbPtr(0);
     gSystemHeapSize = fb - systemHeapStart;
-    // "System heap initalization"
-    PRINTF("システムヒープ初期化 %08x-%08x %08x\n", systemHeapStart, fb, gSystemHeapSize);
+    PRINTF(T("システムヒープ初期化 %08x-%08x %08x\n", "System heap initialization %08x-%08x %08x\n"), systemHeapStart,
+           fb, gSystemHeapSize);
     SystemHeap_Init((void*)systemHeapStart, gSystemHeapSize); // initializes the system heap
 
     if (IS_DEBUG_HEAP_ENABLED) {
@@ -105,24 +143,32 @@ void Main(void* arg) {
     StackCheck_Init(&sIrqMgrStackInfo, sIrqMgrStack, STACK_TOP(sIrqMgrStack), 0, 0x100, "irqmgr");
     IrqMgr_Init(&gIrqMgr, STACK_TOP(sIrqMgrStack), THREAD_PRI_IRQMGR, 1);
 
-    PRINTF("タスクスケジューラの初期化\n"); // "Initialize the task scheduler"
+    PRINTF(T("タスクスケジューラの初期化\n", "Initialize the task scheduler\n"));
     StackCheck_Init(&sSchedStackInfo, sSchedStack, STACK_TOP(sSchedStack), 0, 0x100, "sched");
     Sched_Init(&gScheduler, STACK_TOP(sSchedStack), THREAD_PRI_SCHED, gViConfigModeType, 1, &gIrqMgr);
+
+#if PLATFORM_N64
+    CIC6105_AddFaultClient();
+    func_80001640();
+#endif
 
     IrqMgr_AddClient(&gIrqMgr, &irqClient, &irqMgrMsgQueue);
 
     StackCheck_Init(&sAudioStackInfo, sAudioStack, STACK_TOP(sAudioStack), 0, 0x100, "audio");
-    AudioMgr_Init(&gAudioMgr, STACK_TOP(sAudioStack), THREAD_PRI_AUDIOMGR, THREAD_ID_AUDIOMGR, &gScheduler, &gIrqMgr);
+    AudioMgr_Init(&sAudioMgr, STACK_TOP(sAudioStack), THREAD_PRI_AUDIOMGR, THREAD_ID_AUDIOMGR, &gScheduler, &gIrqMgr);
 
     StackCheck_Init(&sPadMgrStackInfo, sPadMgrStack, STACK_TOP(sPadMgrStack), 0, 0x100, "padmgr");
     PadMgr_Init(&gPadMgr, &sSerialEventQueue, &gIrqMgr, THREAD_ID_PADMGR, THREAD_PRI_PADMGR, STACK_TOP(sPadMgrStack));
 
-    AudioMgr_WaitForInit(&gAudioMgr);
+    AudioMgr_WaitForInit(&sAudioMgr);
 
     StackCheck_Init(&sGraphStackInfo, sGraphStack, STACK_TOP(sGraphStack), 0, 0x100, "graph");
     osCreateThread(&sGraphThread, THREAD_ID_GRAPH, Graph_ThreadEntry, arg, STACK_TOP(sGraphStack), THREAD_PRI_GRAPH);
     osStartThread(&sGraphThread);
+
+#if OOT_VERSION >= PAL_1_0
     osSetThreadPri(NULL, THREAD_PRI_MAIN);
+#endif
 
     while (true) {
         s16* msg = NULL;
@@ -131,14 +177,22 @@ void Main(void* arg) {
         if (msg == NULL) {
             break;
         }
-        if (*msg == OS_SC_PRE_NMI_MSG) {
-            PRINTF("main.c: リセットされたみたいだよ\n"); // "Looks like it's been reset"
-            PreNmiBuff_SetReset(gAppNmiBufferPtr);
+        switch (*msg) {
+            case OS_SC_PRE_NMI_MSG:
+                PRINTF(T("main.c: リセットされたみたいだよ\n", "main.c: Looks like it's been reset\n"));
+#if OOT_VERSION < PAL_1_0
+                StackCheck_Check(NULL);
+#endif
+                PreNmiBuff_SetReset(gAppNmiBufferPtr);
+                break;
         }
     }
 
-    PRINTF("mainproc 後始末\n"); // "Cleanup"
+    PRINTF(T("mainproc 後始末\n", "mainproc Cleanup\n"));
     osDestroyThread(&sGraphThread);
     RcpUtils_Reset();
-    PRINTF("mainproc 実行終了\n"); // "End of execution"
+#if PLATFORM_N64
+    CIC6105_RemoveFaultClient();
+#endif
+    PRINTF(T("mainproc 実行終了\n", "mainproc End of execution\n"));
 }

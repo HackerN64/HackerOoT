@@ -1,8 +1,11 @@
 #include "global.h"
 #include "terminal.h"
 #include "assets/textures/parameter_static/parameter_static.h"
+#if PLATFORM_N64
+#include "n64dd.h"
+#endif
 
-typedef struct {
+typedef struct MapMarkInfo {
     /* 0x00 */ void* texture;
     /* 0x04 */ u32 imageFormat;
     /* 0x08 */ u32 imageSize;
@@ -14,7 +17,7 @@ typedef struct {
     /* 0x20 */ u32 dtdy;
 } MapMarkInfo; // size = 0x24
 
-typedef struct {
+typedef struct MapMarkDataOverlay {
     /* 0x00 */ void* loadedRamAddr; // original name: "allocp"
     /* 0x04 */ RomFile file;
     /* 0x0C */ void* vramStart;
@@ -52,9 +55,21 @@ void MapMark_Init(PlayState* play) {
                                ? (void*)((uintptr_t)overlay->vramTable -
                                          (intptr_t)((uintptr_t)overlay->vramStart - (uintptr_t)overlay->loadedRamAddr))
                                : NULL);
+
+#if PLATFORM_N64
+    if ((B_80121220 != NULL) && (B_80121220->unk_2C != NULL)) {
+        B_80121220->unk_2C(&sLoadedMarkDataTable);
+    }
+#endif
 }
 
 void MapMark_ClearPointers(PlayState* play) {
+#if PLATFORM_N64
+    if ((B_80121220 != NULL) && (B_80121220->unk_30 != NULL)) {
+        B_80121220->unk_30(&sLoadedMarkDataTable);
+    }
+#endif
+
     sMapMarkDataOvl.loadedRamAddr = NULL;
     sLoadedMarkDataTable = NULL;
 }
@@ -72,8 +87,8 @@ void MapMark_DrawForDungeon(PlayState* play) {
     interfaceCtx = &play->interfaceCtx;
 
     if ((gMapData != NULL) && (play->interfaceCtx.mapRoomNum >= gMapData->dgnMinimapCount[dungeon])) {
-        // "Room number exceeded, yikes %d/%d  MapMarkDraw processing interrupted"
-        PRINTF(VT_COL(RED, WHITE) "部屋番号がオーバーしてるで,ヤバイで %d/%d  \nMapMarkDraw の処理を中断します\n",
+        PRINTF(VT_COL(RED, WHITE) T("部屋番号がオーバーしてるで,ヤバイで %d/%d  \nMapMarkDraw の処理を中断します\n",
+                                    "Room number exceeded, yikes %d/%d  \nMapMarkDraw processing interrupted\n"),
                VT_RST, play->interfaceCtx.mapRoomNum, gMapData->dgnMinimapCount[dungeon]);
         return;
     }

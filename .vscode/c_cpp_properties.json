@@ -1,13 +1,13 @@
 {
     "configurations": [
         {
-            "name": "N64 hackeroot-mq",
-            "compilerPath": "/usr/bin/gcc", // Needs to not be "" for -m32 to work
+            "name": "hackeroot-mq",
+            "compilerPath": "/usr/bin/gcc",
             "compilerArgs": [
-                "-m32" // Removes integer truncation warnings with gbi macros
+                "-m32"
             ],
-            "intelliSenseMode": "gcc-x86", // Shouldn't matter
-            "includePath": [ // Matches makefile's includes
+            "intelliSenseMode": "gcc-x86",
+            "includePath": [
                 "include",
                 "include/libc",
                 "src",
@@ -16,16 +16,144 @@
                 "extracted/hackeroot-mq"
             ],
             "defines": [
-                "_LANGUAGE_C", // For gbi.h
-                "OOT_DEBUG=1", // If targeting a debug version
+                "_LANGUAGE_C",
                 "ENABLE_HACKEROOT=1",
                 "RELEASE_ROM=0",
                 "COMPRESS_YAZ=1",
-                "OOT_PAL=1"
+                "OOT_VERSION=OOT_GC_EU_MQ_DBG",
+                "OOT_REGION=REGION_EU",
+                "OOT_PAL=1",
+                "OOT_MQ=1",
+                "OOT_DEBUG=1",
+                "F3DEX_GBI_2",
+                "F3DEX_GBI_PL",
+                "GBI_DOWHILE",
+                "GBI_DEBUG"
             ],
-            "cStandard": "gnu11",
-            "cppStandard": "${default}" // Only ZAPD uses C++, so doesn't really matter
+            "cStandard": "gnu89",
+            "cppStandard": "${default}"
+        },
+        {
+            "name": "oot-gc-us",
+            "compilerArgs": [
+                "-m32"
+            ],
+            "includePath": [
+                "include",
+                "include/libc",
+                "src",
+                "build/gc-us",
+                ".",
+                "extracted/gc-us"
+            ],
+            "defines": [
+                "_LANGUAGE_C",
+                "ENABLE_HACKEROOT=0",
+                "RELEASE_ROM=0",
+                "COMPRESS_YAZ=1",
+                "OOT_VERSION=OOT_GC_US",
+                "OOT_REGION=REGION_US",
+                "OOT_NTSC=1",
+                "OOT_MQ=0",
+                "OOT_DEBUG=0",
+                "NDEBUG",
+                "F3DEX_GBI_2",
+                "F3DEX_GBI_PL",
+                "GBI_DOWHILE"
+            ],
+            "cStandard": "gnu89"
+        },
+        {
+            "name": "oot-gc-eu",
+            "compilerArgs": [
+                "-m32"
+            ],
+            "includePath": [
+                "include",
+                "include/libc",
+                "src",
+                "build/gc-eu",
+                ".",
+                "extracted/gc-eu"
+            ],
+            "defines": [
+                "_LANGUAGE_C",
+                "ENABLE_HACKEROOT=0",
+                "RELEASE_ROM=0",
+                "COMPRESS_YAZ=1",
+                "OOT_VERSION=OOT_GC_EU",
+                "OOT_REGION=REGION_EU",
+                "OOT_PAL=1",
+                "OOT_MQ=0",
+                "OOT_DEBUG=0",
+                "NDEBUG",
+                "F3DEX_GBI_2",
+                "F3DEX_GBI_PL",
+                "GBI_DOWHILE"
+            ],
+            "cStandard": "gnu89"
+        },
+        {
+            "name": "oot-gc-eu-mq",
+            "compilerArgs": [
+                "-m32"
+            ],
+            "includePath": [
+                "include",
+                "include/libc",
+                "src",
+                "build/gc-eu-mq",
+                ".",
+                "extracted/gc-eu-mq"
+            ],
+            "defines": [
+                "_LANGUAGE_C",
+                "ENABLE_HACKEROOT=0",
+                "RELEASE_ROM=0",
+                "COMPRESS_YAZ=1",
+                "OOT_VERSION=OOT_GC_EU_MQ",
+                "OOT_REGION=REGION_EU",
+                "OOT_PAL=1",
+                "OOT_MQ=1",
+                "OOT_DEBUG=0",
+                "NDEBUG",
+                "F3DEX_GBI_2",
+                "F3DEX_GBI_PL",
+                "GBI_DOWHILE"
+            ],
+            "cStandard": "gnu89"
+        },
+        {
+            "name": "oot-gc-eu-mq-dbg",
+            "compilerArgs": [
+                "-m32"
+            ],
+            "includePath": [
+                "include",
+                "include/libc",
+                "src",
+                "build/gc-eu-mq-dbg",
+                ".",
+                "extracted/gc-eu-mq-dbg"
+            ],
+            "defines": [
+                "_LANGUAGE_C",
+                "ENABLE_HACKEROOT=0",
+                "RELEASE_ROM=0",
+                "COMPRESS_YAZ=1",
+                "OOT_VERSION=OOT_GC_EU_MQ_DBG",
+                "OOT_REGION=REGION_EU",
+                "OOT_PAL=1",
+                "OOT_MQ=1",
+                "OOT_DEBUG=1",
+                "F3DEX_GBI_2",
+                "F3DEX_GBI_PL",
+                "GBI_DOWHILE",
+                "GBI_DEBUG"
+            ],
+            "cStandard": "gnu89"
         }
     ],
     "version": 4
 }
+

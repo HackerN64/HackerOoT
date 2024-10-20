@@ -7,7 +7,7 @@
 #include "z_en_girla.h"
 #include "terminal.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4)
+#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4)
 
 void EnGirlA_Init(Actor* thisx, PlayState* play);
 void EnGirlA_Destroy(Actor* thisx, PlayState* play);
@@ -67,7 +67,7 @@ void EnGirlA_BuyEvent_ObtainBombchuPack(PlayState* play, EnGirlA* this);
 void EnGirlA_BuyEvent_GoronTunic(PlayState* play, EnGirlA* this);
 void EnGirlA_BuyEvent_ZoraTunic(PlayState* play, EnGirlA* this);
 
-ActorInit En_GirlA_InitVars = {
+ActorProfile En_GirlA_Profile = {
     /**/ ACTOR_EN_GIRLA,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -141,7 +141,7 @@ static s16 sMaskShopItems[8] = {
 
 static u16 sMaskShopFreeToBorrowTextIds[5] = { 0x70B6, 0x70B5, 0x70B4, 0x70B7, 0x70BB };
 
-typedef struct {
+typedef struct ShopItemEntry {
     /* 0x00 */ s16 objID;
     /* 0x02 */ s16 giDrawId;
     /* 0x04 */ void (*hiliteFunc)(Actor*, PlayState*, s32);
@@ -1058,7 +1058,7 @@ void EnGirlA_WaitForObject(EnGirlA* this, PlayState* play) {
         this->hiliteFunc = itemEntry->hiliteFunc;
         this->giDrawId = itemEntry->giDrawId;
         PRINTF("%s(%2d)\n", sShopItemDescriptions[params], params);
-        this->actor.flags &= ~ACTOR_FLAG_0;
+        this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
         Actor_SetScale(&this->actor, 0.25f);
         this->actor.shape.yOffset = 24.0f;
         this->actor.shape.shadowScale = 4.0f;

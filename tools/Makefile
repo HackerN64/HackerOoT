@@ -1,5 +1,5 @@
 CFLAGS := -Wall -Wextra -pedantic -std=c99 -g -O2
-PROGRAMS := elf2rom makeromfs mkdmadata mkldscript reloc_prereq
+PROGRAMS := elf2rom makeromfs mkdmadata mkldscript preprocess_pragmas reloc_prereq
 
 ifeq ($(shell command -v clang >/dev/null 2>&1; echo $$?),0)
   CC := clang
@@ -26,6 +26,7 @@ endif
 	$(MAKE) -C gzinject
 	$(MAKE) -C z64compress
 	$(MAKE) -C Flips TARGET=cli
+	$(MAKE) -C audio
 
 clean:
 	$(RM) $(PROGRAMS) $(addsuffix .exe,$(PROGRAMS))
@@ -37,16 +38,20 @@ endif
 	$(MAKE) -C z64compress clean
 	$(MAKE) -C Flips clean
 	rm Flips/flips
+	$(MAKE) -C audio clean
 
 distclean: clean
+	$(MAKE) -C audio distclean
 
 .PHONY: all clean distclean
 
-elf2rom_SOURCES      := elf2rom.c elf32.c n64chksum.c util.c
-makeromfs_SOURCES    := makeromfs.c n64chksum.c util.c
-mkdmadata_SOURCES    := mkdmadata.c spec.c util.c
-mkldscript_SOURCES   := mkldscript.c spec.c util.c
-reloc_prereq_SOURCES := reloc_prereq.c spec.c util.c
+elf2rom_SOURCES            := elf2rom.c elf32.c n64chksum.c util.c
+makeromfs_SOURCES          := makeromfs.c n64chksum.c util.c
+mkdmadata_SOURCES          := mkdmadata.c spec.c util.c
+mkldscript_SOURCES         := mkldscript.c spec.c util.c
+preprocess_pragmas_SOURCES := preprocess_pragmas.c
+reloc_prereq_SOURCES       := reloc_prereq.c spec.c util.c
+
 
 define COMPILE =
 $(1): $($1_SOURCES)

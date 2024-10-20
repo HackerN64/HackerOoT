@@ -1,13 +1,21 @@
 #ifndef Z64SCENE_H
 #define Z64SCENE_H
 
-#include "z64.h"
-#include "z64dma.h" // for RomFile
+#include "macros.h"
+#include "ultra64.h"
+#include "z64bgcheck.h"
+#include "z64dma.h"
+#include "z64environment.h"
+#include "z64light.h"
+#include "z64math.h"
 #include "config.h"
 
 #include "command_macros_base.h"
 
-typedef struct {
+struct GameState;
+struct PlayState;
+
+typedef struct SceneTableEntry {
     /* 0x00 */ RomFile sceneFile;
     /* 0x08 */ RomFile titleFile;
     /* 0x10 */ u8  unk_10;
@@ -16,14 +24,14 @@ typedef struct {
     /* 0x13 */ u8  unk_13;
 } SceneTableEntry; // size = 0x14
 
-typedef struct {
+typedef struct ActorEntry {
     /* 0x00 */ s16   id;
     /* 0x02 */ Vec3s pos;
     /* 0x08 */ Vec3s rot;
     /* 0x0E */ s16   params;
 } ActorEntry; // size = 0x10
 
-typedef struct {
+typedef struct TransitionActorEntry {
     struct {
         s8 room;    // Room to switch to
         s8 bgCamIndex; // How the camera reacts during the transition. See `Camera_ChangeDoorCam`
@@ -34,58 +42,58 @@ typedef struct {
     /* 0x0E */ s16   params;
 } TransitionActorEntry; // size = 0x10
 
-typedef struct TransitionActorContext {
-    /* 0x00 */ u8 numActors;
+typedef struct TransitionActorList {
+    /* 0x00 */ u8 count;
     /* 0x04 */ TransitionActorEntry* list;
-} TransitionActorContext; // size = 0x8
+} TransitionActorList; // size = 0x8
 
-typedef struct {
+typedef struct Spawn {
     /* 0x00 */ u8 playerEntryIndex;
     /* 0x01 */ u8 room;
 } Spawn;
 
-typedef struct {
+typedef struct Path {
     /* 0x00 */ u8 count; // number of points in the path
     /* 0x04 */ Vec3s* points; // Segment Address to the array of points
 } Path; // size = 0x8
 
 // Room shapes
 
-typedef enum {
+typedef enum RoomShapeType {
     /* 0 */ ROOM_SHAPE_TYPE_NORMAL,
     /* 1 */ ROOM_SHAPE_TYPE_IMAGE,
     /* 2 */ ROOM_SHAPE_TYPE_CULLABLE,
     /* 3 */ ROOM_SHAPE_TYPE_MAX
 } RoomShapeType;
 
-typedef struct {
+typedef struct RoomShapeBase {
     /* 0x00 */ u8 type;
 } RoomShapeBase; // size = 0x01
 
-typedef struct {
+typedef struct RoomShapeDListsEntry {
     /* 0x00 */ Gfx* opa;
     /* 0x04 */ Gfx* xlu;
 } RoomShapeDListsEntry; // size = 0x08
 
-typedef struct {
+typedef struct RoomShapeNormal {
     /* 0x00 */ RoomShapeBase base;
     /* 0x01 */ u8 numEntries;
     /* 0x04 */ RoomShapeDListsEntry* entries;
     /* 0x08 */ RoomShapeDListsEntry* entriesEnd;
 } RoomShapeNormal; // size = 0x0C
 
-typedef enum {
+typedef enum RoomShapeImageAmountType {
     /* 1 */ ROOM_SHAPE_IMAGE_AMOUNT_SINGLE = 1,
     /* 2 */ ROOM_SHAPE_IMAGE_AMOUNT_MULTI
 } RoomShapeImageAmountType;
 
-typedef struct {
+typedef struct RoomShapeImageBase {
     /* 0x00 */ RoomShapeBase base;
     /* 0x01 */ u8    amountType; // RoomShapeImageAmountType
     /* 0x04 */ RoomShapeDListsEntry* entry;
 } RoomShapeImageBase; // size = 0x08
 
-typedef struct {
+typedef struct RoomShapeImageSingle {
     /* 0x00 */ RoomShapeImageBase base;
     /* 0x08 */ void* source;
     /* 0x0C */ u32   unk_0C;
@@ -98,7 +106,7 @@ typedef struct {
     /* 0x1C */ u16   tlutCount;
 } RoomShapeImageSingle; // size = 0x20
 
-typedef struct {
+typedef struct RoomShapeImageMultiBgEntry {
     /* 0x00 */ u16   unk_00;
     /* 0x02 */ u8    bgCamIndex; // for which bg cam index is this entry for
     /* 0x04 */ void* source;
@@ -112,13 +120,13 @@ typedef struct {
     /* 0x18 */ u16   tlutCount;
 } RoomShapeImageMultiBgEntry; // size = 0x1C
 
-typedef struct {
+typedef struct RoomShapeImageMulti {
     /* 0x00 */ RoomShapeImageBase base;
     /* 0x08 */ u8    numBackgrounds;
     /* 0x0C */ RoomShapeImageMultiBgEntry* backgrounds;
 } RoomShapeImageMulti; // size = 0x10
 
-typedef struct {
+typedef struct RoomShapeCullableEntry {
     /* 0x00 */ Vec3s boundsSphereCenter;
     /* 0x06 */ s16   boundsSphereRadius;
     /* 0x08 */ Gfx* opa;
@@ -127,14 +135,14 @@ typedef struct {
 
 #define ROOM_SHAPE_CULLABLE_MAX_ENTRIES 64
 
-typedef struct {
+typedef struct RoomShapeCullable {
     /* 0x00 */ RoomShapeBase base;
     /* 0x01 */ u8 numEntries;
     /* 0x04 */ RoomShapeCullableEntry* entries;
     /* 0x08 */ RoomShapeCullableEntry* entriesEnd;
 } RoomShapeCullable; // size = 0x0C
 
-typedef union {
+typedef union RoomShape {
     RoomShapeBase base;
     RoomShapeNormal normal;
     union {
@@ -145,30 +153,30 @@ typedef union {
     RoomShapeCullable cullable;
 } RoomShape; // "Ground Shape"
 
-typedef enum RoomBehaviorType1 {
-    /* 0 */ ROOM_BEHAVIOR_TYPE1_0,
-    /* 1 */ ROOM_BEHAVIOR_TYPE1_1,
-    /* 2 */ ROOM_BEHAVIOR_TYPE1_2,
-    /* 3 */ ROOM_BEHAVIOR_TYPE1_3, // unused
-    /* 4 */ ROOM_BEHAVIOR_TYPE1_4, // unused
-    /* 5 */ ROOM_BEHAVIOR_TYPE1_5
-} RoomBehaviorType1;
+typedef enum RoomType {
+    /* 0 */ ROOM_TYPE_NORMAL,
+    /* 1 */ ROOM_TYPE_DUNGEON, // Blocks Sun's Song's time advance effect. Not exclusively used by typical dungeon rooms.
+    /* 2 */ ROOM_TYPE_INDOORS, // Reduces player run speed and blocks player from attacking or jumping.
+    /* 3 */ ROOM_TYPE_3, // Unused. Color dithering is turned off when drawing the room and other things.
+    /* 4 */ ROOM_TYPE_4, // Unused. Prevents switching to CAM_SET_HORSE when mounting a horse.
+    /* 5 */ ROOM_TYPE_BOSS // Disables Environment_AdjustLights
+} RoomType;
 
-typedef enum RoomBehaviorType2 {
-    /* 0 */ ROOM_BEHAVIOR_TYPE2_0,
-    /* 1 */ ROOM_BEHAVIOR_TYPE2_1,
-    /* 2 */ ROOM_BEHAVIOR_TYPE2_2,
-    /* 3 */ ROOM_BEHAVIOR_TYPE2_3,
-    /* 4 */ ROOM_BEHAVIOR_TYPE2_4,
-    /* 5 */ ROOM_BEHAVIOR_TYPE2_5,
-    /* 6 */ ROOM_BEHAVIOR_TYPE2_6
-} RoomBehaviorType2;
+typedef enum RoomEnvironmentType {
+    /* 0 */ ROOM_ENV_DEFAULT,
+    /* 1 */ ROOM_ENV_COLD,
+    /* 2 */ ROOM_ENV_WARM,
+    /* 3 */ ROOM_ENV_HOT, // Enables hot room timer for the current room
+    /* 4 */ ROOM_ENV_UNK_STRETCH_1,
+    /* 5 */ ROOM_ENV_UNK_STRETCH_2,
+    /* 6 */ ROOM_ENV_UNK_STRETCH_3
+} RoomEnvironmentType;
 
 typedef struct Room {
-    /* 0x00 */ s8 num;
+    /* 0x00 */ s8 num; // -1 is invalid room
     /* 0x01 */ u8 unk_01;
-    /* 0x02 */ u8 behaviorType2;
-    /* 0x03 */ u8 behaviorType1;
+    /* 0x02 */ u8 environmentType;
+    /* 0x03 */ u8 type;
     /* 0x04 */ s8 echo;
     /* 0x05 */ u8 lensMode;
 #if ENABLE_F3DEX3
@@ -183,58 +191,63 @@ typedef struct Room {
 typedef struct RoomContext {
     /* 0x00 */ Room curRoom;
     /* 0x14 */ Room prevRoom;
-    /* 0x28 */ void* bufPtrs[2];
-    /* 0x30 */ u8 unk_30;
-    /* 0x31 */ s8 status;
-    /* 0x34 */ void* unk_34;
+    /* 0x28 */ void* bufPtrs[2]; // Start and end pointers for the room buffer. Can be split into two pages, where page 0 is allocated from the start pointer and page 1 is allocated from the end pointer.
+    /* 0x30 */ u8 activeBufPage; // 0 - First page in memory, 1 - Last page in memory
+    /* 0x31 */ s8 status; // 0 - Free for new room request, 1 - DmaRequest for a new room is in progress
+    /* 0x34 */ void* roomRequestAddr; // Pointer to where the requested room segment will be stored
     /* 0x38 */ DmaRequest dmaRequest;
     /* 0x58 */ OSMesgQueue loadQueue;
     /* 0x70 */ OSMesg loadMsg;
-    /* 0x74 */ s16 unk_74[2]; // context-specific data used by the current scene draw config
+    /* 0x74 */ s16 drawParams[2]; // context-specific data used by the current scene draw config
 } RoomContext; // size = 0x78
+
+typedef struct RoomList {
+    /* 0x00 */ u8 count;
+    /* 0x04 */ RomFile* romFiles; // Array of rom addresses for each room in a scene
+} RoomList;
 
 #define ROOM_DRAW_OPA (1 << 0)
 #define ROOM_DRAW_XLU (1 << 1)
 
 // Scene commands
 
-typedef struct {
+typedef struct SCmdBase {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x04 */ u32 data2;
 } SCmdBase;
 
-typedef struct {
+typedef struct SCmdPlayerEntryList {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  length;
     /* 0x04 */ ActorEntry* data;
 } SCmdPlayerEntryList;
 
-typedef struct {
+typedef struct SCmdActorEntryList {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  length;
     /* 0x04 */ ActorEntry* data;
 } SCmdActorEntryList;
 
-typedef struct {
+typedef struct SCmdUnused02 {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x04 */ void* segment;
 } SCmdUnused02;
 
-typedef struct {
+typedef struct SCmdColHeader {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x04 */ CollisionHeader* data;
 } SCmdColHeader;
 
-typedef struct {
+typedef struct SCmdRoomList {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  length;
     /* 0x04 */ RomFile* data;
 } SCmdRoomList;
 
-typedef struct {
+typedef struct SCmdWindSettings {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x02 */ char pad[2];
@@ -244,61 +257,61 @@ typedef struct {
     /* 0x07 */ u8  unk_07;
 } SCmdWindSettings;
 
-typedef struct {
+typedef struct SCmdSpawnList {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x04 */ Spawn* data;
 } SCmdSpawnList;
 
-typedef struct {
+typedef struct SCmdSpecialFiles {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  naviQuestHintFileId;
     /* 0x04 */ u32 keepObjectId;
 } SCmdSpecialFiles;
 
-typedef struct {
+typedef struct SCmdRoomBehavior {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  gpFlag1;
     /* 0x04 */ u32 gpFlag2;
 } SCmdRoomBehavior;
 
-typedef struct {
+typedef struct SCmdMesh {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x04 */ RoomShapeBase* data;
 } SCmdMesh;
 
-typedef struct {
+typedef struct SCmdObjectList {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  length;
     /* 0x04 */ s16* data;
 } SCmdObjectList;
 
-typedef struct {
+typedef struct SCmdLightList {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  length;
     /* 0x04 */ LightInfo* data;
 } SCmdLightList;
 
-typedef struct {
+typedef struct SCmdPathList {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x04 */ Path* data;
 } SCmdPathList;
 
-typedef struct {
+typedef struct SCmdTransiActorList {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  length;
     /* 0x04 */ TransitionActorEntry* data;
 } SCmdTransiActorList;
 
-typedef struct {
+typedef struct SCmdLightSettingList {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  length;
     /* 0x04 */ EnvLightSettings* data;
 } SCmdLightSettingList;
 
-typedef struct {
+typedef struct SCmdTimeSettings {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x02 */ char pad[2];
@@ -307,7 +320,7 @@ typedef struct {
     /* 0x06 */ u8  timeSpeed;
 } SCmdTimeSettings;
 
-typedef struct {
+typedef struct SCmdSkyboxSettings {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x02 */ char pad[2];
@@ -316,7 +329,7 @@ typedef struct {
     /* 0x06 */ u8  envLightMode;
 } SCmdSkyboxSettings;
 
-typedef struct {
+typedef struct SCmdSkyboxDisables {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x02 */ char pad[2];
@@ -324,19 +337,19 @@ typedef struct {
     /* 0x05 */ u8  sunMoonDisabled;
 } SCmdSkyboxDisables;
 
-typedef struct {
+typedef struct SCmdEndMarker {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x04 */ u32 data2;
 } SCmdEndMarker;
 
-typedef struct {
+typedef struct SCmdExitList {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x04 */ s16* data;
 } SCmdExitList;
 
-typedef struct {
+typedef struct SCmdSoundSettings {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  specId;
     /* 0x02 */ char pad[4];
@@ -344,40 +357,40 @@ typedef struct {
     /* 0x07 */ u8  seqId;
 } SCmdSoundSettings;
 
-typedef struct {
+typedef struct SCmdEchoSettings {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x02 */ char pad[5];
     /* 0x07 */ u8  echo;
 } SCmdEchoSettings;
 
-typedef struct {
+typedef struct SCmdCutsceneData {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x04 */ void* data;
 } SCmdCutsceneData;
 
-typedef struct {
+typedef struct SCmdAltHeaders {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  data1;
     /* 0x04 */ void* data;
 } SCmdAltHeaders;
 
-typedef struct {
+typedef struct SCmdMiscSettings {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  sceneCamType;
     /* 0x04 */ u32 area;
 } SCmdMiscSettings;
 
 #if ENABLE_F3DEX3
-typedef struct {
+typedef struct SCmdOccPlaneCandList {
     /* 0x00 */ u8  code;
     /* 0x01 */ u8  count;
     /* 0x04 */ OcclusionPlaneCandidate* list;
 } SCmdOccPlaneCandList;
 #endif
 
-typedef union {
+typedef union SceneCmd {
     SCmdBase              base;
     SCmdPlayerEntryList   playerEntryList;
     SCmdActorEntryList    actorEntryList;
@@ -413,7 +426,7 @@ typedef BAD_RETURN(s32) (*SceneCmdHandlerFunc)(struct PlayState*, SceneCmd*);
 
 #define DEFINE_SCENE(_0, _1, enum, _3, _4, _5) enum,
 
-typedef enum {
+typedef enum SceneID {
     #include "tables/scene_table.h"
     /* 0x6E */ SCENE_ID_MAX
 } SceneID;
@@ -436,10 +449,30 @@ typedef enum {
 // Deleted scene
 #define SCENE_UNUSED_6E     0x6E
 
+// Macros for `EntranceInfo.field`
+#define ENTRANCE_INFO_CONTINUE_BGM_FLAG (1 << 15)
+#define ENTRANCE_INFO_DISPLAY_TITLE_CARD_FLAG (1 << 14)
+#define ENTRANCE_INFO_END_TRANS_TYPE_MASK 0x3F80
+#define ENTRANCE_INFO_END_TRANS_TYPE_SHIFT 7
+#define ENTRANCE_INFO_END_TRANS_TYPE(field)          \
+    (((field) >> ENTRANCE_INFO_END_TRANS_TYPE_SHIFT) \
+     & (ENTRANCE_INFO_END_TRANS_TYPE_MASK >> ENTRANCE_INFO_END_TRANS_TYPE_SHIFT))
+#define ENTRANCE_INFO_START_TRANS_TYPE_MASK 0x7F
+#define ENTRANCE_INFO_START_TRANS_TYPE_SHIFT 0
+#define ENTRANCE_INFO_START_TRANS_TYPE(field)          \
+    (((field) >> ENTRANCE_INFO_START_TRANS_TYPE_SHIFT) \
+     & (ENTRANCE_INFO_START_TRANS_TYPE_MASK >> ENTRANCE_INFO_START_TRANS_TYPE_SHIFT))
+
+typedef struct EntranceInfo {
+    /* 0x00 */ u8  sceneId;
+    /* 0x01 */ u8  spawn;
+    /* 0x02 */ u16 field;
+} EntranceInfo; // size = 0x4
+
 // Entrance Index Enum
 #define DEFINE_ENTRANCE(enum, _1, _2, _3, _4, _5, _6) enum,
 
-typedef enum {
+typedef enum EntranceIndex {
     #include "tables/entrance_table.h"
     /* 0x614 */ ENTR_MAX
 } EntranceIndex;
@@ -448,7 +481,7 @@ typedef enum {
 
 #define ENTR_LOAD_OPENING -1
 
-typedef enum {
+typedef enum ReturnEntranceIndex {
     /* 0x7FF9 */ ENTR_RETURN_GREAT_FAIRYS_FOUNTAIN_SPELLS = 0x7FF9,
     /* 0x7FFA */ ENTR_RETURN_SHOOTING_GALLERY,
     /* 0x7FFB */ ENTR_RETURN_2, // unused
@@ -458,7 +491,7 @@ typedef enum {
     /* 0x7FFF */ ENTR_RETURN_GROTTO // Grottos and normal Fairy Fountain
 } ReturnEntranceIndex;
 
-typedef enum {
+typedef enum SceneDrawConfig {
     /*  0 */ SDC_DEFAULT,
     /*  1 */ SDC_HYRULE_FIELD,
     /*  2 */ SDC_KAKARIKO_VILLAGE,
@@ -515,6 +548,8 @@ typedef enum {
     /* 53 */ SDC_MAX
 } SceneDrawConfig;
 
+typedef void (*SceneDrawConfigFunc)(struct PlayState*);
+
 // R_SCENE_CAM_TYPE values
 #define SCENE_CAM_TYPE_DEFAULT 0
 #define SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT 0x10 // Camera exhibits fixed behaviors and viewpoint changing is handled by shops
@@ -524,7 +559,7 @@ typedef enum {
 #define SCENE_CAM_TYPE_SHOOTING_GALLERY 0x50 // Unreferenced in code, and used only by the main layer of the shooting gallery scene
 
 // navi hints
-typedef enum {
+typedef enum NaviQuestHintFileId {
     NAVI_QUEST_HINTS_NONE,
     NAVI_QUEST_HINTS_OVERWORLD,
     NAVI_QUEST_HINTS_DUNGEON
@@ -532,7 +567,7 @@ typedef enum {
 
 // Scene commands
 
-typedef enum {
+typedef enum SceneCommandTypeID {
     /* 0x00 */ SCENE_CMD_ID_SPAWN_LIST,
     /* 0x01 */ SCENE_CMD_ID_ACTOR_LIST,
     /* 0x02 */ SCENE_CMD_ID_UNUSED_2,
@@ -589,9 +624,9 @@ typedef enum {
 #define SCENE_CMD_SPECIAL_FILES(naviQuestHintFileId, keepObjectId) \
     { SCENE_CMD_ID_SPECIAL_FILES, naviQuestHintFileId, CMD_W(keepObjectId) }
 
-#define SCENE_CMD_ROOM_BEHAVIOR(curRoomUnk3, curRoomUnk2, showInvisActors, disableWarpSongs) \
-    { SCENE_CMD_ID_ROOM_BEHAVIOR, curRoomUnk3, \
-        curRoomUnk2 | _SHIFTL(showInvisActors, 8, 1) | _SHIFTL(disableWarpSongs, 10, 1) }
+#define SCENE_CMD_ROOM_BEHAVIOR(type, environment, showInvisActors, disableWarpSongs) \
+    { SCENE_CMD_ID_ROOM_BEHAVIOR, type, \
+        environment | _SHIFTL(showInvisActors, 8, 1) | _SHIFTL(disableWarpSongs, 10, 1) }
 
 #define SCENE_CMD_UNK_09() \
     { SCENE_CMD_ID_UNDEFINED_9, 0, CMD_W(0) }
@@ -649,5 +684,12 @@ typedef enum {
     { SCENE_CMD_ID_OCC_PLANE_CAND_LIST, numPlanes, CMD_PTR(planeList) }
 #endif
 
+s32 Scene_ExecuteCommands(struct PlayState* play, SceneCmd* sceneCmd);
+void Scene_ResetTransitionActorList(struct GameState* state, TransitionActorList* transitionActors);
+void Scene_SetTransitionForNextEntrance(struct PlayState* play);
+void Scene_Draw(struct PlayState* play);
+
+extern EntranceInfo gEntranceTable[ENTR_MAX];
+extern SceneTableEntry gSceneTable[SCENE_ID_MAX];
 
 #endif

@@ -7,11 +7,23 @@
 
 This project, based on the [Zelda: Ocarina of Time decompilation project](https://github.com/zeldaret/oot/), aims to be an easy-to-use base to make Zelda: Ocarina of Time mods. **It is not producing a PC port.**
 
-The only build currently supported is Master Quest (Debug), but other versions are planned to be supported.
+It builds the following versions:
 
-It builds the following ROM:
+| Name         | Build timestamp   | Description                               | MD5 hash of input ROM(s) |
+|--------------|-------------------|-------------------------------------------|--------------------------|
+| pal-1.0      | 98-11-10 14:34:22 | PAL 1.0 (Europe)                          | `e040de91a74b61e3201db0e2323f768a` |
+| ntsc-1.2     | 98-11-12 18:17:03 | NTSC 1.2 (Japan/US)                       | `2258052847bdd056c8406a9ef6427f13`<br>`57a9719ad547c516342e1a15d5c28c3d` |
+| pal-1.1      | 98-11-18 17:36:49 | PAL 1.1 (Europe)                          | `d714580dd74c2c033f5e1b6dc0aeac77` |
+| gc-jp        | 02-10-29 23:49:53 | GameCube Japan                            | `33fb7852c180b18ea0b9620b630f413f` |
+| gc-jp-mq     | 02-10-30 00:15:15 | GameCube Japan Master Quest               | `69895c5c78442260f6eafb2506dc482a` |
+| gc-us        | 02-12-19 13:28:09 | GameCube US                               | `cd09029edcfb7c097ac01986a0f83d3f` |
+| gc-us-mq     | 02-12-19 14:05:42 | GameCube US Master Quest                  | `da35577fe54579f6a266931cc75f512d` |
+| gc-eu-mq-dbg | 03-02-21 00:16:31 | GameCube Europe/PAL Master Quest Debug    | `75e344f41c26ec2ec5ad92caa9e25629`<br>`8ca71e87de4ce5e9f6ec916202a623e9`<br>`f751d1a097764e2337b1ac9ba1e27699`<br>`dde376d47187b931820d5b2957cded14` |
+| gc-eu        | 03-02-21 20:12:23 | GameCube Europe/PAL                       | `2c27b4e000e85fd78dbca551f1b1c965` |
+| gc-eu-mq     | 03-02-21 20:37:19 | GameCube Europe/PAL Master Quest          | `1618403427e4344a57833043db5ce3c3` |
+| gc-jp-ce     | 03-10-08 21:53:00 | GameCube Japan (Collector's Edition Disc) | `0c13e0449a28ea5b925cdb8af8d29768` |
 
-* hackeroot-mq.z64
+The default version is `hackeroot-mq`.
 
 This project is using the following tools:
 - [F3DEX3](https://github.com/HackerN64/F3DEX3), *will make you want to finally ditch HLE*, by Sauraen
@@ -27,9 +39,7 @@ This project is using the following tools:
 
 ## Zelda: Ocarina of Time Decompilation
 
-**Website:** <https://zelda64.dev>
-
-**Discord:** <https://discord.zelda64.dev>
+**Website:** <https://zelda.deco.mp>
 
 ## Getting Started
 
@@ -48,6 +58,11 @@ HackerOoT features are listed in the config headers under ``include/config/``.
 This project includes an example scene, available if ``INCLUDE_EXAMPLE_SCENE`` is set to ``true``. It's accessible from the map select.
 
 This also includes an example cutscene, playable in the example scene when holding ``L`` + ``R`` and pressing ``A``.
+
+## Changing build options
+
+The project Makefile is fairly configurable and can be used to build other versions of the game or prepare the repo for modding.
+See the options outlined at the top of the Makefile for more information.
 
 ## Contributing
 

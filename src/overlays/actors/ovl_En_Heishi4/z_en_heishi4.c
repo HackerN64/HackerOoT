@@ -2,7 +2,7 @@
 #include "assets/objects/object_sd/object_sd.h"
 #include "terminal.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3)
+#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY)
 
 void EnHeishi4_Init(Actor* thisx, PlayState* play);
 void EnHeishi4_Destroy(Actor* thisx, PlayState* play);
@@ -21,7 +21,7 @@ void func_80A56994(EnHeishi4* this, PlayState* play);
 void func_80A56A50(EnHeishi4* this, PlayState* play);
 void func_80A56ACC(EnHeishi4* this, PlayState* play);
 
-ActorInit En_Heishi4_InitVars = {
+ActorProfile En_Heishi4_Profile = {
     /**/ ACTOR_EN_HEISHI4,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -37,7 +37,7 @@ static u32 sMaskReactionSets[] = { MASK_REACTION_SET_HEISHI4_1, MASK_REACTION_SE
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COLTYPE_NONE,
+        COL_MATERIAL_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -45,7 +45,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -59,10 +59,10 @@ void EnHeishi4_Init(Actor* thisx, PlayState* play) {
     EnHeishi4* this = (EnHeishi4*)thisx;
 
     Actor_SetScale(thisx, 0.01f);
-    this->type = thisx->params & 0xFF;
+    this->type = PARAMS_GET_U(thisx->params, 0, 8);
     thisx->colChkInfo.mass = MASS_IMMOVABLE;
     this->pos = thisx->world.pos;
-    thisx->targetMode = 6;
+    thisx->attentionRangeType = ATTENTION_RANGE_6;
     if (this->type == HEISHI4_AT_MARKET_DYING) {
         this->height = 30.0f;
         ActorShape_Init(&thisx->shape, 0.0f, NULL, 30.0f);
@@ -93,11 +93,11 @@ void EnHeishi4_Init(Actor* thisx, PlayState* play) {
             this->actionFunc = func_80A56544;
             break;
     }
-    this->unk_27C = (thisx->params >> 8) & 0xFF;
+    this->unk_27C = PARAMS_GET_U(thisx->params, 8, 8);
     PRINTF("\n\n");
     PRINTF(VT_FGCOL(GREEN) " ☆☆☆☆☆ 兵士２セット完了！ ☆☆☆☆☆ %d\n" VT_RST, thisx->params);
     PRINTF(VT_FGCOL(YELLOW) " ☆☆☆☆☆ 識別完了！\t    ☆☆☆☆☆ %d\n" VT_RST, this->type);
-    PRINTF(VT_FGCOL(MAGENTA) " ☆☆☆☆☆ メッセージ完了！   ☆☆☆☆☆ %x\n\n" VT_RST, (thisx->params >> 8) & 0xF);
+    PRINTF(VT_FGCOL(MAGENTA) " ☆☆☆☆☆ メッセージ完了！   ☆☆☆☆☆ %x\n\n" VT_RST, PARAMS_GET_U(thisx->params, 8, 4));
     PRINTF("\n\n");
 }
 
