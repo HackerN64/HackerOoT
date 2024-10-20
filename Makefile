@@ -29,7 +29,7 @@ ARES_GDB := 1
 
 # Toggle release or debug mode. 1=Release, 0=Debug
 # Note: currently only used for HackerOoT
-RELEASE := 0
+RELEASE ?= 0
 
 # Valid compression algorithms are 'yaz', 'lzo' and 'aplib'
 COMPRESSION ?= yaz
