@@ -9,7 +9,7 @@ void __osDisplayArena(Arena* arena);
 
 Arena sDebugArena;
 
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
 s32 gDebugArenaLogSeverity = LOG_SEVERITY_ERROR;
 
 void DebugArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action) {
@@ -99,11 +99,11 @@ void* DebugArena_Calloc(u32 num, u32 size) {
 }
 
 void DebugArena_Display(void) {
-    if (IS_DEBUG_HEAP_ENABLED) {
-        // Likely copypasted from ZeldaArena_Display, should say "Debug"
-        PRINTF(T("ゼルダヒープ表示\n", "Zelda heap display\n"));
-        __osDisplayArena(&sDebugArena);
-    }
+#if PLATFORM_GC && IS_DEBUG_HEAP_ENABLED
+    // Likely copypasted from ZeldaArena_Display, should say "Debug"
+    PRINTF(T("ゼルダヒープ表示\n", "Zelda heap display\n"));
+    __osDisplayArena(&sDebugArena);
+#endif
 }
 
 void DebugArena_GetSizes(u32* outMaxFree, u32* outFree, u32* outAlloc) {
@@ -115,14 +115,14 @@ void DebugArena_Check(void) {
 }
 
 void DebugArena_Init(void* start, u32 size) {
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     gDebugArenaLogSeverity = LOG_SEVERITY_NOLOG;
 #endif
     __osMallocInit(&sDebugArena, start, size);
 }
 
 void DebugArena_Cleanup(void) {
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     gDebugArenaLogSeverity = LOG_SEVERITY_NOLOG;
 #endif
     __osMallocCleanup(&sDebugArena);

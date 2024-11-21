@@ -9,7 +9,7 @@
 
 Arena gSystemArena;
 
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
 s32 gSystemArenaLogSeverity = LOG_SEVERITY_NOLOG;
 
 void SystemArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action) {
@@ -152,14 +152,14 @@ void SystemArena_Check(void) {
 }
 
 void SystemArena_Init(void* start, u32 size) {
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     gSystemArenaLogSeverity = LOG_SEVERITY_NOLOG;
 #endif
     __osMallocInit(&gSystemArena, start, size);
 }
 
 void SystemArena_Cleanup(void) {
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     gSystemArenaLogSeverity = LOG_SEVERITY_NOLOG;
 #endif
     __osMallocCleanup(&gSystemArena);

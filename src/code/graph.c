@@ -30,7 +30,7 @@ OSTime sGraphPrevTaskTimeStart;
 u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT]; // pointer-to-array, array itself is allocated (see below)
 #endif
 
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
 FaultClient sGraphFaultClient;
 
 UCodeInfo D_8012D230[3] = {
@@ -164,14 +164,14 @@ void Graph_Init(GraphicsContext* gfxCtx) {
 
     osCreateMesgQueue(&gfxCtx->queue, gfxCtx->msgBuff, ARRAY_COUNT(gfxCtx->msgBuff));
 
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     func_800D31F0();
     Fault_AddClient(&sGraphFaultClient, Graph_FaultClient, NULL, NULL);
 #endif
 }
 
 void Graph_Destroy(GraphicsContext* gfxCtx) {
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     func_800D3210();
     Fault_RemoveClient(&sGraphFaultClient);
 #endif
@@ -195,7 +195,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
         osStopTimer(&timer);
 
         if (msg == (OSMesg)666) {
-#if OOT_DEBUG
+#if PLATFORM_GC && OOT_DEBUG
             PRINTF(VT_FGCOL(RED));
             PRINTF(T("RCPが帰ってきませんでした。", "RCP did not return."));
             PRINTF(VT_RST);
@@ -341,7 +341,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
 
     CLOSE_DISPS(gfxCtx, "../graph.c", 1028);
 
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     if (R_HREG_MODE == HREG_MODE_PLAY && R_PLAY_ENABLE_UCODE_DISAS == 2) {
         R_HREG_MODE = HREG_MODE_UCODE_DISAS;
         R_UCODE_DISAS_TOGGLE = -1;

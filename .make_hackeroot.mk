@@ -25,14 +25,20 @@ endif
 # Default value: `0`
 ARES_GDB := 0
 
-# Toggle release or debug mode. 1=Release, 0=Debug
+# Toggle release or debug mode. 0 for release, 1 for debug
 # Default value: `0`
-RELEASE := 0
+DEBUG := 1
 
 # Compression algorithm. Valid algorithms are 'yaz', 'lzo' and 'aplib'
 # Default value: `yaz`
 COMPRESSION ?= yaz
 COMPRESSION_TYPE ?= $(shell echo $(COMPRESSION) | tr '[:lower:]' '[:upper:]')
+
+# Set the game's region
+REGION := NULL
+
+# Set the optimization level
+OPTFLAGS := -Os
 
 # Platform compatibility flags
 # Default value: (nothing)

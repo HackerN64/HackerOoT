@@ -129,7 +129,7 @@ def byte_swap(file_content: bytearray) -> bytearray:
 
 
 def per_version_fixes(file_content: bytearray, version: str) -> bytearray:
-    if version in {"gc-eu-mq-dbg", "hackeroot-mq"}:
+    if version == "gc-eu-mq-dbg":
         # Strip the overdump, which consists of an area of 0xFF bytes (which may
         # be erased flash memory) and ROM data from an unrelated game
         print("Stripping overdump...")
@@ -225,7 +225,7 @@ def main():
 
     # Check to see if the ROM is a "vanilla" ROM
     str_hash = get_str_hash(file_content)
-    if version in {"gc-eu-mq-dbg", "hackeroot-mq"}:
+    if version == "gc-eu-mq-dbg":
         correct_str_hashes = decompressed_str_hashes
     else:
         correct_str_hashes = compressed_str_hashes

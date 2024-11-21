@@ -4,10 +4,10 @@
 #define STRINGIFY(s) #s
 #define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)
 
-#if RELEASE_ROM
-char const gBuildMakeOption[] = "RELEASE";
-#else
+#if OOT_DEBUG
 char const gBuildMakeOption[] = "DEBUG";
+#else
+char const gBuildMakeOption[] = "RELEASE";
 #endif
 
 char const gBuildGitVersion[] = EXPAND_AND_STRINGIFY(PACKAGE_VERSION);

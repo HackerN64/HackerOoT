@@ -13,7 +13,7 @@
 /*****************
  * config_debug.h
  */
-#if RELEASE_ROM
+#if !OOT_DEBUG
     #undef SKIP_N64_BOOT_LOGO
     #undef BOOT_TO_SCENE
     #undef BOOT_TO_SCENE_NEW_GAME_ONLY

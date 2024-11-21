@@ -75,7 +75,7 @@ void func_800C4344(GameState* gameState) {
     if (D_80121212 != 0) {
         func_801C7E78();
     }
-#elif IS_DEBUG
+#elif PLATFORM_GC && IS_DEBUG
     Input* selectedInput;
     s32 hexDumpSize;
     u16 inputCompareValue;

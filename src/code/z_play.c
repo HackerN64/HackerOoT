@@ -482,7 +482,7 @@ void Play_Init(GameState* thisx) {
     PRINTF(T("ゼルダヒープ %08x-%08x\n", "Zelda Heap %08x-%08x\n"), zAllocAligned,
            (u8*)zAllocAligned + zAllocSize - (s32)(zAllocAligned - zAlloc));
 
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     Fault_AddClient(&D_801614B8, ZeldaArena_Display, NULL, NULL);
 #endif
 
@@ -538,7 +538,7 @@ void Play_Update(PlayState* this) {
     s32 isPaused = IS_PAUSED(&this->pauseCtx);
     s32 pad1;
 
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     if ((SREG(1) < 0) || (DREG(0) != 0)) {
         SREG(1) = 0;
         ZeldaArena_Display();

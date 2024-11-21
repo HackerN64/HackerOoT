@@ -616,7 +616,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_lights.o"
     include "$(BUILD_DIR)/src/code/z_malloc.o"
     include "$(BUILD_DIR)/src/code/z_map_mark.o"
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     include "$(BUILD_DIR)/src/code/z_moji.o"
 #endif
     include "$(BUILD_DIR)/src/code/z_prenmi_buff.o"
@@ -715,7 +715,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/fault_gc_drawer.o"
 #endif
     include "$(BUILD_DIR)/src/code/kanread.o"
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     include "$(BUILD_DIR)/src/code/ucode_disas.o"
 #endif
 #if OOT_VERSION < NTSC_1_1 || PLATFORM_GC

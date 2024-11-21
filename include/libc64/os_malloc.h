@@ -65,8 +65,8 @@ void* __osReallocDebug(Arena* arena, void* ptr, u32 newSize, const char* file, i
 void __osDisplayArena(Arena* arena);
 
 extern u32 __osMalloc_FreeBlockTest_Enable;
-#else
-extern u32 gTotalAllocFailures;
 #endif
+
+extern u32 gTotalAllocFailures;
 
 #endif

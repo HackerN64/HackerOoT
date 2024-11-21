@@ -14,7 +14,7 @@
 void ElfMsg_Init(Actor* thisx, PlayState* play);
 void ElfMsg_Destroy(Actor* thisx, PlayState* play);
 void ElfMsg_Update(Actor* thisx, PlayState* play);
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
 void ElfMsg_Draw(Actor* thisx, PlayState* play);
 #endif
 
@@ -30,7 +30,7 @@ ActorProfile Elf_Msg_Profile = {
     /**/ ElfMsg_Init,
     /**/ ElfMsg_Destroy,
     /**/ ElfMsg_Update,
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     /**/ ElfMsg_Draw,
 #else
     /**/ NULL,
@@ -170,7 +170,7 @@ void ElfMsg_Update(Actor* thisx, PlayState* play) {
     }
 }
 
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
 #include "assets/overlays/ovl_Elf_Msg/ovl_Elf_Msg.c"
 
 void ElfMsg_Draw(Actor* thisx, PlayState* play) {

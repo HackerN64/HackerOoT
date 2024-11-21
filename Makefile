@@ -28,16 +28,10 @@ COMPILER ?= gcc
 #   gc-eu          GameCube Europe/PAL
 #   gc-eu-mq       GameCube Europe/PAL Master Quest
 #   gc-jp-ce       GameCube Japan (Collector's Edition disc)
-#   hackeroot-mq   HackerOoT, based on gc-eu-mq-dbg (default)
 # The following versions are work-in-progress and not yet matching:
 #   ntsc-1.0       N64 NTSC 1.0 (Japan/US depending on REGION)
 #   ntsc-1.1       N64 NTSC 1.1 (Japan/US depending on REGION)
-#
-# Note: choosing hackeroot-mq will enable HackerOoT features,
-#       if another version is chosen, this repo will be like
-#       zeldaret/main decomp but without the disassembly, decompilation
-#       and matching tools, including the IDO compiler
-VERSION ?= hackeroot-mq
+VERSION ?= ntsc-1.2
 # Number of threads to extract and compress with.
 N_THREADS ?= $(shell nproc)
 # Check code syntax with host compiler.
@@ -66,69 +60,52 @@ CPPFLAGS ?=
 CFLAGS_IDO ?=
 CPP_DEFINES ?=
 
-# Version-specific settings
+# Version-specific settings (DEBUG is set in `.make_hackeroot` instead of per-version here)
 REGIONAL_CHECKSUM := 0
 ifeq ($(VERSION),ntsc-1.0)
   REGIONAL_CHECKSUM := 1
   REGION ?= JP
   PLATFORM := N64
-  DEBUG := 0
   COMPARE := 0
 else ifeq ($(VERSION),ntsc-1.1)
   REGIONAL_CHECKSUM := 1
   REGION ?= JP
   PLATFORM := N64
-  DEBUG := 0
   COMPARE := 0
 else ifeq ($(VERSION),pal-1.0)
   REGION ?= EU
   PLATFORM := N64
-  DEBUG := 0
 else ifeq ($(VERSION),ntsc-1.2)
   REGIONAL_CHECKSUM := 1
   REGION ?= JP
   PLATFORM := N64
-  DEBUG := 0
 else ifeq ($(VERSION),pal-1.1)
   REGION ?= EU
   PLATFORM := N64
-  DEBUG := 0
 else ifeq ($(VERSION),gc-jp)
   REGION ?= JP
   PLATFORM := GC
-  DEBUG := 0
 else ifeq ($(VERSION),gc-jp-mq)
   REGION ?= JP
   PLATFORM := GC
-  DEBUG := 0
 else ifeq ($(VERSION),gc-us)
   REGION ?= US
   PLATFORM := GC
-  DEBUG := 0
 else ifeq ($(VERSION),gc-us-mq)
   REGION ?= US
   PLATFORM := GC
-  DEBUG := 0
 else ifeq ($(VERSION),gc-eu-mq-dbg)
   REGION ?= EU
   PLATFORM := GC
-  DEBUG := 1
 else ifeq ($(VERSION),gc-eu)
   REGION ?= EU
   PLATFORM := GC
-  DEBUG := 0
 else ifeq ($(VERSION),gc-eu-mq)
   REGION ?= EU
   PLATFORM := GC
-  DEBUG := 0
 else ifeq ($(VERSION),gc-jp-ce)
   REGION ?= JP
   PLATFORM := GC
-  DEBUG := 0
-else ifeq ($(VERSION),hackeroot-mq)
-  REGION := NULL
-  PLATFORM := GC
-  DEBUG := 1
 else
 $(error Unsupported version $(VERSION))
 endif
@@ -143,12 +120,8 @@ MAKE = make
 CPPFLAGS += -P -xc -fno-dollars-in-identifiers
 
 # Converts e.g. ntsc-1.0 to NTSC_1_0
-ifeq ($(VERSION),hackeroot-mq)
-CPP_DEFINES += -DOOT_VERSION=GC_EU_MQ_DBG
-else
 VERSION_MACRO := $(shell echo $(VERSION) | tr a-z-. A-Z__)
 CPP_DEFINES += -DOOT_VERSION=$(VERSION_MACRO)
-endif
 CPP_DEFINES += -DOOT_REGION=REGION_$(REGION)
 
 ifeq ($(PLATFORM),N64)
@@ -159,23 +132,12 @@ else
   $(error Unsupported platform $(PLATFORM))
 endif
 
-ifeq ($(VERSION),hackeroot-mq)
-  OPTFLAGS := -Os
-
-  ifeq ($(RELEASE),1)
-    CPP_DEFINES += -DRELEASE_ROM=1 -DOOT_DEBUG=0
-    CFLAGS_IDO += -DOOT_DEBUG=0
-  else
-    CPP_DEFINES += -DRELEASE_ROM=0 -DOOT_DEBUG=1
-  endif
+ifeq ($(DEBUG),1)
+  CPP_DEFINES += -DOOT_DEBUG=1
+  OPTFLAGS := -O2
 else
-  ifeq ($(DEBUG),1)
-    CPP_DEFINES += -DOOT_DEBUG=1
-    OPTFLAGS := -O2
-  else
-    CPP_DEFINES += -DNDEBUG -DOOT_DEBUG=0
-    OPTFLAGS := -O2 -g3
-  endif
+  CPP_DEFINES += -DNDEBUG -DOOT_DEBUG=0
+  OPTFLAGS := -O2 -g3
 endif
 
 ifeq ($(OS),Windows_NT)
@@ -270,11 +232,7 @@ OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
 #### Files ####
 
 # ROM image
-ifeq ($(VERSION),hackeroot-mq)
-  ROM      := $(BUILD_DIR)/$(VERSION).z64
-else
-  ROM      := $(BUILD_DIR)/oot-$(VERSION).z64
-endif
+ROM      := $(BUILD_DIR)/oot-$(VERSION).z64
 ROMC     := $(ROM:.z64=-compressed-$(COMPRESSION).z64)
 ELF      := $(ROM:.z64=.elf)
 MAP      := $(ROM:.z64=.map)

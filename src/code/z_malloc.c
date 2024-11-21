@@ -7,7 +7,7 @@
 
 Arena sZeldaArena;
 
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
 s32 gZeldaArenaLogSeverity = LOG_SEVERITY_ERROR;
 
 void ZeldaArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action) {
@@ -96,7 +96,7 @@ void* ZeldaArena_Calloc(u32 num, u32 size) {
     return ret;
 }
 
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
 void ZeldaArena_Display(void) {
     PRINTF(T("ゼルダヒープ表示\n", "Zelda heap display\n"));
     __osDisplayArena(&sZeldaArena);
@@ -112,14 +112,14 @@ void ZeldaArena_Check(void) {
 }
 
 void ZeldaArena_Init(void* start, u32 size) {
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     gZeldaArenaLogSeverity = LOG_SEVERITY_NOLOG;
 #endif
     __osMallocInit(&sZeldaArena, start, size);
 }
 
 void ZeldaArena_Cleanup(void) {
-#if IS_DEBUG
+#if PLATFORM_GC && IS_DEBUG
     gZeldaArenaLogSeverity = LOG_SEVERITY_NOLOG;
 #endif
     __osMallocCleanup(&sZeldaArena);
