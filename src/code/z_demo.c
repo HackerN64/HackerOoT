@@ -1789,7 +1789,7 @@ void CutsceneCmd_Text(PlayState* play, CutsceneContext* csCtx, CsCmdText* cmd) {
 }
 
 void CutsceneCmd_MotionBlur(PlayState* play, CutsceneContext* csCtx, CsCmdMotionBlur* cmd) {
-    if (ENABLE_MOTION_BLUR) {
+    if (IS_MOTION_BLUR_ENABLED) {
         if ((csCtx->curFrame >= cmd->startFrame) && (cmd->endFrame >= csCtx->curFrame)) {
             f32 lerp = Environment_LerpWeight(cmd->endFrame, cmd->startFrame, csCtx->curFrame);
 

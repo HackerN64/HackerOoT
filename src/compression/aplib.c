@@ -12,6 +12,8 @@
  */
 #include "compression.h"
 
+#if COMPRESS_APLIB
+
 static struct decoder dec;
 
 /* block copy, with desired overlapping behavior */
@@ -218,3 +220,5 @@ void Aplib_Decompress(unsigned rom, unsigned char* dst, unsigned compSz) {
     dec.buf_end = dec.buf + sizeof(dec.buf);
     dst = aP_depack(dec.buf_end, dst);
 }
+
+#endif

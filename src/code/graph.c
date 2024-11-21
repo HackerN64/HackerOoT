@@ -26,7 +26,7 @@ OSTime sGraphPrevTaskTimeStart;
 #define GRAPH_UCODE_GLOBAL_SYMBOL gspF3DZEX2_NoN_PosLight_fifoTextStart
 #endif
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
 u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT]; // pointer-to-array, array itself is allocated (see below)
 #endif
 
@@ -465,7 +465,7 @@ void Graph_ThreadEntry(void* arg0) {
     GameStateOverlay* nextOvl = &gGameStateOverlayTable[GAMESTATE_SETUP];
     GameStateOverlay* ovl;
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     gWorkBuf = SYSTEM_ARENA_MALLOC(sizeof(*gWorkBuf) + 64 - 1, __FILE__, __LINE__);
     gWorkBuf = (void*)ALIGN64((u32)gWorkBuf);
 #endif

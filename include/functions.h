@@ -329,7 +329,7 @@ void TitleSetup_Destroy(GameState* thisx);
 void FileSelect_Init(GameState* thisx);
 void FileSelect_Destroy(GameState* thisx);
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
 void Play_DrawMotionBlur(PlayState* this);
 void Play_InitMotionBlur(PlayState* this);
 void Play_DestroyMotionBlur(void);

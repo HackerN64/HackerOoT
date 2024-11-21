@@ -828,7 +828,7 @@ void PreRender_ApplyFilters(PreRender* this) {
     }
 }
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
 void PreRender_MotionBlurImpl(PreRender* this, Gfx** gfxp, void* buf, void* bufSave, s32 envR, s32 envG, s32 envB,
                               s32 envA) {
     Gfx* gfx = *gfxp;
