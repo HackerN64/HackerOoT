@@ -17,7 +17,7 @@ typedef struct GfxPool {
     /* 0x0BF08 */ Gfx polyXluBuffer[POLY_XLU_BUFFER_SIZE];
     /* 0x0FF08 */ Gfx overlayBuffer[OVERLAY_BUFFER_SIZE];
     /* 0x11F08 */ Gfx workBuffer[WORK_BUFFER_SIZE];
-    /* 0x11308 */ Gfx debugBuffer[IS_DEBUG ? DEBUG_BUFFER_SIZE : 0x20];
+    /* 0x11308 */ Gfx debugBuffer[DEBUG_BUFFER_SIZE];
     /* 0x12408 */ u16 tailMagic; // GFXPOOL_TAIL_MAGIC
 } GfxPool; // size = 0x12410
 
@@ -83,7 +83,7 @@ void* Graph_Alloc2(GraphicsContext* gfxCtx, size_t size);
 #define OVERLAY_DISP    __gfxCtx->overlay.p
 #define DEBUG_DISP      __gfxCtx->debug.p
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 
 void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, int line);
 void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, int line);

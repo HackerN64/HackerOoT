@@ -12,11 +12,10 @@ VisZBuf sVisZBuf;
 VisMono sVisMono;
 ViMode sViMode;
 
-// IS_DEBUG
+#if DEBUG_FEATURES
 FaultClient sGameFaultClient;
 u16 sLastButtonPressed;
 
-#if IS_DEBUG
 void GameState_FaultPrint(void) {
     static char sBtnChars[] = "ABZSuldr*+LRudlr";
     s32 i;
@@ -71,18 +70,16 @@ void GameState_SetFBFilter(Gfx** gfxP) {
 }
 
 void func_800C4344(GameState* gameState) {
-#if PLATFORM_N64
-    if (D_80121212 != 0) {
-        func_801C7E78();
-    }
-#elif IS_DEBUG
+#if DEBUG_FEATURES
     Input* selectedInput;
     s32 hexDumpSize;
     u16 inputCompareValue;
 
+#if PLATFORM_GC
     if (R_HREG_MODE == HREG_MODE_HEAP_FREE_BLOCK_TEST) {
         __osMalloc_FreeBlockTest_Enable = R_HEAP_FREE_BLOCK_TEST_TOGGLE;
     }
+#endif
 
     if (R_HREG_MODE == HREG_MODE_INPUT_TEST) {
         selectedInput =
@@ -131,41 +128,46 @@ void func_800C4344(GameState* gameState) {
         }
     }
 #endif
-}
 
-// SHOW_INPUT_DISPLAY
-void GameState_DrawInputDisplay(u16 input, Gfx** gfxP) {
-    if (CAN_SHOW_INPUT_DISPLAY) {
-        static const u16 sInpDispBtnColors[] = {
-            GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),
-            GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1),
-            GPACK_RGBA5551(0, 255, 255, 1),   GPACK_RGBA5551(255, 0, 255, 1),   GPACK_RGBA5551(120, 120, 120, 1),
-            GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1),
-            GPACK_RGBA5551(255, 0, 0, 1),     GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(0, 255, 0, 1),
-            GPACK_RGBA5551(0, 0, 255, 1),
-        };
-        s32 i, j, k;
-        Gfx* gfx = *gfxP;
-
-        gDPPipeSync(gfx++);
-        gDPSetOtherMode(gfx++,
-                        G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_CONV | G_TF_POINT | G_TT_NONE | G_TL_TILE |
-                            G_TD_CLAMP | G_TP_NONE | G_CYC_FILL | G_PM_NPRIMITIVE,
-                        G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2);
-
-        for (i = 0; i < 16; i++) {
-            j = i;
-            if (input & (1 << i)) {
-                gDPSetFillColor(gfx++, (sInpDispBtnColors[i] << 0x10) | sInpDispBtnColors[i]);
-                k = i + 1;
-                gDPFillRectangle(gfx++, (j * 4) + 226, 220, (k * 4) + 225, 223);
-                gDPPipeSync(gfx++);
-            }
-        }
-
-        *gfxP = gfx;
+#if PLATFORM_N64
+    if (D_80121212 != 0) {
+        func_801C7E78();
     }
+#endif
 }
+
+#if CAN_SHOW_INPUT_DISPLAY
+void GameState_DrawInputDisplay(u16 input, Gfx** gfxP) {
+    static const u16 sInpDispBtnColors[] = {
+        GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),
+        GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1),
+        GPACK_RGBA5551(0, 255, 255, 1),   GPACK_RGBA5551(255, 0, 255, 1),   GPACK_RGBA5551(120, 120, 120, 1),
+        GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1),
+        GPACK_RGBA5551(255, 0, 0, 1),     GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(0, 255, 0, 1),
+        GPACK_RGBA5551(0, 0, 255, 1),
+    };
+    s32 i, j, k;
+    Gfx* gfx = *gfxP;
+
+    gDPPipeSync(gfx++);
+    gDPSetOtherMode(gfx++,
+                    G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_CONV | G_TF_POINT | G_TT_NONE | G_TL_TILE |
+                        G_TD_CLAMP | G_TP_NONE | G_CYC_FILL | G_PM_NPRIMITIVE,
+                    G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2);
+
+    for (i = 0; i < 16; i++) {
+        j = i;
+        if (input & (1 << i)) {
+            gDPSetFillColor(gfx++, (sInpDispBtnColors[i] << 0x10) | sInpDispBtnColors[i]);
+            k = i + 1;
+            gDPFillRectangle(gfx++, (j * 4) + 226, 220, (k * 4) + 225, 223);
+            gDPPipeSync(gfx++);
+        }
+    }
+
+    *gfxP = gfx;
+}
+#endif
 
 void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     Gfx* newDList;
@@ -180,7 +182,7 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
         GameState_SetFBFilter(&newDList);
     }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     sLastButtonPressed = gameState->input[0].press.button | gameState->input[0].cur.button;
 
     if (CAN_SHOW_INPUT_DISPLAY && R_DISABLE_INPUT_DISPLAY == 0) {
@@ -199,6 +201,18 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     }
 
 #endif
+
+    if (R_ENABLE_ARENA_DBG < 0) {
+#if PLATFORM_GC && DEBUG_FEATURES
+        s32 pad;
+        DebugArena_Display();
+        SystemArena_Display();
+#endif
+        PRINTF(T("ハイラル滅亡まであと %08x バイト(game_alloc)\n",
+                 "%08x bytes left until Hyrule is destroyed (game_alloc)\n"),
+               THA_GetRemaining(&gameState->tha));
+        R_ENABLE_ARENA_DBG = 0;
+    }
 
     gSPEndDisplayList(newDList++);
     Gfx_Close(polyOpaP, newDList);
@@ -287,7 +301,7 @@ void GameState_Update(GameState* gameState) {
     }
 #endif
 
-#if IS_DEBUG
+#if OOT_VERSION >= PAL_1_0 && DEBUG_FEATURES
     if (SREG(63) == 1u) {
         if (R_VI_MODE_EDIT_STATE < VI_MODE_EDIT_STATE_INACTIVE) {
             R_VI_MODE_EDIT_STATE = VI_MODE_EDIT_STATE_INACTIVE;
@@ -434,7 +448,7 @@ void GameState_Realloc(GameState* gameState, size_t size) {
         THA_Init(&gameState->tha, NULL, 0);
         PRINTF(T("ハイラル再確保失敗\n", "Failure to secure Hyrule\n"));
 
-#if IS_DEBUG
+#if PLATFORM_GC && DEBUG_FEATURES
         SystemArena_Display();
 #endif
 
@@ -491,7 +505,7 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
     VisCvg_Init(&sVisCvg);
     VisZBuf_Init(&sVisZBuf);
     VisMono_Init(&sVisMono);
-    if ((R_VI_MODE_EDIT_STATE == VI_MODE_EDIT_STATE_INACTIVE) || !IS_DEBUG) {
+    if ((R_VI_MODE_EDIT_STATE == VI_MODE_EDIT_STATE_INACTIVE) || !DEBUG_FEATURES) {
         ViMode_Init(&sViMode);
     }
 
@@ -505,7 +519,7 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
     PRINTF(T("その他初期化 処理時間 %d us\n", "Other initialization processing time %d us\n"),
            OS_CYCLES_TO_USEC(endTime - startTime));
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     Fault_AddClient(&sGameFaultClient, GameState_FaultPrint, NULL, NULL);
 #endif
 
@@ -535,11 +549,19 @@ void GameState_Destroy(GameState* gameState) {
     VisCvg_Destroy(&sVisCvg);
     VisZBuf_Destroy(&sVisZBuf);
     VisMono_Destroy(&sVisMono);
-    if ((R_VI_MODE_EDIT_STATE == VI_MODE_EDIT_STATE_INACTIVE) || !IS_DEBUG) {
+    if ((R_VI_MODE_EDIT_STATE == VI_MODE_EDIT_STATE_INACTIVE) || !DEBUG_FEATURES) {
         ViMode_Destroy(&sViMode);
     }
     THA_Destroy(&gameState->tha);
     GameAlloc_Cleanup(&gameState->alloc);
+
+#if PLATFORM_GC && DEBUG_FEATURES
+    SystemArena_Display();
+#endif
+
+#if DEBUG_FEATURES
+    Fault_RemoveClient(&sGameFaultClient);
+#endif
 
     PRINTF(T("game デストラクタ終了\n", "game destructor end\n"));
 }
@@ -556,7 +578,7 @@ u32 GameState_IsRunning(GameState* gameState) {
     return gameState->running;
 }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void* GameState_Alloc(GameState* gameState, size_t size, const char* file, int line) {
     void* ret;
 

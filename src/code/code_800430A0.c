@@ -36,7 +36,7 @@ void DynaPolyActor_UpdateCarriedActorPos(CollisionContext* colCtx, s32 bgId, Act
             SkinMatrix_Vec3fMtxFMultXYZ(&curTransform, &tempPos, &pos);
             carriedActor->world.pos = pos;
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
             if (BGCHECK_XYZ_ABSMAX <= pos.x || pos.x <= -BGCHECK_XYZ_ABSMAX || BGCHECK_XYZ_ABSMAX <= pos.y ||
                 pos.y <= -BGCHECK_XYZ_ABSMAX || BGCHECK_XYZ_ABSMAX <= pos.z || pos.z <= -BGCHECK_XYZ_ABSMAX) {
 
@@ -76,8 +76,8 @@ void func_80043334(CollisionContext* colCtx, Actor* actor, s32 bgId) {
         if (dynaActor != NULL) {
             DynaPolyActor_SetActorOnTop(dynaActor);
 
-            if (CHECK_FLAG_ALL(actor->flags, ACTOR_FLAG_26)) {
-                func_80043538(dynaActor);
+            if (CHECK_FLAG_ALL(actor->flags, ACTOR_FLAG_CAN_PRESS_SWITCHES)) {
+                DynaPolyActor_SetSwitchPressed(dynaActor);
             }
         }
     }

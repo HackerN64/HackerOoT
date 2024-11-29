@@ -671,7 +671,7 @@ void Sram_VerifyAndLoadAllSaves(FileSelectState* fileSelect, SramContext* sramCt
                 bzero(&gSaveContext.save.totalDays, sizeof(s32));
                 bzero(&gSaveContext.save.bgsDayCount, sizeof(s32));
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
                 if (!slotNum) {
                     Sram_InitDebugSave();
                     gSaveContext.save.info.playerData.newf[0] = 'Z';
@@ -795,7 +795,7 @@ void Sram_InitSave(FileSelectState* fileSelect, SramContext* sramCtx) {
     gSaveContext.save.dayTime = CLOCK_TIME(10, 0);
     gSaveContext.save.cutsceneIndex = 0xFFF1;
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     if (fileSelect->buttonIndex == 0) {
         gSaveContext.save.cutsceneIndex = 0;
     }
@@ -973,7 +973,7 @@ void Sram_InitSram(GameState* gameState, SramContext* sramCtx) {
     }
 #endif
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     if (CHECK_BTN_ANY(gameState->input[2].cur.button, BTN_DRIGHT)) {
         bzero(sramCtx->readBuff, SRAM_SIZE);
         for (i = 0; i < CHECKSUM_SIZE; i++) {

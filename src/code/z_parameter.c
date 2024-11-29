@@ -4061,9 +4061,11 @@ void Interface_Draw(PlayState* play) {
         }
     }
 
-    if (IS_EVENT_EDITOR_ENABLED && (pauseCtx->debugState == 3)) {
+#if IS_EVENT_EDITOR_ENABLED
+    if (pauseCtx->debugState == 3) {
         FlagSet_Update(play);
     }
+#endif
 
     if (interfaceCtx->unk_244 != 0) {
         gDPPipeSync(OVERLAY_DISP++);
@@ -4085,7 +4087,7 @@ void Interface_Update(PlayState* play) {
     s16 risingAlpha;
     u16 action;
 
-#if IS_DEBUG
+#if OOT_PAL && DEBUG_FEATURES
     {
         Input* debugInput = &play->state.input[2];
 

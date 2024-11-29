@@ -11,17 +11,17 @@ void ViConfig_UpdateVi(u32 black);
 void ViConfig_UpdateBlack(void);
 void Locale_Init(void);
 void Locale_ResetRegion(void);
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void isPrintfInit(void);
 #endif
 void rmonPrintf(const char* fmt, ...);
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void* is_proutSyncPrintf(void* arg, const char* str, size_t count);
 NORETURN void func_80002384(const char* exp, const char* file, int line);
 #endif
 OSPiHandle* osDriveRomInit(void);
 void Mio0_Decompress(u8* src, u8* dst);
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void LogUtils_LogHexDump(void* ptr, s32 size0);
 void LogUtils_CheckNullPointer(const char* exp, void* ptr, const char* file, int line);
 void LogUtils_CheckValidPointer(const char* exp, void* ptr, const char* file, int line);
@@ -46,7 +46,9 @@ s32 func_800635D0(s32);
 void Regs_Init(void);
 void DebugCamera_ScreenText(u8 x, u8 y, const char* text); // ENABLE_NO_CLIP
 void DebugCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text); // ENABLE_CAMERA_DEBUGGER
+#if DEBUG_FEATURES
 void Regs_UpdateEditor(Input* input); // ENABLE_REG_EDITOR
+#endif
 void Debug_DrawText(GraphicsContext* gfxCtx); // ENABLE_CAMERA_DEBUGGER || ENABLE_REG_EDITOR
 void DebugDisplay_Init(void);
 DebugDispObject* DebugDisplay_AddObject(f32 posX, f32 posY, f32 posZ, s16 rotX, s16 rotY, s16 rotZ, f32 scaleX,
@@ -228,7 +230,7 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
 void GameState_Destroy(GameState* gameState);
 GameStateFunc GameState_GetInit(GameState* gameState);
 u32 GameState_IsRunning(GameState* gameState);
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void* GameState_Alloc(GameState* gameState, size_t size, const char* file, int line);
 void* GameAlloc_MallocDebug(GameAlloc* this, u32 size, const char* file, int line);
 #endif
@@ -272,7 +274,7 @@ void DebugArena_Check(void);
 void DebugArena_Init(void* start, u32 size);
 void DebugArena_Cleanup(void);
 s32 DebugArena_IsInitialized(void);
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void DebugArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action);
 void* DebugArena_MallocDebug(u32 size, const char* file, int line);
 void* DebugArena_MallocRDebug(u32 size, const char* file, int line);

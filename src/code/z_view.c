@@ -337,7 +337,7 @@ s32 View_ApplyPerspective(View* view) {
     height = view->viewport.bottomY - view->viewport.topY;
     aspect = (f32)width / (f32)height;
 
-    if (IS_DEBUG && R_HREG_MODE == HREG_MODE_PERSPECTIVE) {
+    if (DEBUG_FEATURES && R_HREG_MODE == HREG_MODE_PERSPECTIVE) {
         if (R_PERSPECTIVE_INIT != HREG_MODE_PERSPECTIVE) {
             R_PERSPECTIVE_INIT = HREG_MODE_PERSPECTIVE;
             R_PERSPECTIVE_FOVY = 60;
@@ -352,7 +352,7 @@ s32 View_ApplyPerspective(View* view) {
         guPerspective(projection, &view->normal, view->fovy, aspect, view->zNear, view->zFar, view->scale);
     }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     if (QREG(88) & 1) {
         s32 i;
         MtxF mf;
@@ -401,7 +401,7 @@ s32 View_ApplyPerspective(View* view) {
 
     view->viewing = *viewing;
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     // Debug print view matrix
     if (QREG(88) & 2) {
         s32 i;
@@ -697,7 +697,7 @@ s32 View_ApplyTo(View* view, s32 mask, Gfx** gfxP) {
     return 1;
 }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 /**
  * Logs an error and returns nonzero if camera is too far from the origin.
  */

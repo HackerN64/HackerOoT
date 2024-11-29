@@ -15,7 +15,7 @@
 #if OOT_VERSION < NTSC_1_1
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5)
 #else
-#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_UPDATE_DURING_OCARINA)
 #endif
 
 typedef enum BgDyYoseizoRewardType {
@@ -287,7 +287,7 @@ void BgDyYoseizo_ChooseType(BgDyYoseizo* this, PlayState* play) {
     }
 
     if (givingReward) {
-        if (!IS_CUTSCENE_LAYER || !IS_DEBUG) {
+        if (!IS_CUTSCENE_LAYER || !DEBUG_FEATURES) {
             if (play->sceneId != SCENE_GREAT_FAIRYS_FOUNTAIN_MAGIC) {
                 switch (this->fountainType) {
                     case FAIRY_SPELL_FARORES_WIND:

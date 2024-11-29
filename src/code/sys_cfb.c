@@ -13,10 +13,10 @@ void SysCfb_Init(s32 n64dd) {
 
     if (osMemSize >= 0x800000) {
         PRINTF(T("８Ｍバイト以上のメモリが搭載されています\n", "8MB or more memory is installed\n"));
-        tmpFbEnd = IS_DEBUG_HEAP_ENABLED ? 0x8044BE80 : SYS_CFB_END;
+        tmpFbEnd = SYS_CFB_END;
         if (n64dd == 1) {
             PRINTF(T("RAM 8M mode (N64DD対応)\n", "RAM 8M mode (N64DD compatible)\n"));
-#if IS_DEBUG
+#if DEBUG_FEATURES
             sSysCfbEnd = 0x805FB000;
 #else
             sSysCfbEnd = 0x80600000;

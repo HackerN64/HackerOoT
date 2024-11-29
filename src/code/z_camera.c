@@ -5,15 +5,11 @@
 #include "overlays/actors/ovl_En_Horse/z_en_horse.h"
 
 #pragma increment_block_number "gc-eu:192 gc-eu-mq:192 gc-jp:192 gc-jp-ce:192 gc-jp-mq:192 gc-us:192 gc-us-mq:192" \
-                               "ntsc-1.2:192 pal-1.0:192 pal-1.1:192"
+                               "ntsc-1.0:192 ntsc-1.1:192 ntsc-1.2:192 pal-1.0:192 pal-1.1:192"
 
 s16 Camera_RequestSettingImpl(Camera* camera, s16 requestedSetting, s16 flags);
 s32 Camera_RequestModeImpl(Camera* camera, s16 requestedMode, u8 forceModeChange);
 s32 Camera_UpdateWater(Camera* camera);
-
-#if IS_CAMERA_DEBUG_ENABLED
-s32 Camera_QRegInit(void);
-#endif
 
 #if PLATFORM_N64
 #define CAMERA_CHECK_BTN(input, btn) PadUtils_CheckPressed((input), (btn))
@@ -22,6 +18,8 @@ s32 Camera_QRegInit(void);
 #endif
 
 #if IS_CAMERA_DEBUG_ENABLED
+s32 Camera_QRegInit(void);
+
 #define CAM_DEBUG_RELOAD_PREG(camera)        \
     if (R_RELOAD_CAM_PARAMS) {               \
         Camera_CopyPREGToModeValues(camera); \
@@ -46,7 +44,7 @@ s32 Camera_QRegInit(void);
  * runtime. If a small f32 is being stored as an s16, it is common to store that value 100 times larger than the
  * original value. This is then scaled back down during runtime with the CAM_DATA_SCALED macro.
  */
-#define CAM_DATA_SCALED(x) ((x)*0.01f)
+#define CAM_DATA_SCALED(x) ((x) * 0.01f)
 
 // Load the next value from camera read-only data stored in CameraModeValue
 #define GET_NEXT_RO_DATA(values) ((values++)->val)
@@ -3633,7 +3631,7 @@ s32 Camera_KeepOn3(Camera* camera) {
 }
 
 #pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
-                               "ntsc-1.2:93 pal-1.0:91 pal-1.1:91"
+                               "ntsc-1.0:90 ntsc-1.1:90 ntsc-1.2:90 pal-1.0:88 pal-1.1:88"
 
 s32 Camera_KeepOn4(Camera* camera) {
     static Vec3f D_8015BD50;
@@ -8277,7 +8275,7 @@ Vec3s Camera_Update(Camera* camera) {
                CAM_BINANG_TO_DEG(camera->camDir.x), camera->camDir.y, CAM_BINANG_TO_DEG(camera->camDir.y));
     }
 
-#if OOT_DEBUG
+#if DEBUG_FEATURES
     if (camera->timer != -1 && CAMERA_CHECK_BTN(&D_8015BD7C->state.input[0], BTN_DRIGHT)) {
         camera->timer = 0;
     }
@@ -8620,7 +8618,7 @@ s32 Camera_RequestBgCam(Camera* camera, s32 requestedBgCamIndex) {
     if (!(camera->behaviorFlags & CAM_BEHAVIOR_BG_PROCESSED)) {
         requestedCamSetting = Camera_GetBgCamSetting(camera, requestedBgCamIndex);
         camera->behaviorFlags |= CAM_BEHAVIOR_BG_PROCESSED;
-#if OOT_DEBUG
+#if DEBUG_FEATURES
         settingChangeSuccessful = Camera_RequestSettingImpl(camera, requestedCamSetting,
                                                             CAM_REQUEST_SETTING_PRESERVE_BG_CAM_INDEX |
                                                                 CAM_REQUEST_SETTING_FORCE_CHANGE) >= 0;
@@ -8905,7 +8903,7 @@ void Camera_SetCameraData(Camera* camera, s16 setDataFlags, void* data0, void* d
     }
 }
 
-#if OOT_DEBUG
+#if DEBUG_FEATURES
 s32 Camera_QRegInit(void) {
     if (!R_RELOAD_CAM_PARAMS) {
         QREG(2) = 1;
