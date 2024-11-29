@@ -221,7 +221,8 @@ void EnKakasi2_Update(Actor* thisx, PlayState* play2) {
         CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
     }
 
-    if (IS_ACTOR_DEBUG_ENABLED && BREG(0) != 0) {
+#if IS_ACTOR_DEBUG_ENABLED
+    if (BREG(0) != 0) {
         if (BREG(5) != 0) {
             PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ this->actor.player_distance ☆☆☆☆☆ %f\n" VT_RST, this->actor.xzDistToPlayer);
             PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ this->hosei.x ☆☆☆☆☆ %f\n" VT_RST, this->maxSpawnDistance.x);
@@ -241,6 +242,7 @@ void EnKakasi2_Update(Actor* thisx, PlayState* play2) {
             }
         }
     }
+#endif
 }
 
 void func_80A90948(Actor* thisx, PlayState* play) {

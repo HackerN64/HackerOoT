@@ -24,10 +24,10 @@
     #define BOOT_TO_SCENE false
     #define BOOT_TO_SCENE_NEW_GAME_ONLY false
     #define BOOT_TO_FILE_SELECT false
-    #define DEBUG_FEATURES true
+    #define DEBUG_FEATURES false
 #endif
 
-#if DISABLE_DEBUG_FEATURES
+#if !DEBUG_FEATURES
     #undef SHOW_CS_INFOS
     #undef SHOW_INPUT_DISPLAY
     #undef SHOW_TIME_INFOS
@@ -198,15 +198,6 @@
     #define ENABLE_DEBUG_SAVE false
     #define MAP_SELECT_ON_FILE_1 true
     #define ENABLE_MOTION_BLUR_DEBUG false
-#endif
-
-/**
- * Used in if statements
-*/
-#if ENABLE_HACKEROOT
-#define IS_DEBUG (OOT_DEBUG && !DISABLE_DEBUG_FEATURES)
-#else
-#define IS_DEBUG OOT_DEBUG
 #endif
 
 #if ENABLE_PROFILER && !ENABLE_HACKER_DEBUG

@@ -327,7 +327,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gSPBranchList(WORK_DISP++, gfxCtx->polyOpaBuffer);
     gSPBranchList(POLY_OPA_DISP++, gfxCtx->polyXluBuffer);
     gSPBranchList(POLY_XLU_DISP++, gfxCtx->overlayBuffer);
-#if IS_DEBUG
+#if DEBUG_FEATURES
     gSPBranchList(OVERLAY_DISP++, gfxCtx->debugBuffer);
     gSPBranchList(DEBUG_DISP++, WORK_DISP);
     gDPPipeSync(WORK_DISP++);

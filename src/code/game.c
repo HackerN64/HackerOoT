@@ -107,7 +107,7 @@ void func_800C4344(GameState* gameState) {
     gDmaMgrDmaBuffSize = SREG(21) != 0 ? ALIGN16(SREG(21)) : DMAMGR_DEFAULT_BUFSIZE;
     gSystemArenaLogSeverity = HREG(61);
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     gZeldaArenaLogSeverity = HREG(62);
 #endif
 
@@ -122,7 +122,7 @@ void func_800C4344(GameState* gameState) {
         if (R_PRINT_MEMORY_TRIGGER < 0) {
             R_PRINT_MEMORY_TRIGGER = 0;
             hexDumpSize = (u32)(R_PRINT_MEMORY_SIZE == 0 ? 0x100 : R_PRINT_MEMORY_SIZE * 0x10);
-#if IS_DEBUG
+#if DEBUG_FEATURES
             LogUtils_LogHexDump((void*)(0x80000000 + (R_PRINT_MEMORY_ADDR << 8)), hexDumpSize);
 #endif
         }
@@ -185,9 +185,11 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 #if DEBUG_FEATURES
     sLastButtonPressed = gameState->input[0].press.button | gameState->input[0].cur.button;
 
-    if (CAN_SHOW_INPUT_DISPLAY && R_DISABLE_INPUT_DISPLAY == 0) {
+#if CAN_SHOW_INPUT_DISPLAY
+    if (R_DISABLE_INPUT_DISPLAY == 0) {
         GameState_DrawInputDisplay(sLastButtonPressed, &newDList);
     }
+#endif
 
     if (IS_AUDIO_DEBUG_ENABLED && (R_ENABLE_AUDIO_DBG & 1)) {
         s32 pad;
@@ -205,7 +207,9 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     if (R_ENABLE_ARENA_DBG < 0) {
 #if PLATFORM_GC && DEBUG_FEATURES
         s32 pad;
+#if IS_DEBUG_HEAP_ENABLED
         DebugArena_Display();
+#endif
         SystemArena_Display();
 #endif
         PRINTF(T("ハイラル滅亡まであと %08x バイト(game_alloc)\n",
@@ -220,7 +224,7 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 
     CLOSE_DISPS(gfxCtx, "../game.c", 800);
 
-    if (IS_DEBUG && (ENABLE_CAMERA_DEBUGGER || ENABLE_REG_EDITOR)) {
+    if (DEBUG_FEATURES && (ENABLE_CAMERA_DEBUGGER || ENABLE_REG_EDITOR)) {
         Debug_DrawText(gfxCtx);
     }
 

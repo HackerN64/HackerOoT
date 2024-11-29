@@ -820,7 +820,7 @@ void PreRender_ApplyFilters(PreRender* this) {
                 }
             }
 
-            if (IS_DEBUG && PRERENDER_DIVOT_CONTROL != 0) {
+            if (DEBUG_FEATURES && PRERENDER_DIVOT_CONTROL != 0) {
                 // Apply divot filter
                 PreRender_DivotFilter(this);
             }

@@ -11649,8 +11649,6 @@ beginseg
     number 0
 endseg
 
-// Scene files are reordered between versions. On GameCube and iQue, dungeon scenes
-// have been moved to the beginning.
 #if PLATFORM_N64
 
 beginseg
@@ -17423,7 +17421,7 @@ beginseg
     number 3
 endseg
 
-#if CAN_INCLUDE_TEST_SCENES
+#if DEBUG_ASSETS
 beginseg
     name "syotes_scene"
     romalign 0x1000
@@ -17947,7 +17945,7 @@ beginseg
     number 3
 endseg
 
-#if CAN_INCLUDE_TEST_SCENES
+#if DEBUG_ASSETS
 beginseg
     name "testroom_scene"
     romalign 0x1000
@@ -18031,7 +18029,7 @@ beginseg
     number 3
 endseg
 
-#if CAN_INCLUDE_TEST_SCENES
+#if DEBUG_ASSETS
 beginseg
     name "sutaru_scene"
     romalign 0x1000
@@ -18319,7 +18317,7 @@ beginseg
     number 3
 endseg
 
-#if CAN_INCLUDE_TEST_SCENES
+#if DEBUG_ASSETS
 beginseg
     name "sasatest_scene"
     romalign 0x1000
@@ -19071,7 +19069,7 @@ beginseg
     number 3
 endseg
 
-#if CAN_INCLUDE_TEST_SCENES
+#if DEBUG_ASSETS
 beginseg
     name "hairal_niwa2_scene"
     romalign 0x1000
@@ -19559,7 +19557,7 @@ beginseg
     number 3
 endseg
 
-#if CAN_INCLUDE_TEST_SCENES
+#if DEBUG_ASSETS
 beginseg
     name "besitu_scene"
     romalign 0x1000
@@ -19631,10 +19629,9 @@ beginseg
     number 3
 endseg
 
-#if CAN_INCLUDE_TEST_SCENES
+#if DEBUG_ASSETS
 beginseg
     name "test01_scene"
-    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/scenes/test_levels/test01/test01_scene.o"
     number 2
@@ -19642,11 +19639,12 @@ endseg
 
 beginseg
     name "test01_room_0"
-    compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/scenes/test_levels/test01/test01_room_0.o"
     number 3
 endseg
+#endif
+
 #endif
 
 #if !ENABLE_HACKEROOT

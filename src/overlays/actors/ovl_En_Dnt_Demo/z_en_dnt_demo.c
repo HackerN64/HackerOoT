@@ -335,7 +335,8 @@ void EnDntDemo_Update(Actor* thisx, PlayState* play) {
     }
     this->actionFunc(this, play);
 
-    if (IS_ACTOR_DEBUG_ENABLED && BREG(0)) {
+#if IS_ACTOR_DEBUG_ENABLED
+    if (BREG(0)) {
         if (this->debugArrowTimer != 0) {
             if (!(this->debugArrowTimer & 1)) {
                 DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
@@ -348,4 +349,5 @@ void EnDntDemo_Update(Actor* thisx, PlayState* play) {
                                    1.0f, 1.0f, 255, 255, 255, 255, 4, play->state.gfxCtx);
         }
     }
+#endif
 }

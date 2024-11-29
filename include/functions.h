@@ -274,7 +274,7 @@ void DebugArena_Check(void);
 void DebugArena_Init(void* start, u32 size);
 void DebugArena_Cleanup(void);
 s32 DebugArena_IsInitialized(void);
-#if DEBUG_FEATURES
+#if IS_DEBUG_HEAP_ENABLED
 void DebugArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action);
 void* DebugArena_MallocDebug(u32 size, const char* file, int line);
 void* DebugArena_MallocRDebug(u32 size, const char* file, int line);

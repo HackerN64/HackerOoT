@@ -113,7 +113,7 @@
 #define LOG_UTILS_CHECK_VALID_POINTER(exp, ptr, ...) (void)0
 #define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_Malloc(alloc, size)
 
-#endif /* IS_DEBUG */
+#endif /* DEBUG_FEATURES */
 
 #if PLATFORM_N64 || DEBUG_FEATURES
 #define HUNGUP_AND_CRASH(...) Fault_AddHungupAndCrash(__FILE__, __LINE__)
@@ -169,7 +169,7 @@ _DW({                                                                   \
 
 // HackerOoT
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 // if using button combo check for the input, else simply return true
 #define DEBUG_BTN_COMBO(useCombo, btnToHold, btnToPress, input) ((useCombo ? CHECK_BTN_ALL(input->cur.button, btnToHold) : true) && CHECK_BTN_ALL(input->press.button, btnToPress))
 #else

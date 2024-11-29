@@ -9,7 +9,7 @@ void __osDisplayArena(Arena* arena);
 
 Arena sDebugArena;
 
-#if DEBUG_FEATURES
+#if IS_DEBUG_HEAP_ENABLED
 s32 gDebugArenaLogSeverity = LOG_SEVERITY_ERROR;
 
 void DebugArena_CheckPointer(void* ptr, u32 size, const char* name, const char* action) {
@@ -38,7 +38,7 @@ void* DebugArena_Malloc(u32 size) {
     return ptr;
 }
 
-#if DEBUG_FEATURES
+#if IS_DEBUG_HEAP_ENABLED
 void* DebugArena_MallocDebug(u32 size, const char* file, int line) {
     void* ptr = __osMallocDebug(&sDebugArena, size, file, line);
 
@@ -54,7 +54,7 @@ void* DebugArena_MallocR(u32 size) {
     return ptr;
 }
 
-#if DEBUG_FEATURES
+#if IS_DEBUG_HEAP_ENABLED
 void* DebugArena_MallocRDebug(u32 size, const char* file, int line) {
     void* ptr = __osMallocRDebug(&sDebugArena, size, file, line);
 
@@ -69,7 +69,7 @@ void* DebugArena_Realloc(void* ptr, u32 newSize) {
     return ptr;
 }
 
-#if DEBUG_FEATURES
+#if IS_DEBUG_HEAP_ENABLED
 void* DebugArena_ReallocDebug(void* ptr, u32 newSize, const char* file, int line) {
     ptr = __osReallocDebug(&sDebugArena, ptr, newSize, file, line);
     DEBUG_ARENA_CHECK_POINTER(ptr, newSize, "debug_realloc_DEBUG", "再確保"); // "Re-securing"
@@ -81,7 +81,7 @@ void DebugArena_Free(void* ptr) {
     __osFree(&sDebugArena, ptr);
 }
 
-#if DEBUG_FEATURES
+#if IS_DEBUG_HEAP_ENABLED
 void DebugArena_FreeDebug(void* ptr, const char* file, int line) {
     __osFreeDebug(&sDebugArena, ptr, file, line);
 }
@@ -100,13 +100,11 @@ void* DebugArena_Calloc(u32 num, u32 size) {
     return ret;
 }
 
-#if PLATFORM_GC && DEBUG_FEATURES
+#if PLATFORM_GC && IS_DEBUG_HEAP_ENABLED
 void DebugArena_Display(void) {
-    if (IS_DEBUG_HEAP_ENABLED) {
-        // Likely copypasted from ZeldaArena_Display, should say "Debug"
-        PRINTF(T("ゼルダヒープ表示\n", "Zelda heap display\n"));
-        __osDisplayArena(&sDebugArena);
-    }
+    // Likely copypasted from ZeldaArena_Display, should say "Debug"
+    PRINTF(T("ゼルダヒープ表示\n", "Zelda heap display\n"));
+    __osDisplayArena(&sDebugArena);
 }
 #endif
 
@@ -119,14 +117,14 @@ void DebugArena_Check(void) {
 }
 
 void DebugArena_Init(void* start, u32 size) {
-#if DEBUG_FEATURES
+#if IS_DEBUG_HEAP_ENABLED
     gDebugArenaLogSeverity = LOG_SEVERITY_NOLOG;
 #endif
     __osMallocInit(&sDebugArena, start, size);
 }
 
 void DebugArena_Cleanup(void) {
-#if DEBUG_FEATURES
+#if IS_DEBUG_HEAP_ENABLED
     gDebugArenaLogSeverity = LOG_SEVERITY_NOLOG;
 #endif
     __osMallocCleanup(&sDebugArena);

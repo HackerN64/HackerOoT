@@ -1,7 +1,7 @@
 #include "z64.h"
 #include "functions.h"
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void Math3D_VtxF2L(Vtx* r, Vec3f* v) {
     r->n.ob[0] = Math_FFloorF(0.5f + v->x * 128.0f);
     r->n.ob[1] = Math_FFloorF(0.5f + v->y * 128.0f);

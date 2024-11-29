@@ -3330,7 +3330,7 @@ void KaleidoScope_DrawGameOver(PlayState* play) {
     CLOSE_DISPS(gfxCtx, "../z_kaleido_scope_PAL.c", 3169);
 }
 
-#if IS_DEBUG && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)
+#if DEBUG_FEATURES && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)
 #define CAN_DRAW_PAUSE_MENU (pauseCtx->debugState == 0)
 #else
 #define CAN_DRAW_PAUSE_MENU true
@@ -3376,7 +3376,7 @@ void KaleidoScope_Draw(PlayState* play) {
         KaleidoScope_DrawGameOver(play);
     }
 
-    if (IS_DEBUG &&
+    if (DEBUG_FEATURES &&
         ((ENABLE_INV_EDITOR && (pauseCtx->debugState == 1)) || (ENABLE_EVENT_EDITOR && (pauseCtx->debugState == 2)))) {
         KaleidoScope_DrawDebugEditor(play);
     }
@@ -4263,7 +4263,7 @@ void KaleidoScope_Update(PlayState* play) {
                             pauseCtx->alpha = 0;
                         }
                     } else {
-                        if (IS_DEBUG && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)) {
+                        if (DEBUG_FEATURES && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)) {
                             pauseCtx->debugState = 0;
                         }
                         pauseCtx->state = PAUSE_STATE_RESUME_GAMEPLAY;

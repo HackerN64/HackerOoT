@@ -3195,7 +3195,7 @@ void func_8008A994(InterfaceContext* interfaceCtx) {
     View_ApplyOrthoToOverlay(&interfaceCtx->view);
 }
 
-#if IS_DEBUG && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)
+#if DEBUG_FEATURES && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)
 #define CAN_DRAW_INTERFACE (pauseCtx->debugState == 0)
 #else
 #define CAN_DRAW_INTERFACE true

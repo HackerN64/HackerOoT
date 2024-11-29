@@ -52,7 +52,7 @@ typedef struct GraphicsContext {
     /* 0x02F4 */ f32 xScale;
     /* 0x02F8 */ f32 yScale;
 #endif
-#if IS_DEBUG
+#if DEBUG_FEATURES
     /* 0x02FC */ Gfx* debugBuffer;
     TwoHeadGfxArena debug;
 #endif
