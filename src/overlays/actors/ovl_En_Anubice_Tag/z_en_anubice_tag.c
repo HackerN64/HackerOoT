@@ -102,8 +102,8 @@ void EnAnubiceTag_Draw(Actor* thisx, PlayState* play) {
 #if IS_ACTOR_DEBUG_ENABLED
     if (BREG(0) != 0) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
-                        this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
-                        1.0f, 255, 0, 0, 255, 4, play->state.gfxCtx);
+                               this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
+                               1.0f, 255, 0, 0, 255, 4, play->state.gfxCtx);
     }
 #endif
 }

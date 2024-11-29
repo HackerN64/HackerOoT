@@ -10727,15 +10727,15 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     u32 giAllocSize = Player_GetGIAllocSize();
 
 #if ENABLE_AUTO_GI_ALLOC
-        this->giObjectSegment = (void*)ALIGN16((uintptr_t)ZELDA_ARENA_MALLOC(giAllocSize, __FILE__, __LINE__));
+    this->giObjectSegment = (void*)ALIGN16((uintptr_t)ZELDA_ARENA_MALLOC(giAllocSize, __FILE__, __LINE__));
 #else
-        ASSERT(giAllocSize < GI_ALLOC_SIZE, "[HackerOoT:ERROR]: GI Object larger than the allocated size.", __FILE__,
-               __LINE__);
-        // `giObjectSegment` is used for both "get item" objects and title cards. The maximum size for
-        // get item objects is 0x2000 (see the assert in func_8083AE40), and the maximum size for
-        // title cards is 0x1000 * LANGUAGE_MAX since each title card image includes all languages.
-        this->giObjectSegment =
-            (void*)(((uintptr_t)ZELDA_ARENA_MALLOC(0x1000 * LANGUAGE_MAX + 8, "../z_player.c", 17175) + 8) & ~0xF);
+    ASSERT(giAllocSize < GI_ALLOC_SIZE, "[HackerOoT:ERROR]: GI Object larger than the allocated size.", __FILE__,
+           __LINE__);
+    // `giObjectSegment` is used for both "get item" objects and title cards. The maximum size for
+    // get item objects is 0x2000 (see the assert in func_8083AE40), and the maximum size for
+    // title cards is 0x1000 * LANGUAGE_MAX since each title card image includes all languages.
+    this->giObjectSegment =
+        (void*)(((uintptr_t)ZELDA_ARENA_MALLOC(0x1000 * LANGUAGE_MAX + 8, "../z_player.c", 17175) + 8) & ~0xF);
 #endif
 
     respawnFlag = gSaveContext.respawnFlag;
@@ -14557,9 +14557,8 @@ s32 Player_UpdateNoclip(Player* this, PlayState* play) {
     sControlInput = &play->state.input[0];
 
     if ((CHECK_BTN_ALL(sControlInput->cur.button, BTN_L | BTN_R | BTN_A) &&
-            CHECK_BTN_ALL(sControlInput->press.button, BTN_B)) ||
-        (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) &&
-            CHECK_BTN_ALL(sControlInput->press.button, BTN_DRIGHT))) {
+         CHECK_BTN_ALL(sControlInput->press.button, BTN_B)) ||
+        (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DRIGHT))) {
 
         sNoclipEnabled ^= 1;
         cameraMode = 0;
@@ -14690,8 +14689,7 @@ s32 Player_UpdateNoclip(Player* this, PlayState* play) {
         this->actor.velocity.y = 0.0f;
         this->actor.velocity.x = 0.0f;
 
-        if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) &&
-            CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT)) {
+        if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_L) && CHECK_BTN_ALL(sControlInput->press.button, BTN_DLEFT)) {
             Flags_SetTempClear(play, play->roomCtx.curRoom.num);
         }
 
