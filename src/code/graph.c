@@ -119,13 +119,17 @@ void Graph_InitTHGA(GraphicsContext* gfxCtx) {
     THGA_Init(&gfxCtx->polyXlu, pool->polyXluBuffer, sizeof(pool->polyXluBuffer));
     THGA_Init(&gfxCtx->overlay, pool->overlayBuffer, sizeof(pool->overlayBuffer));
     THGA_Init(&gfxCtx->work, pool->workBuffer, sizeof(pool->workBuffer));
+#if IS_DEBUG
     THGA_Init(&gfxCtx->debug, pool->debugBuffer, sizeof(pool->debugBuffer));
+#endif
 
     gfxCtx->polyOpaBuffer = pool->polyOpaBuffer;
     gfxCtx->polyXluBuffer = pool->polyXluBuffer;
     gfxCtx->overlayBuffer = pool->overlayBuffer;
     gfxCtx->workBuffer = pool->workBuffer;
+#if IS_DEBUG
     gfxCtx->debugBuffer = pool->debugBuffer;
+#endif
 
     gfxCtx->curFrameBuffer = SysCfb_GetFbPtr(gfxCtx->fbIdx % 2);
     gfxCtx->unk_014 = 0;
