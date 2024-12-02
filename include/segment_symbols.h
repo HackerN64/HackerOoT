@@ -92,7 +92,7 @@ DECLARE_ROM_SEGMENT(debug)
 DECLARE_BSS_SEGMENT(debug)
 #endif
 
-// N64-only, not wrapped in these are not wrapped in an `#if PLATFORM_N64`
+// N64-only, these are not wrapped in an `#if PLATFORM_N64`
 // so that the N64DD code can always be built.
 DECLARE_SEGMENT(n64dd)
 DECLARE_ROM_SEGMENT(n64dd)
@@ -662,8 +662,9 @@ DECLARE_ROM_SEGMENT(spot20_room_0)
 
 DECLARE_ROM_SEGMENT(ganon_tou_room_0)
 
-// Room symbols for compiling test scenes, these are not wrapped in an `#if OOT_DEBUG`
-// so that debug ROMs (including gc-eu-mq-dbg) can be built with OOT_DEBUG=0.
+// Room symbols for compiling test scenes.
+// These are not wrapped in an `#if DEBUG_ASSETS` so that debug ROMs
+// can be built with DEBUG_ASSETS=0 (e.g. when DEBUG_FEATURES=0)
 
 DECLARE_ROM_SEGMENT(test01_room_0)
 

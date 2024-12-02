@@ -8,7 +8,7 @@
 #define GFXPOOL_TAIL_MAGIC 0x5678
 
 #pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
-                               "ntsc-1.2:192 pal-1.0:192 pal-1.1:192"
+                               "ntsc-1.0:160 ntsc-1.1:160 ntsc-1.2:160 pal-1.0:160 pal-1.1:160"
 
 /**
  * The time at which the previous `Graph_Update` ended.
@@ -30,7 +30,7 @@ OSTime sGraphPrevTaskTimeStart;
 u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT]; // pointer-to-array, array itself is allocated (see below)
 #endif
 
-#if PLATFORM_GC && IS_DEBUG
+#if DEBUG_FEATURES
 FaultClient sGraphFaultClient;
 
 UCodeInfo D_8012D230[3] = {
@@ -119,7 +119,7 @@ void Graph_InitTHGA(GraphicsContext* gfxCtx) {
     THGA_Init(&gfxCtx->polyXlu, pool->polyXluBuffer, sizeof(pool->polyXluBuffer));
     THGA_Init(&gfxCtx->overlay, pool->overlayBuffer, sizeof(pool->overlayBuffer));
     THGA_Init(&gfxCtx->work, pool->workBuffer, sizeof(pool->workBuffer));
-#if IS_DEBUG
+#if DEBUG_FEATURES
     THGA_Init(&gfxCtx->debug, pool->debugBuffer, sizeof(pool->debugBuffer));
 #endif
 
@@ -127,7 +127,7 @@ void Graph_InitTHGA(GraphicsContext* gfxCtx) {
     gfxCtx->polyXluBuffer = pool->polyXluBuffer;
     gfxCtx->overlayBuffer = pool->overlayBuffer;
     gfxCtx->workBuffer = pool->workBuffer;
-#if IS_DEBUG
+#if DEBUG_FEATURES
     gfxCtx->debugBuffer = pool->debugBuffer;
 #endif
 
@@ -168,21 +168,21 @@ void Graph_Init(GraphicsContext* gfxCtx) {
 
     osCreateMesgQueue(&gfxCtx->queue, gfxCtx->msgBuff, ARRAY_COUNT(gfxCtx->msgBuff));
 
-#if PLATFORM_GC && IS_DEBUG
+#if DEBUG_FEATURES
     func_800D31F0();
     Fault_AddClient(&sGraphFaultClient, Graph_FaultClient, NULL, NULL);
 #endif
 }
 
 void Graph_Destroy(GraphicsContext* gfxCtx) {
-#if PLATFORM_GC && IS_DEBUG
+#if DEBUG_FEATURES
     func_800D3210();
     Fault_RemoveClient(&sGraphFaultClient);
 #endif
 }
 
 void Graph_TaskSet00(GraphicsContext* gfxCtx) {
-#if IS_DEBUG
+#if DEBUG_FEATURES
     static Gfx* sPrevTaskWorkBuffer = NULL;
 #endif
     OSTask_t* task = &gfxCtx->task.list.t;
@@ -199,7 +199,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
         osStopTimer(&timer);
 
         if (msg == (OSMesg)666) {
-#if PLATFORM_GC && OOT_DEBUG
+#if DEBUG_FEATURES
             PRINTF(VT_FGCOL(RED));
             PRINTF(T("RCPが帰ってきませんでした。", "RCP did not return."));
             PRINTF(VT_RST);
@@ -222,7 +222,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
 
         osRecvMesg(&gfxCtx->queue, &msg, OS_MESG_NOBLOCK);
 
-#if OOT_DEBUG
+#if DEBUG_FEATURES
         sPrevTaskWorkBuffer = gfxCtx->workBuffer;
 #endif
     }
@@ -299,7 +299,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gameState->inPreNMIState = false;
     Graph_InitTHGA(gfxCtx);
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     OPEN_DISPS(gfxCtx, "../graph.c", 966);
 
     gDPNoOpString(WORK_DISP++, "WORK_DISP 開始", 0);
@@ -314,7 +314,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     GameState_ReqPadData(gameState);
     GameState_Update(gameState);
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     OPEN_DISPS(gfxCtx, "../graph.c", 987);
 
     gDPNoOpString(WORK_DISP++, "WORK_DISP 終了", 0);
@@ -331,7 +331,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     gSPBranchList(WORK_DISP++, gfxCtx->polyOpaBuffer);
     gSPBranchList(POLY_OPA_DISP++, gfxCtx->polyXluBuffer);
     gSPBranchList(POLY_XLU_DISP++, gfxCtx->overlayBuffer);
-#if IS_DEBUG
+#if DEBUG_FEATURES
     gSPBranchList(OVERLAY_DISP++, gfxCtx->debugBuffer);
     gSPBranchList(DEBUG_DISP++, WORK_DISP);
     gDPPipeSync(WORK_DISP++);
@@ -345,7 +345,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
 
     CLOSE_DISPS(gfxCtx, "../graph.c", 1028);
 
-#if PLATFORM_GC && IS_DEBUG
+#if DEBUG_FEATURES
     if (R_HREG_MODE == HREG_MODE_PLAY && R_PLAY_ENABLE_UCODE_DISAS == 2) {
         R_HREG_MODE = HREG_MODE_UCODE_DISAS;
         R_UCODE_DISAS_TOGGLE = -1;
@@ -440,7 +440,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
 
     Audio_Update();
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     if (IS_MAP_SELECT_ENABLED && CHECK_BTN_ALL(gameState->input[0].press.button, BTN_Z) &&
         CHECK_BTN_ALL(gameState->input[0].cur.button, BTN_L | BTN_R)) {
         gSaveContext.gameMode = GAMEMODE_NORMAL;
@@ -487,7 +487,7 @@ void Graph_ThreadEntry(void* arg0) {
         gameState = SYSTEM_ARENA_MALLOC(size, "../graph.c", 1196);
 
         if (gameState == NULL) {
-#if IS_DEBUG
+#if DEBUG_FEATURES
             char faultMsg[0x50];
 
             PRINTF(T("確保失敗\n", "Failure to secure\n"));
@@ -540,7 +540,7 @@ void* Graph_Alloc2(GraphicsContext* gfxCtx, size_t size) {
     return THGA_AllocTail(&gfxCtx->polyOpa, ALIGN16(size));
 }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void Graph_OpenDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file, int line) {
 #if GBI_DEBUG
     dispRefs[0] = gfxCtx->polyOpa.p;

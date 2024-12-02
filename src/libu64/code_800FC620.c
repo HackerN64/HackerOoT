@@ -14,7 +14,7 @@ typedef struct InitFunc {
 // .data
 void* sInitFuncs = NULL;
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 char sNew[] = "new";
 #else
 char sNew[] = "";
@@ -38,7 +38,7 @@ void* func_800FC800(u32 size) {
         size = 1;
     }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     ptr = __osMallocDebug(&gSystemArena, size, sNew, 0);
 #else
     ptr = __osMalloc(&gSystemArena, size);

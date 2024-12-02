@@ -81,7 +81,7 @@ extern u64 gMojiFontTLUTs[4][4]; // original name: "moji_tlut"
 extern u64 gMojiFontTex[]; // original name: "font_ff"
 extern u8 gBossMarkState;
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 extern u32 gIsCtrlr2Valid;
 #endif
 extern s16* gWaveSamples[9];
@@ -121,19 +121,17 @@ extern u16 D_801333D0;
 extern Vec3f gSfxDefaultPos;
 extern f32 gSfxDefaultFreqAndVolScale;
 extern s8 gSfxDefaultReverb;
-
-// ENABLE_AUDIO_DEBUGGER
+#if IS_AUDIO_DEBUG_ENABLED
 extern u8 D_801333F0;
 extern u8 gAudioSfxSwapOff;
 extern u8 D_801333F8;
-
+#endif
 extern u8 gSeqCmdWritePos;
 extern u8 gSeqCmdReadPos;
 extern u8 gStartSeqDisabled;
-
-// ENABLE_AUDIO_DEBUGGER
+#if IS_AUDIO_DEBUG_ENABLED
 extern u8 gAudioDebugPrintSeqCmd;
-
+#endif
 extern u8 gSoundModeList[];
 extern u8 gAudioSpecId;
 extern u8 D_80133418;

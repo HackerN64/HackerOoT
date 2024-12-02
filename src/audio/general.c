@@ -133,7 +133,7 @@ f32 D_801305E4[4] = { 1.0f, 1.12246f, 1.33484f, 1.33484f }; // 2**({0, 2, 5, 5}/
 f32 D_801305F4 = 1.0f;
 u8 sGanonsTowerLevelsVol[8] = { 127, 80, 75, 73, 70, 68, 65, 60 };
 u8 sEnterGanonsTowerTimer = 0;
-#if IS_DEBUG
+#if DEBUG_FEATURES
 s8 sSoundMode = SOUNDMODE_SURROUND;
 #else
 s8 sSoundMode = SOUNDMODE_STEREO;
@@ -161,7 +161,7 @@ u8 sAudioExtraFilter2 = 0;
 Vec3f* sSariaBgmPtr = NULL;
 f32 D_80130650 = 2000.0f;
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 u8 sSeqModeInput = 0;
 #endif
 
@@ -1150,10 +1150,10 @@ OcarinaSongButtons gOcarinaSongButtons[OCARINA_SONG_MAX] = {
     { 0, { 0 } },
 };
 
-// ENABLE_AUDIO_DEBUGGER
+#if DEBUG_FEATURES
 u32 sAudioUpdateStartTime;
 u32 sAudioUpdateEndTime;
-
+#endif
 f32 D_8016B7A8;
 f32 D_8016B7AC;
 f32 D_8016B7B0;
@@ -1163,7 +1163,7 @@ FreqLerp sWaterfallFreqScaleLerp;
 f32 D_8016B7D8;
 s8 D_8016B7DC;
 f32 D_8016B7E0;
-#if IS_DEBUG
+#if DEBUG_FEATURES
 u16 D_8016B7E4;
 
 // ENABLE_AUDIO_DEBUGGER
@@ -1179,11 +1179,11 @@ u8 sRiverSoundMainBgmLower;
 u8 sRiverSoundMainBgmRestore;
 u8 sGanonsTowerVol;
 SfxPlayerState sSfxChannelState[0x10];
-#if IS_DEBUG
+#if DEBUG_FEATURES
 char sBinToStrBuf[0x20];
 #endif
 u8 sMalonSingingTimer;
-#if IS_DEBUG
+#if DEBUG_FEATURES
 u8 sAudioSpecPeakNumNotes[0x12];
 #endif
 u8 sMalonSingingDisabled;
@@ -1216,7 +1216,7 @@ u16 sMusicStaffCurHeldLength[OCARINA_SONG_MAX];
 u16 sMusicStaffExpectedLength[OCARINA_SONG_MAX];
 u8 sMusicStaffExpectedPitch[OCARINA_SONG_MAX];
 OcarinaNote sScarecrowsLongSongSecondNote;
-#if IS_DEBUG
+#if DEBUG_FEATURES
 u8 sIsMalonSinging;
 f32 sMalonSingingDist;
 u32 sDebugPadHold;
@@ -3361,7 +3361,7 @@ s32 Audio_IsSequencePlaying(u16 seqId) {
 void func_800F5ACC(u16 seqId) {
     u16 curSeqId = Audio_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN);
 
-#if !IS_DEBUG
+#if !DEBUG_FEATURES
     if (1) {}
 #endif
 
@@ -3490,7 +3490,7 @@ void Audio_SetSequenceMode(u8 seqMode) {
     u16 seqId;
     u8 volumeFadeOutTimer;
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     sSeqModeInput = seqMode;
 #endif
 
@@ -3630,7 +3630,7 @@ void Audio_UpdateMalonSinging(f32 dist, u16 seqId) {
     s8 melodyVolume;
     s16 curSeqId;
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     sIsMalonSinging = true;
     sMalonSingingDist = dist;
 #endif
@@ -3985,7 +3985,7 @@ void Audio_StartNatureAmbienceSequence(u16 playerIO, u16 channelMask) {
 
     channelIdx = false;
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     if (gStartSeqDisabled) {
         channelIdx = true;
         SEQCMD_DISABLE_PLAY_SEQUENCES(false);

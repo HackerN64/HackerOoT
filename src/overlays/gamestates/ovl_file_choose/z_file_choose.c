@@ -163,7 +163,7 @@ void FileSelect_DrawImageRGBA32(GraphicsContext* gfxCtx, s16 centerX, s16 center
     s32 pad;
     s32 i;
 
-    OPEN_DISPS(gfxCtx, "../z_file_choose.c", 0);
+    OPEN_DISPS(gfxCtx, "../z_file_choose.c", UNK_LINE);
 
     Gfx_SetupDL_56Opa(gfxCtx);
 
@@ -210,7 +210,7 @@ void FileSelect_DrawImageRGBA32(GraphicsContext* gfxCtx, s16 centerX, s16 center
         }
     }
 
-    CLOSE_DISPS(gfxCtx, "../z_file_choose.c", 0);
+    CLOSE_DISPS(gfxCtx, "../z_file_choose.c", UNK_LINE);
 }
 
 void FileSelect_DrawInitialLanguageMenu(FileSelectState* this) {
@@ -219,7 +219,7 @@ void FileSelect_DrawInitialLanguageMenu(FileSelectState* this) {
     s32 y1;
     s32 y2;
 
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 0);
+    OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", UNK_LINE);
 
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, 70 + WREG(0));
     FileSelect_DrawImageRGBA32(this->state.gfxCtx, 160, 85 + WREG(1), (u8*)gTitleZeldaShieldLogoTex, 160, 160);
@@ -294,7 +294,7 @@ void FileSelect_DrawInitialLanguageMenu(FileSelectState* this) {
         y1 = y2;
     }
 
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", 0);
+    CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", UNK_LINE);
 }
 #endif
 
@@ -717,7 +717,7 @@ void FileSelect_PulsateCursor(GameState* thisx) {
     SramContext* sramCtx = &this->sramCtx;
     Input* debugInput = &this->state.input[2];
 
-#if IS_DEBUG
+#if OOT_PAL && DEBUG_FEATURES
     if (CHECK_BTN_ALL(debugInput->press.button, BTN_DLEFT)) {
         sramCtx->readBuff[SRAM_HEADER_LANGUAGE] = gSaveContext.language = LANGUAGE_ENG;
         *((u8*)0x80000002) = LANGUAGE_ENG;
@@ -1855,14 +1855,17 @@ void FileSelect_FadeOut(GameState* thisx) {
 void FileSelect_LoadGame(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
 
-    if (MAP_SELECT_ON_FILE_1 && this->buttonIndex == FS_BTN_SELECT_FILE_1) {
+#if MAP_SELECT_ON_FILE_1
+    if (this->buttonIndex == FS_BTN_SELECT_FILE_1) {
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         gSaveContext.fileNum = this->buttonIndex;
         Sram_OpenSave(&this->sramCtx);
         SET_NEXT_GAMESTATE(&this->state, MapSelect_Init, MapSelectState);
         this->state.running = false;
-    } else {
+    } else
+#endif
+    {
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         gSaveContext.fileNum = this->buttonIndex;
@@ -2337,8 +2340,8 @@ void FileSelect_Init(GameState* thisx) {
 
 #if OOT_PAL_N64
     size = gObjectTable[OBJECT_MAG].vromEnd - gObjectTable[OBJECT_MAG].vromStart;
-    this->objectMagSegment = GAME_STATE_ALLOC(&this->state, size, "../z_file_choose.c", 0);
-    DMA_REQUEST_SYNC(this->objectMagSegment, gObjectTable[OBJECT_MAG].vromStart, size, "../z_file_choose.c", 0);
+    this->objectMagSegment = GAME_STATE_ALLOC(&this->state, size, "../z_file_choose.c", UNK_LINE);
+    DMA_REQUEST_SYNC(this->objectMagSegment, gObjectTable[OBJECT_MAG].vromStart, size, "../z_file_choose.c", UNK_LINE);
 #endif
 
     Matrix_Init(&this->state);

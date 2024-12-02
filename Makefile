@@ -17,6 +17,8 @@ COMPILER ?= gcc
 
 # Target game version. Ensure the corresponding input ROM is placed in baseroms/$(VERSION)/baserom.z64.
 # Currently the following versions are supported:
+#   ntsc-1.0       N64 NTSC 1.0 (Japan/US depending on REGION)
+#   ntsc-1.1       N64 NTSC 1.1 (Japan/US depending on REGION)
 #   pal-1.0        N64 PAL 1.0 (Europe)
 #   ntsc-1.2       N64 NTSC 1.2 (Japan/US depending on REGION)
 #   pal-1.1        N64 PAL 1.1 (Europe)
@@ -44,6 +46,11 @@ N64_EMULATOR ?=
 # Set to override game region in the ROM header (options: JP, US, EU). This can be used to build a fake US version
 # of the debug ROM for better emulator compatibility, or to build US versions of NTSC N64 ROMs.
 # REGION ?= US
+# Set to enable debug features regardless of ROM version.
+# Note that by enabling debug features on non-debug ROM versions, some debug ROM specific assets will not be included.
+# This means the debug test scenes and some debug graphics in the elf_msg actors will not work as expected.
+# This may also be used to disable debug features on debug ROMs by setting DEBUG_FEATURES to 0
+# DEBUG_FEATURES ?= 1
 
 PROJECT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD_DIR := build/$(VERSION)
@@ -60,18 +67,16 @@ CPPFLAGS ?=
 CFLAGS_IDO ?=
 CPP_DEFINES ?=
 
-# Version-specific settings (DEBUG is set in `.make_hackeroot` instead of per-version here)
+# Version-specific settings (DEBUG_FEATURES is set in `.make_hackeroot` instead of per-version here)
 REGIONAL_CHECKSUM := 0
 ifeq ($(VERSION),ntsc-1.0)
   REGIONAL_CHECKSUM := 1
   REGION ?= JP
   PLATFORM := N64
-  COMPARE := 0
 else ifeq ($(VERSION),ntsc-1.1)
   REGIONAL_CHECKSUM := 1
   REGION ?= JP
   PLATFORM := N64
-  COMPARE := 0
 else ifeq ($(VERSION),pal-1.0)
   REGION ?= EU
   PLATFORM := N64
@@ -132,11 +137,11 @@ else
   $(error Unsupported platform $(PLATFORM))
 endif
 
-ifeq ($(DEBUG),1)
-  CPP_DEFINES += -DOOT_DEBUG=1
+ifeq ($(DEBUG_FEATURES),1)
+  CPP_DEFINES += -DDEBUG_FEATURES=1
   OPTFLAGS := -O2
 else
-  CPP_DEFINES += -DNDEBUG -DOOT_DEBUG=0
+  CPP_DEFINES += -DNDEBUG -DDEBUG_FEATURES=0
   OPTFLAGS := -O2 -g3
 endif
 
@@ -213,7 +218,7 @@ GBI_DEFINES := -DF3DEX_GBI_2
 ifeq ($(PLATFORM),GC)
   GBI_DEFINES += -DF3DEX_GBI_PL -DGBI_DOWHILE
 endif
-ifeq ($(DEBUG),1)
+ifeq ($(DEBUG_FEATURES),1)
   GBI_DEFINES += -DGBI_DEBUG
 endif
 

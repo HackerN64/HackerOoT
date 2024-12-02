@@ -490,9 +490,11 @@ void EnHeishi1_Draw(Actor* thisx, PlayState* play) {
                       this);
     func_80033C30(&this->actor.world.pos, &matrixScale, 0xFF, play);
 
-    if (IS_ACTOR_DEBUG_ENABLED && (this->path == BREG(1)) && (BREG(0) != 0)) {
+#if IS_ACTOR_DEBUG_ENABLED
+    if ((this->path == BREG(1)) && (BREG(0) != 0)) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y + 100.0f, this->actor.world.pos.z,
                                17000, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f, 1.0f, 255, 0, 0,
                                255, 4, play->state.gfxCtx);
     }
+#endif
 }

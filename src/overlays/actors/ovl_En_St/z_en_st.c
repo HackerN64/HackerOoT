@@ -563,7 +563,9 @@ s32 EnSt_DecrStunTimer(EnSt* this) {
     if (this->stunTimer == 0) {
         return 0;
     }
-    this->stunTimer--; //! @bug  no return but v0 ends up being stunTimer before decrement
+    this->stunTimer--;
+    //! @bug No return, v0 ends up being stunTimer before decrement.
+    //! The return value is not used so it doesn't matter.
 }
 
 /**
@@ -798,8 +800,8 @@ void EnSt_Init(Actor* thisx, PlayState* play) {
         this->actor.naviEnemyId = NAVI_ENEMY_SKULLTULA;
     }
     EnSt_CheckCeilingPos(this, play);
-    this->actor.flags |= ACTOR_FLAG_14;
-    this->actor.flags |= ACTOR_FLAG_24;
+    this->actor.flags |= ACTOR_FLAG_CAN_ATTACH_TO_ARROW;
+    this->actor.flags |= ACTOR_FLAG_SFX_FOR_PLAYER_BODY_HIT;
     EnSt_SetColliderScale(this);
     this->actor.gravity = 0.0f;
     this->initialYaw = this->actor.world.rot.y;
@@ -1013,7 +1015,7 @@ void EnSt_Update(Actor* thisx, PlayState* play) {
     s32 pad;
     Color_RGBA8 color = { 0, 0, 0, 0 };
 
-    if (this->actor.flags & ACTOR_FLAG_15) {
+    if (this->actor.flags & ACTOR_FLAG_ATTACHED_TO_ARROW) {
         SkelAnime_Update(&this->skelAnime);
     } else if (!EnSt_CheckColliders(this, play)) {
         // no collision has been detected.

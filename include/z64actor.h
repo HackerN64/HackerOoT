@@ -14,6 +14,13 @@
 #define MASS_IMMOVABLE 0xFF // Cannot be pushed by OC colliders
 #define MASS_HEAVY 0xFE // Can only be pushed by OC colliders from actors with IMMOVABLE or HEAVY mass.
 
+// These are default parameters used for "animation fidgeting", which procedurally generate actor idle animations.
+// These calculations may be performed within individual actors, or by using fidget tables with `Actor_UpdateFidgetTables`.
+#define FIDGET_FREQ_Y 0x814
+#define FIDGET_FREQ_Z 0x940
+#define FIDGET_FREQ_LIMB 0x32
+#define FIDGET_AMPLITUDE 200.0f
+
 struct Actor;
 struct ActorEntry;
 struct CollisionPoly;
@@ -41,7 +48,7 @@ typedef struct ActorProfile {
 /**
  * @see ACTOROVL_ALLOC_ABSOLUTE
  */
-#if IS_DEBUG
+#if DEBUG_FEATURES
 #define ACTOROVL_ABSOLUTE_SPACE_SIZE 0x27A0
 #else
 #define ACTOROVL_ABSOLUTE_SPACE_SIZE 0x24E0
@@ -140,26 +147,32 @@ typedef struct ActorShape {
 // Actor will retain this flag until `Actor_TalkOfferAccepted` is called or manually turned off by the actor
 #define ACTOR_FLAG_TALK (1 << 8)
 
-//
-#define ACTOR_FLAG_9 (1 << 9)
+// When the hookshot attaches to this actor, the actor will be pulled back as the hookshot retracts.
+#define ACTOR_FLAG_HOOKSHOT_PULLS_ACTOR (1 << 9)
 
-//
-#define ACTOR_FLAG_10 (1 << 10)
+// When the hookshot attaches to this actor, Player will be pulled by the hookshot and fly to the actor.
+#define ACTOR_FLAG_HOOKSHOT_PULLS_PLAYER (1 << 10)
 
-//
-#define ACTOR_FLAG_ENKUSA_CUT (1 << 11)
+// A clump of grass (EN_KUSA) has been destroyed.
+// This flag is used to communicate with the spawner actor (OBJ_MURE).
+#define ACTOR_FLAG_GRASS_DESTROYED (1 << 11)
 
 // Actor will not shake when a quake occurs
 #define ACTOR_FLAG_IGNORE_QUAKE (1 << 12)
 
+// The hookshot is currently attached to this actor.
+// The behavior that occurs after attachment is determined by `ACTOR_FLAG_HOOKSHOT_PULLS_ACTOR` and `ACTOR_FLAG_HOOKSHOT_PULLS_PLAYER`.
+// If neither of those flags are set attachment cannot occur, and the hookshot will simply act as a damage source.
 //
-#define ACTOR_FLAG_13 (1 << 13)
+// This flag is also reused to indicate that an actor is attached to the boomerang.
+// This only has an effect for Gold Skulltula Tokens (EN_SI) which has overlapping behavior for hookshot and boomerang.
+#define ACTOR_FLAG_HOOKSHOT_ATTACHED (1 << 13)
 
-//
-#define ACTOR_FLAG_14 (1 << 14)
+// When hit by an arrow, the actor will be able to attach to the arrow and fly with it in the air
+#define ACTOR_FLAG_CAN_ATTACH_TO_ARROW (1 << 14)
 
-//
-#define ACTOR_FLAG_15 (1 << 15)
+// Actor is currently attached to an arrow and flying with it in the air
+#define ACTOR_FLAG_ATTACHED_TO_ARROW (1 << 15)
 
 // Player automatically accepts a Talk Offer without needing to press the A button.
 // Player still has to meet all conditions to be able to receive a talk offer (for example, being in range).
@@ -188,14 +201,17 @@ typedef struct ActorShape {
 // Typically an actor can only be thrown when moving, but this allows an actor to be thrown when standing still.
 #define ACTOR_FLAG_THROW_ONLY (1 << 23)
 
-//
-#define ACTOR_FLAG_24 (1 << 24)
+// When colliding with Player's body AC collider, a "thump" sound will play indicating his body has been hit
+#define ACTOR_FLAG_SFX_FOR_PLAYER_BODY_HIT (1 << 24)
 
-//
-#define ACTOR_FLAG_25 (1 << 25)
+// Actor can update even if Player is currently using the ocarina.
+// Typically an actor will halt while the ocarina is active (depending on category).
+// This flag allows a given actor to be an exception.
+#define ACTOR_FLAG_UPDATE_DURING_OCARINA (1 << 25)
 
-//
-#define ACTOR_FLAG_26 (1 << 26)
+// Actor can press and hold down switches.
+// See usages of `DynaPolyActor_SetSwitchPressed` and `DynaPolyActor_IsSwitchPressed` for more context on how switches work.
+#define ACTOR_FLAG_CAN_PRESS_SWITCHES (1 << 26)
 
 // Player is not able to lock onto the actor.
 // Navi will still be able to hover over the actor, assuming `ACTOR_FLAG_ATTENTION_ENABLED` is set.
@@ -283,7 +299,7 @@ typedef struct Actor {
     /* 0x130 */ ActorFunc update; // Update Routine. Called by `Actor_UpdateAll`
     /* 0x134 */ ActorFunc draw; // Draw Routine. Called by `Actor_Draw`
     /* 0x138 */ ActorOverlay* overlayEntry; // Pointer to the overlay table entry for this actor
-#if IS_DEBUG
+#if DEBUG_FEATURES
     /* 0x13C */ char dbgPad[0x10];
 #endif
 } Actor; // size = 0x14C
@@ -309,7 +325,7 @@ if neither of the above are set : blue
 #define DYNA_INTERACT_ACTOR_ON_TOP (1 << 0) // There is an actor standing on the collision of the dynapoly actor
 #define DYNA_INTERACT_PLAYER_ON_TOP (1 << 1) // The player actor is standing on the collision of the dynapoly actor
 #define DYNA_INTERACT_PLAYER_ABOVE (1 << 2) // The player is directly above the collision of the dynapoly actor (any distance above)
-#define DYNA_INTERACT_3 (1 << 3) // Like the ACTOR_ON_TOP flag but only actors with ACTOR_FLAG_26
+#define DYNA_INTERACT_ACTOR_SWITCH_PRESSED (1 << 3) // An actor that is capable of pressing switches is on top of the dynapoly actor
 
 typedef struct DynaPolyActor {
     /* 0x000 */ struct Actor actor;
@@ -739,6 +755,10 @@ typedef struct NpcInteractInfo {
 #define PARAMS_GET_NOSHIFT(p, s, n) \
     ((p) & (NBITS_TO_MASK(n) << (s)))
 
+// Moves the `n`-bit value `p` to bit position `s` for building actor parameters by OR-ing these together
+#define PARAMS_PACK(p, s, n) \
+    (((p) & NBITS_TO_MASK(n)) << (s))
+
 // Generates a bitmask for bit position `s` of length `n`
 #define PARAMS_MAKE_MASK(s, n) PARAMS_GET_NOSHIFT(~0, s, n)
 
@@ -802,7 +822,7 @@ int func_8002DD6C(struct Player* player);
 int func_8002DD78(struct Player* player);
 s32 func_8002DDE4(struct PlayState* play);
 s32 func_8002DDF4(struct PlayState* play);
-void func_8002DE04(struct PlayState* play, Actor* actorA, Actor* actorB);
+void Actor_SwapHookshotAttachment(struct PlayState* play, Actor* srcActor, Actor* destActor);
 void func_8002DE74(struct PlayState* play, struct Player* player);
 void Actor_MountHorse(struct PlayState* play, struct Player* player, Actor* horse);
 int func_8002DEEC(struct Player* player);
@@ -913,7 +933,7 @@ void func_80034BA0(struct PlayState* play, SkelAnime* skelAnime, OverrideLimbDra
 void func_80034CC4(struct PlayState* play, SkelAnime* skelAnime, OverrideLimbDraw overrideLimbDraw,
                    PostLimbDraw postLimbDraw, Actor* actor, s16 alpha);
 s16 func_80034DD4(Actor* actor, struct PlayState* play, s16 arg2, f32 arg3);
-void func_80034F54(struct PlayState* play, s16* arg1, s16* arg2, s32 arg3);
+void Actor_UpdateFidgetTables(struct PlayState* play, s16* fidgetTableY, s16* fidgetTableZ, s32 tableLen);
 void Actor_Noop(Actor* actor, struct PlayState* play);
 
 void Gfx_DrawDListOpa(struct PlayState* play, Gfx* dlist);

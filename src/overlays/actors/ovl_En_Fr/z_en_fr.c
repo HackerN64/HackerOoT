@@ -3,7 +3,7 @@
 #include "terminal.h"
 #include "assets/objects/object_fr/object_fr.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4 | ACTOR_FLAG_UPDATE_DURING_OCARINA)
 
 void EnFr_Init(Actor* thisx, PlayState* play);
 void EnFr_Destroy(Actor* thisx, PlayState* play);
@@ -1029,11 +1029,13 @@ void EnFr_SetIdle(EnFr* this, PlayState* play) {
 void EnFr_UpdateIdle(Actor* thisx, PlayState* play) {
     EnFr* this = (EnFr*)thisx;
 
-    if (IS_ACTOR_DEBUG_ENABLED && BREG(0)) {
+#if IS_ACTOR_DEBUG_ENABLED
+    if (BREG(0) != 0) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 255, 0, 0, 255, 4, play->state.gfxCtx);
     }
+#endif
 
     this->jumpCounter++;
     this->actionFunc(this, play);

@@ -83,13 +83,21 @@
 /**
  * @brief Space allocated for the Debug buffer.
  */
+#if DEBUG_FEATURES
 #define DEBUG_BUFFER_SIZE 0xC00
+#else
+#define DEBUG_BUFFER_SIZE 0x20
+#endif
 
 /**
  * @brief Vanilla value is 0x8044BE80. Make this a little larger to
  * account for greater memory usage in other areas. Required for most
  * of the following memory increases to actually work.
  */
+#if IS_DEBUG_HEAP_ENABLED
+#define SYS_CFB_END 0x8044BE80
+#else
 #define SYS_CFB_END 0x80800000
+#endif
 
 #endif

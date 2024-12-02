@@ -25,9 +25,9 @@ endif
 # Default value: `0`
 ARES_GDB := 0
 
-# Toggle release or debug mode. 0 for release, 1 for debug
+# Toggle debug features. Make sure to set this to 0 when you release your mod.
 # Default value: `0`
-DEBUG := 1
+DEBUG_FEATURES := 0
 
 # Compression algorithm. Valid algorithms are 'yaz', 'lzo' and 'aplib'
 # Default value: `yaz`

@@ -125,8 +125,8 @@ u16 gCamAtSplinePointsAppliedFrame;
 u16 gCamEyePointAppliedFrame;
 u16 gCamAtPointAppliedFrame;
 
-#pragma increment_block_number "gc-eu:188 gc-eu-mq:176 gc-jp:188 gc-jp-ce:188 gc-jp-mq:176 gc-us:188 gc-us-mq:176" \
-                               "ntsc-1.2:80 pal-1.0:80 pal-1.1:80"
+#pragma increment_block_number "gc-eu:186 gc-eu-mq:176 gc-jp:188 gc-jp-ce:188 gc-jp-mq:176 gc-us:188 gc-us-mq:176" \
+                               "ntsc-1.0:80 ntsc-1.1:80 ntsc-1.2:80 pal-1.0:80 pal-1.1:80"
 
 // Cam ID to return to when a scripted cutscene is finished
 s16 sReturnToCamId;
@@ -139,6 +139,7 @@ s16 sQuakeIndex;
 
 void Cutscene_SetupScripted(PlayState* play, CutsceneContext* csCtx);
 
+#if DEBUG_FEATURES
 void Cutscene_DrawDebugInfo(PlayState* play, Gfx** dlist, CutsceneContext* csCtx) {
     if (CAN_SHOW_CS_INFOS) {
         GfxPrint printer;
@@ -160,6 +161,7 @@ void Cutscene_DrawDebugInfo(PlayState* play, Gfx** dlist, CutsceneContext* csCtx
         GfxPrint_Destroy(&printer);
     }
 }
+#endif
 
 void Cutscene_InitContext(PlayState* play, CutsceneContext* csCtx) {
     csCtx->state = CS_STATE_IDLE;
@@ -184,8 +186,9 @@ void Cutscene_UpdateManual(PlayState* play, CutsceneContext* csCtx) {
 }
 
 void Cutscene_UpdateScripted(PlayState* play, CutsceneContext* csCtx) {
-    if (IS_CS_CONTROL_ENABLED) {
-        Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
+#if IS_CS_CONTROL_ENABLED
+    {
+        Input* input = &play->state.input[0];
 
         if (CHECK_BTN_ALL(input->press.button, BTN_DLEFT) && (csCtx->state == CS_STATE_IDLE) && IS_CUTSCENE_LAYER) {
             gUseCutsceneCam = false;
@@ -200,6 +203,7 @@ void Cutscene_UpdateScripted(PlayState* play, CutsceneContext* csCtx) {
             gSaveContext.cutsceneTrigger = 1;
         }
     }
+#endif
 
     if ((gSaveContext.cutsceneTrigger != 0) && (play->transitionTrigger == TRANS_TRIGGER_START)) {
         gSaveContext.cutsceneTrigger = 0;
@@ -576,8 +580,7 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
 
     if ((csCtx->curFrame == cmd->startFrame) || titleDemoSkipped ||
         (CS_CAN_SKIP_TITLE_SCREEN && (csCtx->curFrame > 20) &&
-         CHECK_BTN_ALL(play->state.input[CS_CTRL_CONTROLLER_PORT].press.button, CS_CTRL_RUN_DEST_CONTROL) &&
-         (gSaveContext.fileNum != 0xFEDC))) {
+         CHECK_BTN_ALL(play->state.input[0].press.button, BTN_START) && (gSaveContext.fileNum != 0xFEDC))) {
         csCtx->state = CS_STATE_RUN_UNSTOPPABLE;
         Audio_SetCutsceneFlag(0);
         gSaveContext.cutsceneTransitionControl = 1;
@@ -737,7 +740,7 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
                 break;
 
             case CS_DEST_TEMPLE_OF_TIME_AFTER_LIGHT_MEDALLION:
-#if IS_DEBUG
+#if DEBUG_FEATURES
                 SET_EVENTCHKINF(EVENTCHKINF_WATCHED_SHEIK_AFTER_MASTER_SWORD_CS);
 #endif
                 play->nextEntranceIndex = ENTR_TEMPLE_OF_TIME_4;
@@ -908,7 +911,7 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
                 break;
 
             case CS_DEST_TEMPLE_OF_TIME_AFTER_LIGHT_MEDALLION_ALT:
-#if IS_DEBUG
+#if DEBUG_FEATURES
                 SET_EVENTCHKINF(EVENTCHKINF_WATCHED_SHEIK_AFTER_MASTER_SWORD_CS);
 #endif
                 play->nextEntranceIndex = ENTR_TEMPLE_OF_TIME_4;
@@ -965,7 +968,7 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
                 break;
 
             case CS_DEST_GERUDO_VALLEY_CREDITS:
-#if IS_DEBUG
+#if DEBUG_FEATURES
                 gSaveContext.gameMode = GAMEMODE_END_CREDITS;
                 Audio_SetSfxBanksMute(0x6F);
 #endif
@@ -1838,13 +1841,13 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
         return;
     }
 
-    if (IS_CS_CONTROL_ENABLED) {
-        Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
-        if (DEBUG_BTN_COMBO(CS_CTRL_USE_BTN_COMBO, CS_CTRL_BTN_HOLD_FOR_COMBO, CS_CTRL_STOP_CONTROL, input)) {
-            csCtx->state = CS_STATE_STOP;
-            return;
-        }
+#if IS_CS_CONTROL_ENABLED
+    Input* input = &play->state.input[CS_CTRL_CONTROLLER_PORT];
+    if (DEBUG_BTN_COMBO(CS_CTRL_USE_BTN_COMBO, CS_CTRL_BTN_HOLD_FOR_COMBO, CS_CTRL_STOP_CONTROL, input)) {
+        csCtx->state = CS_STATE_STOP;
+        return;
     }
+#endif
 
     for (i = 0; i < totalEntries; i++) {
         MemCpy(&cmdType, script, sizeof(cmdType));
@@ -2262,7 +2265,8 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
 
 void CutsceneHandler_RunScript(PlayState* play, CutsceneContext* csCtx) {
     if (gSaveContext.save.cutsceneIndex >= 0xFFF0) {
-        if (CAN_SHOW_CS_INFOS && BREG(0) != 0) {
+#if CAN_SHOW_CS_INFOS
+        if (BREG(0) != 0) {
             Gfx* displayList;
             Gfx* prevDisplayList;
 
@@ -2278,10 +2282,11 @@ void CutsceneHandler_RunScript(PlayState* play, CutsceneContext* csCtx) {
 
             CLOSE_DISPS(play->state.gfxCtx, "../z_demo.c", 4108);
         }
+#endif
 
         csCtx->curFrame++;
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
         if (R_USE_DEBUG_CUTSCENE) {
             Cutscene_ProcessScript(play, csCtx, gDebugCutsceneScript);
         } else {
