@@ -62,7 +62,7 @@ This project includes an example scene, available if ``INCLUDE_EXAMPLE_SCENE`` i
 
 This also includes an example cutscene, playable in the example scene when holding ``L`` + ``R`` and pressing ``A``.
 
-Use ``python3 new_actor.py --help`` for instructions on easily adding a new actor to the game.
+Use ``./new_actor.py --help`` for instructions on easily adding a new actor to the game.
 
 ## Changing build options
 

@@ -1,4 +1,4 @@
 #ifndef {objectSpecCap}_H
-#define {objectSpecCap}_H 1
+#define {objectSpecCap}_H
 
 #endif

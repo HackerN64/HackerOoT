@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import re
 import sys
@@ -233,8 +235,8 @@ def main():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-name", required = True, help = "Name of actor. Use alphanumeric and/or _ as valid characters", default = "")
-    parser.add_argument("--noobject", required = False, help = "Optional. Use if you do not want to create an object for this actor", action='store_false')
+    parser.add_argument("-n", "--name", required = True, help = "Name of actor. Use alphanumeric and/or _ as valid characters", default = "")
+    parser.add_argument("-no", "--noobject", required = False, help = "Optional. Use if you do not want to create an object for this actor", action='store_false')
     args = parser.parse_args()
 
     if not os.path.exists(Path(path.curdir, "src") or not os.path.exists(Path(path.curdir, "spec"))):
