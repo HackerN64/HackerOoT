@@ -9,7 +9,7 @@
 #include "overlays/actors/ovl_En_Elf/z_en_elf.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_UPDATE_DURING_OCARINA)
 
 void EnGs_Init(Actor* thisx, PlayState* play);
 void EnGs_Destroy(Actor* thisx, PlayState* play);
@@ -139,12 +139,12 @@ s32 func_80A4E3EC(EnGs* this, PlayState* play) {
 void func_80A4E470(EnGs* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     bREG(15) = 0;
 #endif
 
     if (this->actor.xzDistToPlayer <= 100.0f) {
-#if IS_DEBUG
+#if DEBUG_FEATURES
         bREG(15) = 1;
 #endif
 

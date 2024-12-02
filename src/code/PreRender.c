@@ -598,7 +598,7 @@ void PreRender_AntiAliasFilter(PreRender* this, s32 x, s32 y) {
         buffCvg[i] = this->cvgSave[xi + yi * this->width] >> 5;
     }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     if (buffCvg[7] == 7) {
         PRINTF("Error, should not be in here \n");
         return;
@@ -693,7 +693,7 @@ void PreRender_AntiAliasFilter(PreRender* this, s32 x, s32 y) {
     (((a2) >= (a1)) ? (((a3) >= (a2)) ? (a2) : (((a1) >= (a3)) ? (a1) : (a3))) \
                     : (((a2) >= (a3)) ? (a2) : (((a3) >= (a1)) ? (a1) : (a3))))
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 #define R_HREG_MODE_DEBUG R_HREG_MODE
 #else
 #define R_HREG_MODE_DEBUG ((void)0, 0)
@@ -820,7 +820,7 @@ void PreRender_ApplyFilters(PreRender* this) {
                 }
             }
 
-            if (IS_DEBUG && PRERENDER_DIVOT_CONTROL != 0) {
+            if (DEBUG_FEATURES && PRERENDER_DIVOT_CONTROL != 0) {
                 // Apply divot filter
                 PreRender_DivotFilter(this);
             }

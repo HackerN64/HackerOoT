@@ -49,7 +49,7 @@
 // ensure that these do not use the IDO workaround to avoid errors.
 #define IDO_PRINTF_WORKAROUND (__sgi && !__GNUC__ && !M2CTX)
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 #define PRINTF osSyncPrintf
 #elif IDO_PRINTF_WORKAROUND
 #define PRINTF(args) (void)0
@@ -57,7 +57,7 @@
 #define PRINTF(format, ...) (void)0
 #endif
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 #define LOG(exp, value, format, ...)                \
     do {                                            \
         LogUtils_LogThreadId(__FILE__, __LINE__);   \
@@ -83,7 +83,7 @@
         (state)->size = sizeof(newStruct);               \
     } while (0)
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 
 #define DMA_REQUEST_SYNC(ram, vrom, size, ...) DmaMgr_RequestSyncDebug(ram, vrom, size,  __FILE__, __LINE__)
 #define DMA_REQUEST_ASYNC(req, ram, vrom, size, unk5, queue, msg, ...) DmaMgr_RequestAsyncDebug(req, ram, vrom, size, unk5, queue, msg,  __FILE__, __LINE__)
@@ -113,9 +113,9 @@
 #define LOG_UTILS_CHECK_VALID_POINTER(exp, ptr, ...) (void)0
 #define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_Malloc(alloc, size)
 
-#endif /* IS_DEBUG */
+#endif /* DEBUG_FEATURES */
 
-#if PLATFORM_N64 || OOT_DEBUG
+#if PLATFORM_N64 || DEBUG_FEATURES
 #define HUNGUP_AND_CRASH(...) Fault_AddHungupAndCrash(__FILE__, __LINE__)
 #else
 #define HUNGUP_AND_CRASH(...) LogUtils_HungupThread(__FILE__, __LINE__)
@@ -169,7 +169,7 @@ _DW({                                                                   \
 
 // HackerOoT
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 // if using button combo check for the input, else simply return true
 #define DEBUG_BTN_COMBO(useCombo, btnToHold, btnToPress, input) ((useCombo ? CHECK_BTN_ALL(input->cur.button, btnToHold) : true) && CHECK_BTN_ALL(input->press.button, btnToPress))
 #else

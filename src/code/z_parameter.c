@@ -2216,7 +2216,7 @@ void Interface_LoadActionLabelB(PlayState* play, u16 action) {
  */
 s32 Health_ChangeBy(PlayState* play, s16 amount) {
     u16 heartCount;
-    u16 healthLevel;
+    UNUSED_NDEBUG u16 healthLevel;
 
     PRINTF(T("＊＊＊＊＊  増減=%d (now=%d, max=%d)  ＊＊＊", "*****  Fluctuation=%d (now=%d, max=%d)  ***"), amount,
            gSaveContext.save.info.playerData.health, gSaveContext.save.info.playerData.healthCapacity);
@@ -3195,7 +3195,7 @@ void func_8008A994(InterfaceContext* interfaceCtx) {
     View_ApplyOrthoToOverlay(&interfaceCtx->view);
 }
 
-#if IS_DEBUG && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)
+#if DEBUG_FEATURES && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)
 #define CAN_DRAW_INTERFACE (pauseCtx->debugState == 0)
 #else
 #define CAN_DRAW_INTERFACE true
@@ -4061,9 +4061,11 @@ void Interface_Draw(PlayState* play) {
         }
     }
 
-    if (IS_EVENT_EDITOR_ENABLED && (pauseCtx->debugState == 3)) {
+#if IS_EVENT_EDITOR_ENABLED
+    if (pauseCtx->debugState == 3) {
         FlagSet_Update(play);
     }
+#endif
 
     if (interfaceCtx->unk_244 != 0) {
         gDPPipeSync(OVERLAY_DISP++);
@@ -4085,7 +4087,7 @@ void Interface_Update(PlayState* play) {
     s16 risingAlpha;
     u16 action;
 
-#if IS_DEBUG
+#if OOT_PAL && DEBUG_FEATURES
     {
         Input* debugInput = &play->state.input[2];
 

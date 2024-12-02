@@ -630,7 +630,7 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
             }
             break;
         case MO_TENT_ATTACK:
-            this->actor.flags |= ACTOR_FLAG_24;
+            this->actor.flags |= ACTOR_FLAG_SFX_FOR_PLAYER_BODY_HIT;
             Sfx_PlaySfxAtPos(&this->tentTipPos, NA_SE_EN_MOFER_ATTACK - SFX_FLAG);
             Math_ApproachF(&this->waterLevelMod, -5.0f, 0.1f, 0.4f);
             for (indS1 = 0; indS1 < 41; indS1++) {
@@ -2232,7 +2232,7 @@ void BossMo_UpdateCore(Actor* thisx, PlayState* play) {
     } else {
         MO_WATER_LEVEL(play) = sMorphaTent2->waterLevelMod + ((s16)this->waterLevel + sMorphaTent1->waterLevelMod);
     }
-    this->actor.flags |= ACTOR_FLAG_9;
+    this->actor.flags |= ACTOR_FLAG_HOOKSHOT_PULLS_ACTOR;
     this->actor.focus.pos = this->actor.world.pos;
     this->work[MO_TENT_VAR_TIMER]++;
 

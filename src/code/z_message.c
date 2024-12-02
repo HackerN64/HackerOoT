@@ -8,7 +8,7 @@
 #endif
 
 #pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
-                               "ntsc-1.2:112 pal-1.0:128 pal-1.1:128"
+                               "ntsc-1.0:96 ntsc-1.1:96 ntsc-1.2:112 pal-1.0:128 pal-1.1:128"
 
 #if N64_BTN_COLORS
 #define OCARINA_BUTTON_A_PRIM_1_R 80
@@ -2050,14 +2050,14 @@ void Message_Decode(PlayState* play) {
                 msgCtx->textboxBackgroundBackColorIdx = (font->msgBufWide[msgCtx->msgBufPos + 2] & 0xF00) >> 8;
                 msgCtx->textboxBackgroundYOffsetIdx = (font->msgBufWide[msgCtx->msgBufPos + 2] & 0xF0) >> 4;
                 msgCtx->textboxBackgroundUnkArg = font->msgBufWide[msgCtx->msgBufPos + 2] & 0xF;
-                DmaMgr_RequestSync(msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE,
-                                   (uintptr_t)_message_texture_staticSegmentRomStart +
-                                       msgCtx->textboxBackgroundIdx * MESSAGE_TEXTURE_STATIC_TEX_SIZE,
-                                   MESSAGE_TEXTURE_STATIC_TEX_SIZE);
-                DmaMgr_RequestSync(msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + MESSAGE_TEXTURE_STATIC_TEX_SIZE,
-                                   (uintptr_t)_message_texture_staticSegmentRomStart +
-                                       (msgCtx->textboxBackgroundIdx + 1) * MESSAGE_TEXTURE_STATIC_TEX_SIZE,
-                                   MESSAGE_TEXTURE_STATIC_TEX_SIZE);
+                DMA_REQUEST_SYNC(msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE,
+                                 (uintptr_t)_message_texture_staticSegmentRomStart +
+                                     msgCtx->textboxBackgroundIdx * MESSAGE_TEXTURE_STATIC_TEX_SIZE,
+                                 MESSAGE_TEXTURE_STATIC_TEX_SIZE, "../z_message_PAL.c", UNK_LINE);
+                DMA_REQUEST_SYNC(msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + MESSAGE_TEXTURE_STATIC_TEX_SIZE,
+                                 (uintptr_t)_message_texture_staticSegmentRomStart +
+                                     (msgCtx->textboxBackgroundIdx + 1) * MESSAGE_TEXTURE_STATIC_TEX_SIZE,
+                                 MESSAGE_TEXTURE_STATIC_TEX_SIZE, "../z_message_PAL.c", UNK_LINE);
                 numLines = 2;
                 msgCtx->msgBufPos += 2;
                 R_TEXTBOX_BG_YPOS = R_TEXTBOX_Y + 8;
@@ -2542,8 +2542,8 @@ void Message_OpenText(PlayState* play, u16 textId) {
         if ((B_80121220 != NULL) && (B_80121220->unk_60 != NULL) && B_80121220->unk_60(&play->msgCtx.font)) {
 
         } else {
-            DmaMgr_RequestSync(font->msgBuf, (uintptr_t)_staff_message_data_staticSegmentRomStart + font->msgOffset,
-                               font->msgLength);
+            DMA_REQUEST_SYNC(font->msgBuf, (uintptr_t)_staff_message_data_staticSegmentRomStart + font->msgOffset,
+                             font->msgLength, "../z_message_PAL.c", UNK_LINE);
         }
 #else
         DMA_REQUEST_SYNC(font->msgBuf, (uintptr_t)_staff_message_data_staticSegmentRomStart + font->msgOffset,
@@ -2558,12 +2558,12 @@ void Message_OpenText(PlayState* play, u16 textId) {
             if ((B_80121220 != NULL) && (B_80121220->unk_64 != NULL) && B_80121220->unk_64(&play->msgCtx.font)) {
 
             } else {
-                DmaMgr_RequestSync(font->msgBuf, (uintptr_t)_jpn_message_data_staticSegmentRomStart + font->msgOffset,
-                                   font->msgLength);
+                DMA_REQUEST_SYNC(font->msgBuf, (uintptr_t)_jpn_message_data_staticSegmentRomStart + font->msgOffset,
+                                 font->msgLength, "../z_message_PAL.c", UNK_LINE);
             }
 #else
-            DmaMgr_RequestSync(font->msgBuf, (uintptr_t)_jpn_message_data_staticSegmentRomStart + font->msgOffset,
-                               font->msgLength);
+            DMA_REQUEST_SYNC(font->msgBuf, (uintptr_t)_jpn_message_data_staticSegmentRomStart + font->msgOffset,
+                             font->msgLength, "../z_message_PAL.c", UNK_LINE);
 #endif
         } else {
             Message_FindMessageNES(play, textId);
@@ -2572,12 +2572,12 @@ void Message_OpenText(PlayState* play, u16 textId) {
             if ((B_80121220 != NULL) && (B_80121220->unk_68 != NULL) && B_80121220->unk_68(&play->msgCtx.font)) {
 
             } else {
-                DmaMgr_RequestSync(font->msgBuf, (uintptr_t)_nes_message_data_staticSegmentRomStart + font->msgOffset,
-                                   font->msgLength);
+                DMA_REQUEST_SYNC(font->msgBuf, (uintptr_t)_nes_message_data_staticSegmentRomStart + font->msgOffset,
+                                 font->msgLength, "../z_message_PAL.c", UNK_LINE);
             }
 #else
-            DmaMgr_RequestSync(font->msgBuf, (uintptr_t)_nes_message_data_staticSegmentRomStart + font->msgOffset,
-                               font->msgLength);
+            DMA_REQUEST_SYNC(font->msgBuf, (uintptr_t)_nes_message_data_staticSegmentRomStart + font->msgOffset,
+                             font->msgLength, "../z_message_PAL.c", UNK_LINE);
 #endif
         }
 #else
@@ -2588,8 +2588,8 @@ void Message_OpenText(PlayState* play, u16 textId) {
             if ((B_80121220 != NULL) && (B_80121220->unk_64 != NULL) && B_80121220->unk_64(&play->msgCtx.font)) {
 
             } else {
-                DmaMgr_RequestSync(font->msgBuf, (uintptr_t)_nes_message_data_staticSegmentRomStart + font->msgOffset,
-                                   font->msgLength);
+                DMA_REQUEST_SYNC(font->msgBuf, (uintptr_t)_nes_message_data_staticSegmentRomStart + font->msgOffset,
+                                 font->msgLength, "../z_message_PAL.c", UNK_LINE);
             }
 #else
             DMA_REQUEST_SYNC(font->msgBuf, (uintptr_t)_nes_message_data_staticSegmentRomStart + font->msgOffset,
@@ -2603,8 +2603,8 @@ void Message_OpenText(PlayState* play, u16 textId) {
             if ((B_80121220 != NULL) && (B_80121220->unk_64 != NULL) && B_80121220->unk_68(&play->msgCtx.font)) {
 
             } else {
-                DmaMgr_RequestSync(font->msgBuf, (uintptr_t)_ger_message_data_staticSegmentRomStart + font->msgOffset,
-                                   font->msgLength);
+                DMA_REQUEST_SYNC(font->msgBuf, (uintptr_t)_ger_message_data_staticSegmentRomStart + font->msgOffset,
+                                 font->msgLength, "../z_message_PAL.c", UNK_LINE);
             }
 #else
             DMA_REQUEST_SYNC(font->msgBuf, (uintptr_t)_ger_message_data_staticSegmentRomStart + font->msgOffset,
@@ -2618,8 +2618,8 @@ void Message_OpenText(PlayState* play, u16 textId) {
             if ((B_80121220 != NULL) && (B_80121220->unk_64 != NULL) && B_80121220->unk_6C_PAL(&play->msgCtx.font)) {
 
             } else {
-                DmaMgr_RequestSync(font->msgBuf, (uintptr_t)_fra_message_data_staticSegmentRomStart + font->msgOffset,
-                                   font->msgLength);
+                DMA_REQUEST_SYNC(font->msgBuf, (uintptr_t)_fra_message_data_staticSegmentRomStart + font->msgOffset,
+                                 font->msgLength, "../z_message_PAL.c", UNK_LINE);
             }
 #else
             DMA_REQUEST_SYNC(font->msgBuf, (uintptr_t)_fra_message_data_staticSegmentRomStart + font->msgOffset,
@@ -3951,7 +3951,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
     *p = gfx;
 }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 /**
  * If the s16 variable pointed to by `var` changes in value, a black bar and white box
  * are briefly drawn onto the screen. It can only watch one variable per build due to
@@ -4013,7 +4013,9 @@ void Message_DrawDebugText(PlayState* play, Gfx** p) {
 void Message_Draw(PlayState* play) {
     Gfx* plusOne;
     Gfx* polyOpaP;
-
+#if OOT_VERSION < GC_US
+    s32 pad;
+#endif
 #if IS_MSG_DEBUG_ENABLED
     s16 watchVar;
 #endif
@@ -4087,7 +4089,8 @@ void Message_Update(PlayState* play) {
         sTextboxSkipped = true;
     }
 
-    if (IS_MSG_DEBUG_ENABLED && BREG(0) != 0) {
+#if IS_MSG_DEBUG_ENABLED
+    if (BREG(0) != 0) {
         static u16 sMessageDebuggerTextboxCount = 0;
 
         if (CHECK_BTN_ALL(input->press.button, BTN_DDOWN) && CHECK_BTN_ALL(input->cur.button, BTN_L)) {
@@ -4114,9 +4117,9 @@ void Message_Update(PlayState* play) {
             }
         }
     }
+#endif
 
     if (msgCtx->msgLength != 0) {
-
         switch (msgCtx->msgMode) {
             case MSGMODE_TEXT_START:
                 D_8014B2F4++;

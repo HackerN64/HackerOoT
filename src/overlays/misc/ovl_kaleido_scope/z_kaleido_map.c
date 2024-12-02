@@ -640,7 +640,7 @@ void KaleidoScope_DrawWorldMap(PlayState* play, GraphicsContext* gfxCtx) {
     }
 #endif
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     if (HREG(15) == 0) {
         gDPSetTextureFilter(POLY_OPA_DISP++, G_TF_POINT);
 

@@ -216,9 +216,9 @@ void Scene_DrawConfigDefault(PlayState* play) {
     CLOSE_DISPS(play->state.gfxCtx, "../z_scene_table.c", 4735);
 }
 
-void* D_8012A2F8[] = {
-    gYdanTex_00BA18,
-    gYdanTex_00CA18,
+void* sDekuTreeEntranceTextures[] = {
+    gDekuTreeDayEntranceTex,
+    gDekuTreeNightEntranceTex,
 };
 
 void Scene_DrawConfigDekuTree(PlayState* play) {
@@ -234,7 +234,8 @@ void Scene_DrawConfigDekuTree(PlayState* play) {
     gDPPipeSync(POLY_XLU_DISP++);
     gDPSetEnvColor(POLY_XLU_DISP++, 128, 128, 128, 128);
 
-    gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(D_8012A2F8[((void)0, gSaveContext.save.nightFlag)]));
+    gSPSegment(POLY_OPA_DISP++, 0x08,
+               SEGMENTED_TO_VIRTUAL(sDekuTreeEntranceTextures[((void)0, gSaveContext.save.nightFlag)]));
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_scene_table.c", 4783);
 }
@@ -528,7 +529,7 @@ void Scene_DrawConfigThievesHideout(PlayState* play) {
     CLOSE_DISPS(play->state.gfxCtx, "../z_scene_table.c", 5507);
 }
 
-void* D_8012A330[] = {
+void* sWaterTempleEntranceTextures[] = {
     gWaterTempleDayEntranceTex,
     gWaterTempleNightEntranceTex,
 };
@@ -545,9 +546,11 @@ void Scene_DrawConfigWaterTemple(PlayState* play) {
     gameplayFrames = play->gameplayFrames;
 
 #if !OOT_MQ
-    gSPSegment(POLY_XLU_DISP++, 0x06, SEGMENTED_TO_VIRTUAL(D_8012A330[((void)0, gSaveContext.save.nightFlag)]));
+    gSPSegment(POLY_XLU_DISP++, 0x06,
+               SEGMENTED_TO_VIRTUAL(sWaterTempleEntranceTextures[((void)0, gSaveContext.save.nightFlag)]));
 #else
-    gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(D_8012A330[((void)0, gSaveContext.save.nightFlag)]));
+    gSPSegment(POLY_XLU_DISP++, 0x08,
+               SEGMENTED_TO_VIRTUAL(sWaterTempleEntranceTextures[((void)0, gSaveContext.save.nightFlag)]));
 #endif
 
     if (spB0 == 1) {
@@ -967,11 +970,11 @@ void Scene_DrawConfigLonLonBuildings(PlayState* play) {
     CLOSE_DISPS(play->state.gfxCtx, "../z_scene_table.c", 6528);
 }
 
-void* sGuardHouseView2Textures[] = {
+void* sGuardHouseView1Textures[] = {
     gGuardHouseOutSideView1DayTex,
     gGuardHouseOutSideView1NightTex,
 };
-void* sGuardHouseView1Textures[] = {
+void* sGuardHouseView2Textures[] = {
     gGuardHouseOutSideView2DayTex,
     gGuardHouseOutSideView2NightTex,
 };
@@ -987,8 +990,8 @@ void Scene_DrawConfigMarketGuardHouse(PlayState* play) {
         var = gSaveContext.save.nightFlag;
     }
 
-    gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sGuardHouseView1Textures[var]));
-    gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(sGuardHouseView2Textures[var]));
+    gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sGuardHouseView2Textures[var]));
+    gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(sGuardHouseView1Textures[var]));
 
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetEnvColor(POLY_OPA_DISP++, 128, 128, 128, 128);
@@ -1191,7 +1194,13 @@ void Scene_DrawConfigKokiriForest(PlayState* play) {
         spA3 = 255 - (u8)play->roomCtx.drawParams[0];
     } else if (gSaveContext.sceneLayer == 6) {
         spA0 = play->roomCtx.drawParams[0] + 500;
-    } else if ((!IS_CUTSCENE_LAYER || LINK_IS_ADULT) && GET_EVENTCHKINF(EVENTCHKINF_07)) {
+    } else if (
+#if OOT_VERSION < PAL_1_0
+        !IS_CUTSCENE_LAYER && GET_EVENTCHKINF(EVENTCHKINF_07)
+#else
+        (!IS_CUTSCENE_LAYER || LINK_IS_ADULT) && GET_EVENTCHKINF(EVENTCHKINF_07)
+#endif
+    ) {
         spA0 = 2150;
     }
 
@@ -1372,15 +1381,16 @@ void Scene_DrawConfigDesertColossus(PlayState* play) {
     CLOSE_DISPS(play->state.gfxCtx, "../z_scene_table.c", 7339);
 }
 
-void* D_8012A380[] = {
-    gSpot12_009678Tex,
-    gSpot12_00DE78Tex,
+void* sGerudoFortressWallTextures[] = {
+    gGerudoFortressNightWallTex,
+    gGerudoFortressDayWallTex,
 };
 
 void Scene_DrawConfigGerudosFortress(PlayState* play) {
     OPEN_DISPS(play->state.gfxCtx, "../z_scene_table.c", 7363);
 
-    gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(D_8012A380[((void)0, gSaveContext.save.nightFlag)]));
+    gSPSegment(POLY_OPA_DISP++, 0x08,
+               SEGMENTED_TO_VIRTUAL(sGerudoFortressWallTextures[((void)0, gSaveContext.save.nightFlag)]));
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_scene_table.c", 7371);
 }
@@ -1752,7 +1762,7 @@ SceneDrawConfigFunc sSceneDrawConfigs[SDC_MAX] = {
 };
 
 void Scene_Draw(PlayState* play) {
-#if IS_DEBUG
+#if DEBUG_FEATURES
     if (R_HREG_MODE == HREG_MODE_SCENE_CONFIG) {
         if (R_SCENE_CONFIG_INIT != HREG_MODE_SCENE_CONFIG) {
             R_SCENE_CONFIG_INIT = HREG_MODE_SCENE_CONFIG;

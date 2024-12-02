@@ -334,7 +334,8 @@ void EnEncount1_Update(Actor* thisx, PlayState* play) {
 
     this->updateFunc(this, play);
 
-    if (IS_ACTOR_DEBUG_ENABLED && BREG(0) != 0) {
+#if IS_ACTOR_DEBUG_ENABLED
+    if (BREG(0) != 0) {
         if (this->outOfRangeTimer != 0) {
             if ((this->outOfRangeTimer & 1) == 0) {
                 DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
@@ -347,4 +348,5 @@ void EnEncount1_Update(Actor* thisx, PlayState* play) {
                                    1.0f, 1.0f, 255, 0, 255, 255, 4, play->state.gfxCtx);
         }
     }
+#endif
 }
