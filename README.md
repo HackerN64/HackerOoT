@@ -32,6 +32,7 @@ This project is using the following tools:
 - [gzinject](https://github.com/krimtonz/gzinject), *injector for gz*, by krimtonz
 - [z64compress](https://github.com/z64tools/z64compress), *the fastest Zelda 64 rom compressor*, by z64tools
 - [Flips](https://github.com/Alcaro/Flips), *patcher for IPS and BPS files*, by Alcaro
+- [New Actor Script](https://github.com/hiisuya/oot_new_actor), *Python script and files to automate creating a new actor*, by hiisuya
 
 **Note: This repository does not include any of the assets necessary to build the ROM. A prior copy of the game is required to extract the needed assets.**
 
@@ -61,6 +62,8 @@ This project includes an example scene, available if ``INCLUDE_EXAMPLE_SCENE`` i
 
 This also includes an example cutscene, playable in the example scene when holding ``L`` + ``R`` and pressing ``A``.
 
+Use ``./new_actor.py --help`` for instructions on easily adding a new actor to the game.
+
 ## Changing build options
 
 The project Makefile is fairly configurable and can be used to build other versions of the game or prepare the repo for modding.
@@ -77,6 +80,7 @@ Most discussions happen on our [Discord Server](https://discord.gg/brETAakcXr), 
 
 List of every HackerOoT contributors, from most recent to oldest contribution:
 
+- hiisuya
 - Zeldaboy14
 - Reonu
 - Thar0
