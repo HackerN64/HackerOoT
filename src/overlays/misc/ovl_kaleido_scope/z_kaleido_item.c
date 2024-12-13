@@ -190,8 +190,9 @@ void KaleidoScope_DrawItemSelect(PlayState* play) {
                             pauseCtx->cursorPoint[PAUSE_ITEM] -= 1;
 
                             // if there's an item there, stop there
-                            if (IS_INV_EDITOR_ACTIVE || gSaveContext.save.info.inventory.items[pauseCtx->cursorPoint[PAUSE_ITEM]] !=
-                                ITEM_NONE) {
+                            if (IS_INV_EDITOR_ACTIVE ||
+                                gSaveContext.save.info.inventory.items[pauseCtx->cursorPoint[PAUSE_ITEM]] !=
+                                    ITEM_NONE) {
                                 cursorMoveResult = 1;
                             }
                         } else {
@@ -227,8 +228,9 @@ void KaleidoScope_DrawItemSelect(PlayState* play) {
                             pauseCtx->cursorX[PAUSE_ITEM]++;
                             pauseCtx->cursorPoint[PAUSE_ITEM] += 1;
 
-                            if (IS_INV_EDITOR_ACTIVE || gSaveContext.save.info.inventory.items[pauseCtx->cursorPoint[PAUSE_ITEM]] !=
-                                ITEM_NONE) {
+                            if (IS_INV_EDITOR_ACTIVE ||
+                                gSaveContext.save.info.inventory.items[pauseCtx->cursorPoint[PAUSE_ITEM]] !=
+                                    ITEM_NONE) {
                                 cursorMoveResult = 1;
                             }
                         } else {
@@ -344,8 +346,9 @@ void KaleidoScope_DrawItemSelect(PlayState* play) {
                                 pauseCtx->cursorY[PAUSE_ITEM]--;
                                 pauseCtx->cursorPoint[PAUSE_ITEM] -= ITEM_GRID_COLS;
 
-                                if (IS_INV_EDITOR_ACTIVE || gSaveContext.save.info.inventory.items[pauseCtx->cursorPoint[PAUSE_ITEM]] !=
-                                    ITEM_NONE) {
+                                if (IS_INV_EDITOR_ACTIVE ||
+                                    gSaveContext.save.info.inventory.items[pauseCtx->cursorPoint[PAUSE_ITEM]] !=
+                                        ITEM_NONE) {
                                     cursorMoveResult = 1;
                                 }
                             } else {
@@ -359,8 +362,9 @@ void KaleidoScope_DrawItemSelect(PlayState* play) {
                                 pauseCtx->cursorY[PAUSE_ITEM]++;
                                 pauseCtx->cursorPoint[PAUSE_ITEM] += ITEM_GRID_COLS;
 
-                                if (IS_INV_EDITOR_ACTIVE || gSaveContext.save.info.inventory.items[pauseCtx->cursorPoint[PAUSE_ITEM]] !=
-                                    ITEM_NONE) {
+                                if (IS_INV_EDITOR_ACTIVE ||
+                                    gSaveContext.save.info.inventory.items[pauseCtx->cursorPoint[PAUSE_ITEM]] !=
+                                        ITEM_NONE) {
                                     cursorMoveResult = 1;
                                 }
                             } else {

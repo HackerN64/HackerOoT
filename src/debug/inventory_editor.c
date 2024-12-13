@@ -261,14 +261,14 @@ void InventoryEditor_UpdateMiscScreen(InventoryEditor* this) {
 
 void InventoryEditor_UpdateQuestScreen(InventoryEditor* this) {
     // clang-format off
-    u8 slotToItem[] = { 
+    u8 slotToItem[] = {
         ITEM_MEDALLION_FOREST, ITEM_MEDALLION_FIRE,  ITEM_MEDALLION_WATER, ITEM_MEDALLION_SPIRIT,
         ITEM_MEDALLION_SHADOW, ITEM_MEDALLION_LIGHT, ITEM_SONG_MINUET,     ITEM_SONG_BOLERO,
         ITEM_SONG_SERENADE,    ITEM_SONG_REQUIEM,    ITEM_SONG_NOCTURNE,   ITEM_SONG_PRELUDE,
         ITEM_SONG_LULLABY,     ITEM_SONG_EPONA,      ITEM_SONG_SARIA,      ITEM_SONG_SUN,
         ITEM_SONG_TIME,        ITEM_SONG_STORMS,     ITEM_KOKIRI_EMERALD,  ITEM_GORON_RUBY,
         ITEM_ZORA_SAPPHIRE,    ITEM_STONE_OF_AGONY,  ITEM_GERUDOS_CARD,    ITEM_SKULL_TOKEN,
-        ITEM_HEART_PIECE 
+        ITEM_HEART_PIECE
     };
     // clang-format on
 
