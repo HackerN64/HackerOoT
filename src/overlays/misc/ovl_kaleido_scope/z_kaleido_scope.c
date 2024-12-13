@@ -15,6 +15,7 @@
 #include "assets/textures/icon_item_gameover_static/icon_item_gameover_static.h"
 #include "terminal.h"
 #include "versions.h"
+#include "debug.h"
 
 #pragma increment_block_number "ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
 
@@ -1151,9 +1152,9 @@ void KaleidoScope_DrawCursor(PlayState* play, u16 pageIndex) {
             gDPPipeSync(POLY_OPA_DISP++);
             gDPSetCombineLERP(POLY_OPA_DISP++, PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0,
                               PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0);
-            gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, sCursorColors[cursorColorSet][0],
-                            sCursorColors[cursorColorSet][1],
-                            sCursorColors[cursorColorSet][2], 255);
+            gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, sCursorColors[cursorColorIndex][0],
+                            sCursorColors[cursorColorIndex][1],
+                            sCursorColors[cursorColorIndex][2], 255);
             gDPSetEnvColor(POLY_OPA_DISP++, D_8082AB8C, D_8082AB90, D_8082AB94, 255);
             gSPVertex(POLY_OPA_DISP++, pauseCtx->cursorVtx, 16, 0);
 
@@ -4259,8 +4260,8 @@ void KaleidoScope_Update(PlayState* play) {
                             sDelayTimer = 3;
 #endif
                         }
-                    } else if (CHECK_BTN_ALL(input->press.button, BTN_START) ||
-                               CHECK_BTN_ALL(input->press.button, BTN_B) && !IS_INV_EDITOR_ACTIVE) {
+                    } else if ((CHECK_BTN_ALL(input->press.button, BTN_START) ||
+                               CHECK_BTN_ALL(input->press.button, BTN_B)) && !IS_INV_EDITOR_ACTIVE) {
                         Interface_SetDoAction(play, DO_ACTION_NONE);
                         pauseCtx->savePromptState = PAUSE_SAVE_PROMPT_STATE_CLOSING;
                         R_PAUSE_PAGES_Y_ORIGIN_2 = PAUSE_PAGES_Y_ORIGIN_2_LOWER;
@@ -4277,8 +4278,8 @@ void KaleidoScope_Update(PlayState* play) {
                     break;
 
                 case PAUSE_SAVE_PROMPT_STATE_SAVED:
-                    if (CHECK_BTN_ALL(input->press.button, BTN_B) || CHECK_BTN_ALL(input->press.button, BTN_A) ||
-                        CHECK_BTN_ALL(input->press.button, BTN_START) || (--sDelayTimer == 0) && !IS_INV_EDITOR_ACTIVE) {
+                    if ((CHECK_BTN_ALL(input->press.button, BTN_B) || CHECK_BTN_ALL(input->press.button, BTN_A) ||
+                        CHECK_BTN_ALL(input->press.button, BTN_START) || (--sDelayTimer == 0)) && !IS_INV_EDITOR_ACTIVE) {
                         Interface_SetDoAction(play, DO_ACTION_NONE);
                         gSaveContext.buttonStatus[0] = gSaveContext.buttonStatus[1] = gSaveContext.buttonStatus[2] =
                             gSaveContext.buttonStatus[3] = BTN_ENABLED;
