@@ -7,7 +7,7 @@
 #include "z_en_tana.h"
 #include "assets/objects/object_shop_dungen/object_shop_dungen.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3)
+#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY)
 
 void EnTana_Init(Actor* thisx, PlayState* play);
 void EnTana_Destroy(Actor* thisx, PlayState* play);
@@ -15,7 +15,7 @@ void EnTana_Update(Actor* thisx, PlayState* play);
 void EnTana_DrawWoodenShelves(Actor* thisx, PlayState* play);
 void EnTana_DrawStoneShelves(Actor* thisx, PlayState* play);
 
-ActorInit En_Tana_InitVars = {
+ActorProfile En_Tana_Profile = {
     /**/ ACTOR_EN_TANA,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -27,7 +27,7 @@ ActorInit En_Tana_InitVars = {
     /**/ NULL,
 };
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 //! @bug A third entry is missing here. When printing the string indexed by `params` for type 2, the
 //! next data entry will be dereferenced and print garbage, stopping any future printing.
 //! In a non-matching context, this can cause a crash if the next item isn't a valid pointer.
@@ -63,7 +63,7 @@ void EnTana_Init(Actor* thisx, PlayState* play) {
 
     PRINTF("☆☆☆ %s ☆☆☆\n", sShelfTypes[thisx->params]);
     Actor_SetScale(thisx, 1.0f);
-    thisx->flags &= ~ACTOR_FLAG_0;
+    thisx->flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
     thisx->draw = sDrawFuncs[thisx->params];
 }
 
@@ -79,8 +79,7 @@ void EnTana_DrawWoodenShelves(Actor* thisx, PlayState* play) {
     OPEN_DISPS(play->state.gfxCtx, "../z_en_tana.c", 148);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
-    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_tana.c", 152),
-              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_en_tana.c", 152);
     gSPDisplayList(POLY_OPA_DISP++, sShelfDLists[thisx->params]);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_tana.c", 157);
@@ -93,8 +92,7 @@ void EnTana_DrawStoneShelves(Actor* thisx, PlayState* play) {
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sStoneTextures[thisx->params]));
-    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_tana.c", 169),
-              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_en_tana.c", 169);
     gSPDisplayList(POLY_OPA_DISP++, sShelfDLists[thisx->params]);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_tana.c", 174);

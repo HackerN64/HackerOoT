@@ -45,7 +45,7 @@ void func_80AF2AB4(EnRu2* this, PlayState* play);
 
 static ColliderCylinderInitType1 sCylinderInit = {
     {
-        COLTYPE_NONE,
+        COL_MATERIAL_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
@@ -61,7 +61,7 @@ static void* sEyeTextures[] = {
     gAdultRutoEyeClosedTex,
 };
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 static UNK_TYPE D_80AF4118 = 0;
 #endif
 
@@ -79,7 +79,7 @@ static EnRu2DrawFunc sDrawFuncs[] = {
     func_80AF321C,
 };
 
-ActorInit En_Ru2_InitVars = {
+ActorProfile En_Ru2_Profile = {
     /**/ ACTOR_EN_RU2,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -127,18 +127,18 @@ void func_80AF2608(EnRu2* this) {
 }
 
 s32 func_80AF2690(EnRu2* this) {
-    s32 params_shift = this->actor.params >> 8;
+    s32 params_shift = PARAMS_GET_U(this->actor.params, 8, 8);
 
-    return params_shift & 0xFF;
+    return params_shift;
 }
 
 s32 func_80AF26A0(EnRu2* this) {
-    s16 params = this->actor.params;
+    s32 params = PARAMS_GET_U(this->actor.params, 0, 8);
 
-    return params & 0xFF;
+    return params;
 }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void func_80AF26AC(EnRu2* this) {
     this->action = 7;
     this->drawConfig = 0;
@@ -453,7 +453,7 @@ void func_80AF30AC(EnRu2* this, PlayState* play) {
 
 void func_80AF3144(EnRu2* this, PlayState* play) {
     func_80AF2F04(this, play);
-#if IS_DEBUG
+#if DEBUG_FEATURES
     func_80AF26D0(this, play);
 #endif
 }
@@ -463,7 +463,7 @@ void func_80AF3174(EnRu2* this, PlayState* play) {
     EnRu2_UpdateSkelAnime(this);
     func_80AF2608(this);
     func_80AF2F58(this, play);
-#if IS_DEBUG
+#if DEBUG_FEATURES
     func_80AF26D0(this, play);
 #endif
 }
@@ -473,7 +473,7 @@ void func_80AF31C8(EnRu2* this, PlayState* play) {
     EnRu2_UpdateSkelAnime(this);
     func_80AF2608(this);
     func_80AF30AC(this, play);
-#if IS_DEBUG
+#if DEBUG_FEATURES
     func_80AF26D0(this, play);
 #endif
 }

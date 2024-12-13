@@ -4,7 +4,7 @@
 /**
  * This file hosts different macros that changes different types
  * of buffer/heap allocation size.
- * 
+ *
  * IMPORTANT: do not change these values unless you know what you are doing.
 */
 
@@ -22,11 +22,11 @@
  * @brief PlayState is the "state" type used for "actual gameplay", that
  * is, controlling Link in the world - not the title screen, or file
  * select, etc.
- * 
+ *
  * PlayState is the only type of GameState that reallocates more
  * space beyond the default `GAMESTATE_ALLOC_SIZE`. The
  * vanilla value is `0x1D4790`, ~1.83MB.
- * 
+ *
  * It's okay if this new value is too large, `GameState_Realloc` will just
  * allocate the rest of the available SystemArena space.
  */
@@ -45,7 +45,7 @@
 #define OBJECT_BANK_SIZE 0x200000
 
 /**
- * @brief Automatic GI Object Allocation based on 
+ * @brief Automatic GI Object Allocation based on
  * the size of the largest GI object
 */
 #define ENABLE_AUTO_GI_ALLOC false
@@ -54,9 +54,9 @@
  * @brief Player's memory space reserved to load GI models (the model Link
  * holds over his head when getting an item). Vanilla's size is very
  * tiny, `0x3008`, ~12KB.
- * 
+ *
  * Note: this will be ignored if the automatic allocation is enabled.
- * 
+ *
  */
 #define GI_ALLOC_SIZE 0xB000
 
@@ -83,13 +83,21 @@
 /**
  * @brief Space allocated for the Debug buffer.
  */
+#if DEBUG_FEATURES
 #define DEBUG_BUFFER_SIZE 0xC00
+#else
+#define DEBUG_BUFFER_SIZE 0x20
+#endif
 
 /**
  * @brief Vanilla value is 0x8044BE80. Make this a little larger to
  * account for greater memory usage in other areas. Required for most
  * of the following memory increases to actually work.
  */
+#if IS_DEBUG_HEAP_ENABLED
+#define SYS_CFB_END 0x8044BE80
+#else
 #define SYS_CFB_END 0x80800000
+#endif
 
 #endif

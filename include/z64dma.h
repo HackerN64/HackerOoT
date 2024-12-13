@@ -5,7 +5,7 @@
 #include "alignment.h"
 #include "romfile.h"
 
-typedef struct {
+typedef struct DmaRequest {
     /* 0x00 */ uintptr_t    vromAddr; // VROM address (source)
     /* 0x04 */ void*        dramAddr; // DRAM address (destination)
     /* 0x08 */ size_t       size;     // File Transfer size
@@ -16,7 +16,7 @@ typedef struct {
     /* 0x1C */ OSMesg       notifyMsg;   // Completion notification message
 } DmaRequest; // size = 0x20
 
-typedef struct {
+typedef struct DmaEntry {
     /* 0x00 */ RomFile file;
     /* 0x08 */ uintptr_t romStart;
     /* 0x0C */ uintptr_t romEnd;
@@ -34,7 +34,7 @@ extern size_t gDmaMgrDmaBuffSize;
 s32 DmaMgr_RequestAsync(DmaRequest* req, void* ram, uintptr_t vrom, size_t size, u32 unk5, OSMesgQueue* queue,
                         OSMesg msg);
 s32 DmaMgr_RequestSync(void* ram, uintptr_t vrom, size_t size);
-#if IS_DEBUG
+#if DEBUG_FEATURES
 s32 DmaMgr_RequestAsyncDebug(DmaRequest* req, void* ram, uintptr_t vrom, size_t size, u32 unk5, OSMesgQueue* queue,
                              OSMesg msg, const char* file, int line);
 s32 DmaMgr_RequestSyncDebug(void* ram, uintptr_t vrom, size_t size, const char* file, int line);

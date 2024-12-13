@@ -1,57 +1,51 @@
-#include "ultra64.h"
-#include "z64.h"
-#include "macros.h"
 #include "example_scene.h"
-#include "segment_symbols.h"
-#include "command_macros_base.h"
-#include "z64cutscene_commands.h"
-#include "variables.h"
 
-Gfx example_room_0_entry_0_opaque[] = {
-	gsSPDisplayList(example_dl_crawlspace_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_crawlspace_outline_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_door_outline_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_001_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_ice_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_ladder_001_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_lava_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_lava_void_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_Floor_002_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_Floor_006_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_Floor_007_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_002_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_003_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_004_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_005_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_006_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_007_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_008_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_009_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_010_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_011_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_012_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_013_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_014_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_015_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_016_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_017_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_018_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_019_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_020_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_grass_021_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_sand_mesh_layer_Opaque),
-	gsSPDisplayList(example_dl_water_border_mesh_layer_Opaque),
+
+Gfx example_room_0_shapeHeader_entry_0_opaque[] = {
+	gsSPDisplayList(example_room_0_dl_crawlspace_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_crawlspace_outline_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_door_outline_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_001_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_ice_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_ladder_001_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_lava_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_lava_void_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_Floor_002_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_Floor_006_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_Floor_007_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_002_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_003_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_004_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_005_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_006_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_007_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_008_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_009_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_010_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_011_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_012_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_013_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_014_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_015_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_016_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_017_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_018_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_019_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_020_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_grass_021_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_sand_mesh_layer_Opaque),
+	gsSPDisplayList(example_room_0_dl_water_border_mesh_layer_Opaque),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_room_0_entry_0_transparent[] = {
-	gsSPDisplayList(example_dl_ladder_002_mesh_layer_Transparent),
-	gsSPDisplayList(example_dl_water_mesh_layer_Transparent),
+Gfx example_room_0_shapeHeader_entry_0_transparent[] = {
+	gsSPDisplayList(example_room_0_dl_vines_mesh_layer_Transparent),
+	gsSPDisplayList(example_room_0_dl_water_mesh_layer_Transparent),
 	gsSPEndDisplayList(),
 };
 
-u64 example_dl_wall_hackeroot_i8[] = {
+u64 example_room_0_dl_wall_hackeroot_i8[] = {
 	0x5a620062695f632c, 0x1e5246372b26b772, 0x32680534822b8813, 0x5271737e6f462954, 0x83716184789da928, 0x9f8e859b90979596, 0x8a9d62918a8e949b, 0x9b6e6d829c96818b, 
 	0x9895718296859f2b, 0x9270aba1967b899e, 0xa0768b95857aa285, 0x808da583a07c847f, 0x7aa1848c93859973, 0x9a99ab92a1959d78, 0xb69d7b858587a38c, 0x9a0e999182739c7c, 
 	0xa59a769e8b879c21, 0x959f9370979fb699, 0x909aa4919b8c9099, 0xa12e9381a27d9a8f, 0x7a858d7c96929d0e, 0x9795958b83968397, 0x817b8794987e687d, 0x8e2c6d959c8e9780, 
@@ -71,7 +65,7 @@ u64 example_dl_wall_hackeroot_i8[] = {
 	
 };
 
-u64 example_dl__2grass_hackeroot_ci8[] = {
+u64 example_room_0_dl__2grass_hackeroot_ci8[] = {
 	0x0001000203040502, 0x060703040809070a, 0x0b04030c0d0e040f, 0x1011121303141516, 0x0710171807190a02, 0x1a021b05111c1d1e, 0x1f20072120010b22, 0x0e230524250b2611, 
 	0x12180b2718280529, 0x0126032a18050301, 0x052b0b11182c2d0b, 0x012e292f30310a32, 0x1b1a333435293615, 0x0227172d37381139, 0x1218052515071801, 0x050b2f120b110b1b, 
 	0x030407113a0d2315, 0x0a2f333b070a0415, 0x032a3c38023d0838, 0x04240b080403173e, 0x2a212528182a2d0d, 0x3f401b1811074129, 0x274203070b3a0b0a, 0x02153c25280b2905, 
@@ -91,14 +85,14 @@ u64 example_dl__2grass_hackeroot_ci8[] = {
 	
 };
 
-u64 example_dl__2grass_hackeroot_pal_rgba16[] = {
+u64 example_room_0_dl__2grass_hackeroot_pal_rgba16[] = {
 	0x7513ae157d13a595, 0x9553b615b5d3b617, 0x9dd56d518513add5, 0x7ccf959574d38d0f, 0xbe978d5365117511, 0xae17a5d5c695b5d5, 0x9d956cd1b6576d11, 0x75518515be15be17, 
 	0xb6559593b5d79d93, 0x8551a593a5d364d1, 0xbe5774d19d556551, 0xad93be557d159555, 0xce97add77d539d53, 0xb619ad957d0f8d93, 0x8d5574915d11be59, 0xa5558d13c6976d13, 
 	0x9dd36ccfc6576d0f, 0x6cd3750f7cd17d11, 0x85115c8fadd3a615, 0x9d97648f7d4f8553, 0x6c8f84d3ce997cd3, 0x7d5574cf8d515cd1, 0x6c9184d18d11ced7, 0xc699ad97554f748f, 
 	0x95138d1595516513, 0x8d91a5d7850f9dd7, 0x64d354d1855564cf, 0xa597b69700000000
 };
 
-u64 example_dl_ice_hackeroot_ci8[] = {
+u64 example_room_0_dl_ice_hackeroot_ci8[] = {
 	0x0001020304050406, 0x070707080909080a, 0x0b0c0d0e0c0c0505, 0x0f0707080f100e11, 0x120113140f150a07, 0x070706060f0f090a, 0x16170c0c18050404, 0x1519081a14051b11, 
 	0x1c011314190f0707, 0x07061d0b05040415, 0x0b100c1b05041504, 0x040415131301111e, 0x1f200319190a0607, 0x08090f0418181b18, 0x10181b0c05150f15, 0x040404041505001f, 
 	0x212203190a1d1d0a, 0x0808090f04012323, 0x1b18180505040404, 0x04040f09090f0500, 0x05150f090a16150f, 0x0807080916242517, 0x1717041315150404, 0x150f080807070405, 
@@ -118,12 +112,12 @@ u64 example_dl_ice_hackeroot_ci8[] = {
 	
 };
 
-u64 example_dl_ice_hackeroot_pal_rgba16[] = {
+u64 example_room_0_dl_ice_hackeroot_pal_rgba16[] = {
 	0x1ef526b7267725f7, 0x1e371e771d391cf9, 0x1cf71d371d791e39, 0x1ef91f391f371db7, 0x1eb91ef326f52637, 0x25b71df71df91e79, 0x1eb71d7725771ef7, 0x26f31db926f126b1, 
 	0x267526b3263526f7, 0x2639267924f725f9, 0x1cb71cb91eb526b5, 0x25b924f925792537, 0x253924b71c371c77, 0x25f525b52cb52d35, 0x2d372db52df51eb3, 
 };
 
-u64 example_dl_ladder_hackeroot_ci8[] = {
+u64 example_room_0_dl_ladder_hackeroot_ci8[] = {
 	0x0001020304050606, 0x0507050508090a0a, 0x0b0a0c020d0e0f10, 0x110a0e0a12130a14, 0x0a0a021516170518, 0x051905151a1b1c1d, 0x1e1f020220020a0a, 0x21120a0a22232402, 
 	0x0a0a02051f082526, 0x2705151a281f292a, 0x1b022b100b2c020a, 0x23230a0a0a0a2d02, 0x2e2f300505313233, 0x05341628191b1d2a, 0x35360014000a022a, 0x0b0a0a231137380a, 
 	0x0d2d2e3305053915, 0x092a3a0533000a0a, 0x02140c0a3b0a383c, 0x141b223d0a3e3f0a, 0x4014141928060503, 0x15050541420a0f02, 0x400a000f1f2e4344, 0x1b0e45230a0f360a, 
@@ -143,39 +137,14 @@ u64 example_dl_ladder_hackeroot_ci8[] = {
 	
 };
 
-u64 example_dl_ladder_hackeroot_pal_rgba16[] = {
+u64 example_room_0_dl_ladder_hackeroot_pal_rgba16[] = {
 	0x60c1fec3fe816001, 0xf301fb41fc49fb83, 0xc253300179819247, 0x6081ff057141b34f, 0x9a89bb918a038181, 0x690178015801d201, 0xb901eac198c75881, 0xab0d9205aacb4801, 
 	0xff45d45779418a05, 0xb30dfd51fdd5fb85, 0xfc8ba2894001fec1, 0xffcfe6013801ffd3, 0xee41b9cf8001e281, 0x5001f681ee01c3d3, 0xd5817001fc0781c3, 0xab0b200189c38b41, 
 	0xffcba8c1fd0ff641, 0xff0368c1a081fc09, 0x2801ff47cc157101, 0xff890001ffd59381, 0x5041b941fb439909, 0xda41c9c1bc81e5c1, 0xc1818043dd819a47, 0x81c1ecdb000090c7, 
 	0xff1fcd41ffc99245, 0xa2c9b441a2cbbb8f, 0xd4555841ac01cd01, 0xffcdd415ffd7cc13, 0x9a87000000000000
 };
 
-u64 example_dl_vines_ci8[] = {
-	0x0001010102030405, 0x0406000707050505, 0x0707070808080707, 0x0707070707070707, 0x000101090a030b04, 0x0c01010d0e0a0c0b, 0x0405050707070505, 0x0505050505050505, 
-	0x08000f04040b060a, 0x0200010110011009, 0x1112030405050505, 0x0b13130405050507, 0x0807050505140001, 0x0101000910090101, 0x010110130b070707, 0x02010a0415160808, 
-	0x0705050507080800, 0x0101001713100100, 0x0018190101000808, 0x001a040310010008, 0x0705050508080808, 0x0001010004120101, 0x0007041201010008, 0x0807051b01010008, 
-	0x0705050508080808, 0x0001010007040d01, 0x0007050502010100, 0x0705050700010008, 0x0705050507080800, 0x0101010007050601, 0x0007050507000101, 0x0705050700010108, 
-	0x0807050507070001, 0x0101000808070b01, 0x0108070507020101, 0x0f05050800010108, 0x08070505041c0101, 0x0100080808070b10, 0x10080705051d0101, 0x1b05070800010008, 
-	0x0807050411101000, 0x0008080808081410, 0x11070807050c0101, 0x0505070001010008, 0x0000150b11130b07, 0x0708080808081801, 0x0a0708071e0e101f, 0x05050f0101000808, 
-	0x00010e040b070505, 0x0707080808000110, 0x0b07080001101205, 0x0505000101000808, 0x0001100405070705, 0x0507080808000110, 0x05040201010e0505, 0x0504010100080808, 
-	0x0800010a041b0807, 0x0505070800010100, 0x060e010116050505, 0x0503010000080808, 0x08080019040c0007, 0x0505070001010000, 0x0110110005050714, 0x0c0b130208080808, 
-	0x0808082004150008, 0x0705140101000001, 0x0115040705050700, 0x1904050707080808, 0x08070705040e011f, 0x0505090100000001, 0x0105050707050500, 0x0112050507080808, 
-	0x070505050700010d, 0x0405010100080001, 0x0103050707050521, 0x0101040505080808, 0x0505050707140e01, 0x0607010100080800, 0x010a050707050508, 0x0001150505070808, 
-	0x0507070808070610, 0x1808000101000800, 0x100d0f0805050708, 0x2009110405070808, 0x0708080807040e01, 0x0008000101010008, 0x0e10160805050707, 0x0412100405070808, 
-	0x0708080807060101, 0x0008080001010100, 0x0610100705050705, 0x05140d0404070808, 0x070808081e0d0100, 0x0808080800010100, 0x040d012105050705, 0x051b060422080808, 
-	0x0507080010101c21, 0x080808080001011a, 0x0512012305050707, 0x0505040310000808, 0x0507080001110407, 0x080808080001011b, 0x0515010905050807, 0x0505051c01000808, 
-	0x05050800011c0507, 0x0808080001011805, 0x0520010905050808, 0x0705051001000808, 0x0505070001240505, 0x0708000101000705, 0x0524010d05070808, 0x07050c0101000808, 
-	0x0505070001010505, 0x0708000101000705, 0x0500010e05070808, 0x0704111000080808, 0x0505070001010f05, 0x0507000100080705, 0x0700010605070707, 0x04040e1f08080808, 
-	0x0505070001011805, 0x050f010100070505, 0x0700010b05070505, 0x0b04122108080808, 0x0505080800010007, 0x0514010108070505, 0x0700011405070505, 0x1404250808080808, 
-	
-};
-
-u64 example_dl_vines_pal_rgba16[] = {
-	0x07c807c907880485, 0x040503c5050503c4, 0x0000074905870445, 0x04c5070906870444, 0x078906c705c70607, 0x04c4054506860546, 0x0748070706460404, 0x06470504048406c6, 
-	0x058605c606060706, 0x0708054700000000
-};
-
-u64 example_dl_lava_hackeroot_ci8[] = {
+u64 example_room_0_dl_lava_hackeroot_ci8[] = {
 	0x0001020304050406, 0x0707070809090806, 0x0a0b0c0c0b0d0e0e, 0x0f0710080f110c12, 0x131402150f160607, 0x071010060f0f0917, 0x18110d0b050e0404, 0x1619081a150e0012, 
 	0x1b01031c19190710, 0x1010181d0e0e0416, 0x0a110d1e0e041604, 0x040416020201001b, 0x1f20031919171010, 0x08080f04051e1e05, 0x0d051e0b0e160f16, 0x04040404040e001f, 
 	0x2120031917181806, 0x0808090f04010101, 0x0505050e0e040404, 0x04040f09090f0e1e, 0x05040f0917181619, 0x080708091822231d, 0x1d1d040204040e0e, 0x040f08081010160e, 
@@ -195,12 +164,12 @@ u64 example_dl_lava_hackeroot_ci8[] = {
 	
 };
 
-u64 example_dl_lava_hackeroot_pal_rgba16[] = {
+u64 example_room_0_dl_lava_hackeroot_pal_rgba16[] = {
 	0xd907d989da09da49, 0xda07d987e307e387, 0xdb47db07e247e147, 0xe107e187d9c7da87, 0xe347e1c7d8c9d949, 0xd9c9da89da47e2c7, 0xe287dac7db09d909, 0xdac9e207d947d109, 
 	0xd1c9d149e249e209, 0xdb49e289db87db89, 0xd147d189d8c7e389, 0xe309e2c9e1c9e349, 0xdbc9dbc7d209d249, 0xd38bd34bd289db4b, 0xd2cbd24bd1070000
 };
 
-u64 example_dl_sand_hackeroot_ci8[] = {
+u64 example_room_0_dl_sand_hackeroot_ci8[] = {
 	0x0001020301040503, 0x0601070704080109, 0x010a010b0c0d0e01, 0x070c0f1001110711, 0x111105110112130d, 0x0414080515161706, 0x0511010711010501, 0x180105191111111a, 
 	0x0804111b07110102, 0x0705111c07070111, 0x051d061e1e060501, 0x071f021a06112021, 0x1b04222305022407, 0x252605051e271e28, 0x2904051104050707, 0x05112a2b01270625, 
 	0x051a07272c1e1111, 0x20071107010b0411, 0x051c2d2e2f301e31, 0x071e011e11110511, 0x0e0401010101011e, 0x321e10111a053334, 0x120101111135012f, 0x3611220601012f11, 
@@ -220,13 +189,38 @@ u64 example_dl_sand_hackeroot_ci8[] = {
 	
 };
 
-u64 example_dl_sand_hackeroot_pal_rgba16[] = {
+u64 example_room_0_dl_sand_hackeroot_pal_rgba16[] = {
 	0xe601fbc1e581ed41, 0xfc81fb81fb41fc41, 0xf6c1f501ec01ecc1, 0xfd01e541f3c1ee81, 0xedc1fc01de41e481, 0xed81ec41fe81e4c3, 0xddc1fd41f441eec1, 0xf401ff81fcc1e583, 
 	0xe4c1f601f381fc03, 0xf541ee01e641f4c1, 0xd4c1f701ebc1ef01, 0xd741f341f481e501, 0xe401ec81ee41e5c1, 0xdcc1e741f581f641, 0xe503fb01de81fc43, 0xd541ed01ef41fd81, 
 	0xdd41dd01fe41fdc1, 0xf5c1e6c1dc81e681, 0xf681df01d501fb83, 0xefc1e483f781e701, 0xdec1eb81dc41ff01, 0xd6c1fc83cf01ed43, 0xde01f48300000000
 };
 
-u64 example_dl_water_hackeroot_ci8[] = {
+u64 example_room_0_dl_vines_ci8[] = {
+	0x0001010102030405, 0x0406000707050505, 0x0707070808080707, 0x0707070707070707, 0x000101090a030b04, 0x0c01010d0e0a0c0b, 0x0405050707070505, 0x0505050505050505, 
+	0x08000f04040b060a, 0x0200010110011009, 0x1112030405050505, 0x0b13130405050507, 0x0807050505140001, 0x0101000910090101, 0x010110130b070707, 0x02010a0415160808, 
+	0x0705050507080800, 0x0101001713100100, 0x0018190101000808, 0x001a040310010008, 0x0705050508080808, 0x0001010004120101, 0x0007041201010008, 0x0807051b01010008, 
+	0x0705050508080808, 0x0001010007040d01, 0x0007050502010100, 0x0705050700010008, 0x0705050507080800, 0x0101010007050601, 0x0007050507000101, 0x0705050700010108, 
+	0x0807050507070001, 0x0101000808070b01, 0x0108070507020101, 0x0f05050800010108, 0x08070505041c0101, 0x0100080808070b10, 0x10080705051d0101, 0x1b05070800010008, 
+	0x0807050411101000, 0x0008080808081410, 0x11070807050c0101, 0x0505070001010008, 0x0000150b11130b07, 0x0708080808081801, 0x0a0708071e0e101f, 0x05050f0101000808, 
+	0x00010e040b070505, 0x0707080808000110, 0x0b07080001101205, 0x0505000101000808, 0x0001100405070705, 0x0507080808000110, 0x05040201010e0505, 0x0504010100080808, 
+	0x0800010a041b0807, 0x0505070800010100, 0x060e010116050505, 0x0503010000080808, 0x08080019040c0007, 0x0505070001010000, 0x0110110005050714, 0x0c0b130208080808, 
+	0x0808082004150008, 0x0705140101000001, 0x0115040705050700, 0x1904050707080808, 0x08070705040e011f, 0x0505090100000001, 0x0105050707050500, 0x0112050507080808, 
+	0x070505050700010d, 0x0405010100080001, 0x0103050707050521, 0x0101040505080808, 0x0505050707140e01, 0x0607010100080800, 0x010a050707050508, 0x0001150505070808, 
+	0x0507070808070610, 0x1808000101000800, 0x100d0f0805050708, 0x2009110405070808, 0x0708080807040e01, 0x0008000101010008, 0x0e10160805050707, 0x0412100405070808, 
+	0x0708080807060101, 0x0008080001010100, 0x0610100705050705, 0x05140d0404070808, 0x070808081e0d0100, 0x0808080800010100, 0x040d012105050705, 0x051b060422080808, 
+	0x0507080010101c21, 0x080808080001011a, 0x0512012305050707, 0x0505040310000808, 0x0507080001110407, 0x080808080001011b, 0x0515010905050807, 0x0505051c01000808, 
+	0x05050800011c0507, 0x0808080001011805, 0x0520010905050808, 0x0705051001000808, 0x0505070001240505, 0x0708000101000705, 0x0524010d05070808, 0x07050c0101000808, 
+	0x0505070001010505, 0x0708000101000705, 0x0500010e05070808, 0x0704111000080808, 0x0505070001010f05, 0x0507000100080705, 0x0700010605070707, 0x04040e1f08080808, 
+	0x0505070001011805, 0x050f010100070505, 0x0700010b05070505, 0x0b04122108080808, 0x0505080800010007, 0x0514010108070505, 0x0700011405070505, 0x1404250808080808, 
+	
+};
+
+u64 example_room_0_dl_vines_pal_rgba16[] = {
+	0x07c807c907880485, 0x040503c5050503c4, 0x0000074905870445, 0x04c5070906870444, 0x078906c705c70607, 0x04c4054506860546, 0x0748070706460404, 0x06470504048406c6, 
+	0x058605c606060706, 0x0708054700000000
+};
+
+u64 example_room_0_dl_water_hackeroot_ci8[] = {
 	0x0001020304050406, 0x0707070809090a0b, 0x0c0d0e0e0d0f1010, 0x1107120a11130e14, 0x1501021611170607, 0x121206061111090b, 0x18130d0d05100410, 0x17190a1a1610001b, 
 	0x1c01021d19190712, 0x12061e0c10100417, 0x0c130d1f10040404, 0x0404040302010020, 0x21220319190b0612, 0x0a091104051f1f05, 0x0f05050d10171717, 0x0404100404100021, 
 	0x232203190b1e1e0b, 0x0a0a091104010101, 0x1f05050504040404, 0x040411090911101f, 0x050411090b1e1719, 0x0a120a0918242413, 0x1313040304040404, 0x04110a0a12121710, 
@@ -246,12 +240,12 @@ u64 example_dl_water_hackeroot_ci8[] = {
 	
 };
 
-u64 example_dl_water_hackeroot_x_water_hackeroot_pal_rgba16[] = {
+u64 example_room_0_dl_water_hackeroot_x_water_hackeroot_pal_rgba16[] = {
 	0x1b77233722b72277, 0x1a771af7197918f9, 0x18f71977193719b9, 0x1a791b391b791af9, 0x1ab719f719391ab9, 0x1bf7237722371a37, 0x1a3919b721b71bb7, 0x23b721f719f91b37, 
 	0x23f723b522f52375, 0x22b9217722392137, 0x22f71b3523352139, 0x21b921f922792179, 0x20f7227522352975, 0x29f522b529f72a75, 0x2ab51b7500000000
 };
 
-u64 example_dl_water_hackeroot_ci8_copy[] = {
+u64 example_room_0_dl_water_hackeroot_ci8_copy[] = {
 	0x0001020304050406, 0x0707070809090a0b, 0x0c0d0e0e0d0f1010, 0x1107120a11130e14, 0x1501021611170607, 0x121206061111090b, 0x18130d0d05100410, 0x17190a1a1610001b, 
 	0x1c01021d19190712, 0x12061e0c10100417, 0x0c130d1f10040404, 0x0404040302010020, 0x21220319190b0612, 0x0a091104051f1f05, 0x0f05050d10171717, 0x0404100404100021, 
 	0x232203190b1e1e0b, 0x0a0a091104010101, 0x1f05050504040404, 0x040411090911101f, 0x050411090b1e1719, 0x0a120a0918242413, 0x1313040304040404, 0x04110a0a12121710, 
@@ -271,7 +265,7 @@ u64 example_dl_water_hackeroot_ci8_copy[] = {
 	
 };
 
-Vtx example_dl_crawlspace_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_crawlspace_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-16, 0, -308}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-16, 24, -308}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-16, 24, -545}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -282,7 +276,7 @@ Vtx example_dl_crawlspace_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {13, 0, -545}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_crawlspace_mesh_layer_Opaque_vtx_0[12] = {
+Vtx example_room_0_dl_crawlspace_mesh_layer_Opaque_vtx_0[12] = {
 	{{ {13, 24, -545}, 0, {1008, 462}, {129, 0, 0, 255} }},
 	{{ {13, 0, -308}, 0, {-16, 565}, {129, 0, 0, 255} }},
 	{{ {13, 24, -308}, 0, {-16, 462}, {129, 0, 0, 255} }},
@@ -297,15 +291,15 @@ Vtx example_dl_crawlspace_mesh_layer_Opaque_vtx_0[12] = {
 	{{ {-16, 0, -545}, 0, {1008, 565}, {127, 0, 0, 255} }},
 };
 
-Gfx example_dl_crawlspace_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_crawlspace_mesh_layer_Opaque_vtx_0 + 0, 12, 0),
+Gfx example_room_0_dl_crawlspace_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_crawlspace_mesh_layer_Opaque_vtx_0 + 0, 12, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSP2Triangles(4, 5, 6, 0, 4, 7, 5, 0),
 	gsSP2Triangles(8, 9, 10, 0, 8, 11, 9, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_crawlspace_outline_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_crawlspace_outline_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-46, 0, -308}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-46, 155, -308}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-46, 155, -545}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -316,7 +310,7 @@ Vtx example_dl_crawlspace_outline_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {43, 0, -545}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_crawlspace_outline_mesh_layer_Opaque_vtx_0[47] = {
+Vtx example_room_0_dl_crawlspace_outline_mesh_layer_Opaque_vtx_0[47] = {
 	{{ {13, 155, -308}, 0, {547, 901}, {0, 127, 0, 255} }},
 	{{ {43, 155, -308}, 0, {647, 901}, {0, 127, 0, 255} }},
 	{{ {43, 155, -545}, 0, {647, 91}, {0, 127, 0, 255} }},
@@ -366,8 +360,8 @@ Vtx example_dl_crawlspace_outline_mesh_layer_Opaque_vtx_0[47] = {
 	{{ {-46, 155, -308}, 0, {344, 258}, {0, 0, 127, 255} }},
 };
 
-Gfx example_dl_crawlspace_outline_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_crawlspace_outline_mesh_layer_Opaque_vtx_0 + 0, 31, 0),
+Gfx example_room_0_dl_crawlspace_outline_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_crawlspace_outline_mesh_layer_Opaque_vtx_0 + 0, 31, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 2, 3, 0),
 	gsSP2Triangles(4, 0, 3, 0, 4, 3, 5, 0),
 	gsSP2Triangles(5, 6, 4, 0, 6, 7, 4, 0),
@@ -377,7 +371,7 @@ Gfx example_dl_crawlspace_outline_mesh_layer_Opaque_tri_0[] = {
 	gsSP2Triangles(20, 21, 22, 0, 20, 23, 21, 0),
 	gsSP2Triangles(24, 25, 26, 0, 24, 26, 27, 0),
 	gsSP2Triangles(28, 29, 30, 0, 28, 25, 29, 0),
-	gsSPVertex(example_dl_crawlspace_outline_mesh_layer_Opaque_vtx_0 + 31, 16, 0),
+	gsSPVertex(example_room_0_dl_crawlspace_outline_mesh_layer_Opaque_vtx_0 + 31, 16, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSP2Triangles(4, 5, 6, 0, 4, 6, 7, 0),
 	gsSP2Triangles(8, 9, 10, 0, 8, 11, 9, 0),
@@ -385,7 +379,7 @@ Gfx example_dl_crawlspace_outline_mesh_layer_Opaque_tri_0[] = {
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_door_outline_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_door_outline_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-150, 0, -95}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 155, -95}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 155, -115}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -396,7 +390,7 @@ Vtx example_dl_door_outline_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {150, 0, -115}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_door_outline_mesh_layer_Opaque_vtx_0[58] = {
+Vtx example_room_0_dl_door_outline_mesh_layer_Opaque_vtx_0[58] = {
 	{{ {31, 100, -95}, 0, {462, 493}, {129, 0, 0, 255} }},
 	{{ {31, 0, -115}, 0, {530, 835}, {129, 0, 0, 255} }},
 	{{ {31, 0, -95}, 0, {462, 835}, {129, 0, 0, 255} }},
@@ -457,8 +451,8 @@ Vtx example_dl_door_outline_mesh_layer_Opaque_vtx_0[58] = {
 	{{ {-150, 0, -115}, 0, {530, 835}, {129, 0, 0, 255} }},
 };
 
-Gfx example_dl_door_outline_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_door_outline_mesh_layer_Opaque_vtx_0 + 0, 32, 0),
+Gfx example_room_0_dl_door_outline_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_door_outline_mesh_layer_Opaque_vtx_0 + 0, 32, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSP2Triangles(4, 5, 6, 0, 4, 7, 5, 0),
 	gsSP2Triangles(8, 5, 7, 0, 8, 9, 5, 0),
@@ -470,7 +464,7 @@ Gfx example_dl_door_outline_mesh_layer_Opaque_tri_0[] = {
 	gsSP2Triangles(22, 23, 24, 0, 22, 25, 23, 0),
 	gsSP2Triangles(26, 27, 28, 0, 26, 29, 27, 0),
 	gsSP2Triangles(30, 27, 29, 0, 30, 31, 27, 0),
-	gsSPVertex(example_dl_door_outline_mesh_layer_Opaque_vtx_0 + 32, 26, 0),
+	gsSPVertex(example_room_0_dl_door_outline_mesh_layer_Opaque_vtx_0 + 32, 26, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSP2Triangles(3, 4, 1, 0, 3, 5, 4, 0),
 	gsSP2Triangles(4, 6, 1, 0, 4, 7, 6, 0),
@@ -483,7 +477,7 @@ Gfx example_dl_door_outline_mesh_layer_Opaque_tri_0[] = {
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_001_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_001_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-150, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -494,7 +488,7 @@ Vtx example_dl_grass_001_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {150, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_001_mesh_layer_Opaque_vtx_0[22] = {
+Vtx example_room_0_dl_grass_001_mesh_layer_Opaque_vtx_0[22] = {
 	{{ {-150, 0, -281}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {38, 0, -281}, 0, {624, 1008}, {0, 127, 0, 255} }},
 	{{ {-38, 0, -318}, 0, {368, 880}, {0, 127, 0, 255} }},
@@ -519,8 +513,8 @@ Vtx example_dl_grass_001_mesh_layer_Opaque_vtx_0[22] = {
 	{{ {-38, 0, -356}, 0, {368, 752}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_001_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_001_mesh_layer_Opaque_vtx_0 + 0, 22, 0),
+Gfx example_room_0_dl_grass_001_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_001_mesh_layer_Opaque_vtx_0 + 0, 22, 0),
 	gsSP2Triangles(0, 1, 2, 0, 1, 3, 2, 0),
 	gsSP2Triangles(1, 4, 3, 0, 4, 1, 5, 0),
 	gsSP2Triangles(6, 4, 5, 0, 7, 6, 5, 0),
@@ -535,7 +529,7 @@ Gfx example_dl_grass_001_mesh_layer_Opaque_tri_0[] = {
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_001_mesh_layer_Opaque_vtx_1[16] = {
+Vtx example_room_0_dl_grass_001_mesh_layer_Opaque_vtx_1[16] = {
 	{{ {-38, 0, -356}, 0, {368, 752}, {0, 127, 0, 255} }},
 	{{ {-38, 0, -318}, 0, {368, 880}, {0, 127, 0, 255} }},
 	{{ {0, 0, -318}, 0, {496, 880}, {0, 127, 0, 255} }},
@@ -554,8 +548,8 @@ Vtx example_dl_grass_001_mesh_layer_Opaque_vtx_1[16] = {
 	{{ {-38, 0, -543}, 0, {368, 112}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_001_mesh_layer_Opaque_tri_1[] = {
-	gsSPVertex(example_dl_grass_001_mesh_layer_Opaque_vtx_1 + 0, 16, 0),
+Gfx example_room_0_dl_grass_001_mesh_layer_Opaque_tri_1[] = {
+	gsSPVertex(example_room_0_dl_grass_001_mesh_layer_Opaque_vtx_1 + 0, 16, 0),
 	gsSP2Triangles(0, 1, 2, 0, 3, 0, 2, 0),
 	gsSP2Triangles(4, 3, 2, 0, 5, 4, 2, 0),
 	gsSP2Triangles(6, 5, 2, 0, 7, 6, 2, 0),
@@ -566,7 +560,7 @@ Gfx example_dl_grass_001_mesh_layer_Opaque_tri_1[] = {
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_ice_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_ice_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {150, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {150, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {150, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -577,20 +571,20 @@ Vtx example_dl_ice_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {450, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_ice_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_ice_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {450, 0, 19}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {150, 0, -281}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {150, 0, 19}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {450, 0, -281}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_ice_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_ice_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_ice_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_ice_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_ladder_001_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_ladder_001_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {43, 0, -414}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {43, 171, -414}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {43, 171, -439}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -601,57 +595,33 @@ Vtx example_dl_ladder_001_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {45, 0, -439}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_ladder_001_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_ladder_001_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {43, 0, -414}, 0, {19, 1079}, {127, 0, 0, 255} }},
 	{{ {43, 171, -439}, 0, {201, -151}, {127, 0, 0, 255} }},
 	{{ {43, 171, -414}, 0, {19, -151}, {127, 0, 0, 255} }},
 	{{ {43, 0, -439}, 0, {201, 1079}, {127, 0, 0, 255} }},
 };
 
-Gfx example_dl_ladder_001_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_ladder_001_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_ladder_001_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_ladder_001_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_ladder_001_mesh_layer_Opaque_vtx_1[4] = {
+Vtx example_room_0_dl_ladder_001_mesh_layer_Opaque_vtx_1[4] = {
 	{{ {45, 0, -414}, 0, {19, 1079}, {127, 0, 0, 255} }},
 	{{ {45, 171, -439}, 0, {201, -151}, {127, 0, 0, 255} }},
 	{{ {45, 171, -414}, 0, {19, -151}, {127, 0, 0, 255} }},
 	{{ {45, 0, -439}, 0, {201, 1079}, {127, 0, 0, 255} }},
 };
 
-Gfx example_dl_ladder_001_mesh_layer_Opaque_tri_1[] = {
-	gsSPVertex(example_dl_ladder_001_mesh_layer_Opaque_vtx_1 + 0, 4, 0),
+Gfx example_room_0_dl_ladder_001_mesh_layer_Opaque_tri_1[] = {
+	gsSPVertex(example_room_0_dl_ladder_001_mesh_layer_Opaque_vtx_1 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_ladder_002_mesh_layer_Transparent_vtx_cull[8] = {
-	{{ {-47, 0, -382}, 0, {0, 0}, {0, 0, 0, 0} }},
-	{{ {-47, 155, -382}, 0, {0, 0}, {0, 0, 0, 0} }},
-	{{ {-47, 155, -459}, 0, {0, 0}, {0, 0, 0, 0} }},
-	{{ {-47, 0, -459}, 0, {0, 0}, {0, 0, 0, 0} }},
-	{{ {-47, 0, -382}, 0, {0, 0}, {0, 0, 0, 0} }},
-	{{ {-47, 155, -382}, 0, {0, 0}, {0, 0, 0, 0} }},
-	{{ {-47, 155, -459}, 0, {0, 0}, {0, 0, 0, 0} }},
-	{{ {-47, 0, -459}, 0, {0, 0}, {0, 0, 0, 0} }},
-};
-
-Vtx example_dl_ladder_002_mesh_layer_Transparent_vtx_0[4] = {
-	{{ {-47, 0, -459}, 0, {355, 781}, {129, 0, 0, 255} }},
-	{{ {-47, 155, -382}, 0, {637, 518}, {129, 0, 0, 255} }},
-	{{ {-47, 155, -459}, 0, {355, 518}, {129, 0, 0, 255} }},
-	{{ {-47, 0, -382}, 0, {637, 781}, {129, 0, 0, 255} }},
-};
-
-Gfx example_dl_ladder_002_mesh_layer_Transparent_tri_0[] = {
-	gsSPVertex(example_dl_ladder_002_mesh_layer_Transparent_vtx_0 + 0, 4, 0),
-	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
-	gsSPEndDisplayList(),
-};
-
-Vtx example_dl_lava_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_lava_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {150, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {150, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {150, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -662,20 +632,20 @@ Vtx example_dl_lava_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {450, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_lava_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_lava_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {450, 0, 319}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {150, 0, 19}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {150, 0, 319}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {450, 0, 19}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_lava_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_lava_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_lava_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_lava_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_lava_void_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_lava_void_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {150, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {150, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {150, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -686,20 +656,20 @@ Vtx example_dl_lava_void_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {450, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_lava_void_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_lava_void_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {450, 0, 619}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {150, 0, 319}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {150, 0, 619}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {450, 0, 319}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_lava_void_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_lava_void_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_lava_void_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_lava_void_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_Floor_002_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_Floor_002_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-450, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-450, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-450, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -710,20 +680,20 @@ Vtx example_dl_Floor_002_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-150, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_Floor_002_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_Floor_002_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {-150, 0, 319}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-450, 0, 19}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-450, 0, 319}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {-150, 0, 19}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_Floor_002_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_Floor_002_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_Floor_002_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_Floor_002_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_Floor_006_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_Floor_006_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-450, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-450, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-450, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -734,20 +704,20 @@ Vtx example_dl_Floor_006_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-150, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_Floor_006_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_Floor_006_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {-150, 0, 619}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-450, 0, 319}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-450, 0, 619}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {-150, 0, 319}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_Floor_006_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_Floor_006_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_Floor_006_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_Floor_006_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_Floor_007_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_Floor_007_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-150, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -758,20 +728,20 @@ Vtx example_dl_Floor_007_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {150, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_Floor_007_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_Floor_007_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {150, 0, 619}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-150, 0, 319}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-150, 0, 619}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {150, 0, 319}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_Floor_007_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_Floor_007_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_Floor_007_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_Floor_007_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-150, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -782,20 +752,20 @@ Vtx example_dl_grass_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {150, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {150, 0, 19}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-150, 0, -281}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-150, 0, 19}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {150, 0, -281}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_002_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_002_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-450, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-450, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-450, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -806,20 +776,20 @@ Vtx example_dl_grass_002_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-150, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_002_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_002_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {-150, 0, -281}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-450, 0, -581}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-450, 0, -281}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {-150, 0, -581}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_002_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_002_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_002_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_002_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_003_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_003_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {150, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {150, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {150, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -830,20 +800,20 @@ Vtx example_dl_grass_003_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {450, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_003_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_003_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {450, 0, -281}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {150, 0, -581}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {150, 0, -281}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {450, 0, -581}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_003_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_003_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_003_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_003_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_004_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_004_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-450, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-450, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-450, 0, -881}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -854,20 +824,20 @@ Vtx example_dl_grass_004_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-150, 0, -881}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_004_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_004_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {-150, 0, -581}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-450, 0, -881}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-450, 0, -581}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {-150, 0, -881}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_004_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_004_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_004_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_004_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_005_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_005_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {150, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {150, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {150, 0, -881}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -878,20 +848,20 @@ Vtx example_dl_grass_005_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {450, 0, -881}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_005_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_005_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {450, 0, -581}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {150, 0, -881}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {150, 0, -581}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {450, 0, -881}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_005_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_005_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_005_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_005_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_006_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_006_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-150, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, -881}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -902,20 +872,20 @@ Vtx example_dl_grass_006_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {150, 0, -881}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_006_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_006_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {150, 0, -581}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-150, 0, -881}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-150, 0, -581}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {150, 0, -881}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_006_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_006_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_006_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_006_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_007_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_007_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {450, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {450, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {450, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -926,20 +896,20 @@ Vtx example_dl_grass_007_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {750, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_007_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_007_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {750, 0, -281}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {450, 0, -581}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {450, 0, -281}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {750, 0, -581}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_007_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_007_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_007_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_007_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_008_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_008_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {450, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {450, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {450, 0, -881}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -950,20 +920,20 @@ Vtx example_dl_grass_008_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {750, 0, -881}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_008_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_008_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {750, 0, -581}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {450, 0, -881}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {450, 0, -581}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {750, 0, -881}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_008_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_008_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_008_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_008_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_009_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_009_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {450, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {450, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {450, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -974,20 +944,20 @@ Vtx example_dl_grass_009_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {750, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_009_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_009_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {750, 0, 319}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {450, 0, 19}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {450, 0, 319}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {750, 0, 19}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_009_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_009_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_009_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_009_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_010_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_010_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {450, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {450, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {450, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -998,20 +968,20 @@ Vtx example_dl_grass_010_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {750, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_010_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_010_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {750, 0, 19}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {450, 0, -281}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {450, 0, 19}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {750, 0, -281}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_010_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_010_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_010_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_010_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_011_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_011_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {450, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {450, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {450, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1022,20 +992,20 @@ Vtx example_dl_grass_011_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {750, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_011_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_011_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {750, 0, 619}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {450, 0, 319}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {450, 0, 619}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {750, 0, 319}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_011_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_011_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_011_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_011_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_012_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_012_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-750, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-750, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-750, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1046,20 +1016,20 @@ Vtx example_dl_grass_012_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-450, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_012_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_012_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {-450, 0, -281}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-750, 0, -581}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-750, 0, -281}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {-450, 0, -581}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_012_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_012_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_012_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_012_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_013_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_013_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-750, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-750, 0, -581}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-750, 0, -881}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1070,20 +1040,20 @@ Vtx example_dl_grass_013_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-450, 0, -881}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_013_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_013_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {-450, 0, -581}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-750, 0, -881}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-750, 0, -581}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {-450, 0, -881}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_013_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_013_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_013_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_013_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_014_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_014_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-750, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-750, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-750, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1094,20 +1064,20 @@ Vtx example_dl_grass_014_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-450, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_014_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_014_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {-450, 0, 319}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-750, 0, 19}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-750, 0, 319}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {-450, 0, 19}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_014_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_014_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_014_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_014_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_015_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_015_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-750, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-750, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-750, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1118,20 +1088,20 @@ Vtx example_dl_grass_015_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-450, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_015_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_015_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {-450, 0, 19}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-750, 0, -281}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-750, 0, 19}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {-450, 0, -281}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_015_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_015_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_015_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_015_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_016_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_016_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-750, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-750, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-750, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1142,20 +1112,20 @@ Vtx example_dl_grass_016_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-450, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_016_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_016_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {-450, 0, 619}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-750, 0, 319}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-750, 0, 619}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {-450, 0, 319}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_016_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_016_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_016_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_016_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_017_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_017_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-450, 0, 919}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-450, 0, 919}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-450, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1166,20 +1136,20 @@ Vtx example_dl_grass_017_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-150, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_017_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_017_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {-150, 0, 919}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-450, 0, 619}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-450, 0, 919}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {-150, 0, 619}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_017_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_017_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_017_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_017_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_018_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_018_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {150, 0, 919}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {150, 0, 919}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {150, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1190,20 +1160,20 @@ Vtx example_dl_grass_018_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {450, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_018_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_018_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {450, 0, 919}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {150, 0, 619}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {150, 0, 919}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {450, 0, 619}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_018_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_018_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_018_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_018_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_019_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_019_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-150, 0, 919}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, 919}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1214,20 +1184,20 @@ Vtx example_dl_grass_019_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {150, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_019_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_019_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {150, 0, 919}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-150, 0, 619}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-150, 0, 919}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {150, 0, 619}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_019_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_019_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_019_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_019_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_020_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_020_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {450, 0, 919}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {450, 0, 919}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {450, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1238,20 +1208,20 @@ Vtx example_dl_grass_020_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {750, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_020_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_020_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {750, 0, 919}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {450, 0, 619}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {450, 0, 919}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {750, 0, 619}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_020_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_020_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_020_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_020_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_grass_021_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_grass_021_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-750, 0, 919}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-750, 0, 919}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-750, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1262,20 +1232,20 @@ Vtx example_dl_grass_021_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-450, 0, 619}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_grass_021_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_grass_021_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {-450, 0, 919}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-750, 0, 619}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-750, 0, 919}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {-450, 0, 619}, 0, {1008, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_grass_021_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_grass_021_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_grass_021_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_grass_021_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_sand_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_sand_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-450, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-450, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-450, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1286,59 +1256,83 @@ Vtx example_dl_sand_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-150, 0, -281}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_sand_mesh_layer_Opaque_vtx_0[4] = {
+Vtx example_room_0_dl_sand_mesh_layer_Opaque_vtx_0[4] = {
 	{{ {-150, 0, -131}, 0, {1008, 496}, {0, 127, 0, 255} }},
 	{{ {-150, 0, -281}, 0, {1008, -16}, {0, 127, 0, 255} }},
 	{{ {-300, 0, -281}, 0, {496, -16}, {0, 127, 0, 255} }},
 	{{ {-300, 0, -131}, 0, {496, 496}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_sand_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_sand_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_sand_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_sand_mesh_layer_Opaque_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 2, 3, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_sand_mesh_layer_Opaque_vtx_1[4] = {
+Vtx example_room_0_dl_sand_mesh_layer_Opaque_vtx_1[4] = {
 	{{ {-150, 0, 19}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-150, 0, -131}, 0, {1008, 496}, {0, 127, 0, 255} }},
 	{{ {-300, 0, -131}, 0, {496, 496}, {0, 127, 0, 255} }},
 	{{ {-300, 0, 19}, 0, {496, 1008}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_sand_mesh_layer_Opaque_tri_1[] = {
-	gsSPVertex(example_dl_sand_mesh_layer_Opaque_vtx_1 + 0, 4, 0),
+Gfx example_room_0_dl_sand_mesh_layer_Opaque_tri_1[] = {
+	gsSPVertex(example_room_0_dl_sand_mesh_layer_Opaque_vtx_1 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 2, 3, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_sand_mesh_layer_Opaque_vtx_2[4] = {
+Vtx example_room_0_dl_sand_mesh_layer_Opaque_vtx_2[4] = {
 	{{ {-300, 0, 19}, 0, {496, 1008}, {0, 127, 0, 255} }},
 	{{ {-450, 0, -131}, 0, {-16, 496}, {0, 127, 0, 255} }},
 	{{ {-450, 0, 19}, 0, {-16, 1008}, {0, 127, 0, 255} }},
 	{{ {-300, 0, -131}, 0, {496, 496}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_sand_mesh_layer_Opaque_tri_2[] = {
-	gsSPVertex(example_dl_sand_mesh_layer_Opaque_vtx_2 + 0, 4, 0),
+Gfx example_room_0_dl_sand_mesh_layer_Opaque_tri_2[] = {
+	gsSPVertex(example_room_0_dl_sand_mesh_layer_Opaque_vtx_2 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_sand_mesh_layer_Opaque_vtx_3[4] = {
+Vtx example_room_0_dl_sand_mesh_layer_Opaque_vtx_3[4] = {
 	{{ {-300, 0, -131}, 0, {496, 496}, {0, 127, 0, 255} }},
 	{{ {-450, 0, -281}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-450, 0, -131}, 0, {-16, 496}, {0, 127, 0, 255} }},
 	{{ {-300, 0, -281}, 0, {496, -16}, {0, 127, 0, 255} }},
 };
 
-Gfx example_dl_sand_mesh_layer_Opaque_tri_3[] = {
-	gsSPVertex(example_dl_sand_mesh_layer_Opaque_vtx_3 + 0, 4, 0),
+Gfx example_room_0_dl_sand_mesh_layer_Opaque_tri_3[] = {
+	gsSPVertex(example_room_0_dl_sand_mesh_layer_Opaque_vtx_3 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_water_mesh_layer_Transparent_vtx_cull[8] = {
+Vtx example_room_0_dl_vines_mesh_layer_Transparent_vtx_cull[8] = {
+	{{ {-47, 0, -382}, 0, {0, 0}, {0, 0, 0, 0} }},
+	{{ {-47, 155, -382}, 0, {0, 0}, {0, 0, 0, 0} }},
+	{{ {-47, 155, -459}, 0, {0, 0}, {0, 0, 0, 0} }},
+	{{ {-47, 0, -459}, 0, {0, 0}, {0, 0, 0, 0} }},
+	{{ {-47, 0, -382}, 0, {0, 0}, {0, 0, 0, 0} }},
+	{{ {-47, 155, -382}, 0, {0, 0}, {0, 0, 0, 0} }},
+	{{ {-47, 155, -459}, 0, {0, 0}, {0, 0, 0, 0} }},
+	{{ {-47, 0, -459}, 0, {0, 0}, {0, 0, 0, 0} }},
+};
+
+Vtx example_room_0_dl_vines_mesh_layer_Transparent_vtx_0[4] = {
+	{{ {-47, 0, -459}, 0, {355, 781}, {129, 0, 0, 255} }},
+	{{ {-47, 155, -382}, 0, {637, 518}, {129, 0, 0, 255} }},
+	{{ {-47, 155, -459}, 0, {355, 518}, {129, 0, 0, 255} }},
+	{{ {-47, 0, -382}, 0, {637, 781}, {129, 0, 0, 255} }},
+};
+
+Gfx example_room_0_dl_vines_mesh_layer_Transparent_tri_0[] = {
+	gsSPVertex(example_room_0_dl_vines_mesh_layer_Transparent_vtx_0 + 0, 4, 0),
+	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
+	gsSPEndDisplayList(),
+};
+
+Vtx example_room_0_dl_water_mesh_layer_Transparent_vtx_cull[8] = {
 	{{ {-150, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1349,20 +1343,20 @@ Vtx example_dl_water_mesh_layer_Transparent_vtx_cull[8] = {
 	{{ {150, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_water_mesh_layer_Transparent_vtx_0[4] = {
+Vtx example_room_0_dl_water_mesh_layer_Transparent_vtx_0[4] = {
 	{{ {150, 0, 319}, 0, {1008, 1008}, {0, 129, 0, 255} }},
 	{{ {-150, 0, 319}, 0, {-16, 1008}, {0, 129, 0, 255} }},
 	{{ {-150, 0, 19}, 0, {-16, -16}, {0, 129, 0, 255} }},
 	{{ {150, 0, 19}, 0, {1008, -16}, {0, 129, 0, 255} }},
 };
 
-Gfx example_dl_water_mesh_layer_Transparent_tri_0[] = {
-	gsSPVertex(example_dl_water_mesh_layer_Transparent_vtx_0 + 0, 4, 0),
+Gfx example_room_0_dl_water_mesh_layer_Transparent_tri_0[] = {
+	gsSPVertex(example_room_0_dl_water_mesh_layer_Transparent_vtx_0 + 0, 4, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 2, 3, 0),
 	gsSPEndDisplayList(),
 };
 
-Vtx example_dl_water_border_mesh_layer_Opaque_vtx_cull[8] = {
+Vtx example_room_0_dl_water_border_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {-150, -269, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, 319}, 0, {0, 0}, {0, 0, 0, 0} }},
 	{{ {-150, 0, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
@@ -1373,7 +1367,7 @@ Vtx example_dl_water_border_mesh_layer_Opaque_vtx_cull[8] = {
 	{{ {150, -269, 19}, 0, {0, 0}, {0, 0, 0, 0} }},
 };
 
-Vtx example_dl_water_border_mesh_layer_Opaque_vtx_0[20] = {
+Vtx example_room_0_dl_water_border_mesh_layer_Opaque_vtx_0[20] = {
 	{{ {150, -269, 319}, 0, {1008, 1008}, {0, 127, 0, 255} }},
 	{{ {-150, -269, 19}, 0, {-16, -16}, {0, 127, 0, 255} }},
 	{{ {-150, -269, 319}, 0, {-16, 1008}, {0, 127, 0, 255} }},
@@ -1396,8 +1390,8 @@ Vtx example_dl_water_border_mesh_layer_Opaque_vtx_0[20] = {
 	{{ {150, -269, 319}, 0, {1008, 802}, {0, 0, 129, 255} }},
 };
 
-Gfx example_dl_water_border_mesh_layer_Opaque_tri_0[] = {
-	gsSPVertex(example_dl_water_border_mesh_layer_Opaque_vtx_0 + 0, 20, 0),
+Gfx example_room_0_dl_water_border_mesh_layer_Opaque_tri_0[] = {
+	gsSPVertex(example_room_0_dl_water_border_mesh_layer_Opaque_vtx_0 + 0, 20, 0),
 	gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
 	gsSP2Triangles(4, 5, 6, 0, 4, 7, 5, 0),
 	gsSP2Triangles(8, 9, 10, 0, 8, 11, 9, 0),
@@ -1406,15 +1400,15 @@ Gfx example_dl_water_border_mesh_layer_Opaque_tri_0[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx mat_example_dl_wall_layerOpaque[] = {
+Gfx mat_example_room_0_dl_wall_layerOpaque[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
 	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
-	gsDPSetTextureImage(G_IM_FMT_I, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl_wall_hackeroot_i8),
+	gsDPSetTextureImage(G_IM_FMT_I, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl_wall_hackeroot_i8),
 	gsDPSetTile(G_IM_FMT_I, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadBlock(7, 0, 0, 511, 512),
 	gsDPSetTile(G_IM_FMT_I, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 14, G_TX_WRAP | G_TX_NOMIRROR, 5, 14),
@@ -1422,18 +1416,18 @@ Gfx mat_example_dl_wall_layerOpaque[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx mat_example_dl_grass_layerOpaque[] = {
+Gfx mat_example_room_0_dl_grass_layerOpaque[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
 	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_dl__2grass_hackeroot_pal_rgba16),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_room_0_dl__2grass_hackeroot_pal_rgba16),
 	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadTLUTCmd(5, 109),
-	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl__2grass_hackeroot_ci8),
+	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl__2grass_hackeroot_ci8),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadBlock(7, 0, 0, 511, 512),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 14, G_TX_WRAP | G_TX_NOMIRROR, 5, 14),
@@ -1441,18 +1435,18 @@ Gfx mat_example_dl_grass_layerOpaque[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx mat_example_dl_grass_002_layerOpaque[] = {
+Gfx mat_example_room_0_dl_grass_002_layerOpaque[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
 	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_dl__2grass_hackeroot_pal_rgba16),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_room_0_dl__2grass_hackeroot_pal_rgba16),
 	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadTLUTCmd(5, 109),
-	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl__2grass_hackeroot_ci8),
+	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl__2grass_hackeroot_ci8),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadBlock(7, 0, 0, 511, 512),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 14, G_TX_WRAP | G_TX_NOMIRROR, 5, 14),
@@ -1460,18 +1454,18 @@ Gfx mat_example_dl_grass_002_layerOpaque[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx mat_example_dl_ice_layerOpaque[] = {
+Gfx mat_example_room_0_dl_ice_layerOpaque[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
 	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_dl_ice_hackeroot_pal_rgba16),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_room_0_dl_ice_hackeroot_pal_rgba16),
 	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadTLUTCmd(5, 59),
-	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl_ice_hackeroot_ci8),
+	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl_ice_hackeroot_ci8),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadBlock(7, 0, 0, 511, 512),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 13, G_TX_WRAP | G_TX_NOMIRROR, 5, 13),
@@ -1479,18 +1473,18 @@ Gfx mat_example_dl_ice_layerOpaque[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx mat_example_dl_f3dlite_material_004_layerOpaque[] = {
+Gfx mat_example_room_0_dl_f3dlite_material_004_layerOpaque[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
 	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_TEX_EDGE2),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetPrimColor(0, 0, 0, 0, 0, 255),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_dl_ladder_hackeroot_pal_rgba16),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_room_0_dl_ladder_hackeroot_pal_rgba16),
 	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadTLUTCmd(5, 112),
-	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl_ladder_hackeroot_ci8),
+	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl_ladder_hackeroot_ci8),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadBlock(7, 0, 0, 511, 512),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 13, G_TX_WRAP | G_TX_NOMIRROR, 5, 13),
@@ -1498,18 +1492,18 @@ Gfx mat_example_dl_f3dlite_material_004_layerOpaque[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx mat_example_dl_f3dlite_material_002_layerOpaque[] = {
+Gfx mat_example_room_0_dl_f3dlite_material_002_layerOpaque[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
 	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_TEX_EDGE2),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_dl_ladder_hackeroot_pal_rgba16),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_room_0_dl_ladder_hackeroot_pal_rgba16),
 	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadTLUTCmd(5, 112),
-	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl_ladder_hackeroot_ci8),
+	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl_ladder_hackeroot_ci8),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadBlock(7, 0, 0, 511, 512),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 13, G_TX_WRAP | G_TX_NOMIRROR, 5, 13),
@@ -1517,18 +1511,132 @@ Gfx mat_example_dl_f3dlite_material_002_layerOpaque[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx mat_example_dl_f3dlite_material_006_layerTransparent[] = {
+Gfx mat_example_room_0_dl_lava_layerOpaque[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
+	gsDPPipeSync(),
+	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
+	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
+	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
+	gsSPTexture(65535, 65535, 0, 0, 1),
+	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_room_0_dl_lava_hackeroot_pal_rgba16),
+	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadTLUTCmd(5, 58),
+	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl_lava_hackeroot_ci8),
+	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadBlock(7, 0, 0, 511, 512),
+	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 15, G_TX_WRAP | G_TX_NOMIRROR, 5, 15),
+	gsDPSetTileSize(0, 0, 0, 124, 124),
+	gsSPEndDisplayList(),
+};
+
+Gfx mat_example_room_0_dl_lava_void_layerOpaque[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
+	gsDPPipeSync(),
+	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
+	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
+	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
+	gsSPTexture(65535, 65535, 0, 0, 1),
+	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_room_0_dl_lava_hackeroot_pal_rgba16),
+	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadTLUTCmd(5, 58),
+	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl_lava_hackeroot_ci8),
+	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadBlock(7, 0, 0, 511, 512),
+	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 15, G_TX_WRAP | G_TX_NOMIRROR, 5, 15),
+	gsDPSetTileSize(0, 0, 0, 124, 124),
+	gsSPEndDisplayList(),
+};
+
+Gfx mat_example_room_0_dl_sand_layerOpaque[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
+	gsDPPipeSync(),
+	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
+	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
+	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
+	gsSPTexture(65535, 65535, 0, 0, 1),
+	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_room_0_dl_sand_hackeroot_pal_rgba16),
+	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadTLUTCmd(5, 89),
+	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl_sand_hackeroot_ci8),
+	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadBlock(7, 0, 0, 511, 512),
+	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 13, G_TX_WRAP | G_TX_NOMIRROR, 5, 13),
+	gsDPSetTileSize(0, 0, 0, 124, 124),
+	gsSPEndDisplayList(),
+};
+
+Gfx mat_example_room_0_dl_sand2_layerOpaque[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
+	gsDPPipeSync(),
+	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
+	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
+	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
+	gsSPTexture(65535, 65535, 0, 0, 1),
+	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_room_0_dl_sand_hackeroot_pal_rgba16),
+	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadTLUTCmd(5, 89),
+	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl_sand_hackeroot_ci8),
+	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadBlock(7, 0, 0, 511, 512),
+	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 13, G_TX_WRAP | G_TX_NOMIRROR, 5, 13),
+	gsDPSetTileSize(0, 0, 0, 124, 124),
+	gsSPEndDisplayList(),
+};
+
+Gfx mat_example_room_0_dl_epona1_layerOpaque[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
+	gsDPPipeSync(),
+	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
+	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
+	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
+	gsSPTexture(65535, 65535, 0, 0, 1),
+	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_room_0_dl_sand_hackeroot_pal_rgba16),
+	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadTLUTCmd(5, 89),
+	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl_sand_hackeroot_ci8),
+	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadBlock(7, 0, 0, 511, 512),
+	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 13, G_TX_WRAP | G_TX_NOMIRROR, 5, 13),
+	gsDPSetTileSize(0, 0, 0, 124, 124),
+	gsSPEndDisplayList(),
+};
+
+Gfx mat_example_room_0_dl_epona2_layerOpaque[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
+	gsDPPipeSync(),
+	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
+	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
+	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
+	gsSPTexture(65535, 65535, 0, 0, 1),
+	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_room_0_dl_sand_hackeroot_pal_rgba16),
+	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadTLUTCmd(5, 89),
+	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl_sand_hackeroot_ci8),
+	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadBlock(7, 0, 0, 511, 512),
+	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 13, G_TX_WRAP | G_TX_NOMIRROR, 5, 13),
+	gsDPSetTileSize(0, 0, 0, 124, 124),
+	gsSPEndDisplayList(),
+};
+
+Gfx mat_example_room_0_dl_f3dlite_material_006_layerTransparent[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0, COMBINED, 0, PRIMITIVE, 0, TEXEL1, 0, PRIM_LOD_FRAC, COMBINED),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
 	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_ZB_CLD_SURF2),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetPrimColor(0, 0, 255, 255, 255, 231),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_dl_vines_pal_rgba16),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_room_0_dl_vines_pal_rgba16),
 	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadTLUTCmd(5, 37),
-	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl_vines_ci8),
+	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl_vines_ci8),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadBlock(7, 0, 0, 511, 512),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 13, G_TX_WRAP | G_TX_NOMIRROR, 4, 13),
@@ -1536,133 +1644,19 @@ Gfx mat_example_dl_f3dlite_material_006_layerTransparent[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx mat_example_dl_lava_layerOpaque[] = {
-	gsDPPipeSync(),
-	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
-	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
-	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
-	gsSPTexture(65535, 65535, 0, 0, 1),
-	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_dl_lava_hackeroot_pal_rgba16),
-	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-	gsDPLoadTLUTCmd(5, 58),
-	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl_lava_hackeroot_ci8),
-	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-	gsDPLoadBlock(7, 0, 0, 511, 512),
-	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 15, G_TX_WRAP | G_TX_NOMIRROR, 5, 15),
-	gsDPSetTileSize(0, 0, 0, 124, 124),
-	gsSPEndDisplayList(),
-};
-
-Gfx mat_example_dl_lava_void_layerOpaque[] = {
-	gsDPPipeSync(),
-	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
-	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
-	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
-	gsSPTexture(65535, 65535, 0, 0, 1),
-	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_dl_lava_hackeroot_pal_rgba16),
-	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-	gsDPLoadTLUTCmd(5, 58),
-	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl_lava_hackeroot_ci8),
-	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-	gsDPLoadBlock(7, 0, 0, 511, 512),
-	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 15, G_TX_WRAP | G_TX_NOMIRROR, 5, 15),
-	gsDPSetTileSize(0, 0, 0, 124, 124),
-	gsSPEndDisplayList(),
-};
-
-Gfx mat_example_dl_sand_layerOpaque[] = {
-	gsDPPipeSync(),
-	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
-	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
-	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
-	gsSPTexture(65535, 65535, 0, 0, 1),
-	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_dl_sand_hackeroot_pal_rgba16),
-	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-	gsDPLoadTLUTCmd(5, 89),
-	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl_sand_hackeroot_ci8),
-	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-	gsDPLoadBlock(7, 0, 0, 511, 512),
-	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 13, G_TX_WRAP | G_TX_NOMIRROR, 5, 13),
-	gsDPSetTileSize(0, 0, 0, 124, 124),
-	gsSPEndDisplayList(),
-};
-
-Gfx mat_example_dl_sand2_layerOpaque[] = {
-	gsDPPipeSync(),
-	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
-	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
-	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
-	gsSPTexture(65535, 65535, 0, 0, 1),
-	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_dl_sand_hackeroot_pal_rgba16),
-	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-	gsDPLoadTLUTCmd(5, 89),
-	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl_sand_hackeroot_ci8),
-	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-	gsDPLoadBlock(7, 0, 0, 511, 512),
-	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 13, G_TX_WRAP | G_TX_NOMIRROR, 5, 13),
-	gsDPSetTileSize(0, 0, 0, 124, 124),
-	gsSPEndDisplayList(),
-};
-
-Gfx mat_example_dl_epona1_layerOpaque[] = {
-	gsDPPipeSync(),
-	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
-	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
-	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
-	gsSPTexture(65535, 65535, 0, 0, 1),
-	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_dl_sand_hackeroot_pal_rgba16),
-	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-	gsDPLoadTLUTCmd(5, 89),
-	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl_sand_hackeroot_ci8),
-	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-	gsDPLoadBlock(7, 0, 0, 511, 512),
-	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 13, G_TX_WRAP | G_TX_NOMIRROR, 5, 13),
-	gsDPSetTileSize(0, 0, 0, 124, 124),
-	gsSPEndDisplayList(),
-};
-
-Gfx mat_example_dl_epona2_layerOpaque[] = {
-	gsDPPipeSync(),
-	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
-	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
-	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
-	gsSPTexture(65535, 65535, 0, 0, 1),
-	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_dl_sand_hackeroot_pal_rgba16),
-	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-	gsDPLoadTLUTCmd(5, 89),
-	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl_sand_hackeroot_ci8),
-	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-	gsDPLoadBlock(7, 0, 0, 511, 512),
-	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 13, G_TX_WRAP | G_TX_NOMIRROR, 5, 13),
-	gsDPSetTileSize(0, 0, 0, 124, 124),
-	gsSPEndDisplayList(),
-};
-
-Gfx mat_example_dl_water_layerTransparent[] = {
+Gfx mat_example_room_0_dl_water_layerTransparent[] = {
+	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL1, TEXEL0, ENV_ALPHA, TEXEL0, 0, 0, 0, 1, COMBINED, 0, SHADE, 0, COMBINED, 0, PRIMITIVE, 0),
-	gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_AD_NOISE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE),
 	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_XLU_SURF2),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetPrimColor(0, 0, 255, 255, 255, 128),
 	gsDPSetEnvColor(255, 255, 255, 128),
-	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_dl_water_hackeroot_x_water_hackeroot_pal_rgba16),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, example_room_0_dl_water_hackeroot_x_water_hackeroot_pal_rgba16),
 	gsDPSetTile(0, 0, 0, 256, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadTLUTCmd(5, 57),
-	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_dl_water_hackeroot_ci8),
+	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 1, example_room_0_dl_water_hackeroot_ci8),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadBlock(7, 0, 0, 511, 512),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 0),
@@ -1673,373 +1667,373 @@ Gfx mat_example_dl_water_layerTransparent[] = {
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_crawlspace_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_crawlspace_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_crawlspace_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_crawlspace_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_wall_layerOpaque),
-	gsSPDisplayList(example_dl_crawlspace_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_wall_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_crawlspace_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_crawlspace_outline_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_crawlspace_outline_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_crawlspace_outline_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_crawlspace_outline_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_wall_layerOpaque),
-	gsSPDisplayList(example_dl_crawlspace_outline_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_wall_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_crawlspace_outline_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_door_outline_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_door_outline_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_door_outline_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_door_outline_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_wall_layerOpaque),
-	gsSPDisplayList(example_dl_door_outline_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_wall_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_door_outline_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_001_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_001_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_001_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_001_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_001_mesh_layer_Opaque_tri_0),
-	gsSPDisplayList(mat_example_dl_grass_002_layerOpaque),
-	gsSPDisplayList(example_dl_grass_001_mesh_layer_Opaque_tri_1),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_001_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_002_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_001_mesh_layer_Opaque_tri_1),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_ice_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_ice_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_ice_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_ice_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_ice_layerOpaque),
-	gsSPDisplayList(example_dl_ice_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_ice_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_ice_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_ladder_001_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_ladder_001_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_ladder_001_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_ladder_001_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_f3dlite_material_004_layerOpaque),
-	gsSPDisplayList(example_dl_ladder_001_mesh_layer_Opaque_tri_0),
-	gsSPDisplayList(mat_example_dl_f3dlite_material_002_layerOpaque),
-	gsSPDisplayList(example_dl_ladder_001_mesh_layer_Opaque_tri_1),
+	gsSPDisplayList(mat_example_room_0_dl_f3dlite_material_004_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_ladder_001_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_f3dlite_material_002_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_ladder_001_mesh_layer_Opaque_tri_1),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_ladder_002_mesh_layer_Transparent[] = {
+Gfx example_room_0_dl_lava_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_ladder_002_mesh_layer_Transparent_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_lava_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_f3dlite_material_006_layerTransparent),
-	gsSPDisplayList(example_dl_ladder_002_mesh_layer_Transparent_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_lava_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_lava_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_lava_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_lava_void_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_lava_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_lava_void_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_lava_layerOpaque),
-	gsSPDisplayList(example_dl_lava_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_lava_void_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_lava_void_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_lava_void_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_Floor_002_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_lava_void_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_Floor_002_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_lava_void_layerOpaque),
-	gsSPDisplayList(example_dl_lava_void_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_Floor_002_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_Floor_002_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_Floor_006_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_Floor_002_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_Floor_006_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_Floor_002_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_Floor_006_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_Floor_006_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_Floor_007_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_Floor_006_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_Floor_007_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_Floor_006_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_Floor_007_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_Floor_007_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_Floor_007_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_Floor_007_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_002_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_002_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_002_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_002_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_003_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_002_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_003_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_002_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_003_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_003_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_004_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_003_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_004_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_003_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_004_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_004_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_005_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_004_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_005_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_004_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_005_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_005_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_006_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_005_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_006_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_005_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_006_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_006_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_007_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_006_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_007_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_006_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_007_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_007_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_008_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_007_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_008_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_007_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_008_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_008_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_009_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_008_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_009_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_008_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_009_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_009_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_010_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_009_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_010_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_009_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_010_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_010_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_011_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_010_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_011_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_010_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_011_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_011_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_012_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_011_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_012_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_011_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_012_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_012_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_013_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_012_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_013_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_012_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_013_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_013_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_014_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_013_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_014_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_013_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_014_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_014_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_015_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_014_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_015_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_014_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_015_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_015_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_016_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_015_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_016_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_015_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_016_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_016_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_017_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_016_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_017_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_016_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_017_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_017_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_018_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_017_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_018_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_017_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_018_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_018_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_019_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_018_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_019_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_018_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_019_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_019_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_020_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_019_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_020_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_019_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_020_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_020_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_grass_021_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_020_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_grass_021_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_020_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_grass_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_grass_021_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_grass_021_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_sand_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_grass_021_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_sand_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_grass_layerOpaque),
-	gsSPDisplayList(example_dl_grass_021_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_sand_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_sand_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_sand2_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_sand_mesh_layer_Opaque_tri_1),
+	gsSPDisplayList(mat_example_room_0_dl_epona1_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_sand_mesh_layer_Opaque_tri_2),
+	gsSPDisplayList(mat_example_room_0_dl_epona2_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_sand_mesh_layer_Opaque_tri_3),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_sand_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_vines_mesh_layer_Transparent[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_sand_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_vines_mesh_layer_Transparent_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_sand_layerOpaque),
-	gsSPDisplayList(example_dl_sand_mesh_layer_Opaque_tri_0),
-	gsSPDisplayList(mat_example_dl_sand2_layerOpaque),
-	gsSPDisplayList(example_dl_sand_mesh_layer_Opaque_tri_1),
-	gsSPDisplayList(mat_example_dl_epona1_layerOpaque),
-	gsSPDisplayList(example_dl_sand_mesh_layer_Opaque_tri_2),
-	gsSPDisplayList(mat_example_dl_epona2_layerOpaque),
-	gsSPDisplayList(example_dl_sand_mesh_layer_Opaque_tri_3),
+	gsSPDisplayList(mat_example_room_0_dl_f3dlite_material_006_layerTransparent),
+	gsSPDisplayList(example_room_0_dl_vines_mesh_layer_Transparent_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_water_mesh_layer_Transparent[] = {
+Gfx example_room_0_dl_water_mesh_layer_Transparent[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_water_mesh_layer_Transparent_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_water_mesh_layer_Transparent_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_water_layerTransparent),
-	gsSPDisplayList(example_dl_water_mesh_layer_Transparent_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_water_layerTransparent),
+	gsSPDisplayList(example_room_0_dl_water_mesh_layer_Transparent_tri_0),
 	gsSPEndDisplayList(),
 };
 
-Gfx example_dl_water_border_mesh_layer_Opaque[] = {
+Gfx example_room_0_dl_water_border_mesh_layer_Opaque[] = {
 	gsSPClearGeometryMode(G_LIGHTING),
-	gsSPVertex(example_dl_water_border_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
+	gsSPVertex(example_room_0_dl_water_border_mesh_layer_Opaque_vtx_cull + 0, 8, 0),
 	gsSPSetGeometryMode(G_LIGHTING),
 	gsSPCullDisplayList(0, 7),
-	gsSPDisplayList(mat_example_dl_wall_layerOpaque),
-	gsSPDisplayList(example_dl_water_border_mesh_layer_Opaque_tri_0),
+	gsSPDisplayList(mat_example_room_0_dl_wall_layerOpaque),
+	gsSPDisplayList(example_room_0_dl_water_border_mesh_layer_Opaque_tri_0),
 	gsSPEndDisplayList(),
 };
 

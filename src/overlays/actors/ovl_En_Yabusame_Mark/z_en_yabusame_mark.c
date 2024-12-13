@@ -16,7 +16,7 @@ void func_80B42F74(EnYabusameMark* this, PlayState* play);
 
 static ColliderQuadInit sQuadInit = {
     {
-        COLTYPE_NONE,
+        COL_MATERIAL_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
@@ -24,7 +24,7 @@ static ColliderQuadInit sQuadInit = {
         COLSHAPE_QUAD,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x0001F824, 0x00, 0x00 },
         ATELEM_NONE | ATELEM_SFX_NORMAL,
@@ -34,7 +34,7 @@ static ColliderQuadInit sQuadInit = {
     { { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } } },
 };
 
-ActorInit En_Yabusame_Mark_InitVars = {
+ActorProfile En_Yabusame_Mark_Profile = {
     /**/ ACTOR_EN_YABUSAME_MARK,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -80,9 +80,9 @@ void EnYabusameMark_Init(Actor* thisx, PlayState* play) {
 
     PRINTF("\n\n");
     PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ やぶさめまと ☆☆☆☆☆ %x\n" VT_RST, this->actor.params);
-    this->actor.flags &= ~ACTOR_FLAG_0;
+    this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
     this->typeIndex = this->actor.params;
-    this->actor.targetMode = 5;
+    this->actor.attentionRangeType = ATTENTION_RANGE_5;
     PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 種類インデックス \t   ☆☆☆☆☆ %d\n" VT_RST, this->typeIndex);
     switch (this->typeIndex) {
         case 0:
@@ -215,9 +215,11 @@ void EnYabusameMark_Update(Actor* thisx, PlayState* play) {
     Collider_SetQuadVertices(&this->collider, &this->vertexA, &this->vertexB, &this->vertexC, &this->vertexD);
     CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
 
-    if (IS_ACTOR_DEBUG_ENABLED && BREG(0)) {
+#if IS_ACTOR_DEBUG_ENABLED
+    if (BREG(0) != 0) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 0, 0xFF, 0, 0xFF, 4, play->state.gfxCtx);
     }
+#endif
 }

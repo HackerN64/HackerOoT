@@ -9,8 +9,11 @@
  * F3DEX3 options
  * This only works on real console or LLE emulators like ares or ParaLLEl. It
  * will not work on legacy HLE emulators such as Project64.
+ * Note: you can define this with `CPP_DEFINES=-DENABLE_F3DEX3=0 make -j$(nproc)`
 */
+#ifndef ENABLE_F3DEX3
 #define ENABLE_F3DEX3 true
+#endif
 // Remove usually-unnecessary syncs from texture loading commands. Only matters
 // for vanilla display lists--new ones exported from fast64 already have the
 // syncs removed. This is buggy (graphical issues / crashes) as some vanilla DLs
@@ -18,6 +21,8 @@
 // have already had the missing syncs manually added, but some have not been
 // fixed yet.
 #define ENABLE_F3DEX3_NOSYNCS false
+// Visualize occlusion planes with some dots at the corners and text.
+#define DEBUG_OCCLUSION_PLANES false
 
 /**
  * Other graphical settings

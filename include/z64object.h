@@ -4,7 +4,9 @@
 #include "ultra64.h"
 #include "z64dma.h"
 
-typedef struct {
+struct PlayState;
+
+typedef struct ObjectEntry {
     /* 0x00 */ s16 id;
     /* 0x04 */ void* segment;
     /* 0x08 */ DmaRequest dmaRequest;
@@ -12,7 +14,7 @@ typedef struct {
     /* 0x40 */ OSMesg loadMsg;
 } ObjectEntry; // size = 0x44
 
-typedef struct {
+typedef struct ObjectContext {
     /* 0x0000 */ void* spaceStart;
     /* 0x0004 */ void* spaceEnd; // original name: "endSegment"
     /* 0x0008 */ u8 numEntries; // total amount of used entries
@@ -26,7 +28,7 @@ typedef struct {
 #define DEFINE_OBJECT_EMPTY(_0, enum) enum,
 #define DEFINE_OBJECT_UNSET(enum) enum,
 
-typedef enum {
+typedef enum ObjectId {
     #include "tables/object_table.h"
     /* 0x0192 */ OBJECT_ID_MAX
 } ObjectId;
@@ -34,5 +36,14 @@ typedef enum {
 #undef DEFINE_OBJECT
 #undef DEFINE_OBJECT_EMPTY
 #undef DEFINE_OBJECT_UNSET
+
+void Object_InitContext(struct PlayState* play, ObjectContext* objectCtx);
+void Object_UpdateEntries(ObjectContext* objectCtx);
+s32 Object_GetSlot(ObjectContext* objectCtx, s16 objectId);
+s32 Object_IsLoaded(ObjectContext* objectCtx, s32 slot);
+void func_800981B8(ObjectContext* objectCtx);
+
+extern u32 gObjectTableSize;
+extern RomFile gObjectTable[OBJECT_ID_MAX];
 
 #endif

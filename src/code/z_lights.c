@@ -3,7 +3,7 @@
 
 #define LIGHTS_BUFFER_SIZE 32
 
-typedef struct {
+typedef struct LightsBuffer {
     /* 0x000 */ s32 numOccupied;
     /* 0x004 */ s32 searchIndex;
     /* 0x008 */ LightNode buf[LIGHTS_BUFFER_SIZE];
@@ -211,8 +211,7 @@ LightNode* Lights_FindBufSlot(void) {
     return node;
 }
 
-// return type must not be void to match
-s32 Lights_FreeNode(LightNode* light) {
+BAD_RETURN(s32) Lights_FreeNode(LightNode* light) {
     if (light != NULL) {
         sLightsBuffer.numOccupied--;
         light->info = NULL;
@@ -412,8 +411,7 @@ void Lights_DrawGlow(PlayState* play) {
                 gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, params->color[0], params->color[1], params->color[2], 50);
                 Matrix_Translate(params->x, params->y, params->z, MTXMODE_NEW);
                 Matrix_Scale(scale, scale, scale, MTXMODE_APPLY);
-                gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_lights.c", 918),
-                          G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+                MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_lights.c", 918);
                 gSPDisplayList(POLY_XLU_DISP++, gGlowCircleDL);
             }
         }
