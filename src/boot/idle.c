@@ -63,8 +63,6 @@ void Main_ThreadEntry(void* arg) {
 
 void Idle_ThreadEntry(void* arg) {
     PRINTF(T("アイドルスレッド(idleproc)実行開始\n", "Idle thread (idleproc) execution started\n"));
-    PRINTF(T("作製者    : %s\n", "Created by: %s\n"), gBuildCreator);
-    PRINTF("MAKEOPTION: %s\n", gBuildMakeOption);
     PRINTF(VT_FGCOL(GREEN));
     PRINTF(T("ＲＡＭサイズは %d キロバイトです(osMemSize/osGetMemSize)\n",
              "RAM size is %d kilobytes (osMemSize/osGetMemSize)\n"),

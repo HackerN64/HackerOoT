@@ -59,13 +59,13 @@ BASEROM_DIR := baseroms/$(VERSION)
 EXTRACTED_DIR := extracted/$(VERSION)
 VENV := .venv
 
-# Add HackerOoT options
--include .make_hackeroot.mk
-
 CFLAGS ?=
 CPPFLAGS ?=
 CFLAGS_IDO ?=
 CPP_DEFINES ?=
+
+# Add HackerOoT options
+-include .make_hackeroot.mk
 
 # Version-specific settings
 REGIONAL_CHECKSUM := 0
@@ -142,17 +142,13 @@ OPTFLAGS := -Os
 
 ifeq ($(DEBUG_FEATURES),1)
   CPP_DEFINES += -DDEBUG_FEATURES=1
+  OPTFLAGS += -ggdb3
 else
   CPP_DEFINES += -DNDEBUG -DDEBUG_FEATURES=0
   OPTFLAGS += -g3
 endif
 
-# Override optimization flags if using GDB
-ifeq ($(ARES_GDB),1)
-  OPTFLAGS := -Og -ggdb3
-endif
-
-OPTFLAGS += -ggdb3 -ffast-math -fno-unsafe-math-optimizations
+OPTFLAGS += -ffast-math -fno-unsafe-math-optimizations
 
 ifeq ($(OS),Windows_NT)
     DETECTED_OS=windows

@@ -18,6 +18,7 @@ typedef struct PrintUtils {
 
 void Print_DebugPos(PrintUtils* this, Input* input, s16 posXChangeBy, s16 posYChangeBy);
 void Print_Screen(PrintUtils* this, u8 x, u8 y, u32 rgba, const char* fmt, ...);
+void Print_ScreenPx(PrintUtils* this, u8 x, u8 y, u32 rgba, const char* fmt, ...);
 
 s32 GfxPrint_VPrintf(GfxPrint* this, const char* fmt, va_list args);
 

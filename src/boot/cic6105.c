@@ -7,7 +7,7 @@
 s32 func_80001714(void);
 
 OSTask D_800067C0_unknown = {
-    4, 0, rspbootTextStart, 0x3E8, cic6105TextStart, 0x20, (u64*)gBuildCreator, 8, NULL, 0, NULL, 0, NULL, 0, NULL, 0,
+    4, 0, rspbootTextStart, 0x3E8, cic6105TextStart, 0x20, NULL, 8, NULL, 0, NULL, 0, NULL, 0, NULL, 0,
 };
 
 u32 B_80008EE0;
@@ -36,7 +36,7 @@ void CIC6105_FaultClient(void) {
     }
     Fault_SetCursor(40, 184);
     Fault_Printf("ROM_F");
-    Fault_Printf(" [Creator:%s]", gBuildCreator);
+    Fault_Printf(" [Creator:%s]", gBuildAuthor);
     Fault_SetCursor(96, 32);
     Fault_Printf("I LOVE YOU %08x", func_80001714());
 }
