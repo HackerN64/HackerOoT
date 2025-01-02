@@ -29,7 +29,7 @@ typedef struct EnExItem {
     /* 0x0180 */ EnExItemLightFunc unk_180;
 } EnExItem; // size = 0x0184
 
-typedef enum {
+typedef enum EnExItemType {
     /*  0 */ EXITEM_BOMB_BAG_BOWLING,
     /*  1 */ EXITEM_HEART_PIECE_BOWLING,
     /*  2 */ EXITEM_BOMBCHUS_BOWLING,
@@ -51,9 +51,5 @@ typedef enum {
     /* 18 */ EXITEM_MAGIC_DARK,
     /* 19 */ EXITEM_BULLET_BAG
 } EnExItemType;
-
-#define EXITEM_COUNTER 5
-#define EXITEM_CHEST 10
-#define EXITEM_MAGIC 16
 
 #endif

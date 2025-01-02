@@ -23,14 +23,6 @@ ifneq ($(ASAN),0)
   CFLAGS    += -fsanitize=address -fsanitize=pointer-compare -fsanitize=pointer-subtract -fsanitize=undefined
 endif
 
-ifneq ($(LLD),0)
-  LDFLAGS   += -fuse-ld=lld
-else 
-ifneq ($(LD),ld)
-  LDFLAGS   += -fuse-ld=lld
-endif
-endif
-
 ifneq ($(EXPERIMENTAL),0)
   CFLAGS    += -DEXPERIMENTAL
 endif

@@ -11,6 +11,7 @@ void MapSelect_UpdateMenu(MapSelectState* this);
 void MapSelect_DrawMenu(MapSelectState* this);
 void MapSelect_DrawLoadingScreen(MapSelectState* this);
 void MapSelect_LoadTitle(MapSelectState* this);
+void MapSelect_LoadDebugOpening(MapSelectState* this);
 void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex);
 void MapSelect_PrintMenu(MapSelectState* this, GfxPrint* printer);
 void MapSelect_PrintLoadingMessage(MapSelectState* this, GfxPrint* printer, u8 yPos);
@@ -61,7 +62,13 @@ static const Color_RGBA8 sColors[] = {
 };
 
 static SceneSelectEntry sScenes[] = {
+#if IS_DEBUG_BOOT_ENABLED
+    { "Boot Menu", (void*)MapSelect_LoadDebugOpening, 0 },
+#endif
     { "Title Screen", (void*)MapSelect_LoadTitle, 0 },
+#if CAN_INCLUDE_EXAMPLE_SCENE
+    { "Example", MapSelect_LoadGame, ENTR_EXAMPLE_0 },
+#endif
     { "Hyrule Field", MapSelect_LoadGame, ENTR_HYRULE_FIELD_0 },
     { "Kakariko Village", MapSelect_LoadGame, ENTR_KAKARIKO_VILLAGE_0 },
     { "Graveyard", MapSelect_LoadGame, ENTR_GRAVEYARD_0 },
@@ -84,21 +91,21 @@ static SceneSelectEntry sScenes[] = {
     { "Temple Of Time", MapSelect_LoadGame, ENTR_TEMPLE_OF_TIME_0 },
     { "Chamber of Sages", MapSelect_LoadGame, ENTR_CHAMBER_OF_THE_SAGES_0 },
     { "Shooting Gallery", MapSelect_LoadGame, ENTR_SHOOTING_GALLERY_0 },
-    { "Castle Courtyard Game", MapSelect_LoadGame, ENTR_CASTLE_COURTYARD_GUARDS_DAY_0 },
+    { "Castle Courtyard (Guards)", MapSelect_LoadGame, ENTR_CASTLE_COURTYARD_GUARDS_DAY_0 },
     { "Heart Piece Grave", MapSelect_LoadGame, ENTR_REDEAD_GRAVE_0 },
     { "Hylian Shield Grave", MapSelect_LoadGame, ENTR_GRAVE_WITH_FAIRYS_FOUNTAIN_0 },
     { "Royal Family's Tomb", MapSelect_LoadGame, ENTR_ROYAL_FAMILYS_TOMB_0 },
-    { "Great Fairy's Fountain (Din)", MapSelect_LoadGame, ENTR_GREAT_FAIRYS_FOUNTAIN_MAGIC_0 },
-    { "Great Fairy's Fountain (Farore)", MapSelect_LoadGame, ENTR_FAIRYS_FOUNTAIN_0 },
-    { "Great Fairy's Fountain (Nayru)", MapSelect_LoadGame, ENTR_GREAT_FAIRYS_FOUNTAIN_SPELLS_0 },
+    { "Great Fairy's Fountain (Upgrades)", MapSelect_LoadGame, ENTR_GREAT_FAIRYS_FOUNTAIN_MAGIC_0 },
+    { "Fairy's Fountain", MapSelect_LoadGame, ENTR_FAIRYS_FOUNTAIN_0 },
+    { "Great Fairy's Fountain (Spells)", MapSelect_LoadGame, ENTR_GREAT_FAIRYS_FOUNTAIN_SPELLS_0 },
     { "Ganon's Tower - Collapsing", MapSelect_LoadGame, ENTR_GANONS_TOWER_COLLAPSE_EXTERIOR_0 },
-    { "Castle Courtyard", MapSelect_LoadGame, ENTR_CASTLE_COURTYARD_ZELDA_0 },
+    { "Castle Courtyard (Zelda)", MapSelect_LoadGame, ENTR_CASTLE_COURTYARD_ZELDA_0 },
     { "Fishing Pond", MapSelect_LoadGame, ENTR_FISHING_POND_0 },
     { "Bombchu Bowling Alley", MapSelect_LoadGame, ENTR_BOMBCHU_BOWLING_ALLEY_0 },
     { "Lon Lon Ranch House", MapSelect_LoadGame, ENTR_LON_LON_BUILDINGS_0 },
     { "Lon Lon Ranch Silo", MapSelect_LoadGame, ENTR_LON_LON_BUILDINGS_1 },
-    { "Lots O' Pots", MapSelect_LoadGame, ENTR_MARKET_GUARD_HOUSE_0 },
-    { "Potion Shop", MapSelect_LoadGame, ENTR_POTION_SHOP_GRANNY_0 },
+    { "Guard House (Pots / Poe Room)", MapSelect_LoadGame, ENTR_MARKET_GUARD_HOUSE_0 },
+    { "Granny's Potion Shop", MapSelect_LoadGame, ENTR_POTION_SHOP_GRANNY_0 },
     { "Treasure Chest Game", MapSelect_LoadGame, ENTR_TREASURE_BOX_SHOP_0 },
     { "House Of Skulltula", MapSelect_LoadGame, ENTR_HOUSE_OF_SKULLTULA_0 },
     { "Market Entrance", MapSelect_LoadGame, ENTR_MARKET_ENTRANCE_DAY_0 },
@@ -117,14 +124,14 @@ static SceneSelectEntry sScenes[] = {
     { "Dog Lady's House", MapSelect_LoadGame, ENTR_DOG_LADY_HOUSE_0 },
     { "Impa's House", MapSelect_LoadGame, ENTR_IMPAS_HOUSE_0 },
     { "Lakeside Laboratory", MapSelect_LoadGame, ENTR_LAKESIDE_LABORATORY_0 },
-    { "Running Man's Tent", MapSelect_LoadGame, ENTR_CARPENTERS_TENT_0 },
+    { "Carpenters' Tent", MapSelect_LoadGame, ENTR_CARPENTERS_TENT_0 },
     { "Bazaar", MapSelect_LoadGame, ENTR_BAZAAR_0 },
     { "Kokiri Shop", MapSelect_LoadGame, ENTR_KOKIRI_SHOP_0 },
     { "Goron Shop", MapSelect_LoadGame, ENTR_GORON_SHOP_0 },
     { "Zora Shop", MapSelect_LoadGame, ENTR_ZORA_SHOP_0 },
     { "Kakariko Potion Shop", MapSelect_LoadGame, ENTR_POTION_SHOP_KAKARIKO_0 },
-    { "Potion Shop", MapSelect_LoadGame, ENTR_POTION_SHOP_MARKET_0 },
-    { "Bombchu Shop ", MapSelect_LoadGame, ENTR_BOMBCHU_SHOP_0 },
+    { "Market Potion Shop", MapSelect_LoadGame, ENTR_POTION_SHOP_MARKET_0 },
+    { "Bombchu Shop", MapSelect_LoadGame, ENTR_BOMBCHU_SHOP_0 },
     { "Happy Mask Shop", MapSelect_LoadGame, ENTR_HAPPY_MASK_SHOP_0 },
     { "Gerudo Training Ground", MapSelect_LoadGame, ENTR_GERUDO_TRAINING_GROUND_0 },
     { "Inside the Deku Tree", MapSelect_LoadGame, ENTR_DEKU_TREE_0 },
@@ -174,7 +181,7 @@ static SceneSelectEntry sScenes[] = {
     { "Grotto 9", MapSelect_LoadGame, ENTR_GROTTOS_9 },
     { "Grotto 10", MapSelect_LoadGame, ENTR_GROTTOS_10 },
     { "Tektite Grotto", MapSelect_LoadGame, ENTR_GROTTOS_11 },
-    { "Deku Theater Grotto", MapSelect_LoadGame, ENTR_GROTTOS_12 },
+    { "Forest Stage", MapSelect_LoadGame, ENTR_GROTTOS_12 },
     { "Death Mountain Trail Cow Grotto", MapSelect_LoadGame, ENTR_GROTTOS_13 },
     { "Cutscene Map", MapSelect_LoadGame, ENTR_CUTSCENE_MAP_0 },
 #if CAN_INCLUDE_TEST_SCENES
@@ -188,6 +195,10 @@ static SceneSelectEntry sScenes[] = {
     { "Shooting Gallery Duplicate", MapSelect_LoadGame, ENTR_TEST_SHOOTING_GALLERY_0 },
     { "Depth Test", MapSelect_LoadGame, ENTR_DEPTH_TEST_0 },
     { "Hyrule Garden Game (Broken)", MapSelect_LoadGame, ENTR_HAIRAL_NIWA2_0 },
+#endif
+#if PLATFORM_N64
+    { "64DD TEST  n64dd_SetDiskVersion(1)", (void*)func_80800AD0_unknown, 0 },
+    { "64DD TEST2 n64dd_SetDiskVersion(0)", (void*)func_80800B08_unknown, 0 },
 #endif
 };
 

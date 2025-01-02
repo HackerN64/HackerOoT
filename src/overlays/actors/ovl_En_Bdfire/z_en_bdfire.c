@@ -18,7 +18,7 @@ void EnBdfire_DrawFire(EnBdfire* this, PlayState* play);
 void func_809BC2A4(EnBdfire* this, PlayState* play);
 void func_809BC598(EnBdfire* this, PlayState* play);
 
-ActorInit En_Bdfire_InitVars = {
+ActorProfile En_Bdfire_Profile = {
     /**/ 0,
     /**/ ACTORCAT_ENEMY,
     /**/ FLAGS,
@@ -171,7 +171,7 @@ void func_809BC598(EnBdfire* this, PlayState* play) {
                 player->bodyFlameTimers[i] = Rand_S16Offset(0, 200);
             }
             player->bodyIsBurning = true;
-            func_8002F6D4(play, &this->actor, 20.0f, this->actor.world.rot.y, 0.0f, 8);
+            Actor_SetPlayerKnockbackLarge(play, &this->actor, 20.0f, this->actor.world.rot.y, 0.0f, 8);
             PRINTF("POWER\n");
         }
     }
@@ -193,6 +193,7 @@ void EnBdfire_DrawFire(EnBdfire* this, PlayState* play) {
     };
     s16 texIndex;
     s32 pad;
+    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_bdfire.c", 612);
     texIndex = this->unk_156 & 7;
@@ -206,9 +207,9 @@ void EnBdfire_DrawFire(EnBdfire* this, PlayState* play) {
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 100, (s8)this->unk_18C);
     gDPSetEnvColor(POLY_XLU_DISP++, 200, 0, 0, 0);
     gSPSegment(POLY_XLU_DISP++, 8, SEGMENTED_TO_VIRTUAL(D_809BCB10[texIndex]));
+    IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, texIndex);
     Matrix_Translate(0.0f, 11.0f, 0.0f, MTXMODE_APPLY);
-    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_bdfire.c", 647),
-              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_en_bdfire.c", 647);
     gSPDisplayList(POLY_XLU_DISP++, object_kingdodongo_DL_01D950);
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_bdfire.c", 651);
 }

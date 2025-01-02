@@ -17,14 +17,14 @@ void DemoGj_Draw(Actor* thisx, PlayState* play);
 
 static ColliderCylinderInitType1 sCylinderInit1 = {
     {
-        COLTYPE_HIT0,
+        COL_MATERIAL_HIT0,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
         COLSHAPE_CYLINDER,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000008, 0x00, 0x00 },
         ATELEM_NONE,
@@ -36,14 +36,14 @@ static ColliderCylinderInitType1 sCylinderInit1 = {
 
 static ColliderCylinderInitType1 sCylinderInit2 = {
     {
-        COLTYPE_HIT0,
+        COL_MATERIAL_HIT0,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
         COLSHAPE_CYLINDER,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000008, 0x00, 0x00 },
         ATELEM_NONE,
@@ -55,14 +55,14 @@ static ColliderCylinderInitType1 sCylinderInit2 = {
 
 static ColliderCylinderInitType1 sCylinderInit3 = {
     {
-        COLTYPE_HIT0,
+        COL_MATERIAL_HIT0,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
         COLSHAPE_CYLINDER,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000008, 0x00, 0x00 },
         ATELEM_NONE,
@@ -77,23 +77,23 @@ typedef void (*DemoGjDrawFunc)(DemoGj*, PlayState*);
 
 // bits 11-15
 s32 DemoGj_GetCollectibleType(DemoGj* this) {
-    s32 params = this->dyna.actor.params >> 0xB;
+    s32 type = PARAMS_GET_U(this->dyna.actor.params, 11, 5);
 
-    return params & 0x1F;
+    return type;
 }
 
 // bits 8-10
 s32 DemoGj_GetCollectibleAmount(DemoGj* this) {
-    s32 params = this->dyna.actor.params >> 0x8;
+    s32 amount = PARAMS_GET_U(this->dyna.actor.params, 8, 3);
 
-    return params & 7;
+    return amount;
 }
 
 // bits 0-7
 s32 DemoGj_GetType(DemoGj* this) {
-    s32 params = this->dyna.actor.params;
+    s32 type = PARAMS_GET_U(this->dyna.actor.params, 0, 8);
 
-    return params & 0xFF;
+    return type;
 }
 
 void DemoGj_InitCylinder(DemoGj* this, PlayState* play, ColliderCylinder* cylinder,
@@ -230,7 +230,8 @@ s32 DemoGj_FindGanon(DemoGj* this, PlayState* play) {
         PRINTF("Demo_Gj_Search_Boss_Ganon %d:ガノン発見出来ず\n", this->dyna.actor.params);
         return false;
     }
-    //! @bug: Missing return value when `this->ganon` is already set.
+    //! @bug Missing return value when `this->ganon` is already set. No caller uses the return value
+    //! so it doesn't matter.
 }
 
 static InitChainEntry sInitChain[] = {
@@ -263,14 +264,14 @@ s32 DemoGj_InitSetIndices(DemoGj* this, PlayState* play, s32 updateMode, s32 dra
 }
 
 void DemoGj_DrawCommon(DemoGj* this, PlayState* play, Gfx* displayList) {
-    if (!IS_DEBUG || kREG(0) == 0) {
+    if (!DEBUG_FEATURES || kREG(0) == 0) {
         GraphicsContext* gfxCtx = play->state.gfxCtx;
 
         OPEN_DISPS(gfxCtx, "../z_demo_gj.c", 1163);
 
         Gfx_SetupDL_25Opa(gfxCtx);
 
-        gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(gfxCtx, "../z_demo_gj.c", 1165),
+        gSPMatrix(POLY_OPA_DISP++, MATRIX_FINALIZE(gfxCtx, "../z_demo_gj.c", 1165),
                   G_MTX_PUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
         gSPDisplayList(POLY_OPA_DISP++, displayList);
@@ -975,7 +976,7 @@ void DemoGj_InitDestructableRubble1(DemoGj* this, PlayState* play) {
     DemoGj_InitCylinder(this, play, &this->cylinders[2], &sCylinderInit1);
 }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void DemoGj_DoNothing1(DemoGj* this, PlayState* play) {
 }
 #endif
@@ -1095,7 +1096,7 @@ void DemoGj_Update15(DemoGj* this, PlayState* play) {
 // func_8097B370
 void DemoGj_Update18(DemoGj* this, PlayState* play) {
     func_8097B22C(this, play);
-#if IS_DEBUG
+#if DEBUG_FEATURES
     DemoGj_DoNothing1(this, play);
 #endif
 }
@@ -1112,7 +1113,7 @@ void DemoGj_InitDestructableRubble2(DemoGj* this, PlayState* play) {
     DemoGj_InitCylinder(this, play, &this->cylinders[2], &sCylinderInit2);
 }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void DemoGj_DoNothing2(DemoGj* this, PlayState* play) {
 }
 #endif
@@ -1230,7 +1231,7 @@ void DemoGj_Update16(DemoGj* this, PlayState* play) {
 // func_8097B894
 void DemoGj_Update19(DemoGj* this, PlayState* play) {
     func_8097B750(this, play);
-#if IS_DEBUG
+#if DEBUG_FEATURES
     DemoGj_DoNothing2(this, play);
 #endif
 }
@@ -1245,7 +1246,7 @@ void DemoGj_InitDestructableRubbleTall(DemoGj* this, PlayState* play) {
     DemoGj_InitCylinder(this, play, &this->cylinders[0], &sCylinderInit3);
 }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void DemoGj_DoNothing3(DemoGj* this, PlayState* play) {
 }
 #endif
@@ -1319,7 +1320,7 @@ void DemoGj_Update17(DemoGj* this, PlayState* play) {
 // func_8097BBA8
 void DemoGj_Update20(DemoGj* this, PlayState* play) {
     func_8097BA48(this, play);
-#if IS_DEBUG
+#if DEBUG_FEATURES
     DemoGj_DoNothing3(this, play);
 #endif
 }
@@ -1415,7 +1416,7 @@ void DemoGj_Init(Actor* thisx, PlayState* play) {
 
         default:
             // "Demo_Gj_Actor_ct There is no such argument!!!!!!!!!!!!!!!!!!!!!!"
-            PRINTF(VT_FGCOL(RED) "Demo_Gj_Actor_ct そんな引数は無い!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST, play, this);
+            PRINTF(VT_FGCOL(RED) "Demo_Gj_Actor_ct そんな引数は無い!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
             Actor_Kill(&this->dyna.actor);
     }
 }
@@ -1457,7 +1458,7 @@ void DemoGj_Draw(Actor* thisx, PlayState* play) {
     sDrawFuncs[this->drawConfig](this, play);
 }
 
-ActorInit Demo_Gj_InitVars = {
+ActorProfile Demo_Gj_Profile = {
     /**/ ACTOR_DEMO_GJ,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,

@@ -1,4 +1,5 @@
 #include "global.h"
+#include "stack.h"
 #include "ultra64/internal.h"
 
 OSThread viThread;
@@ -45,7 +46,7 @@ void osCreateViManager(OSPri pri) {
         __osViDevMgr.dma = NULL;
         __osViDevMgr.edma = NULL;
 
-        osCreateThread(&viThread, 0, &viMgrMain, &__osViDevMgr, STACK_TOP(viThreadStack), pri);
+        osCreateThread(&viThread, THREAD_ID_VIMGR, &viMgrMain, &__osViDevMgr, STACK_TOP(viThreadStack), pri);
         __osViInit();
         osStartThread(&viThread);
         __osRestoreInt(prevInt);

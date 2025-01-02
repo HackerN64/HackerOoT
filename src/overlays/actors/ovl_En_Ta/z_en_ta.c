@@ -8,7 +8,7 @@
 #include "terminal.h"
 #include "assets/objects/object_ta/object_ta.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3)
+#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY)
 
 #define TALON_STATE_FLAG_TRACKING_PLAYER (1 << 0)
 #define TALON_STATE_FLAG_GIVING_MILK_REFILL (1 << 1)
@@ -21,14 +21,14 @@
 #define TALON_STATE_FLAG_RAISING_HANDS (1 << 8)
 #define TALON_STATE_FLAG_RESTORE_BGM_ON_DESTROY (1 << 9)
 
-typedef enum {
+typedef enum TalonEyeIndex {
     /* 0 */ TALON_EYE_INDEX_OPEN,
     /* 1 */ TALON_EYE_INDEX_HALF,
     /* 2 */ TALON_EYE_INDEX_CLOSED,
     /* 3 */ TALON_EYE_INDEX_MAX
 } TalonEyeIndex;
 
-typedef enum {
+typedef enum TalonCanBuyMilkResult {
     /* 0 */ TALON_CANBUYMILK_NOT_ENOUGH_RUPEES,
     /* 1 */ TALON_CANBUYMILK_NO_EMPTY_BOTTLE,
     /* 2 */ TALON_CANBUYMILK_SUCCESS
@@ -57,7 +57,7 @@ void EnTa_AnimSleeping(EnTa* this);
 void EnTa_AnimSitSleeping(EnTa* this);
 void EnTa_AnimRunToEnd(EnTa* this);
 
-ActorInit En_Ta_InitVars = {
+ActorProfile En_Ta_Profile = {
     /**/ ACTOR_EN_TA,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -71,7 +71,7 @@ ActorInit En_Ta_InitVars = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COLTYPE_NONE,
+        COL_MATERIAL_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_ALL,
@@ -79,7 +79,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEMTYPE_UNK0,
+        ELEM_MATERIAL_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000004, 0x00, 0x00 },
         ATELEM_NONE,
@@ -148,7 +148,7 @@ void EnTa_Init(Actor* thisx, PlayState* play2) {
     this->blinkTimer = 20;
     this->blinkFunc = EnTa_BlinkWaitUntilNext;
     Actor_SetScale(&this->actor, 0.01f);
-    this->actor.targetMode = 6;
+    this->actor.attentionRangeType = ATTENTION_RANGE_6;
     this->actor.velocity.y = -4.0f;
     this->actor.minVelocityY = -4.0f;
     this->actor.gravity = -1.0f;
@@ -622,7 +622,7 @@ s32 EnTa_IsPlayerHoldingSuperCucco(EnTa* this, PlayState* play, s32 cuccoIdx) {
     Player* player = GET_PLAYER(play);
     Actor* interactRangeActor;
 
-    if (player->stateFlags1 & PLAYER_STATE1_11) {
+    if (player->stateFlags1 & PLAYER_STATE1_CARRYING_ACTOR) {
         interactRangeActor = player->interactRangeActor;
         if (interactRangeActor != NULL && interactRangeActor->id == ACTOR_EN_NIW &&
             interactRangeActor == &this->superCuccos[cuccoIdx]->actor) {
@@ -658,7 +658,7 @@ void EnTa_TalkFoundSuperCucco(EnTa* this, PlayState* play) {
         if (player->heldActor == &this->superCuccos[lastFoundSuperCuccoIdx]->actor) {
             player->heldActor = NULL;
         }
-        player->stateFlags1 &= ~PLAYER_STATE1_11;
+        player->stateFlags1 &= ~PLAYER_STATE1_CARRYING_ACTOR;
         this->superCuccos[lastFoundSuperCuccoIdx] = NULL;
     }
     this->stateFlags |= TALON_STATE_FLAG_TRACKING_PLAYER;
@@ -668,7 +668,7 @@ void EnTa_IdleFoundSuperCucco(EnTa* this, PlayState* play) {
     if (Actor_TalkOfferAccepted(&this->actor, play)) {
         this->actionFunc = EnTa_TalkFoundSuperCucco;
         // Unset auto-talking
-        this->actor.flags &= ~ACTOR_FLAG_16;
+        this->actor.flags &= ~ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
     } else {
         Actor_OfferTalk(&this->actor, play, 1000.0f);
     }
@@ -784,7 +784,7 @@ void EnTa_RunCuccoGame(EnTa* this, PlayState* play) {
                     this->actionFunc = EnTa_IdleFoundSuperCucco;
 
                     // Automatically talk to player
-                    this->actor.flags |= ACTOR_FLAG_16;
+                    this->actor.flags |= ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
                     Actor_OfferTalk(&this->actor, play, 1000.0f);
                     return;
                 }
@@ -1130,9 +1130,9 @@ void EnTa_IdleAfterCuccoGameFinished(EnTa* this, PlayState* play) {
                 this->actionFunc = EnTa_TalkAfterCuccoGameWon;
                 break;
         }
-        this->actor.flags &= ~ACTOR_FLAG_16;
+        this->actor.flags &= ~ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
     } else {
-        this->actor.flags |= ACTOR_FLAG_16;
+        this->actor.flags |= ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
         Actor_OfferTalk(&this->actor, play, 1000.0f);
     }
     this->stateFlags |= TALON_STATE_FLAG_TRACKING_PLAYER;
@@ -1282,10 +1282,10 @@ s32 EnTa_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* po
         this->stateFlags &= ~TALON_STATE_FLAG_SUPPRESS_ROCKING_ANIM;
     } else if ((limbIndex == ENTA_LIMB_CHEST) || (limbIndex == ENTA_LIMB_LEFT_ARM) ||
                (limbIndex == ENTA_LIMB_RIGHT_ARM)) {
-        s32 limbIdx50 = limbIndex * 50;
+        s32 fidgetFrequency = limbIndex * FIDGET_FREQ_LIMB;
 
-        rot->y += Math_SinS(play->state.frames * (limbIdx50 + 0x814)) * 200.0f;
-        rot->z += Math_CosS(play->state.frames * (limbIdx50 + 0x940)) * 200.0f;
+        rot->y += Math_SinS(play->state.frames * (fidgetFrequency + FIDGET_FREQ_Y)) * FIDGET_AMPLITUDE;
+        rot->z += Math_CosS(play->state.frames * (fidgetFrequency + FIDGET_FREQ_Z)) * FIDGET_AMPLITUDE;
     }
 
     return false;

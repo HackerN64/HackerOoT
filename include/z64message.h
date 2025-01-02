@@ -2,11 +2,13 @@
 #define Z64MESSAGE_H
 
 #include "z64view.h"
+#include "versions.h"
 
 struct OcarinaStaff;
 struct Actor;
+struct PlayState;
 
-typedef enum {
+typedef enum TextBoxIcon {
     /* 0 */ TEXTBOX_ICON_TRIANGLE,
     /* 1 */ TEXTBOX_ICON_SQUARE,
     /* 2 */ TEXTBOX_ICON_ARROW
@@ -23,7 +25,38 @@ typedef enum {
 // TODO get these properties from the textures themselves
 #define MESSAGE_TEXTURE_STATIC_TEX_SIZE 0x900
 
-typedef enum {
+// Macros for generating characters in the filename encoding (specified by message 0xFFFC
+// and loaded by Font_LoadOrderedFont). For example, FILENAME_UPPERCASE('A') will encode
+// the character 'A'.
+#if OOT_NTSC
+#define FILENAME_DIGIT(c)                   ((c) - '0')
+// 0x0A - 0x59: hiragana
+// 0x5A - 0xAA: katakana
+#define FILENAME_UPPERCASE(c)               ((c) - 'A' + 0xAB)
+#define FILENAME_LOWERCASE(c)               ((c) - 'a' + 0xC5)
+#define FILENAME_SPACE                      0xDF
+// 0xE0: unknown
+#define FILENAME_QUESTION_MARK              0xE1
+#define FILENAME_EXCLAMATION_MARK           0xE2
+#define FILENAME_COLON                      0xE3
+#define FILENAME_DASH                       0xE4
+#define FILENAME_LEFT_PARENTHESES           0xE5
+#define FILENAME_RIGHT_PARENTHESES          0xE6
+#define FILENAME_DAKUTEN                    0xE7
+#define FILENAME_HANDAKUTEN                 0xE8
+#define FILENAME_COMMA                      0xE9
+#define FILENAME_PERIOD                     0xEA
+#define FILENAME_SLASH                      0xEB
+#else
+#define FILENAME_DIGIT(c)                   ((c) - '0')
+#define FILENAME_UPPERCASE(c)               ((c) - 'A' + 0x0A)
+#define FILENAME_LOWERCASE(c)               ((c) - 'a' + 0x24)
+#define FILENAME_SPACE                      0x3E
+#define FILENAME_DASH                       0x3F
+#define FILENAME_PERIOD                     0x40
+#endif
+
+typedef enum MessageMode {
     /* 0x00 */ MSGMODE_NONE,
     /* 0x01 */ MSGMODE_TEXT_START,
     /* 0x02 */ MSGMODE_TEXT_BOX_GROWING,
@@ -120,33 +153,33 @@ typedef enum MaskReactionSet {
     /* 0x22 */ MASK_REACTION_SET_GERUDO_WHITE,
     /* 0x23 */ MASK_REACTION_SET_NABOORU,
     /* 0x24 */ MASK_REACTION_SET_DANCING_COUPLE,
-    /* 0x25 */ MASK_REACTION_SET_37, // ENHY_TYPE_AOB
-    /* 0x26 */ MASK_REACTION_SET_38, // ENHY_TYPE_COB
-    /* 0x27 */ MASK_REACTION_SET_39, // ENHY_TYPE_AHG_2
-    /* 0x28 */ MASK_REACTION_SET_40, // ENHY_TYPE_BOJ_3
-    /* 0x29 */ MASK_REACTION_SET_41, // ENHY_TYPE_AHG_4
-    /* 0x2A */ MASK_REACTION_SET_42, // ENHY_TYPE_BOJ_5
-    /* 0x2B */ MASK_REACTION_SET_43, // ENHY_TYPE_BBA
-    /* 0x2C */ MASK_REACTION_SET_44, // ENHY_TYPE_BJI_7
-    /* 0x2D */ MASK_REACTION_SET_45, // ENHY_TYPE_CNE_8
-    /* 0x2E */ MASK_REACTION_SET_46, // ENHY_TYPE_BOJ_9
-    /* 0x2F */ MASK_REACTION_SET_47, // ENHY_TYPE_BOJ_10
-    /* 0x30 */ MASK_REACTION_SET_48, // ENHY_TYPE_CNE_11
-    /* 0x31 */ MASK_REACTION_SET_49, // ENHY_TYPE_BOJ_12
-    /* 0x32 */ MASK_REACTION_SET_50, // ENHY_TYPE_AHG_13
-    /* 0x33 */ MASK_REACTION_SET_51, // ENHY_TYPE_BOJ_14
-    /* 0x34 */ MASK_REACTION_SET_52, // ENHY_TYPE_BJI_15
-    /* 0x35 */ MASK_REACTION_SET_53, // ENHY_TYPE_BOJ_16
-    /* 0x36 */ MASK_REACTION_SET_54, // ENHY_TYPE_AHG_17
-    /* 0x37 */ MASK_REACTION_SET_55, // ENHY_TYPE_BOB_18
-    /* 0x38 */ MASK_REACTION_SET_56, // ENHY_TYPE_BJI_19
-    /* 0x39 */ MASK_REACTION_SET_57, // ENHY_TYPE_AHG_20
+    /* 0x25 */ MASK_REACTION_SET_DOG_LADY,
+    /* 0x26 */ MASK_REACTION_SET_WOMAN_3,
+    /* 0x27 */ MASK_REACTION_SET_MAN_1_BEARD,
+    /* 0x28 */ MASK_REACTION_SET_MAN_2_BALD,
+    /* 0x29 */ MASK_REACTION_SET_MAN_1_SHAVED_BLACK_SHIRT,
+    /* 0x2A */ MASK_REACTION_SET_BEGGAR,
+    /* 0x2B */ MASK_REACTION_SET_OLD_WOMAN,
+    /* 0x2C */ MASK_REACTION_SET_OLD_MAN,
+    /* 0x2D */ MASK_REACTION_SET_YOUNG_WOMAN_BROWN_HAIR,
+    /* 0x2E */ MASK_REACTION_SET_MAN_2_MUSTACHE_RED_SHIRT,
+    /* 0x2F */ MASK_REACTION_SET_MAN_2_MUSTACHE_BLUE_SHIRT,
+    /* 0x30 */ MASK_REACTION_SET_YOUNG_WOMAN_ORANGE_HAIR,
+    /* 0x31 */ MASK_REACTION_SET_MAN_2_ALT_MUSTACHE,
+    /* 0x32 */ MASK_REACTION_SET_MAN_1_BOWL_CUT_PURPLE_SHIRT,
+    /* 0x33 */ MASK_REACTION_SET_MAN_2_BEARD,
+    /* 0x34 */ MASK_REACTION_SET_OLD_MAN_BALD_BROWN_ROBE,
+    /* 0x35 */ MASK_REACTION_SET_MAN_2_MUSTACHE_WHITE_SHIRT,
+    /* 0x36 */ MASK_REACTION_SET_MAN_1_SHAVED_GREEN_SHIRT,
+    /* 0x37 */ MASK_REACTION_SET_WOMAN_2,
+    /* 0x38 */ MASK_REACTION_SET_OLD_MAN_BALD_PURPLE_ROBE,
+    /* 0x39 */ MASK_REACTION_SET_MAN_1_BOWL_CUT_GREEN_SHIRT,
     /* 0x3A */ MASK_REACTION_SET_HAGGLING_TOWNSPEOPLE_1,
     /* 0x3B */ MASK_REACTION_SET_HAGGLING_TOWNSPEOPLE_2,
     /* 0x3C */ MASK_REACTION_SET_MAX
 } MaskReactionSet;
 
-typedef enum {
+typedef enum TextState {
     /*  0 */ TEXT_STATE_NONE,
     /*  1 */ TEXT_STATE_DONE_HAS_NEXT,
     /*  2 */ TEXT_STATE_CLOSING,
@@ -160,7 +193,7 @@ typedef enum {
     /* 10 */ TEXT_STATE_AWAITING_NEXT
 } TextState;
 
-typedef struct {
+typedef struct Font {
     /* 0x0000 */ u32 msgOffset;
     /* 0x0004 */ u32 msgLength;
     union {
@@ -190,7 +223,7 @@ typedef struct {
 #define TEXTBOX_ENDTYPE_EVENT       0x50
 #define TEXTBOX_ENDTYPE_FADING      0x60
 
-typedef struct {
+typedef struct MessageContext {
     /* 0x0000 */ View view;
     /* 0x0128 */ Font font;
     /* 0xE2B0 */ u8* textboxSegment; // original name: "fukidashiSegment"
@@ -204,8 +237,10 @@ typedef struct {
     /* 0xE2FE */ u8 textBoxPos; // text box position
     /* 0xE300 */ s32 msgLength; // original name : "msg_data"
     /* 0xE304 */ u8 msgMode; // original name: "msg_mode"
-    /* 0xE305 */ char unk_E305[0x1];
-    /* 0xE306 */ u8 msgBufDecoded[200]; // decoded message buffer, may be smaller than this
+    /* 0xE306 */ union {
+        u8 msgBufDecoded[200];
+        u16 msgBufDecodedWide[100];
+    };
     /* 0xE3CE */ u16 msgBufPos; // original name : "rdp"
     /* 0xE3D0 */ u16 unk_E3D0; // unused, only ever set to 0
     /* 0xE3D2 */ u16 textDrawPos; // draw all decoded characters up to this buffer position
@@ -244,5 +279,18 @@ typedef struct {
     /* 0xE40E */ s16 disableSunsSong; // disables Suns Song effect from occurring after song is played
     /* 0xE410 */ u8 lastOcarinaButtonIndex;
 } MessageContext; // size = 0xE418
+
+void Message_UpdateOcarinaMemoryGame(struct PlayState* play);
+u8 Message_ShouldAdvance(struct PlayState* play);
+void Message_CloseTextbox(struct PlayState*);
+void Message_StartTextbox(struct PlayState* play, u16 textId, struct Actor* actor);
+void Message_ContinueTextbox(struct PlayState* play, u16 textId);
+void Message_StartOcarina(struct PlayState* play, u16 ocarinaActionId);
+void Message_StartOcarinaSunsSongDisabled(struct PlayState* play, u16 ocarinaActionId);
+u8 Message_GetState(MessageContext* msgCtx);
+void Message_Draw(struct PlayState* play);
+void Message_Update(struct PlayState* play);
+void Message_SetTables(void);
+void Message_Init(struct PlayState* play);
 
 #endif

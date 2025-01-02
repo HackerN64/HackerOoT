@@ -24,6 +24,9 @@ typedef struct{
     uint32_t *file_size;
 } doltool_ctxt_t;
 
+void dol_parse_header(dol_hdr_t* hdr, uint8_t *data);
+size_t dol_compute_size(dol_hdr_t* hdr);
+
 void dol_load(doltool_ctxt_t *ctxt, uint8_t **file_data, uint32_t *file_size);
 void dol_inject(doltool_ctxt_t *ctxt, uint8_t *text, size_t size, uint32_t loading_addr);
 size_t dol_save(doltool_ctxt_t *ctxt);
