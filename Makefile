@@ -449,7 +449,6 @@ all: rom
 
 rom:
 	$(call print,Building the rom...)
-	$(V)python3 tools/mod_assets.py --oot-version $(VERSION)
 	$(V)$(MAKE) $(ROM)
 
 compress:
