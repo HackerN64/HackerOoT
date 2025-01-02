@@ -16,7 +16,7 @@ void BgSpot01Idosoko_Draw(Actor* thisx, PlayState* play);
 
 void func_808ABF54(BgSpot01Idosoko* this, PlayState* play);
 
-ActorProfile Bg_Spot01_Idosoko_Profile = {
+ActorInit Bg_Spot01_Idosoko_InitVars = {
     /**/ ACTOR_BG_SPOT01_IDOSOKO,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -73,7 +73,8 @@ void BgSpot01Idosoko_Draw(Actor* thisx, PlayState* play) {
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_bg_spot01_idosoko.c", 166);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_spot01_idosoko.c", 166),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gKakarikoBOTWStoneDL);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot01_idosoko.c", 171);

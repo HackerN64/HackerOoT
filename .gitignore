@@ -3,39 +3,66 @@ __pycache__/
 .pyc
 .DS_Store
 
-# IDE files
+# Text editor remnants
 .vscode/
 .vs/
 .idea/
-.cache/
-compile_commands.json
+CMakeLists.txt
+cmake-build-debug
+venv/
+.venv/
 
 # Project-specific ignores
-.make_options.mk
-extracted/
 build/
 expected/
+notes/
+baserom/
+baseroms/*/segments/
 docs/doxygen/
+build/*/cache/
+*.elf
+*.ram
+*.sav
+*.sra
+*.srm
 *.z64
 *.n64
 *.v64
+*.map
+*.dump
 *.wad
-*.iso
+out.txt
+*.ram
 *.bin
-*.blend1
 F3DEX3/*.code
 F3DEX3/*.data
-wadextract/
-isoextract/
 
-# Tools
-.venv/
+# Tool artifacts
+tools/mipspro7.2_compiler/
+tools/overlayhelpers/batchdisasm/output/*
+tools/overlayhelpers/batchdisasm/output2/*
+tools/overlayhelpers/batchdisasm/mipsdisasm/*
+tools/disasm/output/*
+tools/asmsplitter/asm/*
+tools/asmsplitter/c/*
 ctx.c
 tools/*dSYM/
 graphs/
-tools/Flips/**/CMakeLists.txt
+
+# Assets
+*.png
+*.jpg
+*.mdli
+*.anmi
+*.obj
+*.mtl
+*.fbx
+!*_custom*
+.extracted-assets.json
+extracted/
+
+# Docs
+!docs/tutorial/
 
 # Per-user configuration
-# If you want to use your own gitignore rules without modifying this file:
-# - use `git config core.excludesFile path/to/my_gitignore_file`
-# - or edit `.git/info/exclude`
+.python-version

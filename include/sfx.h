@@ -1,11 +1,7 @@
 #ifndef SFX_H
 #define SFX_H
 
-#include "ultra64.h"
-#include "versions.h"
-#include "z64math.h"
-
-typedef enum SfxBankType {
+typedef enum {
     /* 0 */ BANK_PLAYER,
     /* 1 */ BANK_ITEM,
     /* 2 */ BANK_ENV,
@@ -15,7 +11,7 @@ typedef enum SfxBankType {
     /* 6 */ BANK_VOICE
 } SfxBankType;
 
-typedef enum SfxState {
+typedef enum {
     /* 0 */ SFX_STATE_EMPTY,
     /* 1 */ SFX_STATE_QUEUED,
     /* 2 */ SFX_STATE_READY,
@@ -24,7 +20,7 @@ typedef enum SfxState {
     /* 5 */ SFX_STATE_PLAYING_2
 } SfxState;
 
-typedef struct SfxBankEntry {
+typedef struct {
     /* 0x00 */ f32* posX;
     /* 0x04 */ f32* posY;
     /* 0x08 */ f32* posZ;
@@ -59,9 +55,9 @@ typedef struct SfxBankEntry {
  * bank     1111000000000000    observed in audio code
  */
 
-#define DEFINE_SFX(_0, enum, _2, _3, _4, _5) enum,
+#define DEFINE_SFX(enum, _1, _2, _3, _4) enum,
 
-typedef enum SfxId {
+typedef enum {
     NA_SE_NONE, // Requesting a sfx with this id will play no sound
     NA_SE_PL_BASE = 0x7FF,
     #include "tables/sfx/playerbank_table.h"
@@ -91,7 +87,7 @@ typedef enum SfxId {
 
 #define SFX_FLAG 0x800
 
-typedef struct ActiveSfx {
+typedef struct {
     u32 priority; // lower is more prioritized
     u8 entryIndex;
 } ActiveSfx;
@@ -118,38 +114,15 @@ typedef struct ActiveSfx {
 #define SFX_FLAG_14 (1 << 14)
 #define SFX_FLAG_15 (1 << 15)
 
-typedef struct SfxParams {
+typedef struct {
     u8 importance;
     u16 params;
 } SfxParams;
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
 #define SFX_DIST_SCALING 1.0f
 #else
 #define SFX_DIST_SCALING 10.0f
 #endif
-
-void Audio_SetSfxBanksMute(u16 muteMask);
-void Audio_QueueSeqCmdMute(u8 channelIndex);
-void Audio_ClearBGMMute(u8 channelIndex);
-void Audio_PlaySfxGeneral(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol, s8* reverbAdd);
-void Audio_ProcessSfxRequest(void);
-void Audio_ChooseActiveSfx(u8 bankId);
-void Audio_PlayActiveSfx(u8 bankId);
-void Audio_StopSfxByBank(u8 bankId);
-void Audio_RemoveSfxFromBankByPos(u8 bankId, Vec3f* pos);
-void Audio_StopSfxByPosAndBank(u8 bankId, Vec3f* pos);
-void Audio_StopSfxByPos(Vec3f* pos);
-void Audio_StopSfxByPosAndId(Vec3f* pos, u16 sfxId);
-void Audio_StopSfxByTokenAndId(u8 token, u16 sfxId);
-void Audio_StopSfxById(u32 sfxId);
-void Audio_ProcessSfxRequests(void);
-void func_800F8F88(void);
-u8 Audio_IsSfxPlaying(u32 sfxId);
-void Audio_ResetSfx(void);
-
-extern Vec3f gSfxDefaultPos;
-extern f32 gSfxDefaultFreqAndVolScale;
-extern s8 gSfxDefaultReverb;
 
 #endif

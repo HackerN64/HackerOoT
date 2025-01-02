@@ -21,7 +21,7 @@ void func_808B3604(BgSpot12Saku* this, PlayState* play);
 void func_808B3714(BgSpot12Saku* this);
 void func_808B37AC(BgSpot12Saku* this, PlayState* play);
 
-ActorProfile Bg_Spot12_Saku_Profile = {
+ActorInit Bg_Spot12_Saku_InitVars = {
     /**/ ACTOR_BG_SPOT12_SAKU,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -48,7 +48,7 @@ void func_808B3420(BgSpot12Saku* this, PlayState* play, CollisionHeader* collisi
     CollisionHeader_GetVirtual(collision, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     if (this->dyna.bgId == BG_ACTOR_MAX) {
         s32 pad2;
 
@@ -63,7 +63,7 @@ void BgSpot12Saku_Init(Actor* thisx, PlayState* play) {
 
     func_808B3420(this, play, &gGerudoFortressGTGShutterCol, 0);
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
-    if (Flags_GetSwitch(play, PARAMS_GET_U(this->dyna.actor.params, 0, 6))) {
+    if (Flags_GetSwitch(play, this->dyna.actor.params & 0x3F)) {
         func_808B3714(this);
     } else {
         func_808B3550(this);
@@ -84,7 +84,7 @@ void func_808B3550(BgSpot12Saku* this) {
 }
 
 void func_808B357C(BgSpot12Saku* this, PlayState* play) {
-    if (Flags_GetSwitch(play, PARAMS_GET_U(this->dyna.actor.params, 0, 6))) {
+    if (Flags_GetSwitch(play, this->dyna.actor.params & 0x3F)) {
         func_808B35E4(this);
         this->timer = 20;
         OnePointCutscene_Init(play, 4170, -99, &this->dyna.actor, CAM_ID_MAIN);
@@ -109,7 +109,7 @@ void func_808B3604(BgSpot12Saku* this, PlayState* play) {
         func_808B3714(this);
         Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BRIDGE_OPEN_STOP);
     } else {
-        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_METALGATE_OPEN - SFX_FLAG);
+        func_8002F974(&this->dyna.actor, NA_SE_EV_METALGATE_OPEN - SFX_FLAG);
     }
 }
 

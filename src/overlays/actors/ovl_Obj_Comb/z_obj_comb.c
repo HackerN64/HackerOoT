@@ -20,7 +20,7 @@ void ObjComb_ChooseItemDrop(ObjComb* this, PlayState* play);
 void ObjComb_SetupWait(ObjComb* this);
 void ObjComb_Wait(ObjComb* this, PlayState* play);
 
-ActorProfile Obj_Comb_Profile = {
+ActorInit Obj_Comb_InitVars = {
     /**/ ACTOR_OBJ_COMB,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -35,7 +35,7 @@ ActorProfile Obj_Comb_Profile = {
 static ColliderJntSphElementInit sJntSphElementsInit[1] = {
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0x4001FFFE, 0x00, 0x00 },
             ATELEM_NONE,
@@ -48,7 +48,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[1] = {
 
 static ColliderJntSphInit sJntSphInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_PLAYER,
@@ -128,14 +128,14 @@ void ObjComb_Break(ObjComb* this, PlayState* play) {
 }
 
 void ObjComb_ChooseItemDrop(ObjComb* this, PlayState* play) {
-    s16 params = PARAMS_GET_U(this->actor.params, 0, 5);
+    s16 params = this->actor.params & 0x1F;
 
     if ((params > 0) || (params < ITEM00_MAX)) { // conditional always true. May have been intended to be &&
         if (params == ITEM00_HEART_PIECE) {
-            if (Flags_GetCollectible(play, PARAMS_GET_U(this->actor.params, 8, 6))) {
+            if (Flags_GetCollectible(play, (this->actor.params >> 8) & 0x3F)) {
                 params = -1;
             } else {
-                params = (params | (PARAMS_GET_U(this->actor.params, 8, 6) << 8));
+                params = (params | (((this->actor.params >> 8) & 0x3F) << 8));
             }
         } else if (Rand_ZeroOne() < 0.5f) {
             params = -1;
@@ -216,7 +216,8 @@ void ObjComb_Draw(Actor* thisx, PlayState* play) {
     Matrix_Translate(0, -(this->actor.scale.y * 118.0f), 0, MTXMODE_APPLY);
     Matrix_Scale(this->actor.scale.x, this->actor.scale.y, this->actor.scale.z, MTXMODE_APPLY);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_obj_comb.c", 394);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_obj_comb.c", 394),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     gSPDisplayList(POLY_OPA_DISP++, gFieldBeehiveDL);
 

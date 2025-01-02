@@ -50,7 +50,7 @@ void func_80AE72D0(EnRl* this) {
     }
 }
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
 void func_80AE7358(EnRl* this) {
     Animation_Change(&this->skelAnime, &object_rl_Anim_000A3C, 1.0f, 0.0f,
                      Animation_GetLastFrame(&object_rl_Anim_000A3C), ANIMMODE_LOOP, 0.0f);
@@ -272,7 +272,7 @@ void func_80AE7BF8(EnRl* this, s32 arg1) {
 
 void func_80AE7C64(EnRl* this, PlayState* play) {
     func_80AE7954(this, play);
-#if DEBUG_FEATURES
+#if IS_DEBUG
     func_80AE73D8(this, play);
 #endif
 }
@@ -282,7 +282,7 @@ void func_80AE7C94(EnRl* this, PlayState* play) {
     func_80AE7494(this);
     func_80AE72D0(this);
     func_80AE79A4(this, play);
-#if DEBUG_FEATURES
+#if IS_DEBUG
     func_80AE73D8(this, play);
 #endif
 }
@@ -294,7 +294,7 @@ void func_80AE7CE8(EnRl* this, PlayState* play) {
     temp = func_80AE7494(this);
     func_80AE72D0(this);
     func_80AE7BF8(this, temp);
-#if DEBUG_FEATURES
+#if IS_DEBUG
     func_80AE73D8(this, play);
 #endif
 }
@@ -304,7 +304,7 @@ void func_80AE7D40(EnRl* this, PlayState* play) {
     func_80AE7494(this);
     func_80AE72D0(this);
     func_80AE7AF8(this, play);
-#if DEBUG_FEATURES
+#if IS_DEBUG
     func_80AE73D8(this, play);
 #endif
 }
@@ -394,7 +394,7 @@ void EnRl_Draw(Actor* thisx, PlayState* play) {
     sDrawFuncs[this->drawConfig](this, play);
 }
 
-ActorProfile En_Rl_Profile = {
+ActorInit En_Rl_InitVars = {
     /**/ ACTOR_EN_RL,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,

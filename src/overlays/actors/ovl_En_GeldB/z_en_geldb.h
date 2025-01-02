@@ -6,7 +6,7 @@
 
 struct EnGeldB;
 
-typedef enum EnGeldBLimb {
+typedef enum {
     /* 0x00 */ GELDB_LIMB_NONE,
     /* 0x01 */ GELDB_LIMB_ROOT,
     /* 0x02 */ GELDB_LIMB_TORSO,

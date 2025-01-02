@@ -8,7 +8,7 @@
 #include "assets/objects/object_md/object_md.h"
 #include "overlays/actors/ovl_En_Elf/z_en_elf.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4 | ACTOR_FLAG_UPDATE_DURING_OCARINA)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_25)
 
 void EnMd_Init(Actor* thisx, PlayState* play);
 void EnMd_Destroy(Actor* thisx, PlayState* play);
@@ -21,7 +21,7 @@ void func_80AAB948(EnMd* this, PlayState* play);
 void func_80AABC10(EnMd* this, PlayState* play);
 void func_80AABD0C(EnMd* this, PlayState* play);
 
-ActorProfile En_Md_Profile = {
+ActorInit En_Md_InitVars = {
     /**/ ACTOR_EN_MD,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -35,7 +35,7 @@ ActorProfile En_Md_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -43,7 +43,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -55,7 +55,7 @@ static ColliderCylinderInit sCylinderInit = {
 
 static CollisionCheckInfoInit2 sColChkInfoInit = { 0, 0, 0, 0, MASS_IMMOVABLE };
 
-typedef enum EnMdAnimation {
+typedef enum {
     /*  0 */ ENMD_ANIM_0,
     /*  1 */ ENMD_ANIM_1,
     /*  2 */ ENMD_ANIM_2,
@@ -592,11 +592,11 @@ u8 EnMd_FollowPath(EnMd* this, PlayState* play) {
     f32 pathDiffX;
     f32 pathDiffZ;
 
-    if (PARAMS_GET_NOSHIFT(this->actor.params, 8, 8) == 0xFF00) {
+    if ((this->actor.params & 0xFF00) == 0xFF00) {
         return 0;
     }
 
-    path = &play->pathList[PARAMS_GET_S(this->actor.params, 8, 8)];
+    path = &play->pathList[(this->actor.params & 0xFF00) >> 8];
     pointPos = SEGMENTED_TO_VIRTUAL(path->points);
     pointPos += this->waypoint;
 
@@ -619,11 +619,11 @@ u8 EnMd_SetMovedPos(EnMd* this, PlayState* play) {
     Path* path;
     Vec3s* lastPointPos;
 
-    if (PARAMS_GET_NOSHIFT(this->actor.params, 8, 8) == 0xFF00) {
+    if ((this->actor.params & 0xFF00) == 0xFF00) {
         return 0;
     }
 
-    path = &play->pathList[PARAMS_GET_S(this->actor.params, 8, 8)];
+    path = &play->pathList[(this->actor.params & 0xFF00) >> 8];
     lastPointPos = SEGMENTED_TO_VIRTUAL(path->points);
     lastPointPos += path->count - 1;
 
@@ -667,7 +667,7 @@ void EnMd_Init(Actor* thisx, PlayState* play) {
 
     Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, ENMD_ANIM_0);
     Actor_SetScale(&this->actor, 0.01f);
-    this->actor.attentionRangeType = ATTENTION_RANGE_6;
+    this->actor.targetMode = 6;
     this->alpha = 255;
     Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_EN_ELF, this->actor.world.pos.x,
                        this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, FAIRY_KOKIRI);
@@ -695,7 +695,7 @@ void EnMd_Destroy(Actor* thisx, PlayState* play) {
 
 void func_80AAB874(EnMd* this, PlayState* play) {
     if (this->skelAnime.animation == &gMidoHandsOnHipsIdleAnim) {
-        Actor_UpdateFidgetTables(play, this->fidgetTableY, this->fidgetTableZ, ENMD_LIMB_MAX);
+        func_80034F54(play, this->unk_214, this->unk_236, ENMD_LIMB_MAX);
     } else if ((this->interactInfo.talkState == NPC_TALK_STATE_IDLE) && (this->unk_20B != 7)) {
         func_80AAA92C(this, 7);
     }
@@ -705,7 +705,7 @@ void func_80AAB874(EnMd* this, PlayState* play) {
 
 void func_80AAB8F8(EnMd* this, PlayState* play) {
     if (this->skelAnime.animation == &gMidoHandsOnHipsIdleAnim) {
-        Actor_UpdateFidgetTables(play, this->fidgetTableY, this->fidgetTableZ, ENMD_LIMB_MAX);
+        func_80034F54(play, this->unk_214, this->unk_236, ENMD_LIMB_MAX);
     }
     func_80AAA93C(this);
 }
@@ -757,7 +757,7 @@ void func_80AAB948(EnMd* this, PlayState* play) {
     }
 
     if (this->skelAnime.animation == &gMidoHandsOnHipsIdleAnim) {
-        Actor_UpdateFidgetTables(play, this->fidgetTableY, this->fidgetTableZ, ENMD_LIMB_MAX);
+        func_80034F54(play, this->unk_214, this->unk_236, ENMD_LIMB_MAX);
     }
 
     if ((this->interactInfo.talkState == NPC_TALK_STATE_IDLE) && (play->sceneId == SCENE_LOST_WOODS)) {
@@ -795,7 +795,7 @@ void func_80AABC10(EnMd* this, PlayState* play) {
 }
 
 void func_80AABD0C(EnMd* this, PlayState* play) {
-    Actor_UpdateFidgetTables(play, this->fidgetTableY, this->fidgetTableZ, ENMD_LIMB_MAX);
+    func_80034F54(play, this->unk_214, this->unk_236, ENMD_LIMB_MAX);
     func_80AAA93C(this);
 
     if (!(EnMd_FollowPath(this, play)) || (this->waypoint != 0)) {
@@ -853,8 +853,8 @@ s32 EnMd_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* po
 
     if (((limbIndex == ENMD_LIMB_TORSO) || (limbIndex == ENMD_LIMB_LEFT_UPPER_ARM)) ||
         (limbIndex == ENMD_LIMB_RIGHT_UPPER_ARM)) {
-        rot->y += Math_SinS(this->fidgetTableY[limbIndex]) * FIDGET_AMPLITUDE;
-        rot->z += Math_CosS(this->fidgetTableZ[limbIndex]) * FIDGET_AMPLITUDE;
+        rot->y += Math_SinS(this->unk_214[limbIndex]) * 200.0f;
+        rot->z += Math_CosS(this->unk_236[limbIndex]) * 200.0f;
     }
 
     return false;

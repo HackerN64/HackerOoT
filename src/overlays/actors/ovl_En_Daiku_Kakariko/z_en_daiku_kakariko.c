@@ -7,9 +7,9 @@
 #include "z_en_daiku_kakariko.h"
 #include "assets/objects/object_daiku/object_daiku.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4)
 
-typedef enum KakarikoCarpenterType {
+typedef enum {
     /* 0x0 */ CARPENTER_ICHIRO,  // Red and purple pants, normal hair
     /* 0x1 */ CARPENTER_SABOORO, // Light blue pants
     /* 0x2 */ CARPENTER_JIRO,    // Green pants
@@ -24,7 +24,7 @@ void EnDaikuKakariko_Draw(Actor* thisx, PlayState* play);
 void EnDaikuKakariko_Wait(EnDaikuKakariko* this, PlayState* play);
 void EnDaikuKakariko_Run(EnDaikuKakariko* this, PlayState* play);
 
-ActorProfile En_Daiku_Kakariko_Profile = {
+ActorInit En_Daiku_Kakariko_InitVars = {
     /**/ ACTOR_EN_DAIKU_KAKARIKO,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -38,7 +38,7 @@ ActorProfile En_Daiku_Kakariko_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -46,7 +46,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -93,7 +93,7 @@ static DamageTable sDamageTable = {
     /* Unknown 2     */ DMG_ENTRY(0, 0x0),
 };
 
-typedef enum EnDaikuKakarikoAnimation {
+typedef enum {
     /* 0 */ ENDAIKUKAKARIKO_ANIM_0,
     /* 1 */ ENDAIKUKAKARIKO_ANIM_1,
     /* 2 */ ENDAIKUKAKARIKO_ANIM_2,
@@ -124,7 +124,7 @@ void EnDaikuKakariko_ChangeAnim(EnDaikuKakariko* this, s32 index, s32* currentIn
 }
 
 void EnDaikuKakariko_Init(Actor* thisx, PlayState* play) {
-    static u16 initFlags[] = { 0x0080, 0x00B0, 0x0070, 0x0470 }; // List of initial values for this->flags
+    static u16 initFlags[] = { 0x0080, 0x00B0, 0x0070, 0x0470 }; // List of inital values for this->flags
     EnDaikuKakariko* this = (EnDaikuKakariko*)thisx;
     s32 pad;
 
@@ -133,7 +133,7 @@ void EnDaikuKakariko_Init(Actor* thisx, PlayState* play) {
             case SCENE_KAKARIKO_VILLAGE:
                 if (IS_DAY) {
                     this->flags |= 1;
-                    this->flags |= initFlags[PARAMS_GET_U(this->actor.params, 0, 2)];
+                    this->flags |= initFlags[this->actor.params & 3];
                 }
                 break;
             case SCENE_KAKARIKO_CENTER_GUEST_HOUSE:
@@ -172,7 +172,7 @@ void EnDaikuKakariko_Init(Actor* thisx, PlayState* play) {
     this->actor.gravity = 0.0f;
     this->runSpeed = 3.0f;
     this->actor.uncullZoneForward = 1200.0f;
-    this->actor.attentionRangeType = ATTENTION_RANGE_6;
+    this->actor.targetMode = 6;
     this->currentAnimIndex = -1;
 
     if (this->flags & 0x40) {
@@ -184,8 +184,7 @@ void EnDaikuKakariko_Init(Actor* thisx, PlayState* play) {
         this->actionFunc = EnDaikuKakariko_Run;
     } else {
         if (this->flags & 8) {
-            if ((PARAMS_GET_U(this->actor.params, 0, 2) == CARPENTER_SABOORO) ||
-                (PARAMS_GET_U(this->actor.params, 0, 2) == CARPENTER_SHIRO)) {
+            if (((this->actor.params & 3) == CARPENTER_SABOORO) || ((this->actor.params & 3) == CARPENTER_SHIRO)) {
                 EnDaikuKakariko_ChangeAnim(this, ENDAIKUKAKARIKO_ANIM_5, &this->currentAnimIndex);
                 this->flags |= 0x800;
             } else {
@@ -245,11 +244,10 @@ void EnDaikuKakariko_HandleTalking(EnDaikuKakariko* this, PlayState* play) {
 
         if ((sp26 >= 0) && (sp26 <= 320) && (sp24 >= 0) && (sp24 <= 240) && (this->talkState == 0) &&
             (Actor_OfferTalk(&this->actor, play, 100.0f) == 1)) {
-            this->actor.textId =
-                MaskReaction_GetTextId(play, sMaskReactionSets[PARAMS_GET_U(this->actor.params, 0, 2)]);
+            this->actor.textId = MaskReaction_GetTextId(play, sMaskReactionSets[this->actor.params & 3]);
 
             if (this->actor.textId == 0) {
-                switch (PARAMS_GET_U(this->actor.params, 0, 2)) {
+                switch (this->actor.params & 3) {
                     case 0:
                         if (this->flags & 8) {
                             this->actor.textId = 0x5076;
@@ -366,7 +364,7 @@ void EnDaikuKakariko_Run(EnDaikuKakariko* this, PlayState* play) {
     s32 run;
 
     do {
-        path = &play->pathList[PARAMS_GET_U(this->actor.params, 8, 8)];
+        path = &play->pathList[(this->actor.params >> 8) & 0xFF];
         pathPos = &((Vec3s*)SEGMENTED_TO_VIRTUAL(path->points))[this->waypoint];
         xDist = pathPos->x - this->actor.world.pos.x;
         zDist = pathPos->z - this->actor.world.pos.z;
@@ -538,7 +536,7 @@ void EnDaikuKakariko_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, V
 
     if (limbIndex == 15) {
         Matrix_MultVec3f(&unkVec, &this->actor.focus.pos);
-        gSPDisplayList(POLY_OPA_DISP++, carpenterHeadDLists[PARAMS_GET_U(this->actor.params, 0, 2)]);
+        gSPDisplayList(POLY_OPA_DISP++, carpenterHeadDLists[this->actor.params & 3]);
     }
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_daiku_kakariko.c", 1113);
@@ -551,18 +549,20 @@ void EnDaikuKakariko_Draw(Actor* thisx, PlayState* play) {
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
-    if (PARAMS_GET_U(thisx->params, 0, 2) == CARPENTER_ICHIRO) {
+    if ((thisx->params & 3) == CARPENTER_ICHIRO) {
         gDPSetEnvColor(POLY_OPA_DISP++, 170, 10, 70, 255);
-    } else if (PARAMS_GET_U(thisx->params, 0, 2) == CARPENTER_SABOORO) {
+    } else if ((thisx->params & 3) == CARPENTER_SABOORO) {
         gDPSetEnvColor(POLY_OPA_DISP++, 170, 200, 255, 255);
-    } else if (PARAMS_GET_U(thisx->params, 0, 2) == CARPENTER_JIRO) {
+    } else if ((thisx->params & 3) == CARPENTER_JIRO) {
         gDPSetEnvColor(POLY_OPA_DISP++, 0, 230, 70, 255);
-    } else if (PARAMS_GET_U(thisx->params, 0, 2) == CARPENTER_SHIRO) {
+    } else if ((thisx->params & 3) == CARPENTER_SHIRO) {
         gDPSetEnvColor(POLY_OPA_DISP++, 200, 0, 150, 255);
     }
 
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnDaikuKakariko_OverrideLimbDraw, EnDaikuKakariko_PostLimbDraw, thisx);
+
+    if (1) {}
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_daiku_kakariko.c", 1151);
 }

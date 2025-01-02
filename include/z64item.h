@@ -1,13 +1,13 @@
 #ifndef Z64ITEM_H
 #define Z64ITEM_H
 
-// Note that z_kaleido_scope.c assumes that the dimensions and texture format here also matches the dimensions and
+// Note that z_kaleido_scope_PAL.c assumes that the dimensions and texture format here also matches the dimensions and
 // texture format for MAP_NAME_TEX1_*
 #define ITEM_NAME_TEX_WIDTH 128
 #define ITEM_NAME_TEX_HEIGHT 16
 #define ITEM_NAME_TEX_SIZE ((ITEM_NAME_TEX_WIDTH * ITEM_NAME_TEX_HEIGHT) / 2) // 128x16 IA4 texture
 
-typedef enum EquipmentType {
+typedef enum {
     /* 0 */ EQUIP_TYPE_SWORD,
     /* 1 */ EQUIP_TYPE_SHIELD,
     /* 2 */ EQUIP_TYPE_TUNIC,
@@ -17,26 +17,26 @@ typedef enum EquipmentType {
 
 // `EquipInv*` enums are for Inventory.equipment (for example used in the `CHECK_OWNED_EQUIP` macro)
 
-typedef enum EquipInvSword {
+typedef enum {
     /* 0 */ EQUIP_INV_SWORD_KOKIRI,
     /* 1 */ EQUIP_INV_SWORD_MASTER,
     /* 2 */ EQUIP_INV_SWORD_BIGGORON,
     /* 3 */ EQUIP_INV_SWORD_BROKENGIANTKNIFE
 } EquipInvSword;
 
-typedef enum EquipInvShield {
+typedef enum {
     /* 0 */ EQUIP_INV_SHIELD_DEKU,
     /* 1 */ EQUIP_INV_SHIELD_HYLIAN,
     /* 2 */ EQUIP_INV_SHIELD_MIRROR
 } EquipInvShield;
 
-typedef enum EquipInvTunic {
+typedef enum {
     /* 0 */ EQUIP_INV_TUNIC_KOKIRI,
     /* 1 */ EQUIP_INV_TUNIC_GORON,
     /* 2 */ EQUIP_INV_TUNIC_ZORA
 } EquipInvTunic;
 
-typedef enum EquipInvBoots {
+typedef enum {
     /* 0 */ EQUIP_INV_BOOTS_KOKIRI,
     /* 1 */ EQUIP_INV_BOOTS_IRON,
     /* 2 */ EQUIP_INV_BOOTS_HOVER
@@ -44,7 +44,7 @@ typedef enum EquipInvBoots {
 
 // `EquipValue*` enums are for ItemEquips.equipment (for example used in the `CUR_EQUIP_VALUE` macro)
 
-typedef enum EquipValueSword {
+typedef enum {
     /* 0 */ EQUIP_VALUE_SWORD_NONE,
     /* 1 */ EQUIP_VALUE_SWORD_KOKIRI,
     /* 2 */ EQUIP_VALUE_SWORD_MASTER,
@@ -52,7 +52,7 @@ typedef enum EquipValueSword {
     /* 4 */ EQUIP_VALUE_SWORD_MAX
 } EquipValueSword;
 
-typedef enum EquipValueShield {
+typedef enum {
     /* 0 */ EQUIP_VALUE_SHIELD_NONE,
     /* 1 */ EQUIP_VALUE_SHIELD_DEKU,
     /* 2 */ EQUIP_VALUE_SHIELD_HYLIAN,
@@ -60,7 +60,7 @@ typedef enum EquipValueShield {
     /* 4 */ EQUIP_VALUE_SHIELD_MAX
 } EquipValueShield;
 
-typedef enum EquipValueTunic {
+typedef enum {
     /* 0 */ EQUIP_VALUE_TUNIC_NONE,
     /* 1 */ EQUIP_VALUE_TUNIC_KOKIRI,
     /* 2 */ EQUIP_VALUE_TUNIC_GORON,
@@ -68,7 +68,7 @@ typedef enum EquipValueTunic {
     /* 4 */ EQUIP_VALUE_TUNIC_MAX
 } EquipValueTunic;
 
-typedef enum EquipValueBoots {
+typedef enum {
     /* 0 */ EQUIP_VALUE_BOOTS_NONE,
     /* 1 */ EQUIP_VALUE_BOOTS_KOKIRI,
     /* 2 */ EQUIP_VALUE_BOOTS_IRON,
@@ -76,7 +76,7 @@ typedef enum EquipValueBoots {
     /* 4 */ EQUIP_VALUE_BOOTS_MAX
 } EquipValueBoots;
 
-typedef enum UpgradeType {
+typedef enum {
     /* 0x00 */ UPG_QUIVER,
     /* 0x01 */ UPG_BOMB_BAG,
     /* 0x02 */ UPG_STRENGTH,
@@ -88,7 +88,7 @@ typedef enum UpgradeType {
     /* 0x08 */ UPG_MAX
 } UpgradeType;
 
-typedef enum QuestItem {
+typedef enum {
     /* 0x00 */ QUEST_MEDALLION_FOREST,
     /* 0x01 */ QUEST_MEDALLION_FIRE,
     /* 0x02 */ QUEST_MEDALLION_WATER,
@@ -113,17 +113,16 @@ typedef enum QuestItem {
     /* 0x15 */ QUEST_STONE_OF_AGONY,
     /* 0x16 */ QUEST_GERUDOS_CARD,
     /* 0x17 */ QUEST_SKULL_TOKEN,
-    /* 0x18 */ QUEST_HEART_PIECE, // for `pauseCtx->cursorPoint[PAUSE_QUEST]`
-    /* 0x1C */ QUEST_HEART_PIECE_COUNT = 0x1C // for accessing the `Inventory.questItems` bitfield
+    /* 0x1C */ QUEST_HEART_PIECE_COUNT = 0x1C
 } QuestItem;
 
-typedef enum DungeonItem {
+typedef enum {
     /* 0x00 */ DUNGEON_BOSS_KEY,
     /* 0x01 */ DUNGEON_COMPASS,
     /* 0x02 */ DUNGEON_MAP
 } DungeonItem;
 
-typedef enum InventorySlot {
+typedef enum {
     /* 0x00 */ SLOT_DEKU_STICK,
     /* 0x01 */ SLOT_DEKU_NUT,
     /* 0x02 */ SLOT_BOMB,
@@ -151,7 +150,7 @@ typedef enum InventorySlot {
     /* 0xFF */ SLOT_NONE = 0xFF
 } InventorySlot;
 
-typedef enum ItemID {
+typedef enum {
     /* 0x00 */ ITEM_DEKU_STICK,
     /* 0x01 */ ITEM_DEKU_NUT,
     /* 0x02 */ ITEM_BOMB,
@@ -317,7 +316,7 @@ typedef enum ItemID {
 #define ITEM_TRADE_ADULT ITEM_POCKET_EGG
 
 // Get Item result may vary depending on context (chest/shop/scrub/drop)
-typedef enum GetItemID {
+typedef enum {
     /* 0x00 */ GI_NONE,
     /* 0x01 */ GI_BOMBS_5,
     /* 0x02 */ GI_DEKU_NUTS_5,
@@ -447,7 +446,7 @@ typedef enum GetItemID {
     /* 0x7E */ GI_MAX
 } GetItemID;
 
-typedef enum GetItemDrawID {
+typedef enum {
     /* 0x00 */ GID_BOTTLE_EMPTY,
     /* 0x01 */ GID_SMALL_KEY,
     /* 0x02 */ GID_SONG_MINUET,
@@ -568,7 +567,7 @@ typedef enum GetItemDrawID {
     /* 0x75 */ GID_MAX
 } GetItemDrawID;
 
-typedef enum ExchangeItemID {
+typedef enum {
     /* 0x00 */ EXCH_ITEM_NONE,
     /* 0x01 */ EXCH_ITEM_ZELDAS_LETTER,
     /* 0x02 */ EXCH_ITEM_WEIRD_EGG,

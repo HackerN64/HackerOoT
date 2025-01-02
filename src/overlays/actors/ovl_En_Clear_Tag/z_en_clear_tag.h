@@ -6,13 +6,13 @@
 
 struct EnClearTag;
 
-typedef enum ClearTagType {
+typedef enum {
     /* 0x00 */ CLEAR_TAG_CUTSCENE_ARWING = 0,
     /* 0x01 */ CLEAR_TAG_ARWING = 1,
     /* 0x64 */ CLEAR_TAG_LASER = 100
 } ClearTagType;
 
-typedef enum ClearTagState {
+typedef enum {
     /* 0x00 */ CLEAR_TAG_STATE_FLYING = 0,
     /* 0x01 */ CLEAR_TAG_STATE_TARGET_LOCKED = 1,
     /* 0x02 */ CLEAR_TAG_STATE_DEMO = 2,
@@ -20,19 +20,19 @@ typedef enum ClearTagState {
     /* 0x64 */ CLEAR_TAG_STATE_LASER = 100
 } ClearTagState;
 
-typedef enum ClearTagDemoMode {
+typedef enum {
     /* 0x00 */ CLEAR_TAG_CUTSCENE_MODE_NONE,
     /* 0x01 */ CLEAR_TAG_CUTSCENE_MODE_SETUP,
     /* 0x02 */ CLEAR_TAG_CUTSCENE_MODE_PLAY
 } ClearTagDemoMode;
 
-typedef enum ClearTagDrawMode {
+typedef enum {
     /* 0x00 */ CLEAR_TAG_DRAW_MODE_ARWING,
     /* 0x01 */ CLEAR_TAG_DRAW_MODE_ALL,
     /* 0x02 */ CLEAR_TAG_DRAW_MODE_EFFECT
 } ClearTagDrawMode;
 
-typedef enum ClearTagEffectType {
+typedef enum {
     /* 0x00 */ CLEAR_TAG_EFFECT_AVAILABLE,
     /* 0x01 */ CLEAR_TAG_EFFECT_DEBRIS,
     /* 0x02 */ CLEAR_TAG_EFFECT_FIRE,
@@ -40,7 +40,7 @@ typedef enum ClearTagEffectType {
     /* 0x04 */ CLEAR_TAG_EFFECT_FLASH
 } ClearTagEffectType;
 
-typedef enum ClearTagTimers {
+typedef enum {
     /* 0x00 */ CLEAR_TAG_TIMER_ARWING_UPDATE_STATE = 0,
     /* 0x00 */ CLEAR_TAG_TIMER_LASER_DEATH = 0,
     /* 0x01 */ CLEAR_TAG_TIMER_ARWING_ENTER_LOCKED_ON,

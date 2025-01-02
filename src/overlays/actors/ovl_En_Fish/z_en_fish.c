@@ -5,7 +5,6 @@
  */
 
 #include "z_en_fish.h"
-#include "global.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "terminal.h"
 
@@ -41,7 +40,7 @@ static f32 D_80A17018 = 0.0f;
 static ColliderJntSphElementInit sJntSphElementsInit[1] = {
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0xFFCFFFFF, 0x00, 0x00 },
             ATELEM_NONE,
@@ -54,7 +53,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[1] = {
 
 static ColliderJntSphInit sJntSphInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -65,7 +64,7 @@ static ColliderJntSphInit sJntSphInit = {
     sJntSphElementsInit,
 };
 
-ActorProfile En_Fish_Profile = {
+ActorInit En_Fish_InitVars = {
     /**/ ACTOR_EN_FISH,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,

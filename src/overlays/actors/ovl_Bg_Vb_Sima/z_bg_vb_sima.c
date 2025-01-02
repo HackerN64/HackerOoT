@@ -15,7 +15,7 @@ void BgVbSima_Destroy(Actor* thisx, PlayState* play);
 void BgVbSima_Update(Actor* thisx, PlayState* play);
 void BgVbSima_Draw(Actor* thisx, PlayState* play);
 
-ActorProfile Bg_Vb_Sima_Profile = {
+ActorInit Bg_Vb_Sima_InitVars = {
     /**/ ACTOR_BG_VB_SIMA,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -151,7 +151,8 @@ void BgVbSima_Update(Actor* thisx, PlayState* play) {
 void BgVbSima_Draw(Actor* thisx, PlayState* play) {
     OPEN_DISPS(play->state.gfxCtx, "../z_bg_vb_sima.c", 285);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_bg_vb_sima.c", 291);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_vb_sima.c", 291),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gVolvagiaPlatformDL);
     CLOSE_DISPS(play->state.gfxCtx, "../z_bg_vb_sima.c", 296);
 }

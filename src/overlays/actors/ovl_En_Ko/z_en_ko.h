@@ -28,11 +28,11 @@ typedef struct EnKo {
     /* 0x0220 */ f32 modelAlpha;
     /* 0x0224 */ Vec3s jointTable[16];
     /* 0x0284 */ Vec3s morphTable[16];
-    /* 0x02E4 */ s16 fidgetTableY[16];
-    /* 0x0304 */ s16 fidgetTableZ[16];
+    /* 0x02E4 */ s16 unk_2E4[16];
+    /* 0x0304 */ s16 unk_304[16];
 } EnKo; // size = 0x0324
 
-typedef enum KokiriChildren {
+typedef enum {
     ENKO_TYPE_CHILD_0,
     ENKO_TYPE_CHILD_1,
     ENKO_TYPE_CHILD_2,
@@ -49,7 +49,7 @@ typedef enum KokiriChildren {
     ENKO_TYPE_CHILD_MAX
 } KokiriChildren;
 
-typedef enum KokiriForestQuestState {
+typedef enum {
     ENKO_FQS_CHILD_START,
     ENKO_FQS_CHILD_STONE,
     ENKO_FQS_CHILD_SARIA,

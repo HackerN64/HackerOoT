@@ -22,7 +22,7 @@ void EnNutsball_Draw(Actor* thisx, PlayState* play);
 void func_80ABBB34(EnNutsball* this, PlayState* play);
 void func_80ABBBA8(EnNutsball* this, PlayState* play);
 
-ActorProfile En_Nutsball_Profile = {
+ActorInit En_Nutsball_InitVars = {
     /**/ ACTOR_EN_NUTSBALL,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -36,7 +36,7 @@ ActorProfile En_Nutsball_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_ON | AT_TYPE_ENEMY,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_ALL,
@@ -44,7 +44,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0xFFCFFFFF, 0x00, 0x08 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_WOOD,
@@ -147,7 +147,7 @@ void EnNutsball_Update(Actor* thisx, PlayState* play) {
     Player* player = GET_PLAYER(play);
     s32 pad;
 
-    if (!(player->stateFlags1 & (PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28 | PLAYER_STATE1_29)) ||
+    if (!(player->stateFlags1 & (PLAYER_STATE1_6 | PLAYER_STATE1_7 | PLAYER_STATE1_28 | PLAYER_STATE1_29)) ||
         (this->actionFunc == func_80ABBB34)) {
         this->actionFunc(this, play);
 
@@ -156,7 +156,7 @@ void EnNutsball_Update(Actor* thisx, PlayState* play) {
                                 UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2);
         Collider_UpdateCylinder(&this->actor, &this->collider);
 
-        this->actor.flags |= ACTOR_FLAG_SFX_FOR_PLAYER_BODY_HIT;
+        this->actor.flags |= ACTOR_FLAG_24;
 
         CollisionCheck_SetAT(play, &play->colChkCtx, &this->collider.base);
         CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
@@ -172,7 +172,7 @@ void EnNutsball_Draw(Actor* thisx, PlayState* play) {
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Matrix_Mult(&play->billboardMtxF, MTXMODE_APPLY);
     Matrix_RotateZ(this->actor.home.rot.z * 9.58738e-05f, MTXMODE_APPLY);
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_en_nutsball.c", 333);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_nutsball.c", 333), G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_OPA_DISP++, sDLists[NUTSBALL_GET_TYPE(&this->actor)]);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_nutsball.c", 337);

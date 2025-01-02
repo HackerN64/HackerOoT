@@ -10,14 +10,12 @@ import hashlib
 import io
 from pathlib import Path
 import struct
-from typing import Iterable
 
 import crunch64
 import ipl3checksum
 import zlib
 
 import dmadata
-import version_config
 
 
 def decompress_zlib(data: bytes) -> bytes:
@@ -102,10 +100,10 @@ def get_str_hash(byte_array):
     return str(hashlib.md5(byte_array).hexdigest())
 
 
-def check_existing_rom(rom_path: Path, correct_str_hashes: Iterable[str]):
+def check_existing_rom(rom_path: Path, correct_str_hash: str):
     # If the baserom exists and is correct, we don't need to change anything
     if rom_path.exists():
-        if get_str_hash(rom_path.read_bytes()) in correct_str_hashes:
+        if get_str_hash(rom_path.read_bytes()) == correct_str_hash:
             return True
     return False
 
@@ -174,20 +172,10 @@ def main():
 
     uncompressed_path = baserom_dir / "baserom-decompressed.z64"
 
-    config = version_config.load_version_config(version)
-    dmadata_start = config.dmadata_start
+    dmadata_start = int((baserom_dir / "dmadata_start.txt").read_text(), 16)
+    correct_str_hash = (baserom_dir / "checksum.md5").read_text().split()[0]
 
-    compressed_str_hashes = []
-    decompressed_str_hashes = []
-    for checksum_stem in config.checksums:
-        compressed_str_hashes.append(
-            (baserom_dir / f"{checksum_stem}-compressed.md5").read_text().split()[0]
-        )
-        decompressed_str_hashes.append(
-            (baserom_dir / f"{checksum_stem}.md5").read_text().split()[0]
-        )
-
-    if check_existing_rom(uncompressed_path, decompressed_str_hashes):
+    if check_existing_rom(uncompressed_path, correct_str_hash):
         print("Found valid baserom - exiting early")
         return
 
@@ -223,18 +211,6 @@ def main():
 
     file_content = per_version_fixes(file_content, version)
 
-    # Check to see if the ROM is a "vanilla" ROM
-    str_hash = get_str_hash(file_content)
-    if version in {"gc-eu-mq-dbg", "hackeroot-mq"}:
-        correct_str_hashes = decompressed_str_hashes
-    else:
-        correct_str_hashes = compressed_str_hashes
-    if str_hash not in correct_str_hashes:
-        print(
-            f"Error: Expected a hash of {' or '.join(correct_str_hashes)} but got {str_hash}. The baserom has probably been tampered, find a new one"
-        )
-        exit(1)
-
     dma_entries = dmadata.read_dmadata(file_content, dmadata_start)
     # Decompress
     if any(dma_entry.is_compressed() for dma_entry in dma_entries):
@@ -244,12 +220,19 @@ def main():
             file_content, dmadata_start, dma_entries, is_zlib_compressed
         )
 
-    # Double check the hash
+    # Check to see if the ROM is a "vanilla" ROM
     str_hash = get_str_hash(file_content)
-    if str_hash not in decompressed_str_hashes:
+    if str_hash != correct_str_hash:
         print(
-            f"Error: Expected a hash of {' or '.join(decompressed_str_hashes)} after decompression but got {str_hash}!"
+            f"Error: Expected a hash of {correct_str_hash} but got {str_hash}. The baserom has probably been tampered, find a new one"
         )
+
+        if version in {"gc-eu-mq-dbg", "hackeroot-mq"}:
+            if str_hash == "9fede30e3239558cf3993f12b7ed7458":
+                print(
+                    "The provided baserom is a rom which has been edited with ZeldaEdit and is not suitable for use with decomp. Find a new one."
+                )
+
         exit(1)
 
     # Write out our new ROM

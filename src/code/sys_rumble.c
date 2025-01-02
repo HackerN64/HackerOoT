@@ -147,7 +147,7 @@ void RumbleMgr_Init(RumbleMgr* rumbleMgr) {
 }
 
 void RumbleMgr_Destroy(RumbleMgr* rumbleMgr) {
-#if DEBUG_FEATURES
+#if IS_DEBUG
     bzero(rumbleMgr, sizeof(RumbleMgr));
 #endif
 }

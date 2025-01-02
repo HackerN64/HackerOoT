@@ -10,7 +10,7 @@
 
 #define FLAGS ACTOR_FLAG_4
 
-typedef enum ShadowTempleAssetsType {
+typedef enum {
     /* 0x0 */ STA_GIANT_BIRD_STATUE,
     /* 0x1 */ STA_BOMBABLE_SKULL_WALL,
     /* 0x2 */ STA_BOMBABLE_RUBBLE,
@@ -34,7 +34,7 @@ void BgHakaZou_DoNothing(BgHakaZou* this, PlayState* play);
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
@@ -42,7 +42,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000008, 0x00, 0x00 },
         ATELEM_NONE,
@@ -54,7 +54,7 @@ static ColliderCylinderInit sCylinderInit = {
 
 static Vec3f sZeroVec = { 0.0f, 0.0f, 0.0f };
 
-ActorProfile Bg_Haka_Zou_Profile = {
+ActorInit Bg_Haka_Zou_InitVars = {
     /**/ ACTOR_BG_HAKA_ZOU,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -77,7 +77,7 @@ void BgHakaZou_Init(Actor* thisx, PlayState* play) {
 
     Actor_ProcessInitChain(thisx, sInitChain);
 
-    this->switchFlag = PARAMS_GET_U(thisx->params, 8, 8);
+    this->switchFlag = (thisx->params >> 8) & 0xFF;
     thisx->params &= 0xFF;
 
     if (thisx->params == STA_UNKNOWN) {

@@ -23,7 +23,7 @@ static Color_RGBA8 sWhite = { 250, 250, 250, 255 };
 static Color_RGBA8 sGray = { 180, 180, 180, 255 };
 static Vec3f sZeroVec = { 0.0f, 0.0f, 0.0f };
 
-ActorProfile Bg_Ice_Objects_Profile = {
+ActorInit Bg_Ice_Objects_InitVars = {
     /**/ ACTOR_BG_ICE_OBJECTS,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -192,7 +192,7 @@ void BgIceObjects_Slide(BgIceObjects* this, PlayState* play) {
         pos.x = thisx->world.pos.x - (60.0f * Math_SinS(this->dyna.unk_158)) + (Math_CosS(this->dyna.unk_158) * spread);
         pos.z = thisx->world.pos.z - (60.0f * Math_CosS(this->dyna.unk_158)) - (Math_SinS(this->dyna.unk_158) * spread);
         func_8002829C(play, &pos, &velocity, &sZeroVec, &sWhite, &sGray, 250, Rand_S16Offset(40, 15));
-        Actor_PlaySfx_Flagged(thisx, NA_SE_PL_SLIP_ICE_LEVEL - SFX_FLAG);
+        func_8002F974(thisx, NA_SE_PL_SLIP_ICE_LEVEL - SFX_FLAG);
     }
     BgIceObjects_CheckPits(this, play);
 }

@@ -14,13 +14,13 @@ void BgHaka_Destroy(Actor* thisx, PlayState* play);
 void BgHaka_Update(Actor* thisx, PlayState* play);
 void BgHaka_Draw(Actor* thisx, PlayState* play);
 
-void BgHaka_CheckPlayerOnDirtPatch(BgHaka* this, Player* player);
-void BgHaka_IdleClosed(BgHaka* this, PlayState* play);
-void BgHaka_Pull(BgHaka* this, PlayState* play);
-void BgHaka_IdleOpened(BgHaka* this, PlayState* play);
-void BgHaka_IdleLockedClosed(BgHaka* this, PlayState* play);
+void func_8087B758(BgHaka* this, Player* player);
+void func_8087B7E8(BgHaka* this, PlayState* play);
+void func_8087B938(BgHaka* this, PlayState* play);
+void func_8087BAAC(BgHaka* this, PlayState* play);
+void func_8087BAE4(BgHaka* this, PlayState* play);
 
-ActorProfile Bg_Haka_Profile = {
+ActorInit Bg_Haka_InitVars = {
     /**/ ACTOR_BG_HAKA,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -46,7 +46,7 @@ void BgHaka_Init(Actor* thisx, PlayState* play) {
     DynaPolyActor_Init(&this->dyna, 0);
     CollisionHeader_GetVirtual(&gGravestoneCol, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
-    this->actionFunc = BgHaka_IdleClosed;
+    this->actionFunc = func_8087B7E8;
 }
 
 void BgHaka_Destroy(Actor* thisx, PlayState* play) {
@@ -55,16 +55,16 @@ void BgHaka_Destroy(Actor* thisx, PlayState* play) {
     DynaPoly_DeleteBgActor(play, &play->colCtx.dyna, this->dyna.bgId);
 }
 
-void BgHaka_CheckPlayerOnDirtPatch(BgHaka* this, Player* player) {
-    Vec3f playerRelativePos;
+void func_8087B758(BgHaka* this, Player* player) {
+    Vec3f sp1C;
 
-    Actor_WorldToActorCoords(&this->dyna.actor, &playerRelativePos, &player->actor.world.pos);
-    if (fabsf(playerRelativePos.x) < 34.6f && playerRelativePos.z > -112.8f && playerRelativePos.z < -36.0f) {
+    func_8002DBD0(&this->dyna.actor, &sp1C, &player->actor.world.pos);
+    if (fabsf(sp1C.x) < 34.6f && sp1C.z > -112.8f && sp1C.z < -36.0f) {
         player->stateFlags2 |= PLAYER_STATE2_FORCE_SAND_FLOOR_SOUND;
     }
 }
 
-void BgHaka_IdleClosed(BgHaka* this, PlayState* play) {
+void func_8087B7E8(BgHaka* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (this->dyna.unk_150 != 0.0f) {
@@ -73,8 +73,8 @@ void BgHaka_IdleClosed(BgHaka* this, PlayState* play) {
             player->stateFlags2 &= ~PLAYER_STATE2_4;
             if (!Play_InCsMode(play)) {
                 Message_StartTextbox(play, 0x5073, NULL);
-                this->dyna.actor.params = 100; // Used as a cooldown for displaying Graveyard Boy's warning
-                this->actionFunc = BgHaka_IdleLockedClosed;
+                this->dyna.actor.params = 100;
+                this->actionFunc = func_8087BAE4;
             }
         } else if (0.0f < this->dyna.unk_150 ||
                    (play->sceneId == SCENE_LAKE_HYLIA && !LINK_IS_ADULT && !Flags_GetSwitch(play, 0x23))) {
@@ -82,25 +82,24 @@ void BgHaka_IdleClosed(BgHaka* this, PlayState* play) {
             player->stateFlags2 &= ~PLAYER_STATE2_4;
         } else {
             this->dyna.actor.world.rot.y = this->dyna.actor.shape.rot.y + 0x8000;
-            this->actionFunc = BgHaka_Pull;
+            this->actionFunc = func_8087B938;
         }
     }
-    BgHaka_CheckPlayerOnDirtPatch(this, player);
+    func_8087B758(this, player);
 }
 
-void BgHaka_Pull(BgHaka* this, PlayState* play) {
+void func_8087B938(BgHaka* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
-    s32 reachedMaxPullDist;
+    s32 sp38;
 
     this->dyna.actor.speed += 0.05f;
     this->dyna.actor.speed = CLAMP_MAX(this->dyna.actor.speed, 1.5f);
-    // minVelocityY is used to keep track of the distance pulled from home
-    reachedMaxPullDist = Math_StepToF(&this->dyna.actor.minVelocityY, 60.0f, this->dyna.actor.speed);
+    sp38 = Math_StepToF(&this->dyna.actor.minVelocityY, 60.0f, this->dyna.actor.speed);
     this->dyna.actor.world.pos.x =
         Math_SinS(this->dyna.actor.world.rot.y) * this->dyna.actor.minVelocityY + this->dyna.actor.home.pos.x;
     this->dyna.actor.world.pos.z =
         Math_CosS(this->dyna.actor.world.rot.y) * this->dyna.actor.minVelocityY + this->dyna.actor.home.pos.z;
-    if (reachedMaxPullDist) {
+    if (sp38 != 0) {
         this->dyna.unk_150 = 0.0f;
         player->stateFlags2 &= ~PLAYER_STATE2_4;
         if (this->dyna.actor.params == 1) {
@@ -109,12 +108,12 @@ void BgHaka_Pull(BgHaka* this, PlayState* play) {
             Actor_Spawn(&play->actorCtx, play, ACTOR_EN_POH, this->dyna.actor.home.pos.x, this->dyna.actor.home.pos.y,
                         this->dyna.actor.home.pos.z, 0, this->dyna.actor.shape.rot.y, 0, 1);
         }
-        this->actionFunc = BgHaka_IdleOpened;
+        this->actionFunc = func_8087BAAC;
     }
-    Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
+    func_8002F974(&this->dyna.actor, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
 }
 
-void BgHaka_IdleOpened(BgHaka* this, PlayState* play) {
+void func_8087BAAC(BgHaka* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (this->dyna.unk_150 != 0.0f) {
@@ -123,7 +122,7 @@ void BgHaka_IdleOpened(BgHaka* this, PlayState* play) {
     }
 }
 
-void BgHaka_IdleLockedClosed(BgHaka* this, PlayState* play) {
+void func_8087BAE4(BgHaka* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
     s32 pad;
 
@@ -135,9 +134,9 @@ void BgHaka_IdleLockedClosed(BgHaka* this, PlayState* play) {
         player->stateFlags2 &= ~PLAYER_STATE2_4;
     }
     if (this->dyna.actor.params == 0) {
-        this->actionFunc = BgHaka_IdleClosed;
+        this->actionFunc = func_8087B7E8;
     }
-    BgHaka_CheckPlayerOnDirtPatch(this, player);
+    func_8087B758(this, player);
 }
 
 void BgHaka_Update(Actor* thisx, PlayState* play) {
@@ -152,10 +151,12 @@ void BgHaka_Draw(Actor* thisx, PlayState* play) {
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_bg_haka.c", 406);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_haka.c", 406),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gGravestoneStoneDL);
     Matrix_Translate(0.0f, 0.0f, thisx->minVelocityY * 10.0f, MTXMODE_APPLY);
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_bg_haka.c", 416);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_haka.c", 416),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gGravestoneEarthDL);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_bg_haka.c", 421);

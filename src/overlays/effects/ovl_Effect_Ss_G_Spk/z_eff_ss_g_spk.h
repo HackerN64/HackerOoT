@@ -4,7 +4,7 @@
 #include "ultra64.h"
 #include "global.h"
 
-typedef struct EffectSsGSpkInitParams {
+typedef struct {
     /* 0x00 */ Actor* actor;
     /* 0x04 */ Vec3f pos;
     /* 0x10 */ Vec3f velocity;

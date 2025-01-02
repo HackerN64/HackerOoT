@@ -10,7 +10,7 @@
 #include "assets/scenes/overworld/spot06/spot06_scene.h"
 #include "terminal.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3)
 
 void ShotSun_Init(Actor* thisx, PlayState* play);
 void ShotSun_Destroy(Actor* thisx, PlayState* play);
@@ -21,7 +21,7 @@ void ShotSun_TriggerFairy(ShotSun* this, PlayState* play);
 void ShotSun_UpdateFairySpawner(ShotSun* this, PlayState* play);
 void ShotSun_UpdateHyliaSun(ShotSun* this, PlayState* play);
 
-ActorProfile Shot_Sun_Profile = {
+ActorInit Shot_Sun_InitVars = {
     /**/ ACTOR_SHOT_SUN,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -33,7 +33,7 @@ ActorProfile Shot_Sun_Profile = {
     /**/ NULL,
 };
 
-typedef enum FairySpawnerState {
+typedef enum {
     /* 0 */ SPAWNER_OUT_OF_RANGE,
     /* 1 */ SPAWNER_OCARINA_START,
     /* 2 */ SPAWNER_OCARINA_PLAYING
@@ -41,7 +41,7 @@ typedef enum FairySpawnerState {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_ALL,
@@ -49,7 +49,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000020, 0x00, 0x00 },
         ATELEM_NONE,
@@ -65,24 +65,24 @@ void ShotSun_Init(Actor* thisx, PlayState* play) {
 
     // "Ocarina secret occurrence"
     PRINTF("%d ---- オカリナの秘密発生!!!!!!!!!!!!!\n", this->actor.params);
-    params = PARAMS_GET_U(this->actor.params, 0, 8);
+    params = this->actor.params & 0xFF;
     if (params == 0x40 || params == 0x41) {
         this->fairySpawnerState = SPAWNER_OUT_OF_RANGE;
         this->actor.flags |= ACTOR_FLAG_4;
-        this->actor.flags |= ACTOR_FLAG_UPDATE_DURING_OCARINA;
+        this->actor.flags |= ACTOR_FLAG_25;
         this->actionFunc = ShotSun_UpdateFairySpawner;
-        this->actor.flags |= ACTOR_FLAG_LOCK_ON_DISABLED;
+        this->actor.flags |= ACTOR_FLAG_27;
     } else {
         Collider_InitCylinder(play, &this->collider);
         Collider_SetCylinder(play, &this->collider, &this->actor, &sCylinderInit);
         this->actionFunc = ShotSun_UpdateHyliaSun;
-        this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
+        this->actor.flags &= ~ACTOR_FLAG_0;
     }
 }
 
 void ShotSun_Destroy(Actor* thisx, PlayState* play) {
     ShotSun* this = (ShotSun*)thisx;
-    s32 params = PARAMS_GET_U(this->actor.params, 0, 8);
+    s32 params = this->actor.params & 0xFF;
 
     if (params != 0x40 && params != 0x41) {
         Collider_DestroyCylinder(play, &this->collider);
@@ -90,7 +90,7 @@ void ShotSun_Destroy(Actor* thisx, PlayState* play) {
 }
 
 void ShotSun_SpawnFairy(ShotSun* this, PlayState* play) {
-    s32 params = PARAMS_GET_U(this->actor.params, 0, 8);
+    s32 params = this->actor.params & 0xFF;
     s32 fairyType;
 
     if (this->timer > 0) {
@@ -128,7 +128,7 @@ void ShotSun_TriggerFairy(ShotSun* this, PlayState* play) {
 void ShotSun_UpdateFairySpawner(ShotSun* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
     s32 pad;
-    s32 params = PARAMS_GET_U(this->actor.params, 0, 8);
+    s32 params = this->actor.params & 0xFF;
 
     if (Math3D_Vec3fDistSq(&this->actor.world.pos, &player->actor.world.pos) > SQ(150.0f)) {
         this->fairySpawnerState = SPAWNER_OUT_OF_RANGE;

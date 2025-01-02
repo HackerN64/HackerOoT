@@ -5,7 +5,6 @@
  */
 
 #include "z_bg_treemouth.h"
-#include "versions.h"
 #include "assets/objects/object_spot04_objects/object_spot04_objects.h"
 #include "overlays/effects/ovl_Effect_Ss_Hahen/z_eff_ss_hahen.h"
 
@@ -30,7 +29,7 @@ extern CutsceneData D_808BD2A0[];
 extern CutsceneData D_808BD520[];
 extern CutsceneData D_808BD790[];
 
-ActorProfile Bg_Treemouth_Profile = {
+ActorInit Bg_Treemouth_InitVars = {
     /**/ ACTOR_BG_TREEMOUTH,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -43,7 +42,7 @@ ActorProfile Bg_Treemouth_Profile = {
 };
 
 static InitChainEntry sInitChain[] = {
-    ICHAIN_U8(attentionRangeType, ATTENTION_RANGE_5, ICHAIN_CONTINUE),
+    ICHAIN_U8(targetMode, 5, ICHAIN_CONTINUE),
     ICHAIN_VEC3F(scale, 1, ICHAIN_CONTINUE),
     ICHAIN_F32(uncullZoneForward, 8000, ICHAIN_CONTINUE),
     ICHAIN_F32(uncullZoneScale, 300, ICHAIN_CONTINUE),
@@ -143,9 +142,9 @@ void func_808BC8B8(BgTreemouth* this, PlayState* play) {
         if (!LINK_IS_ADULT) {
             if (Flags_GetEventChkInf(EVENTCHKINF_0C)) {
                 if (Actor_IsFacingAndNearPlayer(&this->dyna.actor, 1658.0f, 0x7530)) {
-                    this->dyna.actor.flags |= ACTOR_FLAG_ATTENTION_ENABLED;
-                    if (this->dyna.actor.isLockedOn) {
-                        this->dyna.actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
+                    this->dyna.actor.flags |= ACTOR_FLAG_0;
+                    if (this->dyna.actor.isTargeted) {
+                        this->dyna.actor.flags &= ~ACTOR_FLAG_0;
                         play->csCtx.script = D_808BD2A0;
                         gSaveContext.cutsceneTrigger = 1;
                         BgTreemouth_SetupAction(this, func_808BC9EC);
@@ -236,12 +235,7 @@ void BgTreemouth_Draw(Actor* thisx, PlayState* play) {
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
-#if OOT_VERSION < PAL_1_0
-    if (!IS_CUTSCENE_LAYER)
-#else
-    if (!IS_CUTSCENE_LAYER || LINK_IS_ADULT)
-#endif
-    {
+    if (!IS_CUTSCENE_LAYER || LINK_IS_ADULT) {
         if (GET_EVENTCHKINF(EVENTCHKINF_07)) {
             alpha = 2150;
         }
@@ -249,11 +243,12 @@ void BgTreemouth_Draw(Actor* thisx, PlayState* play) {
     }
 
     if (gSaveContext.sceneLayer == 6) {
-        alpha = (play->roomCtx.drawParams[0] + 0x1F4);
+        alpha = (play->roomCtx.unk_74[0] + 0x1F4);
     }
 
     gDPSetEnvColor(POLY_OPA_DISP++, 128, 128, 128, alpha * 0.1f);
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_bg_treemouth.c", 932);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_treemouth.c", 932),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gDekuTreeMouthDL);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_bg_treemouth.c", 937);

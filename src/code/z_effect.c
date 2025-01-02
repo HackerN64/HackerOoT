@@ -1,7 +1,5 @@
 #include "global.h"
 
-#include "z64frame_advance.h"
-
 EffectContext sEffectContext;
 
 EffectInfo sEffectInfoTable[] = {
@@ -146,10 +144,9 @@ void Effect_Add(PlayState* play, s32* pIndex, s32 type, u8 arg3, u8 arg4, void* 
         }
 
         if (!slotFound) {
-            PRINTF(T("EffectAdd():確保できません。注意してください。Type%d\n",
-                     "EffectAdd(): I cannot secure it. Be careful. Type %d\n"),
-                   type);
-            PRINTF(T("エフェクト追加せずに終了します。\n", "Exit without adding the effect.\n"));
+            // "EffectAdd(): I cannot secure it. Be careful. Type %d"
+            PRINTF("EffectAdd():確保できません。注意してください。Type%d\n", type);
+            PRINTF("エフェクト追加せずに終了します。\n"); // "Exit without adding the effect."
         } else {
             sEffectInfoTable[type].init(effect, initParams);
             status->unk_02 = arg3;
@@ -241,7 +238,7 @@ void Effect_Delete(PlayState* play, s32 index) {
 void Effect_DeleteAll(PlayState* play) {
     s32 i;
 
-    PRINTF(T("エフェクト総て解放\n", "All effects release\n"));
+    PRINTF("エフェクト総て解放\n"); // "All effect release"
 
     for (i = 0; i < SPARK_COUNT; i++) {
         sEffectContext.sparks[i].status.active = false;
@@ -258,5 +255,5 @@ void Effect_DeleteAll(PlayState* play) {
         sEffectInfoTable[EFFECT_SHIELD_PARTICLE].destroy(&sEffectContext.shieldParticles[i].effect);
     }
 
-    PRINTF(T("エフェクト総て解放 終了\n", "All effects release End\n"));
+    PRINTF("エフェクト総て解放 終了\n"); // "All effects release End"
 }

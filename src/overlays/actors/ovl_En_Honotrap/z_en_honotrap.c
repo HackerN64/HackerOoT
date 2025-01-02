@@ -14,7 +14,7 @@
 #define HONOTRAP_AC_ACTIVE (1 << 1)
 #define HONOTRAP_OC_ACTIVE (1 << 2)
 
-typedef enum EnHonotrapEyeState {
+typedef enum {
     /* 0 */ HONOTRAP_EYE_OPEN,
     /* 1 */ HONOTRAP_EYE_HALF,
     /* 2 */ HONOTRAP_EYE_CLOSE,
@@ -48,7 +48,7 @@ void EnHonotrap_FlameChase(EnHonotrap* this, PlayState* play);
 void EnHonotrap_SetupFlameVanish(EnHonotrap* this);
 void EnHonotrap_FlameVanish(EnHonotrap* this, PlayState* play);
 
-ActorProfile En_Honotrap_Profile = {
+ActorInit En_Honotrap_InitVars = {
     /**/ ACTOR_EN_HONOTRAP,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -63,7 +63,7 @@ ActorProfile En_Honotrap_Profile = {
 static ColliderTrisElementInit sTrisElementsInit[2] = {
     {
         {
-            ELEM_MATERIAL_UNK4,
+            ELEMTYPE_UNK4,
             { 0x00000000, 0x00, 0x00 },
             { 0x0001F824, 0x00, 0x00 },
             ATELEM_NONE,
@@ -74,7 +74,7 @@ static ColliderTrisElementInit sTrisElementsInit[2] = {
     },
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0x0001F824, 0x00, 0x00 },
             ATELEM_NONE,
@@ -87,7 +87,7 @@ static ColliderTrisElementInit sTrisElementsInit[2] = {
 
 static ColliderTrisInit sTrisInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
@@ -100,7 +100,7 @@ static ColliderTrisInit sTrisInit = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_ON | AT_TYPE_ENEMY,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_ALL,
@@ -108,7 +108,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0xFFCFFFFF, 0x01, 0x04 },
         { 0x00100000, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NONE,
@@ -142,7 +142,7 @@ void EnHonotrap_GetNormal(Vec3f* normal, Vec3f* vec) {
     f32 magnitude = Math3D_Vec3fMagnitude(vec);
 
     if (magnitude < 0.001f) {
-        PRINTF("Warning : vector size zero (%s %d)\n", "../z_en_honotrap.c", 328);
+        PRINTF("Warning : vector size zero (%s %d)\n", "../z_en_honotrap.c", 328, normal);
 
         normal->x = normal->y = 0.0f;
         normal->z = 1.0f;
@@ -319,7 +319,7 @@ void EnHonotrap_SetupFlameDrop(EnHonotrap* this) {
 void EnHonotrap_FlameDrop(EnHonotrap* this, PlayState* play) {
     if ((this->collider.cyl.base.atFlags & AT_HIT) || (this->timer <= 0)) {
         if ((this->collider.cyl.base.atFlags & AT_HIT) && !(this->collider.cyl.base.atFlags & AT_BOUNCED)) {
-            Actor_SetPlayerKnockbackLargeNoDamage(play, &this->actor, 5.0f, this->actor.yawTowardsPlayer, 0.0f);
+            func_8002F71C(play, &this->actor, 5.0f, this->actor.yawTowardsPlayer, 0.0f);
         }
         this->actor.velocity.x = this->actor.velocity.y = this->actor.velocity.z = 0.0f;
         EnHonotrap_SetupFlameVanish(this);
@@ -500,7 +500,8 @@ void EnHonotrap_DrawEye(Actor* thisx, PlayState* play) {
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sSilverEyeTextures[this->eyeState]));
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_en_honotrap.c", 987);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_honotrap.c", 987),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gEyeSwitch2DL);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_honotrap.c", 991);
@@ -521,7 +522,8 @@ void EnHonotrap_DrawFlame(Actor* thisx, PlayState* play) {
     gDPSetEnvColor(POLY_XLU_DISP++, 255, 0, 0, 0);
     Matrix_RotateY(BINANG_TO_RAD((s16)(Camera_GetCamDirYaw(GET_ACTIVE_CAM(play)) - this->actor.shape.rot.y + 0x8000)),
                    MTXMODE_APPLY);
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_en_honotrap.c", 1024);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_honotrap.c", 1024),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_honotrap.c", 1028);

@@ -7,17 +7,22 @@
  * - Call ``Rainbow_Init`` in an init function with the address of the variable you just created
  * - Call ``Rainbow_Update`` in an update function with the same address
  * See ``main.c`` and ``game.c`` for the global rainbow implementation.
- */
+*/
 
 static RainbowTarget sRainbowTarget[STATE_MAX] = {
-    { STATE_YELLOW_TO_GREEN, { 255, 255, 0 } },   { STATE_GREEN_TO_LIGHTBLUE, { 0, 255, 0 } },
-    { STATE_LIGHTBLUE_TO_BLUE, { 0, 255, 255 } }, { STATE_BLUE_TO_PINK, { 0, 0, 255 } },
-    { STATE_PINK_TO_RED, { 255, 0, 255 } },       { STATE_RED_TO_YELLOW, { 255, 0, 0 } },
+    { STATE_YELLOW_TO_GREEN,    { 255, 255,   0 } },
+    { STATE_GREEN_TO_LIGHTBLUE, {   0, 255,   0 } },
+    { STATE_LIGHTBLUE_TO_BLUE,  {   0, 255, 255 } },
+    { STATE_BLUE_TO_PINK,       {   0,   0, 255 } },
+    { STATE_PINK_TO_RED,        { 255,   0, 255 } },
+    { STATE_RED_TO_YELLOW,      { 255,   0,   0 } },
 };
 
 void Rainbow_Debug(Rainbow* this) {
-    PRINTF("state: %d, r: %d, g: %d, b: %d, speed: %d, sRainbowTarget.state: %d\n", this->state, this->color.r,
-           this->color.g, this->color.b, this->speed, sRainbowTarget[this->state].state);
+    PRINTF(
+        "state: %d, r: %d, g: %d, b: %d, speed: %d, sRainbowTarget.state: %d\n",
+        this->state, this->color.r, this->color.g, this->color.b, this->speed, sRainbowTarget[this->state].state
+    );
 }
 
 void Rainbow_InitColor(Rainbow* this) {

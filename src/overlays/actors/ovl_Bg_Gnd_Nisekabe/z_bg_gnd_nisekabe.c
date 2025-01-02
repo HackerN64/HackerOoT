@@ -14,7 +14,7 @@ void BgGndNisekabe_Destroy(Actor* thisx, PlayState* play);
 void BgGndNisekabe_Update(Actor* thisx, PlayState* play);
 void BgGndNisekabe_Draw(Actor* thisx, PlayState* play);
 
-ActorProfile Bg_Gnd_Nisekabe_Profile = {
+ActorInit Bg_Gnd_Nisekabe_InitVars = {
     /**/ ACTOR_BG_GND_NISEKABE,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -53,7 +53,7 @@ void BgGndNisekabe_Draw(Actor* thisx, PlayState* play) {
         gGanonsCastleScrubsFakeWallDL,
     };
     BgGndNisekabe* this = (BgGndNisekabe*)thisx;
-    u32 index = PARAMS_GET_U(this->actor.params, 0, 8);
+    u32 index = this->actor.params & 0xFF;
 
     if (CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_REACT_TO_LENS)) {
         Gfx_DrawDListXlu(play, dLists[index]);

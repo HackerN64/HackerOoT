@@ -8,7 +8,7 @@ struct BossFd;
 
 typedef void (*BossFdActionFunc)(struct BossFd*, PlayState*);
 
-typedef enum BossFdActionState {
+typedef enum {
     /*  -1 */ BOSSFD_WAIT_INTRO = -1,
     /*   0 */ BOSSFD_FLY_MAIN,
     /*   1 */ BOSSFD_FLY_HOLE,
@@ -26,7 +26,7 @@ typedef enum BossFdActionState {
     /* 205 */ BOSSFD_SKULL_BURN
 } BossFdActionState;
 
-typedef enum BossFdCutsceneState {
+typedef enum {
     /* 0 */ BFD_CS_NONE,
     /* 1 */ BFD_CS_WAIT,
     /* 2 */ BFD_CS_START,
@@ -38,7 +38,7 @@ typedef enum BossFdCutsceneState {
 
 #define BOSSFD_EFFECT_COUNT 180
 
-typedef struct BossFdEffect {
+typedef struct {
     /* 0x00 */ Vec3f pos;
     /* 0x0C */ Vec3f velocity;
     /* 0x18 */ Vec3f accel;
@@ -58,7 +58,7 @@ typedef struct BossFdEffect {
 #define vFdFxRotY bFdFxFloat2
 #define vFdFxYStop bFdFxFloat2
 
-typedef enum BossFdEffectType {
+typedef enum {
     /* 0 */ BFD_FX_NONE,
     /* 1 */ BFD_FX_EMBER,
     /* 2 */ BFD_FX_DEBRIS,
@@ -67,13 +67,13 @@ typedef enum BossFdEffectType {
     /* 5 */ BFD_FX_SKULL_PIECE
 } BossFdEffectType;
 
-typedef struct BossFdMane {
+typedef struct {
     /* 0x000 */ Vec3f pos[30];
     /* 0x168 */ f32 scale[30];
     /* 0x1E0 */ Vec3f head;
 } BossFdMane; // size = 0x1EC
 
-typedef enum BossFdS16Var {
+typedef enum {
     /*  0 */ BFD_ACTION_STATE,
     /*  1 */ BFD_MOVE_TIMER,
     /*  2 */ BFD_VAR_TIMER,
@@ -96,7 +96,7 @@ typedef enum BossFdS16Var {
     /* 19 */ BFD_SHORT_COUNT
 } BossFdS16Var;
 
-typedef enum BossFdF32Var {
+typedef enum {
     /*  0 */ BFD_TEX1_SCROLL_X,
     /*  1 */ BFD_TEX1_SCROLL_Y,
     /*  2 */ BFD_TEX2_SCROLL_X,

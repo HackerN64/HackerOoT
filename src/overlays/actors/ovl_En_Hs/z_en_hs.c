@@ -8,7 +8,7 @@
 #include "terminal.h"
 #include "assets/objects/object_hs/object_hs.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3)
 
 void EnHs_Init(Actor* thisx, PlayState* play);
 void EnHs_Destroy(Actor* thisx, PlayState* play);
@@ -18,7 +18,7 @@ void EnHs_Draw(Actor* thisx, PlayState* play);
 void func_80A6E9AC(EnHs* this, PlayState* play);
 void func_80A6E6B0(EnHs* this, PlayState* play);
 
-ActorProfile En_Hs_Profile = {
+ActorInit En_Hs_InitVars = {
     /**/ ACTOR_EN_HS,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -32,7 +32,7 @@ ActorProfile En_Hs_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_ENEMY,
         OC1_ON | OC1_TYPE_ALL,
@@ -40,7 +40,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_NONE,
@@ -89,7 +89,7 @@ void EnHs_Init(Actor* thisx, PlayState* play) {
     }
 
     this->unk_2A8 = 0;
-    this->actor.attentionRangeType = ATTENTION_RANGE_6;
+    this->actor.targetMode = 6;
 }
 
 void EnHs_Destroy(Actor* thisx, PlayState* play) {

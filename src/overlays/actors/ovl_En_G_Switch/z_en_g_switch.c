@@ -14,7 +14,7 @@
 
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5)
 
-typedef enum GSwitchMoveState {
+typedef enum {
     /* 0 */ MOVE_TARGET,
     /* 1 */ MOVE_HOME
 } GSwitchMoveState;
@@ -41,7 +41,7 @@ static s16 sCollectedCount = 0;
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
@@ -49,7 +49,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK2,
+        ELEMTYPE_UNK2,
         { 0x00000000, 0x00, 0x00 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_NONE,
@@ -64,7 +64,7 @@ static s16 sRupeeTypes[] = {
     ITEM00_RUPEE_GREEN, ITEM00_RUPEE_BLUE, ITEM00_RUPEE_RED, ITEM00_RUPEE_ORANGE, ITEM00_RUPEE_PURPLE,
 };
 
-ActorProfile En_G_Switch_Profile = {
+ActorInit En_G_Switch_InitVars = {
     /**/ ACTOR_EN_G_SWITCH,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -82,8 +82,8 @@ void EnGSwitch_Init(Actor* thisx, PlayState* play) {
 
     if (play) {}
 
-    this->type = PARAMS_GET_U(this->actor.params, 12, 4);
-    this->switchFlag = PARAMS_GET_U(this->actor.params, 0, 6);
+    this->type = (this->actor.params >> 0xC) & 0xF;
+    this->switchFlag = this->actor.params & 0x3F;
     this->numEffects = EN_GSWITCH_EFFECT_COUNT;
     // "index"
     PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ インデックス ☆☆☆☆☆ %x\n" VT_RST, this->type);
@@ -95,9 +95,7 @@ void EnGSwitch_Init(Actor* thisx, PlayState* play) {
             // "parent switch spawn"
             PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 親スイッチ発生 ☆☆☆☆☆ %x\n" VT_RST, this->actor.params);
             sCollectedCount = 0;
-            // Ideally the following two lines would be
-            // this->silverCount = PARAMS_GET_U(this->actor.params, 6, 6);
-            this->silverCount = PARAMS_GET_NOMASK(this->actor.params, 6);
+            this->silverCount = this->actor.params >> 6;
             this->silverCount &= 0x3F;
             // "maximum number of checks"
             PRINTF(VT_FGCOL(MAGENTA) "☆☆☆☆☆ 最大チェック数 ☆☆☆☆☆ %d\n" VT_RST, this->silverCount);
@@ -448,24 +446,25 @@ void EnGSwitch_Update(Actor* thisx, PlayState* play) {
         }
     }
 
-#if IS_ACTOR_DEBUG_ENABLED
-    if (BREG(0) != 0) {
+    if (IS_ACTOR_DEBUG_ENABLED && BREG(0) && (this->type == ENGSWITCH_SILVER_TRACKER)) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 255, 0, 0, 255, 4, play->state.gfxCtx);
     }
-#endif
 }
 
 void EnGSwitch_DrawPot(Actor* thisx, PlayState* play) {
-    PlayState* play2 = (PlayState*)play;
+    s32 pad;
     EnGSwitch* this = (EnGSwitch*)thisx;
 
     if (!this->broken) {
         OPEN_DISPS(play->state.gfxCtx, "../z_en_g_switch.c", 918);
 
-        Gfx_SetupDL_25Opa(play2->state.gfxCtx);
-        MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_en_g_switch.c", 925);
+        if (1) {}
+
+        Gfx_SetupDL_25Opa(play->state.gfxCtx);
+        gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_g_switch.c", 925),
+                  G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, object_tsubo_DL_0017C0);
         CLOSE_DISPS(play->state.gfxCtx, "../z_en_g_switch.c", 928);
     }
@@ -476,22 +475,22 @@ static void* sRupeeTextures[] = {
 };
 
 void EnGSwitch_DrawRupee(Actor* thisx, PlayState* play) {
-    PlayState* play2 = (PlayState*)play;
+    s32 pad;
     EnGSwitch* this = (EnGSwitch*)thisx;
-    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
+    if (1) {}
     if (!this->broken) {
         OPEN_DISPS(play->state.gfxCtx, "../z_en_g_switch.c", 951);
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         func_8002EBCC(&this->actor, play, 0);
-        MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_en_g_switch.c", 957);
+        gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_g_switch.c", 957),
+                  G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sRupeeTextures[this->colorIdx]));
-        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_OPA_DISP++, this->colorIdx);
         gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
         CLOSE_DISPS(play->state.gfxCtx, "../z_en_g_switch.c", 961);
     }
     if (this->type == ENGSWITCH_TARGET_RUPEE) {
-        EnGSwitch_DrawEffects(this, play2);
+        EnGSwitch_DrawEffects(this, play);
     }
 }
 
@@ -557,7 +556,6 @@ void EnGSwitch_DrawEffects(EnGSwitch* this, PlayState* play) {
     s16 i;
     f32 scale;
     s32 pad;
-    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(gfxCtx, "../z_en_g_switch.c", 1073);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -569,9 +567,9 @@ void EnGSwitch_DrawEffects(EnGSwitch* this, PlayState* play) {
             Matrix_RotateX(effect->rot.x, MTXMODE_APPLY);
             Matrix_RotateY(effect->rot.y, MTXMODE_APPLY);
             Matrix_RotateZ(effect->rot.z, MTXMODE_APPLY);
-            MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_en_g_switch.c", 1088);
+            gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_g_switch.c", 1088),
+                      G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sRupeeTextures[effect->colorIdx]));
-            IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_OPA_DISP++, effect->colorIdx);
             gSPDisplayList(POLY_OPA_DISP++, gRupeeDL);
         }
     }

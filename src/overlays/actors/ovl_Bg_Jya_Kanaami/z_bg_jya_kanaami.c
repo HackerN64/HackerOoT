@@ -21,7 +21,7 @@ void func_8089993C(BgJyaKanaami* this);
 void func_80899950(BgJyaKanaami* this, PlayState* play);
 void func_80899A08(BgJyaKanaami* this);
 
-ActorProfile Bg_Jya_Kanaami_Profile = {
+ActorInit Bg_Jya_Kanaami_InitVars = {
     /**/ ACTOR_BG_JYA_KANAAMI,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -48,7 +48,7 @@ void BgJyaKanaami_InitDynaPoly(BgJyaKanaami* this, PlayState* play, CollisionHea
     CollisionHeader_GetVirtual(collision, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     if (this->dyna.bgId == BG_ACTOR_MAX) {
         s32 pad2;
 
@@ -63,7 +63,7 @@ void BgJyaKanaami_Init(Actor* thisx, PlayState* play) {
 
     BgJyaKanaami_InitDynaPoly(this, play, &gKanaamiCol, 0);
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
-    if (Flags_GetSwitch(play, PARAMS_GET_U(this->dyna.actor.params, 0, 6))) {
+    if (Flags_GetSwitch(play, this->dyna.actor.params & 0x3F)) {
         func_80899A08(this);
     } else {
         func_80899880(this);
@@ -83,7 +83,7 @@ void func_80899880(BgJyaKanaami* this) {
 }
 
 void func_80899894(BgJyaKanaami* this, PlayState* play) {
-    if (Flags_GetSwitch(play, PARAMS_GET_U(this->dyna.actor.params, 0, 6)) || this->unk_16A > 0) {
+    if (Flags_GetSwitch(play, this->dyna.actor.params & 0x3F) || this->unk_16A > 0) {
         if (this->dyna.actor.world.pos.x > -1000.0f && this->unk_16A == 0) {
             OnePointCutscene_Init(play, 3450, -99, &this->dyna.actor, CAM_ID_MAIN);
         }

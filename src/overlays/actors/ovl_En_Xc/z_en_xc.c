@@ -14,9 +14,6 @@
 #include "assets/scenes/dungeons/ice_doukutu/ice_doukutu_scene.h"
 #include "terminal.h"
 
-#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0 ntsc-1.0:0" \
-                               "ntsc-1.1:0 ntsc-1.2:0 pal-1.0:0 pal-1.1:0"
-
 #define FLAGS ACTOR_FLAG_4
 
 void EnXc_Init(Actor* thisx, PlayState* play);
@@ -33,14 +30,14 @@ void EnXc_DrawSquintingEyes(Actor* thisx, PlayState* play);
 
 static ColliderCylinderInitType1 sCylinderInit = {
     {
-        COL_MATERIAL_HIT0,
+        COLTYPE_HIT0,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_PLAYER,
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -229,7 +226,7 @@ void func_80B3C7D4(EnXc* this, s32 action1, s32 action2, s32 action3) {
     }
 }
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
 s32 EnXc_NoCutscenePlaying(PlayState* play) {
     if (play->csCtx.state == CS_STATE_IDLE) {
         return true;
@@ -254,25 +251,25 @@ void func_80B3C8CC(EnXc* this, PlayState* play) {
     SkelAnime* skelAnime = &this->skelAnime;
 
     if (skelAnime->jointTable[0].y >= skelAnime->baseTransl.y) {
-        skelAnime->movementFlags |= ANIM_FLAG_UPDATE_XZ | ANIM_FLAG_UPDATE_Y;
-        AnimTaskQueue_AddActorMovement(play, &this->actor, skelAnime, 1.0f);
+        skelAnime->moveFlags |= ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y;
+        AnimationContext_SetMoveActor(play, &this->actor, skelAnime, 1.0f);
     }
 }
 
 void func_80B3C924(EnXc* this, PlayState* play) {
-    this->skelAnime.movementFlags |= ANIM_FLAG_UPDATE_XZ | ANIM_FLAG_UPDATE_Y;
-    AnimTaskQueue_AddActorMovement(play, &this->actor, &this->skelAnime, 1.0f);
+    this->skelAnime.moveFlags |= ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y;
+    AnimationContext_SetMoveActor(play, &this->actor, &this->skelAnime, 1.0f);
 }
 
 void func_80B3C964(EnXc* this, PlayState* play) {
     this->skelAnime.baseTransl = this->skelAnime.jointTable[0];
     this->skelAnime.prevTransl = this->skelAnime.jointTable[0];
-    this->skelAnime.movementFlags |= ANIM_FLAG_UPDATE_XZ | ANIM_FLAG_UPDATE_Y;
-    AnimTaskQueue_AddActorMovement(play, &this->actor, &this->skelAnime, 1.0f);
+    this->skelAnime.moveFlags |= ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y;
+    AnimationContext_SetMoveActor(play, &this->actor, &this->skelAnime, 1.0f);
 }
 
 void func_80B3C9DC(EnXc* this) {
-    this->skelAnime.movementFlags &= ~(ANIM_FLAG_UPDATE_XZ | ANIM_FLAG_UPDATE_Y);
+    this->skelAnime.moveFlags &= ~(ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y);
 }
 
 void func_80B3C9EC(EnXc* this) {
@@ -352,8 +349,8 @@ s32 EnXc_BoleroCS(EnXc* this, PlayState* play) {
 }
 
 void EnXc_SetupSerenadeAction(EnXc* this, PlayState* play) {
-    if (!(CHECK_OWNED_EQUIP(EQUIP_TYPE_BOOTS, EQUIP_INV_BOOTS_IRON) && DEBUG_FEATURES) &&
-        !GET_EVENTCHKINF(EVENTCHKINF_52) && LINK_IS_ADULT) {
+    if (!(CHECK_OWNED_EQUIP(EQUIP_TYPE_BOOTS, EQUIP_INV_BOOTS_IRON) && IS_DEBUG) && !GET_EVENTCHKINF(EVENTCHKINF_52) &&
+        LINK_IS_ADULT) {
         s32 pad;
 
         this->action = SHEIK_ACTION_SERENADE;
@@ -389,8 +386,6 @@ s32 EnXc_SerenadeCS(EnXc* this, PlayState* play) {
 
 void EnXc_DoNothing(EnXc* this, PlayState* play) {
 }
-
-static Vec3f sSfxPos;
 
 void EnXc_SetWalkingSFX(EnXc* this, PlayState* play) {
     s32 pad[2];
@@ -437,6 +432,7 @@ void EnXc_SetLandingSFX(EnXc* this, PlayState* play) {
 }
 
 void EnXc_SetColossusAppearSFX(EnXc* this, PlayState* play) {
+    static Vec3f sXyzDist;
     s16 sceneId;
 
     if (gSaveContext.sceneLayer == 4) {
@@ -449,14 +445,14 @@ void EnXc_SetColossusAppearSFX(EnXc* this, PlayState* play) {
             if (csCurFrame == 119) {
                 Vec3f pos = { -611.0f, 728.0f, -2.0f };
 
-                SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &pos, &sSfxPos, wDest);
-                Sfx_PlaySfxAtPos(&sSfxPos, NA_SE_EV_JUMP_CONC);
+                SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &pos, &sXyzDist, wDest);
+                Sfx_PlaySfxAtPos(&sXyzDist, NA_SE_EV_JUMP_CONC);
             } else if (csCurFrame == 164) {
                 Vec3f pos = { -1069.0f, 38.0f, 0.0f };
                 s32 pad;
 
-                SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &pos, &sSfxPos, wDest);
-                Sfx_PlaySfxAtPos(&sSfxPos, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_STONE);
+                SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &pos, &sXyzDist, wDest);
+                Sfx_PlaySfxAtPos(&sXyzDist, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_STONE);
             }
         }
     }
@@ -469,6 +465,8 @@ void func_80B3D118(PlayState* play) {
         Sfx_PlaySfxCentered2(NA_SE_PL_SKIP);
     }
 }
+
+static Vec3f D_80B42DA0;
 
 void EnXc_SetColossusWindSFX(PlayState* play) {
     if (gSaveContext.sceneLayer == 4) {
@@ -488,7 +486,7 @@ void EnXc_SetColossusWindSFX(PlayState* play) {
 
                 if (D_80B41D90 != 0) {
                     f32 speed = Math3D_Vec3f_DistXYZ(&D_80B42DB0, eye) / 7.058922f;
-#if DEBUG_FEATURES
+#if IS_DEBUG
                     static f32 sMaxSpeed = 0.0f;
 
                     sMaxSpeed = CLAMP_MIN(sMaxSpeed, speed);
@@ -1396,11 +1394,7 @@ void func_80B3F3D8(void) {
     Sfx_PlaySfxCentered2(NA_SE_PL_SKIP);
 }
 
-#pragma increment_block_number "gc-eu:64 gc-eu-mq:64 gc-jp:64 gc-jp-ce:64 gc-jp-mq:64 gc-us:64 gc-us-mq:64" \
-                               "ntsc-1.0:64 ntsc-1.1:64 ntsc-1.2:64 pal-1.0:64 pal-1.1:64"
-
 void EnXc_PlayDiveSFX(Vec3f* src, PlayState* play) {
-    static Vec3f D_80B42DA0;
     f32 wDest[2];
 
     SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, src, &D_80B42DA0, wDest);
@@ -1694,7 +1688,7 @@ void EnXc_ActionFunc54(EnXc* this, PlayState* play) {
     EnXc_BgCheck(this, play);
     EnXc_SetEyePattern(this);
     EnXc_SetupShowTriforceAction(this, play);
-#if DEBUG_FEATURES
+#if IS_DEBUG
     func_80B3C888(this, play);
 #endif
 }
@@ -1707,7 +1701,7 @@ void EnXc_ShowTriforce(EnXc* this, PlayState* play) {
     EnXc_CalcTriforce(&this->actor, play);
     func_80B3FAE0(this);
     EnXc_SetupShowTriforceIdleAction(this, animFinished);
-#if DEBUG_FEATURES
+#if IS_DEBUG
     func_80B3C888(this, play);
 #endif
 }
@@ -1849,7 +1843,7 @@ void EnXc_SetupContortions(EnXc* this, PlayState* play) {
     s32 pad[2];
     SkelAnime* skelAnime = &this->skelAnime;
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     Animation_Change(skelAnime, &gSheikIdleAnim, 1.0f, 0.0f, Animation_GetLastFrame(&gSheikIdleAnim), ANIMMODE_LOOP,
                      0.0f);
 #endif
@@ -2209,7 +2203,7 @@ void EnXc_SetupDialogueAction(EnXc* this, PlayState* play) {
 
         this->action = SHEIK_ACTION_IN_DIALOGUE;
     } else {
-        this->actor.flags |= ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY;
+        this->actor.flags |= ACTOR_FLAG_0 | ACTOR_FLAG_3;
         if (INV_CONTENT(ITEM_HOOKSHOT) != ITEM_NONE) {
             this->actor.textId = 0x7010;
         } else {
@@ -2222,7 +2216,7 @@ void EnXc_SetupDialogueAction(EnXc* this, PlayState* play) {
 void func_80B41798(EnXc* this, PlayState* play) {
     if (Message_GetState(&play->msgCtx) == TEXT_STATE_CLOSING) {
         this->action = SHEIK_ACTION_BLOCK_PEDESTAL;
-        this->actor.flags &= ~(ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY);
+        this->actor.flags &= ~(ACTOR_FLAG_0 | ACTOR_FLAG_3);
     }
 }
 
@@ -2375,7 +2369,7 @@ void EnXc_Init(Actor* thisx, PlayState* play) {
         case SHEIK_TYPE_9:
             EnXc_InitTempleOfTime(this, play);
             break;
-#if DEBUG_FEATURES
+#if IS_DEBUG
         case SHEIK_TYPE_0:
             EnXc_DoNothing(this, play);
             break;
@@ -2457,7 +2451,7 @@ void EnXc_Draw(Actor* thisx, PlayState* play) {
     }
 }
 
-ActorProfile En_Xc_Profile = {
+ActorInit En_Xc_InitVars = {
     /**/ ACTOR_EN_XC,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,

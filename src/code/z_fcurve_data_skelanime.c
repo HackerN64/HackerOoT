@@ -77,7 +77,7 @@ void SkelCurve_SetAnim(SkelCurve* skelCurve, CurveAnimationHeader* animation, f3
     skelCurve->animation = animation;
 }
 
-typedef enum SkelCurveVecType {
+typedef enum {
     /* 0 */ SKELCURVE_VEC_TYPE_SCALE,
     /* 1 */ SKELCURVE_VEC_TYPE_ROTATION,
     /* 2 */ SKELCURVE_VEC_TYPE_POSIITON,
@@ -162,6 +162,8 @@ void SkelCurve_DrawLimb(PlayState* play, s32 limbIndex, SkelCurve* skelCurve, Ov
 
     OPEN_DISPS(play->state.gfxCtx, "../z_fcurve_data_skelanime.c", 279);
 
+    if (1) {}
+
     Matrix_Push();
 
     if ((overrideLimbDraw == NULL) ||
@@ -192,7 +194,8 @@ void SkelCurve_DrawLimb(PlayState* play, s32 limbIndex, SkelCurve* skelCurve, Ov
 
             dList = limb->dList[0];
             if (dList != NULL) {
-                MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_fcurve_data_skelanime.c", 321);
+                gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_fcurve_data_skelanime.c", 321),
+                          G_MTX_LOAD | G_MTX_NOPUSH | G_MTX_MODELVIEW);
                 gSPDisplayList(POLY_OPA_DISP++, dList);
             }
         } else if (lod == 1) {
@@ -200,16 +203,19 @@ void SkelCurve_DrawLimb(PlayState* play, s32 limbIndex, SkelCurve* skelCurve, Ov
 
             dList = limb->dList[0];
             if (dList != NULL) {
-                MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_fcurve_data_skelanime.c", 332);
+                gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_fcurve_data_skelanime.c", 332),
+                          G_MTX_LOAD | G_MTX_NOPUSH | G_MTX_MODELVIEW);
                 gSPDisplayList(POLY_OPA_DISP++, dList);
             }
             dList = limb->dList[1];
             if (dList != NULL) {
-                MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_fcurve_data_skelanime.c", 338);
+                gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_fcurve_data_skelanime.c", 338),
+                          G_MTX_LOAD | G_MTX_NOPUSH | G_MTX_MODELVIEW);
                 gSPDisplayList(POLY_XLU_DISP++, dList);
             }
         } else {
-            PRINTF(T("FcSkeletonInfo_draw_child():未対応\n", "FcSkeletonInfo_draw_child(): Not supported\n"));
+            // "FcSkeletonInfo_draw_child (): Not supported"
+            PRINTF("FcSkeletonInfo_draw_child():未対応\n");
         }
     }
 

@@ -6,7 +6,7 @@
 
 #include "z_magic_wind.h"
 
-#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_UPDATE_DURING_OCARINA)
+#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_25)
 
 void MagicWind_Init(Actor* thisx, PlayState* play);
 void MagicWind_Destroy(Actor* thisx, PlayState* play);
@@ -19,7 +19,7 @@ void MagicWind_FadeOut(MagicWind* this, PlayState* play);
 void MagicWind_WaitAtFullSize(MagicWind* this, PlayState* play);
 void MagicWind_Grow(MagicWind* this, PlayState* play);
 
-ActorProfile Magic_Wind_Profile = {
+ActorInit Magic_Wind_InitVars = {
     /**/ ACTOR_MAGIC_WIND,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,

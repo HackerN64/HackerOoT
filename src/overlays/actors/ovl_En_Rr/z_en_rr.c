@@ -7,17 +7,15 @@
 #include "z_en_rr.h"
 #include "assets/objects/object_rr/object_rr.h"
 #include "terminal.h"
-#include "versions.h"
 
-#define FLAGS \
-    (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_HOOKSHOT_PULLS_PLAYER)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_10)
 
 #define RR_MESSAGE_SHIELD (1 << 0)
 #define RR_MESSAGE_TUNIC (1 << 1)
 #define RR_MOUTH 4
 #define RR_BASE 0
 
-typedef enum EnRrReachState {
+typedef enum {
     /* 0 */ REACH_NONE,
     /* 1 */ REACH_EXTEND,
     /* 2 */ REACH_STOP,
@@ -26,7 +24,7 @@ typedef enum EnRrReachState {
     /* 5 */ REACH_CLOSE
 } EnRrReachState;
 
-typedef enum EnRrDamageEffect {
+typedef enum {
     /* 0x0 */ RR_DMG_NONE,
     /* 0x1 */ RR_DMG_STUN,
     /* 0x2 */ RR_DMG_FIRE,
@@ -39,7 +37,7 @@ typedef enum EnRrDamageEffect {
     /* 0xF */ RR_DMG_NORMAL
 } EnRrDamageEffect;
 
-typedef enum EnRrDropType {
+typedef enum {
     /* 0 */ RR_DROP_RANDOM_RUPEE,
     /* 1 */ RR_DROP_MAGIC,
     /* 2 */ RR_DROP_ARROW,
@@ -66,7 +64,7 @@ void EnRr_Death(EnRr* this, PlayState* play);
 void EnRr_Retreat(EnRr* this, PlayState* play);
 void EnRr_Stunned(EnRr* this, PlayState* play);
 
-ActorProfile En_Rr_Profile = {
+ActorInit En_Rr_InitVars = {
     /**/ ACTOR_EN_RR,
     /**/ ACTORCAT_ENEMY,
     /**/ FLAGS,
@@ -78,7 +76,7 @@ ActorProfile En_Rr_Profile = {
     /**/ EnRr_Draw,
 };
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
 static char* sDropNames[] = {
     // "type 7", "small magic jar", "arrow", "fairy", "20 rupees", "50 rupees"
     "タイプ７  ", "魔法の壷小", "矢        ", "妖精      ", "20ルピー  ", "50ルピー  ",
@@ -87,14 +85,14 @@ static char* sDropNames[] = {
 
 static ColliderCylinderInitType1 sCylinderInit1 = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_PLAYER,
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0xFFCFFFFF, 0x00, 0x08 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NORMAL,
@@ -106,14 +104,14 @@ static ColliderCylinderInitType1 sCylinderInit1 = {
 
 static ColliderCylinderInitType1 sCylinderInit2 = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_HARD | AC_TYPE_PLAYER,
         OC1_ON | OC1_NO_PUSH | OC1_TYPE_PLAYER,
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0xFFCFFFFF, 0x00, 0x08 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NORMAL,
@@ -160,8 +158,8 @@ static DamageTable sDamageTable = {
 
 static InitChainEntry sInitChain[] = {
     ICHAIN_S8(naviEnemyId, NAVI_ENEMY_LIKE_LIKE, ICHAIN_CONTINUE),
-    ICHAIN_U8(attentionRangeType, ATTENTION_RANGE_2, ICHAIN_CONTINUE),
-    ICHAIN_F32(lockOnArrowOffset, 30, ICHAIN_STOP),
+    ICHAIN_U8(targetMode, 2, ICHAIN_CONTINUE),
+    ICHAIN_F32(targetArrowOffset, 30, ICHAIN_STOP),
 };
 
 void EnRr_Init(Actor* thisx, PlayState* play2) {
@@ -256,7 +254,7 @@ void EnRr_SetupGrabPlayer(EnRr* this, Player* player) {
     s32 i;
 
     this->grabTimer = 100;
-    this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
+    this->actor.flags &= ~ACTOR_FLAG_0;
     this->ocTimer = 8;
     this->hasPlayer = true;
     this->reachState = 0;
@@ -291,7 +289,7 @@ void EnRr_SetupReleasePlayer(EnRr* this, PlayState* play) {
     u8 shield;
     u8 tunic;
 
-    this->actor.flags |= ACTOR_FLAG_ATTENTION_ENABLED;
+    this->actor.flags |= ACTOR_FLAG_0;
     this->hasPlayer = false;
     this->ocTimer = 110;
     this->segMoveRate = 0.0f;
@@ -326,7 +324,7 @@ void EnRr_SetupReleasePlayer(EnRr* this, PlayState* play) {
             break;
     }
     PRINTF(VT_FGCOL(YELLOW) "%s[%d] : Rr_Catch_Cancel" VT_RST "\n", "../z_en_rr.c", 650);
-    Actor_SetPlayerKnockbackLarge(play, &this->actor, 4.0f, this->actor.shape.rot.y, 12.0f, 8);
+    func_8002F6D4(play, &this->actor, 4.0f, this->actor.shape.rot.y, 12.0f, 8);
     if (this->actor.colorFilterTimer == 0) {
         this->actionFunc = EnRr_Approach;
         Actor_PlaySfx(&this->actor, NA_SE_EN_LIKE_THROW);
@@ -383,7 +381,7 @@ void EnRr_SetupDeath(EnRr* this) {
     }
     this->actionFunc = EnRr_Death;
     Actor_PlaySfx(&this->actor, NA_SE_EN_LIKE_DEAD);
-    this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
+    this->actor.flags &= ~ACTOR_FLAG_0;
 }
 
 void EnRr_SetupStunned(EnRr* this) {
@@ -482,16 +480,11 @@ void EnRr_CollisionCheck(EnRr* this, PlayState* play) {
                     if (this->actor.colChkInfo.health == 0) {
                         this->dropType = RR_DROP_RANDOM_RUPEE;
                     }
-#if OOT_VERSION < NTSC_1_1
-                    this->effectTimer = 20;
-                    Actor_SetColorFilter(&this->actor, COLORFILTER_COLORFLAG_BLUE, 255, COLORFILTER_BUFFLAG_XLU, 80);
-#else
                     if (this->actor.colorFilterTimer == 0) {
                         this->effectTimer = 20;
                         Actor_SetColorFilter(&this->actor, COLORFILTER_COLORFLAG_BLUE, 255, COLORFILTER_BUFFLAG_XLU,
                                              80);
                     }
-#endif
                     EnRr_SetupStunned(this);
                     return;
                 case RR_DMG_LIGHT_MAGIC: // Unused light magic
@@ -873,7 +866,8 @@ void EnRr_Draw(Actor* thisx, PlayState* play) {
     Matrix_Scale((1.0f + this->bodySegs[RR_BASE].scaleMod.x) * this->bodySegs[RR_BASE].scale.x,
                  (1.0f + this->bodySegs[RR_BASE].scaleMod.y) * this->bodySegs[RR_BASE].scale.y,
                  (1.0f + this->bodySegs[RR_BASE].scaleMod.z) * this->bodySegs[RR_BASE].scale.z, MTXMODE_APPLY);
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_en_rr.c", 1501);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_rr.c", 1501),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     Matrix_Pop();
 
     zeroVec.x = 0.0f;
@@ -907,18 +901,20 @@ void EnRr_Draw(Actor* thisx, PlayState* play) {
         s32 offIndex;
 
         this->actor.colorFilterTimer++;
-        if ((effectTimer & 1) == 0) {
-            segIndex = 4 - (effectTimer >> 2);
-            offIndex = (effectTimer >> 1) & 3;
+        if ((effectTimer & 1) != 0) {
+            return;
+        }
 
-            effectPos.x = this->effectPos[segIndex].x + sEffectOffsets[offIndex].x + Rand_CenteredFloat(10.0f);
-            effectPos.y = this->effectPos[segIndex].y + sEffectOffsets[offIndex].y + Rand_CenteredFloat(10.0f);
-            effectPos.z = this->effectPos[segIndex].z + sEffectOffsets[offIndex].z + Rand_CenteredFloat(10.0f);
-            if (this->actor.colorFilterParams & 0x4000) {
-                EffectSsEnFire_SpawnVec3f(play, &this->actor, &effectPos, 100, 0, 0, -1);
-            } else {
-                EffectSsEnIce_SpawnFlyingVec3f(play, &this->actor, &effectPos, 150, 150, 150, 250, 235, 245, 255, 3.0f);
-            }
+        segIndex = 4 - (effectTimer >> 2);
+        offIndex = (effectTimer >> 1) & 3;
+
+        effectPos.x = this->effectPos[segIndex].x + sEffectOffsets[offIndex].x + Rand_CenteredFloat(10.0f);
+        effectPos.y = this->effectPos[segIndex].y + sEffectOffsets[offIndex].y + Rand_CenteredFloat(10.0f);
+        effectPos.z = this->effectPos[segIndex].z + sEffectOffsets[offIndex].z + Rand_CenteredFloat(10.0f);
+        if (this->actor.colorFilterParams & 0x4000) {
+            EffectSsEnFire_SpawnVec3f(play, &this->actor, &effectPos, 100, 0, 0, -1);
+        } else {
+            EffectSsEnIce_SpawnFlyingVec3f(play, &this->actor, &effectPos, 150, 150, 150, 250, 235, 245, 255, 3.0f);
         }
     }
 }

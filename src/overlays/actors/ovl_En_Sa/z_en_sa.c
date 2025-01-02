@@ -4,7 +4,7 @@
 #include "assets/scenes/overworld/spot04/spot04_scene.h"
 #include "assets/scenes/overworld/spot05/spot05_scene.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4 | ACTOR_FLAG_UPDATE_DURING_OCARINA)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_25)
 
 void EnSa_Init(Actor* thisx, PlayState* play);
 void EnSa_Destroy(Actor* thisx, PlayState* play);
@@ -17,7 +17,7 @@ void func_80AF683C(EnSa* this, PlayState* play);
 void func_80AF68E4(EnSa* this, PlayState* play);
 void func_80AF6B20(EnSa* this, PlayState* play);
 
-typedef enum SariaEyeState {
+typedef enum {
     /* 0 */ SARIA_EYE_OPEN,
     /* 1 */ SARIA_EYE_HALF,
     /* 2 */ SARIA_EYE_CLOSED,
@@ -25,7 +25,7 @@ typedef enum SariaEyeState {
     /* 4 */ SARIA_EYE_SAD
 } SariaEyeState;
 
-typedef enum SariaMouthState {
+typedef enum {
     /* 0 */ SARIA_MOUTH_CLOSED2,
     /* 1 */ SARIA_MOUTH_SUPRISED,
     /* 2 */ SARIA_MOUTH_CLOSED,
@@ -33,7 +33,7 @@ typedef enum SariaMouthState {
     /* 4 */ SARIA_MOUTH_FROWNING
 } SariaMouthState;
 
-ActorProfile En_Sa_Profile = {
+ActorInit En_Sa_InitVars = {
     /**/ ACTOR_EN_SA,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -47,7 +47,7 @@ ActorProfile En_Sa_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -55,7 +55,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -67,7 +67,7 @@ static ColliderCylinderInit sCylinderInit = {
 
 static CollisionCheckInfoInit2 sColChkInfoInit = { 0, 0, 0, 0, MASS_IMMOVABLE };
 
-typedef enum EnSaAnimation1 {
+typedef enum {
     /*  0 */ ENSA_ANIM1_0,
     /*  1 */ ENSA_ANIM1_1,
     /*  2 */ ENSA_ANIM1_2,
@@ -97,7 +97,7 @@ static AnimationFrameCountInfo sAnimationInfo1[] = {
     { &gSariaPlayingOcarinaAnim, 1.0f, ANIMMODE_LOOP, 0.0f },
 };
 
-typedef enum EnSaAnimation2 {
+typedef enum {
     /* 0 */ ENSA_ANIM2_0,
     /* 1 */ ENSA_ANIM2_1,
     /* 2 */ ENSA_ANIM2_2,
@@ -521,7 +521,7 @@ void EnSa_Init(Actor* thisx, PlayState* play) {
 
     Actor_SetScale(&this->actor, 0.01f);
 
-    this->actor.attentionRangeType = ATTENTION_RANGE_6;
+    this->actor.targetMode = 6;
     this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
     this->alpha = 255;
     this->unk_21A = this->actor.shape.rot;

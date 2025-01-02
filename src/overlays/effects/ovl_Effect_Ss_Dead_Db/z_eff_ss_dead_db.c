@@ -24,7 +24,7 @@ u32 EffectSsDeadDb_Init(PlayState* play, u32 index, EffectSs* this, void* initPa
 void EffectSsDeadDb_Draw(PlayState* play, u32 index, EffectSs* this);
 void EffectSsDeadDb_Update(PlayState* play, u32 index, EffectSs* this);
 
-EffectSsProfile Effect_Ss_Dead_Db_Profile = {
+EffectSsInit Effect_Ss_Dead_Db_InitVars = {
     EFFECT_SS_DEAD_DB,
     EffectSsDeadDb_Init,
 };
@@ -69,7 +69,6 @@ void EffectSsDeadDb_Draw(PlayState* play, u32 index, EffectSs* this) {
     MtxF mfResult;
     Mtx* mtx;
     f32 scale;
-    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(gfxCtx, "../z_eff_ss_dead_db.c", 201);
 
@@ -88,7 +87,6 @@ void EffectSsDeadDb_Draw(PlayState* play, u32 index, EffectSs* this) {
         gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, this->rPrimColorR, this->rPrimColorG, this->rPrimColorB,
                         this->rPrimColorA);
         gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sTextures[this->rTextIdx]));
-        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, this->rTextIdx);
         gSPDisplayList(POLY_XLU_DISP++, this->gfx);
     }
 

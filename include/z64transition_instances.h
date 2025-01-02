@@ -4,12 +4,12 @@
 #include "ultra64.h"
 #include "color.h"
 
-typedef struct TransitionTileVtxData {
+typedef struct {
     /* 0x0 */ f32 x;
     /* 0x4 */ f32 y;
 } TransitionTileVtxData; // size = 0x8
 
-typedef struct TransitionTile {
+typedef struct {
     /* 0x00 */ s32 cols;
     /* 0x04 */ s32 rows;
     /* 0x08 */ s32 frame;
@@ -23,12 +23,12 @@ typedef struct TransitionTile {
     /* 0xDC */ u16* zBuffer;
 } TransitionTile; // size = 0xE0
 
-typedef enum TransitionInstanceType {
+typedef enum {
     /* 1 */ TRANS_INSTANCE_TYPE_FILL_OUT = 1,
     /* 2 */ TRANS_INSTANCE_TYPE_FILL_IN
 } TransitionInstanceType;
 
-typedef struct TransitionWipe {
+typedef struct {
     /* 0x000 */ Color_RGBA8_u32 color;
     /* 0x004 */ Color_RGBA8_u32 unkColor;
     /* 0x008 */ u8 direction;
@@ -44,7 +44,7 @@ typedef struct TransitionWipe {
 
 #define TRANS_INSTANCE_TYPE_FADE_FLASH 3
 
-typedef struct TransitionFade {
+typedef struct {
     /* 0x000 */ u8 type;
     /* 0x001 */ u8 isDone;
     /* 0x002 */ u8 direction;
@@ -52,26 +52,26 @@ typedef struct TransitionFade {
     /* 0x008 */ u16 timer;
 } TransitionFade; // size = 0xC
 
-typedef enum TransitionCircleAppearance {
+typedef enum {
     /* 0 */ TCA_NORMAL,
     /* 1 */ TCA_WAVE,
     /* 2 */ TCA_RIPPLE,
     /* 3 */ TCA_STARBURST
 } TransitionCircleAppearance;
 
-typedef enum TransitionCircleColor {
+typedef enum {
     /* 0 */ TCC_BLACK,
     /* 1 */ TCC_WHITE,
     /* 2 */ TCC_GRAY,
     /* 3 */ TCC_SPECIAL // color varies depending on appearance. unused and appears broken
 } TransitionCircleColor;
 
-typedef enum TransitionCircleSpeed {
+typedef enum {
     /* 0 */ TCS_FAST,
     /* 1 */ TCS_SLOW
 } TransitionCircleSpeed;
 
-typedef struct TransitionCircle {
+typedef struct {
     /* 0x000 */ Color_RGBA8_u32 color;
     /* 0x004 */ Color_RGBA8_u32 unkColor;
     /* 0x008 */ s32 texX;
@@ -88,9 +88,9 @@ typedef struct TransitionCircle {
     /* 0x060 */ Mtx lookAt;
     /* 0x0A0 */ void* texture;
     /* 0x0A8 */ Mtx modelView[2][3];
-} TransitionCircle; // size = 0x228
+} TransitionCircle; // size = 0x228;
 
-typedef struct TransitionTriforce {
+typedef struct {
     /* 0x000 */ Color_RGBA8_u32 color;
     /* 0x004 */ f32 transPos;
     /* 0x008 */ f32 step;
@@ -99,6 +99,6 @@ typedef struct TransitionTriforce {
     /* 0x018 */ Mtx projection;
     /* 0x058 */ s32 frame;
     /* 0x060 */ Mtx modelView[2][3];
-} TransitionTriforce; // size = 0x1E0
+} TransitionTriforce; // size = 0x1E0;
 
 #endif

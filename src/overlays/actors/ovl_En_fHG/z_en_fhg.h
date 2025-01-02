@@ -8,7 +8,7 @@ struct EnfHG;
 
 typedef void (*EnfHGActionFunc)(struct EnfHG*, PlayState*);
 
-typedef enum EnfHGSignal {
+typedef enum {
     /*  0 */ FHG_NO_SIGNAL,
     /*  1 */ FHG_RAISE_SPEAR,
     /*  2 */ FHG_REAR,

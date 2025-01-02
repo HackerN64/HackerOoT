@@ -11,8 +11,6 @@
 #include "config/config_debug_controls.h"
 #include "config/config_debug.h"
 #include "config/config_game.h"
-#include "config/config_graphics.h"
-#include "config/config_memory.h"
 
 /* WARNING: Compatibility safeguards - don't remove this file unless you know what you're doing */
 #include "config/config_safeguards.h"

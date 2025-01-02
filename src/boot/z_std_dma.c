@@ -19,45 +19,33 @@
  * to be uncompressed and the request queue and address translation is skipped.
  */
 #include "global.h"
-#include "fault.h"
-#include "stack.h"
 #include "terminal.h"
 #include "compression.h"
-#if PLATFORM_N64
-#include "n64dd.h"
-#endif
-
-#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
-                               "ntsc-1.2:88 pal-1.0:86 pal-1.1:86"
 
 StackEntry sDmaMgrStackInfo;
 OSMesgQueue sDmaMgrMsgQueue;
 OSMesg sDmaMgrMsgBuf[32];
+OSThread sDmaMgrThread;
+STACK(sDmaMgrStack, 0x500);
+const char* sDmaMgrCurFileName;
+s32 sDmaMgrCurFileLine;
 
 u32 gDmaMgrVerbose = 0;
 size_t gDmaMgrDmaBuffSize = DMAMGR_DEFAULT_BUFSIZE;
 u32 sDmaMgrIsRomCompressed = false;
 
-OSThread sDmaMgrThread;
-STACK(sDmaMgrStack, 0x500);
-
-#if DEBUG_FEATURES
-
-const char* sDmaMgrCurFileName;
-s32 sDmaMgrCurFileLine;
-
 // dmadata filenames
 #define DEFINE_DMA_ENTRY(_0, nameString) nameString,
 
+#if IS_DEBUG
 const char* sDmaMgrFileNames[] = {
 #include "tables/dmadata_table.h"
 };
-
 #endif
 
 #undef DEFINE_DMA_ENTRY
 
-#if PLATFORM_N64 || DEBUG_FEATURES
+#if IS_DEBUG
 /**
  * Compares `str1` and `str2`.
  *
@@ -125,9 +113,8 @@ s32 DmaMgr_DmaRomToRam(uintptr_t rom, void* ram, size_t size) {
         ioMsg.size = buffSize;
 
         if (gDmaMgrVerbose == 10) {
-            PRINTF(T("%10lld ノーマルＤＭＡ %08x %08x %08x (%d)\n", "%10lld Normal DMA %08x %08x %08x (%d)\n"),
-                   OS_CYCLES_TO_USEC(osGetTime()), ioMsg.dramAddr, ioMsg.devAddr, ioMsg.size,
-                   MQ_GET_COUNT(&gPiMgrCmdQueue));
+            PRINTF("%10lld ノーマルＤＭＡ %08x %08x %08x (%d)\n", OS_CYCLES_TO_USEC(osGetTime()), ioMsg.dramAddr,
+                   ioMsg.devAddr, ioMsg.size, MQ_GET_COUNT(&gPiMgrCmdQueue));
         }
 
         ret = osEPiStartDma(gCartHandle, &ioMsg, OS_READ);
@@ -136,14 +123,12 @@ s32 DmaMgr_DmaRomToRam(uintptr_t rom, void* ram, size_t size) {
         }
 
         if (gDmaMgrVerbose == 10) {
-            PRINTF(T("%10lld ノーマルＤＭＡ START (%d)\n", "%10lld Normal DMA START (%d)\n"),
-                   OS_CYCLES_TO_USEC(osGetTime()), MQ_GET_COUNT(&gPiMgrCmdQueue));
+            PRINTF("%10lld ノーマルＤＭＡ START (%d)\n", OS_CYCLES_TO_USEC(osGetTime()), MQ_GET_COUNT(&gPiMgrCmdQueue));
         }
 
         osRecvMesg(&queue, NULL, OS_MESG_BLOCK);
         if (gDmaMgrVerbose == 10) {
-            PRINTF(T("%10lld ノーマルＤＭＡ END (%d)\n", "%10lld Normal DMA END (%d)\n"),
-                   OS_CYCLES_TO_USEC(osGetTime()), MQ_GET_COUNT(&gPiMgrCmdQueue));
+            PRINTF("%10lld ノーマルＤＭＡ END (%d)\n", OS_CYCLES_TO_USEC(osGetTime()), MQ_GET_COUNT(&gPiMgrCmdQueue));
         }
 
         size -= buffSize;
@@ -162,9 +147,8 @@ s32 DmaMgr_DmaRomToRam(uintptr_t rom, void* ram, size_t size) {
     ioMsg.size = size;
 
     if (gDmaMgrVerbose == 10) {
-        PRINTF(T("%10lld ノーマルＤＭＡ %08x %08x %08x (%d)\n", "%10lld Normal DMA %08x %08x %08x (%d)\n"),
-               OS_CYCLES_TO_USEC(osGetTime()), ioMsg.dramAddr, ioMsg.devAddr, ioMsg.size,
-               MQ_GET_COUNT(&gPiMgrCmdQueue));
+        PRINTF("%10lld ノーマルＤＭＡ %08x %08x %08x (%d)\n", OS_CYCLES_TO_USEC(osGetTime()), ioMsg.dramAddr,
+               ioMsg.devAddr, ioMsg.size, MQ_GET_COUNT(&gPiMgrCmdQueue));
     }
 
     ret = osEPiStartDma(gCartHandle, &ioMsg, OS_READ);
@@ -174,8 +158,7 @@ s32 DmaMgr_DmaRomToRam(uintptr_t rom, void* ram, size_t size) {
 
     osRecvMesg(&queue, NULL, OS_MESG_BLOCK);
     if (gDmaMgrVerbose == 10) {
-        PRINTF(T("%10lld ノーマルＤＭＡ END (%d)\n", "%10lld Normal DMA END (%d)\n"), OS_CYCLES_TO_USEC(osGetTime()),
-               MQ_GET_COUNT(&gPiMgrCmdQueue));
+        PRINTF("%10lld ノーマルＤＭＡ END (%d)\n", OS_CYCLES_TO_USEC(osGetTime()), MQ_GET_COUNT(&gPiMgrCmdQueue));
     }
 
 end:
@@ -202,17 +185,9 @@ s32 DmaMgr_AudioDmaHandler(OSPiHandle* pihandle, OSIoMesg* mb, s32 direction) {
     ASSERT(direction == OS_READ, "direction == OS_READ", "../z_std_dma.c", 531);
     ASSERT(mb != NULL, "mb != NULL", "../z_std_dma.c", 532);
 
-#if PLATFORM_N64
-    if (D_80121212) {
-        while (D_80121214) {
-            Sleep_Msec(1000);
-        }
-    }
-#endif
-
     if (gDmaMgrVerbose == 10) {
-        PRINTF(T("%10lld サウンドＤＭＡ %08x %08x %08x (%d)\n", "%10lld Sound DMA %08x %08x %08x (%d)\n"),
-               OS_CYCLES_TO_USEC(osGetTime()), mb->dramAddr, mb->devAddr, mb->size, MQ_GET_COUNT(&gPiMgrCmdQueue));
+        PRINTF("%10lld サウンドＤＭＡ %08x %08x %08x (%d)\n", OS_CYCLES_TO_USEC(osGetTime()), mb->dramAddr, mb->devAddr,
+               mb->size, MQ_GET_COUNT(&gPiMgrCmdQueue));
     }
 
     ret = osEPiStartDma(pihandle, mb, direction);
@@ -230,9 +205,6 @@ s32 DmaMgr_AudioDmaHandler(OSPiHandle* pihandle, OSIoMesg* mb, s32 direction) {
  * @param size Size of transfer.
  */
 void DmaMgr_DmaFromDriveRom(void* ram, uintptr_t rom, size_t size) {
-#if PLATFORM_N64
-    s32 pad;
-#endif
     OSPiHandle* handle = osDriveRomInit();
     OSMesgQueue queue;
     OSMesg msg;
@@ -253,7 +225,7 @@ void DmaMgr_DmaFromDriveRom(void* ram, uintptr_t rom, size_t size) {
     osRecvMesg(&queue, NULL, OS_MESG_BLOCK);
 }
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
 /**
  * DMA error encountered, print error messages and bring up the crash screen.
  *
@@ -273,7 +245,8 @@ NORETURN void DmaMgr_Error(DmaRequest* req, const char* filename, const char* er
 
     PRINTF("%c", BEL);
     PRINTF(VT_FGCOL(RED));
-    PRINTF(T("DMA致命的エラー(%s)\nROM:%X RAM:%X SIZE:%X %s\n", "DMA Fatal Error (%s)\nROM:%X RAM:%X SIZE:%X %s\n"),
+    // "DMA Fatal Error"
+    PRINTF("DMA致命的エラー(%s)\nROM:%X RAM:%X SIZE:%X %s\n",
            errorDesc != NULL ? errorDesc : (errorName != NULL ? errorName : "???"), vrom, ram, size,
            filename != NULL ? filename : "???");
 
@@ -297,17 +270,11 @@ NORETURN void DmaMgr_Error(DmaRequest* req, const char* filename, const char* er
     Fault_AddHungupAndCrashImpl(buff1, buff2);
 }
 
-#define DMA_ERROR(req, filename, errorName, errorDesc, file, line1, line2, line3) \
-    DmaMgr_Error(req, filename, errorName, errorDesc)
-#elif OOT_VERSION < NTSC_1_1
-#define DMA_ERROR(req, filename, errorName, errorDesc, file, line1, line2, line3) Fault_AddHungupAndCrash(file, line1)
-#elif OOT_VERSION < GC_JP
-#define DMA_ERROR(req, filename, errorName, errorDesc, file, line1, line2, line3) Fault_AddHungupAndCrash(file, line2)
+#define DMA_ERROR(req, filename, errorName, errorDesc, file, line) DmaMgr_Error(req, filename, errorName, errorDesc)
 #else
-#define DMA_ERROR(req, filename, errorName, errorDesc, file, line1, line2, line3) Fault_AddHungupAndCrash(file, line3)
+#define DMA_ERROR(req, filename, errorName, errorDesc, file, line) Fault_AddHungupAndCrash(file, line)
 #endif
 
-#if PLATFORM_GC
 /**
  * Searches the filesystem for the entry containing the address `vrom`. Retrieves the name of this entry from
  * the array of file names.
@@ -316,7 +283,7 @@ NORETURN void DmaMgr_Error(DmaRequest* req, const char* filename, const char* er
  * @return Pointer to associated filename
  */
 const char* DmaMgr_FindFileName(uintptr_t vrom) {
-#if DEBUG_FEATURES
+#if IS_DEBUG
     DmaEntry* iter = gDmaDataTable;
     const char** name = sDmaMgrFileNames;
 
@@ -337,10 +304,9 @@ const char* DmaMgr_FindFileName(uintptr_t vrom) {
     return NULL;
 #endif
 }
-#endif
 
 const char* DmaMgr_GetFileName(uintptr_t vrom) {
-#if PLATFORM_GC && DEBUG_FEATURES
+#if IS_DEBUG
     const char* ret = DmaMgr_FindFileName(vrom);
 
     if (ret == NULL) {
@@ -353,10 +319,8 @@ const char* DmaMgr_GetFileName(uintptr_t vrom) {
         return NULL;
     }
     return ret;
-#elif PLATFORM_GC
+#else
     return "";
-#elif PLATFORM_N64
-    return "??";
 #endif
 }
 
@@ -368,14 +332,13 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
     size_t romSize;
     u8 found = false;
     DmaEntry* iter;
-    UNUSED_NDEBUG const char* filename;
-    s32 i = 0;
+    const char* filename;
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     // Get the filename (for debugging)
     filename = DmaMgr_GetFileName(vrom);
-#elif PLATFORM_GC
-    // An unused empty string is defined in .rodata of GameCube retail builds, suggesting it was used near here.
+#else
+    // An unused empty string is defined in .rodata of retail builds, suggesting it was used near here.
     filename = "";
 #endif
 
@@ -384,15 +347,6 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
     while (iter->file.vromEnd != 0) {
         if (vrom >= iter->file.vromStart && vrom < iter->file.vromEnd) {
             // Found the region this request falls into
-
-#if PLATFORM_N64
-            // Based on the MM Debug ROM, these strings are part of the condition for the empty if statement below,
-            // as `... && DmaMgr_StrCmp("", "kanji") != 0 && DmaMgr_StrCmp("", "link_animetion") != 0`
-            (void)"";
-            (void)"kanji";
-            (void)"";
-            (void)"link_animetion";
-#endif
 
             if (0) {
                 // The string is defined in .rodata of debug builds but not used, suggesting a debug print is here
@@ -407,10 +361,9 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
                 if (iter->file.vromEnd < vrom + size) {
                     // Error, vrom + size ends up in a different file than it started in
 
+                    // "DMA transfers cannot cross segment boundaries"
                     DMA_ERROR(req, filename, "Segment Alignment Error",
-                              T("セグメント境界をまたがってＤＭＡ転送することはできません",
-                                "DMA transfers cannot cross segment boundaries"),
-                              "../z_std_dma.c", 575, 578, 726);
+                              "セグメント境界をまたがってＤＭＡ転送することはできません", "../z_std_dma.c", 726);
                 }
 
                 DmaMgr_DmaRomToRam(iter->romStart + (vrom - iter->file.vromStart), ram, size);
@@ -428,19 +381,17 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
                 if (vrom != iter->file.vromStart) {
                     // Error, requested vrom is not the start of a file
 
+                    // "DMA transfer cannot be performed from the middle of a compressed segment"
                     DMA_ERROR(req, filename, "Can't Transfer Segment",
-                              T("圧縮されたセグメントの途中からはＤＭＡ転送することはできません",
-                                "DMA transfer cannot be performed from the middle of a compressed segment"),
-                              "../z_std_dma.c", 595, 598, 746);
+                              "圧縮されたセグメントの途中からはＤＭＡ転送することはできません", "../z_std_dma.c", 746);
                 }
 
                 if (size != iter->file.vromEnd - iter->file.vromStart) {
                     // Error, only part of the file was requested
 
+                    // "It is not possible to DMA only part of a compressed segment"
                     DMA_ERROR(req, filename, "Can't Transfer Segment",
-                              T("圧縮されたセグメントの一部だけをＤＭＡ転送することはできません",
-                                "It is not possible to DMA only part of a compressed segment"),
-                              "../z_std_dma.c", 601, 604, 752);
+                              "圧縮されたセグメントの一部だけをＤＭＡ転送することはできません", "../z_std_dma.c", 752);
                 }
 
                 // Reduce the thread priority and decompress the file, the decompression routine handles the DMA
@@ -462,13 +413,6 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
             }
             break;
         }
-
-#if PLATFORM_N64
-        if (i != 0) {
-            i += 4;
-        }
-#endif
-
         iter++;
     }
 
@@ -478,18 +422,15 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
         if (sDmaMgrIsRomCompressed) {
             // Error, rom is compressed so DMA may only be requested within the filesystem bounds
 
-            DMA_ERROR(req, NULL, "DATA DON'T EXIST",
-                      T("該当するデータが存在しません", "Corresponding data does not exist"), "../z_std_dma.c", 621,
-                      624, 771);
+            // "Corresponding data does not exist"
+            DMA_ERROR(req, NULL, "DATA DON'T EXIST", "該当するデータが存在しません", "../z_std_dma.c", 771);
             return;
         } else {
             // ROM is uncompressed, allow arbitrary DMA even if the region is not marked in the filesystem
             DmaMgr_DmaRomToRam(vrom, ram, size);
 
             if (0) {
-                PRINTF(T("No Press ROM:%08X RAM:%08X SIZE:%08X (非公式)\n",
-                         "No Press ROM:%08X RAM:%08X SIZE:%08X (informal)\n"),
-                       vrom, ram, size);
+                PRINTF("No Press ROM:%08X RAM:%08X SIZE:%08X (非公式)\n", vrom, ram, size);
             }
         }
     }
@@ -499,7 +440,8 @@ void DmaMgr_ThreadEntry(void* arg) {
     OSMesg msg;
     DmaRequest* req;
 
-    PRINTF(T("ＤＭＡマネージャスレッド実行開始\n", "DMA manager thread execution start\n"));
+    // "DMA manager thread execution start"
+    PRINTF("ＤＭＡマネージャスレッド実行開始\n");
 
     while (true) {
         // Wait for DMA Requests to arrive from other threads
@@ -510,7 +452,7 @@ void DmaMgr_ThreadEntry(void* arg) {
         }
 
         if (0) {
-            PRINTF(T("ＤＭＡ登録受付", "DMA registration acceptance") " dmap=%08x\n", req);
+            PRINTF("ＤＭＡ登録受付 dmap=%08x\n", req);
         }
 
         // Process the DMA request
@@ -525,7 +467,8 @@ void DmaMgr_ThreadEntry(void* arg) {
         }
     }
 
-    PRINTF(T("ＤＭＡマネージャスレッド実行終了\n", "DMA manager thread execution end\n"));
+    // "DMA manager thread execution end"
+    PRINTF("ＤＭＡマネージャスレッド実行終了\n");
 }
 
 /**
@@ -545,20 +488,13 @@ s32 DmaMgr_RequestAsync(DmaRequest* req, void* ram, uintptr_t vrom, size_t size,
                         OSMesg msg) {
     static s32 sDmaMgrQueueFullLogged = 0;
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     if ((ram == NULL) || (osMemSize < OS_K0_TO_PHYSICAL(ram) + size) || (vrom & 1) || (vrom > 0x4000000) ||
         (size == 0) || (size & 1)) {
+        // The line numbers for `DMA_ERROR` are only used in retail builds, but this usage was removed so
+        // its line number is unknown.
         //! @bug `req` is passed to `DMA_ERROR` without rom, ram and size being set
-        DMA_ERROR(req, NULL, "ILLIGAL DMA-FUNCTION CALL", T("パラメータ異常です", "Parameter error"), "../z_std_dma.c",
-                  UNK_LINE, UNK_LINE, UNK_LINE);
-    }
-#endif
-
-#if PLATFORM_N64
-    if ((B_80121220 != NULL) && (B_80121220->unk_70 != NULL)) {
-        if (B_80121220->unk_70(req, ram, vrom, size, unk, queue, msg) != 0) {
-            return 0;
-        }
+        DMA_ERROR(req, NULL, "ILLIGAL DMA-FUNCTION CALL", "パラメータ異常です", "../z_std_dma.c", 0);
     }
 #endif
 
@@ -569,13 +505,13 @@ s32 DmaMgr_RequestAsync(DmaRequest* req, void* ram, uintptr_t vrom, size_t size,
     req->notifyQueue = queue;
     req->notifyMsg = msg;
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     if (1 && (sDmaMgrQueueFullLogged == 0) && MQ_IS_FULL(&sDmaMgrMsgQueue)) {
         sDmaMgrQueueFullLogged++;
         PRINTF("%c", BEL);
         PRINTF(VT_FGCOL(RED));
-        PRINTF(T("dmaEntryMsgQが一杯です。キューサイズの再検討をおすすめします。",
-                 "dmaEntryMsgQ is full. Reconsider your queue size."));
+        // "dmaEntryMsgQ is full. Reconsider your queue size."
+        PRINTF("dmaEntryMsgQが一杯です。キューサイズの再検討をおすすめします。");
         LOG_NUM("(sizeof(dmaEntryMsgBufs) / sizeof(dmaEntryMsgBufs[0]))", ARRAY_COUNT(sDmaMgrMsgBuf), "../z_std_dma.c",
                 952);
         PRINTF(VT_RST);
@@ -621,7 +557,7 @@ void DmaMgr_Init(void) {
                        (u32)(_dmadataSegmentRomEnd - _dmadataSegmentRomStart));
     PRINTF("dma_rom_ad[]\n");
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     name = sDmaMgrFileNames;
     iter = gDmaDataTable;
     idx = 0;
@@ -655,13 +591,7 @@ void DmaMgr_Init(void) {
         PRINTF("_bootSegmentRomStart(%08x) != dma_rom_ad[0].rom_b(%08x)\n", _bootSegmentRomStart,
                gDmaDataTable[0].file.vromEnd);
         //! @bug The main code file where fault.c resides is not yet loaded
-#if OOT_VERSION < NTSC_1_1
-        Fault_AddHungupAndCrash("../z_std_dma.c", 837);
-#elif OOT_VERSION < GC_JP
-        Fault_AddHungupAndCrash("../z_std_dma.c", 840);
-#else
         Fault_AddHungupAndCrash("../z_std_dma.c", 1055);
-#endif
     }
 
     // Start the DMA manager
@@ -672,7 +602,7 @@ void DmaMgr_Init(void) {
     osStartThread(&sDmaMgrThread);
 }
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
 /**
  * Asynchronous DMA Request with source file and line info for debugging.
  *

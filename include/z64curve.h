@@ -6,7 +6,7 @@
 
 struct PlayState;
 
-typedef struct CurveInterpKnot {
+typedef struct {
     /* 0x0 */ u16 flags;         // Only the bottom two bits are used, although others are set in objects
     /* 0x2 */ s16 abscissa;      // knot input value
     /* 0x4 */ s16 leftGradient;  // left derivative at the point
@@ -14,7 +14,7 @@ typedef struct CurveInterpKnot {
     /* 0x8 */ f32 ordinate;      // output value
 } CurveInterpKnot; // size = 0xC
 
-typedef struct CurveAnimationHeader {
+typedef struct {
     /* 0x0 */ u8* knotCounts;
     /* 0x4 */ CurveInterpKnot* interpolationData;
     /* 0x8 */ s16* constantData;
@@ -22,18 +22,18 @@ typedef struct CurveAnimationHeader {
     /* 0xE */ s16 frameCount; // Not used, inferred from use in objects
 } CurveAnimationHeader; // size = 0x10
 
-typedef struct SkelCurveLimb {
+typedef struct {
     /* 0x0 */ u8 child;
     /* 0x1 */ u8 sibling;
     /* 0x4 */ Gfx* dList[2];
 } SkelCurveLimb; // size = 0xC
 
-typedef struct CurveSkeletonHeader {
+typedef struct {
     /* 0x0 */ SkelCurveLimb** limbs;
     /* 0x4 */ u8 limbCount;
 } CurveSkeletonHeader; // size = 0x8
 
-typedef struct SkelCurve {
+typedef struct {
     /* 0x00 */ u8 limbCount;
     /* 0x04 */ SkelCurveLimb** skeleton;
     /* 0x08 */ CurveAnimationHeader* animation;

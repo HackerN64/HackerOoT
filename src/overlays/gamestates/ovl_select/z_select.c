@@ -11,14 +11,15 @@
 
 void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;
+    u32 size;
+    s32 pad;
     u8 i;
 
-    gSaveContext.gameMode = GAMEMODE_MAP_SELECT;
     this->state.main = MapSelect_Main;
     this->state.destroy = MapSelect_Destroy;
     this->scenes = sScenes;
-    this->topDisplayedScene = SCENE_HYRULE_FIELD;
-    this->currentScene = SCENE_HYRULE_FIELD;
+    this->topDisplayedScene = 0;
+    this->currentScene = 0;
     this->pageDownStops[0] = 0;  // Hyrule Field
     this->pageDownStops[1] = 19; // Temple Of Time
     this->pageDownStops[2] = 37; // Treasure Chest Game
@@ -43,6 +44,8 @@ void MapSelect_Init(GameState* thisx) {
     this->sceneLayer = 0;
     this->selectedSceneColor = 5; // Red by default
 
+    size = (uintptr_t)_z_select_staticSegmentRomEnd - (uintptr_t)_z_select_staticSegmentRomStart;
+
     if ((dREG(80) >= 0) && (dREG(80) < this->sceneTotal)) {
         this->currentScene = dREG(80);
         this->topDisplayedScene = dREG(81);
@@ -56,7 +59,8 @@ void MapSelect_Init(GameState* thisx) {
     // turning the sfx volume back on
     SEQCMD_SET_SEQPLAYER_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 10);
 
-#if BOOT_TO_MAP_SELECT
+#ifdef BOOT_TO_MAP_SELECT
+    gSaveContext.fileNum = 0xFF;
     gSaveContext.save.linkAge = BOOT_AGE;
     this->sceneLayer = (BOOT_CUTSCENE > 1) ? (BOOT_CUTSCENE & 0x000F) + 2 : BOOT_CUTSCENE;
     for (i = 1; i < this->sceneTotal; i++) {
@@ -88,10 +92,9 @@ void MapSelect_Draw(MapSelectState* this) {
     OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
-    Gfx_SetupFrame(gfxCtx, true, 0, 0, 0);
+    Gfx_SetupFrame(gfxCtx, 0, 0, 0);
     SET_FULLSCREEN_VIEWPORT(&this->view);
     View_Apply(&this->view, VIEW_ALL);
-    Gfx_SetupDL_28Opa(gfxCtx);
 
     if (!this->state.running) {
         MapSelect_DrawLoadingScreen(this);
@@ -333,6 +336,12 @@ void MapSelect_DrawMenu(MapSelectState* this) {
 
     OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
 
+    gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
+    Gfx_SetupFrame(gfxCtx, 0, 0, 0);
+    SET_FULLSCREEN_VIEWPORT(&this->view);
+    View_Apply(&this->view, VIEW_ALL);
+    Gfx_SetupDL_28Opa(gfxCtx);
+
     printer = alloca(sizeof(GfxPrint));
     GfxPrint_Init(printer);
     GfxPrint_Open(printer, POLY_OPA_DISP);
@@ -360,6 +369,12 @@ void MapSelect_DrawLoadingScreen(MapSelectState* this) {
 
     OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
 
+    gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
+    Gfx_SetupFrame(gfxCtx, 0, 0, 0);
+    SET_FULLSCREEN_VIEWPORT(&this->view);
+    View_Apply(&this->view, VIEW_ALL);
+    Gfx_SetupDL_28Opa(gfxCtx);
+
     printer = alloca(sizeof(GfxPrint));
     GfxPrint_Init(printer);
     GfxPrint_Open(printer, POLY_OPA_DISP);
@@ -375,15 +390,7 @@ void MapSelect_LoadTitle(MapSelectState* this) {
     SET_NEXT_GAMESTATE(&this->state, ConsoleLogo_Init, ConsoleLogoState);
 }
 
-void MapSelect_LoadDebugOpening(MapSelectState* this) {
-#if IS_DEBUG_BOOT_ENABLED
-    this->state.running = false;
-    SET_NEXT_GAMESTATE(&this->state, DebugOpening_Init, DebugOpeningState);
-#endif
-}
-
 void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex) {
-    gSaveContext.gameMode = GAMEMODE_NORMAL;
     PRINTF(VT_FGCOL(BLUE));
     PRINTF("\n\n\nＦＩＬＥ＿ＮＯ＝%x\n\n\n", gSaveContext.fileNum);
     PRINTF(VT_RST);

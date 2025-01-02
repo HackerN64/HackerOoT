@@ -8,7 +8,7 @@ struct EnFd;
 
 typedef void (*EnFdActionFunc)(struct EnFd* this, PlayState* play);
 
-typedef enum FDEffectType {
+typedef enum {
     FD_EFFECT_NONE,
     FD_EFFECT_FLAME,
     FD_EFFECT_DOT
@@ -16,7 +16,7 @@ typedef enum FDEffectType {
 
 #define EN_FD_EFFECT_COUNT 200
 
-typedef struct EnFdEffect {
+typedef struct {
     /* 0x0000 */ u8 type;
     /* 0x0001 */ u8 timer;
     /* 0x0002 */ u8 initialTimer;

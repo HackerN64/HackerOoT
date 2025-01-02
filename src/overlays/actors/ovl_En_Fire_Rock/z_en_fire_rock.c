@@ -15,7 +15,7 @@ void FireRock_WaitOnFloor(EnFireRock* this, PlayState* play);
 void EnFireRock_Fall(EnFireRock* this, PlayState* play);
 void EnFireRock_SpawnMoreBrokenPieces(EnFireRock* this, PlayState* play);
 
-ActorProfile En_Fire_Rock_Profile = {
+ActorInit En_Fire_Rock_InitVars = {
     /**/ ACTOR_EN_FIRE_ROCK,
     /**/ ACTORCAT_ENEMY,
     /**/ FLAGS,
@@ -29,7 +29,7 @@ ActorProfile En_Fire_Rock_Profile = {
 
 static ColliderCylinderInit D_80A12CA0 = {
     {
-        COL_MATERIAL_HARD,
+        COLTYPE_HARD,
         AT_ON | AT_TYPE_ENEMY,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
@@ -37,7 +37,7 @@ static ColliderCylinderInit D_80A12CA0 = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0xFFCFFFFF, 0x09, 0x08 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NORMAL,
@@ -49,7 +49,7 @@ static ColliderCylinderInit D_80A12CA0 = {
 
 static ColliderCylinderInit D_80A12CCC = {
     {
-        COL_MATERIAL_HARD,
+        COLTYPE_HARD,
         AT_ON | AT_TYPE_ENEMY,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
@@ -57,7 +57,7 @@ static ColliderCylinderInit D_80A12CCC = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0xFFCFFFFF, 0x01, 0x08 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NORMAL,
@@ -284,13 +284,11 @@ void FireRock_WaitSpawnRocksFromCeiling(EnFireRock* this, PlayState* play) {
         this->playerNearby = 0;
     }
 
-#if IS_ACTOR_DEBUG_ENABLED
-    if (BREG(0) != 0) {
+    if (IS_ACTOR_DEBUG_ENABLED && BREG(0) != 0) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 0, 255, 0, 255, 4, play->state.gfxCtx);
     }
-#endif
 }
 
 void FireRock_WaitOnFloor(EnFireRock* this, PlayState* play) {
@@ -369,7 +367,7 @@ void EnFireRock_Update(Actor* thisx, PlayState* play) {
                 this->collider.base.atFlags &= ~AT_HIT;
                 if (this->collider.base.at == playerActor) {
                     if (!(player->stateFlags1 & PLAYER_STATE1_26)) {
-                        Actor_SetPlayerKnockbackSmall(play, thisx, 2.0f, -player->actor.world.rot.y, 3.0f, 4);
+                        func_8002F758(play, thisx, 2.0f, -player->actor.world.rot.y, 3.0f, 4);
                     }
                     return;
                 }
@@ -398,7 +396,8 @@ void EnFireRock_Draw(Actor* thisx, PlayState* play) {
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 155, 55, 255);
     gDPSetEnvColor(POLY_OPA_DISP++, 155, 255, 55, 255);
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_en_fire_rock.c", 768);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_fire_rock.c", 768),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, object_efc_star_field_DL_000DE0);
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_fire_rock.c", 773);
 }

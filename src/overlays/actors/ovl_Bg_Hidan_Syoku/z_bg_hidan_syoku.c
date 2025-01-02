@@ -18,7 +18,7 @@ void func_8088F4B8(BgHidanSyoku* this, PlayState* play);
 void func_8088F514(BgHidanSyoku* this, PlayState* play);
 void func_8088F62C(BgHidanSyoku* this, PlayState* play);
 
-ActorProfile Bg_Hidan_Syoku_Profile = {
+ActorInit Bg_Hidan_Syoku_InitVars = {
     /**/ ACTOR_BG_HIDAN_SYOKU,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -74,7 +74,7 @@ void func_8088F514(BgHidanSyoku* this, PlayState* play) {
     if (this->timer == 0) {
         func_8088F47C(this);
     } else {
-        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE3 - SFX_FLAG);
+        func_8002F974(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE3 - SFX_FLAG);
     }
 }
 
@@ -86,7 +86,7 @@ void func_8088F5A0(BgHidanSyoku* this, PlayState* play) {
     if (this->timer == 0) {
         func_8088F47C(this);
     } else {
-        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE3 - SFX_FLAG);
+        func_8002F974(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE3 - SFX_FLAG);
     }
 }
 

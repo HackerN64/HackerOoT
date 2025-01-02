@@ -17,7 +17,7 @@ void ObjIcePoly_Draw(Actor* thisx, PlayState* play);
 void ObjIcePoly_Idle(ObjIcePoly* this, PlayState* play);
 void ObjIcePoly_Melt(ObjIcePoly* this, PlayState* play);
 
-ActorProfile Obj_Ice_Poly_Profile = {
+ActorInit Obj_Ice_Poly_InitVars = {
     /**/ ACTOR_OBJ_ICE_POLY,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -31,7 +31,7 @@ ActorProfile Obj_Ice_Poly_Profile = {
 
 static ColliderCylinderInit sCylinderInitIce = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_ON | AT_TYPE_ENEMY,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_ALL,
@@ -39,7 +39,7 @@ static ColliderCylinderInit sCylinderInitIce = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0xFFCFFFFF, 0x02, 0x00 },
         { 0x00020800, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NONE,
@@ -51,7 +51,7 @@ static ColliderCylinderInit sCylinderInitIce = {
 
 static ColliderCylinderInit sCylinderInitHard = {
     {
-        COL_MATERIAL_HARD,
+        COLTYPE_HARD,
         AT_NONE,
         AC_ON | AC_HARD | AC_TYPE_PLAYER,
         OC1_NONE,
@@ -59,7 +59,7 @@ static ColliderCylinderInit sCylinderInitHard = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x4E01F7F6, 0x00, 0x00 },
         ATELEM_NONE,
@@ -77,7 +77,7 @@ static Color_RGBA8 sColorGray = { 180, 180, 180, 255 };
 void ObjIcePoly_Init(Actor* thisx, PlayState* play) {
     ObjIcePoly* this = (ObjIcePoly*)thisx;
 
-    this->unk_151 = PARAMS_GET_U(thisx->params, 8, 8);
+    this->unk_151 = (thisx->params >> 8) & 0xFF;
     thisx->params &= 0xFF;
     if (thisx->params < 0 || thisx->params >= 3) {
         Actor_Kill(thisx);
@@ -197,7 +197,8 @@ void ObjIcePoly_Draw(Actor* thisx, PlayState* play) {
     func_8002ED80(&this->actor, play, 0);
     Matrix_RotateZYX(0x500, 0, -0x500, MTXMODE_APPLY);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_obj_ice_poly.c", 428);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_obj_ice_poly.c", 428),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPSegment(POLY_XLU_DISP++, 0x08,
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, 0, play->gameplayFrames % 0x100, 0x20, 0x10, 1, 0,
                                 (play->gameplayFrames * 2) % 0x100, 0x40, 0x20));

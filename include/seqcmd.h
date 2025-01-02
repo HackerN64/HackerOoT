@@ -1,13 +1,11 @@
 #ifndef SEQCMD_H
 #define SEQCMD_H
 
-#include "sequence.h"
-
 // ==== Primary commands ====
 
 #define SEQCMD_OP_MASK 0xF0000000
 
-typedef enum SeqCmdOp {
+typedef enum {
     /* 0x0 */ SEQCMD_OP_PLAY_SEQUENCE,
     /* 0x1 */ SEQCMD_OP_STOP_SEQUENCE,
     /* 0x2 */ SEQCMD_OP_QUEUE_SEQUENCE,
@@ -29,7 +27,7 @@ typedef enum SeqCmdOp {
 // ==== Secondary commands ====
 
 // Subset of `SEQCMD_OP_TEMPO_CMD`
-typedef enum SeqCmdTempoCmdOp {
+typedef enum {
     /* 0x0 */ SEQCMD_SUB_OP_TEMPO_SET,
     /* 0x1 */ SEQCMD_SUB_OP_TEMPO_SPEED_UP,
     /* 0x2 */ SEQCMD_SUB_OP_TEMPO_SLOW_DOWN,
@@ -38,7 +36,7 @@ typedef enum SeqCmdTempoCmdOp {
 } SeqCmdTempoCmdOp;
 
 // Subset of `SEQCMD_OP_SETUP_CMD`
-typedef enum SeqCmdSetupCmdOp {
+typedef enum {
     /* 0x0 */ SEQCMD_SUB_OP_SETUP_RESTORE_SEQPLAYER_VOLUME,
     /* 0x1 */ SEQCMD_SUB_OP_SETUP_SEQ_UNQUEUE,
     /* 0x2 */ SEQCMD_SUB_OP_SETUP_RESTART_SEQ,
@@ -55,7 +53,7 @@ typedef enum SeqCmdSetupCmdOp {
 } SeqCmdSetupCmdOp;
 
 // Subset of `SEQCMD_OP_GLOBAL_CMD`
-typedef enum SeqCmdSubCmdOp {
+typedef enum {
     /* 0x0 */ SEQCMD_SUB_OP_GLOBAL_SET_SOUND_MODE,
     /* 0x1 */ SEQCMD_SUB_OP_GLOBAL_DISABLE_NEW_SEQUENCES
 } SeqCmdSubCmdOp;

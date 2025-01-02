@@ -10,7 +10,7 @@
 #define LONG_DOUBLE_TYPE long double
 #endif
 
-typedef struct _Pft {
+typedef struct {
     /* 0x00 */ union {
         long long ll;
         LONG_DOUBLE_TYPE ld;

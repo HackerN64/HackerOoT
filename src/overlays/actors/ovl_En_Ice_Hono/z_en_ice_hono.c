@@ -24,7 +24,7 @@ void EnIceHono_SetupActionDroppedFlame(EnIceHono* this);
 void EnIceHono_SetupActionSpreadFlames(EnIceHono* this);
 void EnIceHono_SetupActionSmallFlame(EnIceHono* this);
 
-ActorProfile En_Ice_Hono_Profile = {
+ActorInit En_Ice_Hono_InitVars = {
     /**/ ACTOR_EN_ICE_HONO,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,
@@ -38,7 +38,7 @@ ActorProfile En_Ice_Hono_Profile = {
 
 static ColliderCylinderInit sCylinderInitCapturableFlame = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -46,7 +46,7 @@ static ColliderCylinderInit sCylinderInitCapturableFlame = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -58,7 +58,7 @@ static ColliderCylinderInit sCylinderInitCapturableFlame = {
 
 static ColliderCylinderInit sCylinderInitDroppedFlame = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_ON | AT_TYPE_OTHER,
         AC_NONE,
         OC1_ON | OC1_TYPE_2,
@@ -66,7 +66,7 @@ static ColliderCylinderInit sCylinderInitDroppedFlame = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0xFFCFFFFF, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NORMAL,
@@ -77,8 +77,8 @@ static ColliderCylinderInit sCylinderInitDroppedFlame = {
 };
 
 static InitChainEntry sInitChainCapturableFlame[] = {
-    ICHAIN_U8(attentionRangeType, ATTENTION_RANGE_0, ICHAIN_CONTINUE),
-    ICHAIN_F32(lockOnArrowOffset, 60, ICHAIN_CONTINUE),
+    ICHAIN_U8(targetMode, 0, ICHAIN_CONTINUE),
+    ICHAIN_F32(targetArrowOffset, 60, ICHAIN_CONTINUE),
     ICHAIN_F32(uncullZoneForward, 1000, ICHAIN_CONTINUE),
     ICHAIN_F32(uncullZoneScale, 400, ICHAIN_CONTINUE),
     ICHAIN_F32(uncullZoneDownward, 1000, ICHAIN_STOP),
@@ -105,7 +105,7 @@ void EnIceHono_InitCapturableFlame(Actor* thisx, PlayState* play) {
 
     Actor_ProcessInitChain(&this->actor, sInitChainCapturableFlame);
     Actor_SetScale(&this->actor, 0.0074f);
-    this->actor.flags |= ACTOR_FLAG_ATTENTION_ENABLED;
+    this->actor.flags |= ACTOR_FLAG_0;
     Actor_SetFocus(&this->actor, 10.0f);
 
     Collider_InitCylinder(play, &this->collider);
@@ -221,7 +221,7 @@ void EnIceHono_CapturableFlame(EnIceHono* this, PlayState* play) {
     if (this->actor.xzDistToPlayer < 200.0f) {
         CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
     }
-    Actor_PlaySfx_Flagged2(&this->actor, NA_SE_EV_FIRE_PILLAR_S - SFX_FLAG);
+    func_8002F8F0(&this->actor, NA_SE_EV_FIRE_PILLAR_S - SFX_FLAG);
 }
 
 void EnIceHono_SetupActionDroppedFlame(EnIceHono* this) {
@@ -348,7 +348,7 @@ void EnIceHono_Update(Actor* thisx, PlayState* play) {
         this->timer--;
     }
     if (this->actor.params == 0) {
-        Actor_PlaySfx_Flagged2(&this->actor, NA_SE_IT_FLAME - SFX_FLAG);
+        func_8002F8F0(&this->actor, NA_SE_IT_FLAME - SFX_FLAG);
     }
     if ((this->actor.params == -1) || (this->actor.params == 0)) {
         this->unk_154 += 0x1111;
@@ -357,7 +357,7 @@ void EnIceHono_Update(Actor* thisx, PlayState* play) {
         sin154 = Math_SinS(this->unk_154);
         intensity = (Rand_ZeroOne() * 0.05f) + ((sin154 * 0.125f) + (sin156 * 0.1f)) + 0.425f;
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
         if ((intensity > 0.7f) || (intensity < 0.2f)) {
             PRINTF("ありえない値(ratio = %f)\n", intensity); // "impossible value(ratio = %f)"
         }
@@ -391,7 +391,8 @@ void EnIceHono_Draw(Actor* thisx, PlayState* play) {
     Matrix_RotateY(BINANG_TO_RAD((s16)(Camera_GetCamDirYaw(GET_ACTIVE_CAM(play)) - this->actor.shape.rot.y + 0x8000)),
                    MTXMODE_APPLY);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_en_ice_hono.c", 718);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_ice_hono.c", 718),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_ice_hono.c", 722);

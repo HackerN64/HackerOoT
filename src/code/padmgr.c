@@ -29,15 +29,15 @@
  * done while waiting for this operation to complete.
  */
 #include "global.h"
-#include "fault.h"
 #include "terminal.h"
 
-#define PADMGR_LOG(controllerNum, msg)                                                                \
-    if (DEBUG_FEATURES) {                                                                             \
-        PRINTF(VT_FGCOL(YELLOW));                                                                     \
-        PRINTF(T("padmgr: %dコン: %s\n", "padmgr: Controller %d: %s\n"), (controllerNum) + 1, (msg)); \
-        PRINTF(VT_RST);                                                                               \
-    }                                                                                                 \
+#define PADMGR_LOG(controllerNum, msg)                              \
+    if (IS_DEBUG) {                                                 \
+        PRINTF(VT_FGCOL(YELLOW));                                   \
+        /* padmgr: Controller %d: %s */                             \
+        PRINTF("padmgr: %dコン: %s\n", (controllerNum) + 1, (msg)); \
+        PRINTF(VT_RST);                                             \
+    }                                                               \
     (void)0
 
 #define LOG_SEVERITY_NOLOG 0
@@ -68,23 +68,22 @@ s32 gPadMgrLogSeverity = LOG_SEVERITY_CRITICAL;
 OSMesgQueue* PadMgr_AcquireSerialEventQueue(PadMgr* padMgr) {
     OSMesgQueue* serialEventQueue;
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     serialEventQueue = NULL;
 #endif
 
     if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
-        PRINTF(T("%2d %d serialMsgQロック待ち         %08x %08x          %08x\n",
-                 "%2d %d serialMsgQ Waiting for lock         %08x %08x          %08x\n"),
-               osGetThreadId(NULL), MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue,
-               &serialEventQueue);
+        // "serialMsgQ Waiting for lock"
+        PRINTF("%2d %d serialMsgQロック待ち         %08x %08x          %08x\n", osGetThreadId(NULL),
+               MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue, &serialEventQueue);
     }
 
     osRecvMesg(&padMgr->serialLockQueue, (OSMesg*)&serialEventQueue, OS_MESG_BLOCK);
 
     if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
-        PRINTF(T("%2d %d serialMsgQをロックしました                     %08x\n",
-                 "%2d %d serialMsgQ Locked                     %08x\n"),
-               osGetThreadId(NULL), MQ_GET_COUNT(&padMgr->serialLockQueue), serialEventQueue);
+        // "serialMsgQ Locked"
+        PRINTF("%2d %d serialMsgQをロックしました                     %08x\n", osGetThreadId(NULL),
+               MQ_GET_COUNT(&padMgr->serialLockQueue), serialEventQueue);
     }
 
     return serialEventQueue;
@@ -99,17 +98,17 @@ OSMesgQueue* PadMgr_AcquireSerialEventQueue(PadMgr* padMgr) {
  */
 void PadMgr_ReleaseSerialEventQueue(PadMgr* padMgr, OSMesgQueue* serialEventQueue) {
     if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
-        PRINTF(T("%2d %d serialMsgQロック解除します   %08x %08x %08x\n", "%2d %d serialMsgQ Unlock   %08x %08x %08x\n"),
-               osGetThreadId(NULL), MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue,
-               serialEventQueue);
+        // "serialMsgQ Unlock"
+        PRINTF("%2d %d serialMsgQロック解除します   %08x %08x %08x\n", osGetThreadId(NULL),
+               MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue, serialEventQueue);
     }
 
     osSendMesg(&padMgr->serialLockQueue, (OSMesg)serialEventQueue, OS_MESG_BLOCK);
 
     if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE) {
-        PRINTF(T("%2d %d serialMsgQロック解除しました %08x %08x %08x\n", "%2d %d serialMsgQ Unlocked %08x %08x %08x\n"),
-               osGetThreadId(NULL), MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue,
-               serialEventQueue);
+        // "serialMsgQ Unlocked"
+        PRINTF("%2d %d serialMsgQロック解除しました %08x %08x %08x\n", osGetThreadId(NULL),
+               MQ_GET_COUNT(&padMgr->serialLockQueue), padMgr, &padMgr->serialLockQueue, serialEventQueue);
     }
 }
 
@@ -152,13 +151,14 @@ void PadMgr_UpdateRumble(PadMgr* padMgr) {
                 if (padMgr->pakType[i] == CONT_PAK_RUMBLE) {
                     if (padMgr->rumbleEnable[i]) {
                         if (padMgr->rumbleTimer[i] < 3) {
-                            PADMGR_LOG(i, T("振動パック ぶるぶるぶるぶる", "Rumble pak brrr"));
+                            // "Rumble pack brrr"
+                            PADMGR_LOG(i, "振動パック ぶるぶるぶるぶる");
 
                             if (osMotorStart(&padMgr->rumblePfs[i]) != 0) {
                                 padMgr->pakType[i] = CONT_PAK_NONE;
 
-                                PADMGR_LOG(i, T("振動パックで通信エラーが発生しました",
-                                                "A communication error has occurred with the rumble pak"));
+                                // "A communication error has occurred with the vibration pack"
+                                PADMGR_LOG(i, "振動パックで通信エラーが発生しました");
                             } else {
                                 padMgr->rumbleTimer[i] = 3;
                             }
@@ -167,13 +167,14 @@ void PadMgr_UpdateRumble(PadMgr* padMgr) {
                         }
                     } else {
                         if (padMgr->rumbleTimer[i] != 0) {
-                            PADMGR_LOG(i, T("振動パック 停止", "Stop rumble pak"));
+                            // "Stop vibration pack"
+                            PADMGR_LOG(i, "振動パック 停止");
 
                             if (osMotorStop(&padMgr->rumblePfs[i]) != 0) {
                                 padMgr->pakType[i] = CONT_PAK_NONE;
 
-                                PADMGR_LOG(i, T("振動パックで通信エラーが発生しました",
-                                                "A communication error has occurred with the rumble pak"));
+                                // "A communication error has occurred with the vibration pack"
+                                PADMGR_LOG(i, "振動パックで通信エラーが発生しました");
                             } else {
                                 padMgr->rumbleTimer[i]--;
                             }
@@ -184,12 +185,13 @@ void PadMgr_UpdateRumble(PadMgr* padMgr) {
                 }
             } else {
                 if (padMgr->pakType[i] != CONT_PAK_NONE) {
-                    if (padMgr->pakType[i] == CONT_PAK_RUMBLE || !DEBUG_FEATURES) {
-                        PADMGR_LOG(i, T("振動パックが抜かれたようです", "It seems that a rumble pak was pulled out"));
+                    if (padMgr->pakType[i] == CONT_PAK_RUMBLE || !IS_DEBUG) {
+                        // "It seems that a vibration pack was pulled out"
+                        PADMGR_LOG(i, "振動パックが抜かれたようです");
                         padMgr->pakType[i] = CONT_PAK_NONE;
                     } else {
-                        PADMGR_LOG(i, T("振動パックではないコントローラパックが抜かれたようです",
-                                        "It seems that a controller pak that is not a rumble pak was pulled out"));
+                        // "It seems that a controller pack that is not a vibration pack was pulled out"
+                        PADMGR_LOG(i, "振動パックではないコントローラパックが抜かれたようです");
                         padMgr->pakType[i] = CONT_PAK_NONE;
                     }
                 }
@@ -211,13 +213,15 @@ void PadMgr_UpdateRumble(PadMgr* padMgr) {
                 osMotorStart(&padMgr->rumblePfs[i]);
                 osMotorStop(&padMgr->rumblePfs[i]);
 
-                PADMGR_LOG(i, T("振動パックを認識しました", "Recognized rumble pak"));
+                // "Recognized vibration pack"
+                PADMGR_LOG(i, "振動パックを認識しました");
             } else if (ret == PFS_ERR_DEVICE) {
                 padMgr->pakType[i] = CONT_PAK_OTHER;
             } else if (ret == PFS_ERR_CONTRFAIL) {
                 LOG_NUM("++errcnt", ++sRumbleErrorCount, "../padmgr.c", 282);
 
-                PADMGR_LOG(i, T("コントローラパックの通信エラー", "Controller pak communication error"));
+                // "Controller pack communication error"
+                PADMGR_LOG(i, "コントローラパックの通信エラー");
             }
         }
     }
@@ -237,8 +241,9 @@ void PadMgr_RumbleStop(PadMgr* padMgr) {
         if (osMotorInit(serialEventQueue, &padMgr->rumblePfs[i], i) == 0) {
             // If there is a rumble pak attached to this controller, stop it
 
-            if (!FAULT_MSG_ID && padMgr->rumbleOnTimer != 0) {
-                PADMGR_LOG(i, T("振動パック 停止", "Stop rumble pak"));
+            if (gFaultMgr.msgId == 0 && padMgr->rumbleOnTimer != 0) {
+                // "Stop rumble pak"
+                PADMGR_LOG(i, "振動パック 停止");
             }
             osMotorStop(&padMgr->rumblePfs[i]);
         }
@@ -300,14 +305,16 @@ void PadMgr_UpdateInputs(PadMgr* padMgr) {
                 input->cur = *pad;
                 if (!padMgr->ctrlrIsConnected[i]) {
                     padMgr->ctrlrIsConnected[i] = true;
-                    PADMGR_LOG(i, T("認識しました", "Recognized"));
+                    // "Recognized"
+                    PADMGR_LOG(i, "認識しました");
                 }
                 break;
             case (CHNL_ERR_OVERRUN >> 4):
                 // Overrun error, reuse previous inputs
                 input->cur = input->prev;
                 LOG_NUM("this->Key_switch[i]", padMgr->ctrlrIsConnected[i], "../padmgr.c", 380);
-                PADMGR_LOG(i, T("オーバーランエラーが発生", "Overrun error occurred"));
+                // "Overrun error occurred"
+                PADMGR_LOG(i, "オーバーランエラーが発生");
                 break;
             case (CHNL_ERR_NORESP >> 4):
                 // No response error, take inputs as 0
@@ -320,19 +327,14 @@ void PadMgr_UpdateInputs(PadMgr* padMgr) {
                     padMgr->ctrlrIsConnected[i] = false;
                     padMgr->pakType[i] = CONT_PAK_NONE;
                     padMgr->rumbleTimer[i] = UINT8_MAX;
-                    PADMGR_LOG(i, T("応答しません", "Not responding"));
+                    // "Not responding"
+                    PADMGR_LOG(i, "応答しません");
                 }
                 break;
             default:
                 // Unknown error response
                 LOG_HEX("padnow1->errno", pad->errno, "../padmgr.c", 396);
-#if OOT_VERSION < NTSC_1_1
-                Fault_AddHungupAndCrash("../padmgr.c", 379);
-#elif OOT_VERSION < GC_JP
-                Fault_AddHungupAndCrash("../padmgr.c", 382);
-#else
                 Fault_AddHungupAndCrash("../padmgr.c", 397);
-#endif
                 break;
         }
 
@@ -350,6 +352,8 @@ void PadMgr_UpdateInputs(PadMgr* padMgr) {
 
 void PadMgr_HandleRetrace(PadMgr* padMgr) {
     OSMesgQueue* serialEventQueue = PadMgr_AcquireSerialEventQueue(padMgr);
+    u32 mask;
+    s32 i;
 
     // Begin reading controller data
     osContStartReadData(serialEventQueue);
@@ -363,7 +367,7 @@ void PadMgr_HandleRetrace(PadMgr* padMgr) {
     osRecvMesg(serialEventQueue, NULL, OS_MESG_BLOCK);
     osContGetReadData(padMgr->pads);
 
-#if !DEBUG_FEATURES
+#if !IS_DEBUG
     // Clear controllers 2 and 4
     bzero(&padMgr->pads[1], sizeof(OSContPad));
     bzero(&padMgr->pads[3], sizeof(OSContPad));
@@ -384,27 +388,23 @@ void PadMgr_HandleRetrace(PadMgr* padMgr) {
 
     PadMgr_ReleaseSerialEventQueue(padMgr, serialEventQueue);
 
-    {
-        u32 mask = 0;
-        s32 i;
-
-        // Update the state of connected controllers
-        for (i = 0; i < MAXCONTROLLERS; i++) {
-            if (padMgr->padStatus[i].errno == 0) {
-                // Only standard N64 controllers are supported
-                if (padMgr->padStatus[i].type == CONT_TYPE_NORMAL) {
-                    mask |= 1 << i;
-                } else {
-                    LOG_HEX("this->pad_status[i].type", padMgr->padStatus[i].type, "../padmgr.c", 458);
-                    PRINTF(T("知らない種類のコントローラが接続されています\n",
-                             "An unknown type of controller is connected\n"));
-                }
+    // Update the state of connected controllers
+    mask = 0;
+    for (i = 0; i < MAXCONTROLLERS; i++) {
+        if (padMgr->padStatus[i].errno == 0) {
+            // Only standard N64 controllers are supported
+            if (padMgr->padStatus[i].type == CONT_TYPE_NORMAL) {
+                mask |= 1 << i;
+            } else {
+                LOG_HEX("this->pad_status[i].type", padMgr->padStatus[i].type, "../padmgr.c", 458);
+                // "An unknown type of controller is connected"
+                PRINTF("知らない種類のコントローラが接続されています\n");
             }
         }
-        padMgr->validCtrlrsMask = mask;
     }
+    padMgr->validCtrlrsMask = mask;
 
-    if (FAULT_MSG_ID != 0) {
+    if (gFaultMgr.msgId != 0) {
         // If fault is active, no rumble
         PadMgr_RumbleStop(padMgr);
     } else if (padMgr->rumbleOffTimer > 0) {
@@ -472,13 +472,13 @@ void PadMgr_ThreadEntry(PadMgr* padMgr) {
     s16* msg = NULL;
     s32 exit;
 
-    PRINTF(T("コントローラスレッド実行開始\n", "Controller thread execution start"));
+    PRINTF("コントローラスレッド実行開始\n"); // "Controller thread execution start"
 
     exit = false;
     while (!exit) {
         if (gPadMgrLogSeverity >= LOG_SEVERITY_VERBOSE && MQ_IS_EMPTY(&padMgr->interruptQueue)) {
-            PRINTF(T("コントローラスレッドイベント待ち %lld\n", "Waiting for controller thread event %lld\n"),
-                   OS_CYCLES_TO_USEC(osGetTime()));
+            // "Waiting for controller thread event"
+            PRINTF("コントローラスレッドイベント待ち %lld\n", OS_CYCLES_TO_USEC(osGetTime()));
         }
 
         osRecvMesg(&padMgr->interruptQueue, (OSMesg*)&msg, OS_MESG_BLOCK);
@@ -507,11 +507,11 @@ void PadMgr_ThreadEntry(PadMgr* padMgr) {
 
     IrqMgr_RemoveClient(padMgr->irqMgr, &padMgr->irqClient);
 
-    PRINTF(T("コントローラスレッド実行終了\n", "Controller thread execution end\n"));
+    PRINTF("コントローラスレッド実行終了\n"); // "Controller thread execution end"
 }
 
 void PadMgr_Init(PadMgr* padMgr, OSMesgQueue* serialEventQueue, IrqMgr* irqMgr, OSId id, OSPri priority, void* stack) {
-    PRINTF(T("パッドマネージャ作成 padmgr_Create()\n", "Pad Manager creation padmgr_Create()\n"));
+    PRINTF("パッドマネージャ作成 padmgr_Create()\n"); // "Pad Manager creation"
 
     bzero(padMgr, sizeof(PadMgr));
     padMgr->irqMgr = irqMgr;

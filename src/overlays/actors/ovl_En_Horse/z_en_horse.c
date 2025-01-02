@@ -5,8 +5,6 @@
  */
 
 #include "z_en_horse.h"
-#include "global.h"
-#include "versions.h"
 #include "overlays/actors/ovl_En_In/z_en_in.h"
 #include "assets/objects/object_horse/object_horse.h"
 #include "assets/objects/object_hni/object_hni.h"
@@ -68,7 +66,7 @@ static f32 sPlaybackSpeeds[] = { 2.0f / 3.0f, 2.0f / 3.0f, 1.0f, 1.0f, 1.0f, 1.0
 
 static SkeletonHeader* sSkeletonHeaders[] = { &gEponaSkel, &gHorseIngoSkel };
 
-ActorProfile En_Horse_Profile = {
+ActorInit En_Horse_InitVars = {
     /**/ ACTOR_EN_HORSE,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -82,7 +80,7 @@ ActorProfile En_Horse_Profile = {
 
 static ColliderCylinderInit sCylinderInit1 = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_TYPE_PLAYER,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -90,7 +88,7 @@ static ColliderCylinderInit sCylinderInit1 = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000400, 0x00, 0x04 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NONE,
@@ -102,7 +100,7 @@ static ColliderCylinderInit sCylinderInit1 = {
 
 static ColliderCylinderInit sCylinderInit2 = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -110,7 +108,7 @@ static ColliderCylinderInit sCylinderInit2 = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0xFFCFFFFF, 0x00, 0x00 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_NONE,
@@ -123,7 +121,7 @@ static ColliderCylinderInit sCylinderInit2 = {
 static ColliderJntSphElementInit sJntSphItemsInit[1] = {
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0x0001F824, 0x00, 0x00 },
             ATELEM_NONE,
@@ -136,7 +134,7 @@ static ColliderJntSphElementInit sJntSphItemsInit[1] = {
 
 static ColliderJntSphInit sJntSphInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_ALL,
@@ -149,7 +147,7 @@ static ColliderJntSphInit sJntSphInit = {
 
 static CollisionCheckInfoInit D_80A65F38 = { 10, 35, 100, MASS_HEAVY };
 
-typedef struct EnHorseSpawnpoint {
+typedef struct {
     /* 0x0 */ s16 sceneId;
     /* 0x2 */ Vec3s pos;
     /* 0x8 */ s16 angle;
@@ -331,7 +329,7 @@ static EnHorseSpawnpoint sHorseSpawns[] = {
     { SCENE_LON_LON_RANCH, 907, 0, -2336, 0 },
 };
 
-typedef struct BridgeJumpPoint {
+typedef struct {
     /* 0x00 */ s16 zMin;
     /* 0x02 */ s16 zMax;
     /* 0x04 */ s16 xMin;
@@ -347,7 +345,7 @@ static BridgeJumpPoint sBridgeJumps[] = {
     { -195, -40, -240, -120, -360, 0x4000, 0x7D0, 270, -52, -117 },
 };
 
-typedef struct RaceWaypoint {
+typedef struct {
     /* 0x0 */ s16 x;
     /* 0x2 */ s16 y;
     /* 0x4 */ s16 z;
@@ -355,7 +353,7 @@ typedef struct RaceWaypoint {
     /* 0x8 */ s16 angle;
 } RaceWaypoint; // size = 0xA
 
-typedef struct RaceInfo {
+typedef struct {
     /* 0x0 */ s32 numWaypoints;
     /* 0x4 */ RaceWaypoint* waypoints;
 } RaceInfo; // size = 0x8
@@ -405,7 +403,7 @@ static EnHorseCsFunc sCutsceneActionFuncs[] = {
     NULL, EnHorse_CsMoveToPoint, EnHorse_CsJump, EnHorse_CsRearing, EnHorse_CsWarpMoveToPoint, EnHorse_CsWarpRearing,
 };
 
-typedef struct CsActionEntry {
+typedef struct {
     /* 0x0 */ s32 cueId;
     /* 0x4 */ s32 csFuncIdx;
 } CsActionEntry; // size = 0x8
@@ -701,10 +699,8 @@ s32 EnHorse_Spawn(EnHorse* this, PlayState* play) {
                 this->actor.world.rot.y = sHorseSpawns[i].angle;
                 this->actor.shape.rot.y = Actor_WorldYawTowardActor(&this->actor, &GET_PLAYER(play)->actor);
                 spawn = true;
-#if OOT_VERSION >= PAL_1_0
                 SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &this->actor.world.pos,
                                              &this->actor.projectedPos, &this->actor.projectedW);
-#endif
             }
         }
     }
@@ -724,7 +720,7 @@ void EnHorse_ResetRace(EnHorse* this, PlayState* play) {
 s32 EnHorse_PlayerCanMove(EnHorse* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if ((player->stateFlags1 & PLAYER_STATE1_0) || func_8002DD78(GET_PLAYER(play)) == true ||
+    if ((player->stateFlags1 & PLAYER_STATE1_0) || func_8002DD78(GET_PLAYER(play)) == 1 ||
         (player->stateFlags1 & PLAYER_STATE1_20) || ((this->stateFlags & ENHORSE_FLAG_19) && !this->inRace) ||
         this->action == ENHORSE_ACT_HBA || player->actor.flags & ACTOR_FLAG_TALK ||
         play->csCtx.state != CS_STATE_IDLE) {
@@ -760,7 +756,7 @@ void EnHorse_Init(Actor* thisx, PlayState* play2) {
         DREG(4) = 70;
     }
 
-    if (PARAMS_GET_NOSHIFT(this->actor.params, 15, 1)) {
+    if (this->actor.params & 0x8000) {
         this->actor.params &= ~0x8000;
         this->type = HORSE_HNI;
 
@@ -1742,10 +1738,8 @@ void EnHorse_Inactive(EnHorse* this, PlayState* play2) {
     if (R_EPONAS_SONG_PLAYED && this->type == HORSE_EPONA) {
         R_EPONAS_SONG_PLAYED = false;
         if (EnHorse_Spawn(this, play) != 0) {
-#if OOT_VERSION >= PAL_1_0
             Audio_PlaySfxGeneral(NA_SE_EV_HORSE_NEIGH, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-#endif
             this->stateFlags &= ~ENHORSE_INACTIVE;
             gSaveContext.save.info.horseData.sceneId = play->sceneId;
 
@@ -1820,10 +1814,8 @@ void EnHorse_Idle(EnHorse* this, PlayState* play) {
         R_EPONAS_SONG_PLAYED = false;
         if (!func_80A5BBBC(play, this, &this->actor.world.pos)) {
             if (EnHorse_Spawn(this, play)) {
-#if OOT_VERSION >= PAL_1_0
                 Audio_PlaySfxGeneral(NA_SE_EV_HORSE_NEIGH, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-#endif
                 this->followTimer = 0;
                 EnHorse_SetFollowAnimation(this, play);
                 Camera_SetViewParam(play->cameraPtrs[CAM_ID_MAIN], CAM_VIEW_TARGET, &this->actor);
@@ -1936,12 +1928,6 @@ void EnHorse_FollowPlayer(EnHorse* this, PlayState* play) {
         this->skin.skelAnime.playSpeed = 1.0f;
         this->stateFlags &= ~ENHORSE_LAND2_SOUND;
         this->unk_21C = this->unk_228;
-#if OOT_VERSION < PAL_1_0
-        if (this->stateFlags & ENHORSE_DRAW) {
-            Audio_PlaySfxGeneral(NA_SE_EV_HORSE_NEIGH, &this->unk_21C, 4, &gSfxDefaultFreqAndVolScale,
-                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        }
-#endif
     } else if (this->stateFlags & ENHORSE_TURNING_TO_PLAYER) {
         this->actor.world.rot.y += this->followPlayerTurnSpeed;
         this->actor.shape.rot.y = this->actor.world.rot.y;
@@ -3608,9 +3594,9 @@ void EnHorse_Update(Actor* thisx, PlayState* play2) {
         }
 
         if (thisx->speed == 0.0f && !(this->stateFlags & ENHORSE_FLAG_19)) {
-            thisx->colChkInfo.mass = MASS_IMMOVABLE;
+            thisx->colChkInfo.mass = 0xFF;
         } else {
-            thisx->colChkInfo.mass = MASS_HEAVY;
+            thisx->colChkInfo.mass = 0xFE;
         }
 
         if (thisx->speed >= 5.0f) {

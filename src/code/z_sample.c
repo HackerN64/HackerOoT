@@ -16,8 +16,7 @@ void Sample_Draw(SampleState* this) {
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
     gSPSegment(POLY_OPA_DISP++, 0x01, this->staticSegment);
 
-    Gfx_SetupFrame(gfxCtx, true, 0, 0, 0);
-    Gfx_ClearZBuffer(gfxCtx);
+    Gfx_SetupFrame(gfxCtx, 0, 0, 0);
 
     view->flags = VIEW_VIEWING | VIEW_VIEWPORT | VIEW_PROJECTION_PERSPECTIVE;
     View_Apply(view, VIEW_ALL);
@@ -26,7 +25,7 @@ void Sample_Draw(SampleState* this) {
         Mtx* mtx = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
 
         guPosition(mtx, SREG(37), SREG(38), SREG(39), 1.0f, SREG(40), SREG(41), SREG(42));
-        gSPMatrix(POLY_OPA_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPMatrix(POLY_OPA_DISP++, mtx, G_MTX_LOAD);
     }
 
     POLY_OPA_DISP = Gfx_SetFog2(POLY_OPA_DISP, 255, 255, 255, 0, 0, 0);

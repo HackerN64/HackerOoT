@@ -9,7 +9,7 @@ struct EnGo2;
 
 typedef void (*EnGo2ActionFunc)(struct EnGo2*, PlayState*);
 
-typedef enum GoronType {
+typedef enum {
     /* 0x00 */ GORON_CITY_ROLLING_BIG,
     /* 0x01 */ GORON_CITY_LINK,
     /* 0x02 */ GORON_DMT_BIGGORON,
@@ -41,7 +41,7 @@ typedef enum GoronType {
 // /* 0x0B */ GORON_FIRE_HIGHEST
 
 
-typedef struct EnGo2DataStruct1 {
+typedef struct {
     s16 unused;
     s16 yDist;
     s16 xzDist;
@@ -49,14 +49,14 @@ typedef struct EnGo2DataStruct1 {
     s16 height;
 } EnGo2DataStruct1; // size = 0xA
 
-typedef struct EnGo2DataStruct2 {
+typedef struct {
     f32 shape_unk_10;
     f32 scale;
     s8 actor_unk_1F;
     f32 interactRange;
 } EnGo2DataStruct2; // size = 0x10
 
-typedef struct EnGo2DustEffectData {
+typedef struct {
     u8 initialTimer;
     f32 scale;
     f32 scaleStep;
@@ -92,8 +92,8 @@ typedef struct EnGo2 {
     /* 0x021C */ char unk_21C[0x04];
     /* 0x0220 */ f32 alpha; // Set to 0, used by func_80A45360, smoothed to this->actor.shape.shadowAlpha from either 0 or 255.0f
     /* 0x0224 */ s16 blinkTimer;
-    /* 0x0226 */ s16 fidgetTableY[18];
-    /* 0x024A */ s16 fidgetTableZ[18];
+    /* 0x0226 */ s16 unk_226[18]; // Remains unknown
+    /* 0x024A */ s16 unk_24A[18]; // Remains unknown
     /* 0x026E */ u16 trackingMode;
     /* 0x0270 */ EnGoEffect effects[EN_GO2_EFFECT_COUNT];
     /* 0x04A0 */ Vec3f subCamEye;

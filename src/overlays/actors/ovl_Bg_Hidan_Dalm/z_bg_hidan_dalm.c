@@ -17,7 +17,7 @@ void BgHidanDalm_Draw(Actor* thisx, PlayState* play);
 void BgHidanDalm_Wait(BgHidanDalm* this, PlayState* play);
 void BgHidanDalm_Shrink(BgHidanDalm* this, PlayState* play);
 
-ActorProfile Bg_Hidan_Dalm_Profile = {
+ActorInit Bg_Hidan_Dalm_InitVars = {
     /**/ ACTOR_BG_HIDAN_DALM,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -32,7 +32,7 @@ ActorProfile Bg_Hidan_Dalm_Profile = {
 static ColliderTrisElementInit sTrisElementInit[4] = {
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0x00000040, 0x00, 0x00 },
             ATELEM_NONE,
@@ -43,7 +43,7 @@ static ColliderTrisElementInit sTrisElementInit[4] = {
     },
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0x00000040, 0x00, 0x00 },
             ATELEM_NONE,
@@ -54,7 +54,7 @@ static ColliderTrisElementInit sTrisElementInit[4] = {
     },
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0x00000040, 0x00, 0x00 },
             ATELEM_NONE,
@@ -65,7 +65,7 @@ static ColliderTrisElementInit sTrisElementInit[4] = {
     },
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0x00000040, 0x00, 0x00 },
             ATELEM_NONE,
@@ -78,7 +78,7 @@ static ColliderTrisElementInit sTrisElementInit[4] = {
 
 static ColliderTrisInit sTrisInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
@@ -106,7 +106,7 @@ void BgHidanDalm_Init(Actor* thisx, PlayState* play) {
     Collider_InitTris(play, &this->collider);
     Collider_SetTris(play, &this->collider, thisx, &sTrisInit, this->colliderItems);
 
-    this->switchFlag = PARAMS_GET_U(thisx->params, 8, 8);
+    this->switchFlag = (thisx->params >> 8) & 0xFF;
     thisx->params &= 0xFF;
     if (Flags_GetSwitch(play, this->switchFlag)) {
         Actor_Kill(thisx);

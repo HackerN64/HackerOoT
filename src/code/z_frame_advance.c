@@ -1,10 +1,4 @@
-#include "z64frame_advance.h"
-
-#include "stdbool.h"
-
-#include "controller.h"
-#include "padmgr.h"
-#include "macros.h"
+#include "global.h"
 
 void FrameAdvance_Init(FrameAdvanceContext* frameAdvCtx) {
     frameAdvCtx->timer = 0;

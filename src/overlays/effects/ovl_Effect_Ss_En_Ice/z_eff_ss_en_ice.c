@@ -5,7 +5,6 @@
  */
 
 #include "z_eff_ss_en_ice.h"
-#include "versions.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
 #define rLifespan regs[0]
@@ -27,7 +26,7 @@ void EffectSsEnIce_Draw(PlayState* play, u32 index, EffectSs* this);
 void EffectSsEnIce_Update(PlayState* play, u32 index, EffectSs* this);
 void EffectSsEnIce_UpdateFlying(PlayState* play, u32 index, EffectSs* this);
 
-EffectSsProfile Effect_Ss_En_Ice_Profile = {
+EffectSsInit Effect_Ss_En_Ice_InitVars = {
     EFFECT_SS_EN_ICE,
     EffectSsEnIce_Init,
 };
@@ -114,7 +113,8 @@ void EffectSsEnIce_Draw(PlayState* play, u32 index, EffectSs* this) {
     Matrix_Scale(scale, scale, scale, MTXMODE_APPLY);
     Matrix_RotateY(BINANG_TO_RAD(this->rYaw), MTXMODE_APPLY);
     Matrix_RotateX(BINANG_TO_RAD(this->rPitch), MTXMODE_APPLY);
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, gfxCtx, "../z_eff_en_ice.c", 261);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(gfxCtx, "../z_eff_en_ice.c", 261),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     hiliteLightDir.x = 89.8f;
     hiliteLightDir.y = 0.0f;
@@ -134,9 +134,9 @@ void EffectSsEnIce_Draw(PlayState* play, u32 index, EffectSs* this) {
 }
 
 void EffectSsEnIce_UpdateFlying(PlayState* play, u32 index, EffectSs* this) {
-#if OOT_VERSION >= NTSC_1_1
+    s16 rand;
+
     if ((this->actor != NULL) && (this->actor->update != NULL)) {
-#endif
         if ((this->life >= 9) && (this->actor->colorFilterTimer != 0) && !(this->actor->colorFilterParams & 0xC000)) {
             this->pos.x = this->actor->world.pos.x + this->vec.x;
             this->pos.y = this->actor->world.pos.y + this->vec.y;
@@ -148,11 +148,9 @@ void EffectSsEnIce_UpdateFlying(PlayState* play, u32 index, EffectSs* this) {
             this->accel.y = -1.5f;
             this->velocity.y = 5.0f;
         }
-#if OOT_VERSION >= NTSC_1_1
     } else {
         if (this->life >= 9) {
-            s16 rand = Rand_CenteredFloat(65535.0f);
-
+            rand = Rand_CenteredFloat(65535.0f);
             this->accel.x = Math_SinS(rand) * (Rand_ZeroOne() + 1.0f);
             this->accel.z = Math_CosS(rand) * (Rand_ZeroOne() + 1.0f);
             this->life = 8;
@@ -160,7 +158,6 @@ void EffectSsEnIce_UpdateFlying(PlayState* play, u32 index, EffectSs* this) {
             this->velocity.y = 5.0f;
         }
     }
-#endif
 }
 
 void EffectSsEnIce_Update(PlayState* play, u32 index, EffectSs* this) {

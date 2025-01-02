@@ -23,7 +23,7 @@
  * @param sjis Shift-JIS Codepoint of glyph.
  * @return s32 offset into `kanji` file.
  *
- * @remark Almost identical to "LeoGetKadr" from libleo.
+ * @remark Original name: "LeoGetKadr"
  */
 LEAF(Kanji_OffsetFromShiftJIS)
     // Characters with codepoints >= 0x8800 are kanji. Arrangement is regular,

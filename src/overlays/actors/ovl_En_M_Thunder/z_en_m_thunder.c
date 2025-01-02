@@ -12,7 +12,7 @@ void func_80A9F314(PlayState* play, f32 arg1);
 void func_80A9F408(EnMThunder* this, PlayState* play);
 void func_80A9F9B4(EnMThunder* this, PlayState* play);
 
-ActorProfile En_M_Thunder_Profile = {
+ActorInit En_M_Thunder_InitVars = {
     /**/ ACTOR_EN_M_THUNDER,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,
@@ -26,7 +26,7 @@ ActorProfile En_M_Thunder_Profile = {
 
 static ColliderCylinderInit D_80AA0420 = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_ON | AT_TYPE_PLAYER,
         AC_NONE,
         OC1_NONE,
@@ -34,7 +34,7 @@ static ColliderCylinderInit D_80AA0420 = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK2,
+        ELEMTYPE_UNK2,
         { 0x00000001, 0x00, 0x00 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NONE,
@@ -59,7 +59,7 @@ void EnMThunder_Init(Actor* thisx, PlayState* play2) {
 
     Collider_InitCylinder(play, &this->collider);
     Collider_SetCylinder(play, &this->collider, &this->actor, &D_80AA0420);
-    this->unk_1C7 = PARAMS_GET_S(this->actor.params, 0, 8) - 1;
+    this->unk_1C7 = (this->actor.params & 0xFF) - 1;
     Lights_PointNoGlowSetInfo(&this->lightInfo, this->actor.world.pos.x, this->actor.world.pos.y,
                               this->actor.world.pos.z, 255, 255, 255, 0);
     this->lightNode = LightContext_InsertLight(play, &play->lightCtx, &this->lightInfo);
@@ -78,8 +78,8 @@ void EnMThunder_Init(Actor* thisx, PlayState* play2) {
 
     if (player->stateFlags2 & PLAYER_STATE2_17) {
         if (!gSaveContext.save.info.playerData.isMagicAcquired || (gSaveContext.magicState != MAGIC_STATE_IDLE) ||
-            (PARAMS_GET_S(this->actor.params, 8, 8) &&
-             !(Magic_RequestChange(play, PARAMS_GET_S(this->actor.params, 8, 8), MAGIC_CONSUME_NOW)))) {
+            (((this->actor.params & 0xFF00) >> 8) &&
+             !(Magic_RequestChange(play, (this->actor.params & 0xFF00) >> 8, MAGIC_CONSUME_NOW)))) {
             Audio_PlaySfxGeneral(NA_SE_IT_ROLLING_CUT, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             Audio_PlaySfxGeneral(NA_SE_IT_SWORD_SWING_HARD, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
@@ -135,7 +135,7 @@ void func_80A9F350(EnMThunder* this, PlayState* play) {
         return;
     }
 
-    if (!(player->stateFlags1 & PLAYER_STATE1_CHARGING_SPIN_ATTACK)) {
+    if (!(player->stateFlags1 & PLAYER_STATE1_12)) {
         Actor_Kill(&this->actor);
     }
 }
@@ -151,8 +151,8 @@ void func_80A9F408(EnMThunder* this, PlayState* play) {
     if (this->unk_1CA == 0) {
         if (player->unk_858 >= 0.1f) {
             if ((gSaveContext.magicState != MAGIC_STATE_IDLE) ||
-                (PARAMS_GET_S(this->actor.params, 8, 8) &&
-                 !(Magic_RequestChange(play, PARAMS_GET_S(this->actor.params, 8, 8), MAGIC_CONSUME_WAIT_PREVIEW)))) {
+                (((this->actor.params & 0xFF00) >> 8) &&
+                 !(Magic_RequestChange(play, (this->actor.params & 0xFF00) >> 8, MAGIC_CONSUME_WAIT_PREVIEW)))) {
                 func_80A9F350(this, play);
                 func_80A9EFE0(this, func_80A9F350);
                 this->unk_1C8 = 0;
@@ -185,7 +185,7 @@ void func_80A9F408(EnMThunder* this, PlayState* play) {
             return;
         } else {
             player->stateFlags2 &= ~PLAYER_STATE2_17;
-            if (PARAMS_GET_S(this->actor.params, 8, 8)) {
+            if ((this->actor.params & 0xFF00) >> 8) {
                 gSaveContext.magicState = MAGIC_STATE_CONSUME_SETUP;
             }
             if (player->unk_858 < 0.85f) {
@@ -218,7 +218,7 @@ void func_80A9F408(EnMThunder* this, PlayState* play) {
         }
     }
 
-    if (!(player->stateFlags1 & PLAYER_STATE1_CHARGING_SPIN_ATTACK)) {
+    if (!(player->stateFlags1 & PLAYER_STATE1_12)) {
         if (this->actor.child != NULL) {
             this->actor.child->parent = NULL;
         }
@@ -330,7 +330,8 @@ void EnMThunder_Draw(Actor* thisx, PlayState* play2) {
     OPEN_DISPS(play->state.gfxCtx, "../z_en_m_thunder.c", 844);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     Matrix_Scale(0.02f, 0.02f, 0.02f, MTXMODE_APPLY);
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_en_m_thunder.c", 853);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_m_thunder.c", 853),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     switch (this->unk_1C6) {
         case 0:
@@ -387,7 +388,8 @@ void EnMThunder_Draw(Actor* thisx, PlayState* play2) {
         phi_t1 = 0x14;
     }
     Matrix_Scale(1.0f, phi_f14, phi_f14, MTXMODE_APPLY);
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_en_m_thunder.c", 960);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_m_thunder.c", 960),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     gSPSegment(POLY_XLU_DISP++, 0x09,
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, (play->gameplayFrames * 5) & 0xFF, 0, 0x20, 0x20,

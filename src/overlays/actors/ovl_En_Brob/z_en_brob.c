@@ -7,7 +7,7 @@
 #include "z_en_brob.h"
 #include "assets/objects/object_brob/object_brob.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2)
 
 void EnBrob_Init(Actor* thisx, PlayState* play);
 void EnBrob_Destroy(Actor* thisx, PlayState* play);
@@ -22,7 +22,7 @@ void EnBrob_Stunned(EnBrob* this, PlayState* play);
 void EnBrob_MoveDown(EnBrob* this, PlayState* play);
 void EnBrob_Shock(EnBrob* this, PlayState* play);
 
-ActorProfile En_Brob_Profile = {
+ActorInit En_Brob_InitVars = {
     /**/ ACTOR_EN_BROB,
     /**/ ACTORCAT_ENEMY,
     /**/ FLAGS,
@@ -36,7 +36,7 @@ ActorProfile En_Brob_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_HIT0,
+        COLTYPE_HIT0,
         AT_ON | AT_TYPE_ENEMY,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_ALL,
@@ -44,7 +44,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK1,
+        ELEMTYPE_UNK1,
         { 0xFFCFFFFF, 0x03, 0x08 },
         { 0xFFCFFFFF, 0x01, 0x00 },
         ATELEM_ON | ATELEM_SFX_NONE,
@@ -70,17 +70,18 @@ void EnBrob_Init(Actor* thisx, PlayState* play) {
     Collider_InitCylinder(play, &this->colliders[1]);
     Collider_SetCylinder(play, &this->colliders[1], &this->dyna.actor, &sCylinderInit);
     CollisionCheck_SetInfo(&thisx->colChkInfo, NULL, &sColChkInfoInit);
-    if (PARAMS_GET_U(thisx->params, 8, 8) == 0) {
+
+    if (((thisx->params >> 8) & 0xFF) == 0) {
         Actor_SetScale(&this->dyna.actor, 0.01f);
         thisx->params &= 0xFF;
         if (thisx->params != 0xFF) {
-            thisx->scale.y *= PARAMS_GET_U(thisx->params, 0, 8) * (1.0f / 30.0f);
+            thisx->scale.y *= (thisx->params & 0xFF) * (1.0f / 30.0f);
         }
     } else {
         Actor_SetScale(&this->dyna.actor, 0.005f);
         thisx->params &= 0xFF;
         if (thisx->params != 0xFF) {
-            thisx->scale.y *= PARAMS_GET_U(thisx->params, 0, 8) * (2.0f / 30.0f);
+            thisx->scale.y *= (thisx->params & 0xFF) * (2.0f / 30.0f);
         }
     }
 
@@ -91,7 +92,7 @@ void EnBrob_Init(Actor* thisx, PlayState* play) {
     this->colliders[1].dim.height *= thisx->scale.y;
     this->colliders[1].dim.yShift *= thisx->scale.y;
     this->actionFunc = NULL;
-    thisx->flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
+    thisx->flags &= ~ACTOR_FLAG_0;
     EnBrob_SetupIdle(this, play);
 }
 
@@ -151,8 +152,7 @@ void EnBrob_Idle(EnBrob* this, PlayState* play) {
     }
     if (this->timer == 0) {
         if (DynaPolyActor_IsPlayerOnTop(&this->dyna)) {
-            Actor_SetPlayerKnockbackLargeNoDamage(play, &this->dyna.actor, 5.0f, this->dyna.actor.yawTowardsPlayer,
-                                                  1.0f);
+            func_8002F71C(play, &this->dyna.actor, 5.0f, this->dyna.actor.yawTowardsPlayer, 1.0f);
             EnBrob_SetupMoveUp(this, play);
         } else if (this->dyna.actor.xzDistToPlayer < 300.0f) {
             EnBrob_SetupMoveUp(this, play);
@@ -198,7 +198,7 @@ void EnBrob_Stunned(EnBrob* this, PlayState* play) {
     } else if (this->skelAnime.curFrame < 8.0f) {
         this->modelOffsetY -= 1250.0f;
     }
-    this->dyna.actor.colorFilterTimer = 80;
+    this->dyna.actor.colorFilterTimer = 0x50;
 }
 
 void EnBrob_MoveDown(EnBrob* this, PlayState* play) {
@@ -278,8 +278,7 @@ void EnBrob_Update(Actor* thisx, PlayState* play2) {
 
         if (this->actionFunc == EnBrob_MoveUp && !(this->colliders[0].base.atFlags & AT_BOUNCED) &&
             !(this->colliders[1].base.atFlags & AT_BOUNCED)) {
-            Actor_SetPlayerKnockbackLargeNoDamage(play, &this->dyna.actor, 5.0f, this->dyna.actor.yawTowardsPlayer,
-                                                  1.0f);
+            func_8002F71C(play, &this->dyna.actor, 5.0f, this->dyna.actor.yawTowardsPlayer, 1.0f);
         } else if (this->actionFunc != EnBrob_MoveUp) {
             EnBrob_SetupShock(this);
         }

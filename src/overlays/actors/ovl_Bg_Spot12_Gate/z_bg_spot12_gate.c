@@ -24,7 +24,7 @@ void func_808B318C(BgSpot12Gate* this, PlayState* play);
 void func_808B3274(BgSpot12Gate* this);
 void func_808B3298(BgSpot12Gate* this, PlayState* play);
 
-ActorProfile Bg_Spot12_Gate_Profile = {
+ActorInit Bg_Spot12_Gate_InitVars = {
     /**/ ACTOR_BG_SPOT12_GATE,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -51,7 +51,7 @@ void BgSpot12Gate_InitDynaPoly(BgSpot12Gate* this, PlayState* play, CollisionHea
     CollisionHeader_GetVirtual(collision, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     if (this->dyna.bgId == BG_ACTOR_MAX) {
         s32 pad2;
 
@@ -67,7 +67,7 @@ void BgSpot12Gate_Init(Actor* thisx, PlayState* play) {
     BgSpot12Gate_InitDynaPoly(this, play, &gGerudoFortressWastelandGateCol, 0);
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
 
-    if (Flags_GetSwitch(play, PARAMS_GET_U(this->dyna.actor.params, 0, 6))) {
+    if (Flags_GetSwitch(play, this->dyna.actor.params & 0x3F)) {
         func_808B3274(this);
     } else {
         func_808B30C0(this);
@@ -86,7 +86,7 @@ void func_808B30C0(BgSpot12Gate* this) {
 }
 
 void func_808B30D8(BgSpot12Gate* this, PlayState* play) {
-    if (Flags_GetSwitch(play, PARAMS_GET_U(this->dyna.actor.params, 0, 6))) {
+    if (Flags_GetSwitch(play, this->dyna.actor.params & 0x3F)) {
         func_808B3134(this);
         OnePointCutscene_Init(play, 4160, -99, &this->dyna.actor, CAM_ID_MAIN);
     }
@@ -125,7 +125,7 @@ void func_808B318C(BgSpot12Gate* this, PlayState* play) {
 
         Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BRIDGE_OPEN_STOP);
     } else {
-        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_METALGATE_OPEN - SFX_FLAG);
+        func_8002F974(&this->dyna.actor, NA_SE_EV_METALGATE_OPEN - SFX_FLAG);
     }
 }
 

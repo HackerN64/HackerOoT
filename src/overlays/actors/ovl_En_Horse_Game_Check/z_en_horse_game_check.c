@@ -20,7 +20,7 @@
 #define INGORACE_SET_TIMER (1 << 1)
 #define INGORACE_INGO_MOVE (1 << 2)
 
-typedef enum HorseGameIngoRaceResult {
+typedef enum {
     /* 0 */ INGORACE_NO_RESULT,
     /* 1 */ INGORACE_PLAYER_WIN,
     /* 2 */ INGORACE_INGO_WIN,
@@ -35,7 +35,7 @@ typedef enum HorseGameIngoRaceResult {
 #define MALONRACE_PLAYER_START (1 << 5)
 #define MALONRACE_PLAYER_ON_MARK (1 << 6)
 
-typedef enum HorseGameMalonRaceResult {
+typedef enum {
     /* 0 */ MALONRACE_NO_RESULT,
     /* 1 */ MALONRACE_SUCCESS,
     /* 2 */ MALONRACE_TIME_UP,
@@ -48,7 +48,7 @@ void EnHorseGameCheck_Destroy(Actor* thisx, PlayState* play);
 void EnHorseGameCheck_Update(Actor* thisx, PlayState* play);
 void EnHorseGameCheck_Draw(Actor* thisx, PlayState* play);
 
-ActorProfile En_Horse_Game_Check_Profile = {
+ActorInit En_Horse_Game_Check_InitVars = {
     /**/ ACTOR_EN_HORSE_GAME_CHECK,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -90,11 +90,7 @@ s32 EnHorseGameCheck_InitIngoRace(EnHorseGameCheckBase* base, PlayState* play) {
     this->ingoHorse = Actor_Spawn(&play->actorCtx, play, ACTOR_EN_HORSE, -250.0f, 1.0f, -1650.0f, 0, 0x4000, 0, 0x8003);
 
     if (this->ingoHorse == NULL) {
-#if OOT_VERSION < NTSC_1_1
-        LogUtils_HungupThread("../z_en_horse_game_check.c", 382);
-#else
         LogUtils_HungupThread("../z_en_horse_game_check.c", 385);
-#endif
     }
     this->startTimer = 0;
     this->finishTimer = 0;

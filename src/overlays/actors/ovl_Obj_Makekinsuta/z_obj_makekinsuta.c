@@ -5,7 +5,6 @@
  */
 
 #include "z_obj_makekinsuta.h"
-#include "global.h"
 #include "terminal.h"
 
 #define FLAGS ACTOR_FLAG_4
@@ -16,7 +15,7 @@ void ObjMakekinsuta_Update(Actor* thisx, PlayState* play);
 void func_80B98320(ObjMakekinsuta* this, PlayState* play);
 void ObjMakekinsuta_DoNothing(ObjMakekinsuta* this, PlayState* play);
 
-ActorProfile Obj_Makekinsuta_Profile = {
+ActorInit Obj_Makekinsuta_InitVars = {
     /**/ ACTOR_OBJ_MAKEKINSUTA,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,
@@ -31,7 +30,7 @@ ActorProfile Obj_Makekinsuta_Profile = {
 void ObjMakekinsuta_Init(Actor* thisx, PlayState* play) {
     ObjMakekinsuta* this = (ObjMakekinsuta*)thisx;
 
-    if (PARAMS_GET_NOSHIFT(this->actor.params, 13, 2) == 0x4000) {
+    if ((this->actor.params & 0x6000) == 0x4000) {
         PRINTF(VT_FGCOL(BLUE));
         // "Gold Star Enemy(arg_data %x)"
         PRINTF("金スタ発生敵(arg_data %x)\n", this->actor.params);

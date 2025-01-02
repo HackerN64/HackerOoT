@@ -16,7 +16,7 @@ void BgJyaBombiwa_Destroy(Actor* thisx, PlayState* play);
 void BgJyaBombiwa_Update(Actor* thisx, PlayState* play);
 void BgJyaBombiwa_Draw(Actor* thisx, PlayState* play);
 
-ActorProfile Bg_Jya_Bombiwa_Profile = {
+ActorInit Bg_Jya_Bombiwa_InitVars = {
     /**/ ACTOR_BG_JYA_BOMBIWA,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -31,7 +31,7 @@ ActorProfile Bg_Jya_Bombiwa_Profile = {
 static ColliderJntSphElementInit sJntSphElementsInit[] = {
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0x00000008, 0x00, 0x00 },
             ATELEM_NONE,
@@ -44,7 +44,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[] = {
 
 static ColliderJntSphInit sJntSphInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
@@ -70,7 +70,7 @@ void BgJyaBombiwa_SetupDynaPoly(BgJyaBombiwa* this, PlayState* play, CollisionHe
     CollisionHeader_GetVirtual(collision, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     if (this->dyna.bgId == BG_ACTOR_MAX) {
         s32 pad2;
 
@@ -91,17 +91,17 @@ void BgJyaBombiwa_InitCollider(BgJyaBombiwa* this, PlayState* play) {
 void BgJyaBombiwa_Init(Actor* thisx, PlayState* play) {
     BgJyaBombiwa* this = (BgJyaBombiwa*)thisx;
 
-    if (PARAMS_GET_U(this->dyna.actor.params, 0, 6) != 0x29) {
+    if ((this->dyna.actor.params & 0x3F) != 0x29) {
         PRINTF(VT_COL(YELLOW, BLACK));
 
         // "Warning: Switch Number changed (%s %d)(SW %d)"
         PRINTF("Ｗａｒｎｉｎｇ : Switch Number が変更された(%s %d)(SW %d)\n", "../z_bg_jya_bombiwa.c", 218,
-               PARAMS_GET_U(this->dyna.actor.params, 0, 6));
+               this->dyna.actor.params & 0x3F);
         PRINTF(VT_RST);
     }
     BgJyaBombiwa_SetupDynaPoly(this, play, &gBombiwaCol, 0);
     BgJyaBombiwa_InitCollider(this, play);
-    if (Flags_GetSwitch(play, PARAMS_GET_U(this->dyna.actor.params, 0, 6))) {
+    if (Flags_GetSwitch(play, this->dyna.actor.params & 0x3F)) {
         Actor_Kill(&this->dyna.actor);
     } else {
         Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
@@ -167,7 +167,7 @@ void BgJyaBombiwa_Update(Actor* thisx, PlayState* play) {
 
     if (this->collider.base.acFlags & AC_HIT) {
         BgJyaBombiwa_Break(this, play);
-        Flags_SetSwitch(play, PARAMS_GET_U(this->dyna.actor.params, 0, 6));
+        Flags_SetSwitch(play, this->dyna.actor.params & 0x3F);
         SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 40, NA_SE_EV_WALL_BROKEN);
         Actor_Kill(&this->dyna.actor);
     } else {

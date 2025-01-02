@@ -178,23 +178,22 @@ void Jpeg_ParseMarkers(u8* ptr, JpegContext* ctx) {
                 case MARKER_SOF: {
                     // Start of Frame, stores important metadata of the image.
                     // Only used for extracting the sampling factors (ctx->mode).
-                    PRINTF(T("MARKER_SOF   %d "
-                             "精度%02x 垂直%d 水平%d compo%02x "
-                             "(1:Y)%d (H0=2,V0=1(422) or 2(420))%02x (量子化テーブル)%02x "
-                             "(2:Cb)%d (H1=1,V1=1)%02x (量子化テーブル)%02x "
-                             "(3:Cr)%d (H2=1,V2=1)%02x (量子化テーブル)%02x\n",
-                             "MARKER_SOF   %d "
-                             "accuracy%02x vertical%d horizontal%d compo%02x "
-                             "(1:Y)%d (H0=2,V0=1(422) or 2(420))%02x (quantization tables)%02x "
-                             "(2:Cb)%d (H1=1,V1=1)%02x (quantization tables)%02x "
-                             "(3:Cr)%d (H2=1,V2=1)%02x (quantization tables)%02x\n"),
+                    PRINTF("MARKER_SOF   %d "
+                           "精度%02x " // "accuracy"
+                           "垂直%d "   // "vertical"
+                           "水平%d "   // "horizontal"
+                           "compo%02x "
+                           "(1:Y)%d (H0=2,V0=1(422) or 2(420))%02x (量子化テーブル)%02x "
+                           "(2:Cb)%d (H1=1,V1=1)%02x (量子化テーブル)%02x "
+                           "(3:Cr)%d (H2=1,V2=1)%02x (量子化テーブル)%02x\n",
                            Jpeg_GetUnalignedU16(ptr),
-                           // precision, height, width, component count (assumed to be 3)
-                           ptr[2], Jpeg_GetUnalignedU16(ptr + 3), Jpeg_GetUnalignedU16(ptr + 5), ptr[7],
-                           //
-                           ptr[8], ptr[9], ptr[10],   // Y component
-                           ptr[11], ptr[12], ptr[13], // Cb component
-                           ptr[14], ptr[15], ptr[16]  // Cr component
+                           ptr[2],                        // precision
+                           Jpeg_GetUnalignedU16(ptr + 3), // height
+                           Jpeg_GetUnalignedU16(ptr + 5), // width
+                           ptr[7],                        // component count (assumed to be 3)
+                           ptr[8], ptr[9], ptr[10],       // Y component
+                           ptr[11], ptr[12], ptr[13],     // Cb component
+                           ptr[14], ptr[15], ptr[16]      // Cr component
                     );
 
                     if (ptr[9] == 0x21) {
@@ -221,7 +220,7 @@ void Jpeg_ParseMarkers(u8* ptr, JpegContext* ctx) {
                     break;
                 }
                 default: {
-                    PRINTF(T("マーカー不明 %02x\n", "Unknown marker %02x\n"), ptr[-1]);
+                    PRINTF("マーカー不明 %02x\n", ptr[-1]); // "Unknown marker"
                     ptr += Jpeg_GetUnalignedU16(ptr);
                     break;
                 }
@@ -240,7 +239,7 @@ s32 Jpeg_Decode(void* data, void* zbuffer, void* work, u32 workSize) {
     JpegDecoder decoder;
     JpegDecoderState state;
     JpegWork* workBuff;
-    UNUSED_NDEBUG OSTime diff;
+    OSTime diff;
     OSTime time;
     OSTime curTime;
 
@@ -257,9 +256,8 @@ s32 Jpeg_Decode(void* data, void* zbuffer, void* work, u32 workSize) {
     curTime = osGetTime();
     diff = curTime - time;
     time = curTime;
-    PRINTF(T("*** fifoバッファの同期待ち time = %6.3f ms ***\n",
-             "*** Wait for synchronization of fifo buffer time = %6.3f ms ***\n"),
-           OS_CYCLES_TO_USEC(diff) / 1000.0f);
+    // "Wait for synchronization of fifo buffer"
+    PRINTF("*** fifoバッファの同期待ち time = %6.3f ms ***\n", OS_CYCLES_TO_USEC(diff) / 1000.0f);
 
     ctx.workBuf = workBuff;
     Jpeg_ParseMarkers(data, &ctx);
@@ -267,9 +265,8 @@ s32 Jpeg_Decode(void* data, void* zbuffer, void* work, u32 workSize) {
     curTime = osGetTime();
     diff = curTime - time;
     time = curTime;
-    PRINTF(T("*** 各セグメントのマーカーのチェック time = %6.3f ms ***\n",
-             "*** Check markers for each segment time = %6.3f ms ***\n"),
-           OS_CYCLES_TO_USEC(diff) / 1000.0f);
+    // "Check markers for each segment"
+    PRINTF("*** 各セグメントのマーカーのチェック time = %6.3f ms ***\n", OS_CYCLES_TO_USEC(diff) / 1000.0f);
 
     switch (ctx.dqtCount) {
         case 1:
@@ -292,8 +289,8 @@ s32 Jpeg_Decode(void* data, void* zbuffer, void* work, u32 workSize) {
     curTime = osGetTime();
     diff = curTime - time;
     time = curTime;
-    PRINTF(T("*** 量子化テーブル作成 time = %6.3f ms ***\n", "*** Create quantization table time = %6.3f ms ***\n"),
-           OS_CYCLES_TO_USEC(diff) / 1000.0f);
+    // "Create quantization table"
+    PRINTF("*** 量子化テーブル作成 time = %6.3f ms ***\n", OS_CYCLES_TO_USEC(diff) / 1000.0f);
 
     switch (ctx.dhtCount) {
         case 1:
@@ -322,8 +319,8 @@ s32 Jpeg_Decode(void* data, void* zbuffer, void* work, u32 workSize) {
     curTime = osGetTime();
     diff = curTime - time;
     time = curTime;
-    PRINTF(T("*** ハフマンテーブル作成 time = %6.3f ms ***\n", "*** Huffman table creation time = %6.3f ms ***\n"),
-           OS_CYCLES_TO_USEC(diff) / 1000.0f);
+    // "Huffman table creation"
+    PRINTF("*** ハフマンテーブル作成 time = %6.3f ms ***\n", OS_CYCLES_TO_USEC(diff) / 1000.0f);
 
     decoder.imageData = ctx.imageData;
     decoder.mode = ctx.mode;
@@ -359,8 +356,8 @@ s32 Jpeg_Decode(void* data, void* zbuffer, void* work, u32 workSize) {
     curTime = osGetTime();
     diff = curTime - time;
     time = curTime;
-    PRINTF(T("*** 展開 & 描画 time = %6.3f ms ***\n", "*** Unfold & draw time = %6.3f ms ***\n"),
-           OS_CYCLES_TO_USEC(diff) / 1000.0f);
+    // "Unfold & draw"
+    PRINTF("*** 展開 & 描画 time = %6.3f ms ***\n", OS_CYCLES_TO_USEC(diff) / 1000.0f);
 
     return 0;
 }

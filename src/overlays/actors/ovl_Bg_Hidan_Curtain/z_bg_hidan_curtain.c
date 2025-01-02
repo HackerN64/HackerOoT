@@ -21,7 +21,7 @@ void BgHidanCurtain_TurnOn(BgHidanCurtain* this, PlayState* play);
 void BgHidanCurtain_TurnOff(BgHidanCurtain* this, PlayState* play);
 void BgHidanCurtain_WaitForTimer(BgHidanCurtain* this, PlayState* play);
 
-typedef struct BgHidanCurtainParams {
+typedef struct {
     /* 0x00 */ s16 radius;
     /* 0x02 */ s16 height;
     /* 0x04 */ f32 scale;
@@ -31,7 +31,7 @@ typedef struct BgHidanCurtainParams {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_ON | AT_TYPE_ENEMY,
         AC_NONE,
         OC1_ON | OC1_TYPE_PLAYER,
@@ -39,7 +39,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x20000000, 0x01, 0x04 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NONE,
@@ -53,7 +53,7 @@ static CollisionCheckInfoInit sCcInfoInit = { 1, 80, 100, MASS_IMMOVABLE };
 
 static BgHidanCurtainParams sHCParams[] = { { 81, 144, 0.090f, 144.0f, 5.0f }, { 46, 88, 0.055f, 88.0f, 3.0f } };
 
-ActorProfile Bg_Hidan_Curtain_Profile = {
+ActorInit Bg_Hidan_Curtain_InitVars = {
     /**/ ACTOR_BG_HIDAN_CURTAIN,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -72,7 +72,7 @@ void BgHidanCurtain_Init(Actor* thisx, PlayState* play) {
 
     PRINTF("Curtain (arg_data 0x%04x)\n", this->actor.params);
     Actor_SetFocus(&this->actor, 20.0f);
-    this->type = PARAMS_GET_U(thisx->params, 12, 4);
+    this->type = (thisx->params >> 0xC) & 0xF;
     if (this->type > 6) {
         // "Type is not set"
         PRINTF("Error : object のタイプが設定されていない(%s %d)(arg_data 0x%04x)\n", "../z_bg_hidan_curtain.c", 352,
@@ -83,10 +83,10 @@ void BgHidanCurtain_Init(Actor* thisx, PlayState* play) {
 
     this->size = ((this->type == 2) || (this->type == 4)) ? 1 : 0;
     hcParams = &sHCParams[this->size];
-    this->treasureFlag = PARAMS_GET_U(thisx->params, 6, 6);
+    this->treasureFlag = (thisx->params >> 6) & 0x3F;
     thisx->params &= 0x3F;
 
-    if (DEBUG_FEATURES && ((this->actor.params < 0) || (this->actor.params > 0x3F))) {
+    if (IS_DEBUG && ((this->actor.params < 0) || (this->actor.params > 0x3F))) {
         // "Save bit is not set"
         PRINTF("Warning : object のセーブビットが設定されていない(%s %d)(arg_data 0x%04x)\n", "../z_bg_hidan_curtain.c",
                373, this->actor.params);
@@ -196,7 +196,7 @@ void BgHidanCurtain_WaitForTimer(BgHidanCurtain* this, PlayState* play) {
         this->actionFunc = BgHidanCurtain_TurnOn;
     }
     if ((this->type == 1) || (this->type == 3)) {
-        Actor_PlaySfx_FlaggedTimer(&this->actor, this->timer);
+        func_8002F994(&this->actor, this->timer);
     }
 }
 
@@ -212,7 +212,7 @@ void BgHidanCurtain_Update(Actor* thisx, PlayState* play2) {
     } else {
         if (this->collider.base.atFlags & AT_HIT) {
             this->collider.base.atFlags &= ~AT_HIT;
-            Actor_SetPlayerKnockbackLargeNoDamage(play, &this->actor, 5.0f, this->actor.yawTowardsPlayer, 1.0f);
+            func_8002F71C(play, &this->actor, 5.0f, this->actor.yawTowardsPlayer, 1.0f);
         }
         if ((this->type == 4) || (this->type == 5)) {
             this->actor.world.pos.y = (2.0f * this->actor.home.pos.y) - hcParams->riseDist - this->actor.world.pos.y;
@@ -230,7 +230,7 @@ void BgHidanCurtain_Update(Actor* thisx, PlayState* play2) {
             CollisionCheck_SetAT(play, &play->colChkCtx, &this->collider.base);
             CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
             if (!IS_CUTSCENE_LAYER) {
-                Actor_PlaySfx_Flagged(&this->actor, NA_SE_EV_FIRE_PILLAR_S - SFX_FLAG);
+                func_8002F974(&this->actor, NA_SE_EV_FIRE_PILLAR_S - SFX_FLAG);
             }
         } else if ((this->type == 1) && Flags_GetTreasure(play, this->treasureFlag)) {
             Actor_Kill(&this->actor);
@@ -253,7 +253,8 @@ void BgHidanCurtain_Draw(Actor* thisx, PlayState* play) {
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, this->texScroll & 0x7F, 0, 0x20, 0x40, 1, 0,
                                 (this->texScroll * -0xF) & 0xFF, 0x20, 0x40));
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_bg_hidan_curtain.c", 698);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_hidan_curtain.c", 698),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     gSPDisplayList(POLY_XLU_DISP++, gEffFireCircleDL);
 

@@ -8,7 +8,7 @@ struct EnFhgFire;
 
 typedef void (*EnFhgFireUpdateFunc)(struct EnFhgFire*, PlayState*);
 
-typedef enum FhgFireParam {
+typedef enum {
     /*   1 */ FHGFIRE_LIGHTNING_STRIKE = 1,
     /*  35 */ FHGFIRE_LIGHTNING_SHOCK = 35,
     /*  36 */ FHGFIRE_LIGHTNING_BURST,
@@ -20,13 +20,13 @@ typedef enum FhgFireParam {
     /* 100 */ FHGFIRE_LIGHTNING_TRAIL = 100
 } FhgFireParam;
 
-typedef enum FhgLightMode {
+typedef enum {
     /* 0 */ FHGFIRE_LIGHT_GREEN,
     /* 1 */ FHGFIRE_LIGHT_BLUE,
     /* 2 */ FHGFIRE_LIGHT_REFLECT
 } FhgLightMode;
 
-typedef enum FhgFireS16Var {
+typedef enum {
     /*  0 */ FHGFIRE_TIMER,
     /*  1 */ FHGFIRE_FX_TIMER,
     /*  2 */ FHGFIRE_US_2,
@@ -37,7 +37,7 @@ typedef enum FhgFireS16Var {
     /*  7 */ FHGFIRE_SHORT_COUNT
 } FhgFireS16Var;
 
-typedef enum FhgFireF32Var {
+typedef enum {
     /*  0 */ FHGFIRE_ALPHA,
     /*  1 */ FHGFIRE_UF_1,
     /*  2 */ FHGFIRE_UF_2,

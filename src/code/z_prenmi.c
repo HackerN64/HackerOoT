@@ -1,6 +1,5 @@
 #include "global.h"
 #include "terminal.h"
-#include "versions.h"
 
 void func_80092320(PreNMIState* this) {
     this->state.running = false;
@@ -18,12 +17,7 @@ void PreNMI_Update(PreNMIState* this) {
     }
 
     if (this->timer == 0) {
-#if OOT_VERSION < PAL_1_0
-        osViSetYScale(1.0f);
-        osViBlack(true);
-#else
         ViConfig_UpdateVi(true);
-#endif
         func_80092320(this);
         return;
     }
@@ -39,8 +33,7 @@ void PreNMI_Draw(PreNMIState* this) {
     OPEN_DISPS(gfxCtx, "../z_prenmi.c", 96);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
-    Gfx_SetupFrame(gfxCtx, true, 0, 0, 0);
-    Gfx_ClearZBuffer(gfxCtx);
+    Gfx_SetupFrame(gfxCtx, 0, 0, 0);
     Gfx_SetupDL_36Opa(gfxCtx);
     gDPSetFillColor(POLY_OPA_DISP++, (GPACK_RGBA5551(255, 255, 255, 1) << 16) | GPACK_RGBA5551(255, 255, 255, 1));
     gDPFillRectangle(POLY_OPA_DISP++, 0, this->timer + 100, SCREEN_WIDTH - 1, this->timer + 100);

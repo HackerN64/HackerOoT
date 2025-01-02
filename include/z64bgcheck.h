@@ -23,7 +23,7 @@ struct DynaPolyActor;
 #define FUNC_80041EA4_STOP 8
 #define FUNC_80041EA4_VOID_OUT 12
 
-typedef struct ScaleRotPos {
+typedef struct {
     /* 0x00 */ Vec3f scale;
     /* 0x0C */ Vec3s rot;
     /* 0x14 */ Vec3f pos;
@@ -49,7 +49,7 @@ typedef struct ScaleRotPos {
 // flags for flags_vIB
 #define COLPOLY_IS_FLOOR_CONVEYOR (1 << 0)
 
-typedef struct CollisionPoly {
+typedef struct {
     /* 0x00 */ u16 type;
     union {
         u16 vtxData[3];
@@ -66,7 +66,7 @@ typedef struct CollisionPoly {
     /* 0x0E */ s16 dist; // Plane distance from origin along the normal
 } CollisionPoly; // size = 0x10
 
-typedef struct BgCamInfo {
+typedef struct {
     /* 0x0 */ u16 setting; // camera setting described by CameraSettingType enum
     /* 0x2 */ s16 count; // only used when `bgCamFuncData` is a list of points used for crawlspaces
     /* 0x4 */ Vec3s* bgCamFuncData; // s16 data grouped in threes (ex. Vec3s), is usually of type `BgCamFuncData`, but can be a list of points of type `Vec3s` for crawlspaces
@@ -74,7 +74,7 @@ typedef struct BgCamInfo {
 
 // The structure used for all instances of s16 data from `BgCamInfo` with the exception of crawlspaces.
 // See `Camera_Subj4` for Vec3s data usage in crawlspaces
-typedef struct BgCamFuncData {
+typedef struct {
     /* 0x00 */ Vec3s pos;
     /* 0x06 */ Vec3s rot;
     /* 0x0C */ s16 fov;
@@ -101,7 +101,7 @@ typedef struct BgCamFuncData {
      (((room)       & 0x3F) << 13) | \
      (((setFlag19)  &    1) << 19))
 
-typedef struct WaterBox {
+typedef struct {
     /* 0x00 */ s16 xMin;
     /* 0x02 */ s16 ySurface;
     /* 0x04 */ s16 zMin;
@@ -110,7 +110,7 @@ typedef struct WaterBox {
     /* 0x0C */ u32 properties;
 } WaterBox; // size = 0x10
 
-typedef enum FloorType {
+typedef enum {
     /*  0 */ FLOOR_TYPE_0,
     /*  1 */ FLOOR_TYPE_1,
     /*  2 */ FLOOR_TYPE_2,
@@ -126,7 +126,7 @@ typedef enum FloorType {
     /* 12 */ FLOOR_TYPE_12
 } FloorType;
 
-typedef enum WallType {
+typedef enum {
     /*  0 */ WALL_TYPE_0,
     /*  1 */ WALL_TYPE_1,
     /*  2 */ WALL_TYPE_2,
@@ -152,7 +152,7 @@ typedef enum WallType {
 #define WALL_FLAG_6 (1 << 6)
 #define WALL_FLAG_CRAWLSPACE (WALL_FLAG_CRAWLSPACE_1 | WALL_FLAG_CRAWLSPACE_2)
 
-typedef enum FloorProperty {
+typedef enum {
     /*  0 */ FLOOR_PROPERTY_0,
     /*  5 */ FLOOR_PROPERTY_5 = 5,
     /*  6 */ FLOOR_PROPERTY_6,
@@ -163,7 +163,7 @@ typedef enum FloorProperty {
     /* 12 */ FLOOR_PROPERTY_12
 } FloorProperty;
 
-typedef enum SurfaceSfxOffset {
+typedef enum {
     /*  0 */ SURFACE_SFX_OFFSET_DIRT,
     /*  1 */ SURFACE_SFX_OFFSET_SAND,
     /*  2 */ SURFACE_SFX_OFFSET_STONE,
@@ -182,7 +182,7 @@ typedef enum SurfaceSfxOffset {
     /* 15 */ SURFACE_SFX_OFFSET_ICE
 } SurfaceSfxOffset;
 
-typedef enum SurfaceMaterial {
+typedef enum {
     /*  0 */ SURFACE_MATERIAL_DIRT,
     /*  1 */ SURFACE_MATERIAL_SAND,
     /*  2 */ SURFACE_MATERIAL_STONE,
@@ -200,13 +200,13 @@ typedef enum SurfaceMaterial {
     /* 14 */ SURFACE_MATERIAL_MAX
 } SurfaceMaterial;
 
-typedef enum FloorEffect {
+typedef enum {
     /*  0 */ FLOOR_EFFECT_0,
     /*  1 */ FLOOR_EFFECT_1,
     /*  2 */ FLOOR_EFFECT_2
 } FloorEffect;
 
-typedef enum ConveyorSpeed {
+typedef enum {
     /*  0 */ CONVEYOR_SPEED_DISABLED,
     /*  1 */ CONVEYOR_SPEED_SLOW,
     /*  2 */ CONVEYOR_SPEED_MEDIUM,
@@ -237,11 +237,11 @@ typedef enum ConveyorSpeed {
      (((conveyorDirection) & 0x3F) << 21) | \
      (((unk27)             &    1) << 27))
 
-typedef struct SurfaceType {
+typedef struct {
     u32 data[2];
 } SurfaceType;
 
-typedef struct CollisionHeader {
+typedef struct {
     /* 0x00 */ Vec3s minBounds; // minimum coordinates of poly bounding box
     /* 0x06 */ Vec3s maxBounds; // maximum coordinates of poly bounding box
     /* 0x0C */ u16 numVertices;
@@ -254,41 +254,41 @@ typedef struct CollisionHeader {
     /* 0x28 */ WaterBox* waterBoxes;
 } CollisionHeader; // original name: BGDataInfo
 
-typedef struct SSNode {
+typedef struct {
     s16 polyId;
     u16 next; // next SSNode index
 } SSNode;
 
-typedef struct SSList {
+typedef struct {
     u16 head; // first SSNode index
 } SSList;
 
-typedef struct SSNodeList {
+typedef struct {
     /* 0x00 */ u16 max;          // original name: short_slist_node_size
     /* 0x02 */ u16 count;        // original name: short_slist_node_last_index
     /* 0x04 */ SSNode* tbl;      // original name: short_slist_node_tbl
 } SSNodeList;
 
-typedef struct DynaSSNodeList {
+typedef struct {
     SSNode* tbl;
     s32 count;
     s32 max;
 } DynaSSNodeList;
 
-typedef struct StaticLookup {
+typedef struct {
     SSList floor;
     SSList wall;
     SSList ceiling;
 } StaticLookup;
 
-typedef struct DynaLookup {
+typedef struct {
     u16 polyStartIndex;
     SSList ceiling;
     SSList wall;
     SSList floor;
 } DynaLookup;
 
-typedef struct BgActor {
+typedef struct {
     /* 0x00 */ struct Actor* actor;
     /* 0x04 */ CollisionHeader* colHeader;
     /* 0x08 */ DynaLookup dynaLookup;
@@ -305,7 +305,7 @@ typedef struct BgActor {
 #define BGACTOR_COLLISION_DISABLED (1 << 2) // The collision of the bgActor is disabled
 #define BGACTOR_CEILING_COLLISION_DISABLED (1 << 3) // The ceilings in the collision of the bgActor are ignored
 
-typedef struct DynaCollisionContext {
+typedef struct {
     /* 0x0000 */ u8 bitFlag;
     /* 0x0004 */ BgActor bgActors[BG_ACTOR_MAX];
     /* 0x138C */ u16 bgActorFlags[BG_ACTOR_MAX];
@@ -330,7 +330,7 @@ typedef struct CollisionContext {
     /* 0x1460 */ u32 memSize; // Size of all allocated memory plus CollisionContext
 } CollisionContext; // size = 0x1464
 
-typedef struct DynaRaycastDown {
+typedef struct {
     /* 0x00 */ struct PlayState* play;
     /* 0x04 */ struct CollisionContext* colCtx;
     /* 0x08 */ u16 xpFlags;
@@ -345,7 +345,7 @@ typedef struct DynaRaycastDown {
     /* 0x2C */ SSList* ssList;
 } DynaRaycastDown;
 
-typedef struct DynaLineTest {
+typedef struct {
     /* 0x00 */ struct CollisionContext* colCtx;
     /* 0x04 */ u16 xpFlags;
     /* 0x08 */ DynaCollisionContext* dyna;
@@ -358,132 +358,5 @@ typedef struct DynaLineTest {
     /* 0x24 */ f32* distSq;    // distance from posA to poly squared
     /* 0x28 */ f32 chkDist;    // distance from poly
 } DynaLineTest;
-
-void func_80038A28(CollisionPoly* poly, f32 tx, f32 ty, f32 tz, MtxF* dest);
-f32 CollisionPoly_GetPointDistanceFromPlane(CollisionPoly* poly, Vec3f* point);
-void CollisionPoly_GetVerticesByBgId(CollisionPoly* poly, s32 bgId, CollisionContext* colCtx, Vec3f* dest);
-void BgCheck_Allocate(CollisionContext* colCtx, struct PlayState* play, CollisionHeader* colHeader);
-f32 BgCheck_EntityRaycastDown1(CollisionContext* colCtx, CollisionPoly** outGroundPoly, Vec3f* pos);
-f32 BgCheck_EntityRaycastDown2(struct PlayState* play, CollisionContext* colCtx, CollisionPoly** outGroundPoly,
-                               Vec3f* pos);
-f32 BgCheck_EntityRaycastDown3(CollisionContext* colCtx, CollisionPoly** outGroundPoly, s32* bgId, Vec3f* pos);
-f32 BgCheck_EntityRaycastDown4(CollisionContext* colCtx, CollisionPoly** outGroundPoly, s32* bgId, struct Actor* actor,
-                               Vec3f* pos);
-f32 BgCheck_EntityRaycastDown5(struct PlayState* play, CollisionContext* colCtx, CollisionPoly** outGroundPoly,
-                               s32* bgId, struct Actor* actor, Vec3f* pos);
-f32 BgCheck_EntityRaycastDown6(CollisionContext* colCtx, CollisionPoly** outGroundPoly, s32* bgId, struct Actor* actor,
-                               Vec3f* pos, f32 chkDist);
-f32 BgCheck_EntityRaycastDown7(CollisionContext* colCtx, CollisionPoly** outPoly, s32* bgId, struct Actor* actor,
-                               Vec3f* pos);
-f32 BgCheck_AnyRaycastDown1(CollisionContext* colCtx, CollisionPoly* outGroundPoly, Vec3f* pos);
-f32 BgCheck_AnyRaycastDown2(CollisionContext* colCtx, CollisionPoly* outGroundPoly, s32* bgId, Vec3f* pos);
-f32 BgCheck_CameraRaycastDown2(CollisionContext* colCtx, CollisionPoly** outPoly, s32* bgId, Vec3f* pos);
-f32 BgCheck_EntityRaycastDownWalls(CollisionContext* colCtx, CollisionPoly** outPoly, s32* bgId, struct Actor* actor,
-                                   Vec3f* pos);
-f32 BgCheck_EntityRaycastDown9(CollisionContext* colCtx, CollisionPoly** outPoly, s32* bgId, Vec3f* pos);
-s32 BgCheck_EntitySphVsWall1(CollisionContext* colCtx, Vec3f* posResult, Vec3f* posNext, Vec3f* posPrev, f32 radius,
-                             CollisionPoly** outPoly, f32 checkHeight);
-s32 BgCheck_EntitySphVsWall2(CollisionContext* colCtx, Vec3f* posResult, Vec3f* posNext, Vec3f* posPrev, f32 radius,
-                             CollisionPoly** outPoly, s32* outBgId, f32 checkHeight);
-s32 BgCheck_EntitySphVsWall3(CollisionContext* colCtx, Vec3f* posResult, Vec3f* posNext, Vec3f* posPrev, f32 radius,
-                             CollisionPoly** outPoly, s32* outBgId, struct Actor* actor, f32 checkHeight);
-s32 BgCheck_EntitySphVsWall4(CollisionContext* colCtx, Vec3f* posResult, Vec3f* posNext, Vec3f* posPrev, f32 radius,
-                             CollisionPoly** outPoly, s32* outBgId, struct Actor* actor, f32 checkHeight);
-s32 BgCheck_AnyCheckCeiling(CollisionContext* colCtx, f32* outY, Vec3f* pos, f32 checkHeight);
-s32 BgCheck_EntityCheckCeiling(CollisionContext* colCtx, f32* outY, Vec3f* pos, f32 checkHeight,
-                               CollisionPoly** outPoly, s32* outBgId, struct Actor* actor);
-s32 BgCheck_CameraLineTest1(CollisionContext* colCtx, Vec3f* posA, Vec3f* posB, Vec3f* posResult,
-                            CollisionPoly** outPoly, s32 chkWall, s32 chkFloor, s32 chkCeil, s32 chkOneFace, s32* bgId);
-s32 BgCheck_CameraLineTest2(CollisionContext* colCtx, Vec3f* posA, Vec3f* posB, Vec3f* posResult,
-                            CollisionPoly** outPoly, s32 chkWall, s32 chkFloor, s32 chkCeil, s32 chkOneFace, s32* bgId);
-s32 BgCheck_EntityLineTest1(CollisionContext* colCtx, Vec3f* posA, Vec3f* posB, Vec3f* posResult,
-                            CollisionPoly** outPoly, s32 chkWall, s32 chkFloor, s32 chkCeil, s32 chkOneFace, s32* bgId);
-s32 BgCheck_EntityLineTest2(CollisionContext* colCtx, Vec3f* posA, Vec3f* posB, Vec3f* posResult,
-                            CollisionPoly** outPoly, s32 chkWall, s32 chkFloor, s32 chkCeil, s32 chkOneFace, s32* bgId,
-                            struct Actor* actor);
-s32 BgCheck_EntityLineTest3(CollisionContext* colCtx, Vec3f* posA, Vec3f* posB, Vec3f* posResult,
-                            CollisionPoly** outPoly, s32 chkWall, s32 chkFloor, s32 chkCeil, s32 chkOneFace, s32* bgId,
-                            struct Actor* actor, f32 chkDist);
-s32 BgCheck_ProjectileLineTest(CollisionContext* colCtx, Vec3f* posA, Vec3f* posB, Vec3f* posResult,
-                               CollisionPoly** outPoly, s32 chkWall, s32 chkFloor, s32 chkCeil, s32 chkOneFace,
-                               s32* bgId);
-s32 BgCheck_AnyLineTest1(CollisionContext* colCtx, Vec3f* posA, Vec3f* posB, Vec3f* posResult, CollisionPoly** outPoly,
-                         s32 chkOneFace);
-s32 BgCheck_AnyLineTest2(CollisionContext* colCtx, Vec3f* posA, Vec3f* posB, Vec3f* posResult, CollisionPoly** outPoly,
-                         s32 chkWall, s32 chkFloor, s32 chkCeil, s32 chkOneFace);
-s32 BgCheck_AnyLineTest3(CollisionContext* colCtx, Vec3f* posA, Vec3f* posB, Vec3f* posResult, CollisionPoly** outPoly,
-                         s32 chkWall, s32 chkFloor, s32 chkCeil, s32 chkOneFace, s32* bgId);
-s32 BgCheck_SphVsFirstPoly(CollisionContext* colCtx, Vec3f* center, f32 radius);
-s32 DynaPoly_IsBgIdBgActor(s32 bgId);
-void DynaPoly_DisableCollision(struct PlayState* play, DynaCollisionContext* dyna, s32 bgId);
-void DynaPoly_EnableCollision(struct PlayState* play, DynaCollisionContext* dyna, s32 bgId);
-void DynaPoly_DisableCeilingCollision(struct PlayState* play, DynaCollisionContext* dyna, s32 bgId);
-s32 DynaPoly_SetBgActor(struct PlayState* play, DynaCollisionContext* dyna, struct Actor* actor,
-                        CollisionHeader* colHeader);
-struct DynaPolyActor* DynaPoly_GetActor(CollisionContext* colCtx, s32 bgId);
-void DynaPoly_DeleteBgActor(struct PlayState* play, DynaCollisionContext* dyna, s32 bgId);
-void DynaPoly_InvalidateLookup(struct PlayState* play, DynaCollisionContext* dyna);
-void DynaPoly_UnsetAllInteractFlags(struct PlayState* play, DynaCollisionContext* dyna, struct Actor* actor);
-void DynaPoly_UpdateContext(struct PlayState* play, DynaCollisionContext* dyna);
-void DynaPoly_UpdateBgActorTransforms(struct PlayState* play, DynaCollisionContext* dyna);
-void CollisionHeader_GetVirtual(void* colHeader, CollisionHeader** dest);
-void func_800418D0(CollisionContext* colCtx, struct PlayState* play);
-u32 SurfaceType_GetBgCamIndex(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u16 BgCheck_GetBgCamSettingImpl(CollisionContext* colCtx, u32 bgCamIndex, s32 bgId);
-u16 BgCheck_GetBgCamSetting(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u16 BgCheck_GetBgCamCount(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-Vec3s* BgCheck_GetBgCamFuncDataImpl(CollisionContext* colCtx, s32 bgCamIndex, s32 bgId);
-Vec3s* BgCheck_GetBgCamFuncData(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 SurfaceType_GetExitIndex(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 SurfaceType_GetFloorType(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 func_80041D70(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-s32 SurfaceType_GetWallFlags(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-s32 SurfaceType_CheckWallFlag0(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-s32 SurfaceType_CheckWallFlag1(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-s32 SurfaceType_CheckWallFlag2(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 SurfaceType_GetFloorProperty(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 SurfaceType_IsSoft(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 SurfaceType_IsHorseBlocked(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 SurfaceType_GetMaterial(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u16 SurfaceType_GetSfxOffset(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 SurfaceType_GetFloorEffect(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 SurfaceType_GetLightSetting(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 SurfaceType_GetEcho(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 SurfaceType_CanHookshot(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-s32 SurfaceType_IsIgnoredByEntities(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-s32 SurfaceType_IsIgnoredByProjectiles(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-s32 SurfaceType_IsFloorConveyor(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 SurfaceType_GetConveyorSpeed(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 SurfaceType_GetConveyorDirection(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-u32 func_80042108(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
-s32 WaterBox_GetSurface1(struct PlayState* play, CollisionContext* colCtx, f32 x, f32 z, f32* ySurface,
-                         WaterBox** outWaterBox);
-s32 WaterBox_GetSurface2(struct PlayState* play, CollisionContext* colCtx, Vec3f* pos, f32 surfaceChkDist,
-                         WaterBox** outWaterBox);
-s32 WaterBox_GetSurfaceImpl(struct PlayState* play, CollisionContext* colCtx, f32 x, f32 z, f32* ySurface,
-                            WaterBox** outWaterBox);
-u32 WaterBox_GetBgCamIndex(CollisionContext* colCtx, WaterBox* waterBox);
-u16 WaterBox_GetBgCamSetting(CollisionContext* colCtx, WaterBox* waterBox);
-u32 WaterBox_GetLightIndex(CollisionContext* colCtx, WaterBox* waterBox);
-s32 func_80042708(CollisionPoly* polyA, CollisionPoly* polyB, Vec3f* point, Vec3f* closestPoint);
-s32 func_800427B4(CollisionPoly* polyA, CollisionPoly* polyB, Vec3f* pointA, Vec3f* pointB, Vec3f* closestPoint);
-#if DEBUG_FEATURES
-void BgCheck_DrawDynaCollision(struct PlayState*, CollisionContext*);
-void BgCheck_DrawStaticCollision(struct PlayState*, CollisionContext*);
-#endif
-
-void func_80043334(CollisionContext* colCtx, struct Actor* actor, s32 bgId);
-s32 DynaPolyActor_TransformCarriedActor(CollisionContext* colCtx, s32 bgId, struct Actor* carriedActor);
-void DynaPolyActor_Init(struct DynaPolyActor* dynaActor, s32 transformFlags);
-void DynaPolyActor_UnsetAllInteractFlags(struct DynaPolyActor* dynaActor);
-void DynaPolyActor_SetActorOnTop(struct DynaPolyActor* dynaActor);
-void DynaPoly_SetPlayerOnTop(CollisionContext* colCtx, s32 floorBgId);
-void DynaPoly_SetPlayerAbove(CollisionContext* colCtx, s32 floorBgId);
-void DynaPolyActor_SetSwitchPressed(struct DynaPolyActor* dynaActor);
-s32 DynaPolyActor_IsActorOnTop(struct DynaPolyActor* dynaActor);
-s32 DynaPolyActor_IsPlayerOnTop(struct DynaPolyActor* dynaActor);
-s32 DynaPolyActor_IsPlayerAbove(struct DynaPolyActor* dynaActor);
-s32 DynaPolyActor_IsSwitchPressed(struct DynaPolyActor* dynaActor);
-s32 func_800435D8(struct PlayState* play, struct DynaPolyActor* dynaActor, s16 arg2, s16 arg3, s16 arg4);
 
 #endif

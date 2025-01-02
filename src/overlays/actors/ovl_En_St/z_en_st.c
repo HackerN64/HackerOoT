@@ -7,7 +7,7 @@
 #include "z_en_st.h"
 #include "assets/objects/object_st/object_st.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE | ACTOR_FLAG_4 | ACTOR_FLAG_5)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4 | ACTOR_FLAG_5)
 
 void EnSt_Init(Actor* thisx, PlayState* play);
 void EnSt_Destroy(Actor* thisx, PlayState* play);
@@ -23,7 +23,7 @@ void EnSt_FinishBouncing(EnSt* this, PlayState* play);
 
 #include "assets/overlays/ovl_En_St/ovl_En_St.c"
 
-ActorProfile En_St_Profile = {
+ActorInit En_St_InitVars = {
     /**/ ACTOR_EN_ST,
     /**/ ACTORCAT_ENEMY,
     /**/ FLAGS,
@@ -37,7 +37,7 @@ ActorProfile En_St_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_HIT6,
+        COLTYPE_HIT6,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
@@ -45,7 +45,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NORMAL,
@@ -59,7 +59,7 @@ static CollisionCheckInfoInit2 sColChkInit = { 2, 0, 0, 0, MASS_IMMOVABLE };
 
 static ColliderCylinderInit sCylinderInit2 = {
     {
-        COL_MATERIAL_HIT6,
+        COLTYPE_HIT6,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -67,7 +67,7 @@ static ColliderCylinderInit sCylinderInit2 = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -80,7 +80,7 @@ static ColliderCylinderInit sCylinderInit2 = {
 static ColliderJntSphElementInit sJntSphElementsInit[1] = {
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0xFFCFFFFF, 0x00, 0x04 },
             { 0x00000000, 0x00, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
@@ -93,7 +93,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[1] = {
 
 static ColliderJntSphInit sJntSphInit = {
     {
-        COL_MATERIAL_HIT6,
+        COLTYPE_HIT6,
         AT_ON | AT_TYPE_ENEMY,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -104,7 +104,7 @@ static ColliderJntSphInit sJntSphInit = {
     sJntSphElementsInit,
 };
 
-typedef enum EnStAnimation {
+typedef enum {
     /* 0 */ ENST_ANIM_0,
     /* 1 */ ENST_ANIM_1,
     /* 2 */ ENST_ANIM_2,
@@ -291,9 +291,9 @@ void EnSt_InitColliders(EnSt* this, PlayState* play) {
         DMG_DEFAULT &
         ~(DMG_MAGIC_FIRE | DMG_ARROW | DMG_HOOKSHOT | DMG_HAMMER_SWING | DMG_BOOMERANG | DMG_EXPLOSIVE | DMG_DEKU_NUT) &
         ~(DMG_MAGIC_LIGHT | DMG_MAGIC_ICE);
-    this->colCylinder[2].base.colMaterial = COL_MATERIAL_METAL;
+    this->colCylinder[2].base.colType = COLTYPE_METAL;
     this->colCylinder[2].elem.acElemFlags = ACELEM_ON | ACELEM_HOOKABLE | ACELEM_NO_AT_INFO;
-    this->colCylinder[2].elem.elemMaterial = ELEM_MATERIAL_UNK2;
+    this->colCylinder[2].elem.elemType = ELEMTYPE_UNK2;
     this->colCylinder[2].elem.acDmgInfo.dmgFlags =
         DMG_DEFAULT &
         ~(DMG_MAGIC_FIRE | DMG_ARROW | DMG_HOOKSHOT | DMG_HAMMER_SWING | DMG_BOOMERANG | DMG_EXPLOSIVE | DMG_DEKU_NUT);
@@ -352,7 +352,7 @@ s32 EnSt_SetCylinderOC(EnSt* this, PlayState* play) {
         cyloffsets[i].z *= this->colliderScale;
         Matrix_Push();
         Matrix_Translate(cylPos.x, cylPos.y, cylPos.z, MTXMODE_NEW);
-        Matrix_RotateY(BINANG_TO_RAD_ALT(this->initialYaw), MTXMODE_APPLY);
+        Matrix_RotateY(BINANG_TO_RAD_ALT(this->initalYaw), MTXMODE_APPLY);
         Matrix_MultVec3f(&cyloffsets[i], &cylPos);
         Matrix_Pop();
         this->colCylinder[i + 3].dim.pos.x = cylPos.x;
@@ -404,7 +404,7 @@ s32 EnSt_CheckHitPlayer(EnSt* this, PlayState* play) {
     this->gaveDamageSpinTimer = 30;
     play->damagePlayer(play, -8);
     Actor_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
-    Actor_SetPlayerKnockbackLargeNoDamage(play, &this->actor, 4.0f, this->actor.yawTowardsPlayer, 6.0f);
+    func_8002F71C(play, &this->actor, 4.0f, this->actor.yawTowardsPlayer, 6.0f);
     return true;
 }
 
@@ -467,7 +467,7 @@ s32 EnSt_CheckHitBackside(EnSt* this, PlayState* play) {
         return false;
     }
     Enemy_StartFinishingBlow(play, &this->actor);
-    this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
+    this->actor.flags &= ~ACTOR_FLAG_0;
     this->groundBounces = 3;
     this->deathTimer = 20;
     this->actor.gravity = -1.0f;
@@ -563,9 +563,7 @@ s32 EnSt_DecrStunTimer(EnSt* this) {
     if (this->stunTimer == 0) {
         return 0;
     }
-    this->stunTimer--;
-    //! @bug No return, v0 ends up being stunTimer before decrement.
-    //! The return value is not used so it doesn't matter.
+    this->stunTimer--; //! @bug  no return but v0 ends up being stunTimer before decrement
 }
 
 /**
@@ -625,7 +623,7 @@ void EnSt_UpdateYaw(EnSt* this, PlayState* play) {
 
         // calculate the new yaw to or away from the player.
         rot = this->actor.shape.rot;
-        yawTarget = (this->actionFunc == EnSt_WaitOnGround ? this->actor.yawTowardsPlayer : this->initialYaw);
+        yawTarget = (this->actionFunc == EnSt_WaitOnGround ? this->actor.yawTowardsPlayer : this->initalYaw);
         yawDiff = rot.y - (yawTarget ^ yawDir);
         if (ABS(yawDiff) <= 0x4000) {
             Math_SmoothStepToS(&rot.y, yawTarget ^ yawDir, 4, 0x2000, 1);
@@ -716,7 +714,7 @@ s32 EnSt_IsCloseToPlayer(EnSt* this, PlayState* play) {
     return true;
 }
 
-s32 EnSt_IsCloseToInitialPos(EnSt* this) {
+s32 EnSt_IsCloseToInitalPos(EnSt* this) {
     f32 velY = this->actor.velocity.y;
     f32 checkY = this->actor.world.pos.y + (velY * 2.0f);
 
@@ -800,11 +798,11 @@ void EnSt_Init(Actor* thisx, PlayState* play) {
         this->actor.naviEnemyId = NAVI_ENEMY_SKULLTULA;
     }
     EnSt_CheckCeilingPos(this, play);
-    this->actor.flags |= ACTOR_FLAG_CAN_ATTACH_TO_ARROW;
-    this->actor.flags |= ACTOR_FLAG_SFX_FOR_PLAYER_BODY_HIT;
+    this->actor.flags |= ACTOR_FLAG_14;
+    this->actor.flags |= ACTOR_FLAG_24;
     EnSt_SetColliderScale(this);
     this->actor.gravity = 0.0f;
-    this->initialYaw = this->actor.world.rot.y;
+    this->initalYaw = this->actor.world.rot.y;
     EnSt_SetupAction(this, EnSt_StartOnCeilingOrGround);
 }
 
@@ -928,7 +926,7 @@ void EnSt_ReturnToCeiling(EnSt* this, PlayState* play) {
         // player came back into range
         EnSt_SetDropAnimAndVel(this);
         EnSt_SetupAction(this, EnSt_MoveToGround);
-    } else if (EnSt_IsCloseToInitialPos(this)) {
+    } else if (EnSt_IsCloseToInitalPos(this)) {
         // the Skulltula is close to the initial postion.
         EnSt_SetWaitingAnimation(this);
         EnSt_SetupAction(this, EnSt_WaitOnCeiling);
@@ -1015,7 +1013,7 @@ void EnSt_Update(Actor* thisx, PlayState* play) {
     s32 pad;
     Color_RGBA8 color = { 0, 0, 0, 0 };
 
-    if (this->actor.flags & ACTOR_FLAG_ATTACHED_TO_ARROW) {
+    if (this->actor.flags & ACTOR_FLAG_15) {
         SkelAnime_Update(&this->skelAnime);
     } else if (!EnSt_CheckColliders(this, play)) {
         // no collision has been detected.

@@ -14,7 +14,7 @@ void BgSpot18Futa_Destroy(Actor* thisx, PlayState* play);
 void BgSpot18Futa_Update(Actor* thisx, PlayState* play);
 void BgSpot18Futa_Draw(Actor* thisx, PlayState* play);
 
-ActorProfile Bg_Spot18_Futa_Profile = {
+ActorInit Bg_Spot18_Futa_InitVars = {
     /**/ ACTOR_BG_SPOT18_FUTA,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,

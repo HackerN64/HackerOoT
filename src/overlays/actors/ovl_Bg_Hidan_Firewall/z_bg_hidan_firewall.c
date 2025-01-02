@@ -21,7 +21,7 @@ void BgHidanFirewall_Erupt(BgHidanFirewall* this, PlayState* play);
 void BgHidanFirewall_Collide(BgHidanFirewall* this, PlayState* play);
 void BgHidanFirewall_ColliderFollowPlayer(BgHidanFirewall* this, PlayState* play);
 
-ActorProfile Bg_Hidan_Firewall_Profile = {
+ActorInit Bg_Hidan_Firewall_InitVars = {
     /**/ ACTOR_BG_HIDAN_FIREWALL,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -35,7 +35,7 @@ ActorProfile Bg_Hidan_Firewall_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_ON | AT_TYPE_ENEMY,
         AC_NONE,
         OC1_ON | OC1_TYPE_PLAYER,
@@ -43,7 +43,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x20000000, 0x01, 0x04 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NONE,
@@ -81,12 +81,12 @@ void BgHidanFirewall_Destroy(Actor* thisx, PlayState* play) {
 
 s32 BgHidanFirewall_CheckProximity(BgHidanFirewall* this, PlayState* play) {
     Player* player;
-    Vec3f playerRelativePos;
+    Vec3f distance;
 
     player = GET_PLAYER(play);
-    Actor_WorldToActorCoords(&this->actor, &playerRelativePos, &player->actor.world.pos);
+    func_8002DBD0(&this->actor, &distance, &player->actor.world.pos);
 
-    if (fabsf(playerRelativePos.x) < 100.0f && fabsf(playerRelativePos.z) < 120.0f) {
+    if (fabsf(distance.x) < 100.0f && fabsf(distance.z) < 120.0f) {
         return 1;
     }
     return 0;
@@ -132,44 +132,44 @@ void BgHidanFirewall_Collide(BgHidanFirewall* this, PlayState* play) {
         phi_a3 = this->actor.shape.rot.y + 0x8000;
     }
 
-    Actor_SetPlayerKnockbackLargeNoDamage(play, &this->actor, 5.0f, phi_a3, 1.0f);
+    func_8002F71C(play, &this->actor, 5.0f, phi_a3, 1.0f);
 }
 
 void BgHidanFirewall_ColliderFollowPlayer(BgHidanFirewall* this, PlayState* play) {
     Player* player;
-    Vec3f playerRelativePos;
+    Vec3f sp30;
     f32 temp_ret;
     f32 sp28;
     f32 phi_f0;
 
     player = GET_PLAYER(play);
 
-    Actor_WorldToActorCoords(&this->actor, &playerRelativePos, &player->actor.world.pos);
-    if (playerRelativePos.x < -70.0f) {
-        playerRelativePos.x = -70.0f;
+    func_8002DBD0(&this->actor, &sp30, &player->actor.world.pos);
+    if (sp30.x < -70.0f) {
+        sp30.x = -70.0f;
     } else {
-        if (70.0f < playerRelativePos.x) {
+        if (70.0f < sp30.x) {
             phi_f0 = 70.0f;
         } else {
-            phi_f0 = playerRelativePos.x;
+            phi_f0 = sp30.x;
         }
-        playerRelativePos.x = phi_f0;
+        sp30.x = phi_f0;
     }
     if (this->actor.params == 0) {
-        if (0.0f < playerRelativePos.z) {
-            playerRelativePos.z = -25.0f;
+        if (0.0f < sp30.z) {
+            sp30.z = -25.0f;
             this->actor.params = -1;
         } else {
-            playerRelativePos.z = 25.0f;
+            sp30.z = 25.0f;
             this->actor.params = 1;
         }
     } else {
-        playerRelativePos.z = this->actor.params * 25.0f;
+        sp30.z = this->actor.params * 25.0f;
     }
     sp28 = Math_SinS(this->actor.shape.rot.y);
     temp_ret = Math_CosS(this->actor.shape.rot.y);
-    this->collider.dim.pos.x = this->actor.world.pos.x + playerRelativePos.x * temp_ret + playerRelativePos.z * sp28;
-    this->collider.dim.pos.z = this->actor.world.pos.z - playerRelativePos.x * sp28 + playerRelativePos.z * temp_ret;
+    this->collider.dim.pos.x = this->actor.world.pos.x + sp30.x * temp_ret + sp30.z * sp28;
+    this->collider.dim.pos.z = this->actor.world.pos.z - sp30.x * sp28 + sp30.z * temp_ret;
 }
 
 void BgHidanFirewall_Update(Actor* thisx, PlayState* play) {
@@ -188,7 +188,7 @@ void BgHidanFirewall_Update(Actor* thisx, PlayState* play) {
         BgHidanFirewall_ColliderFollowPlayer(this, play);
         CollisionCheck_SetAT(play, &play->colChkCtx, &this->collider.base);
         CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
-        Actor_PlaySfx_Flagged(&this->actor, NA_SE_EV_FIRE_PLATE - SFX_FLAG);
+        func_8002F974(&this->actor, NA_SE_EV_FIRE_PLATE - SFX_FLAG);
     }
 }
 
@@ -199,17 +199,16 @@ static void* sFireballTexs[] = {
 
 void BgHidanFirewall_Draw(Actor* thisx, PlayState* play) {
     BgHidanFirewall* this = (BgHidanFirewall*)thisx;
-    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_bg_hidan_firewall.c", 448);
 
     POLY_XLU_DISP = Gfx_SetupDL(POLY_XLU_DISP, SETUPDL_20);
 
     gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sFireballTexs[this->unk_150]));
-    IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, this->unk_150);
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0x01, 255, 255, 0, 150);
     gDPSetEnvColor(POLY_XLU_DISP++, 255, 0, 0, 255);
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_bg_hidan_firewall.c", 458);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_hidan_firewall.c", 458),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gFireTempleFireballUpperHalfDL);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_bg_hidan_firewall.c", 463);

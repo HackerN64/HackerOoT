@@ -23,7 +23,7 @@ void func_808934C0(BgJyaAmishutter* this);
 void func_808934FC(BgJyaAmishutter* this);
 void func_8089350C(BgJyaAmishutter* this);
 
-ActorProfile Bg_Jya_Amishutter_Profile = {
+ActorInit Bg_Jya_Amishutter_InitVars = {
     /**/ ACTOR_BG_JYA_AMISHUTTER,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -50,7 +50,7 @@ void BgJyaAmishutter_InitDynaPoly(BgJyaAmishutter* this, PlayState* play, Collis
     CollisionHeader_GetVirtual(collision, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     if (this->dyna.bgId == BG_ACTOR_MAX) {
         s32 pad2;
 
@@ -93,7 +93,7 @@ void func_80893438(BgJyaAmishutter* this) {
         func_808934B0(this);
         Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_METALDOOR_STOP);
     } else {
-        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_METALDOOR_SLIDE - SFX_FLAG);
+        func_8002F974(&this->dyna.actor, NA_SE_EV_METALDOOR_SLIDE - SFX_FLAG);
     }
 }
 
@@ -116,7 +116,7 @@ void func_8089350C(BgJyaAmishutter* this) {
         BgJyaAmishutter_SetupWaitForPlayer(this);
         Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_METALDOOR_STOP);
     } else {
-        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_METALDOOR_SLIDE - SFX_FLAG);
+        func_8002F974(&this->dyna.actor, NA_SE_EV_METALDOOR_SLIDE - SFX_FLAG);
     }
 }
 

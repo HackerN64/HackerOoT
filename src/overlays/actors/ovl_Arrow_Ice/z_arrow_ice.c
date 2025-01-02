@@ -8,7 +8,7 @@
 
 #include "overlays/actors/ovl_En_Arrow/z_en_arrow.h"
 
-#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_UPDATE_DURING_OCARINA)
+#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_25)
 
 void ArrowIce_Init(Actor* thisx, PlayState* play);
 void ArrowIce_Destroy(Actor* thisx, PlayState* play);
@@ -21,7 +21,7 @@ void ArrowIce_Hit(ArrowIce* this, PlayState* play);
 
 #include "assets/overlays/ovl_Arrow_Ice/ovl_Arrow_Ice.c"
 
-ActorProfile Arrow_Ice_Profile = {
+ActorInit Arrow_Ice_InitVars = {
     /**/ ACTOR_ARROW_ICE,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,
@@ -75,7 +75,7 @@ void ArrowIce_Charge(ArrowIce* this, PlayState* play) {
     this->actor.world.pos = arrow->actor.world.pos;
     this->actor.shape.rot = arrow->actor.shape.rot;
 
-    Actor_PlaySfx_Flagged(&this->actor, NA_SE_PL_ARROW_CHARGE_ICE - SFX_FLAG);
+    func_8002F974(&this->actor, NA_SE_PL_ARROW_CHARGE_ICE - SFX_FLAG);
 
     // if arrow has no parent, player has fired the arrow
     if (arrow->actor.parent == NULL) {
@@ -239,7 +239,8 @@ void ArrowIce_Draw(Actor* thisx, PlayState* play) {
     }
     Matrix_Scale(this->radius * 0.2f, this->unk_160 * 3.0f, this->radius * 0.2f, MTXMODE_APPLY);
     Matrix_Translate(0.0f, -700.0f, 0.0f, MTXMODE_APPLY);
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_arrow_ice.c", 660);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_arrow_ice.c", 660),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, sMaterialDL);
     gSPDisplayList(POLY_XLU_DISP++,
                    Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, 511 - (stateFrames * 5) % 512, 0, 128, 32, 1,

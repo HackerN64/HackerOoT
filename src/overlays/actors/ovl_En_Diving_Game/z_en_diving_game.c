@@ -9,7 +9,7 @@
 #include "assets/objects/object_zo/object_zo.h"
 #include "terminal.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4)
 
 void EnDivingGame_Init(Actor* thisx, PlayState* play);
 void EnDivingGame_Destroy(Actor* thisx, PlayState* play);
@@ -33,7 +33,7 @@ void func_809EEA00(EnDivingGame* this, PlayState* play);
 void func_809EEA90(EnDivingGame* this, PlayState* play);
 void func_809EEAF8(EnDivingGame* this, PlayState* play);
 
-ActorProfile En_Diving_Game_Profile = {
+ActorInit En_Diving_Game_InitVars = {
     /**/ ACTOR_EN_DIVING_GAME,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -50,7 +50,7 @@ static u8 D_809EF0B0 = false;
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -58,7 +58,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE | ATELEM_SFX_NORMAL,
@@ -93,7 +93,7 @@ void EnDivingGame_Init(Actor* thisx, PlayState* play) {
         Actor_Kill(&this->actor);
     } else {
         D_809EF0B0 = true;
-        this->actor.attentionRangeType = ATTENTION_RANGE_0;
+        this->actor.targetMode = 0;
         this->actor.colChkInfo.mass = MASS_IMMOVABLE;
         this->actionFunc = func_809EDCB0;
     }
@@ -561,8 +561,8 @@ s32 EnDivingGame_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, V
     }
 
     if (this->notPlayingMinigame && (limbIndex == 8 || limbIndex == 9 || limbIndex == 12)) {
-        rot->y += Math_SinS((play->state.frames * (limbIndex * FIDGET_FREQ_LIMB + FIDGET_FREQ_Y))) * FIDGET_AMPLITUDE;
-        rot->z += Math_CosS((play->state.frames * (limbIndex * FIDGET_FREQ_LIMB + FIDGET_FREQ_Z))) * FIDGET_AMPLITUDE;
+        rot->y += Math_SinS((play->state.frames * (limbIndex * 50 + 0x814))) * 200.0f;
+        rot->z += Math_CosS((play->state.frames * (limbIndex * 50 + 0x940))) * 200.0f;
     }
 
     return 0;

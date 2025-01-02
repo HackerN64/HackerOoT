@@ -9,7 +9,7 @@ struct EnFr;
 typedef void (*EnFrActionFunc)(struct EnFr*, PlayState*);
 typedef void (*EnFrBlinkFunc)(struct EnFr*);
 
-typedef enum FrogType {
+typedef enum {
     /* 0 */ FROG_YELLOW,   // Middle
     /* 1 */ FROG_BLUE,     // Front Left
     /* 2 */ FROG_RED,      // Front Right
@@ -17,7 +17,7 @@ typedef enum FrogType {
     /* 4 */ FROG_WHITE     // Back Right
 } FrogType;
 
-typedef enum FrogSongType {
+typedef enum {
     /* 0 */ FROG_ZL,
     /* 1 */ FROG_EPONA,
     /* 2 */ FROG_SARIA,

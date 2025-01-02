@@ -24,7 +24,7 @@ void ObjOshihiki_Push(ObjOshihiki* this, PlayState* play);
 void ObjOshihiki_SetupFall(ObjOshihiki* this, PlayState* play);
 void ObjOshihiki_Fall(ObjOshihiki* this, PlayState* play);
 
-ActorProfile Obj_Oshihiki_Profile = {
+ActorInit Obj_Oshihiki_InitVars = {
     /**/ ACTOR_OBJ_OSHIHIKI,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -92,7 +92,7 @@ void ObjOshihiki_InitDynapoly(ObjOshihiki* this, PlayState* play, CollisionHeade
     CollisionHeader_GetVirtual(collision, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     if (this->dyna.bgId == BG_ACTOR_MAX) {
         s32 pad2;
 
@@ -116,7 +116,7 @@ s32 ObjOshihiki_StrongEnough(ObjOshihiki* this) {
         return 0;
     }
     strength = Player_GetStrength();
-    switch (PARAMS_GET_U(this->dyna.actor.params, 0, 4)) {
+    switch (this->dyna.actor.params & 0xF) {
         case PUSHBLOCK_SMALL_START_ON:
         case PUSHBLOCK_MEDIUM_START_ON:
         case PUSHBLOCK_SMALL_START_OFF:
@@ -183,16 +183,16 @@ s32 ObjOshihiki_NoSwitchPress(ObjOshihiki* this, DynaPolyActor* dyna, PlayState*
     if (dyna == NULL) {
         return 1;
     } else if (dyna->actor.id == ACTOR_OBJ_SWITCH) {
-        dynaSwitchFlag = PARAMS_GET_U(dyna->actor.params, 8, 6);
-        switch (dyna->actor.params & 0x33) { // Does not fit any standard params getter macro
-            case 0x20:                       // Normal blue switch
-                if ((dynaSwitchFlag == PARAMS_GET_U(this->dyna.actor.params, 8, 6)) &&
+        dynaSwitchFlag = (dyna->actor.params >> 8) & 0x3F;
+        switch (dyna->actor.params & 0x33) {
+            case 0x20: // Normal blue switch
+                if ((dynaSwitchFlag == ((this->dyna.actor.params >> 8) & 0x3F)) &&
                     Flags_GetSwitch(play, dynaSwitchFlag)) {
                     return 0;
                 }
                 break;
             case 0x30: // Inverse blue switch
-                if ((dynaSwitchFlag == PARAMS_GET_U(this->dyna.actor.params, 8, 6)) &&
+                if ((dynaSwitchFlag == ((this->dyna.actor.params >> 8) & 0x3F)) &&
                     !Flags_GetSwitch(play, dynaSwitchFlag)) {
                     return 0;
                 }
@@ -203,7 +203,7 @@ s32 ObjOshihiki_NoSwitchPress(ObjOshihiki* this, DynaPolyActor* dyna, PlayState*
 }
 
 void ObjOshihiki_CheckType(ObjOshihiki* this, PlayState* play) {
-    switch (PARAMS_GET_U(this->dyna.actor.params, 0, 4)) {
+    switch (this->dyna.actor.params & 0xF) {
         case PUSHBLOCK_SMALL_START_ON:
         case PUSHBLOCK_MEDIUM_START_ON:
         case PUSHBLOCK_LARGE_START_ON:
@@ -223,11 +223,11 @@ void ObjOshihiki_CheckType(ObjOshihiki* this, PlayState* play) {
 }
 
 void ObjOshihiki_SetScale(ObjOshihiki* this, PlayState* play) {
-    Actor_SetScale(&this->dyna.actor, sScales[PARAMS_GET_U(this->dyna.actor.params, 0, 4)]);
+    Actor_SetScale(&this->dyna.actor, sScales[this->dyna.actor.params & 0xF]);
 }
 
 void ObjOshihiki_SetTexture(ObjOshihiki* this, PlayState* play) {
-    switch (PARAMS_GET_U(this->dyna.actor.params, 0, 4)) {
+    switch (this->dyna.actor.params & 0xF) {
         case PUSHBLOCK_SMALL_START_ON:
         case PUSHBLOCK_MEDIUM_START_ON:
         case PUSHBLOCK_SMALL_START_OFF:
@@ -247,7 +247,7 @@ void ObjOshihiki_SetTexture(ObjOshihiki* this, PlayState* play) {
 
 void ObjOshihiki_SetColor(ObjOshihiki* this, PlayState* play2) {
     PlayState* play = play2;
-    s16 paramsColorIdx = PARAMS_GET_U(this->dyna.actor.params, 6, 2);
+    s16 paramsColorIdx = (this->dyna.actor.params >> 6) & 3;
     Color_RGB8* color = &this->color;
     Color_RGB8* src;
     s32 i;
@@ -276,9 +276,9 @@ void ObjOshihiki_Init(Actor* thisx, PlayState* play2) {
 
     ObjOshihiki_CheckType(this, play);
 
-    if ((PARAMS_GET_U(this->dyna.actor.params, 8, 8) >= 0) && (PARAMS_GET_U(this->dyna.actor.params, 8, 8) <= 0x3F)) {
-        if (Flags_GetSwitch(play, PARAMS_GET_U(this->dyna.actor.params, 8, 6))) {
-            switch (PARAMS_GET_U(this->dyna.actor.params, 0, 4)) {
+    if ((((this->dyna.actor.params >> 8) & 0xFF) >= 0) && (((this->dyna.actor.params >> 8) & 0xFF) <= 0x3F)) {
+        if (Flags_GetSwitch(play, (this->dyna.actor.params >> 8) & 0x3F)) {
+            switch (this->dyna.actor.params & 0xF) {
                 case PUSHBLOCK_SMALL_START_ON:
                 case PUSHBLOCK_MEDIUM_START_ON:
                 case PUSHBLOCK_LARGE_START_ON:
@@ -287,7 +287,7 @@ void ObjOshihiki_Init(Actor* thisx, PlayState* play2) {
                     return;
             }
         } else {
-            switch (PARAMS_GET_U(this->dyna.actor.params, 0, 4)) {
+            switch (this->dyna.actor.params & 0xF) {
                 case PUSHBLOCK_SMALL_START_OFF:
                 case PUSHBLOCK_MEDIUM_START_OFF:
                 case PUSHBLOCK_LARGE_START_OFF:
@@ -491,7 +491,7 @@ void ObjOshihiki_OnActor(ObjOshihiki* this, PlayState* play) {
             dynaPolyActor = DynaPoly_GetActor(&play->colCtx, bgId);
             if (dynaPolyActor != NULL) {
                 DynaPolyActor_SetActorOnTop(dynaPolyActor);
-                DynaPolyActor_SetSwitchPressed(dynaPolyActor);
+                func_80043538(dynaPolyActor);
 
                 if ((this->timer <= 0) && (fabsf(this->dyna.unk_150) > 0.001f)) {
                     if (ObjOshihiki_StrongEnough(this) && ObjOshihiki_NoSwitchPress(this, dynaPolyActor, play) &&
@@ -520,7 +520,7 @@ void ObjOshihiki_OnActor(ObjOshihiki* this, PlayState* play) {
 
             if ((dynaPolyActor != NULL) && (dynaPolyActor->transformFlags & DYNA_TRANSFORM_POS)) {
                 DynaPolyActor_SetActorOnTop(dynaPolyActor);
-                DynaPolyActor_SetSwitchPressed(dynaPolyActor);
+                func_80043538(dynaPolyActor);
                 this->dyna.actor.world.pos.y = this->dyna.actor.floorHeight;
             } else {
                 ObjOshihiki_SetupFall(this, play);
@@ -635,7 +635,6 @@ void ObjOshihiki_Update(Actor* thisx, PlayState* play) {
 void ObjOshihiki_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     ObjOshihiki* this = (ObjOshihiki*)thisx;
-    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_obj_oshihiki.c", 1289);
     if (ObjOshihiki_MoveWithBlockUnder(this, play)) {
@@ -644,11 +643,11 @@ void ObjOshihiki_Draw(Actor* thisx, PlayState* play) {
     this->stateFlags &= ~PUSHBLOCK_MOVE_UNDER;
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(this->texture));
-    IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_OPA_DISP++, this->texture);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_obj_oshihiki.c", 1308);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_obj_oshihiki.c", 1308),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     switch (play->sceneId) {
         case SCENE_DEKU_TREE:
         case SCENE_DODONGOS_CAVERN:

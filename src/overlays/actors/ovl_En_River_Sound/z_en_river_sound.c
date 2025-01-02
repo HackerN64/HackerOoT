@@ -13,7 +13,7 @@ void EnRiverSound_Destroy(Actor* thisx, PlayState* play);
 void EnRiverSound_Update(Actor* thisx, PlayState* play);
 void EnRiverSound_Draw(Actor* thisx, PlayState* play);
 
-ActorProfile En_River_Sound_Profile = {
+ActorInit En_River_Sound_InitVars = {
     /**/ ACTOR_EN_RIVER_SOUND,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -29,8 +29,8 @@ void EnRiverSound_Init(Actor* thisx, PlayState* play) {
     EnRiverSound* this = (EnRiverSound*)thisx;
 
     this->playSfx = false;
-    this->pathIndex = PARAMS_GET_U(this->actor.params, 8, 8);
-    this->actor.params = PARAMS_GET_U(this->actor.params, 0, 8);
+    this->pathIndex = (this->actor.params >> 8) & 0xFF;
+    this->actor.params &= 0xFF;
 
     if (this->actor.params >= RS_GANON_TOWER_0) {
         // Incrementally increase volume of NA_BGM_GANON_TOWER for each new room during the climb of Ganon's Tower
@@ -226,7 +226,7 @@ void EnRiverSound_Update(Actor* thisx, PlayState* play) {
             }
         }
     } else if ((thisx->params == RS_GORON_CITY_SARIAS_SONG) || (thisx->params == RS_GREAT_FAIRY)) {
-        Actor_WorldToActorCoords(&player->actor, &thisx->home.pos, &thisx->world.pos);
+        func_8002DBD0(&player->actor, &thisx->home.pos, &thisx->world.pos);
     } else if (play->sceneId == SCENE_DODONGOS_CAVERN_BOSS && Flags_GetClear(play, thisx->room)) {
         Actor_Kill(thisx);
     }

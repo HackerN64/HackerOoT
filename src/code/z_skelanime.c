@@ -9,6 +9,9 @@ s32 SkelAnime_LoopFull(SkelAnime* skelAnime);
 s32 SkelAnime_Once(SkelAnime* skelAnime);
 s32 SkelAnime_LoopPartial(SkelAnime* skelAnime);
 
+static u32 sDisableAnimQueueFlags = 0;
+static u32 sAnimQueueFlags;
+
 /**
  * Draw a limb of type `LodLimb`
  * Near or far display list is specified via `lod`
@@ -36,10 +39,12 @@ void SkelAnime_DrawLimbLod(PlayState* play, s32 limbIndex, void** skeleton, Vec3
     if ((overrideLimbDraw == NULL) || !overrideLimbDraw(play, limbIndex, &dList, &pos, &rot, arg)) {
         Matrix_TranslateRotateZYX(&pos, &rot);
         if (dList != NULL) {
-            MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_skelanime.c", 805);
+            gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_skelanime.c", 805), G_MTX_LOAD);
             gSPDisplayList(POLY_OPA_DISP++, dList);
         }
     }
+
+    if (1) {}
 
     if (postLimbDraw != NULL) {
         postLimbDraw(play, limbIndex, &dList, &rot, arg);
@@ -72,7 +77,7 @@ void SkelAnime_DrawLod(PlayState* play, void** skeleton, Vec3s* jointTable, Over
 
     if (skeleton == NULL) {
         PRINTF(VT_FGCOL(RED));
-        PRINTF(T("Si2_Lod_draw():skelがNULLです。\n", "Si2_Lod_draw(): skel is NULL.\n"));
+        PRINTF("Si2_Lod_draw():skelがNULLです。\n"); // "skel is NULL."
         PRINTF(VT_RST);
         return;
     }
@@ -92,7 +97,7 @@ void SkelAnime_DrawLod(PlayState* play, void** skeleton, Vec3s* jointTable, Over
     if ((overrideLimbDraw == NULL) || !overrideLimbDraw(play, 1, &dList, &pos, &rot, arg)) {
         Matrix_TranslateRotateZYX(&pos, &rot);
         if (dList != NULL) {
-            MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_skelanime.c", 881);
+            gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_skelanime.c", 881), G_MTX_LOAD);
             gSPDisplayList(POLY_OPA_DISP++, dList);
         }
     }
@@ -141,7 +146,7 @@ void SkelAnime_DrawFlexLimbLod(PlayState* play, s32 limbIndex, void** skeleton, 
             MATRIX_TO_MTX(*mtx, "../z_skelanime.c", 945);
             {
                 OPEN_DISPS(play->state.gfxCtx, "../z_skelanime.c", 946);
-                gSPMatrix(POLY_OPA_DISP++, *mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+                gSPMatrix(POLY_OPA_DISP++, *mtx, G_MTX_LOAD);
                 gSPDisplayList(POLY_OPA_DISP++, newDList);
                 CLOSE_DISPS(play->state.gfxCtx, "../z_skelanime.c", 949);
             }
@@ -185,7 +190,7 @@ void SkelAnime_DrawFlexLod(PlayState* play, void** skeleton, Vec3s* jointTable, 
 
     if (skeleton == NULL) {
         PRINTF(VT_FGCOL(RED));
-        PRINTF(T("Si2_Lod_draw_SV():skelがNULLです。\n", "Si2_Lod_draw_SV(): skel is NULL.\n"));
+        PRINTF("Si2_Lod_draw_SV():skelがNULLです。\n"); // "skel is NULL."
         PRINTF(VT_RST);
         return;
     }
@@ -208,7 +213,7 @@ void SkelAnime_DrawFlexLod(PlayState* play, void** skeleton, Vec3s* jointTable, 
         Matrix_TranslateRotateZYX(&pos, &rot);
         if (newDList != NULL) {
             MATRIX_TO_MTX(mtx, "../z_skelanime.c", 1033);
-            gSPMatrix(POLY_OPA_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPMatrix(POLY_OPA_DISP++, mtx, G_MTX_LOAD);
             gSPDisplayList(POLY_OPA_DISP++, newDList);
             mtx++;
         } else if (limbDList != NULL) {
@@ -254,10 +259,12 @@ void SkelAnime_DrawLimbOpa(PlayState* play, s32 limbIndex, void** skeleton, Vec3
     if ((overrideLimbDraw == NULL) || !overrideLimbDraw(play, limbIndex, &dList, &pos, &rot, arg)) {
         Matrix_TranslateRotateZYX(&pos, &rot);
         if (dList != NULL) {
-            MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_skelanime.c", 1103);
+            gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_skelanime.c", 1103), G_MTX_LOAD);
             gSPDisplayList(POLY_OPA_DISP++, dList);
         }
     }
+
+    if (1) {}
 
     if (postLimbDraw != NULL) {
         postLimbDraw(play, limbIndex, &dList, &rot, arg);
@@ -288,7 +295,7 @@ void SkelAnime_DrawOpa(PlayState* play, void** skeleton, Vec3s* jointTable, Over
 
     if (skeleton == NULL) {
         PRINTF(VT_FGCOL(RED));
-        PRINTF(T("Si2_draw():skelがNULLです。\n", "Si2_draw(): skel is NULL.\n"));
+        PRINTF("Si2_draw():skelがNULLです。\n"); // "skel is NULL."
         PRINTF(VT_RST);
         return;
     }
@@ -308,7 +315,7 @@ void SkelAnime_DrawOpa(PlayState* play, void** skeleton, Vec3s* jointTable, Over
     if ((overrideLimbDraw == NULL) || !overrideLimbDraw(play, 1, &dList, &pos, &rot, arg)) {
         Matrix_TranslateRotateZYX(&pos, &rot);
         if (dList != NULL) {
-            MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_skelanime.c", 1176);
+            gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_skelanime.c", 1176), G_MTX_LOAD);
             gSPDisplayList(POLY_OPA_DISP++, dList);
         }
     }
@@ -356,7 +363,7 @@ void SkelAnime_DrawFlexLimbOpa(PlayState* play, s32 limbIndex, void** skeleton, 
         Matrix_TranslateRotateZYX(&pos, &rot);
         if (newDList != NULL) {
             MATRIX_TO_MTX(*limbMatrices, "../z_skelanime.c", 1242);
-            gSPMatrix(POLY_OPA_DISP++, *limbMatrices, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPMatrix(POLY_OPA_DISP++, *limbMatrices, G_MTX_LOAD);
             gSPDisplayList(POLY_OPA_DISP++, newDList);
             (*limbMatrices)++;
         } else if (limbDList != NULL) {
@@ -401,7 +408,7 @@ void SkelAnime_DrawFlexOpa(PlayState* play, void** skeleton, Vec3s* jointTable, 
 
     if (skeleton == NULL) {
         PRINTF(VT_FGCOL(RED));
-        PRINTF(T("Si2_draw_SV():skelがNULLです。\n", "Si2_draw_SV(): skel is NULL.\n"));
+        PRINTF("Si2_draw_SV():skelがNULLです。\n"); // "skel is NULL."
         PRINTF(VT_RST);
         return;
     }
@@ -426,7 +433,7 @@ void SkelAnime_DrawFlexOpa(PlayState* play, void** skeleton, Vec3s* jointTable, 
         Matrix_TranslateRotateZYX(&pos, &rot);
         if (newDList != NULL) {
             MATRIX_TO_MTX(mtx, "../z_skelanime.c", 1327);
-            gSPMatrix(POLY_OPA_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPMatrix(POLY_OPA_DISP++, mtx, G_MTX_LOAD);
             gSPDisplayList(POLY_OPA_DISP++, newDList);
             mtx++;
         } else if (limbDList != NULL) {
@@ -519,7 +526,7 @@ Gfx* SkelAnime_DrawLimb(PlayState* play, s32 limbIndex, void** skeleton, Vec3s* 
     if ((overrideLimbDraw == NULL) || !overrideLimbDraw(play, limbIndex, &dList, &pos, &rot, arg, &gfx)) {
         Matrix_TranslateRotateZYX(&pos, &rot);
         if (dList != NULL) {
-            MATRIX_FINALIZE_AND_LOAD(gfx++, play->state.gfxCtx, "../z_skelanime.c", 1489);
+            gSPMatrix(gfx++, MATRIX_NEW(play->state.gfxCtx, "../z_skelanime.c", 1489), G_MTX_LOAD);
             gSPDisplayList(gfx++, dList);
         }
     }
@@ -554,7 +561,8 @@ Gfx* SkelAnime_Draw(PlayState* play, void** skeleton, Vec3s* jointTable, Overrid
 
     if (skeleton == NULL) {
         PRINTF(VT_FGCOL(RED));
-        PRINTF(T("Si2_draw2():skelがNULLです。NULLを返します。\n", "Si2_draw2(): skel is NULL. Returns NULL.\n"));
+        // "skel is NULL. Returns NULL."
+        PRINTF("Si2_draw2():skelがNULLです。NULLを返します。\n");
         PRINTF(VT_RST);
         return NULL;
     }
@@ -574,7 +582,7 @@ Gfx* SkelAnime_Draw(PlayState* play, void** skeleton, Vec3s* jointTable, Overrid
     if ((overrideLimbDraw == NULL) || !overrideLimbDraw(play, 1, &dList, &pos, &rot, arg, &gfx)) {
         Matrix_TranslateRotateZYX(&pos, &rot);
         if (dList != NULL) {
-            MATRIX_FINALIZE_AND_LOAD(gfx++, play->state.gfxCtx, "../z_skelanime.c", 1558);
+            gSPMatrix(gfx++, MATRIX_NEW(play->state.gfxCtx, "../z_skelanime.c", 1558), G_MTX_LOAD);
             gSPDisplayList(gfx++, dList);
         }
     }
@@ -619,7 +627,7 @@ Gfx* SkelAnime_DrawFlexLimb(PlayState* play, s32 limbIndex, void** skeleton, Vec
         Matrix_TranslateRotateZYX(&pos, &rot);
         if (newDList != NULL) {
             MATRIX_TO_MTX(*mtx, "../z_skelanime.c", 1623);
-            gSPMatrix(gfx++, *mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPMatrix(gfx++, *mtx, G_MTX_LOAD);
             gSPDisplayList(gfx++, newDList);
             (*mtx)++;
         } else if (limbDList != NULL) {
@@ -662,7 +670,8 @@ Gfx* SkelAnime_DrawFlex(PlayState* play, void** skeleton, Vec3s* jointTable, s32
 
     if (skeleton == NULL) {
         PRINTF(VT_FGCOL(RED));
-        PRINTF(T("Si2_draw2_SV():skelがNULLです。NULLを返します。\n", "Si2_draw2_SV(): skel is NULL. Returns NULL.\n"));
+        // "skel is NULL. Returns NULL."
+        PRINTF("Si2_draw2_SV():skelがNULLです。NULLを返します。\n");
         PRINTF(VT_RST);
         return NULL;
     }
@@ -683,7 +692,7 @@ Gfx* SkelAnime_DrawFlex(PlayState* play, void** skeleton, Vec3s* jointTable, s32
         Matrix_TranslateRotateZYX(&pos, &rot);
         if (newDList != NULL) {
             MATRIX_TO_MTX(mtx, "../z_skelanime.c", 1710);
-            gSPMatrix(gfx++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPMatrix(gfx++, mtx, G_MTX_LOAD);
             gSPDisplayList(gfx++, newDList);
             mtx++;
         } else if (limbDList != NULL) {
@@ -789,301 +798,245 @@ void SkelAnime_InterpFrameTable(s32 limbCount, Vec3s* dst, Vec3s* start, Vec3s* 
     }
 }
 
-static u32 sDisabledTransformTaskGroups = 0;
-static u32 sCurAnimTaskGroup;
-
 /**
- * Clear the current task queue. The discarded tasks will then not be processed.
+ * zeroes out the current request count
  */
-void AnimTaskQueue_Reset(AnimTaskQueue* animTaskQueue) {
-    animTaskQueue->count = 0;
+void AnimationContext_Reset(AnimationContext* animationCtx) {
+    animationCtx->animationCount = 0;
 }
 
 /**
- * Changes `sCurAnimTaskGroup` to the next group number.
- *
- * Task groups allow for disabling "transformative" tasks for a defined group.
- * For more information see `AnimTaskQueue_DisableTransformTasksForGroup`.
- *
- * Note that `sCurAnimTaskGroup` is not a whole number that increments, it is handled at the bit-level.
- * Every time the group number changes, a single bit moves 1 position to the left. This is an implementation detail
- * that allows for `sDisabledTransformTaskGroups` to compare against a set of bit flags.
+ * Shifts the queue flag to the next queue
  */
-void AnimTaskQueue_SetNextGroup(PlayState* play) {
-    sCurAnimTaskGroup <<= 1;
+void AnimationContext_SetNextQueue(PlayState* play) {
+    sAnimQueueFlags <<= 1;
 }
 
 /**
- * Marks the current task group as disabled so that "transformative" tasks are skipped.
- * A transformative task is one that will alter the appearance of an animation.
- * These include Copy, Interp, CopyUsingMap, and CopyUsingMapInverted.
- *
- * LoadPlayerFrame and ActorMovement, which don't alter the appearance of an existing animation,
- * will always run even if a group has its transformative tasks disabled.
+ * Disables the current animation queue. Only load and move actor requests will be processed for that queue.
  */
-void AnimTaskQueue_DisableTransformTasksForGroup(PlayState* play) {
-    sDisabledTransformTaskGroups |= sCurAnimTaskGroup;
+void AnimationContext_DisableQueue(PlayState* play) {
+    sDisableAnimQueueFlags |= sAnimQueueFlags;
 }
 
-/**
- * Creates a new task and adds it to the queue, if there is room for it.
- *
- * The `type` value for the task gets set here, but all other
- * initialization must be handled by the caller.
- *
- * @return a pointer to the task, or NULL if it could not be added
- */
-AnimTask* AnimTaskQueue_NewTask(AnimTaskQueue* animTaskQueue, s32 type) {
-    AnimTask* task;
-    s16 taskNumber = animTaskQueue->count;
+AnimationEntry* AnimationContext_AddEntry(AnimationContext* animationCtx, AnimationType type) {
+    AnimationEntry* entry;
+    s16 index = animationCtx->animationCount;
 
-    if (taskNumber >= ANIM_TASK_QUEUE_MAX) {
+    if (index >= ANIMATION_ENTRY_MAX) {
         return NULL;
     }
 
-    animTaskQueue->count = taskNumber + 1;
-
-    task = &animTaskQueue->tasks[taskNumber];
-    task->type = type;
-
-    return task;
+    animationCtx->animationCount = index + 1;
+    entry = &animationCtx->entries[index];
+    entry->type = type;
+    return entry;
 }
 
-#if PLATFORM_N64
-#define LINK_ANIMATION_OFFSET(addr, offset) \
-    (((uintptr_t)_link_animetionSegmentRomStart) + SEGMENT_OFFSET(addr) + (offset))
-#else
 #define LINK_ANIMATION_OFFSET(addr, offset)                                                                         \
     (((uintptr_t)_link_animetionSegmentRomStart) + ((uintptr_t)(addr)) - ((uintptr_t)_link_animetionSegmentStart) + \
      (offset))
-#endif
 
 /**
- * Creates a task which will load a single frame of animation data from the link_animetion file.
- * The asynchronous DMA request to load the data is made as soon as the task is created.
- * When the task is processed later in the AnimTaskQueue, it will wait for the DMA to finish.
+ * Requests loading frame data from the Link animation into frameTable
  */
-void AnimTaskQueue_AddLoadPlayerFrame(PlayState* play, LinkAnimationHeader* animation, s32 frame, s32 limbCount,
-                                      Vec3s* frameTable) {
-    AnimTask* task = AnimTaskQueue_NewTask(&play->animTaskQueue, ANIMTASK_LOAD_PLAYER_FRAME);
+void AnimationContext_SetLoadFrame(PlayState* play, LinkAnimationHeader* animation, s32 frame, s32 limbCount,
+                                   Vec3s* frameTable) {
+    AnimationEntry* entry = AnimationContext_AddEntry(&play->animationCtx, ANIMENTRY_LOADFRAME);
 
-    if (task != NULL) {
+    if (entry != NULL) {
         LinkAnimationHeader* linkAnimHeader = SEGMENTED_TO_VIRTUAL(animation);
         s32 pad;
 
-        osCreateMesgQueue(&task->data.loadPlayerFrame.msgQueue, &task->data.loadPlayerFrame.msg, 1);
-        DMA_REQUEST_ASYNC(&task->data.loadPlayerFrame.req, frameTable,
+        osCreateMesgQueue(&entry->data.load.msgQueue, &entry->data.load.msg, 1);
+        DMA_REQUEST_ASYNC(&entry->data.load.req, frameTable,
                           LINK_ANIMATION_OFFSET(linkAnimHeader->segment, ((sizeof(Vec3s) * limbCount + 2) * frame)),
-                          sizeof(Vec3s) * limbCount + 2, 0, &task->data.loadPlayerFrame.msgQueue, NULL,
-                          "../z_skelanime.c", 2004);
+                          sizeof(Vec3s) * limbCount + 2, 0, &entry->data.load.msgQueue, NULL, "../z_skelanime.c", 2004);
     }
 }
 
 /**
- * Creates a task which will copy all vectors from the `src` frame table to the `dest` frame table.
- *
- * Note: This task is "transformative", meaning it will alter the appearance of an animation.
- * If this task's group is included in `sDisabledTransformTaskGroups`, this task will be skipped for that frame.
+ * Requests copying all vectors from src frame table into dst frame table
  */
-void AnimTaskQueue_AddCopy(PlayState* play, s32 vecCount, Vec3s* dest, Vec3s* src) {
-    AnimTask* task = AnimTaskQueue_NewTask(&play->animTaskQueue, ANIMTASK_COPY);
+void AnimationContext_SetCopyAll(PlayState* play, s32 vecCount, Vec3s* dst, Vec3s* src) {
+    AnimationEntry* entry = AnimationContext_AddEntry(&play->animationCtx, ANIMENTRY_COPYALL);
 
-    if (task != NULL) {
-        task->data.copy.group = sCurAnimTaskGroup;
-        task->data.copy.vecCount = vecCount;
-        task->data.copy.dest = dest;
-        task->data.copy.src = src;
+    if (entry != NULL) {
+        entry->data.copy.queueFlag = sAnimQueueFlags;
+        entry->data.copy.vecCount = vecCount;
+        entry->data.copy.dst = dst;
+        entry->data.copy.src = src;
     }
 }
 
 /**
- * Creates a task which will interpolate between the `base` and `mod` frame tables.
- * The result of the interpolation will be placed in the original `base` table.
- *
- * Note: This task is "transformative", meaning it will alter the appearance of an animation.
- * If this task's group is included in `sDisabledTransformTaskGroups`, this task will be skipped for that frame.
+ * Requests interpolating between base and mod frame tables with the given weight, placing the result in base
  */
-void AnimTaskQueue_AddInterp(PlayState* play, s32 vecCount, Vec3s* base, Vec3s* mod, f32 weight) {
-    AnimTask* task = AnimTaskQueue_NewTask(&play->animTaskQueue, ANIMTASK_INTERP);
+void AnimationContext_SetInterp(PlayState* play, s32 vecCount, Vec3s* base, Vec3s* mod, f32 weight) {
+    AnimationEntry* entry = AnimationContext_AddEntry(&play->animationCtx, ANIMENTRY_INTERP);
 
-    if (task != NULL) {
-        task->data.interp.group = sCurAnimTaskGroup;
-        task->data.interp.vecCount = vecCount;
-        task->data.interp.base = base;
-        task->data.interp.mod = mod;
-        task->data.interp.weight = weight;
+    if (entry != NULL) {
+        entry->data.interp.queueFlag = sAnimQueueFlags;
+        entry->data.interp.vecCount = vecCount;
+        entry->data.interp.base = base;
+        entry->data.interp.mod = mod;
+        entry->data.interp.weight = weight;
     }
 }
 
 /**
- * Creates a task which will copy specified vectors from the `src` frame table to the `dest` frame table.
- * Exactly which vectors will be copied is specified by the `limbCopyMap`.
- *
- * The copy map is an array of true/false flags that specify which limbs should have their data copied.
- * Each index of the map corresponds to a limb number in the skeleton.
- * Every limb that has `true` listed will have its data copied.
- *
- * Note: This task is "transformative", meaning it will alter the appearance of an animation.
- * If this task's group is included in `sDisabledTransformTaskGroups`, this task will be skipped for that frame.
+ * Requests copying vectors from src frame table to dst frame table whose copy flag is true
  */
-void AnimTaskQueue_AddCopyUsingMap(PlayState* play, s32 vecCount, Vec3s* dest, Vec3s* src, u8* limbCopyMap) {
-    AnimTask* task = AnimTaskQueue_NewTask(&play->animTaskQueue, ANIMTASK_COPY_USING_MAP);
+void AnimationContext_SetCopyTrue(PlayState* play, s32 vecCount, Vec3s* dst, Vec3s* src, u8* copyFlag) {
+    AnimationEntry* entry = AnimationContext_AddEntry(&play->animationCtx, ANIMENTRY_COPYTRUE);
 
-    if (task != NULL) {
-        task->data.copyUsingMap.group = sCurAnimTaskGroup;
-        task->data.copyUsingMap.vecCount = vecCount;
-        task->data.copyUsingMap.dest = dest;
-        task->data.copyUsingMap.src = src;
-        task->data.copyUsingMap.limbCopyMap = limbCopyMap;
+    if (entry != NULL) {
+        entry->data.copy1.queueFlag = sAnimQueueFlags;
+        entry->data.copy1.vecCount = vecCount;
+        entry->data.copy1.dst = dst;
+        entry->data.copy1.src = src;
+        entry->data.copy1.copyFlag = copyFlag;
     }
 }
 
 /**
- * Identical to `AnimTaskQueue_AddCopyUsingMap`, except the meaning of the flags in the `limbCopyMap` are inverted.
- * Any entry that specifies `false` will be copied, and any entry that specifies `true` will not.
- *
- * Note: This task is "transformative", meaning it will alter the appearance of an animation.
- * If this task's group is included in `sDisabledTransformTaskGroups`, this task will be skipped for that frame.
+ * Requests copying vectors from src frame table to dst frame table whose copy flag is false
  */
-void AnimTaskQueue_AddCopyUsingMapInverted(PlayState* play, s32 vecCount, Vec3s* dest, Vec3s* src, u8* limbCopyMap) {
-    AnimTask* task = AnimTaskQueue_NewTask(&play->animTaskQueue, ANIMTASK_COPY_USING_MAP_INVERTED);
+void AnimationContext_SetCopyFalse(PlayState* play, s32 vecCount, Vec3s* dst, Vec3s* src, u8* copyFlag) {
+    AnimationEntry* entry = AnimationContext_AddEntry(&play->animationCtx, ANIMENTRY_COPYFALSE);
 
-    if (task != NULL) {
-        task->data.copyUsingMapInverted.group = sCurAnimTaskGroup;
-        task->data.copyUsingMapInverted.vecCount = vecCount;
-        task->data.copyUsingMapInverted.dest = dest;
-        task->data.copyUsingMapInverted.src = src;
-        task->data.copyUsingMapInverted.limbCopyMap = limbCopyMap;
+    if (entry != NULL) {
+        entry->data.copy0.queueFlag = sAnimQueueFlags;
+        entry->data.copy0.vecCount = vecCount;
+        entry->data.copy0.dst = dst;
+        entry->data.copy0.src = src;
+        entry->data.copy0.copyFlag = copyFlag;
     }
 }
 
 /**
- * Creates a task which will move an actor according to the translation of its root limb for the current frame.
+ * Requests moving an actor according to the translation of its root limb
  */
-void AnimTaskQueue_AddActorMovement(PlayState* play, Actor* actor, SkelAnime* skelAnime, f32 moveDiffScaleY) {
-    AnimTask* task = AnimTaskQueue_NewTask(&play->animTaskQueue, ANIMTASK_ACTOR_MOVE);
+void AnimationContext_SetMoveActor(PlayState* play, Actor* actor, SkelAnime* skelAnime, f32 moveDiffScaleY) {
+    AnimationEntry* entry = AnimationContext_AddEntry(&play->animationCtx, ANIMENTRY_MOVEACTOR);
 
-    if (task != NULL) {
-        task->data.actorMovement.actor = actor;
-        task->data.actorMovement.skelAnime = skelAnime;
-        task->data.actorMovement.diffScaleY = moveDiffScaleY;
+    if (entry != NULL) {
+        entry->data.move.actor = actor;
+        entry->data.move.skelAnime = skelAnime;
+        entry->data.move.diffScaleY = moveDiffScaleY;
     }
 }
 
 /**
- * Wait for the DMA request submitted by `AnimTaskQueue_AddLoadPlayerFrame` to complete.
+ * Receives the request for Link's animation frame data
  */
-void AnimTask_LoadPlayerFrame(PlayState* play, AnimTaskData* data) {
-    AnimTaskLoadPlayerFrame* task = &data->loadPlayerFrame;
+void AnimationContext_LoadFrame(PlayState* play, AnimationEntryData* data) {
+    AnimEntryLoadFrame* entry = &data->load;
 
-    osRecvMesg(&task->msgQueue, NULL, OS_MESG_BLOCK);
+    osRecvMesg(&entry->msgQueue, NULL, OS_MESG_BLOCK);
 }
 
 /**
- * Copy all data from the `src` frame table to the `dest` table.
+ * If the entry's queue is enabled, copies all vectors from src frame table to dst frame table
  */
-void AnimTask_Copy(PlayState* play, AnimTaskData* data) {
-    AnimTaskCopy* task = &data->copy;
+void AnimationContext_CopyAll(PlayState* play, AnimationEntryData* data) {
+    AnimEntryCopyAll* entry = &data->copy;
 
-    if (!(task->group & sDisabledTransformTaskGroups)) {
-        Vec3s* dest = task->dest;
-        Vec3s* src = task->src;
+    if (!(entry->queueFlag & sDisableAnimQueueFlags)) {
+        Vec3s* dst = entry->dst;
+        Vec3s* src = entry->src;
         s32 i;
 
-        for (i = 0; i < task->vecCount; i++) {
-            *dest++ = *src++;
+        for (i = 0; i < entry->vecCount; i++) {
+            *dst++ = *src++;
         }
     }
 }
 
 /**
- * Interpolate between the `base` and `mod` frame tables.
+ * If the entry's queue is enabled, interpolates between the base and mod frame tables, placing the result in base
  */
-void AnimTask_Interp(PlayState* play, AnimTaskData* data) {
-    AnimTaskInterp* task = &data->interp;
+void AnimationContext_Interp(PlayState* play, AnimationEntryData* data) {
+    AnimEntryInterp* entry = &data->interp;
 
-    if (!(task->group & sDisabledTransformTaskGroups)) {
-        SkelAnime_InterpFrameTable(task->vecCount, task->base, task->base, task->mod, task->weight);
+    if (!(entry->queueFlag & sDisableAnimQueueFlags)) {
+        SkelAnime_InterpFrameTable(entry->vecCount, entry->base, entry->base, entry->mod, entry->weight);
     }
 }
 
 /**
- * Copy all data from the `src` frame table to the `dest` table according to the copy map.
+ * If the entry's queue is enabled, copies all vectors from src frame table to dst frame table whose copy flag is true
  */
-void AnimTask_CopyUsingMap(PlayState* play, AnimTaskData* data) {
-    AnimTaskCopyUsingMap* task = &data->copyUsingMap;
+void AnimationContext_CopyTrue(PlayState* play, AnimationEntryData* data) {
+    AnimEntryCopyTrue* entry = &data->copy1;
 
-    if (!(task->group & sDisabledTransformTaskGroups)) {
-        Vec3s* dest = task->dest;
-        Vec3s* src = task->src;
-        u8* limbCopyMap = task->limbCopyMap;
+    if (!(entry->queueFlag & sDisableAnimQueueFlags)) {
+        Vec3s* dst = entry->dst;
+        Vec3s* src = entry->src;
+        u8* copyFlag = entry->copyFlag;
         s32 i;
 
-        for (i = 0; i < task->vecCount; i++, dest++, src++) {
-            if (*limbCopyMap++) {
-                *dest = *src;
+        for (i = 0; i < entry->vecCount; i++, dst++, src++) {
+            if (*copyFlag++) {
+                *dst = *src;
             }
         }
     }
 }
 
 /**
- * Copy all data from the `src` frame table to the `dest` table according to the inverted copy map.
+ * If the entry's queue is enabled, copies all vectors from src frame table to dst frame table whose copy flag is false
  */
-void AnimTask_CopyUsingMapInverted(PlayState* play, AnimTaskData* data) {
-    AnimTaskCopyUsingMapInverted* task = &data->copyUsingMapInverted;
+void AnimationContext_CopyFalse(PlayState* play, AnimationEntryData* data) {
+    AnimEntryCopyFalse* entry = &data->copy0;
 
-    if (!(task->group & sDisabledTransformTaskGroups)) {
-        Vec3s* dest = task->dest;
-        Vec3s* src = task->src;
-        u8* limbCopyMap = task->limbCopyMap;
+    if (!(entry->queueFlag & sDisableAnimQueueFlags)) {
+        Vec3s* dst = entry->dst;
+        Vec3s* src = entry->src;
+        u8* copyFlag = entry->copyFlag;
         s32 i;
 
-        for (i = 0; i < task->vecCount; i++, dest++, src++) {
-            if (!(*limbCopyMap++)) {
-                *dest = *src;
+        for (i = 0; i < entry->vecCount; i++, dst++, src++) {
+            if (!(*copyFlag++)) {
+                *dst = *src;
             }
         }
     }
 }
 
 /**
- * Move an actor according to the translation of its root limb for the current animation frame.
- * The actor's current shape yaw will factor into the resulting movement.
+ * Moves an actor according to the translation of its root limb
  */
-void AnimTask_ActorMovement(PlayState* play, AnimTaskData* data) {
-    AnimTaskActorMovement* task = &data->actorMovement;
-    Actor* actor = task->actor;
+void AnimationContext_MoveActor(PlayState* play, AnimationEntryData* data) {
+    AnimEntryMoveActor* entry = &data->move;
+    Actor* actor = entry->actor;
     Vec3f diff;
 
-    SkelAnime_UpdateTranslation(task->skelAnime, &diff, actor->shape.rot.y);
-
+    SkelAnime_UpdateTranslation(entry->skelAnime, &diff, actor->shape.rot.y);
     actor->world.pos.x += diff.x * actor->scale.x;
-    actor->world.pos.y += diff.y * actor->scale.y * task->diffScaleY;
+    actor->world.pos.y += diff.y * actor->scale.y * entry->diffScaleY;
     actor->world.pos.z += diff.z * actor->scale.z;
 }
 
-typedef void (*AnimTaskFunc)(struct PlayState* play, AnimTaskData* data);
+typedef void (*AnimationEntryCallback)(struct PlayState* play, AnimationEntryData* data);
 
 /**
- * Update the AnimTaskQueue, processing all tasks in order.
- * Variables related to anim task groups are then reset for the next frame.
+ * Performs all requests in the animation queue, then resets the queue flags.
  */
-void AnimTaskQueue_Update(PlayState* play, AnimTaskQueue* animTaskQueue) {
-    static AnimTaskFunc animTaskFuncs[] = {
-        AnimTask_LoadPlayerFrame,      AnimTask_Copy,          AnimTask_Interp, AnimTask_CopyUsingMap,
-        AnimTask_CopyUsingMapInverted, AnimTask_ActorMovement,
+void AnimationContext_Update(PlayState* play, AnimationContext* animationCtx) {
+    static AnimationEntryCallback animFuncs[] = {
+        AnimationContext_LoadFrame, AnimationContext_CopyAll,   AnimationContext_Interp,
+        AnimationContext_CopyTrue,  AnimationContext_CopyFalse, AnimationContext_MoveActor,
     };
-    AnimTask* task = animTaskQueue->tasks;
+    AnimationEntry* entry = animationCtx->entries;
 
-    while (animTaskQueue->count != 0) {
-        animTaskFuncs[task->type](play, &task->data);
-        task++;
-        animTaskQueue->count--;
+    for (; animationCtx->animationCount != 0; animationCtx->animationCount--) {
+        animFuncs[entry->type](play, &entry->data);
+        entry++;
     }
 
-    sCurAnimTaskGroup = 1 << 0;
-    sDisabledTransformTaskGroups = 0;
+    sAnimQueueFlags = 1;
+    sDisableAnimQueueFlags = 0;
 }
 
 /**
@@ -1130,8 +1083,8 @@ void SkelAnime_InitLink(PlayState* play, SkelAnime* skelAnime, FlexSkeletonHeade
 
     if ((skelAnime->jointTable == NULL) || (skelAnime->morphTable == NULL)) {
         PRINTF(VT_FGCOL(RED));
-        PRINTF(T("Skeleton_Info_Rom_SV_ct メモリアロケーションエラー\n",
-                 "Skeleton_Info_Rom_SV_ct Memory allocation error\n"));
+        // "Memory allocation error"
+        PRINTF("Skeleton_Info_Rom_SV_ct メモリアロケーションエラー\n");
         PRINTF(VT_RST);
     }
 
@@ -1172,8 +1125,8 @@ s32 LinkAnimation_Morph(PlayState* play, SkelAnime* skelAnime) {
         LinkAnimation_SetUpdateFunction(skelAnime);
     }
 
-    AnimTaskQueue_AddInterp(play, skelAnime->limbCount, skelAnime->jointTable, skelAnime->morphTable,
-                            1.0f - (skelAnime->morphWeight / prevMorphWeight));
+    AnimationContext_SetInterp(play, skelAnime->limbCount, skelAnime->jointTable, skelAnime->morphTable,
+                               1.0f - (skelAnime->morphWeight / prevMorphWeight));
     return 0;
 }
 
@@ -1182,8 +1135,8 @@ s32 LinkAnimation_Morph(PlayState* play, SkelAnime* skelAnime) {
  * jointTable and morphTable
  */
 void LinkAnimation_AnimateFrame(PlayState* play, SkelAnime* skelAnime) {
-    AnimTaskQueue_AddLoadPlayerFrame(play, skelAnime->animation, skelAnime->curFrame, skelAnime->limbCount,
-                                     skelAnime->jointTable);
+    AnimationContext_SetLoadFrame(play, skelAnime->animation, skelAnime->curFrame, skelAnime->limbCount,
+                                  skelAnime->jointTable);
     if (skelAnime->morphWeight != 0) {
         f32 updateRate = R_UPDATE_RATE * 0.5f;
 
@@ -1191,8 +1144,8 @@ void LinkAnimation_AnimateFrame(PlayState* play, SkelAnime* skelAnime) {
         if (skelAnime->morphWeight <= 0.0f) {
             skelAnime->morphWeight = 0.0f;
         } else {
-            AnimTaskQueue_AddInterp(play, skelAnime->limbCount, skelAnime->jointTable, skelAnime->morphTable,
-                                    skelAnime->morphWeight);
+            AnimationContext_SetInterp(play, skelAnime->limbCount, skelAnime->jointTable, skelAnime->morphTable,
+                                       skelAnime->morphWeight);
         }
     }
 }
@@ -1259,14 +1212,14 @@ void LinkAnimation_Change(PlayState* play, SkelAnime* skelAnime, LinkAnimationHe
             morphFrames = -morphFrames;
         } else {
             skelAnime->update.link = LinkAnimation_Morph;
-            AnimTaskQueue_AddLoadPlayerFrame(play, animation, (s32)startFrame, skelAnime->limbCount,
-                                             skelAnime->morphTable);
+            AnimationContext_SetLoadFrame(play, animation, (s32)startFrame, skelAnime->limbCount,
+                                          skelAnime->morphTable);
         }
         skelAnime->morphWeight = 1.0f;
         skelAnime->morphRate = 1.0f / morphFrames;
     } else {
         LinkAnimation_SetUpdateFunction(skelAnime);
-        AnimTaskQueue_AddLoadPlayerFrame(play, animation, (s32)startFrame, skelAnime->limbCount, skelAnime->jointTable);
+        AnimationContext_SetLoadFrame(play, animation, (s32)startFrame, skelAnime->limbCount, skelAnime->jointTable);
         skelAnime->morphWeight = 0.0f;
     }
 
@@ -1317,7 +1270,7 @@ void LinkAnimation_PlayLoopSetSpeed(PlayState* play, SkelAnime* skelAnime, LinkA
  * Requests copying jointTable to morphTable
  */
 void LinkAnimation_CopyJointToMorph(PlayState* play, SkelAnime* skelAnime) {
-    AnimTaskQueue_AddCopy(play, skelAnime->limbCount, skelAnime->morphTable, skelAnime->jointTable);
+    AnimationContext_SetCopyAll(play, skelAnime->limbCount, skelAnime->morphTable, skelAnime->jointTable);
 }
 
 /**
@@ -1325,28 +1278,28 @@ void LinkAnimation_CopyJointToMorph(PlayState* play, SkelAnime* skelAnime) {
  * unused
  */
 void LinkAnimation_CopyMorphToJoint(PlayState* play, SkelAnime* skelAnime) {
-    AnimTaskQueue_AddCopy(play, skelAnime->limbCount, skelAnime->jointTable, skelAnime->morphTable);
+    AnimationContext_SetCopyAll(play, skelAnime->limbCount, skelAnime->jointTable, skelAnime->morphTable);
 }
 
 /**
  * Requests loading frame data from the Link animation into morphTable
  */
 void LinkAnimation_LoadToMorph(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 frame) {
-    AnimTaskQueue_AddLoadPlayerFrame(play, animation, (s32)frame, skelAnime->limbCount, skelAnime->morphTable);
+    AnimationContext_SetLoadFrame(play, animation, (s32)frame, skelAnime->limbCount, skelAnime->morphTable);
 }
 
 /**
  * Requests loading frame data from the Link animation into jointTable
  */
 void LinkAnimation_LoadToJoint(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 frame) {
-    AnimTaskQueue_AddLoadPlayerFrame(play, animation, (s32)frame, skelAnime->limbCount, skelAnime->jointTable);
+    AnimationContext_SetLoadFrame(play, animation, (s32)frame, skelAnime->limbCount, skelAnime->jointTable);
 }
 
 /**
  * Requests interpolating between jointTable and morphTable, placing the result in jointTable
  */
 void LinkAnimation_InterpJointMorph(PlayState* play, SkelAnime* skelAnime, f32 weight) {
-    AnimTaskQueue_AddInterp(play, skelAnime->limbCount, skelAnime->jointTable, skelAnime->morphTable, weight);
+    AnimationContext_SetInterp(play, skelAnime->limbCount, skelAnime->jointTable, skelAnime->morphTable, weight);
 }
 
 /**
@@ -1356,12 +1309,12 @@ void LinkAnimation_BlendToJoint(PlayState* play, SkelAnime* skelAnime, LinkAnima
                                 LinkAnimationHeader* animation2, f32 frame2, f32 blendWeight, Vec3s* blendTable) {
     Vec3s* alignedBlendTable;
 
-    AnimTaskQueue_AddLoadPlayerFrame(play, animation1, (s32)frame1, skelAnime->limbCount, skelAnime->jointTable);
+    AnimationContext_SetLoadFrame(play, animation1, (s32)frame1, skelAnime->limbCount, skelAnime->jointTable);
 
     alignedBlendTable = (Vec3s*)ALIGN16((uintptr_t)blendTable);
 
-    AnimTaskQueue_AddLoadPlayerFrame(play, animation2, (s32)frame2, skelAnime->limbCount, alignedBlendTable);
-    AnimTaskQueue_AddInterp(play, skelAnime->limbCount, skelAnime->jointTable, alignedBlendTable, blendWeight);
+    AnimationContext_SetLoadFrame(play, animation2, (s32)frame2, skelAnime->limbCount, alignedBlendTable);
+    AnimationContext_SetInterp(play, skelAnime->limbCount, skelAnime->jointTable, alignedBlendTable, blendWeight);
 }
 
 /**
@@ -1371,12 +1324,12 @@ void LinkAnimation_BlendToMorph(PlayState* play, SkelAnime* skelAnime, LinkAnima
                                 LinkAnimationHeader* animation2, f32 frame2, f32 blendWeight, Vec3s* blendTable) {
     Vec3s* alignedBlendTable;
 
-    AnimTaskQueue_AddLoadPlayerFrame(play, animation1, (s32)frame1, skelAnime->limbCount, skelAnime->morphTable);
+    AnimationContext_SetLoadFrame(play, animation1, (s32)frame1, skelAnime->limbCount, skelAnime->morphTable);
 
     alignedBlendTable = (Vec3s*)ALIGN16((uintptr_t)blendTable);
 
-    AnimTaskQueue_AddLoadPlayerFrame(play, animation2, (s32)frame2, skelAnime->limbCount, alignedBlendTable);
-    AnimTaskQueue_AddInterp(play, skelAnime->limbCount, skelAnime->morphTable, alignedBlendTable, blendWeight);
+    AnimationContext_SetLoadFrame(play, animation2, (s32)frame2, skelAnime->limbCount, alignedBlendTable);
+    AnimationContext_SetInterp(play, skelAnime->limbCount, skelAnime->morphTable, alignedBlendTable, blendWeight);
 }
 
 /**
@@ -1444,7 +1397,7 @@ BAD_RETURN(s32) SkelAnime_Init(PlayState* play, SkelAnime* skelAnime, SkeletonHe
     }
     if ((skelAnime->jointTable == NULL) || (skelAnime->morphTable == NULL)) {
         PRINTF(VT_FGCOL(RED));
-        PRINTF(T("Skeleton_Info2_ct メモリアロケーションエラー\n", "Skeleton_Info2_ct Memory allocation error\n"));
+        PRINTF("Skeleton_Info2_ct メモリアロケーションエラー\n"); // "Memory allocation error"
         PRINTF(VT_RST);
     }
 
@@ -1477,8 +1430,8 @@ BAD_RETURN(s32) SkelAnime_InitFlex(PlayState* play, SkelAnime* skelAnime, FlexSk
     }
     if ((skelAnime->jointTable == NULL) || (skelAnime->morphTable == NULL)) {
         PRINTF(VT_FGCOL(RED));
-        PRINTF(T("Skeleton_Info_Rom_SV_ct メモリアロケーションエラー\n",
-                 "Skeleton_Info_Rom_SV_ct Memory allocation error\n"));
+        // "Memory allocation error"
+        PRINTF("Skeleton_Info_Rom_SV_ct メモリアロケーションエラー\n");
         PRINTF(VT_RST);
     }
 
@@ -1502,8 +1455,8 @@ BAD_RETURN(s32) SkelAnime_InitSkin(PlayState* play, SkelAnime* skelAnime, Skelet
         ZELDA_ARENA_MALLOC(skelAnime->limbCount * sizeof(*skelAnime->morphTable), "../z_skelanime.c", 3121);
     if ((skelAnime->jointTable == NULL) || (skelAnime->morphTable == NULL)) {
         PRINTF(VT_FGCOL(RED));
-        PRINTF(T("Skeleton_Info2_skin2_ct メモリアロケーションエラー\n",
-                 "Skeleton_Info2_skin2_ct Memory allocation error\n"));
+        // "Memory allocation error"
+        PRINTF("Skeleton_Info2_skin2_ct メモリアロケーションエラー\n");
         PRINTF(VT_RST);
     }
 
@@ -1838,8 +1791,7 @@ void SkelAnime_UpdateTranslation(SkelAnime* skelAnime, Vec3f* diff, s16 angle) {
     f32 sin;
     f32 cos;
 
-    // If `ANIM_FLAG_UPDATE_XZ` behaved as expected, it would also be checked here
-    if (skelAnime->movementFlags & ANIM_FLAG_ADJUST_STARTING_POS) {
+    if (skelAnime->moveFlags & ANIM_FLAG_NO_MOVE) {
         diff->x = diff->z = 0.0f;
     } else {
         x = skelAnime->jointTable[0].x;
@@ -1848,7 +1800,6 @@ void SkelAnime_UpdateTranslation(SkelAnime* skelAnime, Vec3f* diff, s16 angle) {
         cos = Math_CosS(angle);
         diff->x = x * cos + z * sin;
         diff->z = z * cos - x * sin;
-
         x = skelAnime->prevTransl.x;
         z = skelAnime->prevTransl.z;
         sin = Math_SinS(skelAnime->prevRot);
@@ -1858,28 +1809,23 @@ void SkelAnime_UpdateTranslation(SkelAnime* skelAnime, Vec3f* diff, s16 angle) {
     }
 
     skelAnime->prevRot = angle;
-
     skelAnime->prevTransl.x = skelAnime->jointTable[0].x;
     skelAnime->jointTable[0].x = skelAnime->baseTransl.x;
-
     skelAnime->prevTransl.z = skelAnime->jointTable[0].z;
     skelAnime->jointTable[0].z = skelAnime->baseTransl.z;
-
-    if (skelAnime->movementFlags & ANIM_FLAG_UPDATE_Y) {
-        if (skelAnime->movementFlags & ANIM_FLAG_ADJUST_STARTING_POS) {
+    if (skelAnime->moveFlags & ANIM_FLAG_UPDATE_Y) {
+        if (skelAnime->moveFlags & ANIM_FLAG_NO_MOVE) {
             diff->y = 0.0f;
         } else {
             diff->y = skelAnime->jointTable[0].y - skelAnime->prevTransl.y;
         }
-
         skelAnime->prevTransl.y = skelAnime->jointTable[0].y;
         skelAnime->jointTable[0].y = skelAnime->baseTransl.y;
     } else {
         diff->y = 0.0f;
         skelAnime->prevTransl.y = skelAnime->jointTable[0].y;
     }
-
-    skelAnime->movementFlags &= ~ANIM_FLAG_ADJUST_STARTING_POS;
+    skelAnime->moveFlags &= ~ANIM_FLAG_NO_MOVE;
 }
 
 /**
@@ -1896,13 +1842,13 @@ void SkelAnime_Free(SkelAnime* skelAnime, PlayState* play) {
     if (skelAnime->jointTable != NULL) {
         ZELDA_ARENA_FREE(skelAnime->jointTable, "../z_skelanime.c", 3729);
     } else {
-        PRINTF(T("now_joint あきまへん！！\n", "now_joint is freed!!\n"));
+        PRINTF("now_joint あきまへん！！\n"); // "now_joint is freed! !"
     }
 
     if (skelAnime->morphTable != NULL) {
         ZELDA_ARENA_FREE(skelAnime->morphTable, "../z_skelanime.c", 3731);
     } else {
-        PRINTF(T("morf_joint あきまへん！！\n", "morf_joint is freed!!\n"));
+        PRINTF("morf_joint あきまへん！！\n"); // "morf_joint is freed !!"
     }
 }
 

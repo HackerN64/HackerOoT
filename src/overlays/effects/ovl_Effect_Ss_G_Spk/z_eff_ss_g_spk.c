@@ -24,7 +24,7 @@ void EffectSsGSpk_Update(PlayState* play, u32 index, EffectSs* this);
 void EffectSsGSpk_UpdateNoAccel(PlayState* play, u32 index, EffectSs* this);
 void EffectSsGSpk_Draw(PlayState* play, u32 index, EffectSs* this);
 
-EffectSsProfile Effect_Ss_G_Spk_Profile = {
+EffectSsInit Effect_Ss_G_Spk_InitVars = {
     EFFECT_SS_G_SPK,
     EffectSsGSpk_Init,
 };
@@ -80,7 +80,6 @@ void EffectSsGSpk_Draw(PlayState* play, u32 index, EffectSs* this) {
     Mtx* mtx;
     f32 scale;
     s32 pad;
-    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(gfxCtx, "../z_eff_ss_g_spk.c", 208);
 
@@ -95,7 +94,6 @@ void EffectSsGSpk_Draw(PlayState* play, u32 index, EffectSs* this) {
     if (mtx != NULL) {
         gSPMatrix(POLY_XLU_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(sparkTextures[this->rTexIndex]));
-        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, this->rTexIndex);
         Gfx_SetupDL_60NoCDXlu(gfxCtx);
         gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, this->rPrimColorR, this->rPrimColorG, this->rPrimColorB, 255);
         gDPSetEnvColor(POLY_XLU_DISP++, this->rEnvColorR, this->rEnvColorG, this->rEnvColorB, this->rEnvColorA);
@@ -103,6 +101,8 @@ void EffectSsGSpk_Draw(PlayState* play, u32 index, EffectSs* this) {
     }
 
     if (1) {}
+    if (1) {}
+
     CLOSE_DISPS(gfxCtx, "../z_eff_ss_g_spk.c", 255);
 }
 

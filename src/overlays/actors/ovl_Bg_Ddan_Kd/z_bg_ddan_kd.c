@@ -18,7 +18,7 @@ void BgDdanKd_CheckForExplosions(BgDdanKd* this, PlayState* play);
 void BgDdanKd_LowerStairs(BgDdanKd* this, PlayState* play);
 void BgDdanKd_DoNothing(BgDdanKd* this, PlayState* play);
 
-ActorProfile Bg_Ddan_Kd_Profile = {
+ActorInit Bg_Ddan_Kd_InitVars = {
     /**/ ACTOR_BG_DDAN_KD,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -32,7 +32,7 @@ ActorProfile Bg_Ddan_Kd_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_ALL,
         OC1_NONE,
@@ -40,7 +40,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK2,
+        ELEMTYPE_UNK2,
         { 0x00000000, 0x00, 0x00 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_NONE,

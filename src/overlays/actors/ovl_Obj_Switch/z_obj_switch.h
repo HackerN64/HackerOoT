@@ -7,9 +7,8 @@
 struct ObjSwitch;
 
 typedef void (*ObjSwitchActionFunc)(struct ObjSwitch*, PlayState*);
-typedef void (*ObjSwitchDrawFunc)(Actor*, PlayState*);
 
-typedef enum ObjSwitchType {
+typedef enum {
     /* 0 */ OBJSWITCH_TYPE_FLOOR,
     /* 1 */ OBJSWITCH_TYPE_FLOOR_RUSTY,
     /* 2 */ OBJSWITCH_TYPE_EYE,
@@ -17,7 +16,7 @@ typedef enum ObjSwitchType {
     /* 4 */ OBJSWITCH_TYPE_CRYSTAL_TARGETABLE
 } ObjSwitchType;
 
-typedef enum ObjSwitchSubType {
+typedef enum {
     /* 0 */ OBJSWITCH_SUBTYPE_ONCE,             // Switches that can only be turned on (On -> Flag Set)
     /* 1 */ OBJSWITCH_SUBTYPE_TOGGLE,           // Switches that can be turned on and off (On -> Flag Set, Off -> Flag Cleared)
     /* 2 */ OBJSWITCH_SUBTYPE_HOLD,             // Floor Types only, released when not stood on (Down -> Flag Set, Up -> Flag Cleared)
@@ -25,12 +24,12 @@ typedef enum ObjSwitchSubType {
     /* 4 */ OBJSWITCH_SUBTYPE_SYNC              // Crystal Types only, syncs with the Switch Flag (On -> Flag Set, Off -> Flag Cleared)
 } ObjSwitchSubType;
 
-typedef struct ObjSwitchJntSph {
+typedef struct {
     /* 0x00 */ ColliderJntSph col;
     /* 0x20 */ ColliderJntSphElement items[1];
 } ObjSwitchJntSph;
 
-typedef struct ObjSwitchTris {
+typedef struct {
     /* 0x00 */ ColliderTris col;
     /* 0x20 */ ColliderTrisElement items[2];
 } ObjSwitchTris;

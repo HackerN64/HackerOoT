@@ -9,7 +9,7 @@
 #include "overlays/actors/ovl_En_Bom/z_en_bom.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE | ACTOR_FLAG_4 | ACTOR_FLAG_HOOKSHOT_PULLS_ACTOR)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4 | ACTOR_FLAG_9)
 
 void EnFw_Init(Actor* thisx, PlayState* play);
 void EnFw_Destroy(Actor* thisx, PlayState* play);
@@ -24,7 +24,7 @@ void EnFw_Run(EnFw* this, PlayState* play);
 void EnFw_JumpToParentInitPos(EnFw* this, PlayState* play);
 void EnFw_TurnToParentInitPos(EnFw* this, PlayState* play);
 
-ActorProfile En_Fw_Profile = {
+ActorInit En_Fw_InitVars = {
     /**/ ACTOR_EN_FW,
     /**/ ACTORCAT_ENEMY,
     /**/ FLAGS,
@@ -39,7 +39,7 @@ ActorProfile En_Fw_Profile = {
 static ColliderJntSphElementInit sJntSphElementsInit[1] = {
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x04 },
             { 0xFFCFFFFE, 0x00, 0x00 },
             ATELEM_NONE,
@@ -52,7 +52,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[1] = {
 
 static ColliderJntSphInit sJntSphInit = {
     {
-        COL_MATERIAL_HIT6,
+        COLTYPE_HIT6,
         AT_ON | AT_TYPE_ENEMY,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_ALL,
@@ -65,7 +65,7 @@ static ColliderJntSphInit sJntSphInit = {
 
 static CollisionCheckInfoInit2 D_80A1FB94 = { 8, 2, 25, 25, MASS_IMMOVABLE };
 
-typedef enum EnFwAnimation {
+typedef enum {
     /* 0 */ ENFW_ANIM_0,
     /* 1 */ ENFW_ANIM_1,
     /* 2 */ ENFW_ANIM_2
@@ -361,7 +361,8 @@ void EnFw_Update(Actor* thisx, PlayState* play) {
     EnFw* this = (EnFw*)thisx;
 
     SkelAnime_Update(&this->skelAnime);
-    if (!CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_HOOKSHOT_ATTACHED)) {
+    if (!CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_13)) {
+        // not attached to hookshot.
         Actor_MoveXZGravity(&this->actor);
         Actor_UpdateBgCheckInfo(play, &this->actor, 10.0f, 20.0f, 0.0f, UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2);
         this->actionFunc(this, play);
@@ -455,7 +456,6 @@ void EnFw_DrawEffects(EnFw* this, PlayState* play) {
     s16 alpha;
     s16 i;
     s16 idx;
-    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_fw.c", 1191);
 
@@ -480,10 +480,10 @@ void EnFw_DrawEffects(EnFw* this, PlayState* play) {
         Matrix_Translate(eff->pos.x, eff->pos.y, eff->pos.z, MTXMODE_NEW);
         Matrix_ReplaceRotation(&play->billboardMtxF);
         Matrix_Scale(eff->scale, eff->scale, 1.0f, MTXMODE_APPLY);
-        MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_en_fw.c", 1229);
+        gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_fw.c", 1229),
+                  G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         idx = eff->timer * (8.0f / eff->initialTimer);
         gSPSegment(POLY_XLU_DISP++, 0x8, SEGMENTED_TO_VIRTUAL(dustTextures[idx]));
-        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, idx);
         gSPDisplayList(POLY_XLU_DISP++, gFlareDancerSquareParticleDL);
     }
 

@@ -1,18 +1,16 @@
 #ifndef ICHAIN_H
 #define ICHAIN_H
 
-#include "ultra64.h"
+#include "libc/stddef.h"
 
-struct Actor;
-
-typedef struct InitChainEntry {
+typedef struct {
     u32 cont:   1;
     u32 type:   4;
     u32 offset: 11;
     s32 value:  16;
 } InitChainEntry;
 
-typedef enum InitChainType {
+typedef enum {
     /* 0x0 */ ICHAINTYPE_U8,            // sets byte
     /* 0x1 */ ICHAINTYPE_S8,
     /* 0x2 */ ICHAINTYPE_U16,           // sets short
@@ -56,7 +54,5 @@ typedef enum InitChainType {
 
 #define ICHAIN_CONTINUE 1
 #define ICHAIN_STOP     0
-
-void Actor_ProcessInitChain(struct Actor* actor, InitChainEntry* ichain);
 
 #endif

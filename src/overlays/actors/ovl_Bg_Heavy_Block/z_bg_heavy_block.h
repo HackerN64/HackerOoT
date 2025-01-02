@@ -2,11 +2,11 @@
 #define Z_BG_HEAVY_BLOCK_H
 
 #include "ultra64.h"
-#include "z64actor.h"
+#include "global.h"
 
 struct BgHeavyBlock;
 
-typedef void (*BgHeavyBlockActionFunc)(struct BgHeavyBlock*, struct PlayState*);
+typedef void (*BgHeavyBlockActionFunc)(struct BgHeavyBlock*, PlayState*);
 
 typedef struct BgHeavyBlock {
     /* 0x0000 */ DynaPolyActor dyna;
@@ -16,7 +16,7 @@ typedef struct BgHeavyBlock {
     /* 0x0174 */ BgHeavyBlockActionFunc actionFunc;
 } BgHeavyBlock; // size = 0x0178
 
-typedef enum HeavyBlockType {
+typedef enum {
     /* 0x00 */ HEAVYBLOCK_UNBREAKABLE,
     /* 0x01 */ HEAVYBLOCK_BREAKABLE,
     /* 0x02 */ HEAVYBLOCK_BIG_PIECE,

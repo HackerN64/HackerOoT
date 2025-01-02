@@ -23,15 +23,6 @@ void AudioMgr_NotifyTaskDone(AudioMgr* audioMgr) {
 void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
     AudioTask* rspTask;
 
-    // Delay the audio update by 3ms so that gfx has time to get going before it has to yield
-    OSTimer timer;
-    OSMesgQueue mq;
-    OSMesg mbuf;
-    osCreateMesgQueue(&mq, &mbuf, 1);
-    osSetTimer(&timer, OS_USEC_TO_CYCLES(3000), 0, &mq, NULL);
-    osRecvMesg(&mq, NULL, OS_MESG_BLOCK);
-    osStopTimer(&timer);
-
     if (R_AUDIOMGR_DEBUG_LEVEL > AUDIOMGR_DEBUG_LEVEL_NONE) {
         // Inhibit audio rsp task processing
         audioMgr->rspTask = NULL;
@@ -54,11 +45,20 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
 
     // Update the audio driver
 
+    if (IS_SPEEDMETER_ENABLED) {
+        gAudioThreadUpdateTimeStart = osGetTime();
+    }
+
     if (R_AUDIOMGR_DEBUG_LEVEL >= AUDIOMGR_DEBUG_LEVEL_NO_UPDATE) {
         // Skip update, no rsp task produced
         rspTask = NULL;
     } else {
         rspTask = AudioThread_Update();
+    }
+
+    if (IS_SPEEDMETER_ENABLED) {
+        gAudioThreadUpdateTimeAcc += osGetTime() - gAudioThreadUpdateTimeStart;
+        gAudioThreadUpdateTimeStart = 0;
     }
 
     if (audioMgr->rspTask != NULL) {
@@ -85,8 +85,8 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
  * @see Audio_PreNMI
  */
 void AudioMgr_HandlePreNMI(AudioMgr* audioMgr) {
-    PRINTF(
-        T("オーディオマネージャが OS_SC_PRE_NMI_MSG を受け取りました\n", "Audio manager received OS_SC_PRE_NMI_MSG\n"));
+    // "Audio manager received OS_SC_PRE_NMI_MSG"
+    PRINTF("オーディオマネージャが OS_SC_PRE_NMI_MSG を受け取りました\n");
     Audio_PreNMI();
 }
 
@@ -95,7 +95,8 @@ void AudioMgr_ThreadEntry(void* arg) {
     IrqMgrClient irqClient;
     s16* msg = NULL;
 
-    PRINTF(T("オーディオマネージャスレッド実行開始\n", "Start running audio manager thread\n"));
+    // "Start running audio manager thread"
+    PRINTF("オーディオマネージャスレッド実行開始\n");
 
     // Initialize audio driver
     Audio_Init();
@@ -156,10 +157,6 @@ void AudioMgr_Init(AudioMgr* audioMgr, void* stack, OSPri pri, OSId id, Schedule
     audioMgr->sched = sched;
     audioMgr->irqMgr = irqMgr;
     audioMgr->rspTask = NULL;
-
-#if PLATFORM_N64
-    R_AUDIOMGR_DEBUG_LEVEL = AUDIOMGR_DEBUG_LEVEL_NO_RSP;
-#endif
 
     osCreateMesgQueue(&audioMgr->taskDoneQueue, &audioMgr->taskDoneMsg, 1);
     osCreateMesgQueue(&audioMgr->interruptQueue, audioMgr->interruptMsgBuf, ARRAY_COUNT(audioMgr->interruptMsgBuf));

@@ -14,19 +14,7 @@
 #include "assets/objects/object_masterzoora/object_masterzoora.h"
 #include "assets/objects/object_masterkokirihead/object_masterkokirihead.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4)
-
-#if !PLATFORM_GC
-#define CURSOR_COLOR_R 0
-#define CURSOR_COLOR_G 80
-#define CURSOR_COLOR_B 255
-#define CURSOR_COLOR_A 255
-#else
-#define CURSOR_COLOR_R 0
-#define CURSOR_COLOR_G 255
-#define CURSOR_COLOR_B 80
-#define CURSOR_COLOR_A 255
-#endif
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4)
 
 void EnOssan_Init(Actor* thisx, PlayState* play);
 void EnOssan_Destroy(Actor* thisx, PlayState* play);
@@ -112,7 +100,7 @@ void EnOssan_SetStateGiveDiscountDialog(PlayState* play, EnOssan* this);
 
 #define CURSOR_INVALID 0xFF
 
-ActorProfile En_Ossan_Profile = {
+ActorInit En_Ossan_InitVars = {
     /**/ ACTOR_EN_OSSAN,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -127,14 +115,14 @@ ActorProfile En_Ossan_Profile = {
 // Unused collider
 static ColliderCylinderInitType1 sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE | ATELEM_SFX_NORMAL,
@@ -153,7 +141,7 @@ static s16 sItemShelfRot[] = { 0xEAAC, 0xEAAC, 0xEAAC, 0xEAAC, 0x1554, 0x1554, 0
 // unused values?
 static s16 D_80AC8904[] = { 0x001E, 0x001F, 0x0020, 0x0021, 0x0022, 0x0023, 0x0024, 0x0025 };
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
 static char* sShopkeeperPrintName[] = {
     "コキリの店  ", // "Kokiri Shop"
     "薬屋        ", // "Potion Shop"
@@ -169,7 +157,7 @@ static char* sShopkeeperPrintName[] = {
 };
 #endif
 
-typedef struct ShopkeeperObjInfo {
+typedef struct {
     /* 0x00 */ s16 objId;
     /* 0x02 */ s16 unk_02;
     /* 0x04 */ s16 unk_04;
@@ -200,7 +188,7 @@ static f32 sShopkeeperScale[] = {
     0.01f, 0.011f, 0.0105f, 0.011f, 0.01f, 0.01f, 0.01f, 0.01f, 0.01f, 0.01f, 0.01f,
 };
 
-typedef struct ShopItem {
+typedef struct {
     /* 0x00 */ s16 shopItemIndex;
     /* 0x02 */ s16 xOffset;
     /* 0x04 */ s16 yOffset;
@@ -324,8 +312,8 @@ static EnOssanGetGirlAParamsFunc sShopItemReplaceFunc[] = {
 };
 
 static InitChainEntry sInitChain[] = {
-    ICHAIN_U8(attentionRangeType, ATTENTION_RANGE_2, ICHAIN_CONTINUE),
-    ICHAIN_F32(lockOnArrowOffset, 500, ICHAIN_STOP),
+    ICHAIN_U8(targetMode, 2, ICHAIN_CONTINUE),
+    ICHAIN_F32(targetArrowOffset, 500, ICHAIN_STOP),
 };
 
 // When selecting an item to buy, this is the position the item moves to
@@ -1894,10 +1882,10 @@ void EnOssan_UpdateCursorAnim(EnOssan* this) {
             this->cursorAnimState = 0;
         }
     }
-    this->cursorColorR = ColChanMix(CURSOR_COLOR_R, 0.0f, t);
-    this->cursorColorG = ColChanMix(CURSOR_COLOR_G, 80.0f, t);
-    this->cursorColorB = ColChanMix(CURSOR_COLOR_B, 0.0f, t);
-    this->cursorColorA = ColChanMix(CURSOR_COLOR_A, 0.0f, t);
+    this->cursorColorR = ColChanMix(0, 0.0f, t);
+    this->cursorColorG = ColChanMix(255, 80.0f, t);
+    this->cursorColorB = ColChanMix(80, 0.0f, t);
+    this->cursorColorA = ColChanMix(255, 0.0f, t);
     this->cursorAnimTween = t;
 }
 
@@ -2154,10 +2142,10 @@ void EnOssan_InitActionFunc(EnOssan* this, PlayState* play) {
 
         this->cursorIndex = 0;
         this->cursorZ = 1.5f;
-        this->cursorColorR = CURSOR_COLOR_R;
-        this->cursorColorG = CURSOR_COLOR_G;
-        this->cursorColorB = CURSOR_COLOR_B;
-        this->cursorColorA = CURSOR_COLOR_A;
+        this->cursorColorR = 0;
+        this->cursorColorG = 255;
+        this->cursorColorB = 80;
+        this->cursorColorA = 255;
         this->cursorAnimTween = 0;
 
         this->cursorAnimState = 0;
@@ -2205,7 +2193,7 @@ void EnOssan_InitActionFunc(EnOssan* this, PlayState* play) {
         this->blinkTimer = 20;
         this->eyeTextureIdx = 0;
         this->blinkFunc = EnOssan_WaitForBlink;
-        this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
+        this->actor.flags &= ~ACTOR_FLAG_0;
         EnOssan_SetupAction(this, EnOssan_MainActionFunc);
     }
 }

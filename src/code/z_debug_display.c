@@ -5,7 +5,7 @@
 #include "global.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
-typedef struct DebugDispObjectInfo {
+typedef struct {
     /* 0x00 */ s16 drawType;  // indicates which draw function to use when displaying the object
     /* 0x04 */ void* drawArg; // segment address (display list or texture) passed to the draw function when called
 } DebugDispObjectInfo;        // size = 0x8
@@ -85,7 +85,8 @@ void DebugDisplay_DrawSpriteI8(DebugDispObject* dispObj, void* texture, PlayStat
     gDPLoadTextureBlock(POLY_XLU_DISP++, texture, G_IM_FMT_I, G_IM_SIZ_8b, 16, 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_debug_display.c", 189);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_debug_display.c", 189),
+              G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_XLU_DISP++, gDebugSpriteDL);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_debug_display.c", 192);
@@ -103,7 +104,8 @@ void DebugDisplay_DrawPolygon(DebugDispObject* dispObj, void* dlist, PlayState* 
     Matrix_SetTranslateRotateYXZ(dispObj->pos.x, dispObj->pos.y, dispObj->pos.z, &dispObj->rot);
     Matrix_Scale(dispObj->scale.x, dispObj->scale.y, dispObj->scale.z, MTXMODE_APPLY);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_debug_display.c", 228);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_debug_display.c", 228),
+              G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_XLU_DISP++, dlist);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_debug_display.c", 231);
