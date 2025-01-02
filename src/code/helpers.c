@@ -92,14 +92,15 @@ void Helpers_InitSkybox(GameState* gameState, EnvironmentContext* envCtx, Skybox
 
 static f32 sSkyboxAngle = 0.0f;
 
-void Helpers_DrawSkybox(GameState* gameState, View* view, EnvironmentContext* envCtx, SkyboxContext* skyboxCtx, s16 skyboxId, f32 eyeY, f32 angleIncrement) {
+void Helpers_DrawSkybox(GameState* gameState, View* view, EnvironmentContext* envCtx, SkyboxContext* skyboxCtx,
+                        s16 skyboxId, f32 eyeY, f32 angleIncrement) {
     f32 eyeX = 1000.0f * Math_CosS(sSkyboxAngle) - 1000.0f * Math_SinS(sSkyboxAngle);
     f32 eyeZ = 1000.0f * Math_SinS(sSkyboxAngle) + 1000.0f * Math_CosS(sSkyboxAngle);
 
     sSkyboxAngle += angleIncrement;
 
     Helpers_SetView(view, eyeX, eyeY, eyeZ);
-    Skybox_Draw(skyboxCtx, gameState->gfxCtx, NULL, skyboxId, envCtx->skyboxBlend,
-                view->eye.x, view->eye.y, view->eye.z);
+    Skybox_Draw(skyboxCtx, gameState->gfxCtx, NULL, skyboxId, envCtx->skyboxBlend, view->eye.x, view->eye.y,
+                view->eye.z);
     Environment_UpdateSkybox(skyboxId, envCtx, skyboxCtx);
 }

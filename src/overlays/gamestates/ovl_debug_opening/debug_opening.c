@@ -193,7 +193,8 @@ void DebugOpening_Draw(DebugOpeningState* this) {
     Gfx_SetupFrame(gfxCtx, true, 0, 0, 0);
     SET_FULLSCREEN_VIEWPORT(&this->view);
     View_Apply(&this->view, VIEW_ALL);
-    Helpers_DrawSkybox(&this->state, &this->view, &this->envCtx, &this->skyboxCtx, DEBUG_OPENING_SKYBOX_ID, 0.0f, -10.0f);
+    Helpers_DrawSkybox(&this->state, &this->view, &this->envCtx, &this->skyboxCtx, DEBUG_OPENING_SKYBOX_ID, 0.0f,
+                       -10.0f);
 
     // draw background
     DebugOpening_DrawRectangle(this, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, rgba);
