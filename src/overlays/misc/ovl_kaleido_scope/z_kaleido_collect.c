@@ -322,8 +322,8 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                     AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
                 }
             } else if (pauseCtx->mainState == PAUSE_MAIN_STATE_IDLE_CURSOR_ON_SONG) {
-                if (CHECK_BTN_ALL(input->press.button, BTN_A) && (cursor >= QUEST_SONG_MINUET) &&
-                    (cursor < QUEST_KOKIRI_EMERALD)) {
+                if (!IS_INV_EDITOR_ACTIVE && CHECK_BTN_ALL(input->press.button, BTN_A) &&
+                    (cursor >= QUEST_SONG_MINUET) && (cursor < QUEST_KOKIRI_EMERALD)) {
 
                     pauseCtx->mainState = PAUSE_MAIN_STATE_SONG_PLAYBACK_START;
 

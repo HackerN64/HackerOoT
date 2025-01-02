@@ -15,6 +15,7 @@
 #include "assets/textures/icon_item_gameover_static/icon_item_gameover_static.h"
 #include "terminal.h"
 #include "versions.h"
+#include "debug.h"
 
 #pragma increment_block_number "ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
 
@@ -880,6 +881,9 @@ static s16 sCursorColors[][3] = {
     { 255, 255, 255 },
     { 255, 255, 0 },
     { KALEIDO_COLOR_CURSOR_UNK_R, KALEIDO_COLOR_CURSOR_UNK_G, KALEIDO_COLOR_CURSOR_UNK_B },
+#if IS_INV_EDITOR_ENABLED
+    { 255, 50, 0 }, // used for the inventory editor
+#endif
 };
 
 static void* sSavePromptMessageTexs[] =
@@ -1082,6 +1086,12 @@ void KaleidoScope_HandlePageToggles(PauseContext* pauseCtx, Input* input) {
         return;
     }
 
+#if IS_INV_EDITOR_ENABLED
+    if (gDebug.invDebug.miscDebug.showMiscScreen || gDebug.invDebug.showInfoScreen) {
+        return;
+    }
+#endif
+
     if (CHECK_BTN_ALL(input->press.button, BTN_R)) {
         KaleidoScope_SetupPageSwitch(pauseCtx, PAGE_SWITCH_PT_RIGHT);
         return;
@@ -1127,6 +1137,13 @@ void KaleidoScope_DrawCursor(PlayState* play, u16 pageIndex) {
           (pauseCtx->mainState == PAUSE_MAIN_STATE_IDLE_CURSOR_ON_SONG)))) {
         s16 i;
         s16 j;
+        s16 cursorColorIndex = pauseCtx->cursorColorSet >> 2;
+
+#if IS_INV_EDITOR_ENABLED
+        if (IS_INV_EDITOR_ACTIVE) {
+            cursorColorIndex = 3;
+        }
+#endif
 
         if (pauseCtx->pageIndex == pageIndex) {
 
@@ -1135,9 +1152,8 @@ void KaleidoScope_DrawCursor(PlayState* play, u16 pageIndex) {
             gDPPipeSync(POLY_OPA_DISP++);
             gDPSetCombineLERP(POLY_OPA_DISP++, PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0,
                               PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0);
-            gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, sCursorColors[pauseCtx->cursorColorSet >> 2][0],
-                            sCursorColors[pauseCtx->cursorColorSet >> 2][1],
-                            sCursorColors[pauseCtx->cursorColorSet >> 2][2], 255);
+            gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, sCursorColors[cursorColorIndex][0],
+                            sCursorColors[cursorColorIndex][1], sCursorColors[cursorColorIndex][2], 255);
             gDPSetEnvColor(POLY_OPA_DISP++, D_8082AB8C, D_8082AB90, D_8082AB94, 255);
             gSPVertex(POLY_OPA_DISP++, pauseCtx->cursorVtx, 16, 0);
 
@@ -1197,8 +1213,9 @@ Gfx* KaleidoScope_DrawPageSections(Gfx* gfx, Vtx* vertices, void** textures) {
 void KaleidoScope_DrawPages(PlayState* play, GraphicsContext* gfxCtx) {
 #if N64_BTN_COLORS
     static s16 D_8082ACF4[][3] = {
-        { 0, 0, 0 }, { 0, 0, 0 },     { 0, 0, 0 },    { 0, 0, 0 }, { 255, 255, 0 }, { 0, 0, 0 },
-        { 0, 0, 0 }, { 255, 255, 0 }, { 0, 50, 255 }, { 0, 0, 0 }, { 0, 0, 0 },     { 0, 50, 255 },
+        { 0, 0, 0 },    { 0, 0, 0 },     { 0, 0, 0 },    { 0, 0, 0 },    { 255, 255, 0 }, { 0, 0, 0 },
+        { 0, 0, 0 },    { 255, 255, 0 }, { 0, 50, 255 }, { 0, 0, 0 },    { 0, 0, 0 },     { 0, 50, 255 },
+        { 255, 50, 0 }, { 0, 0, 0 },     { 0, 0, 0 },    { 255, 50, 0 }, // used by the inventory editor
     };
 #else
     static s16 D_8082ACF4[][3] = {
@@ -1214,6 +1231,10 @@ void KaleidoScope_DrawPages(PlayState* play, GraphicsContext* gfxCtx) {
         { 0, 0, 0 },
         { 0, 0, 0 },
         { KALEIDO_COLOR_CURSOR_UNK_R, KALEIDO_COLOR_CURSOR_UNK_G, KALEIDO_COLOR_CURSOR_UNK_B },
+        { 255, 50, 0 },
+        { 0, 0, 0 },
+        { 0, 0, 0 },
+        { 255, 50, 0 }, // used by the inventory editor
     };
 #endif
     static s16 D_8082AD3C = 20;
@@ -1231,20 +1252,28 @@ void KaleidoScope_DrawPages(PlayState* play, GraphicsContext* gfxCtx) {
 
     if (!IS_PAUSE_STATE_GAMEOVER(pauseCtx)) {
         if (pauseCtx->state != PAUSE_STATE_SAVE_PROMPT) {
-            stepR = ABS(D_8082AB8C - D_8082ACF4[pauseCtx->cursorColorSet + D_8082AD40][0]) / D_8082AD3C;
-            stepG = ABS(D_8082AB90 - D_8082ACF4[pauseCtx->cursorColorSet + D_8082AD40][1]) / D_8082AD3C;
-            stepB = ABS(D_8082AB94 - D_8082ACF4[pauseCtx->cursorColorSet + D_8082AD40][2]) / D_8082AD3C;
-            if (D_8082AB8C >= D_8082ACF4[pauseCtx->cursorColorSet + D_8082AD40][0]) {
+            s16 cursorColorIndex = pauseCtx->cursorColorSet;
+
+#if IS_INV_EDITOR_ENABLED
+            if (IS_INV_EDITOR_ACTIVE) {
+                cursorColorIndex = 3 << 2;
+            }
+#endif
+
+            stepR = ABS(D_8082AB8C - D_8082ACF4[cursorColorIndex + D_8082AD40][0]) / D_8082AD3C;
+            stepG = ABS(D_8082AB90 - D_8082ACF4[cursorColorIndex + D_8082AD40][1]) / D_8082AD3C;
+            stepB = ABS(D_8082AB94 - D_8082ACF4[cursorColorIndex + D_8082AD40][2]) / D_8082AD3C;
+            if (D_8082AB8C >= D_8082ACF4[cursorColorIndex + D_8082AD40][0]) {
                 D_8082AB8C -= stepR;
             } else {
                 D_8082AB8C += stepR;
             }
-            if (D_8082AB90 >= D_8082ACF4[pauseCtx->cursorColorSet + D_8082AD40][1]) {
+            if (D_8082AB90 >= D_8082ACF4[cursorColorIndex + D_8082AD40][1]) {
                 D_8082AB90 -= stepG;
             } else {
                 D_8082AB90 += stepG;
             }
-            if (D_8082AB94 >= D_8082ACF4[pauseCtx->cursorColorSet + D_8082AD40][2]) {
+            if (D_8082AB94 >= D_8082ACF4[cursorColorIndex + D_8082AD40][2]) {
                 D_8082AB94 -= stepB;
             } else {
                 D_8082AB94 += stepB;
@@ -1252,9 +1281,9 @@ void KaleidoScope_DrawPages(PlayState* play, GraphicsContext* gfxCtx) {
 
             D_8082AD3C--;
             if (D_8082AD3C == 0) {
-                D_8082AB8C = D_8082ACF4[pauseCtx->cursorColorSet + D_8082AD40][0];
-                D_8082AB90 = D_8082ACF4[pauseCtx->cursorColorSet + D_8082AD40][1];
-                D_8082AB94 = D_8082ACF4[pauseCtx->cursorColorSet + D_8082AD40][2];
+                D_8082AB8C = D_8082ACF4[cursorColorIndex + D_8082AD40][0];
+                D_8082AB90 = D_8082ACF4[cursorColorIndex + D_8082AD40][1];
+                D_8082AB94 = D_8082ACF4[cursorColorIndex + D_8082AD40][2];
                 D_8082AD3C = ZREG(28 + D_8082AD40);
                 D_8082AD40++;
                 if (D_8082AD40 >= 4) {
@@ -1629,6 +1658,14 @@ void KaleidoScope_DrawPages(PlayState* play, GraphicsContext* gfxCtx) {
     CLOSE_DISPS(gfxCtx, "../z_kaleido_scope_PAL.c", 1577);
 }
 
+#if IS_INV_EDITOR_ENABLED
+#define CHECK_ALPHA (gDebug.invDebug.elementsAlpha == 255)
+#define CHECK_ALPHA2 ((pauseCtx->cursorItem[PAUSE_ITEM] != ITEM_NONE) && (gDebug.invDebug.elementsAlpha == 255))
+#else
+#define CHECK_ALPHA (true)
+#define CHECK_ALPHA2 (true)
+#endif
+
 void KaleidoScope_DrawInfoPanel(PlayState* play) {
     static void* D_8082AD54[] =
         LANGUAGE_ARRAY(gPauseToEquipJPNTex, gPauseToEquipENGTex, gPauseToEquipGERTex, gPauseToEquipFRATex);
@@ -1851,7 +1888,7 @@ void KaleidoScope_DrawInfoPanel(PlayState* play) {
     gDPSetEnvColor(POLY_OPA_DISP++, 20, 30, 40, 0);
 
     if ((pauseCtx->state == PAUSE_STATE_MAIN) && (pauseCtx->namedItem != PAUSE_ITEM_NONE) &&
-        (pauseCtx->nameDisplayTimer < WREG(89)) &&
+        (pauseCtx->nameDisplayTimer < WREG(89)) && CHECK_ALPHA &&
         (((u32)pauseCtx->mainState == PAUSE_MAIN_STATE_IDLE) ||
          (pauseCtx->mainState == PAUSE_MAIN_STATE_SONG_PLAYBACK) ||
          ((pauseCtx->mainState >= PAUSE_MAIN_STATE_SONG_PROMPT_INIT) && (pauseCtx->mainState <= PAUSE_MAIN_STATE_7)) ||
@@ -1871,10 +1908,19 @@ void KaleidoScope_DrawInfoPanel(PlayState* play) {
 
             gSPVertex(POLY_OPA_DISP++, &pauseCtx->infoPanelVtx[16], 4, 0);
 
-            if (pauseCtx->nameColorSet == 1) {
-                gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 70, 70, 70, 255);
-            } else {
-                gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, 255);
+            {
+                u8 alpha = 255;
+                u8 colorIsGrey = pauseCtx->nameColorSet == 1 && !IS_INV_EDITOR_ACTIVE;
+
+                if (IS_INV_EDITOR_ACTIVE) {
+                    alpha = gDebug.invDebug.elementsAlpha;
+                }
+
+                if (colorIsGrey) {
+                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 70, 70, 70, alpha);
+                } else {
+                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, alpha);
+                }
             }
 
             // Note that this is used to draw both item name and map name textures, it expects that the dimensions and
@@ -2004,8 +2050,16 @@ void KaleidoScope_DrawInfoPanel(PlayState* play) {
 
                 gSPDisplayList(POLY_OPA_DISP++, gCButtonIconsDL);
 
-                gDPPipeSync(POLY_OPA_DISP++);
-                gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, 255);
+                {
+                    u8 alpha = 255;
+
+                    if (IS_INV_EDITOR_ACTIVE) {
+                        alpha = gDebug.invDebug.elementsAlpha;
+                    }
+
+                    gDPPipeSync(POLY_OPA_DISP++);
+                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, alpha);
+                }
 
                 POLY_OPA_DISP = KaleidoScope_QuadTextureIA8(POLY_OPA_DISP, D_8082AD54[gSaveContext.language],
                                                             D_8082ADD8[gSaveContext.language], 16, 4);
@@ -2086,11 +2140,17 @@ void KaleidoScope_UpdateNamePanel(PlayState* play) {
         ((pauseCtx->pageIndex == PAUSE_MAP) && (pauseCtx->cursorSpecialPos != 0))) {
 
         pauseCtx->namedItem = pauseCtx->cursorItem[pauseCtx->pageIndex];
+
+#if IS_INV_EDITOR_ENABLED
+        u8 item = InventoryEditor_GetItemFromSlot(&gDebug.invDebug);
+        pauseCtx->namedItem = item != ITEM_NONE ? item : pauseCtx->namedItem;
+#endif
+
         texIndex = pauseCtx->namedItem;
 
         osCreateMesgQueue(&pauseCtx->loadQueue, &pauseCtx->loadMsg, 1);
 
-        if (pauseCtx->namedItem != PAUSE_ITEM_NONE) {
+        if (pauseCtx->namedItem != PAUSE_ITEM_NONE && CHECK_ALPHA) {
             if ((pauseCtx->pageIndex == PAUSE_MAP) && !sInDungeonScene) {
                 // `texIndex` is a `WorldMapPoint` enum value
 
@@ -3331,7 +3391,7 @@ void KaleidoScope_DrawGameOver(PlayState* play) {
 }
 
 #if DEBUG_FEATURES && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)
-#define CAN_DRAW_PAUSE_MENU (pauseCtx->debugState == 0)
+#define CAN_DRAW_PAUSE_MENU (pauseCtx->debugState == 0 || IS_INV_EDITOR_ACTIVE)
 #else
 #define CAN_DRAW_PAUSE_MENU true
 #endif
@@ -3376,8 +3436,8 @@ void KaleidoScope_Draw(PlayState* play) {
         KaleidoScope_DrawGameOver(play);
     }
 
-    if (DEBUG_FEATURES &&
-        ((ENABLE_INV_EDITOR && (pauseCtx->debugState == 1)) || (ENABLE_EVENT_EDITOR && (pauseCtx->debugState == 2)))) {
+    if (DEBUG_FEATURES && ((IS_INV_EDITOR_ENABLED && (pauseCtx->debugState == 3)) ||
+                           (IS_EVENT_EDITOR_ENABLED && (pauseCtx->debugState == 2)))) {
         KaleidoScope_DrawDebugEditor(play);
     }
 
@@ -4027,7 +4087,7 @@ void KaleidoScope_Update(PlayState* play) {
         case PAUSE_STATE_MAIN:
             switch (pauseCtx->mainState) {
                 case PAUSE_MAIN_STATE_IDLE:
-                    if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
+                    if (CHECK_BTN_ALL(input->press.button, BTN_START) && !IS_INV_EDITOR_ACTIVE) {
                         Interface_SetDoAction(play, DO_ACTION_NONE);
                         pauseCtx->state = PAUSE_STATE_CLOSING;
                         R_PAUSE_PAGES_Y_ORIGIN_2 = PAUSE_PAGES_Y_ORIGIN_2_LOWER;
@@ -4035,7 +4095,7 @@ void KaleidoScope_Update(PlayState* play) {
 #if !PLATFORM_N64 && OOT_NTSC
                         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
 #endif
-                    } else if (CHECK_BTN_ALL(input->press.button, BTN_B)) {
+                    } else if (CHECK_BTN_ALL(input->press.button, BTN_B) && !IS_INV_EDITOR_ACTIVE) {
                         pauseCtx->nextPageMode = 0;
                         pauseCtx->promptChoice = 0;
                         Audio_PlaySfxGeneral(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
@@ -4073,7 +4133,7 @@ void KaleidoScope_Update(PlayState* play) {
                 case PAUSE_MAIN_STATE_SONG_PROMPT:
                     pauseCtx->ocarinaStaff = AudioOcarina_GetPlayingStaff();
 
-                    if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
+                    if (CHECK_BTN_ALL(input->press.button, BTN_START) && !IS_INV_EDITOR_ACTIVE) {
                         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
                         Interface_SetDoAction(play, DO_ACTION_NONE);
                         pauseCtx->state = PAUSE_STATE_CLOSING;
@@ -4081,7 +4141,7 @@ void KaleidoScope_Update(PlayState* play) {
                         func_800F64E0(0);
                         pauseCtx->mainState = PAUSE_MAIN_STATE_IDLE;
                         break;
-                    } else if (CHECK_BTN_ALL(input->press.button, BTN_B)) {
+                    } else if (CHECK_BTN_ALL(input->press.button, BTN_B) && !IS_INV_EDITOR_ACTIVE) {
                         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
                         pauseCtx->mainState = PAUSE_MAIN_STATE_IDLE;
                         pauseCtx->nextPageMode = 0;
@@ -4128,14 +4188,14 @@ void KaleidoScope_Update(PlayState* play) {
                     break;
 
                 case PAUSE_MAIN_STATE_IDLE_CURSOR_ON_SONG:
-                    if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
+                    if (CHECK_BTN_ALL(input->press.button, BTN_START) && !IS_INV_EDITOR_ACTIVE) {
                         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
                         Interface_SetDoAction(play, DO_ACTION_NONE);
                         pauseCtx->state = PAUSE_STATE_CLOSING;
                         R_PAUSE_PAGES_Y_ORIGIN_2 = PAUSE_PAGES_Y_ORIGIN_2_LOWER;
                         func_800F64E0(0);
                         pauseCtx->mainState = PAUSE_MAIN_STATE_IDLE;
-                    } else if (CHECK_BTN_ALL(input->press.button, BTN_B)) {
+                    } else if (CHECK_BTN_ALL(input->press.button, BTN_B) && !IS_INV_EDITOR_ACTIVE) {
                         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
                         pauseCtx->mainState = PAUSE_MAIN_STATE_IDLE;
                         pauseCtx->nextPageMode = 0;
@@ -4202,8 +4262,9 @@ void KaleidoScope_Update(PlayState* play) {
                             sDelayTimer = 3;
 #endif
                         }
-                    } else if (CHECK_BTN_ALL(input->press.button, BTN_START) ||
-                               CHECK_BTN_ALL(input->press.button, BTN_B)) {
+                    } else if ((CHECK_BTN_ALL(input->press.button, BTN_START) ||
+                                CHECK_BTN_ALL(input->press.button, BTN_B)) &&
+                               !IS_INV_EDITOR_ACTIVE) {
                         Interface_SetDoAction(play, DO_ACTION_NONE);
                         pauseCtx->savePromptState = PAUSE_SAVE_PROMPT_STATE_CLOSING;
                         R_PAUSE_PAGES_Y_ORIGIN_2 = PAUSE_PAGES_Y_ORIGIN_2_LOWER;
@@ -4220,8 +4281,9 @@ void KaleidoScope_Update(PlayState* play) {
                     break;
 
                 case PAUSE_SAVE_PROMPT_STATE_SAVED:
-                    if (CHECK_BTN_ALL(input->press.button, BTN_B) || CHECK_BTN_ALL(input->press.button, BTN_A) ||
-                        CHECK_BTN_ALL(input->press.button, BTN_START) || (--sDelayTimer == 0)) {
+                    if ((CHECK_BTN_ALL(input->press.button, BTN_B) || CHECK_BTN_ALL(input->press.button, BTN_A) ||
+                         CHECK_BTN_ALL(input->press.button, BTN_START) || (--sDelayTimer == 0)) &&
+                        !IS_INV_EDITOR_ACTIVE) {
                         Interface_SetDoAction(play, DO_ACTION_NONE);
                         gSaveContext.buttonStatus[0] = gSaveContext.buttonStatus[1] = gSaveContext.buttonStatus[2] =
                             gSaveContext.buttonStatus[3] = BTN_ENABLED;
@@ -4476,7 +4538,8 @@ void KaleidoScope_Update(PlayState* play) {
                 pauseCtx->state = PAUSE_STATE_GAME_OVER_CONTINUE_PROMPT;
                 gameOverCtx->state++;
             } else if ((sDelayTimer <= 80) &&
-                       (CHECK_BTN_ALL(input->press.button, BTN_A) || CHECK_BTN_ALL(input->press.button, BTN_START))) {
+                       (CHECK_BTN_ALL(input->press.button, BTN_A) || CHECK_BTN_ALL(input->press.button, BTN_START)) &&
+                       !IS_INV_EDITOR_ACTIVE) {
                 pauseCtx->state = PAUSE_STATE_GAME_OVER_CONTINUE_PROMPT;
                 gameOverCtx->state++;
                 func_800F64E0(0);
@@ -4664,5 +4727,16 @@ void KaleidoScope_Update(PlayState* play) {
             Player_SetEquipmentData(play, player);
             PRINTF(VT_RST);
             break;
+    }
+
+    if (IS_INV_EDITOR_ENABLED && pauseCtx->state != PAUSE_STATE_SAVE_PROMPT && !IS_PAUSE_STATE_GAMEOVER(pauseCtx)) {
+        if (!IS_INV_EDITOR_ACTIVE && CHECK_BTN_ALL(play->state.input[0].press.button, BTN_L) &&
+            (pauseCtx->debugState == 0)) {
+            gDebug.invDebug.state = INVEDITOR_STATE_INIT;
+        }
+
+        if (IS_INV_EDITOR_ACTIVE) {
+            InventoryEditor_Main(&gDebug.invDebug);
+        }
     }
 }

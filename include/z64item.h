@@ -151,6 +151,25 @@ typedef enum InventorySlot {
     /* 0xFF */ SLOT_NONE = 0xFF
 } InventorySlot;
 
+typedef enum EquipmentSlot {
+    /* 0x00 */ SLOT_UPG_QUIVER, // also bullet bag slot
+    /* 0x01 */ SLOT_SWORD_KOKIRI,
+    /* 0x02 */ SLOT_SWORD_MASTER,
+    /* 0x03 */ SLOT_SWORD_BIGGORON,
+    /* 0x04 */ SLOT_UPG_BOMB_BAG, // also deku stick capacity slot (inventory editor only)
+    /* 0x05 */ SLOT_SHIELD_DEKU,
+    /* 0x06 */ SLOT_SHIELD_HYLIAN,
+    /* 0x07 */ SLOT_SHIELD_MIRROR,
+    /* 0x08 */ SLOT_UPG_STRENGTH, // also deku nut capacity slot (inventory editor only)
+    /* 0x09 */ SLOT_TUNIC_KOKIRI,
+    /* 0x0A */ SLOT_TUNIC_GORON,
+    /* 0x0B */ SLOT_TUNIC_ZORA,
+    /* 0x0C */ SLOT_UPG_SCALE, // also wallet capacity slot (inventory editor only)
+    /* 0x0D */ SLOT_BOOTS_KOKIRI,
+    /* 0x0E */ SLOT_BOOTS_IRON,
+    /* 0x0F */ SLOT_BOOTS_HOVER
+} EquipmentSlot;
+
 typedef enum ItemID {
     /* 0x00 */ ITEM_DEKU_STICK,
     /* 0x01 */ ITEM_DEKU_NUT,

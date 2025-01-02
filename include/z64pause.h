@@ -84,7 +84,7 @@ typedef enum PauseState {
 
 #if ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR
     #define IS_PAUSED(pauseCtx) \
-        (((pauseCtx)->state != PAUSE_STATE_OFF) || ((pauseCtx)->debugState != 0))
+        (((pauseCtx)->state != PAUSE_STATE_OFF) || (IS_INV_EDITOR_ACTIVE && (pauseCtx)->debugState != 0))
 #else
     #define IS_PAUSED(pauseCtx) \
         ((pauseCtx)->state != PAUSE_STATE_OFF)
