@@ -152,11 +152,35 @@ VENV := .venv
 MAKE = make
 CPPFLAGS += -P -xc -fno-dollars-in-identifiers
 
+# Set PACKAGE_NAME define for printing commit name
+ifeq ($(origin PACKAGE_NAME), undefined)
+  PACKAGE_NAME := "$(shell git log -1 --pretty=%s | tr -d '\n' | sed 's/\"/\\\"/g')"
+  ifeq ($(PACKAGE_NAME),"")
+    PACKAGE_NAME := "Unknown name"
+  endif
+endif
+
+# Set PACKAGE_COMMIT_AUTHOR for printing commit author
+ifeq ($(origin PACKAGE_COMMIT_AUTHOR), undefined)
+  PACKAGE_COMMIT_AUTHOR := "$(shell git log -1 --pretty=format:'%an' | tr -d '\n' | sed 's/\"/\\\"/g')"
+  ifeq ($(PACKAGE_COMMIT_AUTHOR),"")
+    PACKAGE_COMMIT_AUTHOR := "Unknown author"
+  endif
+endif
+
+# Set PACKAGE_AUTHOR define for printing author's git name
+ifeq ($(origin PACKAGE_AUTHOR), undefined)
+  PACKAGE_AUTHOR := "$(shell git config --get user.name | tr -d '\n' | sed 's/\"/\\\"/g')"
+  ifeq ($(PACKAGE_AUTHOR),"")
+    PACKAGE_AUTHOR := "Unknown author"
+  endif
+endif
+
 # Set PACKAGE_VERSION define for printing commit hash
 ifeq ($(origin PACKAGE_VERSION), undefined)
-  PACKAGE_VERSION := $(shell git log -1 --pretty=%h | tr -d '\n')
-  ifeq ('$(PACKAGE_VERSION)', '')
-    PACKAGE_VERSION = Unknown version
+  PACKAGE_VERSION := "$(shell git log -1 --pretty=%h | tr -d '\n' | sed 's/\"/\\\"/g')"
+  ifeq ($(PACKAGE_VERSION),"")
+    PACKAGE_VERSION := "Unknown version"
   endif
 endif
 
@@ -207,9 +231,7 @@ endif
 
 # Define author and package version for every OoT version
 # Note: this won't be used if not using HackerOoT
-CFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
-CPPFLAGS += -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
-CFLAGS_IDO += -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
+CPP_DEFINES += -DCOMPRESS_$(COMPRESSION_TYPE)=1 -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DPACKAGE_NAME='$(PACKAGE_NAME)' -DPACKAGE_COMMIT_AUTHOR='$(PACKAGE_COMMIT_AUTHOR)' -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)'
 OPTFLAGS += -ffast-math -fno-unsafe-math-optimizations
 
 ifeq ($(OS),Windows_NT)

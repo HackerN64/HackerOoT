@@ -169,6 +169,16 @@ typedef struct ConsoleLogoState {
     /* 0x01E2 */ char unk_1E2[0x06];
 } ConsoleLogoState; // size = 0x1E8
 
+typedef struct DebugOpeningState {
+    GameState state;
+    View view;
+    s32 currentOption;
+    char* controlGuideString;
+    u8 page;
+    SkyboxContext skyboxCtx;
+    EnvironmentContext envCtx;
+} DebugOpeningState;
+
 // vvv IS_MAP_SELECT_ENABLED vvv
 struct MapSelectState;
 
