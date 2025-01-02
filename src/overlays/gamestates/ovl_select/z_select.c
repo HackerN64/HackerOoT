@@ -56,7 +56,7 @@ void MapSelect_Init(GameState* thisx) {
     // turning the sfx volume back on
     SEQCMD_SET_SEQPLAYER_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 10);
 
-#if BOOT_TO_DEBUG_OPENING
+#if BOOT_TO_MAP_SELECT
     gSaveContext.save.linkAge = BOOT_AGE;
     this->sceneLayer = (BOOT_CUTSCENE > 1) ? (BOOT_CUTSCENE & 0x000F) + 2 : BOOT_CUTSCENE;
     for (i = 1; i < this->sceneTotal; i++) {

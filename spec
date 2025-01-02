@@ -962,6 +962,7 @@ beginseg
     include "$(BUILD_DIR)/data/f3dzex2.rodata.o"
 #endif
     include "$(BUILD_DIR)/src/code/rainbow.o"
+    include "$(BUILD_DIR)/src/code/helpers.o"
 endseg
 
 #if ENABLE_HACKER_DEBUG
@@ -1153,7 +1154,7 @@ beginseg
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_opening/ovl_opening_reloc.o"
 endseg
 
-#if IS_MAP_SELECT_ENABLED
+#if IS_DEBUG_BOOT_ENABLED
 beginseg
     name "ovl_debug_opening"
     compress

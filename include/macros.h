@@ -218,3 +218,6 @@ _DW({                                                                   \
 #define IF_F3DEX3_DONT_SKIP_TEX_HERE(pkt, texIndex) (void)0
 #define IF_F3DEX3_ALWAYS_DONT_SKIP_TEX(pkt) (void)0
 #endif
+
+#define STRINGIFY(s) #s
+#define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)

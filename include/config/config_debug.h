@@ -79,4 +79,9 @@
 */
 #define ENABLE_MOTION_BLUR_DEBUG false
 
+/**
+ * Enable debug boot menu
+ */
+#define ENABLE_DEBUG_BOOT true
+
 #endif

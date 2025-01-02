@@ -17,24 +17,27 @@ typedef enum {
     /* 4 */ OPTION_LOAD_FILE_SELECT,
 } CurrentOption;
 
-typedef void (*OptionFunc)(GameState*);
+struct DebugOpeningState;
+
+typedef void (*OptionFunc)(DebugOpeningState*);
 
 typedef struct {
     OptionFunc func;
     char* name;
 } OptionInfo;
 
-void DebugOpening_LoadDefinedScene(GameState* thisx);
-void DebugOpening_LoadTitleScreen(GameState* thisx);
-void DebugOpening_LoadFileSelect(GameState* thisx);
-void DebugOpening_LoadMapSelect(GameState* thisx);
-void DebugOpening_ControlOptions(GameState* thisx);
+void DebugOpening_Init(GameState* thisx);
+void DebugOpening_Main(GameState* thisx);
+void DebugOpening_Destroy(GameState* thisx);
+
+void DebugOpening_LoadDefinedScene(DebugOpeningState* this);
+void DebugOpening_LoadTitleScreen(DebugOpeningState* this);
+void DebugOpening_LoadFileSelect(DebugOpeningState* this);
+void DebugOpening_LoadMapSelect(DebugOpeningState* this);
+void DebugOpening_ControlOptions(DebugOpeningState* this);
 void DebugOpening_DrawBuildInfo(DebugOpeningState* this, GfxPrint* printer);
 void DebugOpening_DrawCommitInfo(DebugOpeningState* this, GfxPrint* printer);
-void DebugOpening_Destroy(GameState* thisx);
-void DebugOpening_DrawOptions(GameState* thisx, GfxPrint* printer);
-void DebugOpening_DrawBase(GameState* thisx);
-void DebugOpening_Main(GameState* thisx);
-void DebugOpening_Init(GameState* thisx);
+void DebugOpening_DrawOptions(DebugOpeningState* this, GfxPrint* printer);
+void DebugOpening_DrawBase(DebugOpeningState* this);
 
 #endif

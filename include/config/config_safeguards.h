@@ -100,7 +100,7 @@
 #endif
 
 // Enable the map select feature if booting to map select or using map select for file 1
-#if (BOOT_TO_DEBUG_OPENING || MAP_SELECT_ON_FILE_1) && !ENABLE_MAP_SELECT
+#if (BOOT_TO_MAP_SELECT || MAP_SELECT_ON_FILE_1) && !ENABLE_MAP_SELECT
     #undef ENABLE_MAP_SELECT
     #define ENABLE_MAP_SELECT true
 #endif
@@ -115,6 +115,11 @@
 #if ENABLE_CAMERA_DEBUGGER && !ENABLE_DEBUG_HEAP
     #undef ENABLE_DEBUG_HEAP
     #define ENABLE_DEBUG_HEAP true
+#endif
+
+#if BOOT_TO_DEBUG_OPENING && !ENABLE_DEBUG_BOOT
+    #undef ENABLE_DEBUG_BOOT
+    #define ENABLE_DEBUG_BOOT true
 #endif
 
 

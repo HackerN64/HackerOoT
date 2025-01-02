@@ -8,13 +8,14 @@
 #include "global.h"
 #include "config.h"
 
-#if IS_MAP_SELECT_ENABLED
+#if IS_DEBUG_BOOT_ENABLED
 
 #include "alloca.h"
 #include "debug_opening.h"
+#include "macros.h"
+#include "helpers.h"
 
-void DebugOpening_ChooseSaveFile(GameState* thisx) {
-    DebugOpeningState* this = (DebugOpeningState*)thisx;
+void DebugOpening_ChooseSaveFile(DebugOpeningState* this) {
     if (gSaveContext.fileNum != 0) {
         gSaveContext.fileNum = 0;
     } else {
@@ -22,60 +23,20 @@ void DebugOpening_ChooseSaveFile(GameState* thisx) {
     }
 }
 
-void DebugOpening_LoadDefinedScene(GameState* thisx) {
-    DebugOpeningState* this = (DebugOpeningState*)thisx;
-
-    if (gSaveContext.fileNum == 0xff) {
-        Sram_InitDebugSave();
-    } else {
-        Sram_InitNewSave();
-    }
-    // Set age, time and entrance
-    gSaveContext.save.linkAge = BOOT_AGE;
-    gSaveContext.save.dayTime = CLOCK_TIME(12, 0);
-    gSaveContext.save.entranceIndex = BOOT_ENTRANCE;
-
-    gSaveContext.respawnFlag = 0;
-    gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = ENTR_LOAD_OPENING;
-
-    // Have the magic meter load correctly
-    gSaveContext.magicFillTarget = gSaveContext.save.info.playerData.magic;
-    gSaveContext.magicCapacity = 0;
-    gSaveContext.save.info.playerData.magic = 0;
-    gSaveContext.save.info.playerData.magicLevel = 0;
-
-    gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-
-    // Load Play state
-    gSaveContext.gameMode = GAMEMODE_NORMAL;
-    this->state.running = false;
-    SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
+void DebugOpening_LoadDefinedScene(DebugOpeningState* this) {
+    Helpers_LoadDefinedScene(&this->state);
 }
 
-void DebugOpening_LoadTitleScreen(GameState* thisx) {
-    DebugOpeningState* this = (DebugOpeningState*)thisx;
-
-    gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-    gSaveContext.natureAmbienceId = 0xFF;
-    gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
-    this->state.running = false;
-    SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, TitleSetupState);
+void DebugOpening_LoadTitleScreen(DebugOpeningState* this) {
+    Helpers_LoadTitleScreen(&this->state);
 }
 
-void DebugOpening_LoadFileSelect(GameState* thisx) {
-    DebugOpeningState* this = (DebugOpeningState*)thisx;
-
-    gSaveContext.gameMode = GAMEMODE_FILE_SELECT;
-    SET_NEXT_GAMESTATE(&this->state, FileSelect_Init, FileSelectState);
-    this->state.running = false;
+void DebugOpening_LoadFileSelect(DebugOpeningState* this) {
+    Helpers_LoadFileSelect(&this->state);
 }
 
-void DebugOpening_LoadMapSelect(GameState* thisx) {
-    DebugOpeningState* this = (DebugOpeningState*)thisx;
-
-    gSaveContext.gameMode = GAMEMODE_NORMAL;
-    SET_NEXT_GAMESTATE(&this->state, MapSelect_Init, MapSelectState);
-    this->state.running = false;
+void DebugOpening_LoadMapSelect(DebugOpeningState* this) {
+    Helpers_LoadMapSelect(&this->state);
 }
 
 /**
@@ -88,25 +49,25 @@ static OptionInfo sOptionInfo[] = {
     { .func = DebugOpening_ChooseSaveFile, .name = "Save File: " },
     {
         .func = DebugOpening_LoadDefinedScene,
-        .name = "Init Defined Scene",
+        .name = "Go to Defined Scene",
     },
+#if IS_MAP_SELECT_ENABLED
     {
         .func = DebugOpening_LoadMapSelect,
-        .name = "Init Map Select",
+        .name = "Go to Map Select",
     },
+#endif
     {
         .func = DebugOpening_LoadTitleScreen,
-        .name = "Init Title Screen",
+        .name = "Go to Title Screen",
     },
     {
         .func = DebugOpening_LoadFileSelect,
-        .name = "Init File Select",
+        .name = "Go to File Select",
     },
 };
 
-void DebugOpening_ControlOptions(GameState* thisx) {
-    DebugOpeningState* this = (DebugOpeningState*)thisx;
-
+void DebugOpening_ControlOptions(DebugOpeningState* this) {
     // if dpad-up is pressed, go up in the options page
     if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_DUP) && this->currentOption > OPTION_CHOOSE_SAVE_FILE) {
         this->currentOption--;
@@ -124,12 +85,9 @@ void DebugOpening_ControlOptions(GameState* thisx) {
     // Run the function of the currently selected option
     // as soon as A is pressed
     if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A)) {
-        sOptionInfo[this->currentOption].func(thisx);
+        sOptionInfo[this->currentOption].func(this);
     }
 }
-
-#define STRINGIFY(s) #s
-#define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)
 
 void DebugOpening_DrawBuildInfo(DebugOpeningState* this, GfxPrint* printer) {
     GfxPrint_SetColor(printer, 201, 144, 0, 255);
@@ -149,7 +107,7 @@ void DebugOpening_DrawBuildInfo(DebugOpeningState* this, GfxPrint* printer) {
     GfxPrint_Printf(printer, EXPAND_AND_STRINGIFY(BOOT_ENTRANCE));
 }
 
-void DebugOpening_DrawCommands(DebugOpeningState* thisx, GfxPrint* printer) {
+void DebugOpening_DrawCommands(DebugOpeningState* this, GfxPrint* printer) {
     GfxPrint_SetColor(printer, 201, 144, 0, 255);
     GfxPrint_SetPos(printer, 15, 5);
     GfxPrint_Printf(printer, "COMMANDS");
@@ -196,8 +154,7 @@ void DebugOpening_DrawCommitInfo(DebugOpeningState* this, GfxPrint* printer) {
 void DebugOpening_Destroy(GameState* thisx) {
 }
 
-void DebugOpening_DrawOptions(GameState* thisx, GfxPrint* printer) {
-    DebugOpeningState* this = (DebugOpeningState*)thisx;
+void DebugOpening_DrawOptions(DebugOpeningState* this, GfxPrint* printer) {
     s32 i;
 
     GfxPrint_SetColor(printer, 201, 144, 0, 255);
@@ -220,8 +177,7 @@ void DebugOpening_DrawOptions(GameState* thisx, GfxPrint* printer) {
     }
 }
 
-void DebugOpening_DrawBase(GameState* thisx) {
-    DebugOpeningState* this = (DebugOpeningState*)thisx;
+void DebugOpening_DrawBase(DebugOpeningState* this) {
     GraphicsContext* gfxCtx = this->state.gfxCtx;
     GfxPrint* printer;
 
@@ -238,11 +194,11 @@ void DebugOpening_DrawBase(GameState* thisx) {
     GfxPrint_Open(printer, POLY_OPA_DISP);
 
     GfxPrint_SetColor(printer, 220, 0, 17, 255);
-    GfxPrint_SetPos(printer, 12, 1);
-    GfxPrint_Printf(printer, "Zelda Debug Boot");
+    GfxPrint_SetPos(printer, 10, 1);
+    GfxPrint_Printf(printer, "HackerOoT Boot Menu");
 
     GfxPrint_SetColor(printer, 255, 255, 255, 255);
-    GfxPrint_SetPos(printer, 12, 2);
+    GfxPrint_SetPos(printer, 10, 2);
     GfxPrint_Printf(printer, "Welcome ");
 
     GfxPrint_SetColor(printer, 0, 160, 220, 255);
@@ -257,7 +213,7 @@ void DebugOpening_DrawBase(GameState* thisx) {
 
     switch (this->page) {
         case OPTIONS_PAGE:
-            DebugOpening_DrawOptions(thisx, printer);
+            DebugOpening_DrawOptions(this, printer);
             break;
         case COMMANDS_PAGE:
             DebugOpening_DrawCommands(this, printer);
@@ -281,14 +237,14 @@ void DebugOpening_Main(GameState* thisx) {
     DebugOpeningState* this = (DebugOpeningState*)thisx;
 
     if (this->page == OPTIONS_PAGE) {
-        DebugOpening_ControlOptions(&this->state);
+        DebugOpening_ControlOptions(this);
     }
-    DebugOpening_DrawBase(thisx);
+    DebugOpening_DrawBase(this);
     if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_R) && this->page != BUILDINFO_PAGE) {
         this->page++;
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-    } else if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_L) && this->page != OPTIONS_PAGE) {
+    } else if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_Z) && this->page != OPTIONS_PAGE) {
         this->page--;
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
@@ -303,10 +259,10 @@ void DebugOpening_Init(GameState* thisx) {
     View_Init(&this->view, this->state.gfxCtx);
     SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_TITLE);
     if (USE_WIDESCREEN) { // Debug boot in widescreen is not completely positioned yet
-        this->controlGuideString = "[L] <--                      %d / 3                       --> [R]";
+        this->controlGuideString = "[Z] <--                      %d / 3                       --> [R]";
         this->seperatorString = "________________________________________________________";
     } else {
-        this->controlGuideString = "[L] <--         %d / 3          --> [R]";
+        this->controlGuideString = "[Z] <--         %d / 3          --> [R]";
         this->seperatorString = "_______________________________________";
     }
     this->state.main = DebugOpening_Main;
