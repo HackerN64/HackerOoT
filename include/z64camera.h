@@ -8,8 +8,9 @@
 
 #include "config.h"
 
-struct CollisionContext;
-struct View;
+// these two angle conversion macros are slightly inaccurate
+#define CAM_DEG_TO_BINANG(degrees) (s16)TRUNCF_BINANG((degrees) * 182.04167f + .5f)
+#define CAM_BINANG_TO_DEG(binang) ((f32)(binang) * (360.0001525f / 65535.0f))
 
 #define CAM_STAT_CUT        0
 #define CAM_STAT_WAIT       1
@@ -103,7 +104,7 @@ struct View;
 #define CAM_STATE_CHECK_BG (1 << 2) //  Must be set for the camera to change settings based on the bg surface
 #define CAM_STATE_EXTERNAL_FINISHED (1 << 3) // Signal from the external systems to camera that the current cam-update function is no longer needed
 #define CAM_STATE_CAM_FUNC_FINISH (1 << 4) // Signal from camera to player that the cam-update function is finished its primary purpose
-#define CAM_STATE_LOCK_MODE (1 << 5) // Prevents camera from changing mode, unless overridden by `forceModeChange` passed to `Camera_RequestModeImpl`
+#define CAM_STATE_LOCK_MODE (1 << 5) // Prevents camera from changing mode, unless overriden by `forceModeChange` passed to `Camera_RequestModeImpl`
 #define CAM_STATE_DISTORTION (1 << 6) // Set when camera distortion is on
 #define CAM_STATE_PLAY_INIT (1 << 7) // Set in Play_Init, never used or changed
 #define CAM_STATE_CAMERA_IN_WATER (1 << 8) // Camera (eye) is underwater
@@ -135,10 +136,7 @@ struct View;
 // Use a camera pivot setting that allows camera rotation (CAM_SET_PIVOT_SHOP_BROWSING for shop specifically)
 #define VIEWPOINT_PIVOT (BGCAM_INDEX_TOGGLE_PIVOT + 1)
 
-struct Actor;
-struct CollisionPoly;
-
-typedef enum CameraSettingType {
+typedef enum {
     /* 0x00 */ CAM_SET_NONE,
     /* 0x01 */ CAM_SET_NORMAL0,
     /* 0x02 */ CAM_SET_NORMAL1,
@@ -208,7 +206,7 @@ typedef enum CameraSettingType {
     /* 0x42 */ CAM_SET_MAX
 } CameraSettingType;
 
-typedef enum CameraModeType {
+typedef enum {
     /* 0x00 */ CAM_MODE_NORMAL,
     /* 0x01 */ CAM_MODE_Z_PARALLEL, // Holding Z but with no target, keeps the camera aligned
     /* 0x02 */ CAM_MODE_Z_TARGET_FRIENDLY,
@@ -233,7 +231,7 @@ typedef enum CameraModeType {
     /* 0x15 */ CAM_MODE_MAX
 } CameraModeType;
 
-typedef enum CameraFuncType {
+typedef enum {
     /* 0x00 */ CAM_FUNC_NONE,
     /* 0x01 */ CAM_FUNC_NORM0,
     /* 0x02 */ CAM_FUNC_NORM1,
@@ -308,7 +306,7 @@ typedef enum CameraFuncType {
     /* 0x47 */ CAM_FUNC_MAX
 } CameraFuncType;
 
-typedef enum CameraDataType {
+typedef enum {
     /* 0x00 */ CAM_DATA_Y_OFFSET,
     /* 0x01 */ CAM_DATA_EYE_DIST,
     /* 0x02 */ CAM_DATA_EYE_DIST_NEXT,
@@ -342,9 +340,9 @@ typedef enum CameraDataType {
 #define CAM_FUNCDATA_INTERFACE_FIELD(interfaceField) \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct SwingAnimation {
+typedef struct {
     /* 0x00 */ Vec3f collisionClosePoint;
-    /* 0x0C */ struct CollisionPoly* atEyePoly;
+    /* 0x0C */ CollisionPoly* atEyePoly;
     /* 0x10 */ f32 swingUpdateRate;
     /* 0x14 */ s16 unk_14;
     /* 0x16 */ s16 unk_16;
@@ -352,7 +350,7 @@ typedef struct SwingAnimation {
     /* 0x1A */ s16 swingUpdateRateTimer;
 } SwingAnimation; // size = 0x1C
 
-typedef struct Normal1ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 yOffset;
     /* 0x04 */ f32 distMin;
     /* 0x08 */ f32 distMax;
@@ -365,7 +363,7 @@ typedef struct Normal1ReadOnlyData {
     /* 0x22 */ s16 interfaceField;
 } Normal1ReadOnlyData; // size = 0x24
 
-typedef struct Normal1ReadWriteData {
+typedef struct {
     /* 0x00 */ SwingAnimation swing;
     /* 0x1C */ f32 yOffset;
     /* 0x20 */ f32 unk_20;
@@ -375,7 +373,7 @@ typedef struct Normal1ReadWriteData {
     /* 0x2A */ s16 startSwingTimer;
 } Normal1ReadWriteData; // size = 0x2C
 
-typedef struct Normal1 {
+typedef struct {
     /* 0x00 */ Normal1ReadOnlyData roData;
     /* 0x24 */ Normal1ReadWriteData rwData;
 } Normal1; // size = 0x50
@@ -411,7 +409,7 @@ typedef struct Normal1 {
     { atLerpStepScale, CAM_DATA_AT_LERP_STEP_SCALE }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Normal2ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 unk_00;
     /* 0x04 */ f32 unk_04;
     /* 0x08 */ f32 unk_08;
@@ -423,7 +421,7 @@ typedef struct Normal2ReadOnlyData {
     /* 0x1E */ s16 interfaceField;
 } Normal2ReadOnlyData; // size = 0x20
 
-typedef struct Normal2ReadWriteData {
+typedef struct {
     /* 0x00 */ Vec3f unk_00;
     /* 0x0C */ Vec3f unk_0C;
     /* 0x18 */ f32 unk_18;
@@ -434,7 +432,7 @@ typedef struct Normal2ReadWriteData {
     /* 0x28 */ s16 unk_28;
 } Normal2ReadWriteData; // size = 0x2C
 
-typedef struct Normal2 {
+typedef struct {
     /* 0x00 */ Normal2ReadOnlyData roData;
     /* 0x20 */ Normal2ReadWriteData rwData;
 } Normal2; // size = 0x4C
@@ -455,7 +453,7 @@ typedef struct Normal2 {
     { atLerpStepScale, CAM_DATA_AT_LERP_STEP_SCALE }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Normal3ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 yOffset;
     /* 0x04 */ f32 distMin;
     /* 0x08 */ f32 distMax;
@@ -467,7 +465,7 @@ typedef struct Normal3ReadOnlyData {
     /* 0x1E */ s16 interfaceField;
 } Normal3ReadOnlyData; // size = 0x20
 
-typedef struct Normal3ReadWriteData {
+typedef struct {
     /* 0x00 */ SwingAnimation swing;
     /* 0x1C */ f32 unk_1C;
     /* 0x20 */ f32 unk_20;
@@ -477,7 +475,7 @@ typedef struct Normal3ReadWriteData {
     /* 0x2A */ s16 distTimer;
 } Normal3ReadWriteData; // size = 0x2C
 
-typedef struct Normal3 {
+typedef struct {
     /* 0x00 */ Normal3ReadOnlyData roData;
     /* 0x20 */ Normal3ReadWriteData rwData;
 } Normal3; // size = 0x4C
@@ -493,7 +491,7 @@ typedef struct Normal3 {
     { atLerpStepScale, CAM_DATA_AT_LERP_STEP_SCALE }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Parallel1ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 yOffset;
     /* 0x04 */ f32 distTarget;
     /* 0x08 */ f32 unk_08;
@@ -507,7 +505,7 @@ typedef struct Parallel1ReadOnlyData {
     /* 0x24 */ s16 interfaceField;
 } Parallel1ReadOnlyData; // size = 0x28
 
-typedef struct Parallel1ReadWriteData {
+typedef struct {
     /* 0x00 */ Vec3f unk_00;
     /* 0x0C */ f32 yTarget;
     /* 0x10 */ s16 unk_10;
@@ -517,7 +515,7 @@ typedef struct Parallel1ReadWriteData {
     /* 0x18 */ s16 animTimer;
 } Parallel1ReadWriteData; // size = 0x1C
 
-typedef struct Parallel1 {
+typedef struct {
     /* 0x00 */ Parallel1ReadOnlyData roData;
     /* 0x28 */ Parallel1ReadWriteData rwData;
 } Parallel1; // size = 0x44
@@ -547,7 +545,7 @@ typedef struct Parallel1 {
 #define PARALLEL3_FLAG_0 (1 << 0)
 #define PARALLEL3_FLAG_1 (1 << 1)
 
-typedef struct Jump1ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 atYOffset;
     /* 0x04 */ f32 distMin;
     /* 0x08 */ f32 distMax;
@@ -558,7 +556,7 @@ typedef struct Jump1ReadOnlyData {
     /* 0x1C */ s16 interfaceField;
 } Jump1ReadOnlyData; // size = 0x20
 
-typedef struct Jump1ReadWriteData {
+typedef struct {
     /* 0x00 */ SwingAnimation swing;
     /* 0x1C */ f32 unk_1C;
     /* 0x20 */ f32 unk_20;
@@ -566,7 +564,7 @@ typedef struct Jump1ReadWriteData {
     /* 0x26 */ s16 unk_26;
 } Jump1ReadWriteData; // size = 0x28
 
-typedef struct Jump1 {
+typedef struct {
     /* 0x00 */ Jump1ReadOnlyData roData;
     /* 0x20 */ Jump1ReadWriteData rwData;
 } Jump1; // size = 0x48
@@ -584,7 +582,7 @@ typedef struct Jump1 {
     { atLerpStepScale, CAM_DATA_AT_LERP_STEP_SCALE }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Jump2ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 atYOffset;
     /* 0x04 */ f32 minDist;
     /* 0x08 */ f32 maxDist;
@@ -596,7 +594,7 @@ typedef struct Jump2ReadOnlyData {
     /* 0x20 */ s16 interfaceField;
 } Jump2ReadOnlyData; // size = 0x24
 
-typedef struct Jump2ReadWriteData {
+typedef struct {
     /* 0x0 */ f32 floorY;
     /* 0x4 */ s16 yawTarget;
     /* 0x6 */ s16 initYawDiff; // unused, set but not read.
@@ -605,7 +603,7 @@ typedef struct Jump2ReadWriteData {
     /* 0xC */ s16 animTimer;
 } Jump2ReadWriteData; // size = 0x10
 
-typedef struct Jump2 {
+typedef struct {
     /* 0x00 */ Jump2ReadOnlyData roData;
     /* 0x24 */ Jump2ReadWriteData rwData;
 } Jump2; // size = 0x34
@@ -624,7 +622,7 @@ typedef struct Jump2 {
     { atLerpStepScale, CAM_DATA_AT_LERP_STEP_SCALE }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Jump3ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 yOffset;
     /* 0x04 */ f32 distMin;
     /* 0x08 */ f32 distMax;
@@ -637,14 +635,14 @@ typedef struct Jump3ReadOnlyData {
     /* 0x22 */ s16 interfaceField;
 } Jump3ReadOnlyData; // size = 0x24
 
-typedef struct Jump3ReadWriteData {
+typedef struct {
     /* 0x00 */ SwingAnimation swing;
     /* 0x1C */ f32 unk_1C;
     /* 0x20 */ s16 animTimer;
     /* 0x22 */ s16 mode;
 } Jump3ReadWriteData; // size = 0x24
 
-typedef struct Jump3 {
+typedef struct {
     /* 0x00 */ Jump3ReadOnlyData roData;
     /* 0x24 */ Jump3ReadWriteData rwData;
 } Jump3; // size = 0x48
@@ -665,7 +663,7 @@ typedef struct Jump3 {
     { atLerpStepScale, CAM_DATA_AT_LERP_STEP_SCALE }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Battle1ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 yOffset;
     /* 0x04 */ f32 distance;
     /* 0x08 */ f32 swingYawInitial;
@@ -680,11 +678,11 @@ typedef struct Battle1ReadOnlyData {
     /* 0x2C */ s16 interfaceField;
 } Battle1ReadOnlyData; // size = 0x30
 
-typedef struct Battle1ReadWriteData {
+typedef struct {
     /* 0x00 */ f32 initialEyeToAtDist;
     /* 0x04 */ f32 roll;
     /* 0x08 */ f32 yPosOffset;
-    /* 0x0C */ struct Actor* target;
+    /* 0x0C */ Actor* target;
     /* 0x10 */ f32 unk_10;
     /* 0x14 */ s16 unk_14; // unused
     /* 0x16 */ s16 initialEyeToAtYaw;
@@ -693,7 +691,7 @@ typedef struct Battle1ReadWriteData {
     /* 0x1C */ s16 chargeTimer;
 } Battle1ReadWriteData; // size = 0x20
 
-typedef struct Battle1 {
+typedef struct {
     /* 0x00 */ Battle1ReadOnlyData roData;
     /* 0x30 */ Battle1ReadWriteData rwData;
 } Battle1; // size = 0x50
@@ -716,7 +714,7 @@ typedef struct Battle1 {
     { groundYOffset, CAM_DATA_GROUND_Y_OFFSET }, \
     { groundAtLerpStepScale, CAM_DATA_GROUND_AT_LERP_STEP_SCALE }
 
-typedef struct Battle4ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 yOffset;
     /* 0x04 */ f32 rTarget;
     /* 0x08 */ s16 pitchTarget;
@@ -727,11 +725,11 @@ typedef struct Battle4ReadOnlyData {
     /* 0x1A */ s16 unk_1A;
 } Battle4ReadOnlyData; // size = 0x1C
 
-typedef struct Battle4ReadWriteData {
+typedef struct {
     /* 0x0 */ s16 animTimer;
 } Battle4ReadWriteData; // size = 0x4
 
-typedef struct Battle4 {
+typedef struct {
     /* 0x00 */ Battle4ReadOnlyData roData;
     /* 0x1C */ Battle4ReadWriteData rwData;
 } Battle4; // size = 0x20
@@ -745,7 +743,7 @@ typedef struct Battle4 {
     { atLerpStepScale, CAM_DATA_AT_LERP_STEP_SCALE }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct KeepOn1ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 unk_00;
     /* 0x04 */ f32 unk_04;
     /* 0x08 */ f32 unk_08;
@@ -761,18 +759,18 @@ typedef struct KeepOn1ReadOnlyData {
     /* 0x30 */ s16 interfaceField;
 } KeepOn1ReadOnlyData; // size = 0x34
 
-typedef struct KeepOn1ReadWriteData {
+typedef struct {
     /* 0x00 */ f32 unk_00;
     /* 0x04 */ f32 unk_04;
     /* 0x08 */ f32 unk_08;
-    /* 0x0C */ struct Actor* unk_0C;
+    /* 0x0C */ Actor* unk_0C;
     /* 0x10 */ s16 unk_10;
     /* 0x12 */ s16 unk_12;
     /* 0x14 */ s16 unk_14;
     /* 0x16 */ s16 unk_16;
 } KeepOn1ReadWriteData; // size = 0x18
 
-typedef struct KeepOn1 {
+typedef struct {
     /* 0x00 */ KeepOn1ReadOnlyData roData;
     /* 0x34 */ KeepOn1ReadWriteData rwData;
 } KeepOn1; // size = 0x4C
@@ -795,11 +793,11 @@ typedef struct KeepOn1 {
     { groundYOffset, CAM_DATA_GROUND_Y_OFFSET }, \
     { groundAtLerpStepScale, CAM_DATA_GROUND_AT_LERP_STEP_SCALE }
 
-typedef struct KeepOn3ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 yOffset;
     /* 0x04 */ f32 minDist;
     /* 0x08 */ f32 maxDist;
-    /* 0x0C */ f32 swingYawInitial;
+    /* 0x0C */ f32 swingYawInital;
     /* 0x10 */ f32 swingYawFinal;
     /* 0x14 */ f32 swingPitchInitial;
     /* 0x18 */ f32 swingPitchFinal;
@@ -810,16 +808,16 @@ typedef struct KeepOn3ReadOnlyData {
     /* 0x2A */ s16 interfaceField;
 } KeepOn3ReadOnlyData; // size = 0x2C
 
-typedef struct KeepOn3ReadWriteData {
+typedef struct {
     /* 0x00 */ f32 eyeToAtTargetR;
     /* 0x08 */ f32 eyeToAtTargetYaw;
     /* 0x04 */ f32 eyeToAtTargetPitch;
-    /* 0x0C */ struct Actor* target;
+    /* 0x0C */ Actor* target;
     /* 0x10 */ Vec3f atTarget;
     /* 0x1C */ s16 animTimer;
 } KeepOn3ReadWriteData; // size = 0x20
 
-typedef struct KeepOn3 {
+typedef struct {
     /* 0x00 */ KeepOn3ReadOnlyData roData;
     /* 0x2C */ KeepOn3ReadWriteData rwData;
 } KeepOn3; // size = 0x4C
@@ -842,7 +840,7 @@ typedef struct KeepOn3 {
     { yawUpdateRateTarget, CAM_DATA_YAW_UPDATE_RATE_TARGET }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct KeepOn4ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 unk_00;
     /* 0x04 */ f32 unk_04;
     /* 0x08 */ f32 unk_08;
@@ -854,7 +852,7 @@ typedef struct KeepOn4ReadOnlyData {
     /* 0x1E */ s16 unk_1E;
 } KeepOn4ReadOnlyData; // size = 0x20
 
-typedef struct KeepOn4ReadWriteData {
+typedef struct {
     /* 0x00 */ f32 unk_00;
     /* 0x04 */ f32 unk_04;
     /* 0x08 */ f32 unk_08;
@@ -865,7 +863,7 @@ typedef struct KeepOn4ReadWriteData {
     /* 0x14 */ s16 unk_14;
 } KeepOn4ReadWriteData; // size = 0x18
 
-typedef struct KeepOn4 {
+typedef struct {
     /* 0x00 */ KeepOn4ReadOnlyData roData;
     /* 0x20 */ KeepOn4ReadWriteData rwData;
 } KeepOn4; // size = 0x38
@@ -890,19 +888,19 @@ typedef struct KeepOn4 {
     { yawUpdateRateTarget, CAM_DATA_YAW_UPDATE_RATE_TARGET }, \
     { unk_22, CAM_DATA_UNK_22 }
 
-typedef struct KeepOn0ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 fovScale;
     /* 0x04 */ f32 yawScale;
     /* 0x08 */ s16 timerInit;
     /* 0x0A */ s16 interfaceField;
 } KeepOn0ReadOnlyData; // size = 0x0C
 
-typedef struct KeepOn0ReadWriteData {
+typedef struct {
     /* 0x0 */ f32 fovTarget;
     /* 0x4 */ s16 animTimer;
 } KeepOn0ReadWriteData; // size = 0x8
 
-typedef struct KeepOn0 {
+typedef struct {
     /* 0x00 */ KeepOn0ReadOnlyData roData;
     /* 0x0C */ KeepOn0ReadWriteData rwData;
 } KeepOn0; // size = 0x14
@@ -913,19 +911,19 @@ typedef struct KeepOn0 {
     { yawUpdateRateTarget, CAM_DATA_YAW_UPDATE_RATE_TARGET }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Fixed1ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 unk_00; // seems to be unused?
     /* 0x04 */ f32 lerpStep;
     /* 0x08 */ f32 fov;
     /* 0x0C */ s16 interfaceField;
 } Fixed1ReadOnlyData; // size = 0x10
 
-typedef struct Fixed1ReadWriteData {
+typedef struct {
     /* 0x00 */ PosRot eyePosRotTarget;
     /* 0x14 */ s16 fov;
 } Fixed1ReadWriteData; // size = 0x18
 
-typedef struct Fixed1 {
+typedef struct {
     /* 0x00 */ Fixed1ReadOnlyData roData;
     /* 0x10 */ Fixed1ReadWriteData rwData;
 } Fixed1; // size = 0x28
@@ -936,7 +934,7 @@ typedef struct Fixed1 {
     { fov, CAM_DATA_FOV }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Fixed2ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 yOffset;
     /* 0x04 */ f32 eyeStepScale;
     /* 0x08 */ f32 posStepScale;
@@ -944,12 +942,12 @@ typedef struct Fixed2ReadOnlyData {
     /* 0x10 */ s16 interfaceField;
 } Fixed2ReadOnlyData; // size = 0x14
 
-typedef struct Fixed2ReadWriteData {
+typedef struct {
     /* 0x0 */ Vec3f eye;
     /* 0xC */ s16 fov;
 } Fixed2ReadWriteData; // size = 0x10
 
-typedef struct Fixed2 {
+typedef struct {
     /* 0x00 */ Fixed2ReadOnlyData roData;
     /* 0x14 */ Fixed2ReadWriteData rwData;
 } Fixed2; // size = 0x24
@@ -964,23 +962,23 @@ typedef struct Fixed2 {
     { fov, CAM_DATA_FOV }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Fixed3ReadOnlyData {
+typedef struct {
     /* 0x0 */ s16 interfaceField;
 } Fixed3ReadOnlyData; // size = 0x4
 
-typedef struct Fixed3ReadWriteData {
+typedef struct {
     /* 0x0 */ Vec3s rot;
     /* 0x6 */ s16 fov;
     /* 0x8 */ s16 updDirTimer;
     /* 0xA */ s16 roomImageOverrideBgCamIndex;
 } Fixed3ReadWriteData; // size = 0xC
 
-typedef struct Fixed3 {
+typedef struct {
     /* 0x0 */ Fixed3ReadOnlyData roData;
     /* 0x4 */ Fixed3ReadWriteData rwData;
 } Fixed3; // size = 0x10
 
-typedef struct Fixed4ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 yOffset;
     /* 0x04 */ f32 speedToEyePos;
     /* 0x08 */ f32 followSpeed;
@@ -988,12 +986,12 @@ typedef struct Fixed4ReadOnlyData {
     /* 0x10 */ s16 interfaceField;
 } Fixed4ReadOnlyData; // size = 0x14
 
-typedef struct Fixed4ReadWriteData {
+typedef struct {
     /* 0x0 */ Vec3f eyeTarget;
     /* 0xC */ f32 followSpeed;
 } Fixed4ReadWriteData; // size = 0x10
 
-typedef struct Fixed4 {
+typedef struct {
     /* 0x00 */ Fixed4ReadOnlyData roData;
     /* 0x14 */ Fixed4ReadWriteData rwData;
 } Fixed4; // size = 0x24
@@ -1007,7 +1005,7 @@ typedef struct Fixed4 {
     { fov, CAM_DATA_FOV }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Subj3ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 eyeNextYOffset;
     /* 0x04 */ f32 eyeDist;
     /* 0x08 */ f32 eyeNextDist;
@@ -1017,14 +1015,14 @@ typedef struct Subj3ReadOnlyData {
     /* 0x20 */ s16 interfaceField;
 } Subj3ReadOnlyData; // size = 0x24
 
-typedef struct Subj3ReadWriteData {
+typedef struct {
     /* 0x0 */ f32 r;
     /* 0x4 */ s16 yaw;
     /* 0x6 */ s16 pitch;
     /* 0x8 */ s16 animTimer;
 } Subj3ReadWriteData; // size = 0xC
 
-typedef struct Subj3 {
+typedef struct {
     /* 0x00 */ Subj3ReadOnlyData roData;
     /* 0x24 */ Subj3ReadWriteData rwData;
 } Subj3; // size = 0x30
@@ -1040,11 +1038,11 @@ typedef struct Subj3 {
     { fov, CAM_DATA_FOV }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Subj4ReadOnlyData {
+typedef struct {
     /* 0x0 */ s16 interfaceField;
 } Subj4ReadOnlyData; // size = 0x4
 
-typedef struct Subj4ReadWriteData {
+typedef struct {
     /* 0x00 */ InfiniteLine crawlspaceLine;
     /* 0x18 */ Vec3f unk_18; // unused
     /* 0x24 */ f32 xzSpeed;
@@ -1055,7 +1053,7 @@ typedef struct Subj4ReadWriteData {
     /* 0x32 */ s16 zoomTimer;
 } Subj4ReadWriteData; // size = 0x34
 
-typedef struct Subj4 {
+typedef struct {
     /* 0x00 */ Subj4ReadOnlyData roData;
     /* 0x04 */ Subj4ReadWriteData rwData;
 } Subj4; // size = 0x38
@@ -1068,20 +1066,20 @@ typedef struct Subj4 {
     { fov, CAM_DATA_FOV }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Data4ReadOnlyData {
+typedef struct {
     /* 0x0 */ f32 yOffset;
     /* 0x4 */ f32 fov;
     /* 0x8 */ s16 interfaceField;
 } Data4ReadOnlyData; // size = 0xC
 
-typedef struct Data4ReadWriteData {
+typedef struct {
     /* 0x00 */ PosRot eyePosRot;
     /* 0x14 */ char unk_14[0x8];
     /* 0x1C */ s16 fov;
     /* 0x1E */ s16 flags;
 } Data4ReadWriteData; // size = 0x20
 
-typedef struct Data4 {
+typedef struct {
     /* 0x00 */ Data4ReadOnlyData roData;
     /* 0x0C */ Data4ReadWriteData rwData;
 } Data4; // size = 0x2C
@@ -1091,7 +1089,7 @@ typedef struct Data4 {
     { fov, CAM_DATA_FOV }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Unique1ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 yOffset;
     /* 0x04 */ f32 distMin;
     /* 0x08 */ f32 distMax;
@@ -1102,14 +1100,14 @@ typedef struct Unique1ReadOnlyData {
     /* 0x1A */ s16 interfaceField;
 } Unique1ReadOnlyData; // size = 0x1C
 
-typedef struct Unique1ReadWriteData {
+typedef struct {
     /* 0x0 */ f32 unk_00; // unused
     /* 0x4 */ s16 yawTarget;
     /* 0x6 */ s16 yawTargetAdj;
     /* 0x8 */ s16 timer;
 } Unique1ReadWriteData; // size = 0xC
 
-typedef struct Unique1 {
+typedef struct {
     /* 0x00 */ Unique1ReadOnlyData roData;
     /* 0x1C */ Unique1ReadWriteData rwData;
 } Unique1; // size = 0x28
@@ -1123,19 +1121,19 @@ typedef struct Unique1 {
     { atLerpStepScale, CAM_DATA_AT_LERP_STEP_SCALE }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Unique2ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 yOffset;
     /* 0x04 */ f32 distTarget;
     /* 0x08 */ f32 fovTarget;
     /* 0x0C */ s16 interfaceField;
 } Unique2ReadOnlyData; // size = 0x10
 
-typedef struct Unique2ReadWriteData {
+typedef struct {
     /* 0x0 */ f32 unk_00;
     /* 0x4 */ s16 unk_04;
 } Unique2ReadWriteData; // size = 0x8
 
-typedef struct Unique2 {
+typedef struct {
     /* 0x00 */ Unique2ReadOnlyData roData;
     /* 0x10 */ Unique2ReadWriteData rwData;
 } Unique2; // size = 0x18
@@ -1150,7 +1148,7 @@ typedef struct Unique2 {
     { fov, CAM_DATA_FOV }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct DoorParams {
+typedef struct {
     /* 0x0 */ struct Actor* doorActor;
     /* 0x4 */ s16 bgCamIndex;
     /* 0x6 */ s16 timer1;
@@ -1158,18 +1156,18 @@ typedef struct DoorParams {
     /* 0xA */ s16 timer3;
 } DoorParams; // size = 0xC
 
-typedef struct Unique3ReadOnlyData {
+typedef struct {
     /* 0x0 */ f32 yOffset;
     /* 0x4 */ f32 fov;
     /* 0x8 */ s16 interfaceField;
 } Unique3ReadOnlyData; // size = 0xC
 
-typedef struct Unique3ReadWriteData {
+typedef struct {
     /* 0x0 */ f32 initialFov;
     /* 0x4 */ f32 initialDist;
 } Unique3ReadWriteData; // size = 0x8
 
-typedef struct Unique3 {
+typedef struct {
     /* 0x00 */ Unique3ReadOnlyData roData;
     /* 0x0C */ Unique3ReadWriteData rwData;
 } Unique3; // size = 0x14
@@ -1182,44 +1180,44 @@ typedef struct Unique3 {
     { fov, CAM_DATA_FOV }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Unique0ReadOnlyData {
+typedef struct {
     /* 0x0 */ s16 interfaceField;
 } Unique0ReadOnlyData; // size = 0x4
 
-typedef struct Unique0ReadWriteData {
-    /* 0x00 */ Vec3f initialPos;
+typedef struct {
+    /* 0x00 */ Vec3f initalPos;
     /* 0x0C */ s16 animTimer;
     /* 0x10 */ InfiniteLine eyeAndDirection;
 } Unique0ReadWriteData; // size = 0x28
 
-typedef struct Unique0 {
+typedef struct {
     /* 0x00 */ Unique0ReadOnlyData roData;
     /* 0x04 */ Unique0ReadWriteData rwData;
 } Unique0; // size = 0x2C
 
 #define UNIQUE0_FLAG_0 (1 << 0)
 
-typedef struct Unique6ReadOnlyData {
+typedef struct {
     /* 0x0 */ s16 interfaceField;
 } Unique6ReadOnlyData; // size = 0x4
 
-typedef struct Unique6 {
+typedef struct {
     /* 0x0 */ Unique6ReadOnlyData roData;
 } Unique6; // size = 0x4
 
 #define UNIQUE6_FLAG_0 (1 << 0)
 
-typedef struct Unique7ReadOnlyData {
+typedef struct {
     /* 0x0 */ f32 fov;
     /* 0x4 */ s16 interfaceField;
     /* 0x6 */ s16 align;
 } Unique7ReadOnlyData; // size = 0x8
 
-typedef struct Unique7ReadWriteData {
+typedef struct {
     /* 0x0 */ Vec3s unk_00;
 } Unique7ReadWriteData; // size = 0x8
 
-typedef struct Unique7 {
+typedef struct {
     /* 0x00 */ Unique7ReadOnlyData roData;
     /* 0x08 */ Unique7ReadWriteData rwData;
 } Unique7; // size = 0x10
@@ -1228,7 +1226,7 @@ typedef struct Unique7 {
     { fov, CAM_DATA_FOV }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef enum OnePointCsAction {
+typedef enum {
     /*  0x1 */ ONEPOINT_CS_ACTION_ID_1 = 1,
     /*  0x2 */ ONEPOINT_CS_ACTION_ID_2,
     /*  0x3 */ ONEPOINT_CS_ACTION_ID_3,
@@ -1277,7 +1275,7 @@ typedef enum OnePointCsAction {
  * 0x10: ? unused
  * 0x20: focus on player
 */
-typedef struct OnePointCsFull {
+typedef struct {
     /* 0x00 */ u8 actionFlags;
     /* 0x01 */ u8 initField;
     /* 0x02 */ s16 viewFlags;
@@ -1289,16 +1287,16 @@ typedef struct OnePointCsFull {
     /* 0x1C */ Vec3f eyeTargetInit;
 } OnePointCsFull; // size = 0x28
 
-typedef struct OnePointCsInfo {
+typedef struct {
     /* 0x0 */ s32 keyFrameCount;
     /* 0x4 */ OnePointCsFull* keyFrames;
 } OnePointCsInfo; // size = 0x8
 
-typedef struct Unique9ReadOnlyData {
+typedef struct {
     /* 0x0 */ s16 interfaceField;
 } Unique9ReadOnlyData; // size = 0x40
 
-typedef struct Unique9ReadWriteData {
+typedef struct {
     /* 0x00 */ OnePointCsFull* curKeyFrame;
     /* 0x04 */ Vec3f atTarget;
     /* 0x10 */ Vec3f eyeTarget;
@@ -1312,40 +1310,40 @@ typedef struct Unique9ReadWriteData {
     /* 0x3C */ s16 keyFrameTimer;
 } Unique9ReadWriteData; // size = 0x40
 
-typedef struct Unique9 {
+typedef struct {
     /* 0x00 */ OnePointCsInfo csInfo;
     /* 0x08 */ Unique9ReadOnlyData roData;
     /* 0x0C */ Unique9ReadWriteData rwData;
 } Unique9; // size = 0x4C
 
-typedef struct Demo1ReadOnlyData {
+typedef struct {
     /* 0x0 */ s16 interfaceField;
 } Demo1ReadOnlyData; // size = 0x4
 
-typedef struct Demo1ReadWriteData {
+typedef struct {
     /* 0x0 */ f32 curFrame;
     /* 0x4 */ s16 keyframe;
 } Demo1ReadWriteData; // size = 0x14
 
-typedef struct Demo1 {
+typedef struct {
     /* 0x00 */ Demo1ReadOnlyData roData;
     /* 0x04 */ Demo1ReadWriteData rwData;
 } Demo1; // size = 0x18
 
-typedef struct Demo3ReadOnlyData {
+typedef struct {
     /* 0x0 */ f32 fov;
     /* 0x4 */ f32 unk_04; // unused
     /* 0x8 */ s16 interfaceField;
 } Demo3ReadOnlyData; // size = 0xC
 
-typedef struct Demo3ReadWriteData {
+typedef struct {
     /* 0x00 */ Vec3f initialAt;
     /* 0x0C */ f32 unk_0C;
     /* 0x10 */ s16 animFrame;
     /* 0x12 */ s16 yawDir;
 } Demo3ReadWriteData; // size = 0x14
 
-typedef struct Demo3 {
+typedef struct {
     /* 0x00 */ Demo3ReadOnlyData roData;
     /* 0x0C */ Demo3ReadWriteData rwData;
 } Demo3; // size = 0x20
@@ -1355,33 +1353,33 @@ typedef struct Demo3 {
     { atLerpStepScale, CAM_DATA_AT_LERP_STEP_SCALE }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Demo6ReadOnlyData {
+typedef struct {
     /* 0x0 */ s16 interfaceField;
     /* 0x2 */ s16 unk_02;
 } Demo6ReadOnlyData; // size = 0x4
 
-typedef struct Demo6ReadWriteData {
+typedef struct {
     /* 0x0 */ s16 animTimer;
     /* 0x4 */ Vec3f atTarget;
 } Demo6ReadWriteData; // size = 0x10
 
-typedef struct Demo6 {
+typedef struct {
     /* 0x00 */ Demo6ReadOnlyData roData;
     /* 0x04 */ Demo6ReadWriteData rwData;
 } Demo6; // size = 0x14
 
-typedef struct OnePointCamData {
+typedef struct {
     /* 0x0 */ CutsceneCameraPoint* atPoints;
     /* 0x4 */ CutsceneCameraPoint* eyePoints;
     /* 0x8 */ s16 actionParameters;
     /* 0xA */ s16 initTimer;
 } OnePointCamData; // size = 0xC
 
-typedef struct Demo9ReadOnlyData {
+typedef struct {
     /* 0x0 */ s16 interfaceField;
 } Demo9ReadOnlyData; // size = 0x4
 
-typedef struct Demo9ReadWriteData {
+typedef struct {
     /* 0x0 */ f32 curFrame;
     /* 0x4 */ s16 keyframe;
     /* 0x6 */ s16 doLERPAt;
@@ -1389,7 +1387,7 @@ typedef struct Demo9ReadWriteData {
     /* 0xA */ s16 animTimer;
 } Demo9ReadWriteData; // size = 0xC
 
-typedef struct Demo9 {
+typedef struct {
     /* 0x00 */ OnePointCamData onePointCamData;
     /* 0x0C */ Demo9ReadOnlyData roData;
     /* 0x10 */ Demo9ReadWriteData rwData;
@@ -1398,12 +1396,12 @@ typedef struct Demo9 {
 #define DEMO9_FLAG_1 (1 << 1)
 #define DEMO9_FLAG_4 (1 << 4)
 
-typedef struct Special0ReadOnlyData {
+typedef struct {
     /* 0x0 */ f32 lerpAtScale;
     /* 0x4 */ s16 interfaceField;
 } Special0ReadOnlyData; // size = 0x8
 
-typedef struct Special0 {
+typedef struct {
     /* 0x0 */ Special0ReadOnlyData roData;
 } Special0; // size = 0x8
 
@@ -1411,15 +1409,15 @@ typedef struct Special0 {
     { yawUpdateRateTarget, CAM_DATA_YAW_UPDATE_RATE_TARGET }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Special4ReadWriteData {
-    /* 0x0 */ s16 initialTimer;
+typedef struct {
+    /* 0x0 */ s16 initalTimer;
 } Special4ReadWriteData; // size = 0x4
 
-typedef struct Special4 {
+typedef struct {
     /* 0x0 */ Special4ReadWriteData rwData;
 } Special4; // size = 0x4
 
-typedef struct Special5ReadOnlyData {
+typedef struct {
     /* 0x00 */ f32 yOffset;
     /* 0x04 */ f32 eyeDist;
     /* 0x08 */ f32 minDistForRot;
@@ -1431,11 +1429,11 @@ typedef struct Special5ReadOnlyData {
     /* 0x1A */ s16 unk_1A;
 } Special5ReadOnlyData; // size = 0x1C
 
-typedef struct Special5ReadWriteData {
+typedef struct {
     /* 0x0 */ s16 animTimer;
 } Special5ReadWriteData; // size = 0x4
 
-typedef struct Special5 {
+typedef struct {
     /* 0x00 */ Special5ReadOnlyData roData;
     /* 0x1C */ Special5ReadWriteData rwData;
 } Special5; // size = 0x20
@@ -1461,40 +1459,40 @@ typedef struct Special5 {
     { unk_22, CAM_DATA_UNK_22 }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef struct Special7ReadWriteData {
+typedef struct {
     /* 0x0 */ s16 index; // See `CamElevatorPlatform`
 } Special7ReadWriteData; // size = 0x4
 
-typedef struct Special7 {
+typedef struct {
     /* 0x0 */ Special7ReadWriteData rwData;
 } Special7; // size = 0x4
 
-typedef struct Special6ReadOnlyData {
+typedef struct {
     /* 0x0 */ s16 interfaceField;
 } Special6ReadOnlyData; // size = 0x4
 
-typedef struct Special6ReadWriteData {
-    /* 0x0 */ f32 initialPlayerY;
+typedef struct {
+    /* 0x0 */ f32 initalPlayerY;
     /* 0x4 */ s16 animTimer;
 } Special6ReadWriteData; // size = 0x8
 
-typedef struct Special6 {
+typedef struct {
     /* 0x0 */ Special6ReadOnlyData roData;
     /* 0x4 */ Special6ReadWriteData rwData;
 } Special6; // size = 0xC
 
-typedef struct Special9ReadOnlyData {
+typedef struct {
     /* 0x0 */ f32 yOffset;
     /* 0x4 */ f32 unk_04;
     /* 0x8 */ s16 interfaceField;
     /* 0xA */ s16 unk_0A;
 } Special9ReadOnlyData; // size = 0xC
 
-typedef struct Special9ReadWriteData {
+typedef struct {
     /* 0x0 */ s16 targetYaw;
 } Special9ReadWriteData; // size = 0x4
 
-typedef struct Special9 {
+typedef struct {
     /* 0x00 */ Special9ReadOnlyData roData;
     /* 0x0C */ Special9ReadWriteData rwData;
 } Special9; // size = 0x10
@@ -1508,7 +1506,7 @@ typedef struct Special9 {
     { fov, CAM_DATA_FOV }, \
     { interfaceField, CAM_DATA_INTERFACE_FIELD }
 
-typedef union CamParamData {
+typedef union {
     Normal1 norm1;
     Normal2 norm2;
     Normal3 norm3;
@@ -1553,10 +1551,10 @@ typedef union CamParamData {
     };
 } CamParamData; // size = 0x50
 
-typedef struct CamColChk {
+typedef struct {
     /* 0x00 */ Vec3f pos;
     /* 0x0C */ Vec3f norm;
-    /* 0x18 */ struct CollisionPoly* poly;
+    /* 0x18 */ CollisionPoly* poly;
     /* 0x1C */ VecGeo geoNorm;
     /* 0x24 */ s32 bgId;
 } CamColChk; // size = 0x28
@@ -1630,7 +1628,7 @@ typedef struct Camera {
  * Debug Camera
 */
 
-typedef struct DebugCamSub {
+typedef struct {
     /* 0x0000 */ s16 mode;
     /* 0x0002 */ s16 nFrames;
     /* 0x0004 */ s16 nPoints;
@@ -1647,7 +1645,7 @@ typedef struct DebugCamSub {
     /* 0x104A */ Vec3s unk_104A;
 } DebugCamSub; // size = 0x1050
 
-typedef struct DebugCam {
+typedef struct {
     /* 0x00 */ s32 unk_00;
     /* 0x04 */ Vec3f at;
     /* 0x10 */ Vec3f eye;
@@ -1670,7 +1668,7 @@ typedef struct DebugCam {
     /* 0x7C */ DebugCamSub sub;
 } DebugCam; // size = 0x10CC
 
-typedef struct DebugCamCut {
+typedef struct {
     /* 0x00 */ char letter;
     /* 0x01 */ u8 unk_01;
     /* 0x02 */ s16 mode;
@@ -1680,7 +1678,7 @@ typedef struct DebugCamCut {
     /* 0x0E */ s16 nPoints;
 } DebugCamCut; // size = 0x10
 
-typedef struct DebugCamAnim {
+typedef struct {
     /* 0x00 */ f32 curFrame;
     /* 0x04 */ f32 unk_04; // frame count?
     /* 0x08 */ s16 keyframe;
@@ -1692,7 +1690,7 @@ typedef struct DebugCamAnim {
     /* 0x2C */ f32 fov;
 } DebugCamAnim; // size = 0x30
 
-typedef enum DebugCamTextColor {
+typedef enum {
     /* 0 */ DEBUG_CAM_TEXT_YELLOW,
     /* 1 */ DEBUG_CAM_TEXT_PEACH,
     /* 2 */ DEBUG_CAM_TEXT_BROWN,
@@ -1702,35 +1700,5 @@ typedef enum DebugCamTextColor {
     /* 6 */ DEBUG_CAM_TEXT_BLUE,
     /* 7 */ DEBUG_CAM_TEXT_GREEN
 } DebugCamTextColor;
-
-void Camera_Init(Camera* camera, struct View* view, struct CollisionContext* colCtx, struct PlayState* play);
-void Camera_InitDataUsingPlayer(Camera* camera, struct Player* player);
-s16 Camera_ChangeStatus(Camera* camera, s16 status);
-Vec3s Camera_Update(Camera* camera);
-void Camera_Finish(Camera* camera);
-s32 Camera_RequestMode(Camera* camera, s16 mode);
-s32 Camera_CheckValidMode(Camera* camera, s16 mode);
-s32 Camera_RequestSetting(Camera* camera, s16 setting);
-s32 Camera_RequestBgCam(Camera* camera, s32 requestedBgCamIndex);
-s16 Camera_GetInputDirYaw(Camera* camera);
-Vec3s Camera_GetCamDir(Camera* camera);
-s16 Camera_GetCamDirPitch(Camera* camera);
-s16 Camera_GetCamDirYaw(Camera* camera);
-s32 Camera_RequestQuake(Camera* camera, s32 unused, s16 y, s32 duration);
-s32 Camera_SetViewParam(Camera* camera, s32 viewFlag, void* param);
-s32 Camera_OverwriteStateFlags(Camera* camera, s16 stateFlags);
-s16 Camera_SetStateFlag(Camera* camera, s16 stateFlag);
-s16 Camera_UnsetStateFlag(Camera* camera, s16 stateFlag);
-s32 Camera_ResetAnim(Camera* camera);
-s32 Camera_SetCSParams(Camera* camera, CutsceneCameraPoint* atPoints, CutsceneCameraPoint* eyePoints,
-                       struct Player* player, s16 relativeToPlayer);
-s32 Camera_ChangeDoorCam(Camera* camera, struct Actor* doorActor, s16 bgCamIndex, f32 arg3, s16 timer1, s16 timer2,
-                         s16 timer3);
-s32 Camera_Copy(Camera* dstCamera, Camera* srcCamera);
-Vec3f Camera_GetQuakeOffset(Camera* camera);
-void Camera_SetCameraData(Camera* camera, s16 setDataFlags, void* data0, void* data1, s16 data2, s16 data3,
-                          UNK_TYPE arg6);
-s32 func_8005B198(void);
-s16 Camera_SetFinishedFlag(Camera* camera);
 
 #endif

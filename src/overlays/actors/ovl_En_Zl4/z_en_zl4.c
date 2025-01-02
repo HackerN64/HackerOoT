@@ -8,9 +8,9 @@
 #include "assets/objects/object_zl4/object_zl4.h"
 #include "assets/scenes/indoors/nakaniwa/nakaniwa_scene.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4)
 
-typedef enum EnZl4CutsceneState {
+typedef enum {
     /* 0 */ ZL4_CS_WAIT,
     /* 1 */ ZL4_CS_START,
     /* 2 */ ZL4_CS_MEET,
@@ -22,7 +22,7 @@ typedef enum EnZl4CutsceneState {
     /* 8 */ ZL4_CS_PLAN
 } EnZl4CutsceneState;
 
-typedef enum EnZl4EyeExpression {
+typedef enum {
     /* 0 */ ZL4_EYES_NEUTRAL,
     /* 1 */ ZL4_EYES_SHUT,
     /* 2 */ ZL4_EYES_LOOK_LEFT,
@@ -32,14 +32,14 @@ typedef enum EnZl4EyeExpression {
     /* 6 */ ZL4_EYES_OPEN
 } EnZl4EyeExpression;
 
-typedef enum EnZl4MouthExpression {
+typedef enum {
     /* 0 */ ZL4_MOUTH_NEUTRAL,
     /* 1 */ ZL4_MOUTH_HAPPY,
     /* 2 */ ZL4_MOUTH_WORRIED,
     /* 3 */ ZL4_MOUTH_SURPRISED
 } EnZl4MouthExpression;
 
-typedef enum EnZl4EyeState {
+typedef enum {
     /* 0 */ ZL4_EYE_OPEN,
     /* 1 */ ZL4_EYE_BLINK,
     /* 2 */ ZL4_EYE_SHUT,
@@ -58,7 +58,7 @@ void EnZl4_Cutscene(EnZl4* this, PlayState* play);
 void EnZl4_Idle(EnZl4* this, PlayState* play);
 void EnZl4_TheEnd(EnZl4* this, PlayState* play);
 
-ActorProfile En_Zl4_Profile = {
+ActorInit En_Zl4_InitVars = {
     /**/ ACTOR_EN_ZL4,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -72,7 +72,7 @@ ActorProfile En_Zl4_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -80,7 +80,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -92,7 +92,7 @@ static ColliderCylinderInit sCylinderInit = {
 
 static CollisionCheckInfoInit2 sColChkInfoInit = { 0, 0, 0, 0, MASS_IMMOVABLE };
 
-typedef enum EnZl4Animation {
+typedef enum {
     /*  0 */ ZL4_ANIM_0,
     /*  1 */ ZL4_ANIM_1,
     /*  2 */ ZL4_ANIM_2,
@@ -298,8 +298,8 @@ void EnZl4_UpdateFace(EnZl4* this) {
 }
 
 void EnZl4_SetMove(EnZl4* this, PlayState* play) {
-    this->skelAnime.movementFlags |= ANIM_FLAG_UPDATE_XZ;
-    AnimTaskQueue_AddActorMovement(play, &this->actor, &this->skelAnime, 1.0f);
+    this->skelAnime.moveFlags |= ANIM_FLAG_0;
+    AnimationContext_SetMoveActor(play, &this->actor, &this->skelAnime, 1.0f);
 }
 
 void func_80B5BB78(EnZl4* this, PlayState* play) {
@@ -367,7 +367,7 @@ void EnZl4_Init(Actor* thisx, PlayState* play) {
     Collider_SetCylinder(play, &this->collider, &this->actor, &sCylinderInit);
     CollisionCheck_SetInfo2(&this->actor.colChkInfo, NULL, &sColChkInfoInit);
     Actor_SetScale(&this->actor, 0.01f);
-    this->actor.attentionRangeType = ATTENTION_RANGE_6;
+    this->actor.targetMode = 6;
     this->actor.textId = -1;
     this->eyeExpression = this->mouthExpression = ZL4_MOUTH_NEUTRAL;
 

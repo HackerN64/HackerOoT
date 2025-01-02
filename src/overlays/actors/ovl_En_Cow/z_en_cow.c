@@ -6,7 +6,7 @@
 
 #include "z_en_cow.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3)
 
 void EnCow_Init(Actor* thisx, PlayState* play);
 void EnCow_Destroy(Actor* thisx, PlayState* play);
@@ -26,7 +26,7 @@ void EnCow_DrawTail(Actor* thisx, PlayState* play);
 void EnCow_UpdateTail(Actor* thisx, PlayState* play);
 void EnCow_IdleTail(EnCow* this, PlayState* play);
 
-ActorProfile En_Cow_Profile = {
+ActorInit En_Cow_InitVars = {
     /**/ ACTOR_EN_COW,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -40,7 +40,7 @@ ActorProfile En_Cow_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_ENEMY,
         OC1_ON | OC1_TYPE_ALL,
@@ -48,7 +48,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_NONE,
@@ -146,7 +146,7 @@ void EnCow_Init(Actor* thisx, PlayState* play) {
                                COW_TYPE_TAIL);
             this->animationTimer = Rand_ZeroFloat(1000.0f) + 40.0f;
             this->breathTimer = 0;
-            this->actor.attentionRangeType = ATTENTION_RANGE_6;
+            this->actor.targetMode = 6;
             R_EPONAS_SONG_PLAYED = false;
             break;
 
@@ -158,7 +158,7 @@ void EnCow_Init(Actor* thisx, PlayState* play) {
             this->actor.draw = EnCow_DrawTail;
             this->actionFunc = EnCow_IdleTail;
             EnCow_SetTailPos(this);
-            this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
+            this->actor.flags &= ~ACTOR_FLAG_0;
             this->animationTimer = (u16)Rand_ZeroFloat(1000.0f) + 40.0f;
             break;
     }
@@ -217,7 +217,7 @@ void EnCow_UpdateAnimation(EnCow* this, PlayState* play) {
 
 void EnCow_TalkEnd(EnCow* this, PlayState* play) {
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_EVENT) && Message_ShouldAdvance(play)) {
-        this->actor.flags &= ~ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
+        this->actor.flags &= ~ACTOR_FLAG_16;
         Message_CloseTextbox(play);
         this->actionFunc = EnCow_Idle;
     }
@@ -225,7 +225,7 @@ void EnCow_TalkEnd(EnCow* this, PlayState* play) {
 
 void EnCow_GiveMilkEnd(EnCow* this, PlayState* play) {
     if (Actor_TextboxIsClosing(&this->actor, play)) {
-        this->actor.flags &= ~ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
+        this->actor.flags &= ~ACTOR_FLAG_16;
         this->actionFunc = EnCow_Idle;
     }
 }
@@ -241,7 +241,7 @@ void EnCow_GiveMilkWait(EnCow* this, PlayState* play) {
 
 void EnCow_GiveMilk(EnCow* this, PlayState* play) {
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_EVENT) && Message_ShouldAdvance(play)) {
-        this->actor.flags &= ~ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
+        this->actor.flags &= ~ACTOR_FLAG_16;
         Message_CloseTextbox(play);
         this->actionFunc = EnCow_GiveMilkWait;
         Actor_OfferGetItem(&this->actor, play, GI_MILK, 10000.0f, 100.0f);
@@ -264,7 +264,7 @@ void EnCow_Talk(EnCow* this, PlayState* play) {
     if (Actor_TalkOfferAccepted(&this->actor, play)) {
         this->actionFunc = EnCow_CheckForEmptyBottle;
     } else {
-        this->actor.flags |= ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
+        this->actor.flags |= ACTOR_FLAG_16;
         Actor_OfferTalk(&this->actor, play, 170.0f);
         this->actor.textId = 0x2006;
     }
@@ -290,7 +290,7 @@ void EnCow_Idle(EnCow* this, PlayState* play) {
                     (ABS((s16)(this->actor.yawTowardsPlayer - this->actor.shape.rot.y)) < 25000)) {
                     R_EPONAS_SONG_PLAYED = false;
                     this->actionFunc = EnCow_Talk;
-                    this->actor.flags |= ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
+                    this->actor.flags |= ACTOR_FLAG_16;
                     Actor_OfferTalk(&this->actor, play, 170.0f);
                     this->actor.textId = 0x2006;
                 } else {

@@ -14,7 +14,7 @@ void BgHidanRsekizou_Destroy(Actor* thisx, PlayState* play);
 void BgHidanRsekizou_Update(Actor* thisx, PlayState* play);
 void BgHidanRsekizou_Draw(Actor* thisx, PlayState* play);
 
-ActorProfile Bg_Hidan_Rsekizou_Profile = {
+ActorInit Bg_Hidan_Rsekizou_InitVars = {
     /**/ ACTOR_BG_HIDAN_RSEKIZOU,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -29,7 +29,7 @@ ActorProfile Bg_Hidan_Rsekizou_Profile = {
 static ColliderJntSphElementInit sJntSphElementsInit[6] = {
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x20000000, 0x01, 0x04 },
             { 0x00000000, 0x00, 0x00 },
             ATELEM_ON | ATELEM_SFX_NONE,
@@ -40,7 +40,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[6] = {
     },
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x20000000, 0x01, 0x04 },
             { 0x00000000, 0x00, 0x00 },
             ATELEM_ON | ATELEM_SFX_NONE,
@@ -51,7 +51,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[6] = {
     },
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x20000000, 0x01, 0x04 },
             { 0x00000000, 0x00, 0x00 },
             ATELEM_ON | ATELEM_SFX_NONE,
@@ -62,7 +62,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[6] = {
     },
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x20000000, 0x01, 0x04 },
             { 0x00000000, 0x00, 0x00 },
             ATELEM_ON | ATELEM_SFX_NONE,
@@ -73,7 +73,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[6] = {
     },
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x20000000, 0x01, 0x04 },
             { 0x00000000, 0x00, 0x00 },
             ATELEM_ON | ATELEM_SFX_NONE,
@@ -84,7 +84,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[6] = {
     },
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x20000000, 0x01, 0x04 },
             { 0x00000000, 0x00, 0x00 },
             ATELEM_ON | ATELEM_SFX_NONE,
@@ -97,7 +97,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[6] = {
 
 static ColliderJntSphInit sJntSphInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_ON | AT_TYPE_ENEMY,
         AC_NONE,
         OC1_NONE,
@@ -178,7 +178,7 @@ void BgHidanRsekizou_Update(Actor* thisx, PlayState* play) {
     }
 
     CollisionCheck_SetAT(play, &play->colChkCtx, &this->collider.base);
-    Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_FIRE_PILLAR - SFX_FLAG);
+    func_8002F974(&this->dyna.actor, NA_SE_EV_FIRE_PILLAR - SFX_FLAG);
 }
 
 Gfx* BgHidanRsekizou_DrawFireball(PlayState* play, BgHidanRsekizou* this, s16 frame, MtxF* mf, s32 a,
@@ -188,11 +188,9 @@ Gfx* BgHidanRsekizou_DrawFireball(PlayState* play, BgHidanRsekizou* this, s16 fr
     s32 temp;
     f32 fVar6;
     f32 tmpf7;
-    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     temp = (((this->burnFrame + frame) % 8) * 7) * (1.0f / 7.0f);
     gSPSegment(displayList++, 0x09, SEGMENTED_TO_VIRTUAL(sFireballsTexs[temp]));
-    IF_F3DEX3_DONT_SKIP_TEX_HERE(displayList++, temp);
 
     frame++;
     fVar6 = (frame != 4) ? frame + ((3 - this->bendFrame) * (1.0f / 3.0f)) : frame;
@@ -234,7 +232,8 @@ void BgHidanRsekizou_Draw(Actor* thisx, PlayState* play) {
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_bg_hidan_rsekizou.c", 568);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_hidan_rsekizou.c", 568),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gFireTempleSpinningFlamethrowerDL);
     Matrix_MtxFCopy(&mf, &gMtxFClear);
 

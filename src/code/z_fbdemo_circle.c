@@ -1,6 +1,6 @@
 #include "global.h"
 
-typedef enum TransitionCircleDirection {
+typedef enum {
     /* 0 */ TRANS_CIRCLE_DIR_IN,
     /* 1 */ TRANS_CIRCLE_DIR_OUT
 } TransitionCircleDirection;
@@ -164,13 +164,13 @@ void TransitionCircle_Draw(void* thisx, Gfx** gfxP) {
     gSPSegment(gfx++, 8, this->texture);
     gDPSetColor(gfx++, G_SETPRIMCOLOR, this->color.rgba);
     gDPSetColor(gfx++, G_SETENVCOLOR, this->color.rgba);
-    gSPMatrix(gfx++, &this->projection, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
+    gSPMatrix(gfx++, &this->projection, G_MTX_PROJECTION | G_MTX_LOAD);
     gSPPerspNormalize(gfx++, this->normal);
-    gSPMatrix(gfx++, &this->lookAt, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_PROJECTION);
+    gSPMatrix(gfx++, &this->lookAt, G_MTX_PROJECTION | G_MTX_NOPUSH | G_MTX_MUL);
 
     if (scale != 1.0f) {
         guScale(&modelView[0], scale, scale, 1.0f);
-        gSPMatrix(gfx++, &modelView[0], G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPMatrix(gfx++, &modelView[0], G_MTX_LOAD);
     }
 
     if (rot != 0.0f) {

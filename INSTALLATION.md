@@ -20,7 +20,7 @@ For Windows 10 or 11, install WSL and a distribution by following this
 [WSL Installation Guide](https://docs.microsoft.com/en-us/windows/wsl/install).
 We recommend using Ubuntu 20.04 as the Linux distribution.
 
-For older versions of Windows, install a Linux VM or refer to [Docker](docs/BUILDING_DOCKER.md) instructions.
+For older versions of Windows, install a Linux VM or refer to either [Cygwin](docs/BUILDING_CYGWIN.md) or [Docker](docs/BUILDING_DOCKER.md) instructions.
 
 
 ### Linux (Native or under WSL / VM)
@@ -37,13 +37,12 @@ The build process has the following package requirements:
 * python3-venv
 * libpng-dev
 * gcc-mips-linux-gnu
-* libxml2-dev
 
 Under Debian / Ubuntu (which we recommend using), you can install them with the following commands:
 
 ```bash
 sudo apt-get update
-sudo apt-get install git build-essential binutils-mips-linux-gnu python3 python3-pip python3-venv libpng-dev gcc-mips-linux-gnu libxml2-dev
+sudo apt-get install git build-essential binutils-mips-linux-gnu python3 python3-pip python3-venv libpng-dev gcc-mips-linux-gnu
 ```
 
 #### 2. Clone the repository

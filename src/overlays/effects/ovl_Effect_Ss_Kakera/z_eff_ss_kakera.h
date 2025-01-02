@@ -4,7 +4,7 @@
 #include "ultra64.h"
 #include "global.h"
 
-typedef struct EffectSsKakeraInitParams {
+typedef struct {
     /* 0x00 */ Vec3f pos;
     /* 0x0C */ Vec3f velocity;
     /* 0x18 */ Vec3f unk_18;
@@ -24,7 +24,7 @@ typedef struct EffectSsKakeraInitParams {
 
 #define KAKERA_OBJECT_DEFAULT -1
 
-typedef enum KakeraColorIndex {
+typedef enum {
     /* -1 */ KAKERA_COLOR_NONE = -1,
     /*  0 */ KAKERA_COLOR_WHITE,
     /*  1 */ KAKERA_COLOR_BROWN

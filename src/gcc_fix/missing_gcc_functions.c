@@ -26,6 +26,38 @@ int memcmp(const void* s1, const void* s2, size_t n) {
     return 0;
 }
 
+void* memset(void* str, int c, size_t n) {
+    u8* m = str;
+    size_t i;
+
+    for (i = 0; i < n; i++) {
+        m[i] = c;
+    }
+
+    return str;
+}
+
+void* memmove(void* dest, const void* src, size_t len) {
+    u8* d = dest;
+    const u8* s = src;
+
+    if (d == s) {
+        return dest;
+    }
+    if (d < s) {
+        while (len--) {
+            *d++ = *s++;
+        }
+    } else {
+        d += len - 1;
+        s += len - 1;
+        while (len--) {
+            *d-- = *s--;
+        }
+    }
+    return dest;
+}
+
 // Conversions involving 64-bit integer types required by the O32 MIPS ABI.
 
 // f32 -> u64, negative values become 0
@@ -152,13 +184,6 @@ f32 __powisf2(f32 x, s32 m) {
         }
     }
     return (m < 0) ? (1.0f / y) : y;
-}
-
-int __ucmpdi2(unsigned long long a, unsigned long long b) {
-    if (a == b) {
-        return 1;
-    }
-    return (a < b) ? 0 : 2;
 }
 
 // Compute division and modulo of 64-bit signed and unsigned integers

@@ -6,7 +6,7 @@
 
 #include "z_magic_fire.h"
 
-#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_UPDATE_DURING_OCARINA)
+#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_25)
 
 void MagicFire_Init(Actor* thisx, PlayState* play);
 void MagicFire_Destroy(Actor* thisx, PlayState* play);
@@ -15,14 +15,14 @@ void MagicFire_Draw(Actor* thisx, PlayState* play);
 
 void MagicFire_UpdateBeforeCast(Actor* thisx, PlayState* play);
 
-typedef enum MagicFireAction {
+typedef enum {
     /* 0x00 */ DF_ACTION_INITIALIZE,
     /* 0x01 */ DF_ACTION_EXPAND_SLOWLY,
     /* 0x02 */ DF_ACTION_STOP_EXPANDING,
     /* 0x03 */ DF_ACTION_EXPAND_QUICKLY
 } MagicFireAction;
 
-typedef enum MagicFireScreenTint {
+typedef enum {
     /* 0x00 */ DF_SCREEN_TINT_NONE,
     /* 0x01 */ DF_SCREEN_TINT_FADE_IN,
     /* 0x02 */ DF_SCREEN_TINT_MAINTAIN,
@@ -30,7 +30,7 @@ typedef enum MagicFireScreenTint {
     /* 0x04 */ DF_SCREEN_TINT_FINISHED
 } MagicFireScreenTint;
 
-ActorProfile Magic_Fire_Profile = {
+ActorInit Magic_Fire_InitVars = {
     /**/ ACTOR_MAGIC_FIRE,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,
@@ -46,7 +46,7 @@ ActorProfile Magic_Fire_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_ON | AT_TYPE_PLAYER,
         AC_NONE,
         OC1_NONE,
@@ -54,7 +54,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00020000, 0x00, 0x01 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_ON | ATELEM_SFX_NONE,
@@ -237,7 +237,8 @@ void MagicFire_Draw(Actor* thisx, PlayState* play) {
         gDPSetPrimColor(POLY_XLU_DISP++, 0, 128, 255, 200, 0, (u8)(this->alphaMultiplier * 255));
         gDPSetEnvColor(POLY_XLU_DISP++, 255, 0, 0, (u8)(this->alphaMultiplier * 255));
         Matrix_Scale(0.15f, 0.15f, 0.15f, MTXMODE_APPLY);
-        MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_magic_fire.c", 715);
+        gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_magic_fire.c", 715),
+                  G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gDPPipeSync(POLY_XLU_DISP++);
         gSPTexture(POLY_XLU_DISP++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
         gDPSetTextureLUT(POLY_XLU_DISP++, G_TT_NONE);

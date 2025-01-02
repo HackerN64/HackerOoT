@@ -6,11 +6,9 @@
 
 #include "z_en_takara_man.h"
 #include "terminal.h"
-#include "versions.h"
 #include "assets/objects/object_ts/object_ts.h"
 
-#define FLAGS \
-    (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_LOCK_ON_DISABLED)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_27)
 
 void EnTakaraMan_Init(Actor* thisx, PlayState* play);
 void EnTakaraMan_Destroy(Actor* thisx, PlayState* play);
@@ -24,7 +22,7 @@ void func_80B17934(EnTakaraMan* this, PlayState* play);
 void func_80B17A6C(EnTakaraMan* this, PlayState* play);
 void func_80B17AC4(EnTakaraMan* this, PlayState* play);
 
-ActorProfile En_Takara_Man_Profile = {
+ActorInit En_Takara_Man_InitVars = {
     /**/ ACTOR_EN_TAKARA_MAN,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -68,7 +66,7 @@ void EnTakaraMan_Init(Actor* thisx, PlayState* play) {
     this->originalRoomNum = thisx->room;
     thisx->room = -1;
     thisx->world.rot.y = thisx->shape.rot.y = -0x4E20;
-    thisx->attentionRangeType = ATTENTION_RANGE_1;
+    thisx->targetMode = 1;
     this->actionFunc = func_80B176E0;
 }
 
@@ -115,11 +113,11 @@ void func_80B1778C(EnTakaraMan* this, PlayState* play) {
         absYawDiff = ABS(yawDiff);
         if (absYawDiff < 0x4300) {
             if (play->roomCtx.curRoom.num != this->originalRoomNum) {
-                this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
+                this->actor.flags &= ~ACTOR_FLAG_0;
                 this->unk_218 = 0;
             } else {
                 if (!this->unk_218) {
-                    this->actor.flags |= ACTOR_FLAG_ATTENTION_ENABLED;
+                    this->actor.flags |= ACTOR_FLAG_0;
                     this->unk_218 = 1;
                 }
                 Actor_OfferTalk(&this->actor, play, 100.0f);
@@ -162,11 +160,7 @@ void func_80B17A6C(EnTakaraMan* this, PlayState* play) {
     if (Actor_HasParent(&this->actor, play)) {
         this->actionFunc = func_80B17AC4;
     } else {
-#if OOT_VERSION < NTSC_1_1
-        Actor_OfferGetItem(&this->actor, play, GI_SMALL_KEY, 2000.0f, 1000.0f);
-#else
         Actor_OfferGetItem(&this->actor, play, GI_DOOR_KEY, 2000.0f, 1000.0f);
-#endif
     }
 }
 

@@ -50,7 +50,6 @@ void EffectSs_DrawGEffect(PlayState* play, EffectSs* this, void* texture) {
     s32 pad1;
     Mtx* mtx;
     void* objectPtr = play->objectCtx.slots[this->rgObjectSlot].segment;
-    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(gfxCtx, "../z_effect_soft_sprite_old_init.c", 196);
 
@@ -67,7 +66,6 @@ void EffectSs_DrawGEffect(PlayState* play, EffectSs* this, void* texture) {
     if (mtx != NULL) {
         gSPMatrix(POLY_XLU_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(texture));
-        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, texture);
         Gfx_SetupDL_61Xlu(gfxCtx);
         gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, this->rgPrimColorR, this->rgPrimColorG, this->rgPrimColorB,
                         this->rgPrimColorA);

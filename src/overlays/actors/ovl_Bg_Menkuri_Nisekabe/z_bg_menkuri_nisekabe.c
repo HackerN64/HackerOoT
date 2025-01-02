@@ -14,7 +14,7 @@ void BgMenkuriNisekabe_Destroy(Actor* thisx, PlayState* play);
 void BgMenkuriNisekabe_Update(Actor* thisx, PlayState* play);
 void BgMenkuriNisekabe_Draw(Actor* thisx, PlayState* play);
 
-ActorProfile Bg_Menkuri_Nisekabe_Profile = {
+ActorInit Bg_Menkuri_Nisekabe_InitVars = {
     /**/ ACTOR_BG_MENKURI_NISEKABE,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -49,7 +49,7 @@ void BgMenkuriNisekabe_Update(Actor* thisx, PlayState* play) {
 
 void BgMenkuriNisekabe_Draw(Actor* thisx, PlayState* play) {
     BgMenkuriNisekabe* this = (BgMenkuriNisekabe*)thisx;
-    u32 index = PARAMS_GET_U(this->actor.params, 0, 8);
+    u32 index = this->actor.params & 0xFF;
 
     if (CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_REACT_TO_LENS)) {
         Gfx_DrawDListXlu(play, sDLists[index]);

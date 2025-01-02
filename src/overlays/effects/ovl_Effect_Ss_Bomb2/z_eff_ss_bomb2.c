@@ -24,7 +24,7 @@ void EffectSsBomb2_DrawFade(PlayState* play, u32 index, EffectSs* this);
 void EffectSsBomb2_DrawLayered(PlayState* play, u32 index, EffectSs* this);
 void EffectSsBomb2_Update(PlayState* play, u32 index, EffectSs* this);
 
-EffectSsProfile Effect_Ss_Bomb2_Profile = {
+EffectSsInit Effect_Ss_Bomb2_InitVars = {
     EFFECT_SS_BOMB2,
     EffectSsBomb2_Init,
 };
@@ -72,7 +72,6 @@ void EffectSsBomb2_DrawFade(PlayState* play, u32 index, EffectSs* this) {
     Mtx* mtx;
     s32 pad;
     f32 scale;
-    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(gfxCtx, "../z_eff_ss_bomb2.c", 298);
 
@@ -91,11 +90,12 @@ void EffectSsBomb2_DrawFade(PlayState* play, u32 index, EffectSs* this) {
                         this->rPrimColorA);
         gDPSetEnvColor(POLY_XLU_DISP++, this->rEnvColorR, this->rEnvColorG, this->rEnvColorB, 0);
         gSPSegment(POLY_XLU_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(textures[this->rTexIndex]));
-        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, this->rTexIndex);
         gSPDisplayList(POLY_XLU_DISP++, this->gfx);
     }
 
     if (1) {}
+    if (1) {}
+
     CLOSE_DISPS(gfxCtx, "../z_eff_ss_bomb2.c", 345);
 }
 
@@ -151,7 +151,8 @@ void EffectSsBomb2_DrawLayered(PlayState* play, u32 index, EffectSs* this) {
                 Matrix_Translate(0.0f, 0.0f, depth, MTXMODE_APPLY);
                 Matrix_RotateZ((this->life * 0.02f) + 180.0f, MTXMODE_APPLY);
                 Matrix_Scale(layer2Scale, layer2Scale, layer2Scale, MTXMODE_APPLY);
-                MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_eff_ss_bomb2.c", 448);
+                gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_eff_ss_bomb2.c", 448),
+                          G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 gSPDisplayList(POLY_XLU_DISP++, gEffBombExplosion3DL);
                 layer2Scale -= 0.15f;
             }
@@ -159,6 +160,8 @@ void EffectSsBomb2_DrawLayered(PlayState* play, u32 index, EffectSs* this) {
     }
 
     if (1) {}
+    if (1) {}
+
     CLOSE_DISPS(gfxCtx, "../z_eff_ss_bomb2.c", 456);
 }
 

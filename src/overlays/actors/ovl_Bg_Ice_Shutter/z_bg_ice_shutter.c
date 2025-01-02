@@ -18,7 +18,7 @@ void func_80891CF4(BgIceShutter* this, PlayState* play);
 void func_80891D6C(BgIceShutter* this, PlayState* play);
 void func_80891DD4(BgIceShutter* this, PlayState* play);
 
-ActorProfile Bg_Ice_Shutter_Profile = {
+ActorInit Bg_Ice_Shutter_InitVars = {
     /**/ ACTOR_BG_ICE_SHUTTER,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -53,8 +53,8 @@ void BgIceShutter_Init(Actor* thisx, PlayState* play) {
     colHeader = NULL;
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
     DynaPolyActor_Init(&this->dyna, 0);
-    sp28 = PARAMS_GET_U(this->dyna.actor.params, 0, 8);
-    this->dyna.actor.params = PARAMS_GET_U(this->dyna.actor.params, 8, 8);
+    sp28 = this->dyna.actor.params & 0xFF;
+    this->dyna.actor.params = (this->dyna.actor.params >> 8) & 0xFF;
     CollisionHeader_GetVirtual(&object_ice_objects_Col_002854, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
     if (sp28 == 2) {

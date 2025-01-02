@@ -2,26 +2,24 @@
 #define Z_EFF_SS_FHGFLASH_H
 
 #include "ultra64.h"
-#include "z64math.h"
+#include "global.h"
 
-struct Actor;
-
-typedef struct EffectSsFhgFlashInitParams {
+typedef struct {
     /* 0x00 */ Vec3f pos;
     /* 0x0C */ Vec3f velocity;
     /* 0x18 */ Vec3f accel;
     /* 0x24 */ s16 scale;
     /* 0x26 */ u8 param;
-    /* 0x28 */ struct Actor* actor;
+    /* 0x28 */ Actor* actor;
     /* 0x2C */ u8 type;
 } EffectSsFhgFlashInitParams; // size = 0x30
 
-typedef enum FhgFlashType {
+typedef enum {
     /* 0x00 */ FHGFLASH_LIGHTBALL,
     /* 0x01 */ FHGFLASH_SHOCK
 } FhgFlashType;
 
-typedef enum FhgFlashLightBallParam {
+typedef enum {
     /* 0x00 */ FHGFLASH_LIGHTBALL_GREEN,
     /* 0x01 */ FHGFLASH_LIGHTBALL_LIGHTBLUE,
     /* 0x02 */ FHGFLASH_LIGHTBALL_RED,
@@ -33,7 +31,7 @@ typedef enum FhgFlashLightBallParam {
     /* 0x08 */ FHGFLASH_LIGHTBALL_WHITE2
 } FhgFlashLightBallParam;
 
-typedef enum FhgFlashLightningParam {
+typedef enum {
     /* 0x00 */ FHGFLASH_SHOCK_NO_ACTOR, // Don't attach to any actor. Stays at a fixed position.
     /* 0x01 */ FHGFLASH_SHOCK_PLAYER,   // Move to a random Player body part every frame.
     /* 0x02 */ FHGFLASH_SHOCK_PG        // Move to a random Phantom Ganon body part every frame.

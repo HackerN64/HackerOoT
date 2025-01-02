@@ -1,5 +1,3 @@
-#include "z64sfx_source.h"
-
 #include "global.h"
 
 void SfxSource_InitAll(PlayState* play) {

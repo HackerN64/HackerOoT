@@ -5,7 +5,6 @@
  */
 
 #include "z_en_insect.h"
-#include "global.h"
 #include "terminal.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
@@ -43,7 +42,7 @@ static s16 sCaughtCount = 0;
  */
 static s16 sDroppedCount = 0;
 
-ActorProfile En_Insect_Profile = {
+ActorInit En_Insect_InitVars = {
     /**/ ACTOR_EN_INSECT,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,
@@ -58,7 +57,7 @@ ActorProfile En_Insect_Profile = {
 static ColliderJntSphElementInit sColliderItemInit[1] = {
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0xFFCFFFFF, 0x00, 0x00 },
             ATELEM_NONE,
@@ -71,7 +70,7 @@ static ColliderJntSphElementInit sColliderItemInit[1] = {
 
 static ColliderJntSphInit sColliderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_PLAYER | OC1_TYPE_1,
@@ -100,7 +99,7 @@ static InitChainEntry sInitChain[] = {
 };
 
 void EnInsect_InitFlags(EnInsect* this) {
-    this->insectFlags = sInitInsectFlags[PARAMS_GET_U(this->actor.params, 0, 2)];
+    this->insectFlags = sInitInsectFlags[this->actor.params & 3];
 }
 
 f32 EnInsect_XZDistanceSquared(Vec3f* v1, Vec3f* v2) {
@@ -188,7 +187,7 @@ void EnInsect_Init(Actor* thisx, PlayState* play2) {
     Actor_ProcessInitChain(&this->actor, sInitChain);
     EnInsect_InitFlags(this);
 
-    type = PARAMS_GET_U(this->actor.params, 0, 2);
+    type = this->actor.params & 3;
 
     SkelAnime_Init(play, &this->skelAnime, &gBugSkel, &gBugCrawlAnim, this->jointTable, this->morphTable, 24);
     Collider_InitJntSph(play, &this->collider);
@@ -243,7 +242,7 @@ void EnInsect_Destroy(Actor* thisx, PlayState* play) {
     s16 type;
     EnInsect* this = (EnInsect*)thisx;
 
-    type = PARAMS_GET_U(this->actor.params, 0, 2);
+    type = this->actor.params & 3;
     Collider_DestroyJntSph(play, &this->collider);
     if ((type == INSECT_TYPE_FIRST_DROPPED || type == INSECT_TYPE_EXTRA_DROPPED) && sDroppedCount > 0) {
         sDroppedCount--;
@@ -262,7 +261,7 @@ void EnInsect_SlowDown(EnInsect* this, PlayState* play) {
     s16 type;
     f32 playSpeed;
 
-    type = PARAMS_GET_U(this->actor.params, 0, 2);
+    type = this->actor.params & 3;
 
     Math_SmoothStepToF(&this->actor.speed, 0.0f, 0.1f, 0.5f, 0.0f);
 
@@ -298,7 +297,7 @@ void EnInsect_Crawl(EnInsect* this, PlayState* play) {
     s32 pad1;
     s32 pad2;
     s16 yaw;
-    s16 type = PARAMS_GET_U(this->actor.params, 0, 2);
+    s16 type = this->actor.params & 3;
 
     Math_SmoothStepToF(&this->actor.speed, 1.5f, 0.1f, 0.5f, 0.0f);
 
@@ -470,7 +469,7 @@ void EnInsect_WalkOnWater(EnInsect* this, PlayState* play) {
     s16 type;
     Vec3f ripplePoint;
 
-    type = PARAMS_GET_U(this->actor.params, 0, 2);
+    type = this->actor.params & 3;
 
     if (this->actionTimer > 80) {
         Math_StepToF(&this->actor.speed, 0.6f, 0.08f);
@@ -478,7 +477,7 @@ void EnInsect_WalkOnWater(EnInsect* this, PlayState* play) {
         Math_StepToF(&this->actor.speed, 0.0f, 0.02f);
     }
     this->actor.velocity.y = 0.0f;
-    this->actor.world.pos.y += this->actor.depthInWater;
+    this->actor.world.pos.y += this->actor.yDistToWater;
     this->skelAnime.playSpeed = CLAMP(this->actionTimer * 0.018f, 0.1f, 1.9f);
 
     SkelAnime_Update(&this->skelAnime);
@@ -501,7 +500,7 @@ void EnInsect_WalkOnWater(EnInsect* this, PlayState* play) {
 
     if (Rand_ZeroOne() < 0.03f) {
         ripplePoint.x = this->actor.world.pos.x;
-        ripplePoint.y = this->actor.world.pos.y + this->actor.depthInWater;
+        ripplePoint.y = this->actor.world.pos.y + this->actor.yDistToWater;
         ripplePoint.z = this->actor.world.pos.z;
         EffectSsGRipple_Spawn(play, &ripplePoint, 20, 100, 4);
         EffectSsGRipple_Spawn(play, &ripplePoint, 40, 200, 8);
@@ -538,7 +537,7 @@ void EnInsect_Drown(EnInsect* this, PlayState* play) {
     this->actor.shape.rot.y += 200;
     Actor_SetScale(&this->actor, CLAMP_MIN(this->actor.scale.x - 0.00005f, 0.001f));
 
-    if (this->actor.depthInWater > 5.0f && this->actor.depthInWater < 30.0f && Rand_ZeroOne() < 0.3f) {
+    if (this->actor.yDistToWater > 5.0f && this->actor.yDistToWater < 30.0f && Rand_ZeroOne() < 0.3f) {
         EffectSsBubble_Spawn(play, &this->actor.world.pos, -5.0f, 5.0f, 5.0f, (Rand_ZeroOne() * 0.04f) + 0.02f);
     }
 
@@ -572,7 +571,7 @@ void EnInsect_Dropped(EnInsect* this, PlayState* play) {
     f32 sp34;
 
     sp50 = 0;
-    type = PARAMS_GET_U(this->actor.params, 0, 2);
+    type = this->actor.params & 3;
 
     if (this->soilActor != NULL) {
         distanceSq = Math3D_Vec3fDistSq(&this->actor.world.pos, &this->soilActor->actor.world.pos);
@@ -673,8 +672,8 @@ void EnInsect_Dropped(EnInsect* this, PlayState* play) {
         !(this->insectFlags & INSECT_FLAG_7)) {
         if (this->unk_32A >= 15) {
             if (this->soilActor != NULL) {
-                if (!(GET_GS_FLAGS(PARAMS_GET_U(this->soilActor->actor.params, 8, 5) - 1) &
-                      PARAMS_GET_U(this->soilActor->actor.params, 0, 8))) {
+                if (!(GET_GS_FLAGS(((this->soilActor->actor.params >> 8) & 0x1F) - 1) &
+                      (this->soilActor->actor.params & 0xFF))) {
                     Sfx_PlaySfxCentered(NA_SE_SY_TRE_BOX_APPEAR);
                 }
             }
@@ -765,7 +764,7 @@ void EnInsect_Update(Actor* thisx, PlayState* play) {
 
         if (Actor_HasParent(&this->actor, play)) {
             this->actor.parent = NULL;
-            tmp = PARAMS_GET_U(this->actor.params, 0, 2);
+            tmp = this->actor.params & 3;
 
             if (tmp == INSECT_TYPE_FIRST_DROPPED || tmp == INSECT_TYPE_EXTRA_DROPPED) {
                 Actor_Kill(&this->actor);

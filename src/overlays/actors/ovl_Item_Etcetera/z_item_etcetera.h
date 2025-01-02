@@ -18,7 +18,7 @@ typedef struct ItemEtcetera {
     /* 0x015C */ ItemEtceteraActionFunc actionFunc;
 } ItemEtcetera; // size = 0x0160
 
-typedef enum ItemEtceteraType {
+typedef enum {
     /* 0x00 */ ITEM_ETC_BOTTLE,
     /* 0x01 */ ITEM_ETC_LETTER,
     /* 0x02 */ ITEM_ETC_SHIELD_HYLIAN,

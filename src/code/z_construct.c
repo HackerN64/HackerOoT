@@ -1,5 +1,4 @@
 #include "global.h"
-#include "versions.h"
 
 void Interface_Destroy(PlayState* play) {
     Map_Destroy(play);
@@ -12,6 +11,8 @@ void Interface_Init(PlayState* play) {
     u32 parameterSize;
     u16 doActionOffset;
     u8 timerId;
+    Color_RGB8 aBtnColor = { 255, 30, 30 };
+    Color_RGB8 bBtnColor = { 0, 200, 50 };
 
     gSaveContext.sunsSongState = SUNSSONG_INACTIVE;
     gSaveContext.nextHudVisibilityMode = gSaveContext.hudVisibilityMode = HUD_VISIBILITY_NO_CHANGE;
@@ -33,7 +34,8 @@ void Interface_Init(PlayState* play) {
 
     parameterSize = (uintptr_t)_parameter_staticSegmentRomEnd - (uintptr_t)_parameter_staticSegmentRomStart;
 
-    PRINTF(T("常駐ＰＡＲＡＭＥＴＥＲセグメント=%x\n", "Permanent PARAMETER Segment = %x\n"), parameterSize);
+    // "Permanent PARAMETER Segment = %x"
+    PRINTF("常駐ＰＡＲＡＭＥＴＥＲセグメント=%x\n", parameterSize);
 
     interfaceCtx->parameterSegment = GAME_STATE_ALLOC(&play->state, parameterSize, "../z_construct.c", 159);
 
@@ -45,45 +47,29 @@ void Interface_Init(PlayState* play) {
 
     interfaceCtx->doActionSegment = GAME_STATE_ALLOC(&play->state, 3 * DO_ACTION_TEX_SIZE, "../z_construct.c", 166);
 
-    PRINTF(T("ＤＯアクション テクスチャ初期=%x\n", "DO Action Texture Initialization = %x\n"), 3 * DO_ACTION_TEX_SIZE);
+    PRINTF("ＤＯアクション テクスチャ初期=%x\n", 3 * DO_ACTION_TEX_SIZE); // "DO Action Texture Initialization"
     PRINTF("parameter->do_actionSegment=%x\n", interfaceCtx->doActionSegment);
 
     ASSERT(interfaceCtx->doActionSegment != NULL, "parameter->do_actionSegment != NULL", "../z_construct.c", 169);
 
-#if OOT_NTSC
-    if (gSaveContext.language == LANGUAGE_JPN) {
-        doActionOffset = (LANGUAGE_JPN * DO_ACTION_MAX + DO_ACTION_ATTACK) * DO_ACTION_TEX_SIZE;
-    } else {
-        doActionOffset = (LANGUAGE_ENG * DO_ACTION_MAX + DO_ACTION_ATTACK) * DO_ACTION_TEX_SIZE;
-    }
-#else
     if (gSaveContext.language == LANGUAGE_ENG) {
-        doActionOffset = (LANGUAGE_ENG * DO_ACTION_MAX + DO_ACTION_ATTACK) * DO_ACTION_TEX_SIZE;
+        doActionOffset = LANGUAGE_ENG * DO_ACTION_MAX * DO_ACTION_TEX_SIZE;
     } else if (gSaveContext.language == LANGUAGE_GER) {
-        doActionOffset = (LANGUAGE_GER * DO_ACTION_MAX + DO_ACTION_ATTACK) * DO_ACTION_TEX_SIZE;
+        doActionOffset = LANGUAGE_GER * DO_ACTION_MAX * DO_ACTION_TEX_SIZE;
     } else {
-        doActionOffset = (LANGUAGE_FRA * DO_ACTION_MAX + DO_ACTION_ATTACK) * DO_ACTION_TEX_SIZE;
+        doActionOffset = LANGUAGE_FRA * DO_ACTION_MAX * DO_ACTION_TEX_SIZE;
     }
-#endif
 
     DMA_REQUEST_SYNC(interfaceCtx->doActionSegment, (uintptr_t)_do_action_staticSegmentRomStart + doActionOffset,
                      2 * DO_ACTION_TEX_SIZE, "../z_construct.c", 174);
 
-#if OOT_NTSC
-    if (gSaveContext.language == LANGUAGE_JPN) {
-        doActionOffset = (LANGUAGE_JPN * DO_ACTION_MAX + DO_ACTION_RETURN) * DO_ACTION_TEX_SIZE;
-    } else {
-        doActionOffset = (LANGUAGE_ENG * DO_ACTION_MAX + DO_ACTION_RETURN) * DO_ACTION_TEX_SIZE;
-    }
-#else
     if (gSaveContext.language == LANGUAGE_ENG) {
-        doActionOffset = (LANGUAGE_ENG * DO_ACTION_MAX + DO_ACTION_RETURN) * DO_ACTION_TEX_SIZE;
+        doActionOffset = 3 * DO_ACTION_TEX_SIZE + LANGUAGE_ENG * DO_ACTION_MAX * DO_ACTION_TEX_SIZE;
     } else if (gSaveContext.language == LANGUAGE_GER) {
-        doActionOffset = (LANGUAGE_GER * DO_ACTION_MAX + DO_ACTION_RETURN) * DO_ACTION_TEX_SIZE;
+        doActionOffset = 3 * DO_ACTION_TEX_SIZE + LANGUAGE_GER * DO_ACTION_MAX * DO_ACTION_TEX_SIZE;
     } else {
-        doActionOffset = (LANGUAGE_FRA * DO_ACTION_MAX + DO_ACTION_RETURN) * DO_ACTION_TEX_SIZE;
+        doActionOffset = 3 * DO_ACTION_TEX_SIZE + LANGUAGE_FRA * DO_ACTION_MAX * DO_ACTION_TEX_SIZE;
     }
-#endif
 
     DMA_REQUEST_SYNC(interfaceCtx->doActionSegment + 2 * DO_ACTION_TEX_SIZE,
                      (uintptr_t)_do_action_staticSegmentRomStart + doActionOffset, DO_ACTION_TEX_SIZE,
@@ -91,8 +77,8 @@ void Interface_Init(PlayState* play) {
 
     interfaceCtx->iconItemSegment = GAME_STATE_ALLOC(&play->state, ICON_ITEM_SEGMENT_SIZE, "../z_construct.c", 190);
 
-    PRINTF(T("アイコンアイテム テクスチャ初期=%x\n", "Icon Item Texture Initialization = %x\n"),
-           ICON_ITEM_SEGMENT_SIZE);
+    // "Icon Item Texture Initialization = %x"
+    PRINTF("アイコンアイテム テクスチャ初期=%x\n", ICON_ITEM_SEGMENT_SIZE);
     PRINTF("parameter->icon_itemSegment=%x\n", interfaceCtx->iconItemSegment);
 
     ASSERT(interfaceCtx->iconItemSegment != NULL, "parameter->icon_itemSegment != NULL", "../z_construct.c", 193);
@@ -162,41 +148,42 @@ void Interface_Init(PlayState* play) {
             gSaveContext.timerY[timerId] = 46; // one row of hearts
         }
     }
-#if OOT_VERSION < PAL_1_0
-    else if ((gSaveContext.timerState >= TIMER_STATE_UP_INIT) && (gSaveContext.timerState <= TIMER_STATE_UP_FREEZE))
-#else
-    // No "else"
-    if ((gSaveContext.timerState >= TIMER_STATE_UP_INIT) && (gSaveContext.timerState <= TIMER_STATE_UP_FREEZE))
-#endif
-    {
+
+    if ((gSaveContext.timerState >= TIMER_STATE_UP_INIT) && (gSaveContext.timerState <= TIMER_STATE_UP_FREEZE)) {
         gSaveContext.timerState = TIMER_STATE_OFF;
-        PRINTF(T("タイマー停止！！！！！！！！！！！！！！！！！！！！！  = %d\n",
-                 "Timer Stop!!!!!!!!!!!!!!!!!!!!!  = %d\n"),
-               gSaveContext.timerState);
+        // "Timer Stop!!!!!!!!!!!!!!!!!!!!!!"
+        PRINTF("タイマー停止！！！！！！！！！！！！！！！！！！！！！  = %d\n", gSaveContext.timerState);
     }
 
-    PRINTF(T("ＰＡＲＡＭＥＴＥＲ領域＝%x\n", "Parameter Area = %x\n"), parameterSize + 0x5300);
+    PRINTF("ＰＡＲＡＭＥＴＥＲ領域＝%x\n", parameterSize + 0x5300); // "Parameter Area = %x"
 
     Health_InitMeter(play);
     Map_Init(play);
 
     interfaceCtx->unk_23C = interfaceCtx->unk_242 = 0;
 
+    if (N64_BTN_COLORS) {
+        aBtnColor.r = aBtnColor.b = 0;
+        aBtnColor.g = 150;
+
+        bBtnColor.r = bBtnColor.g = 90;
+        bBtnColor.b = 255;
+    }
+
     R_ITEM_BTN_X(0) = B_BUTTON_X;
 
-    R_B_BTN_COLOR(0) = B_BUTTON_R;
-    R_B_BTN_COLOR(1) = B_BUTTON_G;
-    R_B_BTN_COLOR(2) = B_BUTTON_B;
+    R_B_BTN_COLOR(0) = aBtnColor.r;
+    R_B_BTN_COLOR(1) = aBtnColor.g;
+    R_B_BTN_COLOR(2) = aBtnColor.b;
 
     R_ITEM_ICON_X(0) = B_BUTTON_X;
     R_ITEM_AMMO_X(0) = B_BUTTON_X + 2;
-
     R_A_BTN_X = A_BUTTON_X;
     R_A_ICON_X = A_BUTTON_X;
 
-    R_A_BTN_COLOR(0) = A_BUTTON_R;
-    R_A_BTN_COLOR(1) = A_BUTTON_G;
-    R_A_BTN_COLOR(2) = A_BUTTON_B;
+    R_A_BTN_COLOR(0) = bBtnColor.r;
+    R_A_BTN_COLOR(1) = bBtnColor.g;
+    R_A_BTN_COLOR(2) = bBtnColor.b;
 }
 
 #define TEXTBOX_SEGMENT_SIZE \
@@ -221,7 +208,7 @@ void Message_Init(PlayState* play) {
 
     PRINTF("message->fukidashiSegment=%x\n", msgCtx->textboxSegment);
 
-    PRINTF(T("吹き出しgame_alloc=%x\n", "Textbox game_alloc=%x\n"), TEXTBOX_SEGMENT_SIZE);
+    PRINTF("吹き出しgame_alloc=%x\n", TEXTBOX_SEGMENT_SIZE); // "Textbox game_alloc=%x"
     ASSERT(msgCtx->textboxSegment != NULL, "message->fukidashiSegment != NULL", "../z_construct.c", 352);
 
     Font_LoadOrderedFont(&play->msgCtx.font);
@@ -257,22 +244,6 @@ void Regs_InitDataImpl(void) {
     YREG(45) = 236;
     YREG(46) = 36;
     YREG(47) = 0;
-
-#if OOT_NTSC
-    R_KALEIDO_UNK1(0) = -45;
-    R_KALEIDO_UNK1(1) = -48;
-    R_KALEIDO_UNK2(0) = 16;
-    R_KALEIDO_UNK2(1) = 22;
-    R_KALEIDO_UNK3(0) = -55;
-    R_KALEIDO_UNK3(1) = -53;
-    R_KALEIDO_UNK4(0) = 43;
-    R_KALEIDO_UNK4(1) = 47;
-    R_KALEIDO_UNK5(0) = -33;
-    R_KALEIDO_UNK5(1) = -42;
-    R_KALEIDO_UNK6(0) = -33;
-    R_KALEIDO_UNK6(1) = -37;
-#else
-    // Same as above, although these regs are now unused for PAL versions
     YREG(48) = -45;
     YREG(49) = -48;
     YREG(50) = 16;
@@ -285,8 +256,6 @@ void Regs_InitDataImpl(void) {
     YREG(57) = -42;
     YREG(58) = -33;
     YREG(59) = -37;
-#endif
-
     YREG(60) = 14;
     YREG(61) = -2;
     YREG(62) = -2;
@@ -326,7 +295,7 @@ void Regs_InitDataImpl(void) {
     ZREG(10) = 200;
     ZREG(11) = 0;
     ZREG(12) = 200;
-    R_PAUSE_PAGE_SWITCH_FRAME_ADVANCE_ON = false;
+    ZREG(13) = 0;
     ZREG(14) = 110;
     ZREG(15) = 56;
     ZREG(16) = 1;
@@ -356,17 +325,6 @@ void Regs_InitDataImpl(void) {
     R_C_BTN_COLOR(2) = 0;
     ZREG(46) = 1;
     ZREG(47) = 1;
-
-#if OOT_NTSC
-    R_START_LABEL_DD(0) = 86;
-    R_START_LABEL_DD(1) = 100;
-    R_START_LABEL_WIDTH = 0;
-    R_START_LABEL_HEIGHT = 0;
-    R_START_LABEL_Y(0) = 21;
-    R_START_LABEL_Y(1) = 20;
-    R_START_LABEL_X(0) = 122;
-    R_START_LABEL_X(1) = 120;
-#else
     R_START_LABEL_DD(0) = 100;
     R_START_LABEL_DD(1) = 89;
     R_START_LABEL_DD(2) = 92;
@@ -376,20 +334,12 @@ void Regs_InitDataImpl(void) {
     R_START_LABEL_X(0) = 120;
     R_START_LABEL_X(1) = 119;
     R_START_LABEL_X(2) = 119;
-#endif
-
-    R_PAUSE_QUEST_MEDALLION_SHINE_TIME(0) = 1;
-    //! @bug Overlapping reg usage
-    R_C_UP_BTN_X = C_UP_BUTTON_X; // R_PAUSE_QUEST_MEDALLION_SHINE_TIME(1)
-    R_C_UP_BTN_Y = C_UP_BUTTON_Y; // R_PAUSE_QUEST_MEDALLION_SHINE_TIME(2)
-    R_PAUSE_QUEST_MEDALLION_SHINE_TIME(3) = 20;
-
+    ZREG(61) = 1;
+    R_C_UP_BTN_X = C_UP_BUTTON_X;
+    R_C_UP_BTN_Y = C_UP_BUTTON_Y;
+    ZREG(64) = 20;
     ZREG(65) = 21;
     ZREG(66) = 122;
-#if OOT_VERSION < PAL_1_0
-    R_START_BTN_X = 132;
-    R_START_BTN_Y = 17;
-#endif
     R_ITEM_BTN_X(1) = C_LEFT_BUTTON_X;
     R_ITEM_BTN_X(2) = C_DOWN_BUTTON_X;
     R_ITEM_BTN_X(3) = C_RIGHT_BUTTON_X;
@@ -505,24 +455,12 @@ void Regs_InitDataImpl(void) {
     XREG(93) = 100;
     XREG(94) = 160;
     XREG(95) = 200;
-    R_PAUSE_PAGES_Y_ORIGIN_2 = -6080;
-    R_PAUSE_DEPTH_OFFSET = 9355;
+    WREG(2) = -6080;
+    WREG(3) = 9355;
     WREG(4) = 8;
     WREG(5) = 3;
     WREG(6) = 8;
     WREG(7) = 0;
-
-#if OOT_NTSC
-    R_B_LABEL_SCALE(0) = 100;
-    R_B_LABEL_SCALE(1) = 109;
-    R_B_LABEL_X(0) = 151;
-    R_B_LABEL_X(1) = 148;
-    R_B_LABEL_Y(0) = 23;
-    R_B_LABEL_Y(1) = 22;
-    R_A_LABEL_Z(0) = -380;
-    R_A_LABEL_Z(1) = -350;
-#else
-    // Same as above, although these regs are now unused in PAL versions
     WREG(8) = 100;
     WREG(9) = 109;
     WREG(10) = 151;
@@ -531,8 +469,6 @@ void Regs_InitDataImpl(void) {
     WREG(13) = 22;
     WREG(14) = -380;
     WREG(15) = -350;
-#endif
-
     WREG(16) = -175;
     WREG(17) = 155;
     WREG(18) = 10;
@@ -553,40 +489,36 @@ void Regs_InitDataImpl(void) {
     WREG(33) = 60;
     WREG(35) = 0;
     WREG(36) = 0;
-
-#if OOT_PAL
-    R_B_LABEL_SCALE(0) = 100;
-    R_B_LABEL_SCALE(1) = 99;
-    R_B_LABEL_SCALE(2) = 109;
+    WREG(37) = 100;
+    WREG(38) = 99;
+    WREG(39) = 109;
     R_B_LABEL_X(0) = B_BUTTON_X - 9;
     R_B_LABEL_X(1) = B_BUTTON_X - 11;
     R_B_LABEL_X(2) = B_BUTTON_X - 12;
     R_B_LABEL_Y(0) = B_BUTTON_Y + 6;
     R_B_LABEL_Y(1) = B_BUTTON_Y + 5;
     R_B_LABEL_Y(2) = B_BUTTON_Y + 5;
-    R_A_LABEL_Z(0) = -380;
-    R_A_LABEL_Z(1) = -360;
-    R_A_LABEL_Z(2) = -350;
-    R_KALEIDO_UNK1(0) = -48;
-    R_KALEIDO_UNK1(1) = 16;
-    R_KALEIDO_UNK1(2) = -62;
-    R_KALEIDO_UNK2(0) = 22;
-    R_KALEIDO_UNK2(1) = -84;
-    R_KALEIDO_UNK2(2) = 20;
-    R_KALEIDO_UNK3(0) = -53;
-    R_KALEIDO_UNK3(1) = 40;
-    R_KALEIDO_UNK3(2) = -64;
-    R_KALEIDO_UNK4(0) = 47;
-    R_KALEIDO_UNK4(1) = -84;
-    R_KALEIDO_UNK4(2) = 44;
-    R_KALEIDO_UNK5(0) = -42;
-    R_KALEIDO_UNK5(1) = 32;
-    R_KALEIDO_UNK5(2) = -45;
-    R_KALEIDO_UNK6(0) = -37;
-    R_KALEIDO_UNK6(1) = 30;
-    R_KALEIDO_UNK6(2) = -50;
-#endif
-
+    WREG(46) = -380;
+    WREG(47) = -360;
+    WREG(48) = -350;
+    WREG(49) = -48;
+    WREG(50) = 16;
+    WREG(51) = -62;
+    WREG(52) = 22;
+    WREG(53) = -84;
+    WREG(54) = 20;
+    WREG(55) = -53;
+    WREG(56) = 40;
+    WREG(57) = -64;
+    WREG(58) = 47;
+    WREG(59) = -84;
+    WREG(60) = 44;
+    WREG(61) = -42;
+    WREG(62) = 32;
+    WREG(63) = -45;
+    WREG(64) = -37;
+    WREG(65) = 30;
+    WREG(66) = -50;
     R_DGN_MINIMAP_X = 204;
     R_DGN_MINIMAP_Y = 140;
     WREG(87) = 80;
@@ -619,12 +551,11 @@ void Regs_InitDataImpl(void) {
         R_MINIMAP_COLOR(2) = 255;
     }
 
-    R_PAUSE_SONG_OCA_BTN_Y(OCARINA_BTN_A) = 0;
-    R_PAUSE_SONG_OCA_BTN_Y(OCARINA_BTN_C_DOWN) = 0;
-    R_PAUSE_SONG_OCA_BTN_Y(OCARINA_BTN_C_RIGHT) = 0;
-    R_PAUSE_SONG_OCA_BTN_Y(OCARINA_BTN_C_LEFT) = 0;
-    R_PAUSE_SONG_OCA_BTN_Y(OCARINA_BTN_C_UP) = 0;
-
+    VREG(21) = 0;
+    VREG(22) = 0;
+    VREG(23) = 0;
+    VREG(24) = 0;
+    VREG(25) = 0;
     VREG(26) = 0;
     VREG(27) = 0;
     R_OCARINA_BUTTONS_XPOS = 98;
@@ -650,7 +581,7 @@ void Regs_InitDataImpl(void) {
     R_OCARINA_BUTTONS_YPOS(2) = 176;
     R_OCARINA_BUTTONS_YPOS(3) = 172;
     R_OCARINA_BUTTONS_YPOS(4) = 170;
-    R_OCARINA_BUTTONS_APPEAR_ALPHA_STEP = 30;
+    VREG(50) = 30;
     R_OCARINA_BUTTONS_YPOS_OFFSET = 0;
     VREG(52) = -16;
     VREG(53) = 230;
@@ -660,10 +591,10 @@ void Regs_InitDataImpl(void) {
     VREG(57) = 255;
     VREG(58) = 255;
     VREG(59) = 255;
-    R_KALEIDO_PROMPT_CURSOR_ALPHA_TIMER_BASE = 20;
-    R_KALEIDO_PROMPT_CURSOR_ALPHA = 100;
-    R_KALEIDO_PROMPT_CURSOR_ALPHA_STATE = 0;
-    R_KALEIDO_PROMPT_CURSOR_ALPHA_TIMER = 10;
+    VREG(60) = 20;
+    VREG(61) = 100;
+    VREG(62) = 0;
+    VREG(63) = 10;
     R_ITEM_AMMO_X(1) = C_LEFT_BUTTON_X + 1;
     R_ITEM_AMMO_X(2) = C_DOWN_BUTTON_X + 1;
     R_ITEM_AMMO_X(3) = C_RIGHT_BUTTON_X + 1;

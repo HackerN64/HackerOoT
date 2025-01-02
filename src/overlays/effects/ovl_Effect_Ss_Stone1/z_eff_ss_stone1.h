@@ -4,7 +4,7 @@
 #include "ultra64.h"
 #include "global.h"
 
-typedef struct EffectSsStone1InitParams {
+typedef struct {
     /* 0x00 */ Vec3f pos;
     /* 0x00 */ s32 unk_C;
 } EffectSsStone1InitParams; // size = 0x

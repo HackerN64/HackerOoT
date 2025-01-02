@@ -3,7 +3,7 @@
 #define gISVDbgPrnAdrs ((ISVDbg*)0xB3FF0000)
 #define ASCII_TO_U32(a, b, c, d) ((u32)((a << 24) | (b << 16) | (c << 8) | (d << 0)))
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
 OSPiHandle* sISVHandle; // official name : is_Handle
 
 void isPrintfInit(void) {
@@ -18,7 +18,7 @@ void osSyncPrintfUnused(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     _Printf(is_proutSyncPrintf, NULL, fmt, args);
 #endif
 
@@ -29,7 +29,7 @@ void osSyncPrintf(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     _Printf(is_proutSyncPrintf, NULL, fmt, args);
 #endif
 
@@ -41,19 +41,14 @@ void rmonPrintf(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     _Printf(is_proutSyncPrintf, NULL, fmt, args);
 #endif
 
     va_end(args);
 }
 
-#if OOT_VERSION < PAL_1_0
-void func_800015F4(void) {
-}
-#endif
-
-#if DEBUG_FEATURES
+#if IS_DEBUG
 void* is_proutSyncPrintf(void* arg, const char* str, size_t count) {
     u32 data;
     s32 pos;

@@ -2,7 +2,7 @@
 #include "quake.h"
 #include "terminal.h"
 
-typedef struct QuakeRequest {
+typedef struct {
     /* 0x00 */ s16 index;
     /* 0x02 */ s16 duration;
     /* 0x04 */ Camera* cam;
@@ -170,7 +170,7 @@ QuakeRequest* Quake_RequestImpl(Camera* camera, u32 type) {
     s16 index = Quake_GetFreeIndex();
     QuakeRequest* req = &sQuakeRequests[index];
 
-    memset(req, 0, sizeof(QuakeRequest));
+    __osMemset(req, 0, sizeof(QuakeRequest));
 
     req->cam = camera;
     req->camId = camera->camId;

@@ -10,7 +10,6 @@ from pathlib import Path
 import sys
 
 import dmadata
-import version_config
 
 
 def main():
@@ -21,34 +20,33 @@ def main():
         "rom", metavar="ROM", type=Path, help="Path to uncompressed ROM"
     )
     parser.add_argument(
-        "output_dir",
+        "-o",
+        "--output-dir",
         type=Path,
-        help="Output directory for segments",
-    )
-    parser.add_argument(
-        "-v",
-        "--version",
-        dest="oot_version",
         required=True,
-        help="OOT version",
+        help="Output directory for segments",
     )
     parser.add_argument(
         "--dmadata-start",
         type=lambda s: int(s, 16),
+        required=True,
         help=(
-            "Override dmadata location for non-matching ROMs, as a hexadecimal offset (e.g. 0x12F70)"
+            "The dmadata location in the rom, as a hexadecimal offset (e.g. 0x12f70)"
         ),
+    )
+    parser.add_argument(
+        "--dmadata-names",
+        type=Path,
+        required=True,
+        help="Path to file containing segment names",
     )
 
     args = parser.parse_args()
 
     rom_data = memoryview(args.rom.read_bytes())
 
-    config = version_config.load_version_config(args.oot_version)
-    dmadata_start = args.dmadata_start or config.dmadata_start
-    dma_names = config.dmadata_segments.keys()
-
-    dma_entries = dmadata.read_dmadata(rom_data, dmadata_start)
+    dma_names = args.dmadata_names.read_text().splitlines()
+    dma_entries = dmadata.read_dmadata(rom_data, args.dmadata_start)
     if len(dma_names) != len(dma_entries):
         print(
             f"Error: expected {len(dma_names)} DMA entries but found {len(dma_entries)} in ROM",
@@ -62,7 +60,7 @@ def main():
             segment_rom_start = dma_entry.vrom_start
         elif not dma_entry.is_compressed():
             segment_rom_start = dma_entry.rom_start
-        else:  # Segment compressed
+        else: # Segment compressed
             print(f"Error: segment {dma_name} is compressed", file=sys.stderr)
             exit(1)
 

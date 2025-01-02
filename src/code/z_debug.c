@@ -2,7 +2,7 @@
 #include "config.h"
 
 // ENABLE_CAMERA_DEBUGGER
-typedef struct DebugCamTextBufferEntry {
+typedef struct {
     /* 0x0 */ u8 x;
     /* 0x1 */ u8 y;
     /* 0x2 */ u8 colorIndex;
@@ -10,13 +10,10 @@ typedef struct DebugCamTextBufferEntry {
 } DebugCamTextBufferEntry; // size = 0x18
 
 // ENABLE_REG_EDITOR
-typedef struct InputCombo {
+typedef struct {
     /* 0x0 */ u16 hold;
     /* 0x2 */ u16 press;
 } InputCombo; // size = 0x4
-
-#pragma increment_block_number "gc-eu:192 gc-eu-mq:192 gc-jp:192 gc-jp-ce:192 gc-jp-mq:192 gc-us:192 gc-us-mq:192" \
-                               "ntsc-1.0:192 ntsc-1.1:192 ntsc-1.2:192 pal-1.0:192 pal-1.1:192"
 
 RegEditor* gRegEditor; // ``gRegEditor->data`` is used by non-debug features in normal gameplay
 
@@ -38,7 +35,7 @@ Color_RGBA8 sDebugCamTextColors[] = {
 #endif
 };
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
 InputCombo sRegGroupInputCombos[REG_GROUPS] = {
 #if IS_REG_EDITOR_ENABLED
     { BTN_L, BTN_CUP },        //  REG
@@ -175,7 +172,7 @@ void DebugCamera_DrawScreenText(GfxPrint* printer) {
     }
 }
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
 /**
  * Updates the state of the Reg Editor according to user input.
  * Also contains a controller rumble test that can be interfaced with via related REGs.
@@ -187,7 +184,7 @@ void Regs_UpdateEditor(Input* input) {
         s32 increment;
         s32 i;
 
-        dPadInputCur = input->cur.button & (BTN_DUP | BTN_DDOWN | BTN_DLEFT | BTN_DRIGHT);
+        dPadInputCur = input->cur.button & (BTN_DUP | BTN_DLEFT | BTN_DRIGHT | BTN_DDOWN);
 
         if (CHECK_BTN_ALL(input->cur.button, BTN_L) || CHECK_BTN_ALL(input->cur.button, BTN_R) ||
             CHECK_BTN_ALL(input->cur.button, BTN_START)) {
@@ -303,41 +300,41 @@ void Regs_DrawEditor(GfxPrint* printer) {
  * Draws the Reg Editor and Debug Camera text on screen
  */
 void Debug_DrawText(GraphicsContext* gfxCtx) {
-#if DEBUG_FEATURES && (ENABLE_CAMERA_DEBUGGER || ENABLE_REG_EDITOR)
-    Gfx* gfx;
-    Gfx* opaStart;
-    GfxPrint printer;
-    s32 pad;
+    if (IS_DEBUG && (ENABLE_CAMERA_DEBUGGER || ENABLE_REG_EDITOR)) {
+        Gfx* gfx;
+        Gfx* opaStart;
+        GfxPrint printer;
+        s32 pad;
 
-    OPEN_DISPS(gfxCtx, "../z_debug.c", 628);
+        OPEN_DISPS(gfxCtx, "../z_debug.c", 628);
 
-    GfxPrint_Init(&printer);
-    opaStart = POLY_OPA_DISP;
-    gfx = Gfx_Open(POLY_OPA_DISP);
-    gSPDisplayList(OVERLAY_DISP++, gfx);
-    GfxPrint_Open(&printer, gfx);
+        GfxPrint_Init(&printer);
+        opaStart = POLY_OPA_DISP;
+        gfx = Gfx_Open(POLY_OPA_DISP);
+        gSPDisplayList(OVERLAY_DISP++, gfx);
+        GfxPrint_Open(&printer, gfx);
 
-    if ((OREG(0) == 1) || (OREG(0) == 8)) {
-        DebugCamera_DrawScreenText(&printer);
+        if (IS_CAMERA_DEBUG_ENABLED && ((OREG(0) == 1) || (OREG(0) == 8))) {
+            DebugCamera_DrawScreenText(&printer);
+        }
+
+        if (IS_REG_EDITOR_ENABLED && gRegEditor->regPage != 0) {
+            Regs_DrawEditor(&printer);
+        }
+
+        if (IS_CAMERA_DEBUG_ENABLED) {
+            sDebugCamTextEntryCount = 0;
+        }
+
+        gfx = GfxPrint_Close(&printer);
+        gSPEndDisplayList(gfx++);
+        Gfx_Close(opaStart, gfx);
+        POLY_OPA_DISP = gfx;
+
+        if (1) {}
+
+        CLOSE_DISPS(gfxCtx, "../z_debug.c", 664);
+
+        GfxPrint_Destroy(&printer);
     }
-
-#if IS_REG_EDITOR_ENABLED
-    if (gRegEditor->regPage != 0) {
-        Regs_DrawEditor(&printer);
-    }
-#endif
-
-#if IS_CAMERA_DEBUG_ENABLED
-    sDebugCamTextEntryCount = 0;
-#endif
-
-    gfx = GfxPrint_Close(&printer);
-    gSPEndDisplayList(gfx++);
-    Gfx_Close(opaStart, gfx);
-    POLY_OPA_DISP = gfx;
-
-    CLOSE_DISPS(gfxCtx, "../z_debug.c", 664);
-
-    GfxPrint_Destroy(&printer);
-#endif
 }

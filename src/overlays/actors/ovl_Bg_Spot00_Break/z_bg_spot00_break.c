@@ -14,7 +14,7 @@ void BgSpot00Break_Destroy(Actor* thisx, PlayState* play);
 void BgSpot00Break_Update(Actor* thisx, PlayState* play);
 void BgSpot00Break_Draw(Actor* thisx, PlayState* play);
 
-ActorProfile Bg_Spot00_Break_Profile = {
+ActorInit Bg_Spot00_Break_InitVars = {
     /**/ ACTOR_BG_SPOT00_BREAK,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,

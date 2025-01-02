@@ -24,7 +24,7 @@ void BgMjin_Draw(Actor* thisx, PlayState* play);
 void func_808A0850(BgMjin* this, PlayState* play);
 void BgMjin_DoNothing(BgMjin* this, PlayState* play);
 
-ActorProfile Bg_Mjin_Profile = {
+ActorInit Bg_Mjin_InitVars = {
     /**/ ACTOR_BG_MJIN,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -119,7 +119,8 @@ void BgMjin_Draw(Actor* thisx, PlayState* play) {
     }
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_bg_mjin.c", 285);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_mjin.c", 285),
+              G_MTX_NOPUSH | G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_OPA_DISP++, dlist);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_bg_mjin.c", 288);

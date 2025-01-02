@@ -1,6 +1,6 @@
 #include "global.h"
 
-typedef struct FlagSetEntry {
+typedef struct {
     /* 0x00 */ u16* value;
     /* 0x04 */ const char* name;
 } FlagSetEntry; // size = 0x08

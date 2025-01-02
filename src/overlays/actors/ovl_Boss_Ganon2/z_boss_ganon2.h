@@ -8,7 +8,7 @@ struct BossGanon2;
 
 typedef void (*BossGanon2ActionFunc)(struct BossGanon2*, PlayState*);
 
-typedef enum GanonLimb {
+typedef enum {
     /*  0 */ GANON_LIMB_NONE,
     /*  1 */ GANON_LIMB_ROOT,
     /*  2 */ GANON_LIMB_TORSO,

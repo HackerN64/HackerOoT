@@ -8,13 +8,11 @@
 #include "terminal.h"
 #include "assets/objects/object_ka/object_ka.h"
 
-#define FLAGS                                                                                        \
-    (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_UPDATE_DURING_OCARINA | \
-     ACTOR_FLAG_LOCK_ON_DISABLED)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_25 | ACTOR_FLAG_27)
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_ALL,
@@ -22,7 +20,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0xFFCFFFFF, 0x00, 0x00 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_NONE,
@@ -43,7 +41,7 @@ void func_80A904D8(EnKakasi2* this, PlayState* play);
 void func_80A90578(EnKakasi2* this, PlayState* play);
 void func_80A906C4(EnKakasi2* this, PlayState* play);
 
-ActorProfile En_Kakasi2_Profile = {
+ActorInit En_Kakasi2_InitVars = {
     /**/ ACTOR_EN_KAKASI2,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -65,13 +63,13 @@ void EnKakasi2_Init(Actor* thisx, PlayState* play) {
     // "Visit Umeda"
     PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ 梅田参号見参！ ☆☆☆☆☆ \n" VT_RST);
 
-    this->switchFlag = PARAMS_GET_U(this->actor.params, 0, 6);
-    spawnRangeY = PARAMS_GET_U(this->actor.params, 6, 8);
+    this->switchFlag = this->actor.params & 0x3F;
+    spawnRangeY = (this->actor.params >> 6) & 0xFF;
     spawnRangeXZ = this->actor.world.rot.z;
     if (this->switchFlag == 0x3F) {
         this->switchFlag = -1;
     }
-    this->actor.attentionRangeType = ATTENTION_RANGE_4;
+    this->actor.targetMode = 4;
     this->maxSpawnDistance.x = (spawnRangeY * 40.0f) + 40.0f;
     this->maxSpawnDistance.y = (spawnRangeXZ * 40.0f) + 40.0f;
 
@@ -91,7 +89,7 @@ void EnKakasi2_Init(Actor* thisx, PlayState* play) {
     this->actor.colChkInfo.mass = MASS_IMMOVABLE;
     this->height = 60.0f;
     Actor_SetScale(&this->actor, 0.01f);
-    this->actor.flags |= ACTOR_FLAG_HOOKSHOT_PULLS_PLAYER;
+    this->actor.flags |= ACTOR_FLAG_10;
     this->unk_198 = this->actor.shape.rot.y;
 
     if (this->switchFlag >= 0 && Flags_GetSwitch(play, this->switchFlag)) {
@@ -120,7 +118,7 @@ void func_80A90264(EnKakasi2* this, PlayState* play) {
         this->unk_194++;
     }
 
-    if (DEBUG_FEATURES && (BREG(1) != 0) && (this->actor.xzDistToPlayer < this->maxSpawnDistance.x) &&
+    if (IS_DEBUG && (BREG(1) != 0) && (this->actor.xzDistToPlayer < this->maxSpawnDistance.x) &&
         (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < this->maxSpawnDistance.y)) {
         // debug feature?
 
@@ -129,7 +127,7 @@ void func_80A90264(EnKakasi2* this, PlayState* play) {
         Collider_SetCylinder(play, &this->collider, &this->actor, &sCylinderInit);
         SkelAnime_InitFlex(play, &this->skelAnime, &object_ka_Skel_0065B0, &object_ka_Anim_000214, NULL, NULL, 0);
         OnePointCutscene_Attention(play, &this->actor);
-        this->actor.flags |= ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_LOCK_ON_DISABLED;
+        this->actor.flags |= ACTOR_FLAG_0 | ACTOR_FLAG_27;
 
         Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
         if (this->switchFlag >= 0) {
@@ -158,7 +156,7 @@ void func_80A90264(EnKakasi2* this, PlayState* play) {
             OnePointCutscene_Attention(play, &this->actor);
             Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
 
-            this->actor.flags |= ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_LOCK_ON_DISABLED;
+            this->actor.flags |= ACTOR_FLAG_0 | ACTOR_FLAG_27;
             this->actionFunc = func_80A904D8;
         }
     }
@@ -221,8 +219,7 @@ void EnKakasi2_Update(Actor* thisx, PlayState* play2) {
         CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
     }
 
-#if IS_ACTOR_DEBUG_ENABLED
-    if (BREG(0) != 0) {
+    if (IS_ACTOR_DEBUG_ENABLED && BREG(0) != 0) {
         if (BREG(5) != 0) {
             PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ this->actor.player_distance ☆☆☆☆☆ %f\n" VT_RST, this->actor.xzDistToPlayer);
             PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ this->hosei.x ☆☆☆☆☆ %f\n" VT_RST, this->maxSpawnDistance.x);
@@ -242,7 +239,6 @@ void EnKakasi2_Update(Actor* thisx, PlayState* play2) {
             }
         }
     }
-#endif
 }
 
 void func_80A90948(Actor* thisx, PlayState* play) {

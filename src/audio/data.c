@@ -44,20 +44,18 @@ s8 gSfxDefaultReverb = 0;
 
 s32 D_801333EC = 0; // unused
 
-#if IS_AUDIO_DEBUG_ENABLED
+// ENABLE_AUDIO_DEBUGGER
 u8 D_801333F0 = 0;
 u8 gAudioSfxSwapOff = 0;
 u8 D_801333F8 = 0;
 s32 D_801333FC = 0; // unused
-#endif
 
 u8 gSeqCmdWritePos = 0;
 u8 gSeqCmdReadPos = 0;
 u8 gStartSeqDisabled = false;
 
-#if IS_AUDIO_DEBUG_ENABLED
+// ENABLE_AUDIO_DEBUGGER
 u8 gAudioDebugPrintSeqCmd = true;
-#endif
 
 u8 gSoundModeList[] = {
     SOUNDMODE_STEREO,
@@ -69,5 +67,3 @@ u8 gSoundModeList[] = {
 u8 gAudioSpecId = 0;
 
 u8 D_80133418 = 0;
-
-u8 D_8016F0E0[0xA0]; // unused

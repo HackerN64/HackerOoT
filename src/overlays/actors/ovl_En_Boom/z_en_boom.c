@@ -5,7 +5,6 @@
  */
 
 #include "z_en_boom.h"
-#include "global.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5)
@@ -17,7 +16,7 @@ void EnBoom_Draw(Actor* thisx, PlayState* play);
 
 void EnBoom_Fly(EnBoom* this, PlayState* play);
 
-ActorProfile En_Boom_Profile = {
+ActorInit En_Boom_InitVars = {
     /**/ ACTOR_EN_BOOM,
     /**/ ACTORCAT_MISC,
     /**/ FLAGS,
@@ -31,7 +30,7 @@ ActorProfile En_Boom_Profile = {
 
 static ColliderQuadInit sQuadInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_ON | AT_TYPE_PLAYER,
         AC_NONE,
         OC1_NONE,
@@ -39,7 +38,7 @@ static ColliderQuadInit sQuadInit = {
         COLSHAPE_QUAD,
     },
     {
-        ELEM_MATERIAL_UNK2,
+        ELEMTYPE_UNK2,
         { 0x00000010, 0x00, 0x01 },
         { 0xFFCFFFFF, 0x00, 0x00 },
         ATELEM_ON | ATELEM_NEAREST | ATELEM_SFX_NORMAL,
@@ -50,7 +49,7 @@ static ColliderQuadInit sQuadInit = {
 };
 
 static InitChainEntry sInitChain[] = {
-    ICHAIN_S8(attentionRangeType, ATTENTION_RANGE_5, ICHAIN_CONTINUE),
+    ICHAIN_S8(targetMode, 5, ICHAIN_CONTINUE),
     ICHAIN_VEC3S(shape.rot, 0, ICHAIN_STOP),
 };
 
@@ -139,7 +138,7 @@ void EnBoom_Fly(EnBoom* this, PlayState* play) {
 
         if ((target != &player->actor) && ((target->update == NULL) || (ABS(yawDiff) > 0x4000))) {
             //! @bug  This condition is why the boomerang will randomly fly off in a the down left direction sometimes.
-            //      If the actor targeted is not Link and the difference between the 2 y angles is greater than 0x4000,
+            //      If the actor targetted is not Link and the difference between the 2 y angles is greater than 0x4000,
             //      the moveTo pointer is nulled and it flies off in a seemingly random direction.
             this->moveTo = NULL;
         } else {
@@ -151,7 +150,7 @@ void EnBoom_Fly(EnBoom* this, PlayState* play) {
     // Set xyz speed, move forward, and play the boomerang sound effect
     Actor_SetProjectileSpeed(&this->actor, 12.0f);
     Actor_MoveXZGravity(&this->actor);
-    Actor_PlaySfx_Flagged(&this->actor, NA_SE_IT_BOOMERANG_FLY - SFX_FLAG);
+    func_8002F974(&this->actor, NA_SE_IT_BOOMERANG_FLY - SFX_FLAG);
 
     // If the boomerang collides with EnItem00 or a Skulltula token, set grabbed pointer to pick it up
     collided = this->collider.base.atFlags & AT_HIT;
@@ -160,7 +159,7 @@ void EnBoom_Fly(EnBoom* this, PlayState* play) {
         if (((this->collider.base.at->id == ACTOR_EN_ITEM00) || (this->collider.base.at->id == ACTOR_EN_SI))) {
             this->grabbed = this->collider.base.at;
             if (this->collider.base.at->id == ACTOR_EN_SI) {
-                this->collider.base.at->flags |= ACTOR_FLAG_HOOKSHOT_ATTACHED;
+                this->collider.base.at->flags |= ACTOR_FLAG_13;
             }
         }
     }
@@ -183,11 +182,11 @@ void EnBoom_Fly(EnBoom* this, PlayState* play) {
                     target->gravity = -0.9f;
                     target->bgCheckFlags &= ~(BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH);
                 } else {
-                    target->flags &= ~ACTOR_FLAG_HOOKSHOT_ATTACHED;
+                    target->flags &= ~ACTOR_FLAG_13;
                 }
             }
             // Set player flags and kill the boomerang beacause Link caught it.
-            player->stateFlags1 &= ~PLAYER_STATE1_BOOMERANG_THROWN;
+            player->stateFlags1 &= ~PLAYER_STATE1_25;
             Actor_Kill(&this->actor);
         }
     } else {
@@ -269,8 +268,11 @@ void EnBoom_Draw(Actor* thisx, PlayState* play) {
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Matrix_RotateY(BINANG_TO_RAD(this->activeTimer * 12000), MTXMODE_APPLY);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_en_boom.c", 601);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_boom.c", 601),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gBoomerangRefDL);
+
+    if (1) {}
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_boom.c", 604);
 }

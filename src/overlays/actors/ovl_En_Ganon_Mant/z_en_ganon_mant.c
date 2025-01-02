@@ -14,7 +14,7 @@ void EnGanonMant_Destroy(Actor* thisx, PlayState* play);
 void EnGanonMant_Update(Actor* thisx, PlayState* play);
 void EnGanonMant_Draw(Actor* thisx, PlayState* play);
 
-ActorProfile En_Ganon_Mant_Profile = {
+ActorInit En_Ganon_Mant_InitVars = {
     /**/ ACTOR_EN_GANON_MANT,
     /**/ ACTORCAT_BOSS,
     /**/ FLAGS,
@@ -38,7 +38,7 @@ static s16 sTearSizesSmall[] = {
     0, 0, 0, 0, 0, 0, 0,
 };
 
-typedef struct TearShape {
+typedef struct {
     s16* tearAreaSizes;
     s16 count;
 } TearShape; // size = 0x8
@@ -102,7 +102,7 @@ static u64 sForceAlignment = 0;
 void EnGanonMant_Init(Actor* thisx, PlayState* play) {
     EnGanonMant* this = (EnGanonMant*)thisx;
 
-    this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
+    this->actor.flags &= ~ACTOR_FLAG_0;
 }
 
 void EnGanonMant_Destroy(Actor* thisx, PlayState* play) {
@@ -361,7 +361,8 @@ void EnGanonMant_DrawCloak(PlayState* play, EnGanonMant* this) {
 
     Matrix_Translate(0.0f, 0.0f, 0.0f, MTXMODE_NEW);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_en_ganon_mant.c", 572);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_ganon_mant.c", 572),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     // set texture
     gSPDisplayList(POLY_OPA_DISP++, gMantMaterialDL);
@@ -425,7 +426,7 @@ void EnGanonMant_Draw(Actor* thisx, PlayState* play) {
         midpoint.y = rightPos->y + yDiff * 0.5f;
         midpoint.z = rightPos->z + zDiff * 0.5f;
 
-        // Calculate base orientation for chosen endpoints
+        // Calculte base orientation for chosen endpoints
         yaw = Math_Atan2F(zDiff, xDiff);
         pitch = -Math_Atan2F(sqrtf(SQ(xDiff) + SQ(zDiff)), yDiff);
         diffHalfDist = sqrtf(SQ(xDiff) + SQ(yDiff) + SQ(zDiff)) * 0.5f;

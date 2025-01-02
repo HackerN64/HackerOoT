@@ -31,7 +31,7 @@ void EnHeishi1_WaitNight(EnHeishi1* this, PlayState* play);
 
 static s32 sPlayerIsCaught = false;
 
-ActorProfile En_Heishi1_Profile = {
+ActorInit En_Heishi1_InitVars = {
     /**/ 0,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -72,8 +72,8 @@ void EnHeishi1_Init(Actor* thisx, PlayState* play2) {
     Actor_SetScale(&this->actor, 0.01f);
     SkelAnime_Init(play, &this->skelAnime, &gEnHeishiSkel, &gEnHeishiIdleAnim, this->jointTable, this->morphTable, 17);
 
-    this->type = PARAMS_GET_U(this->actor.params, 8, 8);
-    this->path = PARAMS_GET_U(this->actor.params, 0, 8);
+    this->type = (this->actor.params >> 8) & 0xFF;
+    this->path = this->actor.params & 0xFF;
 
     for (i = 0; i < ARRAY_COUNT(sAnimParamsInit[0]); i++) {
         this->animParams[i] = sAnimParamsInit[this->type][i];
@@ -490,11 +490,9 @@ void EnHeishi1_Draw(Actor* thisx, PlayState* play) {
                       this);
     func_80033C30(&this->actor.world.pos, &matrixScale, 0xFF, play);
 
-#if IS_ACTOR_DEBUG_ENABLED
-    if ((this->path == BREG(1)) && (BREG(0) != 0)) {
+    if (IS_ACTOR_DEBUG_ENABLED && (this->path == BREG(1)) && (BREG(0) != 0)) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y + 100.0f, this->actor.world.pos.z,
                                17000, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f, 1.0f, 255, 0, 0,
                                255, 4, play->state.gfxCtx);
     }
-#endif
 }

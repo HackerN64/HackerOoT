@@ -1,29 +1,28 @@
-#include "config.h"
-#include "versions.h"
-#include "macros.h"
+#define STRINGIFY(s) #s
+#define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)
 
-#ifdef PACKAGE_AUTHOR
-const char* gBuildAuthor = EXPAND_AND_STRINGIFY(PACKAGE_AUTHOR);
+#if !DETERMINISTIC_BUILD && (defined PACKAGE_AUTHOR)
+char const gBuildAuthor[] = EXPAND_AND_STRINGIFY(PACKAGE_AUTHOR);
 #else
-const char* gBuildAuthor = "???";
+char const gBuildAuthor[] = "???";
 #endif
 
-#ifdef PACKAGE_COMMIT_AUTHOR
-const char* gCommitAuthor = EXPAND_AND_STRINGIFY(PACKAGE_COMMIT_AUTHOR);
+#if !DETERMINISTIC_BUILD
+char const gBuildDate[] = __DATE__ " " __TIME__;
 #else
-const char* gCommitAuthor = "???";
+char const gBuildDate[] = "???";
 #endif
 
-const char* gBuildDate = __DATE__ " " __TIME__;
-
-#ifdef PACKAGE_VERSION
-const char* gBuildGitVersion = EXPAND_AND_STRINGIFY(PACKAGE_VERSION);
+#if RELEASE_ROM
+char const gBuildMakeOption[] = "RELEASE";
 #else
-const char* gBuildGitVersion = "???";
+char const gBuildMakeOption[] = "DEBUG";
 #endif
 
-#ifdef PACKAGE_NAME
-const char* gCommitGitString = EXPAND_AND_STRINGIFY(PACKAGE_NAME);
+#if !DETERMINISTIC_BUILD && (defined PACKAGE_VERSION)
+char const gBuildGitVersion[] = EXPAND_AND_STRINGIFY(PACKAGE_VERSION);
 #else
-const char* gCommitGitString = "???";
+char const gBuildGitVersion[] = "???";
 #endif
+
+char const gBuildTeam[] = "";

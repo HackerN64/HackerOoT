@@ -16,7 +16,7 @@ void BgSpot03Taki_Draw(Actor* thisx, PlayState* play);
 
 void func_808ADEF0(BgSpot03Taki* this, PlayState* play);
 
-ActorProfile Bg_Spot03_Taki_Profile = {
+ActorInit Bg_Spot03_Taki_InitVars = {
     /**/ ACTOR_BG_SPOT03_TAKI,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -47,7 +47,7 @@ void BgSpot03Taki_Init(Actor* thisx, PlayState* play) {
     s16 pad;
     CollisionHeader* colHeader = NULL;
 
-    this->switchFlag = PARAMS_GET_U(this->dyna.actor.params, 0, 6);
+    this->switchFlag = (this->dyna.actor.params & 0x3F);
     DynaPolyActor_Init(&this->dyna, 0);
     CollisionHeader_GetVirtual(&object_spot03_object_Col_000C98, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
@@ -122,7 +122,8 @@ void BgSpot03Taki_Draw(Actor* thisx, PlayState* play) {
 
     gameplayFrames = play->gameplayFrames;
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_bg_spot03_taki.c", 325);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_spot03_taki.c", 325),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
@@ -145,6 +146,8 @@ void BgSpot03Taki_Draw(Actor* thisx, PlayState* play) {
                                 -gameplayFrames, gameplayFrames * 3, 64, 64));
 
     gSPDisplayList(POLY_XLU_DISP++, object_spot03_object_DL_001580);
+
+    if (1) {}
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot03_taki.c", 358);
 

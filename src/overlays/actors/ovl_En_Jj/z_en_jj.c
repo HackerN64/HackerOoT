@@ -10,7 +10,7 @@
 
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5)
 
-typedef enum EnJjEyeState {
+typedef enum {
     /* 0 */ JABUJABU_EYE_OPEN,
     /* 1 */ JABUJABU_EYE_HALF,
     /* 2 */ JABUJABU_EYE_CLOSED,
@@ -28,7 +28,7 @@ void EnJj_WaitForFish(EnJj* this, PlayState* play);
 void EnJj_BeginCutscene(EnJj* this, PlayState* play);
 void EnJj_RemoveDust(EnJj* this, PlayState* play);
 
-ActorProfile En_Jj_Profile = {
+ActorInit En_Jj_InitVars = {
     /**/ ACTOR_EN_JJ,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,
@@ -48,7 +48,7 @@ static s32 sUnused2[] = { 0, 0 };
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_ALL,
@@ -56,7 +56,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000004, 0x00, 0x00 },
         ATELEM_NONE,

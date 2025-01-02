@@ -1,9 +1,7 @@
 #include "z_en_ma2.h"
 #include "assets/objects/object_ma2/object_ma2.h"
 
-#define FLAGS                                                                           \
-    (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4 | ACTOR_FLAG_5 | \
-     ACTOR_FLAG_UPDATE_DURING_OCARINA)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_25)
 
 void EnMa2_Init(Actor* thisx, PlayState* play);
 void EnMa2_Destroy(Actor* thisx, PlayState* play);
@@ -19,7 +17,7 @@ void func_80AA204C(EnMa2* this, PlayState* play);
 void func_80AA20E4(EnMa2* this, PlayState* play);
 void func_80AA21C8(EnMa2* this, PlayState* play);
 
-ActorProfile En_Ma2_Profile = {
+ActorInit En_Ma2_InitVars = {
     /**/ ACTOR_EN_MA2,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -33,7 +31,7 @@ ActorProfile En_Ma2_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -41,7 +39,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -53,7 +51,7 @@ static ColliderCylinderInit sCylinderInit = {
 
 static CollisionCheckInfoInit2 sColChkInfoInit = { 0, 0, 0, 0, MASS_IMMOVABLE };
 
-typedef enum EnMa2Animation {
+typedef enum {
     /* 0 */ ENMA2_ANIM_0,
     /* 1 */ ENMA2_ANIM_1,
     /* 2 */ ENMA2_ANIM_2,
@@ -244,7 +242,7 @@ void EnMa2_Init(Actor* thisx, PlayState* play) {
 
     Actor_UpdateBgCheckInfo(play, &this->actor, 0.0f, 0.0f, 0.0f, UPDBGCHECKINFO_FLAG_2);
     Actor_SetScale(&this->actor, 0.01f);
-    this->actor.attentionRangeType = ATTENTION_RANGE_6;
+    this->actor.targetMode = 6;
     this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
 }
 
@@ -257,7 +255,7 @@ void EnMa2_Destroy(Actor* thisx, PlayState* play) {
 
 void func_80AA2018(EnMa2* this, PlayState* play) {
     if (this->interactInfo.talkState == NPC_TALK_STATE_ACTION) {
-        this->actor.flags &= ~ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
+        this->actor.flags &= ~ACTOR_FLAG_16;
         this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
     }
 }
@@ -300,10 +298,10 @@ void func_80AA21C8(EnMa2* this, PlayState* play) {
         player->stateFlags2 |= PLAYER_STATE2_23;
     } else {
         if (this->interactInfo.talkState == NPC_TALK_STATE_IDLE) {
-            this->actor.flags |= ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
+            this->actor.flags |= ACTOR_FLAG_16;
             Message_CloseTextbox(play);
         } else {
-            this->actor.flags &= ~ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
+            this->actor.flags &= ~ACTOR_FLAG_16;
             this->actionFunc = func_80AA2018;
         }
     }

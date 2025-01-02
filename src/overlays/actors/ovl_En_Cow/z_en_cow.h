@@ -10,12 +10,12 @@
 
 #define COW_GET_TYPE(thisx) ((thisx)->actor.params)
 
-typedef enum CowType {
+typedef enum {
     /*  0 */ COW_TYPE_BODY,
     /*  1 */ COW_TYPE_TAIL
 } CowType;
 
-typedef enum CowCollider {
+typedef enum {
     /*  0 */ COW_COLLIDER_FRONT,
     /*  1 */ COW_COLLIDER_REAR,
     /*  2 */ COW_COLLIDER_MAX

@@ -7,9 +7,7 @@
 #include "z_en_ma1.h"
 #include "assets/objects/object_ma1/object_ma1.h"
 
-#define FLAGS                                                                           \
-    (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4 | ACTOR_FLAG_5 | \
-     ACTOR_FLAG_UPDATE_DURING_OCARINA)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_25)
 
 void EnMa1_Init(Actor* thisx, PlayState* play);
 void EnMa1_Destroy(Actor* thisx, PlayState* play);
@@ -25,7 +23,7 @@ void EnMa1_TeachSong(EnMa1* this, PlayState* play);
 void EnMa1_WaitForPlayback(EnMa1* this, PlayState* play);
 void EnMa1_DoNothing(EnMa1* this, PlayState* play);
 
-ActorProfile En_Ma1_Profile = {
+ActorInit En_Ma1_InitVars = {
     /**/ ACTOR_EN_MA1,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -39,7 +37,7 @@ ActorProfile En_Ma1_Profile = {
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -47,7 +45,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -59,7 +57,7 @@ static ColliderCylinderInit sCylinderInit = {
 
 static CollisionCheckInfoInit2 sColChkInfoInit = { 0, 0, 0, 0, MASS_IMMOVABLE };
 
-typedef enum EnMa1Animation {
+typedef enum {
     /* 0 */ MALON_ANIM_IDLE_NOMORPH,
     /* 1 */ MALON_ANIM_IDLE,
     /* 2 */ MALON_ANIM_SING_NOMORPH,
@@ -271,7 +269,7 @@ void EnMa1_Init(Actor* thisx, PlayState* play) {
 
     Actor_UpdateBgCheckInfo(play, &this->actor, 0.0f, 0.0f, 0.0f, UPDBGCHECKINFO_FLAG_2);
     Actor_SetScale(&this->actor, 0.01f);
-    this->actor.attentionRangeType = ATTENTION_RANGE_6;
+    this->actor.targetMode = 6;
     this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
 
     if (!GET_EVENTCHKINF(EVENTCHKINF_TALON_RETURNED_FROM_CASTLE) || CHECK_QUEST_ITEM(QUEST_SONG_EPONA)) {
@@ -350,7 +348,7 @@ void EnMa1_IdleTeachSong(EnMa1* this, PlayState* play) {
             this->actor.textId = 0x2061;
             Message_StartTextbox(play, this->actor.textId, NULL);
             this->interactInfo.talkState = NPC_TALK_STATE_TALKING;
-            this->actor.flags |= ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
+            this->actor.flags |= ACTOR_FLAG_16;
             this->actionFunc = EnMa1_StartTeachSong;
         } else if (this->actor.xzDistToPlayer < 30.0f + this->collider.dim.radius) {
             player->stateFlags2 |= PLAYER_STATE2_23;
@@ -363,7 +361,7 @@ void EnMa1_StartTeachSong(EnMa1* this, PlayState* play) {
     if (this->interactInfo.talkState == NPC_TALK_STATE_ACTION) {
         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_MALON);
         Message_StartOcarina(play, OCARINA_ACTION_TEACH_EPONA);
-        this->actor.flags &= ~ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
+        this->actor.flags &= ~ACTOR_FLAG_16;
         this->actionFunc = EnMa1_TeachSong;
     }
 }

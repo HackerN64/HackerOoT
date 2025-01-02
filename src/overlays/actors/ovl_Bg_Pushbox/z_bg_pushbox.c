@@ -16,7 +16,7 @@ void BgPushbox_Draw(Actor* thisx, PlayState* play);
 
 void BgPushbox_UpdateImpl(BgPushbox* this, PlayState* play);
 
-ActorProfile Bg_Pushbox_Profile = {
+ActorInit Bg_Pushbox_InitVars = {
     /**/ ACTOR_BG_PUSHBOX,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -81,7 +81,8 @@ void BgPushbox_Draw(Actor* thisx, PlayState* play) {
     OPEN_DISPS(play->state.gfxCtx, "../z_bg_pushbox.c", 263);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_bg_pushbox.c", 269);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_pushbox.c", 269),
+              G_MTX_NOPUSH | G_MTX_MODELVIEW | G_MTX_LOAD);
     gSPDisplayList(POLY_OPA_DISP++, gBlockSmallDL);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_bg_pushbox.c", 272);

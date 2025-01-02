@@ -8,7 +8,7 @@ struct EnMb;
 
 typedef void (*EnMbActionFunc)(struct EnMb*, PlayState*);
 
-typedef enum EnMbState {
+typedef enum {
     /*  0 */ ENMB_STATE_SPEAR_SPEARPATH_DAMAGED,
     /*  1 */ ENMB_STATE_CLUB_DEAD,
     /*  2 */ ENMB_STATE_CLUB_KNEELING_DAMAGED,

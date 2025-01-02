@@ -8,14 +8,14 @@ struct EnSyatekiItm;
 
 typedef void (*EnSyatekiItmActionFunc)(struct EnSyatekiItm*, PlayState*);
 
-typedef enum EnSyatekiSignal {
+typedef enum {
     /* 0 */ ENSYATEKI_NONE,
     /* 1 */ ENSYATEKI_START,
     /* 2 */ ENSYATEKI_END,
     /* 3 */ ENSYATEKI_RESULTS
 } EnSyatekiSignal;
 
-typedef enum EnSyatekiHitState {
+typedef enum {
     /* 0 */ ENSYATEKIHIT_NONE,
     /* 1 */ ENSYATEKIHIT_MISS,
     /* 2 */ ENSYATEKIHIT_HIT

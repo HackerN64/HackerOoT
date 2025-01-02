@@ -261,8 +261,7 @@ __pycache__/
 *.pyc
 
 # Testing File
-*.wad
-*.iso
+*.Wad
 TestExtract/
 *.exe
 *.stackdump
@@ -272,7 +271,6 @@ TestExtract/
 Debug/
 CppProperties.json
 wadextract/
-isoextract/
 *.o
 Makefile
 config.*

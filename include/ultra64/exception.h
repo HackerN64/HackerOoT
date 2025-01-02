@@ -38,7 +38,6 @@ typedef struct  {
     /* 0x04 */ void* sp;
 } __osHwInt; // size = 0x08
 
-OSIntMask osGetIntMask(void);
 OSIntMask osSetIntMask(OSIntMask);
 
 void __osSetHWIntrRoutine(OSHWIntr intr, s32 (*callback)(void), void* sp);

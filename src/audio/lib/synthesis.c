@@ -14,7 +14,7 @@
 #define DMEM_WET_LEFT_CH 0xC80
 #define DMEM_WET_RIGHT_CH 0xE20 // = DMEM_WET_LEFT_CH + DMEM_1CH_SIZE
 
-typedef enum HaasEffectDelaySide {
+typedef enum {
     /* 0 */ HAAS_EFFECT_DELAY_NONE,
     /* 1 */ HAAS_EFFECT_DELAY_LEFT, // Delay left channel so that right channel is heard first
     /* 2 */ HAAS_EFFECT_DELAY_RIGHT // Delay right channel so that left channel is heard first
@@ -643,13 +643,7 @@ Acmd* AudioSynth_DoOneAudioUpdate(s16* aiBuf, s32 aiBufLen, Acmd* cmd, s32 updat
             aMix(cmd++, DMEM_2CH_SIZE >> 4, reverb->decayRatio + 0x8000, DMEM_WET_LEFT_CH, DMEM_WET_LEFT_CH);
 
             // Leak reverb between the left and right channels
-
-#if OOT_VERSION < NTSC_1_1 || PLATFORM_GC
-            if ((reverb->leakRtl != 0) || (reverb->leakLtr != 0))
-#else
-            if (((reverb->leakRtl != 0) || (reverb->leakLtr != 0)) && (gAudioCtx.soundMode != SOUNDMODE_MONO))
-#endif
-            {
+            if (reverb->leakRtl != 0 || reverb->leakLtr != 0) {
                 cmd = AudioSynth_LeakReverb(cmd, reverb);
             }
 
@@ -784,13 +778,6 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     nParts = noteSubEu->bitField1.hasTwoParts + 1;
     samplesLenFixedPoint = (resamplingRateFixedPoint * aiBufLen * 2) + synthState->samplePosFrac;
     numSamplesToLoad = samplesLenFixedPoint >> 16;
-
-#if !(OOT_VERSION < NTSC_1_1 || PLATFORM_GC)
-    if (numSamplesToLoad == 0) {
-        skipBytes = false;
-    }
-#endif
-
     synthState->samplePosFrac = samplesLenFixedPoint & 0xFFFF;
 
     // Partially-optimized out no-op ifs required for matching. SM64 decomp
@@ -809,7 +796,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     } else {
         sample = noteSubEu->tunedSample->sample;
         loopInfo = sample->loop;
-        loopEndPos = loopInfo->header.end;
+        loopEndPos = loopInfo->end;
         sampleAddr = (u32)sample->sampleAddr;
         resampledTempLen = 0;
 
@@ -842,7 +829,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                     if (1) {}
                     if (1) {}
                     if (1) {}
-                    nEntries = SAMPLES_PER_FRAME * sample->book->header.order * sample->book->header.numPredictors;
+                    nEntries = SAMPLES_PER_FRAME * sample->book->order * sample->book->numPredictors;
                     aLoadADPCM(cmd++, nEntries, gAudioCtx.curLoadedBook);
                 }
             }
@@ -874,7 +861,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         nSamplesInFirstFrame = nSamplesUntilLoopEnd;
                     }
                     nFramesToDecode = (nSamplesToDecode + SAMPLES_PER_FRAME - 1) / SAMPLES_PER_FRAME;
-                    if (loopInfo->header.count != 0) {
+                    if (loopInfo->count != 0) {
                         // Loop around and restart
                         restart = true;
                     } else {
@@ -1032,7 +1019,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                 } else {
                     if (restart) {
                         synthState->restart = true;
-                        synthState->samplePosInt = loopInfo->header.start;
+                        synthState->samplePosInt = loopInfo->start;
                     } else {
                         synthState->samplePosInt += nSamplesToProcess;
                     }

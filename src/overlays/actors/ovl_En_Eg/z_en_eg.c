@@ -22,7 +22,7 @@ static EnEgActionFunc sActionFuncs[] = {
     func_809FFDC8,
 };
 
-ActorProfile En_Eg_Profile = {
+ActorInit En_Eg_InitVars = {
     /**/ ACTOR_EN_EG,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,
@@ -48,8 +48,7 @@ void EnEg_Init(Actor* thisx, PlayState* play) {
 }
 
 void func_809FFDC8(EnEg* this, PlayState* play) {
-    if (!sVoided && (gSaveContext.subTimerSeconds <= 0) && Flags_GetSwitch(play, 0x36) &&
-        (!DEBUG_FEATURES || kREG(0) == 0)) {
+    if (!sVoided && (gSaveContext.subTimerSeconds <= 0) && Flags_GetSwitch(play, 0x36) && (!IS_DEBUG || kREG(0) == 0)) {
         // Void the player out
         Play_TriggerRespawn(play);
         gSaveContext.respawnFlag = -2;

@@ -6,7 +6,6 @@
 
 #include "z_en_weather_tag.h"
 #include "terminal.h"
-#include "versions.h"
 
 #define FLAGS ACTOR_FLAG_4
 
@@ -32,7 +31,7 @@ void EnWeatherTag_EnabledRainThunder(EnWeatherTag* this, PlayState* play);
 
 #define WEATHER_TAG_RANGE100(x) ((x >> 8) * 100.0f)
 
-ActorProfile En_Weather_Tag_Profile = {
+ActorInit En_Weather_Tag_InitVars = {
     /**/ ACTOR_EN_WEATHER_TAG,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -54,9 +53,9 @@ void EnWeatherTag_Destroy(Actor* thisx, PlayState* play) {
 void EnWeatherTag_Init(Actor* thisx, PlayState* play) {
     EnWeatherTag* this = (EnWeatherTag*)thisx;
 
-    this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
+    this->actor.flags &= ~ACTOR_FLAG_0;
 
-    switch (PARAMS_GET_U(this->actor.params, 0, 4)) {
+    switch (this->actor.params & 0xF) {
         case EN_WEATHER_TAG_TYPE_CLOUDY_MARKET:
             PRINTF("\n\n");
             // "☆☆☆☆☆ (;o;) About ☆☆☆☆☆☆"
@@ -141,13 +140,8 @@ u8 WeatherTag_CheckEnableWeatherEffect(EnWeatherTag* this, PlayState* play, u8 s
             if (play->envCtx.stormRequest == STORM_REQUEST_NONE &&
                 ((play->envCtx.lightMode != LIGHT_MODE_TIME) ||
                  (play->envCtx.lightConfig != 1 && !play->envCtx.changeLightEnabled))) {
-#if OOT_VERSION >= PAL_1_0
                 gInterruptSongOfStorms = false;
-#endif
                 if (gWeatherMode != weatherMode) {
-#if OOT_VERSION < PAL_1_0
-                    gInterruptSongOfStorms = false;
-#endif
                     gWeatherMode = weatherMode;
                     if (play->envCtx.stormRequest == STORM_REQUEST_NONE) {
                         play->envCtx.changeSkyboxState = CHANGE_SKYBOX_REQUESTED;
@@ -333,11 +327,9 @@ void EnWeatherTag_Update(Actor* thisx, PlayState* play) {
 
     this->actionFunc(this, play);
 
-#if IS_ACTOR_DEBUG_ENABLED
-    if (BREG(0) != 0) {
+    if (IS_ACTOR_DEBUG_ENABLED && BREG(0) != 0) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 255, 0, 255, 255, 4, play->state.gfxCtx);
     }
-#endif
 }

@@ -13,7 +13,7 @@ void DoorToki_Init(Actor* thisx, PlayState* play);
 void DoorToki_Destroy(Actor* thisx, PlayState* play);
 void DoorToki_Update(Actor* thisx, PlayState* play);
 
-ActorProfile Door_Toki_Profile = {
+ActorInit Door_Toki_InitVars = {
     /**/ ACTOR_DOOR_TOKI,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,

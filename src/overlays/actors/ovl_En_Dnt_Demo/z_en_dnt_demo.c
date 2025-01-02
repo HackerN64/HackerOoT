@@ -12,7 +12,7 @@
 
 #define FLAGS 0
 
-typedef enum EnDntDemoResults {
+typedef enum {
     /* 0 */ DNT_LIKE,
     /* 1 */ DNT_HATE,
     /* 2 */ DNT_LOVE
@@ -26,7 +26,7 @@ void EnDntDemo_Judge(EnDntDemo* this, PlayState* play);
 void EnDntDemo_Results(EnDntDemo* this, PlayState* play);
 void EnDntDemo_Prize(EnDntDemo* this, PlayState* play);
 
-ActorProfile En_Dnt_Demo_Profile = {
+ActorInit En_Dnt_Demo_InitVars = {
     /**/ ACTOR_EN_DNT_DEMO,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -98,7 +98,7 @@ void EnDntDemo_Init(Actor* thisx, PlayState* play2) {
         PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ じじじじじじじじじじい ☆☆☆☆☆ %x\n" VT_RST, this->leader);
     }
     this->subCamId = SUB_CAM_ID_DONE;
-    this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
+    this->actor.flags &= ~ACTOR_FLAG_0;
     this->actionFunc = EnDntDemo_Judge;
 }
 
@@ -335,8 +335,7 @@ void EnDntDemo_Update(Actor* thisx, PlayState* play) {
     }
     this->actionFunc(this, play);
 
-#if IS_ACTOR_DEBUG_ENABLED
-    if (BREG(0)) {
+    if (IS_ACTOR_DEBUG_ENABLED && BREG(0)) {
         if (this->debugArrowTimer != 0) {
             if (!(this->debugArrowTimer & 1)) {
                 DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
@@ -349,5 +348,4 @@ void EnDntDemo_Update(Actor* thisx, PlayState* play) {
                                    1.0f, 1.0f, 255, 255, 255, 255, 4, play->state.gfxCtx);
         }
     }
-#endif
 }

@@ -5,12 +5,10 @@
  */
 
 #include "z_en_firefly.h"
-#include "versions.h"
 #include "assets/objects/object_firefly/object_firefly.h"
 #include "overlays/actors/ovl_Obj_Syokudai/z_obj_syokudai.h"
 
-#define FLAGS \
-    (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE | ACTOR_FLAG_IGNORE_QUAKE | ACTOR_FLAG_CAN_ATTACH_TO_ARROW)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_IGNORE_QUAKE | ACTOR_FLAG_14)
 
 void EnFirefly_Init(Actor* thisx, PlayState* play);
 void EnFirefly_Destroy(Actor* thisx, PlayState* play);
@@ -30,13 +28,13 @@ void EnFirefly_FrozenFall(EnFirefly* this, PlayState* play);
 void EnFirefly_Perch(EnFirefly* this, PlayState* play);
 void EnFirefly_DisturbDiveAttack(EnFirefly* this, PlayState* play);
 
-typedef enum KeeseAuraType {
+typedef enum {
     /* 0 */ KEESE_AURA_NONE,
     /* 1 */ KEESE_AURA_FIRE,
     /* 2 */ KEESE_AURA_ICE
 } KeeseAuraType;
 
-ActorProfile En_Firefly_Profile = {
+ActorInit En_Firefly_InitVars = {
     /**/ ACTOR_EN_FIREFLY,
     /**/ ACTORCAT_ENEMY,
     /**/ FLAGS,
@@ -51,7 +49,7 @@ ActorProfile En_Firefly_Profile = {
 static ColliderJntSphElementInit sJntSphElementsInit[1] = {
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0xFFCFFFFF, 0x01, 0x08 },
             { 0xFFCFFFFF, 0x00, 0x00 },
             ATELEM_ON | ATELEM_SFX_HARD,
@@ -64,7 +62,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[1] = {
 
 static ColliderJntSphInit sJntSphInit = {
     {
-        COL_MATERIAL_HIT3,
+        COLTYPE_HIT3,
         AT_ON | AT_TYPE_ENEMY,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_ALL,
@@ -114,8 +112,8 @@ static DamageTable sDamageTable = {
 
 static InitChainEntry sInitChain[] = {
     ICHAIN_VEC3F_DIV1000(scale, 5, ICHAIN_CONTINUE),  ICHAIN_F32_DIV1000(gravity, -500, ICHAIN_CONTINUE),
-    ICHAIN_F32(minVelocityY, -4, ICHAIN_CONTINUE),    ICHAIN_U8(attentionRangeType, ATTENTION_RANGE_2, ICHAIN_CONTINUE),
-    ICHAIN_F32(lockOnArrowOffset, 4000, ICHAIN_STOP),
+    ICHAIN_F32(minVelocityY, -4, ICHAIN_CONTINUE),    ICHAIN_U8(targetMode, 2, ICHAIN_CONTINUE),
+    ICHAIN_F32(targetArrowOffset, 4000, ICHAIN_STOP),
 };
 
 void EnFirefly_Extinguish(EnFirefly* this) {
@@ -148,7 +146,7 @@ void EnFirefly_Init(Actor* thisx, PlayState* play) {
     Collider_SetJntSph(play, &this->collider, &this->actor, &sJntSphInit, this->colliderItems);
     CollisionCheck_SetInfo(&this->actor.colChkInfo, &sDamageTable, &sColChkInfoInit);
 
-    if (PARAMS_GET_NOSHIFT(this->actor.params, 15, 1) != 0) {
+    if ((this->actor.params & 0x8000) != 0) {
         this->actor.flags |= ACTOR_FLAG_REACT_TO_LENS;
         if (1) {}
         this->actor.draw = EnFirefly_DrawInvisible;
@@ -424,7 +422,7 @@ void EnFirefly_Fall(EnFirefly* this, PlayState* play) {
     this->actor.colorFilterTimer = 40;
     SkelAnime_Update(&this->skelAnime);
     Math_StepToF(&this->actor.speed, 0.0f, 0.5f);
-    if (this->actor.flags & ACTOR_FLAG_ATTACHED_TO_ARROW) {
+    if (this->actor.flags & ACTOR_FLAG_15) {
         this->actor.colorFilterTimer = 40;
     } else {
         Math_ScaledStepToS(&this->actor.shape.rot.x, 0x6800, 0x200);
@@ -555,12 +553,7 @@ void EnFirefly_Stunned(EnFirefly* this, PlayState* play) {
 }
 
 void EnFirefly_FrozenFall(EnFirefly* this, PlayState* play) {
-#if OOT_VERSION < NTSC_1_1
-    if ((this->actor.bgCheckFlags & BGCHECKFLAG_GROUND_TOUCH) || (this->actor.floorHeight == BGCHECK_Y_MIN))
-#else
-    if ((this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) || (this->actor.floorHeight == BGCHECK_Y_MIN))
-#endif
-    {
+    if ((this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) || (this->actor.floorHeight == BGCHECK_Y_MIN)) {
         this->actor.colorFilterTimer = 0;
         EnFirefly_SetupDie(this);
     } else {
@@ -632,7 +625,7 @@ void EnFirefly_UpdateDamage(EnFirefly* this, PlayState* play) {
         if ((this->actor.colChkInfo.damageEffect != 0) || (this->actor.colChkInfo.damage != 0)) {
             if (Actor_ApplyDamage(&this->actor) == 0) {
                 Enemy_StartFinishingBlow(play, &this->actor);
-                this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
+                this->actor.flags &= ~ACTOR_FLAG_0;
             }
 
             damageEffect = this->actor.colChkInfo.damageEffect;
@@ -688,7 +681,7 @@ void EnFirefly_Update(Actor* thisx, PlayState* play2) {
 
     this->actionFunc(this, play);
 
-    if (!(this->actor.flags & ACTOR_FLAG_ATTACHED_TO_ARROW)) {
+    if (!(this->actor.flags & ACTOR_FLAG_15)) {
         if ((this->actor.colChkInfo.health == 0) || (this->actionFunc == EnFirefly_Stunned)) {
             Actor_MoveXZGravity(&this->actor);
         } else {

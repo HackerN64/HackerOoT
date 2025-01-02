@@ -20,7 +20,7 @@ void func_80878300(BgGateShutter* this, PlayState* play);
 void func_808783AC(BgGateShutter* this, PlayState* play);
 void func_808783D4(BgGateShutter* this, PlayState* play);
 
-ActorProfile Bg_Gate_Shutter_Profile = {
+ActorInit Bg_Gate_Shutter_InitVars = {
     /**/ ACTOR_BG_GATE_SHUTTER,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,
@@ -126,7 +126,8 @@ void BgGateShutter_Draw(Actor* thisx, PlayState* play) {
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_bg_gate_shutter.c", 328);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_gate_shutter.c", 328),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gKakarikoGuardGateDL);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_bg_gate_shutter.c", 333);

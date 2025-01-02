@@ -8,7 +8,7 @@ struct BossGanon;
 
 typedef void (*BossGanonActionFunc)(struct BossGanon*, PlayState*);
 
-typedef enum GanondorfLimb {
+typedef enum {
     /*  0 */ GANONDORF_LIMB_NONE,
     /*  1 */ GANONDORF_LIMB_ROOT,
     /*  2 */ GANONDORF_LIMB_TORSO,
@@ -38,7 +38,7 @@ typedef enum GanondorfLimb {
     /* 26 */ GANONDORF_LIMB_MAX
 } GanondorfLimb;
 
-typedef enum GanondorfFwork {
+typedef enum {
     /*  0 */ GDF_FWORK_0,
     /*  1 */ GDF_FWORK_1,
     /*  2 */ GDF_CENTER_POS,
@@ -52,19 +52,19 @@ typedef enum GanondorfFwork {
     /* 10 */ GDF_FWORK_MAX
 } GanondorfFwork;
 
-typedef enum WindowShatterState {
+typedef enum {
     /* 0 */ GDF_WINDOW_SHATTER_OFF,
     /* 1 */ GDF_WINDOW_SHATTER_PARTIAL,
     /* 2 */ GDF_WINDOW_SHATTER_FULL
 } WindowShatterState;
 
-typedef enum GanondorfShockType {
+typedef enum {
     /* 0 */ GDF_SHOCK_DORF_YELLOW,
     /* 1 */ GDF_SHOCK_PLAYER_YELLOW,
     /* 2 */ GDF_SHOCK_PLAYER_PURPLE
 } GanondorfShockType;
 
-typedef enum GanondorfEffectType {
+typedef enum {
     /* 0 */ GDF_EFF_NONE,
     /* 1 */ GDF_EFF_SPARKLE,
     /* 2 */ GDF_EFF_LIGHT_RAY,
@@ -77,7 +77,7 @@ typedef enum GanondorfEffectType {
     /* 9 */ GDF_EFF_WINDOW_SHARD
 } GanondorfEffectType;
 
-typedef enum GanondorfTriforceType {
+typedef enum {
     /* 0 */ GDF_TRIFORCE_PLAYER,
     /* 1 */ GDF_TRIFORCE_ZELDA,
     /* 2 */ GDF_TRIFORCE_DORF

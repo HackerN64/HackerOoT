@@ -7,7 +7,7 @@
 #include "z_en_gb.h"
 #include "assets/objects/object_ps/object_ps.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3)
 
 void EnGb_Init(Actor* thisx, PlayState* play);
 void EnGb_Destroy(Actor* thisx, PlayState* play);
@@ -26,7 +26,7 @@ void func_80A2FC0C(EnGb* this, PlayState* play);
 void EnGb_DrawCagedSouls(EnGb* this, PlayState* play);
 void EnGb_UpdateCagedSouls(EnGb* this, PlayState* play);
 
-ActorProfile En_Gb_Profile = {
+ActorInit En_Gb_InitVars = {
     /**/ ACTOR_EN_GB,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -46,14 +46,14 @@ static EnGbCagedSoulInfo sCagedSoulInfo[] = {
 
 static ColliderCylinderInitType1 sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -66,14 +66,14 @@ static ColliderCylinderInitType1 sCylinderInit = {
 static ColliderCylinderInitType1 sBottlesCylindersInit[] = {
     {
         {
-            COL_MATERIAL_NONE,
+            COLTYPE_NONE,
             AT_NONE,
             AC_NONE,
             OC1_ON | OC1_TYPE_ALL,
             COLSHAPE_CYLINDER,
         },
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0x00000000, 0x00, 0x00 },
             ATELEM_NONE,
@@ -84,14 +84,14 @@ static ColliderCylinderInitType1 sBottlesCylindersInit[] = {
     },
     {
         {
-            COL_MATERIAL_NONE,
+            COLTYPE_NONE,
             AT_NONE,
             AC_NONE,
             OC1_ON | OC1_TYPE_ALL,
             COLSHAPE_CYLINDER,
         },
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0x00000000, 0x00, 0x00 },
             ATELEM_NONE,
@@ -102,14 +102,14 @@ static ColliderCylinderInitType1 sBottlesCylindersInit[] = {
     },
     {
         {
-            COL_MATERIAL_NONE,
+            COLTYPE_NONE,
             AT_NONE,
             AC_NONE,
             OC1_ON | OC1_TYPE_ALL,
             COLSHAPE_CYLINDER,
         },
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0x00000000, 0x00, 0x00 },
             ATELEM_NONE,
@@ -121,8 +121,8 @@ static ColliderCylinderInitType1 sBottlesCylindersInit[] = {
 };
 
 static InitChainEntry sInitChain[] = {
-    ICHAIN_U8(attentionRangeType, ATTENTION_RANGE_6, ICHAIN_CONTINUE),
-    ICHAIN_F32(lockOnArrowOffset, 2200, ICHAIN_STOP),
+    ICHAIN_U8(targetMode, 6, ICHAIN_CONTINUE),
+    ICHAIN_F32(targetArrowOffset, 2200, ICHAIN_STOP),
 };
 
 // relative positions of poe souls
@@ -176,7 +176,7 @@ void EnGb_Init(Actor* thisx, PlayState* play) {
 
     ActorShape_Init(&this->dyna.actor.shape, 0.0f, ActorShadow_DrawCircle, 35.0f);
     Actor_SetScale(&this->dyna.actor, 0.01f);
-    this->dyna.actor.colChkInfo.mass = MASS_IMMOVABLE;
+    this->dyna.actor.colChkInfo.mass = 0xFF;
     this->dyna.actor.speed = 0.0f;
     this->dyna.actor.velocity.y = 0.0f;
     this->dyna.actor.gravity = -1.0f;
@@ -518,7 +518,6 @@ void EnGb_UpdateCagedSouls(EnGb* this, PlayState* play) {
 void EnGb_DrawCagedSouls(EnGb* this, PlayState* play) {
     s32 pad;
     s32 i;
-    IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_gb.c", 914);
 
@@ -531,7 +530,6 @@ void EnGb_DrawCagedSouls(EnGb* this, PlayState* play) {
                    Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, 0, 0, 32, 64, 1, 0,
                                     (u32)(sCagedSoulInfo[idx].timerMultiplier * this->frameTimer) % 512, 32, 128));
         gSPSegment(POLY_XLU_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(sCagedSoulInfo[idx].texture));
-        IF_F3DEX3_DONT_SKIP_TEX_HERE(POLY_XLU_DISP++, idx);
         gDPSetPrimColor(POLY_XLU_DISP++, 0x80, 0x80, sCagedSoulInfo[idx].prim.r, sCagedSoulInfo[idx].prim.g,
                         sCagedSoulInfo[idx].prim.b, sCagedSoulInfo[idx].prim.a);
         gDPSetEnvColor(POLY_XLU_DISP++, sCagedSoulInfo[idx].env.r, sCagedSoulInfo[idx].env.g, sCagedSoulInfo[idx].env.b,
@@ -547,7 +545,8 @@ void EnGb_DrawCagedSouls(EnGb* this, PlayState* play) {
         }
         Matrix_Scale(0.007f, 0.007f, 1.0f, MTXMODE_APPLY);
 
-        MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_en_gb.c", 955);
+        gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_gb.c", 955),
+                  G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, gPoeSellerCagedSoulDL);
 
         Matrix_Pop();

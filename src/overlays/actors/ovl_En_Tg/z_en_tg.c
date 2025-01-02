@@ -7,7 +7,7 @@
 #include "z_en_tg.h"
 #include "assets/objects/object_mu/object_mu.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3)
 
 void EnTg_Init(Actor* thisx, PlayState* play);
 void EnTg_Destroy(Actor* thisx, PlayState* play);
@@ -18,7 +18,7 @@ void EnTg_SpinIfNotTalking(EnTg* this, PlayState* play);
 
 static ColliderCylinderInit sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
@@ -26,7 +26,7 @@ static ColliderCylinderInit sCylinderInit = {
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -38,7 +38,7 @@ static ColliderCylinderInit sCylinderInit = {
 
 static CollisionCheckInfoInit2 sColChkInfoInit = { 0, 0, 0, 0, MASS_IMMOVABLE };
 
-ActorProfile En_Tg_Profile = {
+ActorInit En_Tg_InitVars = {
     /**/ ACTOR_EN_TG,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -115,7 +115,7 @@ void EnTg_Init(Actor* thisx, PlayState* play) {
     Collider_InitCylinder(play, &this->collider);
     Collider_SetCylinder(play, &this->collider, &this->actor, &sCylinderInit);
     CollisionCheck_SetInfo2(&this->actor.colChkInfo, NULL, &sColChkInfoInit);
-    this->actor.attentionRangeType = ATTENTION_RANGE_6;
+    this->actor.targetMode = 6;
     Actor_SetScale(&this->actor, 0.01f);
     this->nextDialogue = play->state.frames % 2;
     this->actionFunc = EnTg_SpinIfNotTalking;

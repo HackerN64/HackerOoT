@@ -5,7 +5,6 @@
  */
 
 #include "z_bg_spot07_taki.h"
-#include "versions.h"
 #include "assets/objects/object_spot07_object/object_spot07_object.h"
 
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5)
@@ -17,7 +16,7 @@ void BgSpot07Taki_Draw(Actor* thisx, PlayState* play);
 
 void BgSpot07Taki_DoNothing(BgSpot07Taki* this, PlayState* play);
 
-ActorProfile Bg_Spot07_Taki_Profile = {
+ActorInit Bg_Spot07_Taki_InitVars = {
     /**/ ACTOR_BG_SPOT07_TAKI,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -74,7 +73,8 @@ void BgSpot07Taki_Draw(Actor* thisx, PlayState* play) {
     frames = play->gameplayFrames;
     if (LINK_IS_ADULT) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
-        MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_bg_spot07_taki.c", 177);
+        gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_spot07_taki.c", 177),
+                  G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         if (this->dyna.actor.params == 0) {
             gSPDisplayList(POLY_OPA_DISP++, object_spot07_object_DL_001CF0);
         } else {
@@ -83,7 +83,8 @@ void BgSpot07Taki_Draw(Actor* thisx, PlayState* play) {
     }
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_bg_spot07_taki.c", 191);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_spot07_taki.c", 191),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     gSPSegment(POLY_XLU_DISP++, 0x08,
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, ((frames * -1) & 0x7F), ((frames * 1) & 0x7F), 32,
@@ -92,19 +93,10 @@ void BgSpot07Taki_Draw(Actor* thisx, PlayState* play) {
     if (!LINK_IS_ADULT) {
         gDPSetEnvColor(POLY_XLU_DISP++, 255, 255, 255, 128);
         if (this->dyna.actor.params == 0) {
-#if !OOT_PAL_N64
-            //! @bug 64x64 texture is scrolled mod 128 instead of mod 256 (i.e. 64 << G_TEXTURE_IMAGE_FRAC),
-            //  so there is a noticeable jump when the scrolling wraps around
             gSPSegment(POLY_XLU_DISP++, 0x09,
                        Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, ((frames * -1) & 0x7F),
                                         ((frames * -3) & 0xFF), 64, 64, 1, ((frames * 1) & 0x7F),
                                         ((frames * -3) & 0xFF), 64, 64));
-#else
-            gSPSegment(POLY_XLU_DISP++, 0x09,
-                       Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, ((frames * -1) & 0xFF),
-                                        ((frames * -3) & 0xFF), 64, 64, 1, ((frames * 1) & 0xFF),
-                                        ((frames * -3) & 0xFF), 64, 64));
-#endif
             gSPSegment(POLY_XLU_DISP++, 0x0A,
                        Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, frames * 0, ((frames * 3) & 0x1FF), 32,
                                         128, 1, frames * 0, ((frames * 3) & 0x1FF), 32, 128));

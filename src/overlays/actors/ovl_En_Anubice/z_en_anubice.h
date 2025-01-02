@@ -9,7 +9,7 @@ struct EnAnubice;
 
 typedef void (*EnAnubiceActionFunc)(struct EnAnubice*, struct PlayState*);
 
-typedef enum AnubiceLimbs {
+typedef enum {
     /*  0 */ ANUBICE_LIMB_NONE,
     /*  1 */ ANUBICE_LIMB_ROOT,
     /*  2 */ ANUBICE_LIMB_BODY_ROOT,

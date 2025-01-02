@@ -4,7 +4,7 @@
 #include "ultra64.h"
 #include "global.h"
 
-typedef enum BgSpot03TakiState {
+typedef enum {
     WATERFALL_CLOSED,
     WATERFALL_OPENING_IDLE,
     WATERFALL_OPENING_ANIMATED,

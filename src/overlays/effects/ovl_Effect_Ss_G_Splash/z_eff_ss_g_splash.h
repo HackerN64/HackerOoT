@@ -4,7 +4,7 @@
 #include "ultra64.h"
 #include "global.h"
 
-typedef struct EffectSsGSplashInitParams {
+typedef struct {
     /* 0x00 */ Vec3f pos;
     /* 0x0C */ u8 type;
     /* 0x0D */ u8 customColor;

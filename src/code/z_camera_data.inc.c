@@ -1,18 +1,18 @@
 #include "ultra64.h"
 #include "global.h"
 
-typedef struct CameraModeValue {
+typedef struct {
     s16 val;
     s16 dataType;
 } CameraModeValue;
 
-typedef struct CameraMode {
+typedef struct {
     s16 funcIdx;
     s16 valueCnt;
     CameraModeValue* values;
 } CameraMode;
 
-typedef struct CameraSetting {
+typedef struct {
     union {
         u32 unk_00;
         struct {

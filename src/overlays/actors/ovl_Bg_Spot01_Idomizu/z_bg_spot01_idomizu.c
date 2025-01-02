@@ -16,7 +16,7 @@ void BgSpot01Idomizu_Draw(Actor* thisx, PlayState* play);
 
 void func_808ABB84(BgSpot01Idomizu* this, PlayState* play);
 
-ActorProfile Bg_Spot01_Idomizu_Profile = {
+ActorInit Bg_Spot01_Idomizu_InitVars = {
     /**/ ACTOR_BG_SPOT01_IDOMIZU,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -73,7 +73,8 @@ void BgSpot01Idomizu_Draw(Actor* thisx, PlayState* play) {
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_bg_spot01_idomizu.c", 232);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_spot01_idomizu.c", 232),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     frames = play->state.frames;
     gSPSegment(POLY_XLU_DISP++, 0x08,

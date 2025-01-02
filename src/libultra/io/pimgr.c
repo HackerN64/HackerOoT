@@ -1,5 +1,4 @@
 #include "global.h"
-#include "stack.h"
 #include "ultra64/internal.h"
 
 OSDevMgr __osPiDevMgr = { 0 };
@@ -47,7 +46,7 @@ void osCreatePiManager(OSPri pri, OSMesgQueue* cmdQueue, OSMesg* cmdBuf, s32 cmd
         __osPiDevMgr.dma = __osPiRawStartDma;
         __osPiDevMgr.edma = __osEPiRawStartDma;
 
-        osCreateThread(&piThread, THREAD_ID_PIMGR, __osDevMgrMain, (void*)&__osPiDevMgr, STACK_TOP(piStackThread), pri);
+        osCreateThread(&piThread, 0, __osDevMgrMain, (void*)&__osPiDevMgr, STACK_TOP(piStackThread), pri);
         osStartThread(&piThread);
 
         __osRestoreInt(prevInt);

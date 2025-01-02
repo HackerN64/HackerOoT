@@ -16,7 +16,7 @@ void BgSpot17Bakudankabe_Destroy(Actor* thisx, PlayState* play);
 void BgSpot17Bakudankabe_Update(Actor* thisx, PlayState* play);
 void BgSpot17Bakudankabe_Draw(Actor* thisx, PlayState* play);
 
-ActorProfile Bg_Spot17_Bakudankabe_Profile = {
+ActorInit Bg_Spot17_Bakudankabe_InitVars = {
     /**/ ACTOR_BG_SPOT17_BAKUDANKABE,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -96,7 +96,7 @@ void BgSpot17Bakudankabe_Init(Actor* thisx, PlayState* play) {
     CollisionHeader* colHeader = NULL;
 
     DynaPolyActor_Init(&this->dyna, 0);
-    if (Flags_GetSwitch(play, PARAMS_GET_U(this->dyna.actor.params, 0, 6))) {
+    if (Flags_GetSwitch(play, (this->dyna.actor.params & 0x3F))) {
         Actor_Kill(&this->dyna.actor);
         return;
     }
@@ -115,7 +115,7 @@ void BgSpot17Bakudankabe_Update(Actor* thisx, PlayState* play) {
     BgSpot17Bakudankabe* this = (BgSpot17Bakudankabe*)thisx;
     if (this->dyna.actor.xzDistToPlayer < 650.0f && func_80033684(play, &this->dyna.actor) != NULL) {
         func_808B6BC0(this, play);
-        Flags_SetSwitch(play, PARAMS_GET_U(this->dyna.actor.params, 0, 6));
+        Flags_SetSwitch(play, (this->dyna.actor.params & 0x3F));
         SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 40, NA_SE_EV_WALL_BROKEN);
         Sfx_PlaySfxCentered(NA_SE_SY_CORRECT_CHIME);
         Actor_Kill(&this->dyna.actor);
@@ -123,15 +123,16 @@ void BgSpot17Bakudankabe_Update(Actor* thisx, PlayState* play) {
 }
 
 void BgSpot17Bakudankabe_Draw(Actor* thisx, PlayState* play) {
-    PlayState* play2 = (PlayState*)play;
-    s8 r = coss(play2->gameplayFrames * 1500) >> 8;
-    s8 g = coss(play2->gameplayFrames * 1500) >> 8;
+    s32 pad;
+    s8 r = coss(play->gameplayFrames * 1500) >> 8;
+    s8 g = coss(play->gameplayFrames * 1500) >> 8;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_bg_spot17_bakudankabe.c", 269);
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_bg_spot17_bakudankabe.c", 273);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_spot17_bakudankabe.c", 273),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     r = (r >> 1) + 0xC0;
     g = (g >> 1) + 0xC0;
@@ -146,7 +147,8 @@ void BgSpot17Bakudankabe_Draw(Actor* thisx, PlayState* play) {
 
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_bg_spot17_bakudankabe.c", 290);
+    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_spot17_bakudankabe.c", 290),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gCraterBombableWallCracksDL);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_bg_spot17_bakudankabe.c", 295);

@@ -3,7 +3,6 @@
 
 #include "ultra64.h"
 #include "irqmgr.h"
-#include "versions.h"
 
 #define OS_SC_NEEDS_RDP     0x0001  // Task uses the RDP
 #define OS_SC_NEEDS_RSP     0x0002  // Task uses the RSP
@@ -20,7 +19,7 @@
 #define OS_SC_RCP_MASK  (OS_SC_NEEDS_RDP | OS_SC_NEEDS_RSP)
 #define OS_SC_TYPE_MASK (OS_SC_NEEDS_RDP | OS_SC_NEEDS_RSP | OS_SC_DRAM_DLIST)
 
-typedef struct CfbInfo {
+typedef struct {
     /* 0x00 */ u16* framebuffer;    // current framebuffer
     /* 0x04 */ u16* swapBuffer;     // framebuffer to swap to
     /* 0x08 */ OSViMode* viMode;
@@ -28,10 +27,8 @@ typedef struct CfbInfo {
     /* 0x10 */ u8 unk_10;           // set to 0, never read
     /* 0x11 */ s8 updateRate;       // how many VIs should elapse before next swap
     /* 0x12 */ s8 updateTimer;      // counts down (in VIs) from updateRate to 0, swaps the framebuffer at 0
-#if OOT_VERSION >= PAL_1_0
     /* 0x14 */ f32 xScale;
     /* 0x18 */ f32 yScale;
-#endif
 } CfbInfo; // size = 0x1C
 
 typedef struct OSScTask {
@@ -46,7 +43,7 @@ typedef struct OSScTask {
     /* 0x60 */ OSTime totalTime;
 } OSScTask; // size = 0x68
 
-typedef struct Scheduler {
+typedef struct {
     /* 0x0000 */ OSMesgQueue  interruptQueue;
     /* 0x0018 */ OSMesg       interruptMsgBuf[8];
     /* 0x0038 */ OSMesgQueue  cmdQueue;         // queue for receiving OSScTask pointers
@@ -69,7 +66,5 @@ typedef struct Scheduler {
 
 void Sched_Notify(Scheduler* sc);
 void Sched_Init(Scheduler* sc, void* stack, OSPri priority, u8 viModeType, UNK_TYPE arg4, IrqMgr* irqMgr);
-
-extern Scheduler gScheduler;
 
 #endif

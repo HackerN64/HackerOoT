@@ -54,7 +54,7 @@ typedef union EnHorseGameCheck {
     EnHorseGameCheckMalonRace malon;
 } EnHorseGameCheck; // size = 0x01A4
 
-typedef enum EnHorseGameCheckType {
+typedef enum {
     /* 0 */ HORSEGAME_NONE,
     /* 1 */ HORSEGAME_INGO_RACE,
     /* 2 */ HORSEGAME_GERUDO_ARCHERY,

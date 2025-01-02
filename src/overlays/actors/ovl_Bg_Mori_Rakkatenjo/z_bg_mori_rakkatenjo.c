@@ -28,7 +28,7 @@ void BgMoriRakkatenjo_Rise(BgMoriRakkatenjo* this, PlayState* play);
 
 static s16 sCamSetting = CAM_SET_NONE;
 
-ActorProfile Bg_Mori_Rakkatenjo_Profile = {
+ActorInit Bg_Mori_Rakkatenjo_InitVars = {
     /**/ ACTOR_BG_MORI_RAKKATENJO,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -53,7 +53,7 @@ void BgMoriRakkatenjo_Init(Actor* thisx, PlayState* play) {
 
     DynaPolyActor_Init(&this->dyna, DYNA_TRANSFORM_POS);
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
     // "Forest Temple obj. Falling Ceiling"
     PRINTF("森の神殿 obj. 落下天井 (home posY %f)\n", this->dyna.actor.home.pos.y);
     if ((fabsf(1991.0f - this->dyna.actor.home.pos.x) > 0.001f) ||
@@ -232,7 +232,8 @@ void BgMoriRakkatenjo_Draw(Actor* thisx, PlayState* play) {
 
     gSPSegment(POLY_OPA_DISP++, 0x08, play->objectCtx.slots[this->moriTexObjectSlot].segment);
 
-    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_bg_mori_rakkatenjo.c", 502);
+    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_bg_mori_rakkatenjo.c", 502),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     gSPDisplayList(POLY_OPA_DISP++, gMoriRakkatenjoDL);
 

@@ -36,17 +36,16 @@ void DynaPolyActor_UpdateCarriedActorPos(CollisionContext* colCtx, s32 bgId, Act
             SkinMatrix_Vec3fMtxFMultXYZ(&curTransform, &tempPos, &pos);
             carriedActor->world.pos = pos;
 
-#if DEBUG_FEATURES
+#if IS_DEBUG
             if (BGCHECK_XYZ_ABSMAX <= pos.x || pos.x <= -BGCHECK_XYZ_ABSMAX || BGCHECK_XYZ_ABSMAX <= pos.y ||
                 pos.y <= -BGCHECK_XYZ_ABSMAX || BGCHECK_XYZ_ABSMAX <= pos.z || pos.z <= -BGCHECK_XYZ_ABSMAX) {
 
                 PRINTF(VT_FGCOL(RED));
                 //! @bug file and line are not passed to PRINTF
-                PRINTF(T("BGCheckCollection_typicalActorPos():位置が妥当ではありません。\n"
-                         "pos (%f,%f,%f) file:%s line:%d\n",
-                         "BGCheckCollection_typicalActorPos(): Position is not valid. \n"
-                         "pos (%f,%f,%f) file:%s line:%d\n"),
-                       pos.x, pos.y, pos.z);
+                // "Position is not valid"
+                PRINTF(
+                    "BGCheckCollection_typicalActorPos():位置が妥当ではありません。\npos (%f,%f,%f) file:%s line:%d\n",
+                    pos.x, pos.y, pos.z);
                 PRINTF(VT_RST);
             }
 #endif
@@ -76,8 +75,8 @@ void func_80043334(CollisionContext* colCtx, Actor* actor, s32 bgId) {
         if (dynaActor != NULL) {
             DynaPolyActor_SetActorOnTop(dynaActor);
 
-            if (CHECK_FLAG_ALL(actor->flags, ACTOR_FLAG_CAN_PRESS_SWITCHES)) {
-                DynaPolyActor_SetSwitchPressed(dynaActor);
+            if (CHECK_FLAG_ALL(actor->flags, ACTOR_FLAG_26)) {
+                func_80043538(dynaActor);
             }
         }
     }

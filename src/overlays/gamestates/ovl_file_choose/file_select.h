@@ -4,7 +4,6 @@
 #include "libc/stddef.h"
 #include "ultra64.h"
 #include "global.h"
-#include "versions.h"
 
 
 #define GET_NEWF(sramCtx, slotNum, index) (sramCtx->readBuff[gSramSlotOffsets[slotNum] + offsetof(SaveContext, save.info.playerData.newf[index])])
@@ -17,16 +16,16 @@
      (GET_NEWF(sramCtx, slotNum, 4) == 'A') || \
      (GET_NEWF(sramCtx, slotNum, 5) == 'Z'))
 
-// Init mode: Loads saves from SRAM, handles initial language selection in PAL N64 versions
+// Init mode: Initial setup as the file select is starting up, fades and slides in various menu elements
 // Config mode: Handles the bulk of the file select, various configuration tasks like picking a file, copy/erase, and the options menu
 // Select mode: Displays the selected file with various details about it, and allows the player to confirm and open it
-typedef enum MenuMode {
+typedef enum {
     /* 0 */ FS_MENU_MODE_INIT,
     /* 1 */ FS_MENU_MODE_CONFIG,
     /* 2 */ FS_MENU_MODE_SELECT
 } MenuMode;
 
-typedef enum ConfigMode {
+typedef enum {
     /* 00 */ CM_FADE_IN_START,
     /* 01 */ CM_FADE_IN_END,
     /* 02 */ CM_MAIN_MENU,
@@ -70,7 +69,7 @@ typedef enum ConfigMode {
     /* 40 */ CM_UNUSED_DELAY
 } ConfigMode;
 
-typedef enum SelectMode {
+typedef enum {
     /* 0 */ SM_FADE_MAIN_TO_SELECT,
     /* 1 */ SM_MOVE_FILE_TO_TOP,
     /* 2 */ SM_FADE_IN_FILE_INFO,
@@ -81,7 +80,7 @@ typedef enum SelectMode {
     /* 7 */ SM_LOAD_GAME
 } SelectMode;
 
-typedef enum TitleLabel {
+typedef enum {
     /* 0 */ FS_TITLE_SELECT_FILE,   // "Please select a file."
     /* 1 */ FS_TITLE_OPEN_FILE,     // "Open this file?"
     /* 2 */ FS_TITLE_COPY_FROM,     // "Copy which file?"
@@ -93,7 +92,7 @@ typedef enum TitleLabel {
     /* 8 */ FS_TITLE_ERASE_COMPLETE // "File erased."
 } TitleLabel;
 
-typedef enum WarningLabel {
+typedef enum {
     /* -1 */ FS_WARNING_NONE = -1,
     /*  0 */ FS_WARNING_NO_FILE_COPY,   // "No file to copy."
     /*  1 */ FS_WARNING_NO_FILE_ERASE,  // "No file to erase."
@@ -102,7 +101,7 @@ typedef enum WarningLabel {
     /*  4 */ FS_WARNING_FILE_IN_USE     // "This file is in use."
 } WarningLabel;
 
-typedef enum MainMenuButtonIndex {
+typedef enum {
     /* 0 */ FS_BTN_MAIN_FILE_1,
     /* 1 */ FS_BTN_MAIN_FILE_2,
     /* 2 */ FS_BTN_MAIN_FILE_3,
@@ -111,21 +110,21 @@ typedef enum MainMenuButtonIndex {
     /* 5 */ FS_BTN_MAIN_OPTIONS
 } MainMenuButtonIndex;
 
-typedef enum CopyMenuButtonIndex {
+typedef enum {
     /* 0 */ FS_BTN_COPY_FILE_1,
     /* 1 */ FS_BTN_COPY_FILE_2,
     /* 2 */ FS_BTN_COPY_FILE_3,
     /* 3 */ FS_BTN_COPY_QUIT
 } CopyMenuButtonIndex;
 
-typedef enum EraseMenuButtonIndex {
+typedef enum {
     /* 0 */ FS_BTN_ERASE_FILE_1,
     /* 1 */ FS_BTN_ERASE_FILE_2,
     /* 2 */ FS_BTN_ERASE_FILE_3,
     /* 3 */ FS_BTN_ERASE_QUIT
 } EraseMenuButtonIndex;
 
-typedef enum SelectMenuButtonIndex {
+typedef enum {
     /* 0 */ FS_BTN_SELECT_FILE_1,
     /* 1 */ FS_BTN_SELECT_FILE_2,
     /* 2 */ FS_BTN_SELECT_FILE_3,
@@ -133,45 +132,35 @@ typedef enum SelectMenuButtonIndex {
     /* 4 */ FS_BTN_SELECT_QUIT
 } SelectMenuButtonIndex;
 
-typedef enum ConfirmButtonIndex {
+typedef enum {
     /* 0 */ FS_BTN_CONFIRM_YES,
     /* 1 */ FS_BTN_CONFIRM_QUIT
 } ConfirmButtonIndex;
 
-typedef enum ActionButtonIndex {
+typedef enum {
     /* 0 */ FS_BTN_ACTION_COPY,
     /* 1 */ FS_BTN_ACTION_ERASE
 } ActionButtonIndex;
 
-typedef enum SettingIndex {
+typedef enum {
     /* 0 */ FS_SETTING_AUDIO,
-    /* 1 */ FS_SETTING_TARGET,
-#if OOT_PAL_N64
-    /* 2 */ FS_SETTING_LANGUAGE,
-#endif
-    /*   */ FS_SETTING_MAX
+    /* 1 */ FS_SETTING_TARGET
 } SettingIndex;
 
-typedef enum AudioOption {
+typedef enum {
     /* 0 */ FS_AUDIO_STEREO,
     /* 1 */ FS_AUDIO_MONO,
     /* 2 */ FS_AUDIO_HEADSET,
     /* 3 */ FS_AUDIO_SURROUND
 } AudioOption;
 
-typedef enum CharPage {
+typedef enum {
     /* 0 */ FS_CHAR_PAGE_HIRA,
     /* 1 */ FS_CHAR_PAGE_KATA,
-    /* 2 */ FS_CHAR_PAGE_ENG,
-    /* 3 */ FS_CHAR_PAGE_HIRA_TO_KATA,
-    /* 4 */ FS_CHAR_PAGE_KATA_TO_HIRA,
-    /* 5 */ FS_CHAR_PAGE_HIRA_TO_ENG,
-    /* 6 */ FS_CHAR_PAGE_ENG_TO_HIRA,
-    /* 7 */ FS_CHAR_PAGE_KATA_TO_ENG,
-    /* 8 */ FS_CHAR_PAGE_ENG_TO_KATA
+    /* 2 */ FS_CHAR_PAGE_ENG
 } CharPage;
 
-typedef enum KeyboardButton {
+typedef enum {
     /* 00 */ FS_KBD_BTN_HIRA,
     /* 01 */ FS_KBD_BTN_KATA,
     /* 02 */ FS_KBD_BTN_ENG,
@@ -225,8 +214,6 @@ void FileSelect_DrawOptions(GameState* thisx);
 void FileSelect_DrawNameEntry(GameState* thisx);
 void FileSelect_DrawCharacter(GraphicsContext* gfxCtx, void* texture, s16 vtx);
 
-#if OOT_VERSION == PAL_1_1
-extern s16 D_808124C0[];
-#endif
+extern s16 D_808123F0[];
 
 #endif

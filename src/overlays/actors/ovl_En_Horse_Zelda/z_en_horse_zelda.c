@@ -18,7 +18,7 @@ void EnHorseZelda_Stop(EnHorseZelda* this, PlayState* play);
 void EnHorseZelda_Gallop(EnHorseZelda* this, PlayState* play);
 void EnHorseZelda_SetupStop(EnHorseZelda* this);
 
-ActorProfile En_Horse_Zelda_Profile = {
+ActorInit En_Horse_Zelda_InitVars = {
     /**/ ACTOR_EN_HORSE_ZELDA,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -36,14 +36,14 @@ static f32 splaySpeeds[] = { 2.0f / 3.0f };
 
 static ColliderCylinderInitType1 sCylinderInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_NONE,
         OC1_ON | OC1_TYPE_ALL,
         COLSHAPE_CYLINDER,
     },
     {
-        ELEM_MATERIAL_UNK0,
+        ELEMTYPE_UNK0,
         { 0x00000000, 0x00, 0x00 },
         { 0x00000000, 0x00, 0x00 },
         ATELEM_NONE,
@@ -56,7 +56,7 @@ static ColliderCylinderInitType1 sCylinderInit = {
 static ColliderJntSphElementInit sJntSphElementsInit[1] = {
     {
         {
-            ELEM_MATERIAL_UNK0,
+            ELEMTYPE_UNK0,
             { 0x00000000, 0x00, 0x00 },
             { 0x00000000, 0x00, 0x00 },
             ATELEM_NONE,
@@ -69,7 +69,7 @@ static ColliderJntSphElementInit sJntSphElementsInit[1] = {
 
 static ColliderJntSphInit sJntSphInit = {
     {
-        COL_MATERIAL_NONE,
+        COLTYPE_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_ALL,
@@ -82,7 +82,7 @@ static ColliderJntSphInit sJntSphInit = {
 
 static CollisionCheckInfoInit sColChkInfoInit = { 10, 35, 100, MASS_HEAVY };
 
-typedef struct HorsePosSpeed {
+typedef struct {
     /* 0x0 */ Vec3s pos;
     /* 0x6 */ u8 speedXZ;
 } HorsePosSpeed; // size = 0x8

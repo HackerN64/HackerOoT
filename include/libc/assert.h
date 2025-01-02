@@ -1,8 +1,6 @@
 #ifndef ASSERT_H
 #define ASSERT_H
 
-#include "config.h"
-
 #if !defined(__GNUC__) && !defined(__attribute__)
 #define __attribute__(x)
 #endif
