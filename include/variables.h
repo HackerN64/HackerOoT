@@ -2,13 +2,22 @@
 #define VARIABLES_H
 
 #include "z64.h"
+#include "libc64/os_malloc.h"
 #include "segment_symbols.h"
+#include "config.h"
+
+#if ENABLE_HACKER_DEBUG
+#include "debug.h"
+
+extern Debug gDebug;
+#endif
 
 extern Mtx D_01000000;
 
-extern u32 osTvType;
-extern u32 osRomBase;
-extern u32 osResetType;
+extern void* osRomBase;
+extern s32 osTvType;
+extern s32 osResetType;
+extern s32 osCicId;
 extern u32 osMemSize;
 extern u8 osAppNMIBuffer[0x40];
 
@@ -19,6 +28,7 @@ extern u32 gViConfigFeatures;
 extern f32 gViConfigXScale;
 extern f32 gViConfigYScale;
 extern OSPiHandle* gCartHandle;
+extern s32 gCurrentRegion;
 extern u32 __osPiAccessQueueEnabled;
 extern OSViMode osViModePalLan1;
 extern s32 osViClock;
@@ -37,12 +47,13 @@ extern OSViMode osViModeMpalLan1;
 extern OSViContext* __osViCurr;
 extern OSViContext* __osViNext;
 extern OSViMode osViModeFpalLan1;
+extern OSViMode gCustomViModePal60Lan1;
 extern u32 __additional_scanline;
-extern const char gBuildAuthor[];
-extern const char gBuildDate[];
-extern const char gBuildMakeOption[];
-extern const char gBuildGitVersion[];
-extern const char gBuildTeam[];
+extern const char* gBuildAuthor;
+extern const char* gCommitAuthor;
+extern const char* gBuildDate;
+extern const char* gBuildGitVersion;
+extern const char* gCommitGitString;
 extern OSMesgQueue gPiMgrCmdQueue;
 extern OSViMode gViConfigMode;
 extern u8 gViConfigModeType;
@@ -59,53 +70,20 @@ extern ActorOverlay gActorOverlayTable[ACTOR_ID_MAX]; // original name: "actor_d
 extern s32 gMaxActorId; // original name: "MaxProfile"
 extern s32 gDebugCamEnabled; // ENABLE_CAMERA_DEBUGGER
 extern GameStateOverlay gGameStateOverlayTable[GAMESTATE_ID_MAX];
-extern u8 gWeatherMode;
-extern u8 gLightConfigAfterUnderwater;
-extern u8 gInterruptSongOfStorms;
-extern u16 gTimeSpeed;
 extern s32 gZeldaArenaLogSeverity;
 extern MapData gMapDataTable;
 extern s16 gSpoilingItems[3];
 extern s16 gSpoilingItemReverts[3];
-extern FlexSkeletonHeader* gPlayerSkelHeaders[2];
-extern u8 gPlayerModelTypes[PLAYER_MODELGROUP_MAX][PLAYER_MODELGROUPENTRY_MAX];
-extern Gfx* gPlayerLeftHandBgsDLs[];
-extern Gfx* gPlayerLeftHandOpenDLs[];
-extern Gfx* gPlayerLeftHandClosedDLs[];
-extern Gfx* gPlayerLeftHandBoomerangDLs[];
-extern Gfx gCullBackDList[];
-extern Gfx gCullFrontDList[];
+
 extern Gfx gEmptyDL[];
-extern u32 gBitFlags[32];
-extern u16 gEquipMasks[EQUIP_TYPE_MAX];
-extern u16 gEquipNegMasks[EQUIP_TYPE_MAX];
-extern u32 gUpgradeMasks[UPG_MAX];
-extern u8 gEquipShifts[EQUIP_TYPE_MAX];
-extern u8 gUpgradeShifts[UPG_MAX];
-extern u16 gUpgradeCapacities[UPG_MAX][4];
-extern u32 gGsFlagsMasks[4];
-extern u32 gGsFlagsShifts[4];
-extern void* gItemIcons[0x82];
-extern u8 gItemSlots[56];
-extern SceneCmdHandlerFunc gSceneCmdHandlers[SCENE_CMD_ID_MAX];
-extern s16 gLinkObjectIds[2];
-extern u32 gObjectTableSize;
-extern RomFile gObjectTable[OBJECT_ID_MAX];
-extern EntranceInfo gEntranceTable[ENTR_MAX];
-extern SceneTableEntry gSceneTable[SCENE_ID_MAX];
+
 extern u16 gSramSlotOffsets[];
 // 4 16-colors palettes
 extern u64 gMojiFontTLUTs[4][4]; // original name: "moji_tlut"
 extern u64 gMojiFontTex[]; // original name: "font_ff"
-extern KaleidoMgrOverlay gKaleidoMgrOverlayTable[KALEIDO_OVL_MAX];
-extern KaleidoMgrOverlay* gKaleidoMgrCurOvl;
 extern u8 gBossMarkState;
-extern void* gDebugCutsceneScript;
-extern s32 gScreenWidth;
-extern s32 gScreenHeight;
-extern Mtx gMtxClear;
-extern MtxF gMtxFClear;
-#if IS_DEBUG
+
+#if DEBUG_FEATURES
 extern u32 gIsCtrlr2Valid;
 #endif
 extern s16* gWaveSamples[9];
@@ -145,19 +123,17 @@ extern u16 D_801333D0;
 extern Vec3f gSfxDefaultPos;
 extern f32 gSfxDefaultFreqAndVolScale;
 extern s8 gSfxDefaultReverb;
-
-// ENABLE_AUDIO_DEBUGGER
+#if IS_AUDIO_DEBUG_ENABLED
 extern u8 D_801333F0;
 extern u8 gAudioSfxSwapOff;
 extern u8 D_801333F8;
-
+#endif
 extern u8 gSeqCmdWritePos;
 extern u8 gSeqCmdReadPos;
 extern u8 gStartSeqDisabled;
-
-// ENABLE_AUDIO_DEBUGGER
+#if IS_AUDIO_DEBUG_ENABLED
 extern u8 gAudioDebugPrintSeqCmd;
-
+#endif
 extern u8 gSoundModeList[];
 extern u8 gAudioSpecId;
 extern u8 D_80133418;
@@ -170,47 +146,49 @@ extern s32 __osPfsLastChannel;
 extern const TempoData gTempoData;
 extern const AudioHeapInitSizes gAudioHeapInitSizes;
 extern s16 gOcarinaSongItemMap[];
-extern u8 gSoundFontTable[];
+extern AudioTable gSoundFontTable;
 extern u8 gSequenceFontTable[];
 extern u8 gSequenceTable[];
-extern u8 gSampleBankTable[];
+extern AudioTable gSampleBankTable;
 
-extern SaveContext gSaveContext;
-extern RegEditor* gRegEditor;
-
+extern u8 gUseCutsceneCam;
+extern u16 D_8015FCCC;
+extern char D_8015FCD0[20];
+extern u8 D_8015FCE4;
 extern u16 gCamAtSplinePointsAppliedFrame;
 extern u16 gCamEyePointAppliedFrame;
 extern u16 gCamAtPointAppliedFrame;
-extern u8 gUseCutsceneCam;
 
+extern LightningStrike gLightningStrike;
+// TODO: These variables are here for BSS ordering but ideally they should not
+// be extern. This could be fixed by putting more stuff (e.g. struct definitions)
+// between gLightningStrike and gCustomLensFlareOn.
+extern s16 sLightningFlashAlpha;
+extern s16 sSunDepthTestX;
+extern s16 sSunDepthTestY;
 extern u8 gCustomLensFlareOn;
 extern Vec3f gCustomLensFlarePos;
 extern s16 gLensFlareScale;
 extern f32 gLensFlareColorIntensity;
 extern s16 gLensFlareGlareStrength;
-extern LightningStrike gLightningStrike;
 extern MapData* gMapData;
 extern f32 gBossMarkScale;
+extern u32 D_8016139C;
 extern PauseMapMarksData* gLoadedPauseMarkDataTable;
-extern s32 gTransitionTileState;
-extern Color_RGBA8_u32 gVisMonoColor;
+
 extern PreNmiBuff* gAppNmiBufferPtr;
 extern Scheduler gScheduler;
-extern uintptr_t gSegments[NUM_SEGMENTS];
+extern PadMgr gPadMgr;
+extern IrqMgr gIrqMgr;
 
-// ENABLE_SPEEDMETER
-extern volatile OSTime gAudioThreadUpdateTimeTotalPerGfxTask;
-extern volatile OSTime gGfxTaskSentToNextReadyMinusAudioThreadUpdateTime;
-extern volatile OSTime gRSPAudioTimeTotal;
-extern volatile OSTime gRSPGfxTimeTotal;
-extern volatile OSTime gRDPTimeTotal;
-extern volatile OSTime gGraphUpdatePeriod;
-extern volatile OSTime gAudioThreadUpdateTimeStart;
-extern volatile OSTime gAudioThreadUpdateTimeAcc;
-extern volatile OSTime gRSPAudioTimeAcc;
-extern volatile OSTime gRSPGfxTimeAcc;
-extern volatile OSTime gRSPOtherTimeAcc;
-extern volatile OSTime gRDPTimeAcc;
+#if ENABLE_F3DEX3
+extern u8 gF3DEX3TextBuffer[];
+extern volatile s8 gLoadedF3DEX3Version;
+extern volatile s8 gF3DEX3ProfVersion;
+extern volatile s8 gF3DEX3NOCVersion;
+extern s8 gF3DEX3OccMode;
+extern u8 gUseMemsetForZBuffer;
+#endif
 
 extern SfxBankEntry D_8016BAD0[9];
 extern SfxBankEntry D_8016BC80[12];
@@ -231,8 +209,6 @@ extern ActiveSequence gActiveSeqs[4];
 extern AudioContext gAudioCtx;
 extern AudioCustomUpdateFunction gAudioCustomUpdateFunction;
 
-extern u32 __osMalloc_FreeBlockTest_Enable;
-extern Arena gSystemArena;
 extern OSPifRam __osContPifRam;
 extern u8 __osContLastCmd;
 extern u8 __osMaxControllers;
@@ -243,8 +219,10 @@ extern u64 gGfxSPTaskOutputBuffer[0x3000]; // 0x18000 bytes
 extern u64 gGfxSPTaskYieldBuffer[OS_YIELD_DATA_SIZE / sizeof(u64)]; // 0xC00 bytes
 extern u64 gGfxSPTaskStack[SP_DRAM_STACK_SIZE64]; // 0x400 bytes
 extern GfxPool gGfxPools[2]; // 0x24820 bytes
-extern u8 gAudioHeap[0x38000]; // 0x38000 bytes
+extern u8 gAudioHeap[AUDIO_HEAP_SIZE]; // 0x38000 bytes
 
 extern Rainbow gRainbow;
+
+extern u8 gRDPTimingsExist; // This variable being 1 indicates that the game is running on console or an extremely accurate emulator that can be affected by RDP lag.
 
 #endif

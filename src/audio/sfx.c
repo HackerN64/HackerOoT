@@ -2,7 +2,7 @@
 #include "global.h"
 #include "terminal.h"
 
-typedef struct {
+typedef struct SfxRequest {
     /* 0x00 */ u16 sfxId;
     /* 0x04 */ Vec3f* pos;
     /* 0x08 */ u8 token;
@@ -11,7 +11,7 @@ typedef struct {
     /* 0x14 */ s8* reverbAdd;
 } SfxRequest; // size = 0x18
 
-typedef struct {
+typedef struct UnusedBankLerp {
     /* 0x00 */ f32 value;
     /* 0x04 */ f32 target;
     /* 0x08 */ f32 step;
@@ -34,10 +34,11 @@ u8 sCurSfxPlayerChannelIndex;
 u8 gSfxBankMuted[7];
 UnusedBankLerp sUnusedBankLerp[7];
 
-//! TODO: audio debug feature?
+#if DEBUG_FEATURES
 u16 gAudioSfxSwapSource[10];
 u16 gAudioSfxSwapTarget[10];
 u8 gAudioSfxSwapMode[10];
+#endif
 
 void Audio_SetSfxBanksMute(u16 muteMask) {
     u8 bankId;
@@ -73,7 +74,8 @@ void Audio_PlaySfxGeneral(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* 
     if (!gSfxBankMuted[SFX_BANK_SHIFT(sfxId)]) {
         req = &sSfxRequests[gSfxRequestWriteIndex];
 
-        if (IS_AUDIO_DEBUG_ENABLED && !gAudioSfxSwapOff) {
+#if IS_AUDIO_DEBUG_ENABLED
+        if (!gAudioSfxSwapOff) {
             for (i = 0; i < 10; i++) {
                 if (sfxId == gAudioSfxSwapSource[i]) {
                     if (gAudioSfxSwapMode[i] == 0) { // "SWAP"
@@ -92,6 +94,7 @@ void Audio_PlaySfxGeneral(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* 
                 }
             }
         }
+#endif
 
         req->sfxId = sfxId;
         req->pos = pos;
@@ -169,10 +172,12 @@ void Audio_ProcessSfxRequest(void) {
 
     bankId = SFX_BANK(req->sfxId);
 
-    if (IS_AUDIO_DEBUG_ENABLED && ((1 << bankId) & D_801333F0)) {
+#if IS_AUDIO_DEBUG_ENABLED
+    if ((1 << bankId) & D_801333F0) {
         AudioDebug_ScrPrt("SE", req->sfxId);
         bankId = SFX_BANK(req->sfxId);
     }
+#endif
 
     count = 0;
     index = gSfxBanks[bankId][0].next;
@@ -336,8 +341,11 @@ void Audio_ChooseActiveSfx(u8 bankId) {
                                               "flag:%04X ptr:%08X pos:%f-%f-%f" VT_RST "\n",
                            entry->sfxId, entry->posX, entry->posZ, *entry->posX, *entry->posY, *entry->posZ);
                 }
+                entry->priority = (u32)entry->dist + (SQ(0xFF - sfxImportance) * SQ(76));
+#if OOT_VERSION < NTSC_1_1 || PLATFORM_GC
                 temp3 = entry->sfxId; // fake
-                entry->priority = (u32)entry->dist + (SQ(0xFF - sfxImportance) * SQ(76)) + temp3 - temp3;
+                entry->priority = entry->priority + temp3 - temp3;
+#endif
                 if (*entry->posZ < 0.0f) {
                     entry->priority += (s32)(-*entry->posZ * 6.0f);
                 }
@@ -525,7 +533,7 @@ void Audio_StopSfxByBank(u8 bankId) {
     Audio_RemoveMatchingSfxRequests(0, &cmp);
 }
 
-void func_800F8884(u8 bankId, Vec3f* pos) {
+void Audio_RemoveSfxFromBankByPos(u8 bankId, Vec3f* pos) {
     SfxBankEntry* entry;
     u8 entryIndex = gSfxBanks[bankId][0].next;
     u8 prevEntryIndex = 0;
@@ -549,7 +557,7 @@ void func_800F8884(u8 bankId, Vec3f* pos) {
 void Audio_StopSfxByPosAndBank(u8 bankId, Vec3f* pos) {
     SfxBankEntry cmp;
 
-    func_800F8884(bankId, pos);
+    Audio_RemoveSfxFromBankByPos(bankId, pos);
     cmp.sfxId = bankId << 12;
     cmp.posX = &pos->x;
     Audio_RemoveMatchingSfxRequests(1, &cmp);
@@ -560,7 +568,7 @@ void Audio_StopSfxByPos(Vec3f* pos) {
     SfxBankEntry cmp;
 
     for (i = 0; i < ARRAY_COUNT(gSfxBanks); i++) {
-        func_800F8884(i, pos);
+        Audio_RemoveSfxFromBankByPos(i, pos);
     }
     cmp.posX = &pos->x;
     Audio_RemoveMatchingSfxRequests(2, &cmp);
@@ -731,7 +739,8 @@ void Audio_ResetSfx(void) {
         gSfxBanks[bankId][i].next = 0xFF;
     }
 
-    if (IS_AUDIO_DEBUG_ENABLED && D_801333F8 == 0) {
+#if IS_AUDIO_DEBUG_ENABLED
+    if (D_801333F8 == 0) {
         for (bankId = 0; bankId < 10; bankId++) {
             gAudioSfxSwapSource[bankId] = 0;
             gAudioSfxSwapTarget[bankId] = 0;
@@ -739,4 +748,5 @@ void Audio_ResetSfx(void) {
         }
         D_801333F8++;
     }
+#endif
 }

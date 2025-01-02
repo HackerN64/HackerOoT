@@ -2,7 +2,7 @@
 #include "terminal.h"
 #include "z64environment.h"
 
-typedef struct {
+typedef struct SkyboxFaceParams {
     /* 0x000 */ s32 xStart;
     /* 0x004 */ s32 yStart;
     /* 0x008 */ s32 zStart;
@@ -69,10 +69,10 @@ s32 Skybox_CalculateFace256(SkyboxContext* skyboxCtx, Vtx* roomVtx, s32 roomVtxS
     s32 k;
     u16 index;
     s16 m;
+    s16 l;
     s16 ult;
     s16 uls;
     s16 vtxIdx;
-    s16 l;
     s32 xPoints[9 * 5];
     s32 yPoints[9 * 5];
     s32 zPoints[9 * 5];
@@ -303,6 +303,8 @@ s32 Skybox_CalculateFace128(SkyboxContext* skyboxCtx, Vtx* roomVtx, s32 roomVtxS
             }
             break;
     }
+
+    if (1) {}
 
     // Select gfx buffer
     skyboxCtx->gfx = &skyboxCtx->dListBuf[2 * faceNum][0];
@@ -1042,17 +1044,10 @@ void Skybox_Init(GameState* state, SkyboxContext* skyboxCtx, s16 skyboxId) {
             skyboxCtx->dListBuf = GAME_STATE_ALLOC(state, 12 * 150 * sizeof(Gfx), "../z_vr_box.c", 1643);
             ASSERT(skyboxCtx->dListBuf != NULL, "vr_box->dpList != NULL", "../z_vr_box.c", 1644);
 
-            if (skyboxId == SKYBOX_CUTSCENE_MAP) {
-                skyboxCtx->roomVtx = GAME_STATE_ALLOC(state, 6 * 32 * sizeof(Vtx), "../z_vr_box.c", 1648);
-                ASSERT(skyboxCtx->roomVtx != NULL, "vr_box->roomVtx != NULL", "../z_vr_box.c", 1649);
-
-                Skybox_Calculate128(skyboxCtx, 6); // compute all 6 faces
-            } else {
-                skyboxCtx->roomVtx = GAME_STATE_ALLOC(state, 5 * 32 * sizeof(Vtx), "../z_vr_box.c", 1653);
-                ASSERT(skyboxCtx->roomVtx != NULL, "vr_box->roomVtx != NULL", "../z_vr_box.c", 1654);
-
-                Skybox_Calculate128(skyboxCtx, 5); // compute 5 faces, excludes the bottom face
-            }
+            skyboxCtx->roomVtx = GAME_STATE_ALLOC(state, 6 * 32 * sizeof(Vtx), "../z_vr_box.c", 1648);
+            ASSERT(skyboxCtx->roomVtx != NULL, "vr_box->roomVtx != NULL", "../z_vr_box.c", 1649);
+            // compute all 6 faces, may be drawn black or with a texture (see Skybox_Draw)
+            Skybox_Calculate128(skyboxCtx, 6);
         }
         PRINTF(VT_RST);
     }

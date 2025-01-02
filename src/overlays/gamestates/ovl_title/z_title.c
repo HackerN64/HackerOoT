@@ -6,46 +6,16 @@
 
 #include "global.h"
 #include "alloca.h"
+#include "versions.h"
+#include "helpers.h"
+
+#if PLATFORM_N64
+#include "cic6105.h"
+#include "n64dd.h"
+#endif
+
 #include "assets/textures/nintendo_rogo_static/nintendo_rogo_static.h"
 
-void ConsoleLogo_PrintBuildInfo(Gfx** gfxP) {
-    if (IS_DEBUG) {
-        Gfx* gfx;
-        GfxPrint* printer;
-
-        gfx = *gfxP;
-        gfx = Gfx_SetupDL_28(gfx);
-        printer = alloca(sizeof(GfxPrint));
-        GfxPrint_Init(printer);
-        GfxPrint_Open(printer, gfx);
-
-        GfxPrint_SetColor(printer, 255, 255, 255, 255);
-
-        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 22);
-        GfxPrint_Printf(printer, "[Author:%s]", gBuildAuthor);
-
-        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 23);
-        GfxPrint_Printf(printer, "[Date:%s]", gBuildDate);
-
-        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 24);
-        GfxPrint_Printf(printer, "[Version:%s]", gBuildGitVersion);
-
-        GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 25);
-        GfxPrint_Printf(printer, "[Build Option:%s]", gBuildMakeOption);
-
-        if (ENABLE_F3DEX3) {
-            GfxPrint_SetPos(printer, WIDE_MULT(7, WIDE_GET_16_9), 27);
-            GfxPrint_Printf(printer, "Powered by F3DEX3!");
-        }
-
-        gfx = GfxPrint_Close(printer);
-        GfxPrint_Destroy(printer);
-        *gfxP = gfx;
-    }
-}
-
-// Note: In other rom versions this function also updates unk_1D4, coverAlpha, addAlpha, visibleDuration to calculate
-// the fade-in/fade-out + the duration of the n64 logo animation
 void ConsoleLogo_Calc(ConsoleLogoState* this) {
     if (SKIP_N64_BOOT_LOGO) {
         this->exit = true;
@@ -121,7 +91,7 @@ void ConsoleLogo_Draw(ConsoleLogoState* this) {
     Matrix_Scale(1.0, 1.0, 1.0, MTXMODE_APPLY);
     Matrix_RotateZYX(0, sTitleRotY, 0, MTXMODE_APPLY);
 
-    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(this->state.gfxCtx, "../z_title.c", 424), G_MTX_LOAD);
+    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, this->state.gfxCtx, "../z_title.c", 424);
     gSPDisplayList(POLY_OPA_DISP++, gNintendo64LogoDL);
     Gfx_SetupDL_39Opa(this->state.gfxCtx);
     gDPPipeSync(POLY_OPA_DISP++);
@@ -159,20 +129,24 @@ void ConsoleLogo_Main(GameState* thisx) {
 
     gSPSegment(POLY_OPA_DISP++, 0, NULL);
     gSPSegment(POLY_OPA_DISP++, 1, this->staticSegment);
-    Gfx_SetupFrame(this->state.gfxCtx, 0, 0, 0);
+    Gfx_SetupFrame(this->state.gfxCtx, true, 0, 0, 0);
+    Gfx_ClearZBuffer(this->state.gfxCtx);
     ConsoleLogo_Calc(this);
     ConsoleLogo_Draw(this);
 
-    if (IS_DEBUG) {
-        ConsoleLogo_PrintBuildInfo(&POLY_OPA_DISP);
-    }
-
     if (this->exit) {
-        gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-        gSaveContext.natureAmbienceId = 0xFF;
-        gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
+#if ENABLE_HACKER_DEBUG
+#if BOOT_TO_SCENE
+        Helpers_LoadDefinedScene(thisx),
+#elif IS_DEBUG_BOOT_ENABLED && BOOT_TO_DEBUG_OPENING
         this->state.running = false;
-        SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, TitleSetupState);
+        SET_NEXT_GAMESTATE(&this->state, DebugOpening_Init, DebugOpeningState);
+#else
+        Helpers_LoadTitleScreen(thisx);
+#endif
+#else
+        Helpers_LoadTitleScreen(thisx);
+#endif
     }
 
     CLOSE_DISPS(this->state.gfxCtx, "../z_title.c", 541);
@@ -181,12 +155,36 @@ void ConsoleLogo_Main(GameState* thisx) {
 void ConsoleLogo_Destroy(GameState* thisx) {
     ConsoleLogoState* this = (ConsoleLogoState*)thisx;
 
+#if PLATFORM_N64
+    if (this->unk_1E0) {
+        if (func_801C7818() != 0) {
+            func_800D31A0();
+        }
+        func_801C7268();
+    }
+#endif
+
     Sram_InitSram(&this->state, &this->sramCtx);
+
+#if PLATFORM_N64
+    func_800014E8();
+#endif
 }
 
 void ConsoleLogo_Init(GameState* thisx) {
     u32 size = (uintptr_t)_nintendo_rogo_staticSegmentRomEnd - (uintptr_t)_nintendo_rogo_staticSegmentRomStart;
     ConsoleLogoState* this = (ConsoleLogoState*)thisx;
+
+#if PLATFORM_N64
+    if ((D_80121210 != 0) && (D_80121211 != 0) && (D_80121212 == 0)) {
+        if (func_801C7658() != 0) {
+            func_800D31A0();
+        }
+        this->unk_1E0 = true;
+    } else {
+        this->unk_1E0 = false;
+    }
+#endif
 
     this->staticSegment = GAME_STATE_ALLOC(&this->state, size, "../z_title.c", 611);
     PRINTF("z_title.c\n");
@@ -198,7 +196,17 @@ void ConsoleLogo_Init(GameState* thisx) {
     this->state.main = ConsoleLogo_Main;
     this->state.destroy = ConsoleLogo_Destroy;
     this->exit = false;
+
+#if OOT_VERSION < GC_US
+    if (!(gPadMgr.validCtrlrsMask & 1)) {
+        gSaveContext.fileNum = 0xFEDC;
+    } else {
+        gSaveContext.fileNum = 0xFF;
+    }
+#else
     gSaveContext.fileNum = 0xFF;
+#endif
+
     Sram_Alloc(&this->state, &this->sramCtx);
     this->ult = 0;
     this->timer = 20;
