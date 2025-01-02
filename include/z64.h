@@ -126,19 +126,19 @@
 #define THREAD_ID_GRAPH       4
 #define THREAD_ID_SCHED       5
 #define THREAD_ID_PADMGR      7
+#define THREAD_ID_N64DD       8
+#define THREAD_ID_DDMSG       9
+#define THREAD_ID_AUDIOMGR   10
 
 #if ENABLE_PROFILER
-#define THREAD_ID_PIMGR       8
-#define THREAD_ID_VIMGR       9
+#define THREAD_ID_PIMGR       11
+#define THREAD_ID_VIMGR       12
 #else
 // Not sure why these are zero in vanilla.
 #define THREAD_ID_PIMGR       0
 #define THREAD_ID_VIMGR       0
 #endif
 
-#define THREAD_ID_N64DD       8
-#define THREAD_ID_DDMSG       9
-#define THREAD_ID_AUDIOMGR   10
 #define THREAD_ID_DMAMGR     18
 #define THREAD_ID_IRQMGR     19
 

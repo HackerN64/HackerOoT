@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #include "libc/stdbool.h"
+#include "versions.h"
 
 /**
  * All HackerOoT config headers included into one.

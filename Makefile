@@ -45,12 +45,12 @@ MIPS_BINUTILS_PREFIX ?= mips-linux-gnu-
 N64_EMULATOR ?=
 # Set to override game region in the ROM header (options: JP, US, EU). This can be used to build a fake US version
 # of the debug ROM for better emulator compatibility, or to build US versions of NTSC N64 ROMs.
-# REGION ?= US
+REGION ?= US
 # Set to enable debug features regardless of ROM version.
 # Note that by enabling debug features on non-debug ROM versions, some debug ROM specific assets will not be included.
 # This means the debug test scenes and some debug graphics in the elf_msg actors will not work as expected.
 # This may also be used to disable debug features on debug ROMs by setting DEBUG_FEATURES to 0
-# DEBUG_FEATURES ?= 1
+DEBUG_FEATURES ?= 1
 
 PROJECT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD_DIR := build/$(VERSION)
@@ -67,7 +67,7 @@ CPPFLAGS ?=
 CFLAGS_IDO ?=
 CPP_DEFINES ?=
 
-# Version-specific settings (DEBUG_FEATURES is set in `.make_hackeroot` instead of per-version here)
+# Version-specific settings
 REGIONAL_CHECKSUM := 0
 ifeq ($(VERSION),ntsc-1.0)
   REGIONAL_CHECKSUM := 1
@@ -137,13 +137,22 @@ else
   $(error Unsupported platform $(PLATFORM))
 endif
 
+# Optimization flags
+OPTFLAGS := -Os
+
 ifeq ($(DEBUG_FEATURES),1)
   CPP_DEFINES += -DDEBUG_FEATURES=1
-  OPTFLAGS := -O2
 else
   CPP_DEFINES += -DNDEBUG -DDEBUG_FEATURES=0
-  OPTFLAGS := -O2 -g3
+  OPTFLAGS += -g3
 endif
+
+# Override optimization flags if using GDB
+ifeq ($(ARES_GDB),1)
+  OPTFLAGS := -Og -ggdb3
+endif
+
+OPTFLAGS += -ggdb3 -ffast-math -fno-unsafe-math-optimizations
 
 ifeq ($(OS),Windows_NT)
     DETECTED_OS=windows
@@ -509,6 +518,8 @@ $(ROM): $(ELF)
 	@$(PRINT) "==== Build Options ====$(NO_COL)\n"
 	@$(PRINT) "${GREEN}OoT Version: $(BLUE)$(VERSION)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Code Version: $(BLUE)$(PACKAGE_VERSION)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}Debug Build: $(BLUE)$(DEBUG_FEATURES)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}Opt. Flags: $(BLUE)$(OPTFLAGS)$(NO_COL)\n"
 
 $(ROMC): $(ROM) $(ELF) $(BUILD_DIR)/compress_ranges.txt
 ifeq ($(COMPRESSION),yaz)

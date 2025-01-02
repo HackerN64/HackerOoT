@@ -13,21 +13,11 @@
 /*****************
  * config_debug.h
  */
-#if !OOT_DEBUG
+#if !DEBUG_FEATURES
     #undef SKIP_N64_BOOT_LOGO
     #undef BOOT_TO_SCENE
     #undef BOOT_TO_SCENE_NEW_GAME_ONLY
     #undef BOOT_TO_FILE_SELECT
-    #undef DEBUG_FEATURES
-
-    #define SKIP_N64_BOOT_LOGO false
-    #define BOOT_TO_SCENE false
-    #define BOOT_TO_SCENE_NEW_GAME_ONLY false
-    #define BOOT_TO_FILE_SELECT false
-    #define DEBUG_FEATURES false
-#endif
-
-#if !DEBUG_FEATURES
     #undef SHOW_CS_INFOS
     #undef SHOW_INPUT_DISPLAY
     #undef SHOW_TIME_INFOS
@@ -51,6 +41,10 @@
     #undef ENABLE_HACKER_DEBUG
     #undef ENABLE_PROFILER
 
+    #define SKIP_N64_BOOT_LOGO false
+    #define BOOT_TO_SCENE false
+    #define BOOT_TO_SCENE_NEW_GAME_ONLY false
+    #define BOOT_TO_FILE_SELECT false
     #define SHOW_CS_INFOS false
     #define SHOW_INPUT_DISPLAY false
     #define SHOW_TIME_INFOS false
@@ -117,7 +111,6 @@
     #define ENABLE_DEBUG_HEAP true
 #endif
 
-
 /*****************
  * config_game.h
  */
@@ -150,6 +143,15 @@
 #error "ENABLE_PROFILER requires ENABLE_HACKER_DEBUG"
 #endif
 
+// Temporary
+#if OOT_VERSION != GC_EU_MQ_DBG && ENABLE_PROFILER
+#error "The profiler isn't supported yet on the other versions."
+#endif
+
+#if OOT_VERSION != GC_EU_MQ_DBG && ENABLE_F3DEX3
+#error "F3DEX3 isn't supported yet on the other versions."
+#endif
+
 /**
  * Game
 */
@@ -171,7 +173,7 @@
 #define IS_MAP_SELECT_ENABLED (DEBUG_FEATURES && ENABLE_MAP_SELECT)
 #define IS_DEBUG_SAVE_ENABLED (DEBUG_FEATURES && ENABLE_DEBUG_SAVE)
 #define CAN_INCLUDE_TEST_SCENES (DEBUG_ASSETS && INCLUDE_TEST_SCENES)
-#define CAN_INCLUDE_EXAMPLE_SCENE (DEBUG_ASSETS && INCLUDE_EXAMPLE_SCENE)
+#define CAN_INCLUDE_EXAMPLE_SCENE (DEBUG_FEATURES && INCLUDE_EXAMPLE_SCENE)
 
 // In-game editors
 #define IS_INV_EDITOR_ENABLED (DEBUG_FEATURES && ENABLE_INV_EDITOR)

@@ -25,20 +25,10 @@ endif
 # Default value: `0`
 ARES_GDB := 0
 
-# Toggle debug features. Make sure to set this to 0 when you release your mod.
-# Default value: `0`
-DEBUG_FEATURES := 0
-
 # Compression algorithm. Valid algorithms are 'yaz', 'lzo' and 'aplib'
 # Default value: `yaz`
 COMPRESSION ?= yaz
 COMPRESSION_TYPE ?= $(shell echo $(COMPRESSION) | tr '[:lower:]' '[:upper:]')
-
-# Set the game's region
-REGION := NULL
-
-# Set the optimization level
-OPTFLAGS := -Os
 
 # Platform compatibility flags
 # Default value: (nothing)
@@ -61,12 +51,6 @@ endif
 
 # Define author and package version for every OoT version
 CPP_DEFINES += -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DCOMPRESS_$(COMPRESSION_TYPE)=1
-OPTFLAGS += -ffast-math -fno-unsafe-math-optimizations
-
-# Override optimization flags if using GDB
-ifeq ($(ARES_GDB),1)
-	OPTFLAGS := -Og -ggdb3
-endif
 
 #### Tools ####
 

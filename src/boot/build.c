@@ -4,7 +4,7 @@
 #define STRINGIFY(s) #s
 #define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)
 
-#if OOT_DEBUG
+#if DEBUG_FEATURES
 char const gBuildMakeOption[] = "DEBUG";
 #else
 char const gBuildMakeOption[] = "RELEASE";
