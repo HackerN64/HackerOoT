@@ -11,7 +11,7 @@ struct GameState;
 struct GraphicsContext;
 struct LightContext;
 
-typedef enum {
+typedef enum SkyboxId {
     /* 0x00 */ SKYBOX_NONE,
     /* 0x01 */ SKYBOX_NORMAL_SKY,
     /* 0x02 */ SKYBOX_BAZAAR,
@@ -42,7 +42,7 @@ typedef enum {
     /* 0x27 */ SKYBOX_UNSET_27 = 39
 } SkyboxId;
 
-typedef enum {
+typedef enum SkyboxDrawType {
     /* 0 */ SKYBOX_DRAW_128,       // 128x128 top/bottom faces, 128x64 side faces
     /* 1 */ SKYBOX_DRAW_256_4FACE, // 256x256 all side faces with per-face palettes
     /* 2 */ SKYBOX_DRAW_256_3FACE  // 256x256 3/4 side faces with per-face palettes
@@ -60,7 +60,7 @@ typedef struct SkyboxContext {
     /* 0x150 */ char unk_150[0x10];
 } SkyboxContext; // size = 0x160
 
-typedef struct {
+typedef struct SkyboxFile {
     /* 0x00 */ RomFile file;
     /* 0x08 */ RomFile palette;
 } SkyboxFile; // size = 0x10

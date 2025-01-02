@@ -12,12 +12,12 @@
 
 #define FLAGS ACTOR_FLAG_4
 
-typedef struct {
+typedef struct EnfHGPainting {
     /* 0x00 */ Vec3f pos;
     /* 0x0C */ s16 yRot;
-} EnfHGPainting; // size = 0x10;
+} EnfHGPainting; // size = 0x10
 
-typedef enum {
+typedef enum EnfHGIntroState {
     /*  0 */ INTRO_WAIT,
     /*  1 */ INTRO_START,
     /*  2 */ INTRO_FENCE,
@@ -45,7 +45,7 @@ void EnfHG_Damage(EnfHG* this, PlayState* play);
 void EnfHG_Retreat(EnfHG* this, PlayState* play);
 void EnfHG_Done(EnfHG* this, PlayState* play);
 
-ActorInit En_fHG_InitVars = {
+ActorProfile En_fHG_Profile = {
     /**/ ACTOR_EN_FHG,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -651,7 +651,7 @@ void EnfHG_Retreat(EnfHG* this, PlayState* play) {
         BossGanondrof* bossGnd = (BossGanondrof*)this->actor.parent;
         s16 paintingIdxReal;
         s16 paintingIdxFake;
-        Actor* child;
+        UNUSED_NDEBUG Actor* child;
 
         if (this->actor.params != GND_REAL_BOSS) {
             this->killActor = true;

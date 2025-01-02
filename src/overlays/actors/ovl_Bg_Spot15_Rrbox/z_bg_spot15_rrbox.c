@@ -25,7 +25,7 @@ void func_808B44CC(BgSpot15Rrbox* this, PlayState* play);
 
 static s16 D_808B4590 = 0;
 
-ActorInit Bg_Spot15_Rrbox_InitVars = {
+ActorProfile Bg_Spot15_Rrbox_Profile = {
     /**/ ACTOR_BG_SPOT15_RRBOX,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -63,7 +63,7 @@ void func_808B3960(BgSpot15Rrbox* this, PlayState* play, CollisionHeader* collis
     CollisionHeader_GetVirtual(collision, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     if (this->dyna.bgId == BG_ACTOR_MAX) {
         s32 pad2;
 
@@ -126,7 +126,7 @@ void BgSpot15Rrbox_Init(Actor* thisx, PlayState* play) {
     func_808B3960(this, play, &gLonLonMilkCrateCol, 0);
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
     func_808B3A34(this);
-    if (Flags_GetSwitch(play, (this->dyna.actor.params & 0x3F))) {
+    if (Flags_GetSwitch(play, PARAMS_GET_U(this->dyna.actor.params, 0, 6))) {
         func_808B44B8(this, play);
         this->dyna.actor.world.pos = D_808B45C4[D_808B4590];
         D_808B4590++;

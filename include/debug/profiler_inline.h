@@ -17,7 +17,7 @@ static inline void Profiler_RSPStart(u32 type, bool isFirstStartOfMainGfxTask){
     u8 eventType;
     if(isFirstStartOfMainGfxTask){
         activeProfilerState->traceEndTime = t;
-        
+
         {
             u32 prevInt = __osDisableInt();
             // Atomically swap last and active, and reset the important counter.
@@ -27,14 +27,14 @@ static inline void Profiler_RSPStart(u32 type, bool isFirstStartOfMainGfxTask){
             activeProfilerState->numEvents = 0;
             __osRestoreInt(prevInt);
         }
-        
+
 #if ENABLE_F3DEX3
         activeProfilerState->f3dex3Version = gLoadedF3DEX3Version;
 #endif
         activeProfilerState->traceStartTime = t;
-        
+
         osDpSetStatus(DPC_CLR_CLOCK_CTR | DPC_CLR_CMD_CTR | DPC_CLR_PIPE_CTR | DPC_CLR_TMEM_CTR);
-        
+
         eventType = PROFILER_EVENT_TYPE_MAINGFXSTART;
     }else if(type == M_AUDTASK){
         eventType = PROFILER_EVENT_TYPE_RSPAUDIOSTART;

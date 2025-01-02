@@ -44,7 +44,7 @@ void DemoSa_DrawNothing(DemoSa* this, PlayState* play);
 void DemoSa_DrawOpa(DemoSa* this, PlayState* play);
 void DemoSa_DrawXlu(DemoSa* this, PlayState* play);
 
-typedef enum {
+typedef enum SariaEyeState {
     /* 0 */ SARIA_EYE_OPEN,
     /* 1 */ SARIA_EYE_HALF,
     /* 2 */ SARIA_EYE_CLOSED,
@@ -52,7 +52,7 @@ typedef enum {
     /* 4 */ SARIA_EYE_SAD
 } SariaEyeState;
 
-typedef enum {
+typedef enum SariaMouthState {
     /* 0 */ SARIA_MOUTH_CLOSED2,
     /* 1 */ SARIA_MOUTH_SUPRISED,
     /* 2 */ SARIA_MOUTH_CLOSED,
@@ -69,7 +69,7 @@ static void* sMouthTextures[] = {
     gSariaMouthSmilingOpenTex, gSariaMouthFrowningTex,
 };
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 static u32 D_80990108 = 0;
 #endif
 
@@ -87,7 +87,7 @@ static DemoSaDrawFunc sDrawFuncs[] = {
     DemoSa_DrawXlu,
 };
 
-ActorInit Demo_Sa_InitVars = {
+ActorProfile Demo_Sa_Profile = {
     /**/ ACTOR_DEMO_SA,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -128,7 +128,7 @@ void DemoSa_SetMouthIndex(DemoSa* this, s16 mouthIndex) {
     this->mouthIndex = mouthIndex;
 }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void func_8098E530(DemoSa* this) {
     this->action = 7;
     this->drawConfig = 0;
@@ -444,7 +444,7 @@ void func_8098F050(DemoSa* this, PlayState* play) {
 
 void func_8098F0E8(DemoSa* this, PlayState* play) {
     func_8098EEA8(this, play);
-#if IS_DEBUG
+#if DEBUG_FEATURES
     func_8098E554(this, play);
 #endif
 }
@@ -454,7 +454,7 @@ void func_8098F118(DemoSa* this, PlayState* play) {
     DemoSa_UpdateSkelAnime(this);
     func_8098E480(this);
     func_8098EEFC(this, play);
-#if IS_DEBUG
+#if DEBUG_FEATURES
     func_8098E554(this, play);
 #endif
 }
@@ -464,7 +464,7 @@ void func_8098F16C(DemoSa* this, PlayState* play) {
     DemoSa_UpdateSkelAnime(this);
     func_8098EDB0(this);
     func_8098F050(this, play);
-#if IS_DEBUG
+#if DEBUG_FEATURES
     func_8098E554(this, play);
 #endif
 }

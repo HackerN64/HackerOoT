@@ -26,7 +26,7 @@
     Audio_ProcessSeqCmd((SEQCMD_OP_SET_SEQPLAYER_VOLUME << 28) | ((u8)(seqPlayerIndex) << 24) | \
                         ((u8)(duration) << 16) | ((u8)((volume)*127.0f)));
 
-typedef struct {
+typedef struct SeqRequest {
     /* 0x0 */ u8 seqId;
     /* 0x1 */ u8 priority; // higher values have higher priority
 } SeqRequest;              // size = 0x2
@@ -43,7 +43,7 @@ void Audio_StartSequence(u8 seqPlayerIndex, u8 seqId, u8 seqArgs, u16 fadeInDura
 
     if (!gStartSeqDisabled || (seqPlayerIndex == SEQ_PLAYER_SFX)) {
         seqArgs &= 0x7F;
-        if (IS_DEBUG && (seqArgs == 0x7F)) {
+        if (DEBUG_FEATURES && (seqArgs == 0x7F)) {
             // `fadeInDuration` interpreted as seconds, 60 is refresh rate and does not account for PAL
             skipTicks = (fadeInDuration >> 3) * 60 * gAudioCtx.audioBufferParameters.ticksPerUpdate;
             AUDIOCMD_GLOBAL_INIT_SEQPLAYER_SKIP_TICKS((u32)seqPlayerIndex, (u32)seqId, skipTicks);
@@ -103,11 +103,12 @@ void Audio_ProcessSeqCmd(u32 cmd) {
     f32 freqScaleTarget;
     s32 pad;
 
-    if (IS_AUDIO_DEBUG_ENABLED && gAudioDebugPrintSeqCmd &&
-        (cmd & SEQCMD_OP_MASK) != (SEQCMD_OP_SET_SEQPLAYER_IO << 28)) {
+#if IS_AUDIO_DEBUG_ENABLED
+    if (gAudioDebugPrintSeqCmd && (cmd & SEQCMD_OP_MASK) != (SEQCMD_OP_SET_SEQPLAYER_IO << 28)) {
         AudioDebug_ScrPrt("SEQ H", (cmd >> 16) & 0xFFFF);
         AudioDebug_ScrPrt("    L", cmd & 0xFFFF);
     }
+#endif
 
     op = cmd >> 28;
     seqPlayerIndex = (cmd & 0xF000000) >> 24;

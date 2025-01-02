@@ -1686,7 +1686,7 @@ typedef struct {
             { ar, ag, ab }, 0,                  \
         }}                                      \
     }
-    
+
 #define gdSPDefLights9(ar, ag, ab,              \
                        r1, g1, b1, x1, y1, z1,  \
                        r2, g2, b2, x2, y2, z2,  \
@@ -2391,7 +2391,7 @@ _DW({                                               \
  * clear the color framebuffer or Z-buffer faster than the RDP can in fill mode.
  * SPMemset overwrites the DMEM vertex buffer, so vertices loaded before this
  * command cannot be used after it (though this would not normally be done).
- * 
+ *
  * dram: Segmented or physical start address. Must be aligned to 16 bytes.
  * value: 16-bit value to fill the memory with. e.g. 0 for color, 0xFFFC for Z.
  * size: Size in bytes to fill, must be nonzero and a multiple of 16 bytes.
@@ -2491,7 +2491,7 @@ _DW({                                       \
     gDma1p((pkt), G_MOVEWORD, data, (offset & 0xFFF), index)
 #define gsMoveWd(    index, offset, data) \
     gsDma1p(      G_MOVEWORD, data, (offset & 0xFFF), index)
-    
+
 #define gMoveHalfwd(pkt, index, offset, data) \
     gDma1p((pkt), G_MOVEWORD, data, (offset & 0xFFF) | G_MW_HALFWORD_FLAG, index)
 #define gsMoveHalfwd(    index, offset, data) \
@@ -2662,7 +2662,7 @@ _DW({                                                        \
  * the given type (ambient, directional, point). They are u16s.
  * You can set each independently or two adjacent values with one moveword.
  * A two-command macro is also provided to set all three values.
- * 
+ *
  * When building the model, you must encode the amount of ambient occlusion at
  * each vertex--effectively the shadow map for the model--in vertex alpha, where
  * 00 means darkest and FF means lightest. Then, the factors set with the
@@ -2671,26 +2671,26 @@ _DW({                                                        \
  * means that in the darkest parts of the model, the ambient light intensity
  * will be reduced by 50%, and in the lightest parts of the model, the ambient
  * light intensity won't be reduced at all.
- * 
+ *
  * The default is:
  * amb = 0xFFFF (ambient light fully affected by vertex alpha)
  * dir = 0xA000 (directional lights 62% affected by vertex alpha)
  * point = 0    (point lights not at all affected by vertex alpha)
- * 
+ *
  * Two reasons to use ambient occlusion rather than darkening the vertex colors:
  * - With ambient occlusion, the geometry can be fully lit up with point and/or
  *   directional lights, depending on your settings here.
  * - Ambient occlusion can be used with cel shading to create areas which are
  *   "darker" for the cel shading thresholds, but still have bright / white
  *   vertex colors.
- * 
+ *
  * Two reasons to use these factors to modify ambient occlusion rather than
  * just manually scaling and offsetting all the vertex alpha values:
  * - To allow the behavior to differ between ambient, directional, and point
  *   lights
  * - To allow the lighting to be adjusted at the scene level on-the-fly
  */
- 
+
 #define gSPAmbOcclusionAmb(pkt, amb)     gMoveHalfwd(pkt, G_MW_FX, G_MWO_AO_AMBIENT, amb)
 #define gsSPAmbOcclusionAmb(amb)        gsMoveHalfwd(     G_MW_FX, G_MWO_AO_AMBIENT, amb)
 #define gSPAmbOcclusionDir(pkt, dir)     gMoveHalfwd(pkt, G_MW_FX, G_MWO_AO_DIRECTIONAL, dir)
@@ -2728,17 +2728,17 @@ _DW({                                         \
  * value. This is useful for making surfaces fade between transparent when
  * viewed straight-on and opaque when viewed at a large angle, or for applying a
  * fake "outline" around the border of meshes.
- * 
+ *
  * If using Fresnel, you need to set the camera world position whenever you set
  * the VP matrix, viewport, etc. See SPCameraWorld.
- * 
+ *
  * The RSP does:
  * s16 dotProduct = dot(vertex normal, camera pos - vertex pos);
  * dotProduct = abs(dotProduct); // 0 = points to side, 7FFF = points at or away
  * s32 factor = ((scale * dotProduct) >> 15) + offset;
  * s16 result = clamp(factor << 8, 0, 7FFF);
  * color_or_alpha = result >> 7;
- * 
+ *
  * At dotMax, color_or_alpha = FF, result = 7F80, factor = 7F
  * At dotMin, color_or_alpha = 00, result = 0, factor = 0
  * 7F = ((scale * dotMax) >> 15) + offset
@@ -2748,7 +2748,7 @@ _DW({                                         \
  *           scale = 3F8000 / (dotMax - dotMin)                <--
  * offset = -(((3F8000 / (dotMax - dotMin)) * dotMin) >> 15)
  * offset = -((7F * dotMin) / (dotMax - dotMin))               <--
- * 
+ *
  * To convert in the opposite direction:
  * ((7F - offset) << 15) / scale = dotMax
  * ((00 - offset) << 15) / scale = dotMin
@@ -2791,13 +2791,13 @@ _DW({                                         \
     gMoveHalfwd(pkt, G_MW_FX, G_MWO_ATTR_OFFSET_Z, z)
 #define gsSPAttrOffsetZ(z) \
     gsMoveHalfwd(G_MW_FX, G_MWO_ATTR_OFFSET_Z, z)
-    
+
 /*
  * Alpha compare culling. Optimization for cel shading, could also be used for
  * other scenarios where lots of tris are being drawn with alpha compare.
- * 
+ *
  * If mode == G_ALPHA_COMPARE_CULL_DISABLE, tris are drawn normally.
- * 
+ *
  * Otherwise:
  * - "vertex alpha" means the post-transform alpha value at each vertex being
  *   sent to the RDP. This may be the original model vertex alpha, fog, light
@@ -2806,7 +2806,7 @@ _DW({                                         \
  *   tris once and want to write all pixels where shade alpha >= thresh. Then
  *   you change color settings and draw tris again, and want to write all other
  *   pixels, i.e. where shade alpha < thresh.
- * 
+ *
  * For the light pass:
  * - Set blend color alpha to thresh
  * - Set CC alpha cycle 1 (or only cycle) to (shade alpha - 0) * tex alpha + 0
@@ -2815,7 +2815,7 @@ _DW({                                         \
  * - Set mode = G_ALPHA_COMPARE_CULL_BELOW in SPAlphaCompareCull, and thresh
  * - The RSP will cull any tris where all three vertex alpha values (i.e. light
  *   level) are < thresh
- * 
+ *
  * For the dark pass:
  * - Set blend color alpha to 0x100 - thresh (yes, not 0xFF - thresh).
  * - Set CC alpha cycle 1 (or only cycle) to (1 - shade alpha) * tex alpha + 0
@@ -2824,7 +2824,7 @@ _DW({                                         \
  * - Set mode = G_ALPHA_COMPARE_CULL_ABOVE in SPAlphaCompareCull, and thresh
  * - The RSP will cull any tris where all three vertex alpha values (i.e. light
  *   level) are >= thresh
- * 
+ *
  * The idea is to cull tris early on the RSP which won't have any of their
  * fragments drawn on the RDP, to save RDP time and memory bandwidth.
  */
@@ -2838,14 +2838,14 @@ _DW({                                         \
 /*
  * Normals mode: How to handle transformation of vertex normals from model to
  * world space for lighting.
- * 
+ *
  * If mode = G_NORMALS_MODE_FAST, transforms normals from model space to world
  * space with the M matrix. This is correct if the object's transformation
  * matrix stack only included translations, rotations, and uniform scale (i.e.
  * same scale in X, Y, and Z); otherwise, if the transformation matrix has
  * nonuniform scale or shear, the lighting on the object will be somewhat
  * distorted.
- * 
+ *
  * If mode = G_NORMALS_MODE_AUTO, transforms normals from model space to world
  * space with M inverse transpose, which renders lighting correctly for the
  * object regardless of its transformation matrix (nonuniform scale or shear is
@@ -2856,7 +2856,7 @@ _DW({                                         \
  * happens effectively once per matrix, which is once per normal object or
  * separated limb or about twice per flex skeleton limb. So in a scene with lots
  * of complex skeletons, this may have a noticeable performance impact.
- * 
+ *
  * If mode = G_NORMALS_MODE_MANUAL, uses M inverse transpose for correct results
  * like G_NORMALS_MODE_AUTO, but it never internally computes M inverse
  * transpose. You have to upload M inverse transpose to the RSP using
@@ -2864,7 +2864,7 @@ _DW({                                         \
  * extra matrix uploads is much smaller than the overlay swaps, so if you can
  * efficiently compute M inverse transpose on the CPU, this may be faster than
  * G_NORMALS_MODE_AUTO.
- * 
+ *
  * Recommended to leave this set to G_NORMALS_MODE_FAST generally, and only set
  * it to G_NORMALS_MODE_AUTO for specific objects at times when they actually
  * have a nonuniform scale. For example, G_NORMALS_MODE_FAST for Mario
@@ -2880,13 +2880,13 @@ _DW({                                         \
  * material display list being run is the same as the last material, the texture
  * loads are automatically skipped the second time as they should already be in
  * TMEM.
- * 
+ *
  * This design generally works, but can break if you call a display list twice
  * but in between change a segment mapping so that a referenced image inside is
  * actually different the two times. In these cases, run the below command
  * between the two calls (e.g. when you change the segment) and the microcode
  * will not skip the second texture loads.
- * 
+ *
  * Internally, a material is defined to start with any set image command, and
  * end on any of the following: call, branch, return, vertex, all tri commands,
  * modify vertex, branch Z/W, or cull. The physical address of the display list
@@ -2895,7 +2895,7 @@ _DW({                                         \
  * address, i.e. we're executing the same material display list as the last
  * material, material cull mode is set. In this mode, load block, load tile, and
  * load TLUT all are skipped. This mode is cleared when the material ends.
- * 
+ *
  * This design has the benefit that it works correctly even with complex
  * materials, e.g. with two CI4 textures (four loads), whereas it would be
  * difficult to implement tracking all these loads separately. Furthermore, a
@@ -2917,7 +2917,7 @@ typedef union {
 
 /*
  * See SPNormalsMode. mtx is the address of a MITMtx (M inverse transpose).
- * 
+ *
  * The matrix values must be scaled down so that the matrix norm is <= 1,
  * i.e. multiplying this matrix by any vector length <= 1 must produce a vector
  * with length <= 1. Normally, M scales things down substantially, so M inverse
@@ -3192,7 +3192,7 @@ _DW({\
  * PosLights2 myLights; // 2 pos + 1 ambient
  * <code to fill in the fields of myLights>
  * gSPSetLights(POLY_OPA_DISP++, 2, myLights);
- * 
+ *
  * If you need to use a pointer, e.g. if the number of lights is variable at
  * runtime:
  * PosLight *lights = memory_allocate((numLights + 1) * sizeof(PosLight));
@@ -3201,7 +3201,7 @@ _DW({\
  * ...
  * lights[numLights].l.col = ambient_color();
  * gSPSetLights(POLY_OPA_DISP++, numLights, *lights); // <- NOTE DEREFERENCE
- * 
+ *
  * If you're wondering why this macro takes a name / dereference instead of a
  * pointer, it's for backwards compatibility.
  */
@@ -3254,7 +3254,7 @@ _DW({ \
     gDma2p((pkt), G_MOVEMEM, (la), sizeof(LookAt), G_MV_LIGHT, 8)
 #define gsSPLookAt(la) \
     gsDma2p(      G_MOVEMEM, (la), sizeof(LookAt), G_MV_LIGHT, 8)
- 
+
 /*
  * These versions are deprecated, please use g*SPLookAt. The two directions
  * cannot be set independently anymore as they both fit within one memory word.
@@ -3301,11 +3301,11 @@ _DW({ \
  * geometry behind it is culled. You should create occlusion plane candidates
  * just behind walls and other large objects, and have your game engine pick
  * the most optimal one every frame to send to the RSP.
- * 
+ *
  * Computing the coefficients for the occlusion plane is far too complicated to
  * explain here. The reference implementation `guOcclusionPlane` is provided
  * separately.
- * 
+ *
  * o is the address of an OcclusionPlane struct
  */
 #define gSPOcclusionPlane(pkt, o) \
@@ -3725,7 +3725,7 @@ _DW({                                                   \
  * the ambient light, 1 is the last directional / point light, etc. The RGB
  * color of the selected light is combined with the alpha specified in this
  * command as word 1 of a RDP command, and word 0 is specified in this command.
- * Specialized versions are provided below for prim color and fog color, 
+ * Specialized versions are provided below for prim color and fog color,
  * because these are the two versions needed for cel shading, but any RDP color
  * command could be specified this way.
  */
@@ -3808,18 +3808,18 @@ _DW({                                                   \
 
 /*
  * Define this to remove syncs from texture loading multi-command macros.
- * 
+ *
  * You should convert your romhack codebase to F3DEX3 without this defined
  * first, then once everything is stable, define it and fix any crashes or
  * graphical issues that arise.
- * 
+ *
  * How the syncs work: load, tile, and pipe sync all delay the RDP by fixed
  * numbers of cycles. It is the smallest number for load, a medium number for
  * tile, and the largest number for pipe. These syncs do NOT wait until
  * something is finished being used; they just stall for a fixed time.
  * (DPFullSync is different and DOES wait for writebacks to memory to be done;
  * that is not considered in this explanation.)
- * 
+ *
  * Syncs always happen after rendering something and before changing some
  * settings. In other words:
  * - gsSP2Triangles(), gsSPTextureRectangle(), etc.
@@ -3827,16 +3827,16 @@ _DW({                                                   \
  * - gsDPSetSomething()
  * You never need the opposite, i.e. you never need a sync after changing
  * settings but before rendering.
- * 
+ *
  * Which sync you use depends on which settings you are changing. If you are
  * doing a texture load (DPLoadBlock or DPLoadTile), you need a load sync (or
  * either of the other syncs which wait for even longer). If you are changing
  * tile settings, you need a tile sync (or pipe sync which is longer). If you
  * are changing CC, othermode, env color, or other things like that, you need
  * a pipe sync.
- * 
+ *
  * Display lists overall should be structured like:
- * 
+ *
  * - ...
  * - previous draw tris
  * - pipe sync
@@ -3846,13 +3846,13 @@ _DW({                                                   \
  * - pipe sync
  * - next material setup
  * - ...
- * 
+ *
  * In SM64, the pipe sync is at the end of each object or sub-object; in OoT
  * it is at the start of each display list. This ends up being the same thing
  * when the display lists are effectively concatenated: you have a pipe sync
  * after each set of rendering things, and before each new set of changing
  * settings.
- * 
+ *
  * If you are doing multitexture and/or CI texture loads, use a different tile
  * for each load, and then you don't need any syncs in the loads. As an extreme
  * example with two CI textures:
@@ -3875,7 +3875,7 @@ _DW({                                                   \
  * hand or they were vanilla DLs not using the multi-command macros, they may
  * need to be updated. (Then again, in that case the syncs are also written by
  * hand, so these syncs changes do not affect them.)
- * 
+ *
  * If you are writing GUI display lists with texture rectangle which look like
  * - load tex
  * - tex rect

@@ -60,12 +60,6 @@
 // #define FIX_GROTTO_CRASH false
 
 /**
- * Disable every debug feature
- * This will enable Jumper pak compatibility
- */
-#define DISABLE_DEBUG_FEATURES false
-
-/**
  * Disable autoscroll on crash debugger
 */
 #define DISABLE_CRASH_DBG_AUTOSCROLL true

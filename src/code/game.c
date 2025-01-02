@@ -1,25 +1,30 @@
 #include "global.h"
+#include "fault.h"
+#include "libc64/os_malloc.h"
 #include "terminal.h"
+#include "versions.h"
+#if PLATFORM_N64
+#include "n64dd.h"
+#endif
 
 VisCvg sVisCvg;
 VisZBuf sVisZBuf;
 VisMono sVisMono;
 ViMode sViMode;
 
-// IS_DEBUG
+#if DEBUG_FEATURES
 FaultClient sGameFaultClient;
 u16 sLastButtonPressed;
 
-#if IS_DEBUG
 void GameState_FaultPrint(void) {
     static char sBtnChars[] = "ABZSuldr*+LRudlr";
     s32 i;
 
     PRINTF("last_button=%04x\n", sLastButtonPressed);
-    FaultDrawer_DrawText(120, 180, "%08x", sLastButtonPressed);
+    Fault_DrawText(120, 180, "%08x", sLastButtonPressed);
     for (i = 0; i < ARRAY_COUNT(sBtnChars); i++) {
         if (sLastButtonPressed & (1 << i)) {
-            FaultDrawer_DrawText((i * 8) + 120, 190, "%c", sBtnChars[i]);
+            Fault_DrawText((i * 8) + 120, 190, "%c", sBtnChars[i]);
         }
     }
 }
@@ -65,14 +70,16 @@ void GameState_SetFBFilter(Gfx** gfxP) {
 }
 
 void func_800C4344(GameState* gameState) {
-#if IS_DEBUG
+#if DEBUG_FEATURES
     Input* selectedInput;
     s32 hexDumpSize;
     u16 inputCompareValue;
 
+#if PLATFORM_GC
     if (R_HREG_MODE == HREG_MODE_HEAP_FREE_BLOCK_TEST) {
         __osMalloc_FreeBlockTest_Enable = R_HEAP_FREE_BLOCK_TEST_TOGGLE;
     }
+#endif
 
     if (R_HREG_MODE == HREG_MODE_INPUT_TEST) {
         selectedInput =
@@ -100,7 +107,7 @@ void func_800C4344(GameState* gameState) {
     gDmaMgrDmaBuffSize = SREG(21) != 0 ? ALIGN16(SREG(21)) : DMAMGR_DEFAULT_BUFSIZE;
     gSystemArenaLogSeverity = HREG(61);
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     gZeldaArenaLogSeverity = HREG(62);
 #endif
 
@@ -115,47 +122,52 @@ void func_800C4344(GameState* gameState) {
         if (R_PRINT_MEMORY_TRIGGER < 0) {
             R_PRINT_MEMORY_TRIGGER = 0;
             hexDumpSize = (u32)(R_PRINT_MEMORY_SIZE == 0 ? 0x100 : R_PRINT_MEMORY_SIZE * 0x10);
-#if IS_DEBUG
+#if DEBUG_FEATURES
             LogUtils_LogHexDump((void*)(0x80000000 + (R_PRINT_MEMORY_ADDR << 8)), hexDumpSize);
 #endif
         }
     }
 #endif
-}
 
-// SHOW_INPUT_DISPLAY
-void GameState_DrawInputDisplay(u16 input, Gfx** gfxP) {
-    if (CAN_SHOW_INPUT_DISPLAY) {
-        static const u16 sInpDispBtnColors[] = {
-            GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),
-            GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1),
-            GPACK_RGBA5551(0, 255, 255, 1),   GPACK_RGBA5551(255, 0, 255, 1),   GPACK_RGBA5551(120, 120, 120, 1),
-            GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1),
-            GPACK_RGBA5551(255, 0, 0, 1),     GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(0, 255, 0, 1),
-            GPACK_RGBA5551(0, 0, 255, 1),
-        };
-        s32 i, j, k;
-        Gfx* gfx = *gfxP;
-
-        gDPPipeSync(gfx++);
-        gDPSetOtherMode(gfx++,
-                        G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_CONV | G_TF_POINT | G_TT_NONE | G_TL_TILE |
-                            G_TD_CLAMP | G_TP_NONE | G_CYC_FILL | G_PM_NPRIMITIVE,
-                        G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2);
-
-        for (i = 0; i < 16; i++) {
-            j = i;
-            if (input & (1 << i)) {
-                gDPSetFillColor(gfx++, (sInpDispBtnColors[i] << 0x10) | sInpDispBtnColors[i]);
-                k = i + 1;
-                gDPFillRectangle(gfx++, (j * 4) + 226, 220, (k * 4) + 225, 223);
-                gDPPipeSync(gfx++);
-            }
-        }
-
-        *gfxP = gfx;
+#if PLATFORM_N64
+    if (D_80121212 != 0) {
+        func_801C7E78();
     }
+#endif
 }
+
+#if CAN_SHOW_INPUT_DISPLAY
+void GameState_DrawInputDisplay(u16 input, Gfx** gfxP) {
+    static const u16 sInpDispBtnColors[] = {
+        GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(255, 255, 0, 1),
+        GPACK_RGBA5551(255, 255, 0, 1),   GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1),
+        GPACK_RGBA5551(0, 255, 255, 1),   GPACK_RGBA5551(255, 0, 255, 1),   GPACK_RGBA5551(120, 120, 120, 1),
+        GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(120, 120, 120, 1),
+        GPACK_RGBA5551(255, 0, 0, 1),     GPACK_RGBA5551(120, 120, 120, 1), GPACK_RGBA5551(0, 255, 0, 1),
+        GPACK_RGBA5551(0, 0, 255, 1),
+    };
+    s32 i, j, k;
+    Gfx* gfx = *gfxP;
+
+    gDPPipeSync(gfx++);
+    gDPSetOtherMode(gfx++,
+                    G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_CONV | G_TF_POINT | G_TT_NONE | G_TL_TILE |
+                        G_TD_CLAMP | G_TP_NONE | G_CYC_FILL | G_PM_NPRIMITIVE,
+                    G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2);
+
+    for (i = 0; i < 16; i++) {
+        j = i;
+        if (input & (1 << i)) {
+            gDPSetFillColor(gfx++, (sInpDispBtnColors[i] << 0x10) | sInpDispBtnColors[i]);
+            k = i + 1;
+            gDPFillRectangle(gfx++, (j * 4) + 226, 220, (k * 4) + 225, 223);
+            gDPPipeSync(gfx++);
+        }
+    }
+
+    *gfxP = gfx;
+}
+#endif
 
 void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
     Gfx* newDList;
@@ -170,12 +182,14 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
         GameState_SetFBFilter(&newDList);
     }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     sLastButtonPressed = gameState->input[0].press.button | gameState->input[0].cur.button;
 
-    if (CAN_SHOW_INPUT_DISPLAY && R_DISABLE_INPUT_DISPLAY == 0) {
+#if CAN_SHOW_INPUT_DISPLAY
+    if (R_DISABLE_INPUT_DISPLAY == 0) {
         GameState_DrawInputDisplay(sLastButtonPressed, &newDList);
     }
+#endif
 
     if (IS_AUDIO_DEBUG_ENABLED && (R_ENABLE_AUDIO_DBG & 1)) {
         s32 pad;
@@ -190,15 +204,27 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
 
 #endif
 
+    if (R_ENABLE_ARENA_DBG < 0) {
+#if PLATFORM_GC && DEBUG_FEATURES
+        s32 pad;
+#if IS_DEBUG_HEAP_ENABLED
+        DebugArena_Display();
+#endif
+        SystemArena_Display();
+#endif
+        PRINTF(T("ハイラル滅亡まであと %08x バイト(game_alloc)\n",
+                 "%08x bytes left until Hyrule is destroyed (game_alloc)\n"),
+               THA_GetRemaining(&gameState->tha));
+        R_ENABLE_ARENA_DBG = 0;
+    }
+
     gSPEndDisplayList(newDList++);
     Gfx_Close(polyOpaP, newDList);
     POLY_OPA_DISP = newDList;
 
-    if (1) {}
-
     CLOSE_DISPS(gfxCtx, "../game.c", 800);
 
-    if (IS_DEBUG && (ENABLE_CAMERA_DEBUGGER || ENABLE_REG_EDITOR)) {
+    if (DEBUG_FEATURES && (ENABLE_CAMERA_DEBUGGER || ENABLE_REG_EDITOR)) {
         Debug_DrawText(gfxCtx);
     }
 
@@ -232,11 +258,15 @@ void func_800C49F4(GraphicsContext* gfxCtx) {
     newDlist = Gfx_Open(polyOpaP = POLY_OPA_DISP);
     gSPDisplayList(OVERLAY_DISP++, newDlist);
 
+#if PLATFORM_N64
+    if (D_80121212 != 0) {
+        func_801C6EA0(&newDlist);
+    }
+#endif
+
     gSPEndDisplayList(newDlist++);
     Gfx_Close(polyOpaP, newDlist);
     POLY_OPA_DISP = newDlist;
-
-    if (1) {}
 
     CLOSE_DISPS(gfxCtx, "../game.c", 865);
 }
@@ -255,9 +285,27 @@ void GameState_Update(GameState* gameState) {
     gameState->main(gameState);
 
     Rainbow_Update(&gRainbow);
+
+#if PLATFORM_N64
+    if (D_80121212 != 0) {
+        func_801C7E78();
+    }
+    if ((B_80121220 != NULL) && (B_80121220->unk_74 != NULL)) {
+        B_80121220->unk_74(gameState);
+    }
+#endif
+
     func_800C4344(gameState);
 
-#if IS_DEBUG
+#if OOT_VERSION < PAL_1_0
+    if (R_VI_MODE_EDIT_STATE != VI_MODE_EDIT_STATE_INACTIVE) {
+        ViMode_Update(&sViMode, &gameState->input[0]);
+        gfxCtx->viMode = &sViMode.customViMode;
+        gfxCtx->viFeatures = sViMode.viFeatures;
+    }
+#endif
+
+#if OOT_VERSION >= PAL_1_0 && DEBUG_FEATURES
     if (SREG(63) == 1u) {
         if (R_VI_MODE_EDIT_STATE < VI_MODE_EDIT_STATE_INACTIVE) {
             R_VI_MODE_EDIT_STATE = VI_MODE_EDIT_STATE_INACTIVE;
@@ -278,12 +326,12 @@ void GameState_Update(GameState* gameState) {
         gfxCtx->xScale = gViConfigXScale;
         gfxCtx->yScale = gViConfigYScale;
 
-        if (SREG(63) == 6 || (SREG(63) == 2u && osTvType == OS_TV_NTSC)) {
+        if (SREG(63) == 6 || (SREG(63) == 2u && (u32)osTvType == OS_TV_NTSC)) {
             gfxCtx->viMode = &osViModeNtscLan1;
             gfxCtx->yScale = 1.0f;
         }
 
-        if (SREG(63) == 5 || (SREG(63) == 2u && osTvType == OS_TV_MPAL)) {
+        if (SREG(63) == 5 || (SREG(63) == 2u && (u32)osTvType == OS_TV_MPAL)) {
             gfxCtx->viMode = &osViModeMpalLan1;
             gfxCtx->yScale = 1.0f;
         }
@@ -350,16 +398,24 @@ void GameState_Update(GameState* gameState) {
 void GameState_InitArena(GameState* gameState, size_t size) {
     void* arena;
 
-    PRINTF("ハイラル確保 サイズ＝%u バイト\n"); // "Hyrule reserved size = %u bytes"
+    PRINTF(T("ハイラル確保 サイズ＝%u バイト\n", "Hyrule reserved size = %u bytes\n"), size);
     arena = GAME_ALLOC_MALLOC(&gameState->alloc, size, "../game.c", 992);
 
     if (arena != NULL) {
         THA_Init(&gameState->tha, arena, size);
-        PRINTF("ハイラル確保成功\n"); // "Successful Hyral"
+        PRINTF(T("ハイラル確保成功\n", "Hyrule successfully secured\n"));
     } else {
         THA_Init(&gameState->tha, NULL, 0);
-        PRINTF("ハイラル確保失敗\n"); // "Failure to secure Hyrule"
+        PRINTF(T("ハイラル確保失敗\n", "Failure to secure Hyrule\n"));
+#if OOT_VERSION < NTSC_1_1
+        HUNGUP_AND_CRASH("../game.c", 895);
+#elif OOT_VERSION < PAL_1_0
+        HUNGUP_AND_CRASH("../game.c", 898);
+#elif OOT_VERSION < GC_JP
+        HUNGUP_AND_CRASH("../game.c", 985);
+#else
         HUNGUP_AND_CRASH("../game.c", 999);
+#endif
     }
 }
 
@@ -373,37 +429,50 @@ void GameState_Realloc(GameState* gameState, size_t size) {
 
     THA_Destroy(&gameState->tha);
     GameAlloc_Free(alloc, thaStart);
-    PRINTF("ハイラル一時解放!!\n"); // "Hyrule temporarily released!!"
+    PRINTF(T("ハイラル一時解放!!\n", "Hyrule temporarily released!!\n"));
     SystemArena_GetSizes(&systemMaxFree, &systemFree, &systemAlloc);
     if ((systemMaxFree - 0x10) < size) {
         PRINTF("%c", BEL);
         PRINTF(VT_FGCOL(RED));
 
-        // "Not enough memory. Change the hyral size to the largest possible value"
-        PRINTF("メモリが足りません。ハイラルサイズを可能な最大値に変更します\n");
+        PRINTF(T("メモリが足りません。ハイラルサイズを可能な最大値に変更します\n",
+                 "Not enough memory. Change Hyrule size to maximum possible value\n"));
         PRINTF("(hyral=%08x max=%08x free=%08x alloc=%08x)\n", size, systemMaxFree, systemFree, systemAlloc);
         PRINTF(VT_RST);
         size = systemMaxFree - 0x10;
     }
 
-    PRINTF("ハイラル再確保 サイズ＝%u バイト\n", size); // "Hyral reallocate size = %u bytes"
+    PRINTF(T("ハイラル再確保 サイズ＝%u バイト\n", "Hyrule reallocate size = %u bytes\n"), size);
 
     gameArena = GAME_ALLOC_MALLOC(alloc, size, "../game.c", 1033);
     if (gameArena != NULL) {
         THA_Init(&gameState->tha, gameArena, size);
-        PRINTF("ハイラル再確保成功\n"); // "Successful reacquisition of Hyrule"
+        PRINTF(T("ハイラル再確保成功\n", "Successful reacquisition of Hyrule\n"));
     } else {
         THA_Init(&gameState->tha, NULL, 0);
-        PRINTF("ハイラル再確保失敗\n"); // "Failure to secure Hyral"
+        PRINTF(T("ハイラル再確保失敗\n", "Failure to secure Hyrule\n"));
+
+#if PLATFORM_GC && DEBUG_FEATURES
+        SystemArena_Display();
+#endif
+
+#if OOT_VERSION < NTSC_1_1
+        HUNGUP_AND_CRASH("../game.c", 940);
+#elif OOT_VERSION < PAL_1_0
+        HUNGUP_AND_CRASH("../game.c", 943);
+#elif OOT_VERSION < GC_JP
+        HUNGUP_AND_CRASH("../game.c", 1030);
+#else
         HUNGUP_AND_CRASH("../game.c", 1044);
+#endif
     }
 }
 
 void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* gfxCtx) {
-    OSTime startTime;
-    OSTime endTime;
+    UNUSED_NDEBUG OSTime startTime;
+    UNUSED_NDEBUG OSTime endTime;
 
-    PRINTF("game コンストラクタ開始\n"); // "game constructor start"
+    PRINTF(T("game コンストラクタ開始\n", "game constructor start\n"));
     gameState->gfxCtx = gfxCtx;
     gameState->frames = 0;
     gameState->main = NULL;
@@ -418,30 +487,29 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
     {
         s32 requiredScopeTemp;
         endTime = osGetTime();
-        // "game_set_next_game_null processing time %d us"
-        PRINTF("game_set_next_game_null 処理時間 %d us\n", OS_CYCLES_TO_USEC(endTime - startTime));
+        PRINTF(T("game_set_next_game_null 処理時間 %d us\n", "game_set_next_game_null processing time %d us\n"),
+               OS_CYCLES_TO_USEC(endTime - startTime));
         startTime = endTime;
         GameAlloc_Init(&gameState->alloc);
     }
 
     endTime = osGetTime();
-    // "gamealloc_init processing time %d us"
-    PRINTF("gamealloc_init 処理時間 %d us\n", OS_CYCLES_TO_USEC(endTime - startTime));
+    PRINTF(T("gamealloc_init 処理時間 %d us\n", "gamealloc_init processing time %d us\n"),
+           OS_CYCLES_TO_USEC(endTime - startTime));
     startTime = endTime;
     GameState_InitArena(gameState, GAMESTATE_ALLOC_SIZE);
 
     R_UPDATE_RATE = 3;
     init(gameState);
     endTime = osGetTime();
-    // "init processing time %d us"
-    PRINTF("init 処理時間 %d us\n", OS_CYCLES_TO_USEC(endTime - startTime));
+    PRINTF(T("init 処理時間 %d us\n", "init processing time %d us\n"), OS_CYCLES_TO_USEC(endTime - startTime));
 
     startTime = endTime;
     LOG_UTILS_CHECK_NULL_POINTER("this->cleanup", gameState->destroy, "../game.c", 1088);
     VisCvg_Init(&sVisCvg);
     VisZBuf_Init(&sVisZBuf);
     VisMono_Init(&sVisMono);
-    if ((R_VI_MODE_EDIT_STATE == VI_MODE_EDIT_STATE_INACTIVE) || !IS_DEBUG) {
+    if ((R_VI_MODE_EDIT_STATE == VI_MODE_EDIT_STATE_INACTIVE) || !DEBUG_FEATURES) {
         ViMode_Init(&sViMode);
     }
 
@@ -452,10 +520,10 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
     Rumble_Init();
     osSendMesg(&gameState->gfxCtx->queue, NULL, OS_MESG_BLOCK);
     endTime = osGetTime();
-    // "Other initialization processing time %d us"
-    PRINTF("その他初期化 処理時間 %d us\n", OS_CYCLES_TO_USEC(endTime - startTime));
+    PRINTF(T("その他初期化 処理時間 %d us\n", "Other initialization processing time %d us\n"),
+           OS_CYCLES_TO_USEC(endTime - startTime));
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     Fault_AddClient(&sGameFaultClient, GameState_FaultPrint, NULL, NULL);
 #endif
 
@@ -464,11 +532,11 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
     Menu_Init(&gDebug.menu);
 #endif
 
-    PRINTF("game コンストラクタ終了\n"); // "game constructor end"
+    PRINTF(T("game コンストラクタ終了\n", "game constructor end\n"));
 }
 
 void GameState_Destroy(GameState* gameState) {
-    PRINTF("game デストラクタ開始\n"); // "game destructor start"
+    PRINTF(T("game デストラクタ開始\n", "game destructor start\n"));
     AudioMgr_StopAllSfx();
     Audio_Update();
     osRecvMesg(&gameState->gfxCtx->queue, NULL, OS_MESG_BLOCK);
@@ -485,13 +553,21 @@ void GameState_Destroy(GameState* gameState) {
     VisCvg_Destroy(&sVisCvg);
     VisZBuf_Destroy(&sVisZBuf);
     VisMono_Destroy(&sVisMono);
-    if ((R_VI_MODE_EDIT_STATE == VI_MODE_EDIT_STATE_INACTIVE) || !IS_DEBUG) {
+    if ((R_VI_MODE_EDIT_STATE == VI_MODE_EDIT_STATE_INACTIVE) || !DEBUG_FEATURES) {
         ViMode_Destroy(&sViMode);
     }
     THA_Destroy(&gameState->tha);
     GameAlloc_Cleanup(&gameState->alloc);
 
-    PRINTF("game デストラクタ終了\n"); // "game destructor end"
+#if PLATFORM_GC && DEBUG_FEATURES
+    SystemArena_Display();
+#endif
+
+#if DEBUG_FEATURES
+    Fault_RemoveClient(&sGameFaultClient);
+#endif
+
+    PRINTF(T("game デストラクタ終了\n", "game destructor end\n"));
 }
 
 GameStateFunc GameState_GetInit(GameState* gameState) {
@@ -506,22 +582,22 @@ u32 GameState_IsRunning(GameState* gameState) {
     return gameState->running;
 }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 void* GameState_Alloc(GameState* gameState, size_t size, const char* file, int line) {
     void* ret;
 
     if (THA_IsCrash(&gameState->tha)) {
-        PRINTF("ハイラルは滅亡している\n");
+        PRINTF(T("ハイラルは滅亡している\n", "Hyrule is destroyed\n"));
         ret = NULL;
     } else if ((u32)THA_GetRemaining(&gameState->tha) < size) {
-        // "Hyral on the verge of extinction does not have %d bytes left (%d bytes until extinction)"
-        PRINTF("滅亡寸前のハイラルには %d バイトの余力もない（滅亡まであと %d バイト）\n", size,
-               THA_GetRemaining(&gameState->tha));
+        PRINTF(T("滅亡寸前のハイラルには %d バイトの余力もない（滅亡まであと %d バイト）\n",
+                 "Hyrule on the verge of extinction does not have %d bytes left (%d bytes until extinction)\n"),
+               size, THA_GetRemaining(&gameState->tha));
         ret = NULL;
     } else {
         ret = THA_AllocTailAlign16(&gameState->tha, size);
         if (THA_IsCrash(&gameState->tha)) {
-            PRINTF("ハイラルは滅亡してしまった\n"); // "Hyrule has been destroyed"
+            PRINTF(T("ハイラルは滅亡してしまった\n", "Hyrule has been destroyed\n"));
             ret = NULL;
         }
     }

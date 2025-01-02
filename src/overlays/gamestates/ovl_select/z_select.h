@@ -62,7 +62,8 @@ static const Color_RGBA8 sColors[] = {
 
 static SceneSelectEntry sScenes[] = {
     { "Boot Menu", (void*)MapSelect_LoadTitle, 0 },
-#if INCLUDE_EXAMPLE_SCENE
+    { "Title Screen", (void*)MapSelect_LoadTitle, 0 },
+#if CAN_INCLUDE_EXAMPLE_SCENE
     { "Example", MapSelect_LoadGame, ENTR_EXAMPLE_0 },
 #endif
     { "Hyrule Field", MapSelect_LoadGame, ENTR_HYRULE_FIELD_0 },
@@ -191,6 +192,10 @@ static SceneSelectEntry sScenes[] = {
     { "Shooting Gallery Duplicate", MapSelect_LoadGame, ENTR_TEST_SHOOTING_GALLERY_0 },
     { "Depth Test", MapSelect_LoadGame, ENTR_DEPTH_TEST_0 },
     { "Hyrule Garden Game (Broken)", MapSelect_LoadGame, ENTR_HAIRAL_NIWA2_0 },
+#endif
+#if PLATFORM_N64
+    { "64DD TEST  n64dd_SetDiskVersion(1)", (void*)func_80800AD0_unknown, 0 },
+    { "64DD TEST2 n64dd_SetDiskVersion(0)", (void*)func_80800B08_unknown, 0 },
 #endif
 };
 
