@@ -441,173 +441,6 @@ OSThread* Fault_FindFaultedThread(void) {
     return NULL;
 }
 
-void Fault_WaitForButtonCombo(void) {
-    Input* inputs = sFaultInputs;
-    s32 btnPress;
-    s32 btnCur;
-    OSTime comboStartTime;
-    s32 x;
-    s32 y;
-    s32 count;
-    s32 pad[4];
-
-    // "KeyWaitB (L R Z Up Down Up Down Left Left Right Right B A START)"
-    osSyncPrintf(VT_FGCOL(WHITE) T("KeyWaitB (ＬＲＺ ", "KeyWaitB (L R Z ") VT_FGCOL(WHITE) T("上", "Up ")
-                     VT_FGCOL(YELLOW) T("下 ", "Down ") VT_FGCOL(YELLOW) T("上", "Up ") VT_FGCOL(WHITE)
-                         T("下 ", "Down ") VT_FGCOL(WHITE) T("左", "Left ") VT_FGCOL(YELLOW) T("左 ", "Left ")
-                             VT_FGCOL(YELLOW) T("右", "Right ") VT_FGCOL(WHITE) T("右 ", "Right ") VT_FGCOL(GREEN)
-                                 T("Ｂ", "B ") VT_FGCOL(BLUE) T("Ａ", "A ")
-                                     VT_FGCOL(RED) "START" VT_FGCOL(WHITE) ")" VT_RST "\n");
-
-    x = 0;
-    y = 0;
-    count = 0;
-    while (x != 11) {
-        if ((count % 30) == 1) {}
-        if ((count % 30) == 0) {
-            Fault_DrawCornerRecYellow();
-        }
-        count++;
-
-        Fault_SleepImpl(1000 / 60);
-        PadMgr_RequestPadData(&gPadMgr, inputs, 0);
-        btnCur = inputs[0].cur.button;
-        btnPress = inputs[0].press.button;
-        if ((btnCur == 0) && (y == 1)) {
-            y = 0;
-            osSyncPrintf("x=%d y=%d\n", x, y);
-        } else if (btnPress != 0) {
-            if (y == 1) {
-                x = 0;
-                osSyncPrintf("x=%d y=%d\n", x, y);
-            }
-            switch (x) {
-                case 0:
-                    if ((btnCur == (BTN_Z | BTN_L | BTN_R)) && (btnPress == BTN_Z)) {
-                        x = 1;
-                        y = 1;
-                        comboStartTime = osGetTime();
-                    }
-                    break;
-
-                case 1:
-                    if (btnPress == BTN_DUP) {
-                        x = 2;
-                    } else {
-                        x = 0;
-                    }
-                    break;
-
-                case 2:
-                    if (btnPress == BTN_CDOWN) {
-                        x = 3;
-                        y = 1;
-                    } else {
-                        x = 0;
-                    }
-                    break;
-
-                case 3:
-                    if (btnPress == BTN_CUP) {
-                        x = 4;
-                    } else {
-                        x = 0;
-                    }
-                    break;
-
-                case 4:
-                    if (btnPress == BTN_DDOWN) {
-                        x = 5;
-                        y = 1;
-                    } else {
-                        x = 0;
-                    }
-                    break;
-
-                case 5:
-                    if (btnPress == BTN_DLEFT) {
-                        x = 6;
-                    } else {
-                        x = 0;
-                    }
-                    break;
-
-                case 6:
-                    if (btnPress == BTN_CLEFT) {
-                        x = 7;
-                        y = 1;
-                    } else {
-                        x = 0;
-                    }
-                    break;
-
-                case 7:
-                    if (btnPress == BTN_CRIGHT) {
-                        x = 8;
-                    } else {
-                        x = 0;
-                    }
-                    break;
-
-                case 8:
-                    if (btnPress == BTN_DRIGHT) {
-                        x = 9;
-                        y = 1;
-                    } else {
-                        x = 0;
-                    }
-                    break;
-
-                case 9:
-                    if (btnPress == (BTN_A | BTN_B)) {
-                        x = 10;
-                    } else if (btnPress == BTN_A) {
-                        x = 91;
-                    } else if (btnPress == BTN_B) {
-                        x = 92;
-                    } else {
-                        x = 0;
-                    }
-                    break;
-
-                case 91:
-                    if (btnPress == BTN_B) {
-                        x = 10;
-                    } else {
-                        x = 0;
-                    }
-                    break;
-
-                case 92:
-                    if (btnPress == BTN_A) {
-                        x = 10;
-                    } else {
-                        x = 0;
-                    }
-                    break;
-
-                case 10:
-                    if ((btnCur == (BTN_A | BTN_B | BTN_START)) && (btnPress == BTN_START)) {
-                        f32 comboTimeSeconds = OS_CYCLES_TO_USEC(osGetTime() - comboStartTime) / 1000000.0f;
-
-                        osSyncPrintf(T("入力時間 %f 秒\n", "Input time %f seconds\n"), comboTimeSeconds);
-                        if (comboTimeSeconds <= 50.0f) {
-                            x = 11;
-                        } else {
-                            x = 0;
-                        }
-                    } else {
-                        x = 0;
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
-    }
-}
-
 void func_800AF0E0(void) {
     s32 i;
 
@@ -783,7 +616,6 @@ void Fault_ThreadEntry(void* arg0) {
         }
         Fault_SleepImpl(500);
         Fault_DrawCornerRecRed();
-        Fault_WaitForButtonCombo();
         do {
             func_800AF558();
             Fault_PrintThreadContext(faultedThread);
@@ -831,7 +663,6 @@ NORETURN void Fault_AddHungupAndCrashImpl(const char* exp1, const char* exp2) {
         Fault_SleepImpl(1000);
     }
     Fault_SleepImpl(500);
-    Fault_WaitForButtonCombo();
     do {
         func_800AF558();
         Fault_DrawRecBlack(22, 16, 276, 34);

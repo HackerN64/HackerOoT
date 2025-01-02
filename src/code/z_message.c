@@ -3951,80 +3951,71 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
     *p = gfx;
 }
 
-#if DEBUG_FEATURES
+#if IS_MSG_DEBUG_ENABLED
 /**
  * If the s16 variable pointed to by `var` changes in value, a black bar and white box
  * are briefly drawn onto the screen. It can only watch one variable per build due to
  * the last value being saved in a static variable.
  */
 void Message_DrawDebugVariableChanged(s16* var, GraphicsContext* gfxCtx) {
-    if (IS_MSG_DEBUG_ENABLED) {
-        static s16 sVarLastValue = 0;
-        static s16 sFillTimer = 0;
-        s32 pad;
+    static s16 sVarLastValue = 0;
+    static s16 sFillTimer = 0;
+    s32 pad;
 
-        OPEN_DISPS(gfxCtx, "../z_message_PAL.c", 3485);
+    OPEN_DISPS(gfxCtx, "../z_message_PAL.c", 3485);
 
-        if (sVarLastValue != *var) {
-            sVarLastValue = *var;
-            sFillTimer = 30;
-        }
-        if (sFillTimer != 0) {
-            sFillTimer--;
-            gDPPipeSync(POLY_OPA_DISP++);
-            gDPSetCycleType(POLY_OPA_DISP++, G_CYC_FILL);
-            gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
-            gDPSetFillColor(POLY_OPA_DISP++, GPACK_RGBA5551(0, 0, 0, 1) << 0x10 | GPACK_RGBA5551(0, 0, 0, 1));
-            gDPFillRectangle(POLY_OPA_DISP++, 0, 110, SCREEN_WIDTH - 1, 150); // 40x319 black bar
-            gDPPipeSync(POLY_OPA_DISP++);
-            gDPPipeSync(POLY_OPA_DISP++);
-            gDPSetCycleType(POLY_OPA_DISP++, G_CYC_FILL);
-            gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
-            gDPSetFillColor(POLY_OPA_DISP++,
-                            GPACK_RGBA5551(255, 255, 255, 1) << 0x10 | GPACK_RGBA5551(255, 255, 255, 1));
-            gDPFillRectangle(POLY_OPA_DISP++, 40, 120, 60, 140); // 20x20 white box
-            gDPPipeSync(POLY_OPA_DISP++);
-        }
-        CLOSE_DISPS(gfxCtx, "../z_message_PAL.c", 3513);
+    if (sVarLastValue != *var) {
+        sVarLastValue = *var;
+        sFillTimer = 30;
     }
+    if (sFillTimer != 0) {
+        sFillTimer--;
+        gDPPipeSync(POLY_OPA_DISP++);
+        gDPSetCycleType(POLY_OPA_DISP++, G_CYC_FILL);
+        gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
+        gDPSetFillColor(POLY_OPA_DISP++, GPACK_RGBA5551(0, 0, 0, 1) << 0x10 | GPACK_RGBA5551(0, 0, 0, 1));
+        gDPFillRectangle(POLY_OPA_DISP++, 0, 110, SCREEN_WIDTH - 1, 150); // 40x319 black bar
+        gDPPipeSync(POLY_OPA_DISP++);
+        gDPPipeSync(POLY_OPA_DISP++);
+        gDPSetCycleType(POLY_OPA_DISP++, G_CYC_FILL);
+        gDPSetRenderMode(POLY_OPA_DISP++, G_RM_NOOP, G_RM_NOOP2);
+        gDPSetFillColor(POLY_OPA_DISP++, GPACK_RGBA5551(255, 255, 255, 1) << 0x10 | GPACK_RGBA5551(255, 255, 255, 1));
+        gDPFillRectangle(POLY_OPA_DISP++, 40, 120, 60, 140); // 20x20 white box
+        gDPPipeSync(POLY_OPA_DISP++);
+    }
+    CLOSE_DISPS(gfxCtx, "../z_message_PAL.c", 3513);
 }
 
 void Message_DrawDebugText(PlayState* play, Gfx** p) {
-    if (IS_MSG_DEBUG_ENABLED) {
-        s32 pad;
-        GfxPrint printer;
-        s32 pad1;
+    s32 pad;
+    GfxPrint printer;
+    s32 pad1;
 
-        GfxPrint_Init(&printer);
-        GfxPrint_Open(&printer, *p);
-        GfxPrint_SetPos(&printer, 6, 26);
-        GfxPrint_SetColor(&printer, 255, 60, 0, 255);
-        GfxPrint_Printf(&printer, "%s", "MESSAGE");
-        GfxPrint_SetPos(&printer, 14, 26);
-        GfxPrint_Printf(&printer, "%s", "=");
-        GfxPrint_SetPos(&printer, 16, 26);
-        GfxPrint_Printf(&printer, "%x", play->msgCtx.textId);
-        *p = GfxPrint_Close(&printer);
-        GfxPrint_Destroy(&printer);
-    }
+    GfxPrint_Init(&printer);
+    GfxPrint_Open(&printer, *p);
+    GfxPrint_SetPos(&printer, 6, 26);
+    GfxPrint_SetColor(&printer, 255, 60, 0, 255);
+    GfxPrint_Printf(&printer, "%s", "MESSAGE");
+    GfxPrint_SetPos(&printer, 14, 26);
+    GfxPrint_Printf(&printer, "%s", "=");
+    GfxPrint_SetPos(&printer, 16, 26);
+    GfxPrint_Printf(&printer, "%x", play->msgCtx.textId);
+    *p = GfxPrint_Close(&printer);
+    GfxPrint_Destroy(&printer);
 }
 #endif
 
 void Message_Draw(PlayState* play) {
     Gfx* plusOne;
     Gfx* polyOpaP;
-#if OOT_VERSION < GC_US
-    s32 pad;
-#endif
-#if IS_MSG_DEBUG_ENABLED
-    s16 watchVar;
-#endif
 
     OPEN_DISPS(play->state.gfxCtx, "../z_message_PAL.c", 3554);
 
 #if IS_MSG_DEBUG_ENABLED
-    watchVar = gSaveContext.save.info.scarecrowLongSongSet;
+    s16 watchVar = gSaveContext.save.info.scarecrowLongSongSet;
+
     Message_DrawDebugVariableChanged(&watchVar, play->state.gfxCtx);
+
     if (BREG(0) != 0 && play->msgCtx.textId != 0) {
         plusOne = Gfx_Open(polyOpaP = POLY_OPA_DISP);
         gSPDisplayList(OVERLAY_DISP++, plusOne);

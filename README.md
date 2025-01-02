@@ -25,7 +25,7 @@ It builds the following versions:
 | gc-eu-mq     | 03-02-21 20:37:19 | GameCube Europe/PAL Master Quest          | `1618403427e4344a57833043db5ce3c3` |
 | gc-jp-ce     | 03-10-08 21:53:00 | GameCube Japan (Collector's Edition Disc) | `0c13e0449a28ea5b925cdb8af8d29768` |
 
-The default version is `hackeroot-mq`.
+The default version is `ntsc-1.2`.
 
 This project is using the following tools:
 - [F3DEX3](https://github.com/HackerN64/F3DEX3), *will make you want to finally ditch HLE*, by Sauraen

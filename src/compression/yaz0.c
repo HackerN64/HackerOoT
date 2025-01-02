@@ -1,6 +1,8 @@
 #include "global.h"
 #include "compression.h"
 
+#if COMPRESS_YAZ
+
 #pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
                                "ntsc-1.2:128 pal-1.1:128"
 
@@ -104,3 +106,5 @@ void Yaz0_Decompress(uintptr_t romStart, u8* dst, size_t size) {
     sYaz0DataBufferEnd = sYaz0DataBuffer + sizeof(sYaz0DataBuffer);
     Yaz0_DecompressImpl(Yaz0_FirstDMA(), dst);
 }
+
+#endif

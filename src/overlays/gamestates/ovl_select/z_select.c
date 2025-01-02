@@ -8,6 +8,21 @@
 #include "terminal.h"
 #include "alloca.h"
 #include "z_select.h"
+#include "n64dd.h"
+
+#if PLATFORM_N64
+void func_80800AD0_unknown(MapSelectState* this, s32 arg1) {
+    if (D_80121212 != 0) {
+        n64dd_SetDiskVersion(1);
+    }
+}
+
+void func_80800B08_unknown(MapSelectState* this, s32 arg1) {
+    if (D_80121212 != 0) {
+        n64dd_SetDiskVersion(0);
+    }
+}
+#endif
 
 void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;

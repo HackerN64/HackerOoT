@@ -1412,7 +1412,7 @@ void Environment_DrawSunAndMoon(PlayState* play) {
                          G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_PRIM_A | G_RM_XLU_SURF2),
         gsDPLoadTextureBlock(gMoonTex, G_IM_FMT_IA, G_IM_SIZ_8b, 64, 64, 0, G_TX_NOMIRROR | G_TX_WRAP,
                              G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD),
-        gsSPVertex(gameplay_keepVtx_038F70, 4, 0),
+        gsSPVertex(gameplay_keepVtx_039410, 4, 0),
         gsSP2Triangles(0, 1, 2, 0, 1, 3, 2, 0),
         gsSPEndDisplayList(),
     };

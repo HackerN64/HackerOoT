@@ -26,7 +26,7 @@ OSTime sGraphPrevTaskTimeStart;
 #define GRAPH_UCODE_GLOBAL_SYMBOL gspF3DZEX2_NoN_PosLight_fifoTextStart
 #endif
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
 u16 (*gWorkBuf)[SCREEN_WIDTH * SCREEN_HEIGHT]; // pointer-to-array, array itself is allocated (see below)
 #endif
 
@@ -119,13 +119,17 @@ void Graph_InitTHGA(GraphicsContext* gfxCtx) {
     THGA_Init(&gfxCtx->polyXlu, pool->polyXluBuffer, sizeof(pool->polyXluBuffer));
     THGA_Init(&gfxCtx->overlay, pool->overlayBuffer, sizeof(pool->overlayBuffer));
     THGA_Init(&gfxCtx->work, pool->workBuffer, sizeof(pool->workBuffer));
+#if DEBUG_FEATURES
     THGA_Init(&gfxCtx->debug, pool->debugBuffer, sizeof(pool->debugBuffer));
+#endif
 
     gfxCtx->polyOpaBuffer = pool->polyOpaBuffer;
     gfxCtx->polyXluBuffer = pool->polyXluBuffer;
     gfxCtx->overlayBuffer = pool->overlayBuffer;
     gfxCtx->workBuffer = pool->workBuffer;
+#if DEBUG_FEATURES
     gfxCtx->debugBuffer = pool->debugBuffer;
+#endif
 
     gfxCtx->curFrameBuffer = SysCfb_GetFbPtr(gfxCtx->fbIdx % 2);
     gfxCtx->unk_014 = 0;
@@ -465,7 +469,7 @@ void Graph_ThreadEntry(void* arg0) {
     GameStateOverlay* nextOvl = &gGameStateOverlayTable[GAMESTATE_SETUP];
     GameStateOverlay* ovl;
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     gWorkBuf = SYSTEM_ARENA_MALLOC(sizeof(*gWorkBuf) + 64 - 1, __FILE__, __LINE__);
     gWorkBuf = (void*)ALIGN64((u32)gWorkBuf);
 #endif

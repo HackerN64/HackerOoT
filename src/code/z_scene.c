@@ -62,27 +62,8 @@ void Object_InitContext(PlayState* play, ObjectContext* objectCtx) {
     u32 spaceSize;
     s32 i;
 
-#if ENABLE_HACKEROOT
+    // HackerOoT change: set a fixed allocation for the object heap
     spaceSize = OBJECT_BANK_SIZE;
-#else
-    if (play2->sceneId == SCENE_HYRULE_FIELD) {
-        spaceSize = 1000 * 1024 - OBJECT_SPACE_ADJUSTMENT;
-    } else if (play2->sceneId == SCENE_GANON_BOSS) {
-        if (gSaveContext.sceneLayer != 4) {
-            spaceSize = 1150 * 1024 - OBJECT_SPACE_ADJUSTMENT;
-        } else {
-            spaceSize = 1000 * 1024 - OBJECT_SPACE_ADJUSTMENT;
-        }
-    } else if (play2->sceneId == SCENE_SPIRIT_TEMPLE_BOSS) {
-        spaceSize = 1050 * 1024 - OBJECT_SPACE_ADJUSTMENT;
-    } else if (play2->sceneId == SCENE_CHAMBER_OF_THE_SAGES) {
-        spaceSize = 1050 * 1024 - OBJECT_SPACE_ADJUSTMENT;
-    } else if (play2->sceneId == SCENE_GANONDORF_BOSS) {
-        spaceSize = 1050 * 1024 - OBJECT_SPACE_ADJUSTMENT;
-    } else {
-        spaceSize = 1000 * 1024 - OBJECT_SPACE_ADJUSTMENT;
-    }
-#endif
 
     objectCtx->numEntries = objectCtx->numPersistentEntries = 0;
     objectCtx->mainKeepSlot = objectCtx->subKeepSlot = 0;
