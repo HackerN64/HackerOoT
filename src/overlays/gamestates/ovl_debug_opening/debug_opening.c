@@ -18,63 +18,6 @@
 #define DEBUG_OPENING_SKYBOX_ID SKYBOX_NORMAL_SKY
 static f32 sSkyboxAngle = 0.0f;
 
-void DebugOpening_SetView(DebugOpeningState* this, f32 eyeX, f32 eyeY, f32 eyeZ) {
-    Vec3f eye;
-    Vec3f lookAt;
-    Vec3f up;
-
-    eye.x = eyeX;
-    eye.y = eyeY;
-    eye.z = eyeZ;
-
-    lookAt.x = lookAt.y = lookAt.z = 0.0f;
-
-    up.x = up.z = 0.0f;
-    up.y = 1.0f;
-
-    View_LookAt(&this->view, &eye, &lookAt, &up);
-    View_Apply(&this->view, VIEW_ALL | VIEW_FORCE_VIEWING | VIEW_FORCE_VIEWPORT | VIEW_FORCE_PROJECTION_PERSPECTIVE);
-}
-
-void DebugOpening_InitSkybox(DebugOpeningState* this) {
-    EnvironmentContext* envCtx = &this->envCtx;
-
-    gSaveContext.save.dayTime = gSaveContext.skyboxTime = CLOCK_TIME(15, 0);
-
-    Skybox_Init(&this->state, &this->skyboxCtx, DEBUG_OPENING_SKYBOX_ID);
-
-    envCtx->changeSkyboxState = CHANGE_SKYBOX_INACTIVE;
-    envCtx->changeSkyboxTimer = 0;
-    envCtx->changeLightEnabled = false;
-    envCtx->changeLightTimer = 0;
-    envCtx->skyboxDmaState = SKYBOX_DMA_INACTIVE;
-    envCtx->skybox1Index = 99;
-    envCtx->skybox2Index = 99;
-    envCtx->lightConfig = 0;
-    envCtx->changeLightNextConfig = 0;
-    envCtx->lightSetting = 0;
-    envCtx->skyboxConfig = 2;
-    envCtx->skyboxDisabled = 0;
-    envCtx->skyboxBlend = 0;
-    envCtx->glareAlpha = 0.0f;
-    envCtx->lensFlareAlphaScale = 0.0f;
-
-    Environment_UpdateSkybox(DEBUG_OPENING_SKYBOX_ID, &this->envCtx, &this->skyboxCtx);
-}
-
-void DebugOpening_DrawSkybox(DebugOpeningState* this) {
-    f32 eyeX = 1000.0f * Math_CosS(sSkyboxAngle) - 1000.0f * Math_SinS(sSkyboxAngle);
-    f32 eyeY = 0.0f;
-    f32 eyeZ = 1000.0f * Math_SinS(sSkyboxAngle) + 1000.0f * Math_CosS(sSkyboxAngle);
-
-    sSkyboxAngle -= 10.0f;
-
-    DebugOpening_SetView(this, eyeX, eyeY, eyeZ);
-    Skybox_Draw(&this->skyboxCtx, this->state.gfxCtx, NULL, DEBUG_OPENING_SKYBOX_ID, this->envCtx.skyboxBlend,
-                this->view.eye.x, this->view.eye.y, this->view.eye.z);
-    Environment_UpdateSkybox(DEBUG_OPENING_SKYBOX_ID, &this->envCtx, &this->skyboxCtx);
-}
-
 void DebugOpening_DrawRectangle(DebugOpeningState* this, s32 leftX, s32 leftY, s32 rightX, s32 rightY,
                                 Color_RGBA8 rgba) {
     Vec2s leftPos = { leftX, leftY }, rightPos = { rightX, rightY };
@@ -115,21 +58,21 @@ static OptionInfo sOptionInfo[] = {
     { .func = DebugOpening_ChooseSaveFile, .name = "Save File: " },
     {
         .func = DebugOpening_LoadDefinedScene,
-        .name = "Go to Defined Scene",
+        .name = "Load Defined Scene",
     },
 #if IS_MAP_SELECT_ENABLED
     {
         .func = DebugOpening_LoadMapSelect,
-        .name = "Go to Map Select",
+        .name = "Load Map Select",
     },
 #endif
     {
         .func = DebugOpening_LoadTitleScreen,
-        .name = "Go to Title Screen",
+        .name = "Load Title Screen",
     },
     {
         .func = DebugOpening_LoadFileSelect,
-        .name = "Go to File Select",
+        .name = "Load File Select",
     },
 };
 
@@ -218,9 +161,6 @@ void DebugOpening_DrawCommitInfo(DebugOpeningState* this) {
     }
 }
 
-void DebugOpening_Destroy(GameState* thisx) {
-}
-
 void DebugOpening_DrawOptions(DebugOpeningState* this) {
     s32 i;
 
@@ -241,7 +181,7 @@ void DebugOpening_DrawOptions(DebugOpeningState* this) {
     }
 }
 
-void DebugOpening_DrawBase(DebugOpeningState* this) {
+void DebugOpening_Draw(DebugOpeningState* this) {
     GraphicsContext* gfxCtx = this->state.gfxCtx;
     GfxPrint* printer;
 
@@ -253,7 +193,7 @@ void DebugOpening_DrawBase(DebugOpeningState* this) {
     Gfx_SetupFrame(gfxCtx, true, 0, 0, 0);
     SET_FULLSCREEN_VIEWPORT(&this->view);
     View_Apply(&this->view, VIEW_ALL);
-    DebugOpening_DrawSkybox(this);
+    Helpers_DrawSkybox(&this->state, &this->view, &this->envCtx, &this->skyboxCtx, DEBUG_OPENING_SKYBOX_ID, 0.0f, -10.0f);
 
     // draw background
     DebugOpening_DrawRectangle(this, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, rgba);
@@ -265,7 +205,6 @@ void DebugOpening_DrawBase(DebugOpeningState* this) {
         { 0, ((SCREEN_HEIGHT / 10) + 6), SCREEN_WIDTH, ((SCREEN_HEIGHT / 10) + 7) },
         { 0, (SCREEN_HEIGHT - 40), SCREEN_WIDTH, (SCREEN_HEIGHT - 41) },
     };
-
     rgba.r = rgba.g = rgba.b = rgba.a = 255;
     for (i = 0; i < ARRAY_COUNT(positions); i++) {
         DebugOpening_DrawRectangle(this, positions[i][0], positions[i][1], positions[i][2], positions[i][3], rgba);
@@ -296,26 +235,6 @@ void DebugOpening_DrawBase(DebugOpeningState* this) {
     CLOSE_DISPS(gfxCtx, "../debug_opening.c", __LINE__);
 }
 
-void DebugOpening_Main(GameState* thisx) {
-    DebugOpeningState* this = (DebugOpeningState*)thisx;
-
-    if (this->page == OPTIONS_PAGE) {
-        DebugOpening_ControlOptions(this);
-    }
-
-    DebugOpening_DrawBase(this);
-
-    if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_R) && this->page != BUILDINFO_PAGE) {
-        this->page++;
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-    } else if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_Z) && this->page != OPTIONS_PAGE) {
-        this->page--;
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-    }
-}
-
 void DebugOpening_Init(GameState* thisx) {
     DebugOpeningState* this = (DebugOpeningState*)thisx;
 
@@ -330,12 +249,38 @@ void DebugOpening_Init(GameState* thisx) {
         this->controlGuideString = "[Z] <--         %d / 3          --> [R]";
     }
 
-    DebugOpening_InitSkybox(this);
+    // initialize skybox
+    gSaveContext.save.dayTime = gSaveContext.skyboxTime = CLOCK_TIME(15, 0);
+    Helpers_InitSkybox(&this->state, &this->envCtx, &this->skyboxCtx, DEBUG_OPENING_SKYBOX_ID);
+
     this->state.main = DebugOpening_Main;
     this->state.destroy = DebugOpening_Destroy;
 
     // set the framerate to 30fps
     R_UPDATE_RATE = 2;
+}
+
+void DebugOpening_Main(GameState* thisx) {
+    DebugOpeningState* this = (DebugOpeningState*)thisx;
+
+    if (this->page == OPTIONS_PAGE) {
+        DebugOpening_ControlOptions(this);
+    }
+
+    DebugOpening_Draw(this);
+
+    if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_R) && this->page != BUILDINFO_PAGE) {
+        this->page++;
+        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+    } else if (CHECK_BTN_ANY(this->state.input[0].press.button, BTN_Z) && this->page != OPTIONS_PAGE) {
+        this->page--;
+        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+    }
+}
+
+void DebugOpening_Destroy(GameState* thisx) {
 }
 
 #endif

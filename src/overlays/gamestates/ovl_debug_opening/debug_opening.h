@@ -2,6 +2,9 @@
 #define DEBUG_OPENING_H
 
 #include "global.h"
+#include "config.h"
+
+#if IS_DEBUG_BOOT_ENABLED
 
 typedef enum {
     /* 1 */ OPTIONS_PAGE = 1,
@@ -26,13 +29,6 @@ typedef struct {
     char* name;
 } OptionInfo;
 
-void DebugOpening_Init(GameState* thisx);
-void DebugOpening_Main(GameState* thisx);
-void DebugOpening_Destroy(GameState* thisx);
-
-void DebugOpening_SetView(DebugOpeningState* this, f32 eyeX, f32 eyeY, f32 eyeZ);
-void DebugOpening_InitSkybox(DebugOpeningState* this);
-void DebugOpening_DrawSkybox(DebugOpeningState* this);
 void DebugOpening_DrawRectangle(DebugOpeningState* this, s32 leftX, s32 leftY, s32 rightX, s32 rightY, Color_RGBA8 rgba);
 void DebugOpening_ChooseSaveFile(DebugOpeningState* this);
 void DebugOpening_LoadDefinedScene(DebugOpeningState* this);
@@ -44,6 +40,12 @@ void DebugOpening_DrawBuildInfo(DebugOpeningState* this);
 void DebugOpening_DrawCommands(DebugOpeningState* this);
 void DebugOpening_DrawCommitInfo(DebugOpeningState* this);
 void DebugOpening_DrawOptions(DebugOpeningState* this);
-void DebugOpening_DrawBase(DebugOpeningState* this);
+void DebugOpening_Draw(DebugOpeningState* this);
+
+void DebugOpening_Init(GameState* thisx);
+void DebugOpening_Main(GameState* thisx);
+void DebugOpening_Destroy(GameState* thisx);
+
+#endif
 
 #endif
