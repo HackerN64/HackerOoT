@@ -1158,7 +1158,7 @@ endseg
 beginseg
     name "ovl_debug_opening"
     compress
-    include "$(BUILD_DIR)/src/overlays/gamestates/ovl_debug_opening/z_debug_opening.o"
+    include "$(BUILD_DIR)/src/overlays/gamestates/ovl_debug_opening/debug_opening.o"
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_debug_opening/ovl_debug_opening_reloc.o"
 endseg
 #endif

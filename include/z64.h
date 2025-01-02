@@ -173,9 +173,10 @@ typedef struct DebugOpeningState {
     GameState state;
     View view;
     s32 currentOption;
-    char* seperatorString;
     char* controlGuideString;
     u8 page;
+    SkyboxContext skyboxCtx;
+    EnvironmentContext envCtx;
 } DebugOpeningState;
 
 // vvv IS_MAP_SELECT_ENABLED vvv

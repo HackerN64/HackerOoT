@@ -30,14 +30,20 @@ void DebugOpening_Init(GameState* thisx);
 void DebugOpening_Main(GameState* thisx);
 void DebugOpening_Destroy(GameState* thisx);
 
+void DebugOpening_SetView(DebugOpeningState* this, f32 eyeX, f32 eyeY, f32 eyeZ);
+void DebugOpening_InitSkybox(DebugOpeningState* this);
+void DebugOpening_DrawSkybox(DebugOpeningState* this);
+void DebugOpening_DrawRectangle(DebugOpeningState* this, s32 leftX, s32 leftY, s32 rightX, s32 rightY, Color_RGBA8 rgba);
+void DebugOpening_ChooseSaveFile(DebugOpeningState* this);
 void DebugOpening_LoadDefinedScene(DebugOpeningState* this);
 void DebugOpening_LoadTitleScreen(DebugOpeningState* this);
 void DebugOpening_LoadFileSelect(DebugOpeningState* this);
 void DebugOpening_LoadMapSelect(DebugOpeningState* this);
 void DebugOpening_ControlOptions(DebugOpeningState* this);
-void DebugOpening_DrawBuildInfo(DebugOpeningState* this, GfxPrint* printer);
-void DebugOpening_DrawCommitInfo(DebugOpeningState* this, GfxPrint* printer);
-void DebugOpening_DrawOptions(DebugOpeningState* this, GfxPrint* printer);
+void DebugOpening_DrawBuildInfo(DebugOpeningState* this);
+void DebugOpening_DrawCommands(DebugOpeningState* this);
+void DebugOpening_DrawCommitInfo(DebugOpeningState* this);
+void DebugOpening_DrawOptions(DebugOpeningState* this);
 void DebugOpening_DrawBase(DebugOpeningState* this);
 
 #endif

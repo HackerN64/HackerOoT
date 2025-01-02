@@ -73,4 +73,43 @@ void Print_Screen(PrintUtils* this, u8 x, u8 y, u32 rgba, const char* fmt, ...) 
     CLOSE_DISPS(this->gfxCtx, __FILE__, __LINE__);
 }
 
+/**
+ * Draws text but use PosPx
+ *
+ * @param this reference to a ``PrintUtils`` struct, usually ``&gDebug.printer``
+ * @param fmt the text to print, can be formatted (``%d``, ``%08X``, etc...)
+ * @param ... the variables to use for the format of the text
+ */
+void Print_ScreenPx(PrintUtils* this, u8 x, u8 y, u32 rgba, const char* fmt, ...) {
+    GfxPrint gfxP;
+    Gfx *dl, *gfxRef;
+
+    OPEN_DISPS(this->gfxCtx, __FILE__, __LINE__);
+
+    dl = Gfx_Open(gfxRef = POLY_OPA_DISP);
+    gSPDisplayList(OVERLAY_DISP++, dl);
+
+    GfxPrint_Init(&gfxP);
+    GfxPrint_Open(&gfxP, dl);
+
+    GfxPrint_SetPosPx(&gfxP, x, y);
+    GfxPrint_SetColor(&gfxP, (rgba >> 16) & 0xFF, (rgba >> 8) & 0xFF, rgba & 0xFF, 255);
+
+    va_list args;
+    va_start(args, fmt);
+
+    GfxPrint_VPrintf(&gfxP, fmt, args);
+
+    va_end(args);
+
+    dl = GfxPrint_Close(&gfxP);
+    GfxPrint_Destroy(&gfxP);
+
+    gSPEndDisplayList(dl++);
+    Gfx_Close(gfxRef, dl);
+    POLY_OPA_DISP = dl;
+
+    CLOSE_DISPS(this->gfxCtx, __FILE__, __LINE__);
+}
+
 #endif

@@ -160,7 +160,6 @@
     #undef BOOT_TO_SCENE
     #undef BOOT_TO_SCENE_NEW_GAME_ONLY
     #undef BOOT_TO_FILE_SELECT
-    #undef DEBUG_FEATURES
     #undef SHOW_CS_INFOS
     #undef SHOW_INPUT_DISPLAY
     #undef SHOW_TIME_INFOS
@@ -184,7 +183,6 @@
     #define BOOT_TO_SCENE false
     #define BOOT_TO_SCENE_NEW_GAME_ONLY false
     #define BOOT_TO_FILE_SELECT false
-    #define DEBUG_FEATURES false
     #define SHOW_CS_INFOS false
     #define SHOW_INPUT_DISPLAY false
     #define SHOW_TIME_INFOS false
