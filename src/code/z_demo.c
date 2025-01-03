@@ -35,6 +35,10 @@
 
 #include "assets/scenes/misc/hakaana_ouke/hakaana_ouke_scene.h"
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+struct CutsceneCamera sCutsceneCameraInfo;
+#endif
+
 u16 sCurTextId = 0;
 u16 sCurOcarinaAction = 0;
 
@@ -165,7 +169,11 @@ void Cutscene_DrawDebugInfo(PlayState* play, Gfx** dlist, CutsceneContext* csCtx
 
 void Cutscene_InitContext(PlayState* play, CutsceneContext* csCtx) {
     csCtx->state = CS_STATE_IDLE;
+    csCtx->curFrame = 0;
     csCtx->timer = 0.0f;
+    play->csCtx.scriptListCount = 0;
+    play->csCtx.scriptIndex = 0;
+    Audio_SetCutsceneFlag(0);
 }
 
 void Cutscene_StartManual(PlayState* play, CutsceneContext* csCtx) {
@@ -1821,7 +1829,7 @@ void CutsceneCmd_MotionBlur(PlayState* play, CutsceneContext* csCtx, CsCmdMotion
     }
 }
 
-void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script) {
+void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, CutsceneData* script) {
     s16 i;
     s32 totalEntries;
     s32 cmdType;
@@ -2351,7 +2359,6 @@ void Cutscene_SetupScripted(PlayState* play, CutsceneContext* csCtx) {
 
         sCurTextId = 0;
         sCurOcarinaAction = 0;
-        csCtx->unk_12 = 0;
         csCtx->playerCue = NULL;
 
         for (i = 0; i < ARRAY_COUNT(csCtx->actorCues); i++) {
@@ -2364,6 +2371,12 @@ void Cutscene_SetupScripted(PlayState* play, CutsceneContext* csCtx) {
             Audio_SetCutsceneFlag(1);
 
             csCtx->curFrame = 0xFFFF;
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+            csCtx->subCamId = CutsceneManager_GetCurrentSubCamId(CS_ID_GLOBAL_END);
+            CutsceneCamera_Init(Play_GetCamera(play, csCtx->subCamId), &sCutsceneCameraInfo);
+            csCtx->camEyeSplinePointsAppliedFrame = CS_CAM_DATA_NOT_APPLIED;
+#else
 
             csCtx->camEyeSplinePointsAppliedFrame = CS_CAM_DATA_NOT_APPLIED;
             gCamAtSplinePointsAppliedFrame = CS_CAM_DATA_NOT_APPLIED;
@@ -2378,6 +2391,7 @@ void Cutscene_SetupScripted(PlayState* play, CutsceneContext* csCtx) {
             if (gUseCutsceneCam) {
                 csCtx->subCamId = Play_CreateSubCamera(play);
             }
+#endif
 
             if (gSaveContext.cutsceneTrigger == 0) {
                 Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_NOTHING);
@@ -2487,4 +2501,10 @@ void Cutscene_SetScript(PlayState* play, void* script) {
     } else {
         play->csCtx.script = script;
     }
+}
+
+void Cutscene_StartScripted(PlayState* play, u8 scriptIndex) {
+    PRINTF("(Cutscene_StartScripted) play->csCtx.scriptList: %08X\n", play->csCtx.scriptList);
+    Cutscene_SetScript(play, play->csCtx.scriptList[scriptIndex].script);
+    gSaveContext.cutsceneTrigger = 1;
 }

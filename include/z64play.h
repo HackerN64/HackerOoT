@@ -113,6 +113,9 @@ typedef struct PlayState {
 #if ENABLE_ANIMATED_MATERIALS
     AnimatedMaterial* sceneMaterialAnims;
 #endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    ActorCsCamInfo* actorCsCamList;
+#endif
 } PlayState; // size = 0x12518
 
 #define GET_ACTIVE_CAM(play) ((play)->cameraPtrs[(play)->activeCamId])
@@ -148,6 +151,11 @@ void Play_SetupRespawnPoint(PlayState* this, s32 respawnMode, s32 playerParams);
 void Play_TriggerVoidOut(PlayState* this);
 void Play_TriggerRespawn(PlayState* this);
 int Play_CamIsNotFixed(PlayState* this);
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+u16 Play_GetActorCsCamSetting(PlayState* this, s32 csCamDataIndex);
+Vec3s* Play_GetActorCsCamFuncData(PlayState* this, s32 csCamDataIndex);
+#endif
 
 #if DEBUG_FEATURES
 extern void* gDebugCutsceneScript;

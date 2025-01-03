@@ -29,6 +29,9 @@ void TitleSetup_Main(GameState* thisx) {
 }
 
 void TitleSetup_Destroy(GameState* thisx) {
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Destroy();
+#endif
 }
 
 void TitleSetup_Init(GameState* thisx) {
@@ -36,6 +39,9 @@ void TitleSetup_Init(GameState* thisx) {
 
     R_UPDATE_RATE = 1;
     Matrix_Init(&this->state);
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Init();
+#endif
     View_Init(&this->view, this->state.gfxCtx);
     this->state.main = TitleSetup_Main;
     this->state.destroy = TitleSetup_Destroy;

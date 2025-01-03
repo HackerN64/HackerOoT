@@ -74,4 +74,16 @@
  */
 #define ENABLE_ANIMATED_MATERIALS true
 
+/**
+ * Enable New Letterbox (from Majora's Mask)
+ */
+#define ENABLE_NEW_LETTERBOX true
+
+/**
+ * Enable Cutscene Improvements (from Majora's Mask)
+ * 
+ * This includes actor cutscenes
+ */
+#define ENABLE_CUTSCENE_IMPROVEMENTS true
+
 #endif

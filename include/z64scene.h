@@ -398,6 +398,26 @@ typedef struct {
 } SCmdTextureAnimations; // size = 0x8
 #endif
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+typedef struct {
+    /* 0x0 */ u8  code;
+    /* 0x1 */ u8  data1;
+    /* 0x4 */ void* segment;
+} SCmdCsCameraList; // size = 0x8
+
+typedef struct {
+    /* 0x0 */ u8  code;
+    /* 0x1 */ u8  num;
+    /* 0x4 */ void* segment;
+} SCmdCutsceneList; // size = 0x8
+
+typedef struct {
+    /* 0x0 */ s16 setting; // camera setting described by CameraSettingType enum
+    /* 0x2 */ s16 count;
+    /* 0x4 */ Vec3s* actorCsCamFuncData; // s16 data grouped in threes
+} ActorCsCamInfo; // size = 0x8
+#endif
+
 typedef union SceneCmd {
     SCmdBase              base;
     SCmdPlayerEntryList   playerEntryList;
@@ -430,6 +450,10 @@ typedef union SceneCmd {
 #endif
 #if ENABLE_ANIMATED_MATERIALS
     SCmdTextureAnimations textureAnimations;
+#endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    SCmdCsCameraList actorCsCamList;
+    SCmdCutsceneList cutsceneList;
 #endif
 } SceneCmd; // size = 0x8
 
@@ -615,6 +639,10 @@ typedef enum SceneCommandTypeID {
 #if ENABLE_ANIMATED_MATERIALS
                SCENE_CMD_ID_ANIMATED_MATERIAL_LIST,
 #endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+               SCENE_CMD_ID_ACTOR_CUTSCENE_LIST,
+               SCENE_CMD_ID_ACTOR_CUTSCENE_CAM_LIST,
+#endif
     /* 0x1A */ SCENE_CMD_ID_MAX
 } SceneCommandTypeID;
 
@@ -705,6 +733,15 @@ typedef enum SceneCommandTypeID {
 #if ENABLE_ANIMATED_MATERIALS
 #define SCENE_CMD_ANIMATED_MATERIAL_LIST(matAnimList) \
     { SCENE_CMD_ID_ANIMATED_MATERIAL_LIST, 0, CMD_PTR(matAnimList) }
+#endif
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+#define SCENE_CMD_ACTOR_CUTSCENE_LIST(numEntries, actorCutsceneList) \
+    { SCENE_CMD_ID_ACTOR_CUTSCENE_LIST, numEntries, CMD_PTR(actorCutsceneList) }
+
+#define SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(numCams, camList) \
+    { SCENE_CMD_ID_ACTOR_CUTSCENE_CAM_LIST, numCams, CMD_PTR(camList) }
+
 #endif
 
 

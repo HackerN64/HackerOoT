@@ -963,7 +963,13 @@ beginseg
 #endif
     include "$(BUILD_DIR)/src/code/rainbow.o"
     include "$(BUILD_DIR)/src/code/helpers.o"
+#if ENABLE_ANIMATED_MATERIALS
     include "$(BUILD_DIR)/src/code/animated_materials.o"
+#endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    include "$(BUILD_DIR)/src/code/cutscene_camera.o"
+    include "$(BUILD_DIR)/src/code/cutscene_manager.o"
+#endif
 endseg
 
 #if ENABLE_HACKER_DEBUG
@@ -19779,3 +19785,22 @@ beginseg
     number 3
 endseg
 #endif
+
+beginseg
+    name "debug1_scene"
+    compress
+    romalign 0x1000
+    include "$(BUILD_DIR)/assets/scenes/debug1/debug1_scene_main.o"
+    include "$(BUILD_DIR)/assets/scenes/debug1/debug1_scene_col.o"
+    number 2
+endseg
+
+beginseg
+    name "debug1_room_0"
+    compress
+    romalign 0x1000
+    include "$(BUILD_DIR)/assets/scenes/debug1/debug1_room_0_main.o"
+    include "$(BUILD_DIR)/assets/scenes/debug1/debug1_room_0_model_info.o"
+    include "$(BUILD_DIR)/assets/scenes/debug1/debug1_room_0_model.o"
+    number 3
+endseg

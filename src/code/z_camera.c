@@ -8959,3 +8959,211 @@ s16 Camera_SetFinishedFlag(Camera* camera) {
 
     return camera->camId;
 }
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+#define CAM_DATA_IS_BG (1 << 12) // if not set, then cam data is for actor cutscenes
+
+s16 sGlobalCamDataSettings[] = {
+    /* -66 */ CAM_SET_NORMAL4,                // CS_CAM_ID_GLOBAL_NORMAL4
+    /* -65 */ CAM_SET_PIVOT_FROM_SIDE,        // CS_CAM_ID_GLOBAL_PIVOT_FROM_SIDE
+    /* -64 */ CAM_SET_DIRECTED_YAW,           // CS_CAM_ID_GLOBAL_DIRECTED_YAW
+    /* -63 */ CAM_SET_DUNGEON2,               // CS_CAM_ID_GLOBAL_DUNGEON2
+    /* -62 */ CAM_SET_JABU_TENTACLE,          // CS_CAM_ID_GLOBAL_JABU_TENTACLE
+    /* -61 */ CAM_SET_CS_C,                   // CS_CAM_ID_GLOBAL_CS_C
+    /* -60 */ CAM_SET_FISHING,                // CS_CAM_ID_GLOBAL_FISHING
+    /* -59 */ CAM_SET_NORMAL2,                // CS_CAM_ID_GLOBAL_NORMAL2
+    /* -58 */ CAM_SET_PIVOT_VERTICAL,         // CS_CAM_ID_GLOBAL_PIVOT_VERTICAL
+    /* -57 */ CAM_SET_TURN_AROUND,            // CS_CAM_ID_GLOBAL_TURN_AROUND
+    /* -56 */ CAM_SET_FIRE_BIRDS_EYE,         // CS_CAM_ID_GLOBAL_FIRE_BIRDS_EYE
+    /* -55 */ CAM_SET_MEADOW_UNUSED,          // CS_CAM_ID_GLOBAL_MEADOW_UNUSED
+    /* -54 */ CAM_SET_MEADOW_BIRDS_EYE,       // CS_CAM_ID_GLOBAL_MEADOW_BIRDS_EYE
+    /* -53 */ CAM_SET_BIG_OCTO,               // CS_CAM_ID_GLOBAL_BIG_OCTO
+    /* -52 */ CAM_SET_FOREST_DEFEAT_POE,      // CS_CAM_ID_GLOBAL_FOREST_DEFEAT_POE
+    /* -51 */ CAM_SET_FOREST_UNUSED,          // CS_CAM_ID_GLOBAL_FOREST_UNUSED
+    /* -50 */ CAM_SET_FIRE_STAIRCASE,         // CS_CAM_ID_GLOBAL_FIRE_STAIRCASE
+    /* -49 */ CAM_SET_ELEVATOR_PLATFORM,      // CS_CAM_ID_GLOBAL_ELEVATOR_PLATFORM
+    /* -48 */ CAM_SET_SCENE_TRANSITION,       // CS_CAM_ID_GLOBAL_SCENE_TRANSITION
+    /* -47 */ CAM_SET_SCENE_UNUSED,           // CS_CAM_ID_GLOBAL_SCENE_UNUSED
+    /* -46 */ CAM_SET_BEAN_LOST_WOODS,        // CS_CAM_ID_GLOBAL_BEAN_LOST_WOODS
+    /* -45 */ CAM_SET_BEAN_GENERIC,           // CS_CAM_ID_GLOBAL_BEAN_GENERIC
+    /* -44 */ CAM_SET_CS_ATTENTION,           // CS_CAM_ID_GLOBAL_CS_ATTENTION
+    /* -43 */ CAM_SET_CS_3,                   // CS_CAM_ID_GLOBAL_CS_3
+    /* -42 */ CAM_SET_ITEM_UNUSED,            // CS_CAM_ID_GLOBAL_ITEM_UNUSED
+    /* -41 */ CAM_SET_SLOW_CHEST_CS,          // CS_CAM_ID_GLOBAL_SLOW_CHEST_CS
+    /* -40 */ CAM_SET_FOREST_BIRDS_EYE,       // CS_CAM_ID_GLOBAL_FOREST_BIRDS_EYE
+    /* -39 */ CAM_SET_CS_TWISTED_HALLWAY,     // CS_CAM_ID_GLOBAL_CS_TWISTED_HALLWAY
+    /* -38 */ CAM_SET_CS_0,                   // CS_CAM_ID_GLOBAL_CS_0
+    /* -37 */ CAM_SET_PIVOT_WATER_SURFACE,    // CS_CAM_ID_GLOBAL_PIVOT_WATER_SURFACE
+    /* -36 */ CAM_SET_PIVOT_CORNER,           // CS_CAM_ID_GLOBAL_PIVOT_CORNER
+    /* -35 */ CAM_SET_FREE2,                  // CS_CAM_ID_GLOBAL_FREE2
+    /* -34 */ CAM_SET_FREE0,                  // CS_CAM_ID_GLOBAL_FREE0
+    /* -33 */ CAM_SET_START1,                 // CS_CAM_ID_GLOBAL_START1
+    /* -32 */ CAM_SET_START0,                 // CS_CAM_ID_GLOBAL_START0
+    /* -31 */ CAM_SET_CRAWLSPACE,             // CS_CAM_ID_GLOBAL_CRAWLSPACE
+    /* -30 */ CAM_SET_DOORC,                  // CS_CAM_ID_GLOBAL_DOORC
+    /* -29 */ CAM_SET_DOOR0,                  // CS_CAM_ID_GLOBAL_DOOR0
+    /* -28 */ CAM_SET_PREREND_SIDE_SCROLL,    // CS_CAM_ID_GLOBAL_PREREND_SIDE_SCROLL
+    /* -27 */ CAM_SET_PREREND_PIVOT,          // CS_CAM_ID_GLOBAL_PREREND_PIVOT
+    /* -26 */ CAM_SET_PREREND_FIXED,          // CS_CAM_ID_GLOBAL_PREREND_FIXED
+    /* -25 */ CAM_SET_PIVOT_IN_FRONT,         // CS_CAM_ID_GLOBAL_PIVOT_IN_FRONT
+    /* -24 */ CAM_SET_PIVOT_SHOP_BROWSING,    // CS_CAM_ID_GLOBAL_PIVOT_SHOP_BROWSING
+    /* -23 */ CAM_SET_PIVOT_CRAWLSPACE,       // CS_CAM_ID_GLOBAL_PIVOT_CRAWLSPACE
+    /* -22 */ CAM_SET_CHU_BOWLING,            // CS_CAM_ID_GLOBAL_CHU_BOWLING
+    /* -21 */ CAM_SET_MARKET_BALCONY,         // CS_CAM_ID_GLOBAL_MARKET_BALCONY
+    /* -20 */ CAM_SET_TOWER_UNUSED,           // CS_CAM_ID_GLOBAL_TOWER_UNUSED
+    /* -19 */ CAM_SET_TOWER_CLIMB,            // CS_CAM_ID_GLOBAL_TOWER_CLIMB
+    /* -18 */ CAM_SET_BOSS_GANON,             // CS_CAM_ID_GLOBAL_BOSS_GANON
+    /* -17 */ CAM_SET_BOSS_GANONDORF,         // CS_CAM_ID_GLOBAL_BOSS_GANONDORF
+    /* -16 */ CAM_SET_BOSS_TWINROVA_FLOOR,    // CS_CAM_ID_GLOBAL_BOSS_TWINROVA_FLOOR
+    /* -15 */ CAM_SET_BOSS_TWINROVA_PLATFORM, // CS_CAM_ID_GLOBAL_BOSS_TWINROVA_PLATFORM
+    /* -14 */ CAM_SET_BOSS_MORPHA,            // CS_CAM_ID_GLOBAL_BOSS_MORPHA
+    /* -13 */ CAM_SET_BOSS_BONGO,             // CS_CAM_ID_GLOBAL_BOSS_BONGO
+    /* -12 */ CAM_SET_BOSS_VOLVAGIA,          // CS_CAM_ID_GLOBAL_BOSS_VOLVAGIA
+    /* -11 */ CAM_SET_BOSS_PHANTOM_GANON,     // CS_CAM_ID_GLOBAL_BOSS_PHANTOM_GANON
+    /* -10 */ CAM_SET_BOSS_BARINADE,          // CS_CAM_ID_GLOBAL_BOSS_BARINADE
+    /*  -9 */ CAM_SET_BOSS_DODONGO,           // CS_CAM_ID_GLOBAL_BOSS_DODONGO
+    /*  -8 */ CAM_SET_BOSS_GOHMA,             // CS_CAM_ID_GLOBAL_BOSS_GOHMA
+    /*  -7 */ CAM_SET_HORSE,                  // CS_CAM_ID_GLOBAL_HORSE
+    /*  -6 */ CAM_SET_NORMAL3,                // CS_CAM_ID_GLOBAL_NORMAL3
+    /*  -5 */ CAM_SET_DUNGEON1,               // CS_CAM_ID_GLOBAL_DUNGEON1
+    /*  -4 */ CAM_SET_DUNGEON0,               // CS_CAM_ID_GLOBAL_DUNGEON0
+    /*  -3 */ CAM_SET_NORMAL1,                // CS_CAM_ID_GLOBAL_NORMAL1
+    /*  -2 */ CAM_SET_NORMAL0,                // CS_CAM_ID_GLOBAL_NORMAL0
+    /*  -1 */ CAM_SET_NONE,                   // CS_CAM_ID_NONE
+    /*   0 */ CAM_SET_NONE,
+};
+
+s16* sGlobalCamDataSettingsPtr = &sGlobalCamDataSettings[ARRAY_COUNT(sGlobalCamDataSettings) - 1];
+
+/**
+ * Returns the CameraSettingType of the camera from either the bgCam or the actorCsCam at index `camDataId`
+ */
+s16 Camera_GetBgCamOrActorCsCamSetting(Camera* camera, u32 camDataId) {
+    if (camDataId & CAM_DATA_IS_BG) {
+        return BgCheck_GetBgCamSettingImpl(&camera->play->colCtx, camDataId & ~CAM_DATA_IS_BG, BGCHECK_SCENE);
+    } else {
+        return Play_GetActorCsCamSetting(camera->play, camDataId);
+    }
+}
+
+/**
+ * Returns either the bgCam data or the actorCsCam data at index `camDataId`
+ */
+Vec3s* Camera_GetBgCamOrActorCsCamFuncData(Camera* camera, u32 camDataId) {
+    if (camDataId & CAM_DATA_IS_BG) {
+        return BgCheck_GetBgCamFuncDataImpl(&camera->play->colCtx, camDataId & ~CAM_DATA_IS_BG, BGCHECK_SCENE);
+    } else {
+        return Play_GetActorCsCamFuncData(camera->play, camDataId);
+    }
+}
+
+s16 Camera_ChangeSettingFlags(Camera* camera, s16 setting, s16 flags) {
+    // Reject settings change based on priority
+    if ((camera->behaviorFlags & CAM_BEHAVIOR_SETTING_CHECK_PRIORITY) &&
+        ((sCameraSettings[camera->setting].flags & 0xF) >= (sCameraSettings[setting].flags & 0xF))) {
+        camera->behaviorFlags |= CAM_BEHAVIOR_BG_SUCCESS;
+        if (!(flags & CAM_REQUEST_SETTING_IGNORE_PRIORITY)) {
+            camera->behaviorFlags |= CAM_BEHAVIOR_SETTING_CHECK_PRIORITY;
+        }
+        return -2;
+    }
+
+    // Reject settings change based on NONE setting
+    if (setting == CAM_SET_NONE) {
+        return 0;
+    }
+
+    // Reject settings change based on an invalid setting
+    if (setting >= CAM_SET_MAX) {
+        return -99;
+    }
+
+    // Reject settings change based on setting already set (and flags)
+    if ((setting == camera->setting) && !(flags & CAM_REQUEST_SETTING_FORCE_CHANGE)) {
+        camera->behaviorFlags |= CAM_REQUEST_SETTING_PRESERVE_BG_CAM_INDEX;
+        if (!(flags & CAM_REQUEST_SETTING_IGNORE_PRIORITY)) {
+            camera->behaviorFlags |= CAM_BEHAVIOR_SETTING_CHECK_PRIORITY;
+        }
+        return -1;
+    }
+
+    camera->behaviorFlags |= CAM_REQUEST_SETTING_PRESERVE_BG_CAM_INDEX;
+
+    if (!(flags & CAM_REQUEST_SETTING_IGNORE_PRIORITY)) {
+        camera->behaviorFlags |= CAM_BEHAVIOR_SETTING_CHECK_PRIORITY;
+    }
+
+    Camera_SetNewModeStateFlags(camera);
+
+    if (!(sCameraSettings[camera->setting].flags & 0x40000000)) {
+        camera->prevSetting = camera->setting;
+    }
+
+    if (flags & CAM_REQUEST_SETTING_RESTORE_PREV_BG_CAM_INDEX) {
+        camera->bgCamIndex = camera->prevBgCamIndex;
+        camera->prevBgCamIndex = -1;
+    } else if (!(flags & CAM_REQUEST_SETTING_PRESERVE_BG_CAM_INDEX)) {
+        if (!(sCameraSettings[camera->setting].flags & 0x40000000)) {
+            camera->prevBgCamIndex = camera->bgCamIndex;
+        }
+        camera->bgCamIndex = -1;
+    }
+
+    camera->setting = setting;
+
+    if (Camera_RequestModeImpl(camera, camera->mode, true) >= 0) {
+        Camera_CopyDataToRegs(camera, camera->mode);
+    }
+
+    return setting;
+}
+
+s32 Camera_ChangeSetting(Camera* camera, s16 setting) {
+    s32 settingChangeSuccessful = Camera_ChangeSettingFlags(camera, setting, 0);
+
+    if (settingChangeSuccessful >= 0) {
+        camera->bgCamIndex = -1;
+    }
+    return settingChangeSuccessful;
+}
+
+s32 Camera_ChangeActorCsCamIndex(Camera* camera, s32 bgCamIndex) {
+    s16 setting;
+
+    if ((bgCamIndex == -1) || (bgCamIndex == camera->bgCamIndex)) {
+        camera->behaviorFlags |= CAM_BEHAVIOR_BG_PROCESSED;
+        return -1;
+    }
+
+    if (bgCamIndex < 0) {
+        setting = sGlobalCamDataSettingsPtr[bgCamIndex];
+    } else if (!(camera->behaviorFlags & CAM_BEHAVIOR_BG_PROCESSED)) {
+        setting = Camera_GetBgCamOrActorCsCamSetting(camera, bgCamIndex);
+    } else {
+        return -1;
+    }
+
+    camera->behaviorFlags |= CAM_BEHAVIOR_BG_PROCESSED;
+
+    // Sets camera setting based on bg/scene data
+    if ((Camera_ChangeSettingFlags(
+             camera, setting, CAM_REQUEST_SETTING_PRESERVE_BG_CAM_INDEX | CAM_REQUEST_SETTING_FORCE_CHANGE) >= 0) ||
+        (sCameraSettings[camera->setting].flags & 0x80000000)) {
+        camera->bgCamIndex = bgCamIndex;
+        camera->behaviorFlags |= CAM_BEHAVIOR_BG_SUCCESS;
+        Camera_CopyDataToRegs(camera, camera->mode);
+    }
+
+    return bgCamIndex | 0x80000000;
+}
+
+void Camera_800E0348(Camera* camera) {
+    if (!RELOAD_PARAMS(camera)) {
+        camera->animState = 999;
+        Camera_SetStateFlag(camera, CAM_STATE_BLOCK_BG | CAM_STATE_CAM_FUNC_FINISH | CAM_STATE_CHECK_BG | CAM_STATE_CHECK_WATER);
+    } else {
+        camera->animState = 666;
+    }
+}
+
+#endif

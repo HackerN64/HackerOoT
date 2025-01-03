@@ -614,7 +614,7 @@ int Player_InBlockingCsMode(PlayState* play, Player* this) {
 int Player_InCsMode(PlayState* play) {
     Player* this = GET_PLAYER(play);
 
-    return Player_InBlockingCsMode(play, this) || (this->unk_6AD == 4);
+    return CutsceneManager_GetCurrentCsId() == CS_ID_NONE && (Player_InBlockingCsMode(play, this) || (this->unk_6AD == 4));
 }
 
 /**

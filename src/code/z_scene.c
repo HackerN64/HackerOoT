@@ -528,11 +528,20 @@ void Scene_SetTransitionForNextEntrance(PlayState* play) {
 }
 
 #if ENABLE_ANIMATED_MATERIALS
-
 void Scene_CommandAnimatedMaterials(PlayState* play, SceneCmd* cmd) {
     play->sceneMaterialAnims = SEGMENTED_TO_VIRTUAL(cmd->textureAnimations.segment);
 }
+#endif
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+void Scene_CommandCutsceneList(PlayState* play, SceneCmd* cmd) {
+    CutsceneManager_Init(play, SEGMENTED_TO_VIRTUAL(cmd->cutsceneList.segment), cmd->cutsceneList.num);
+    PRINTF("(Scene_CommandCutsceneList) segment: 0x%08X, num: %d\n", cmd->cutsceneList.segment, cmd->cutsceneList.num);
+}
+
+void Scene_CommandActorCutsceneCamList(PlayState* play, SceneCmd* cmd) {
+    play->actorCsCamList = SEGMENTED_TO_VIRTUAL(cmd->actorCsCamList.segment);
+}
 #endif
 
 SceneCmdHandlerFunc sSceneCmdHandlers[SCENE_CMD_ID_MAX] = {
@@ -567,6 +576,10 @@ SceneCmdHandlerFunc sSceneCmdHandlers[SCENE_CMD_ID_MAX] = {
 #endif
 #if ENABLE_ANIMATED_MATERIALS
     Scene_CommandAnimatedMaterials, // SCENE_CMD_ID_ANIMATED_MATERIAL_LIST
+#endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    Scene_CommandCutsceneList,         // SCENE_CMD_ID_ACTOR_CUTSCENE_LIST
+    Scene_CommandActorCutsceneCamList, // SCENE_CMD_ID_ACTOR_CUTSCENE_CAM_LIST
 #endif
 };
 

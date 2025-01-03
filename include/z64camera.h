@@ -1733,4 +1733,13 @@ void Camera_SetCameraData(Camera* camera, s16 setDataFlags, void* data0, void* d
 s32 func_8005B198(void);
 s16 Camera_SetFinishedFlag(Camera* camera);
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+s16 Camera_GetBgCamOrActorCsCamSetting(Camera* camera, u32 camDataId);
+Vec3s* Camera_GetBgCamOrActorCsCamFuncData(Camera* camera, u32 camDataId);
+s16 Camera_ChangeSettingFlags(Camera* camera, s16 setting, s16 flags);
+s32 Camera_ChangeSetting(Camera* camera, s16 setting);
+s32 Camera_ChangeActorCsCamIndex(Camera* camera, s32 bgCamIndex);
+void Camera_800E0348(Camera* camera);
+#endif
+
 #endif
