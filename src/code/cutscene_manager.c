@@ -291,8 +291,6 @@ s16 CutsceneManager_Update(void) {
     //     CutsceneManager_StartWithPlayerCs(CS_ID_GLOBAL_RETURN_TO_CAM, &GET_PLAYER(sCutsceneMgr.play)->actor);
     // }
 
-    PRINTF("(CutsceneManager_Update) csId: %d, endCsId: %d, length: %d\n", sCutsceneMgr.csId, sCutsceneMgr.endCsId, sCutsceneMgr.length);
-
     if (sCutsceneMgr.endCsId == CS_ID_NONE) {
         if (sCutsceneMgr.csId != CS_ID_NONE) {
             if (sCutsceneMgr.length > 0) {
@@ -384,6 +382,12 @@ s16 CutsceneManager_Start(s16 csId, Actor* actor) {
     Camera* subCam;
     Camera* retCam;
     s32 csType = 0;
+    Player* player = GET_PLAYER(sCutsceneMgr.play);
+
+    // set the cutscene halt flag
+    if (!(player->stateFlags3 & PLAYER_STATE3_ACTOR_CS_HALT)) {
+        player->stateFlags3 |= PLAYER_STATE3_ACTOR_CS_HALT;
+    }
 
     if ((csId <= CS_ID_NONE) || (sCutsceneMgr.csId != CS_ID_NONE)) {
         return csId;
@@ -403,9 +407,6 @@ s16 CutsceneManager_Start(s16 csId, Actor* actor) {
     } else if ((csId != CS_ID_GLOBAL_DOOR) && (csId != CS_ID_GLOBAL_TALK)) {
         csType = 2;
     }
-
-    PRINTF("(CutsceneManager_Start) csType: %d, csEntry->scriptIndex:%d, csEntry->priority: %d\n",
-    csType, csEntry->scriptIndex, csEntry->priority);
 
     if (csType != 0) {
         sCutsceneMgr.retCamId = Play_GetActiveCamId(sCutsceneMgr.play);
@@ -453,6 +454,12 @@ s16 CutsceneManager_Start(s16 csId, Actor* actor) {
 
 s16 CutsceneManager_Stop(s16 csId) {
     CutsceneEntry* csEntry;
+    Player* player = GET_PLAYER(sCutsceneMgr.play);
+
+    // unset the cutscene halt flag
+    if (player->stateFlags3 & PLAYER_STATE3_ACTOR_CS_HALT) {
+        player->stateFlags3 &= ~PLAYER_STATE3_ACTOR_CS_HALT;
+    }
 
     if (csId <= CS_ID_NONE) {
         return csId;

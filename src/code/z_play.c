@@ -601,18 +601,6 @@ void Play_Update(PlayState* this) {
 #define FRAMEADVANCE_CAN_UPDATE true
 #endif
 
-    if (CHECK_BTN_ALL(input[0].press.button, BTN_L)) {
-        if (!CutsceneManager_IsNext(0)) {
-            CutsceneManager_Queue(0);
-        } else {
-            CutsceneManager_Start(0, &GET_PLAYER(this)->actor);
-        }
-
-        PRINTF("pressed!\n");
-    }
-
-    PRINTF("CutsceneManager_IsNext(0):%d\n", CutsceneManager_IsNext(0));
-
     if (FRAMEADVANCE_CAN_UPDATE) {
         if ((this->transitionMode == TRANS_MODE_OFF) && (this->transitionTrigger != TRANS_TRIGGER_OFF)) {
             this->transitionMode = TRANS_MODE_SETUP;
@@ -1704,8 +1692,17 @@ void Play_Main(GameState* thisx) {
     PLAY_LOG(4587);
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS
+    s16 optCsId = CutsceneManager_GetAdditionalCsId(0);
+    s16 csId = optCsId >= 0 ? optCsId : 0;
+
+    if (CutsceneManager_IsNext(csId)) {
+        CutsceneManager_Start(csId, &GET_PLAYER(this)->actor);
+    } else if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_L)) {
+        CutsceneManager_Queue(csId);
+    }
+
     CutsceneManager_Update();
-    // CutsceneManager_ClearWaiting();
+    CutsceneManager_ClearWaiting();
 #endif
 }
 

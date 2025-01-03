@@ -3,6 +3,7 @@
 #include "quake.h"
 #include "terminal.h"
 #include "overlays/actors/ovl_En_Horse/z_en_horse.h"
+#include "config.h"
 
 #pragma increment_block_number "gc-eu:192 gc-eu-mq:192 gc-jp:192 gc-jp-ce:192 gc-jp-mq:192 gc-us:192 gc-us-mq:192" \
                                "ntsc-1.0:192 ntsc-1.1:192 ntsc-1.2:192 pal-1.0:192 pal-1.1:192"
@@ -38,6 +39,9 @@ s32 Camera_QRegInit(void);
 #else
 #define CAM_DEBUG_RELOAD_PARAMS true
 #endif
+
+#define CAMERA_CHECK_FLAGS(settings, mask) ((settings.flags & 0x20000000) ? sCameraSettings[camera->setting].unk_00 & (mask) : sCameraSettings[camera->setting].flags & (mask))
+#define CAM_DATA_IS_BG (1 << 12) // if not set, then cam data is for actor cutscenes
 
 /**
  * Camera data is stored in both read-only data and OREG as s16, and then converted to the appropriate type during
@@ -1849,7 +1853,7 @@ s32 Camera_Normal2(Camera* camera) {
         case 10:
         case 20:
         case 25:
-            bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
+            bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamOrActorCsCamFuncData(camera, camera->bgCamIndex);
             rwData->unk_00 = Camera_Vec3sToVec3f(&bgCamFuncData->pos);
             rwData->unk_20 = bgCamFuncData->rot.x;
             rwData->unk_22 = bgCamFuncData->rot.y;
@@ -3994,7 +3998,7 @@ s32 Camera_KeepOn0(Camera* camera) {
 
     CAM_DEBUG_RELOAD_PREG(camera);
 
-    bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
+    bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamOrActorCsCamFuncData(camera, camera->bgCamIndex);
     *eyeNext = Camera_Vec3sToVec3f(&bgCamFuncData->pos);
     *eye = *eyeNext;
 
@@ -4059,7 +4063,7 @@ s32 Camera_Fixed1(Camera* camera) {
     if (RELOAD_PARAMS(camera) || CAM_DEBUG_RELOAD_PARAMS) {
         CameraModeValue* values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
 
-        bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
+        bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamOrActorCsCamFuncData(camera, camera->bgCamIndex);
         rwData->eyePosRotTarget.pos = Camera_Vec3sToVec3f(&bgCamFuncData->pos);
         rwData->eyePosRotTarget.rot = bgCamFuncData->rot;
         rwData->fov = bgCamFuncData->fov;
@@ -4139,7 +4143,7 @@ s32 Camera_Fixed2(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
         rwData->fov = roData->fov * 100.0f;
 
-        bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
+        bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamOrActorCsCamFuncData(camera, camera->bgCamIndex);
         if (bgCamFuncData != NULL) {
             rwData->eye = Camera_Vec3sToVec3f(&bgCamFuncData->pos);
             if (bgCamFuncData->fov != -1) {
@@ -4204,7 +4208,7 @@ s32 Camera_Fixed3(Camera* camera) {
     Fixed3ReadWriteData* rwData = &camera->paramData.fixd3.rwData;
     s32 pad;
 
-    bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
+    bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamOrActorCsCamFuncData(camera, camera->bgCamIndex);
 
     eyeAtOffset = OLib_Vec3fDiffToVecGeo(eye, at);
 
@@ -4291,7 +4295,7 @@ s32 Camera_Fixed4(Camera* camera) {
         roData->fov = GET_NEXT_RO_DATA(values);
         roData->interfaceField = GET_NEXT_RO_DATA(values);
 
-        bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
+        bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamOrActorCsCamFuncData(camera, camera->bgCamIndex);
         if (bgCamFuncData != NULL) {
             rwData->eyeTarget = Camera_Vec3sToVec3f(&bgCamFuncData->pos);
         } else {
@@ -4694,7 +4698,7 @@ s32 Camera_Data4(Camera* camera) {
         roData->fov = GET_NEXT_RO_DATA(values);
         roData->interfaceField = GET_NEXT_RO_DATA(values);
 
-        bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
+        bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamOrActorCsCamFuncData(camera, camera->bgCamIndex);
         rwData->eyePosRot.pos = Camera_Vec3sToVec3f(&bgCamFuncData->pos);
         rwData->eyePosRot.rot = bgCamFuncData->rot;
         fov = bgCamFuncData->fov;
@@ -4953,7 +4957,7 @@ s32 Camera_Unique3(Camera* camera) {
                 break;
             }
 
-            bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
+            bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamOrActorCsCamFuncData(camera, camera->bgCamIndex);
             camera->eyeNext = Camera_Vec3sToVec3f(&bgCamFuncData->pos);
             camera->eye = camera->eyeNext;
             bgCamRot = bgCamFuncData->rot;
@@ -5068,7 +5072,7 @@ s32 Camera_Unique0(Camera* camera) {
         func_80043B60(camera);
         camera->stateFlags &= ~CAM_STATE_CHECK_BG;
 
-        bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
+        bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamOrActorCsCamFuncData(camera, camera->bgCamIndex);
         rwData->eyeAndDirection.point = Camera_Vec3sToVec3f(&bgCamFuncData->pos);
 
         *eye = camera->eyeNext = rwData->eyeAndDirection.point;
@@ -5227,7 +5231,7 @@ s32 Camera_Unique7(Camera* camera) {
     }
     CAM_DEBUG_RELOAD_PREG(camera);
 
-    bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
+    bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamOrActorCsCamFuncData(camera, camera->bgCamIndex);
 
     *eyeNext = Camera_Vec3sToVec3f(&bgCamFuncData->pos);
     *eye = *eyeNext;
@@ -7210,7 +7214,7 @@ s32 Camera_Special6(Camera* camera) {
 
     eyeAtOffset = OLib_Vec3fDiffToVecGeo(eye, at);
 
-    bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
+    bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamOrActorCsCamFuncData(camera, camera->bgCamIndex);
     bgCamPos = Camera_Vec3sToVec3f(&bgCamFuncData->pos);
     bgCamRot = bgCamFuncData->rot;
     fov = bgCamFuncData->fov;
@@ -7354,7 +7358,7 @@ s32 Camera_Special9(Camera* camera) {
             if (doorParams->timer1 <= 0) {
                 camera->animState++;
                 if (roData->interfaceField & SPECIAL9_FLAG_0) {
-                    bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
+                    bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamOrActorCsCamFuncData(camera, camera->bgCamIndex);
                     *eyeNext = Camera_Vec3sToVec3f(&bgCamFuncData->pos);
                     spAC = *eye = *eyeNext;
                 } else {
@@ -7777,7 +7781,7 @@ s32 Camera_UpdateWater(Camera* camera) {
     Player* player = camera->player;
     s16 prevBgId;
 
-    if (!(camera->stateFlags & CAM_STATE_CHECK_WATER) || sCameraSettings[camera->setting].unk_00 & 0x40000000) {
+    if (!(camera->stateFlags & CAM_STATE_CHECK_WATER) || CAMERA_CHECK_FLAGS(sCameraSettings[camera->setting], 0x40000000)) {
         return 0;
     }
 
@@ -8032,6 +8036,15 @@ void Camera_UpdateDistortion(Camera* camera) {
 #define ENABLE_DEBUG_CAM_UPDATE false
 #endif
 
+// probably useless?
+s32 Camera_800CB854(Camera* camera) {
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    return camera->player->stateFlags1 & PLAYER_STATE1_5;
+#else
+    return 0;
+#endif
+}
+
 Vec3s Camera_Update(Camera* camera) {
     static s32 sOOBTimer = 0;
     Vec3f viewAt;
@@ -8114,6 +8127,10 @@ Vec3s Camera_Update(Camera* camera) {
                     camera->nextBgId = bgId;
                     if (bgId == BGCHECK_SCENE) {
                         camera->nextBgCamIndex = bgCamIndex;
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+                        camera->nextBgCamIndex |= CAM_DATA_IS_BG;
+#endif
                     }
                 }
             }
@@ -8155,15 +8172,18 @@ Vec3s Camera_Update(Camera* camera) {
         Camera_CalcAtDefault(camera, &eyeAtAngle, 0.0f, false);
     }
 
+    if (D_8011D3F0 != 0) {
+        D_8011D3F0--;
+    }
+
     if (camera->status == CAM_STAT_ACTIVE) {
         if ((gSaveContext.gameMode != GAMEMODE_NORMAL) && (gSaveContext.gameMode != GAMEMODE_END_CREDITS)) {
             sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_NONE, CAM_HUD_VISIBILITY_ALL, 0);
             Camera_UpdateInterface(sCameraInterfaceField);
-        } else if ((D_8011D3F0 != 0) && (camera->camId == CAM_ID_MAIN)) {
-            D_8011D3F0--;
+        } else if (((D_8011D3F0 != 0) || Camera_800CB854(camera)) && (camera->camId == CAM_ID_MAIN)) {
             sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_LARGE, CAM_HUD_VISIBILITY_NOTHING_ALT, 0);
             Camera_UpdateInterface(sCameraInterfaceField);
-        } else if (camera->play->transitionMode != TRANS_MODE_OFF) {
+        } else if ((camera->play->transitionMode != TRANS_MODE_OFF) && (camera->camId != CAM_ID_MAIN)) {
             sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_IGNORE, CAM_HUD_VISIBILITY_NOTHING_ALT, 0);
             Camera_UpdateInterface(sCameraInterfaceField);
         } else if (camera->play->csCtx.state != CS_STATE_IDLE) {
@@ -8617,7 +8637,7 @@ s32 Camera_RequestBgCam(Camera* camera, s32 requestedBgCamIndex) {
     }
 
     if (!(camera->behaviorFlags & CAM_BEHAVIOR_BG_PROCESSED)) {
-        requestedCamSetting = Camera_GetBgCamSetting(camera, requestedBgCamIndex);
+        requestedCamSetting = Camera_GetBgCamOrActorCsCamSetting(camera, requestedBgCamIndex);
         camera->behaviorFlags |= CAM_BEHAVIOR_BG_PROCESSED;
 #if DEBUG_FEATURES
         settingChangeSuccessful = Camera_RequestSettingImpl(camera, requestedCamSetting,
@@ -8828,7 +8848,7 @@ s32 Camera_ChangeDoorCam(Camera* camera, Actor* doorActor, s16 bgCamIndex, f32 a
         Camera_RequestSetting(camera, CAM_SET_DOORC);
         PRINTF(".... change default door camera (set %d)\n", CAM_SET_DOORC);
     } else {
-        s32 setting = Camera_GetBgCamSetting(camera, bgCamIndex);
+        s32 setting = Camera_GetBgCamOrActorCsCamSetting(camera, bgCamIndex);
 
         camera->behaviorFlags |= CAM_BEHAVIOR_BG_PROCESSED;
 
@@ -8960,8 +8980,37 @@ s16 Camera_SetFinishedFlag(Camera* camera) {
     return camera->camId;
 }
 
+/**
+ * Returns the CameraSettingType of the camera from either the bgCam or the actorCsCam at index `camDataId`
+ */
+s16 Camera_GetBgCamOrActorCsCamSetting(Camera* camera, u32 camDataId) {
 #if ENABLE_CUTSCENE_IMPROVEMENTS
-#define CAM_DATA_IS_BG (1 << 12) // if not set, then cam data is for actor cutscenes
+    if (camDataId & CAM_DATA_IS_BG) {
+        return BgCheck_GetBgCamSettingImpl(&camera->play->colCtx, camDataId & ~CAM_DATA_IS_BG, BGCHECK_SCENE);
+    } else {
+        return Play_GetActorCsCamSetting(camera->play, camDataId);
+    }
+#else
+    return BgCheck_GetBgCamSettingImpl(&camera->play->colCtx, bgCamIndex, BGCHECK_SCENE);
+#endif
+}
+
+/**
+ * Returns either the bgCam data or the actorCsCam data at index `camDataId`
+ */
+Vec3s* Camera_GetBgCamOrActorCsCamFuncData(Camera* camera, u32 camDataId) {
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    if (camDataId & CAM_DATA_IS_BG) {
+        return BgCheck_GetBgCamFuncDataImpl(&camera->play->colCtx, camDataId & ~CAM_DATA_IS_BG, BGCHECK_SCENE);
+    } else {
+        return Play_GetActorCsCamFuncData(camera->play, camDataId);
+    }
+#else
+    return return BgCheck_GetBgCamFuncDataImpl(&camera->play->colCtx, camDataId, BGCHECK_SCENE);
+#endif
+}
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
 
 s16 sGlobalCamDataSettings[] = {
     /* -66 */ CAM_SET_NORMAL4,                // CS_CAM_ID_GLOBAL_NORMAL4
@@ -9034,28 +9083,6 @@ s16 sGlobalCamDataSettings[] = {
 };
 
 s16* sGlobalCamDataSettingsPtr = &sGlobalCamDataSettings[ARRAY_COUNT(sGlobalCamDataSettings) - 1];
-
-/**
- * Returns the CameraSettingType of the camera from either the bgCam or the actorCsCam at index `camDataId`
- */
-s16 Camera_GetBgCamOrActorCsCamSetting(Camera* camera, u32 camDataId) {
-    if (camDataId & CAM_DATA_IS_BG) {
-        return BgCheck_GetBgCamSettingImpl(&camera->play->colCtx, camDataId & ~CAM_DATA_IS_BG, BGCHECK_SCENE);
-    } else {
-        return Play_GetActorCsCamSetting(camera->play, camDataId);
-    }
-}
-
-/**
- * Returns either the bgCam data or the actorCsCam data at index `camDataId`
- */
-Vec3s* Camera_GetBgCamOrActorCsCamFuncData(Camera* camera, u32 camDataId) {
-    if (camDataId & CAM_DATA_IS_BG) {
-        return BgCheck_GetBgCamFuncDataImpl(&camera->play->colCtx, camDataId & ~CAM_DATA_IS_BG, BGCHECK_SCENE);
-    } else {
-        return Play_GetActorCsCamFuncData(camera->play, camDataId);
-    }
-}
 
 s16 Camera_ChangeSettingFlags(Camera* camera, s16 setting, s16 flags) {
     // Reject settings change based on priority
@@ -9130,7 +9157,7 @@ s32 Camera_ChangeSetting(Camera* camera, s16 setting) {
 s32 Camera_ChangeActorCsCamIndex(Camera* camera, s32 bgCamIndex) {
     s16 setting;
 
-    if ((bgCamIndex == -1) || (bgCamIndex == camera->bgCamIndex)) {
+    if ((bgCamIndex == -1) || ((bgCamIndex == camera->bgCamIndex) && !(camera->behaviorFlags & CAM_BEHAVIOR_BG_PROCESSED))) {
         camera->behaviorFlags |= CAM_BEHAVIOR_BG_PROCESSED;
         return -1;
     }

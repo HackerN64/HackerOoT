@@ -1,4 +1,5 @@
 #include "z_en_holl.h"
+#include "config.h"
 
 #define FLAGS ACTOR_FLAG_4
 
@@ -403,7 +404,13 @@ void EnHoll_WaitRoomLoaded(EnHoll* this, PlayState* play) {
 void EnHoll_Update(Actor* thisx, PlayState* play) {
     EnHoll* this = (EnHoll*)thisx;
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    if ((play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->transitionMode == TRANS_MODE_OFF) && !(GET_PLAYER(play)->stateFlags3 & PLAYER_STATE3_ACTOR_CS_HALT)) {
+        this->actionFunc(this, play);
+    }
+#else
     this->actionFunc(this, play);
+#endif
 }
 
 #include "assets/overlays/ovl_En_Holl/ovl_En_Holl.c"

@@ -2352,6 +2352,16 @@ CameraMode sCamSetNormal4Modes[] = {
     CAM_SETTING_MODE_ENTRY(CAM_FUNC_KEEP1, sSetNormal0ModeFollowBoomerangData),   // CAM_MODE_FOLLOW_BOOMERANG
 };
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+CameraModeValue D_801B5824[] = {
+    CAM_FUNCDATA_FIXD1(-40, 100, 60, CAM_INTERFACE_FIELD(CAM_LETTERBOX_IGNORE, CAM_HUD_VISIBILITY_IGNORE, 0)),
+};
+
+CameraMode sCamSetFixed1Modes[] = {
+    CAM_SETTING_MODE_ENTRY(CAM_FUNC_FIXED1, D_801B5824), // CAM_MODE_NORMAL
+};
+#endif
+
 CameraSetting sCameraSettings[] = {
     { { 0x00000000 }, 0x20000000, NULL },                             // CAM_SET_NONE
     { { 0x051FFFFF }, 0x20000000, sCamSetNormal0Modes },              // CAM_SET_NORMAL0
@@ -2419,6 +2429,9 @@ CameraSetting sCameraSettings[] = {
     { { 0x051FFFFF }, 0x20000000, sCamSetDirectedYawModes },          // CAM_SET_DIRECTED_YAW
     { { 0xC5000ECD }, 0x20000000, sCamSetPivotFromSideModes },        // CAM_SET_PIVOT_FROM_SIDE
     { { 0x051FFFFF }, 0x20000000, sCamSetNormal4Modes },              // CAM_SET_NORMAL4
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    { { 0x00000001 }, 0x80000005, sCamSetFixed1Modes },               // CAM_SET_FIXED1
+#endif
 };
 
 s32 Camera_Normal0(Camera* camera);
@@ -2564,6 +2577,9 @@ s32 (*sCameraFunctions[])(Camera*) = {
     Camera_Special7,  // CAM_FUNC_SPEC7
     Camera_Special8,  // CAM_FUNC_SPEC8
     Camera_Special9,  // CAM_FUNC_SPEC9
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    Camera_Fixed3,    // CAM_FUNC_FIXED1
+#endif
 };
 
 s32 sInitRegs = 1;

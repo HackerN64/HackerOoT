@@ -2342,6 +2342,9 @@ void CutsceneHandler_StopScript(PlayState* play, CutsceneContext* csCtx) {
             Camera_SetFinishedFlag(play->cameraPtrs[sReturnToCamId]);
         }
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+        CutsceneManager_Stop(CS_ID_GLOBAL_END);
+#endif
         Audio_SetCutsceneFlag(0);
         csCtx->state = CS_STATE_IDLE;
     }

@@ -526,7 +526,7 @@ typedef struct CutsceneEntry {
 
 typedef enum CutsceneCamId {
     // global (see sGlobalCamDataSettings)
-    /* -66 */ CS_CAM_ID_GLOBAL_NORMAL4 = -66,          // CAM_SET_NORMAL4 (set to -CAM_SET_MAX)
+    /* -66 */ CS_CAM_ID_GLOBAL_NORMAL4 = -67,          // CAM_SET_NORMAL4 (set to -CAM_SET_MAX)
     /* -65 */ CS_CAM_ID_GLOBAL_PIVOT_FROM_SIDE,        // CAM_SET_PIVOT_FROM_SIDE
     /* -64 */ CS_CAM_ID_GLOBAL_DIRECTED_YAW,           // CAM_SET_DIRECTED_YAW
     /* -63 */ CS_CAM_ID_GLOBAL_DUNGEON2,               // CAM_SET_DUNGEON2
