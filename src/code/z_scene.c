@@ -527,6 +527,14 @@ void Scene_SetTransitionForNextEntrance(PlayState* play) {
     play->transitionType = ENTRANCE_INFO_START_TRANS_TYPE(gEntranceTable[entranceIndex].field);
 }
 
+#if ENABLE_ANIMATED_MATERIALS
+
+void Scene_CommandAnimatedMaterials(PlayState* play, SceneCmd* cmd) {
+    play->sceneMaterialAnims = SEGMENTED_TO_VIRTUAL(cmd->textureAnimations.segment);
+}
+
+#endif
+
 SceneCmdHandlerFunc sSceneCmdHandlers[SCENE_CMD_ID_MAX] = {
     Scene_CommandPlayerEntryList,          // SCENE_CMD_ID_SPAWN_LIST
     Scene_CommandActorEntryList,           // SCENE_CMD_ID_ACTOR_LIST
@@ -556,6 +564,9 @@ SceneCmdHandlerFunc sSceneCmdHandlers[SCENE_CMD_ID_MAX] = {
     Scene_CommandMiscSettings,             // SCENE_CMD_ID_MISC_SETTINGS
 #if ENABLE_F3DEX3
     Scene_CommandOccPlaneCandList, // SCENE_CMD_ID_OCC_PLANE_CAND_LIST
+#endif
+#if ENABLE_ANIMATED_MATERIALS
+    Scene_CommandAnimatedMaterials, // SCENE_CMD_ID_ANIMATED_MATERIAL_LIST
 #endif
 };
 

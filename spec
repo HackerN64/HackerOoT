@@ -963,6 +963,7 @@ beginseg
 #endif
     include "$(BUILD_DIR)/src/code/rainbow.o"
     include "$(BUILD_DIR)/src/code/helpers.o"
+    include "$(BUILD_DIR)/src/code/animated_materials.o"
 endseg
 
 #if ENABLE_HACKER_DEBUG

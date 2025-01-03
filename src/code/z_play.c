@@ -531,6 +531,9 @@ void Play_Init(GameState* thisx) {
         DmaMgr_DmaRomToRam(0x03FEB000, gDebugCutsceneScript, sizeof(sDebugCutsceneScriptBuf));
     }
 #endif
+
+    //! TODO: investigate issue with this variable set to a random value
+    this->gameplayFrames = 0;
 }
 
 void Play_Update(PlayState* this) {
@@ -1770,6 +1773,10 @@ void Play_InitScene(PlayState* this, s32 spawn) {
     this->exitList = NULL;
     this->naviQuestHints = NULL;
     this->pathList = NULL;
+
+#if ENABLE_ANIMATED_MATERIALS
+    this->sceneMaterialAnims = NULL;
+#endif
 
     this->numActorEntries = 0;
 
