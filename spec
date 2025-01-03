@@ -19785,22 +19785,3 @@ beginseg
     number 3
 endseg
 #endif
-
-beginseg
-    name "debug1_scene"
-    compress
-    romalign 0x1000
-    include "$(BUILD_DIR)/assets/scenes/debug1/debug1_scene_main.o"
-    include "$(BUILD_DIR)/assets/scenes/debug1/debug1_scene_col.o"
-    number 2
-endseg
-
-beginseg
-    name "debug1_room_0"
-    compress
-    romalign 0x1000
-    include "$(BUILD_DIR)/assets/scenes/debug1/debug1_room_0_main.o"
-    include "$(BUILD_DIR)/assets/scenes/debug1/debug1_room_0_model_info.o"
-    include "$(BUILD_DIR)/assets/scenes/debug1/debug1_room_0_model.o"
-    number 3
-endseg
