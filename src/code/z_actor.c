@@ -2330,9 +2330,9 @@ typedef struct ActorFreezeMasks {
 
 ActorFreezeMasks sCategoryFreezeMasks[ACTORCAT_MAX] = {
     // ACTORCAT_SWITCH
-    { PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28, 0 , PLAYER_STATE3_CS_HALT },
+    { PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28, 0, PLAYER_STATE3_CS_HALT },
     // ACTORCAT_BG
-    { PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28, 0 , PLAYER_STATE3_CS_HALT },
+    { PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28, 0, PLAYER_STATE3_CS_HALT },
     // ACTORCAT_PLAYER
     { 0, 0, PLAYER_STATE3_CS_HALT },
     // ACTORCAT_EXPLOSIVE
@@ -2410,7 +2410,8 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
     for (i = 0; i < ARRAY_COUNT(actorCtx->actorLists); i++, categoryFreezeMaskP++) {
         ActorFreezeMasks curEntry = *categoryFreezeMaskP;
 
-        canFreezeCategory = (curEntry.mask1 & player->stateFlags1) || (curEntry.mask2 & player->stateFlags2) || (curEntry.mask3 & player->stateFlags3);
+        canFreezeCategory = (curEntry.mask1 & player->stateFlags1) || (curEntry.mask2 & player->stateFlags2) ||
+                            (curEntry.mask3 & player->stateFlags3);
 
         actor = actorCtx->actorLists[i].head;
         while (actor != NULL) {

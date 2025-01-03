@@ -2430,7 +2430,7 @@ CameraSetting sCameraSettings[] = {
     { { 0xC5000ECD }, 0x20000000, sCamSetPivotFromSideModes },        // CAM_SET_PIVOT_FROM_SIDE
     { { 0x051FFFFF }, 0x20000000, sCamSetNormal4Modes },              // CAM_SET_NORMAL4
 #if ENABLE_CUTSCENE_IMPROVEMENTS
-    { { 0x00000001 }, 0x80000005, sCamSetFixed1Modes },               // CAM_SET_FIXED1
+    { { 0x00000001 }, 0x80000005, sCamSetFixed1Modes }, // CAM_SET_FIXED1
 #endif
 };
 
@@ -2578,7 +2578,7 @@ s32 (*sCameraFunctions[])(Camera*) = {
     Camera_Special8,  // CAM_FUNC_SPEC8
     Camera_Special9,  // CAM_FUNC_SPEC9
 #if ENABLE_CUTSCENE_IMPROVEMENTS
-    Camera_Fixed3,    // CAM_FUNC_FIXED1
+    Camera_Fixed3, // CAM_FUNC_FIXED1
 #endif
 };
 

@@ -40,7 +40,9 @@ s32 Camera_QRegInit(void);
 #define CAM_DEBUG_RELOAD_PARAMS true
 #endif
 
-#define CAMERA_CHECK_FLAGS(settings, mask) ((settings.flags & 0x20000000) ? sCameraSettings[camera->setting].unk_00 & (mask) : sCameraSettings[camera->setting].flags & (mask))
+#define CAMERA_CHECK_FLAGS(settings, mask)                                            \
+    ((settings.flags & 0x20000000) ? sCameraSettings[camera->setting].unk_00 & (mask) \
+                                   : sCameraSettings[camera->setting].flags & (mask))
 #define CAM_DATA_IS_BG (1 << 12) // if not set, then cam data is for actor cutscenes
 
 /**
@@ -7781,7 +7783,8 @@ s32 Camera_UpdateWater(Camera* camera) {
     Player* player = camera->player;
     s16 prevBgId;
 
-    if (!(camera->stateFlags & CAM_STATE_CHECK_WATER) || CAMERA_CHECK_FLAGS(sCameraSettings[camera->setting], 0x40000000)) {
+    if (!(camera->stateFlags & CAM_STATE_CHECK_WATER) ||
+        CAMERA_CHECK_FLAGS(sCameraSettings[camera->setting], 0x40000000)) {
         return 0;
     }
 
@@ -9157,7 +9160,8 @@ s32 Camera_ChangeSetting(Camera* camera, s16 setting) {
 s32 Camera_ChangeActorCsCamIndex(Camera* camera, s32 bgCamIndex) {
     s16 setting;
 
-    if ((bgCamIndex == -1) || ((bgCamIndex == camera->bgCamIndex) && !(camera->behaviorFlags & CAM_BEHAVIOR_BG_PROCESSED))) {
+    if ((bgCamIndex == -1) ||
+        ((bgCamIndex == camera->bgCamIndex) && !(camera->behaviorFlags & CAM_BEHAVIOR_BG_PROCESSED))) {
         camera->behaviorFlags |= CAM_BEHAVIOR_BG_PROCESSED;
         return -1;
     }
@@ -9187,7 +9191,8 @@ s32 Camera_ChangeActorCsCamIndex(Camera* camera, s32 bgCamIndex) {
 void Camera_800E0348(Camera* camera) {
     if (!RELOAD_PARAMS(camera)) {
         camera->animState = 999;
-        Camera_SetStateFlag(camera, CAM_STATE_BLOCK_BG | CAM_STATE_CAM_FUNC_FINISH | CAM_STATE_CHECK_BG | CAM_STATE_CHECK_WATER);
+        Camera_SetStateFlag(camera, CAM_STATE_BLOCK_BG | CAM_STATE_CAM_FUNC_FINISH | CAM_STATE_CHECK_BG |
+                                        CAM_STATE_CHECK_WATER);
     } else {
         camera->animState = 666;
     }

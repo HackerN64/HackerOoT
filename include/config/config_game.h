@@ -81,7 +81,7 @@
 
 /**
  * Enable Cutscene Improvements (from Majora's Mask)
- * 
+ *
  * This includes actor cutscenes
  */
 #define ENABLE_CUTSCENE_IMPROVEMENTS true
