@@ -1692,15 +1692,6 @@ void Play_Main(GameState* thisx) {
     PLAY_LOG(4587);
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS
-    s16 optCsId = CutsceneManager_GetAdditionalCsId(0);
-    s16 csId = optCsId >= 0 ? optCsId : 0;
-
-    if (CutsceneManager_IsNext(csId)) {
-        CutsceneManager_Start(csId, &GET_PLAYER(this)->actor);
-    } else if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_L)) {
-        CutsceneManager_Queue(csId);
-    }
-
     CutsceneManager_Update();
     CutsceneManager_ClearWaiting();
 #endif
