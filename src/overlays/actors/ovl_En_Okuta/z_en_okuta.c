@@ -580,7 +580,7 @@ void EnOkuta_Update(Actor* thisx, PlayState* play2) {
     s32 canRestorePrevPos;
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS
-    if (player->stateFlags3 & PLAYER_STATE3_ACTOR_CS_HALT) {
+    if (player->stateFlags3 & PLAYER_STATE3_CS_HALT) {
         return;
     }
 #endif

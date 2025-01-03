@@ -609,7 +609,7 @@ int Player_InBlockingCsMode(PlayState* play, Player* this) {
     return (this->stateFlags1 & (PLAYER_STATE1_DEAD | PLAYER_STATE1_29)) || (this->csAction != PLAYER_CSACTION_NONE) ||
            (play->transitionTrigger == TRANS_TRIGGER_START) || (this->stateFlags1 & PLAYER_STATE1_0) ||
 #if ENABLE_CUTSCENE_IMPROVEMENTS
-           (this->stateFlags3 & (PLAYER_STATE3_FLYING_WITH_HOOKSHOT | PLAYER_STATE3_ACTOR_CS_HALT)) ||
+           (this->stateFlags3 & (PLAYER_STATE3_FLYING_WITH_HOOKSHOT | PLAYER_STATE3_CS_HALT)) ||
 #else
            (this->stateFlags3 & PLAYER_STATE3_FLYING_WITH_HOOKSHOT) ||
 #endif

@@ -385,8 +385,8 @@ s16 CutsceneManager_Start(s16 csId, Actor* actor) {
     Player* player = GET_PLAYER(sCutsceneMgr.play);
 
     // set the cutscene halt flag
-    if (!(player->stateFlags3 & PLAYER_STATE3_ACTOR_CS_HALT)) {
-        player->stateFlags3 |= PLAYER_STATE3_ACTOR_CS_HALT;
+    if (!(player->stateFlags3 & PLAYER_STATE3_CS_HALT)) {
+        player->stateFlags3 |= PLAYER_STATE3_CS_HALT;
     }
 
     if ((csId <= CS_ID_NONE) || (sCutsceneMgr.csId != CS_ID_NONE)) {
@@ -457,8 +457,8 @@ s16 CutsceneManager_Stop(s16 csId) {
     Player* player = GET_PLAYER(sCutsceneMgr.play);
 
     // unset the cutscene halt flag
-    if (player->stateFlags3 & PLAYER_STATE3_ACTOR_CS_HALT) {
-        player->stateFlags3 &= ~PLAYER_STATE3_ACTOR_CS_HALT;
+    if (player->stateFlags3 & PLAYER_STATE3_CS_HALT) {
+        player->stateFlags3 &= ~PLAYER_STATE3_CS_HALT;
     }
 
     if (csId <= CS_ID_NONE) {
