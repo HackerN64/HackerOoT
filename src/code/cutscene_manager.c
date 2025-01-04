@@ -125,8 +125,10 @@ CutsceneEntry* CutsceneManager_GetCutsceneEntryImpl(s16 csId) {
 void CutsceneManager_Init(PlayState* play, CutsceneEntry* cutsceneList, s16 numEntries) {
     s32 i;
 
-    sSceneCutsceneList = cutsceneList;
-    sSceneCutsceneCount = numEntries;
+    if (cutsceneList != NULL) {
+        sSceneCutsceneList = cutsceneList;
+        sSceneCutsceneCount = numEntries;
+    }
 
     for (i = 0; i < ARRAY_COUNT(sWaitingCutsceneList); i++) {
         sWaitingCutsceneList[i] = 0;
@@ -146,7 +148,7 @@ void CutsceneManager_Init(PlayState* play, CutsceneEntry* cutsceneList, s16 numE
  * Store camera into subCam 2, and keep subCam 2 INACTIVE to preserve the struct.
  */
 void CutsceneManager_StoreCamera(Camera* camera) {
-    if (camera != NULL) {
+    if ((camera != NULL) && (sCutsceneMgr.play != NULL)) {
         memcpy(&sCutsceneMgr.play->subCameras[2], camera, sizeof(Camera));
         sCutsceneMgr.play->subCameras[2].camId = camera->camId;
         Camera_ChangeStatus(&sCutsceneMgr.play->subCameras[2], CAM_STAT_UNK100);

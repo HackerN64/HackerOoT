@@ -4,6 +4,7 @@
 #include "ultra64.h"
 #include "macros.h"
 #include "z64.h"
+#include "config.h"
 
 
 extern SceneCmd example_scene_header00[];
@@ -15,6 +16,18 @@ extern ActorEntry example_scene_header00_playerEntryList[];
 extern Spawn example_scene_header00_entranceList[];
 extern TransitionActorEntry example_scene_header00_transitionActors[];
 extern EnvLightSettings example_scene_header00_lightSettings[4];
+extern AnimatedMatTexScrollParams debug1_scene_header00_AnimatedMaterialTexScrollParams_00[];
+extern AnimatedMatTexScrollParams debug1_scene_header00_AnimatedMaterialTexScrollParams_01[];
+extern F3DPrimColor debug1_scene_header00_AnimatedMaterialColorPrimColor_02[];
+extern F3DEnvColor debug1_scene_header00_AnimatedMaterialColorEnvColor_02[];
+extern u16 debug1_scene_header00_AnimatedMaterialColorKeyFrames_02[];
+extern AnimatedMatColorParams debug1_scene_header00_AnimatedMaterialColorParams_02;
+extern AnimatedMaterial debug1_scene_header00_AnimatedMaterial[];
+extern Vec3s debug1_scene_header00_ActorCutsceneCameraData[];
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+extern ActorCsCamInfo debug1_scene_header00_ActorCutsceneCameraInfo[];
+extern CutsceneEntry debug1_scene_header00_ActorCutsceneList[];
+#endif
 extern SceneCmd example_scene_header01[];
 extern ActorEntry example_scene_header01_playerEntryList[];
 extern Spawn example_scene_header01_entranceList[];

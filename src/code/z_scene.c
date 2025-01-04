@@ -536,7 +536,6 @@ void Scene_CommandAnimatedMaterials(PlayState* play, SceneCmd* cmd) {
 #if ENABLE_CUTSCENE_IMPROVEMENTS
 void Scene_CommandCutsceneList(PlayState* play, SceneCmd* cmd) {
     CutsceneManager_Init(play, SEGMENTED_TO_VIRTUAL(cmd->cutsceneList.segment), cmd->cutsceneList.num);
-    PRINTF("(Scene_CommandCutsceneList) segment: 0x%08X, num: %d\n", cmd->cutsceneList.segment, cmd->cutsceneList.num);
 }
 
 void Scene_CommandActorCutsceneCamList(PlayState* play, SceneCmd* cmd) {

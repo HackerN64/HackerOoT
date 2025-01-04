@@ -741,7 +741,6 @@ typedef enum SceneCommandTypeID {
 
 #define SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(numCams, camList) \
     { SCENE_CMD_ID_ACTOR_CUTSCENE_CAM_LIST, numCams, CMD_PTR(camList) }
-
 #endif
 
 

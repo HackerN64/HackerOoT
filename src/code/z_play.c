@@ -11,7 +11,7 @@
 #include "z64frame_advance.h"
 #include "z64camera.h"
 
-#if INCLUDE_EXAMPLE_SCENE
+#if CAN_INCLUDE_EXAMPLE_SCENE
 #include "assets/scenes/example/example_scene.h"
 #endif
 
@@ -399,6 +399,11 @@ void Play_Init(GameState* thisx) {
                LINK_IS_ADULT && !IS_CUTSCENE_LAYER) {
         gSaveContext.sceneLayer = GET_EVENTCHKINF(EVENTCHKINF_48) ? 3 : 2;
     }
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    // initialize default values to avoid issues
+    CutsceneManager_Init(this, NULL, 0);
+#endif
 
     Play_SpawnScene(
         this, gEntranceTable[((void)0, gSaveContext.save.entranceIndex) + ((void)0, gSaveContext.sceneLayer)].sceneId,
@@ -1154,11 +1159,29 @@ skip:
         }
     }
 
-#if INCLUDE_EXAMPLE_SCENE
-    if (this->sceneId == SCENE_EXAMPLE && CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_L | BTN_R) &&
-        CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A) && !Play_InCsMode(this)) {
-        Cutscene_SetScript(this, gExampleCS);
-        gSaveContext.cutsceneTrigger = 1;
+#if CAN_INCLUDE_EXAMPLE_SCENE
+    if (this->sceneId == SCENE_EXAMPLE) {
+        if (CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_Z | BTN_R) &&
+            CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A) && !Play_InCsMode(this)) {
+            Cutscene_SetScript(this, gExampleCS);
+            gSaveContext.cutsceneTrigger = 1;
+        }
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+        if (!Play_InCsMode(this)) {
+            // get the additional cutscene id and use it if the value is not -1
+            s16 optCsId = CutsceneManager_GetAdditionalCsId(0);
+            s16 csId = optCsId >= 0 ? optCsId : 0;
+
+            // check if the cutscene is the next on the queue, if it is play it,
+            // otherwise add it to the queue when the button L is pressed
+            if (CutsceneManager_IsNext(csId)) {
+                CutsceneManager_Start(csId, &GET_PLAYER(this)->actor);
+            } else if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_L)) {
+                CutsceneManager_Queue(csId);
+            }
+        }
+#endif
     }
 #endif
 }

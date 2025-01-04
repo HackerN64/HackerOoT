@@ -8039,15 +8039,6 @@ void Camera_UpdateDistortion(Camera* camera) {
 #define ENABLE_DEBUG_CAM_UPDATE false
 #endif
 
-// probably useless?
-s32 Camera_800CB854(Camera* camera) {
-#if ENABLE_CUTSCENE_IMPROVEMENTS
-    return camera->player->stateFlags1 & PLAYER_STATE1_5;
-#else
-    return 0;
-#endif
-}
-
 Vec3s Camera_Update(Camera* camera) {
     static s32 sOOBTimer = 0;
     Vec3f viewAt;
@@ -8183,7 +8174,7 @@ Vec3s Camera_Update(Camera* camera) {
         if ((gSaveContext.gameMode != GAMEMODE_NORMAL) && (gSaveContext.gameMode != GAMEMODE_END_CREDITS)) {
             sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_NONE, CAM_HUD_VISIBILITY_ALL, 0);
             Camera_UpdateInterface(sCameraInterfaceField);
-        } else if (((D_8011D3F0 != 0) || Camera_800CB854(camera)) && (camera->camId == CAM_ID_MAIN)) {
+        } else if ((D_8011D3F0 != 0) && (camera->camId == CAM_ID_MAIN)) {
             sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_LARGE, CAM_HUD_VISIBILITY_NOTHING_ALT, 0);
             Camera_UpdateInterface(sCameraInterfaceField);
         } else if ((camera->play->transitionMode != TRANS_MODE_OFF) && (camera->camId != CAM_ID_MAIN)) {
@@ -8994,7 +8985,7 @@ s16 Camera_GetBgCamOrActorCsCamSetting(Camera* camera, u32 camDataId) {
         return Play_GetActorCsCamSetting(camera->play, camDataId);
     }
 #else
-    return BgCheck_GetBgCamSettingImpl(&camera->play->colCtx, bgCamIndex, BGCHECK_SCENE);
+    return BgCheck_GetBgCamSettingImpl(&camera->play->colCtx, camDataId, BGCHECK_SCENE);
 #endif
 }
 
@@ -9009,7 +9000,7 @@ Vec3s* Camera_GetBgCamOrActorCsCamFuncData(Camera* camera, u32 camDataId) {
         return Play_GetActorCsCamFuncData(camera->play, camDataId);
     }
 #else
-    return return BgCheck_GetBgCamFuncDataImpl(&camera->play->colCtx, camDataId, BGCHECK_SCENE);
+    return BgCheck_GetBgCamFuncDataImpl(&camera->play->colCtx, camDataId, BGCHECK_SCENE);
 #endif
 }
 

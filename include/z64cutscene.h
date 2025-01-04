@@ -499,8 +499,6 @@ typedef struct CutsceneCameraMove {
     /* 0x8 */ s16 relativeToPlayer;
 } CutsceneCameraMove; // size = 0xC
 
-#if ENABLE_CUTSCENE_IMPROVEMENTS
-
 typedef struct CutsceneScriptEntry {
     /* 0x0 */ CutsceneData* script;
     /* 0x4 */ s16 nextEntrance;
@@ -716,11 +714,9 @@ typedef enum {
     /* 999 */ CS_CAM_STATE_DONE = 999     // Finished all the splines.
 } CutsceneCameraState;
 
-#endif
-
 typedef struct CutsceneContext {
     /* 0x00 */ u8 scriptListCount;
-    /* 0x04 */ CutsceneData* script;
+    /* 0x04 */ void* script;
     /* 0x08 */ u8 state;
     /* 0x0C */ f32 timer;
     /* 0x10 */ u16 curFrame; // current frame of the script that is running
