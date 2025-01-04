@@ -1,6 +1,7 @@
 #include "z64math.h"
 #include "libc64/math64.h"
 #include "z_lib.h"
+#include "z64olib.h"
 
 /**
  * Calculates the distances between `a` and `b`
@@ -208,4 +209,69 @@ Vec3s OLib_Vec3fDiffBinAng(Vec3f* a, Vec3f* b) {
     anglesBinAng.z = 0.0f;
 
     return anglesBinAng;
+}
+
+/**
+ * Takes the sum of positions `a` (x,y,z coordinates) and `geo` (geographic coordinates), result is in x,y,z position
+ * Identical to Quake_AddVec from OoT
+ */
+Vec3f OLib_AddVecGeoToVec3f(Vec3f* a, VecGeo* geo) {
+    Vec3f sum;
+    Vec3f b = OLib_VecGeoToVec3f(geo);
+
+    sum.x = a->x + b.x;
+    sum.y = a->y + b.y;
+    sum.z = a->z + b.z;
+
+    return sum;
+}
+
+/**
+ * Gets a x,y,z position diff depending on the mode
+ */
+void OLib_Vec3fDiff(PosRot* a, Vec3f* b, Vec3f* dest, s16 mode) {
+    VecGeo geo;
+
+    switch (mode) {
+        case OLIB_DIFF_OFFSET:
+            geo = OLib_Vec3fDiffToVecGeo(&a->pos, b);
+            geo.yaw -= a->rot.y;
+            *dest = OLib_VecGeoToVec3f(&geo);
+            break;
+
+        case OLIB_DIFF:
+            dest->x = b->x - a->pos.x;
+            dest->y = b->y - a->pos.y;
+            dest->z = b->z - a->pos.z;
+            break;
+
+        default: // OLIB_DIFF_COPY
+            *dest = *b;
+            break;
+    }
+}
+
+/**
+ * Gets a x,y,z position sum depending on the mode
+ */
+void OLib_Vec3fAdd(PosRot* a, Vec3f* b, Vec3f* dest, s16 mode) {
+    VecGeo geo;
+
+    switch (mode) {
+        case OLIB_ADD_OFFSET:
+            geo = OLib_Vec3fToVecGeo(b);
+            geo.yaw += a->rot.y;
+            *dest = OLib_AddVecGeoToVec3f(&a->pos, &geo);
+            break;
+
+        case OLIB_ADD:
+            dest->x = a->pos.x + b->x;
+            dest->y = a->pos.y + b->y;
+            dest->z = a->pos.z + b->z;
+            break;
+
+        default: // OLIB_ADD_COPY
+            *dest = *b;
+            break;
+    }
 }

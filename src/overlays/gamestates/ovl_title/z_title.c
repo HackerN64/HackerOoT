@@ -137,7 +137,7 @@ void ConsoleLogo_Main(GameState* thisx) {
     if (this->exit) {
 #if ENABLE_HACKER_DEBUG
 #if BOOT_TO_SCENE
-        Helpers_LoadDefinedScene(thisx),
+        Helpers_LoadDefinedScene(thisx);
 #elif IS_DEBUG_BOOT_ENABLED && BOOT_TO_DEBUG_OPENING
         this->state.running = false;
         SET_NEXT_GAMESTATE(&this->state, DebugOpening_Init, DebugOpeningState);
@@ -169,6 +169,10 @@ void ConsoleLogo_Destroy(GameState* thisx) {
 #if PLATFORM_N64
     func_800014E8();
 #endif
+
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Destroy();
+#endif
 }
 
 void ConsoleLogo_Init(GameState* thisx) {
@@ -192,6 +196,9 @@ void ConsoleLogo_Init(GameState* thisx) {
     DMA_REQUEST_SYNC(this->staticSegment, (uintptr_t)_nintendo_rogo_staticSegmentRomStart, size, "../z_title.c", 615);
     R_UPDATE_RATE = 1;
     Matrix_Init(&this->state);
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Init();
+#endif
     View_Init(&this->view, this->state.gfxCtx);
     this->state.main = ConsoleLogo_Main;
     this->state.destroy = ConsoleLogo_Destroy;

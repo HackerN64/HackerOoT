@@ -2,8 +2,6 @@
 #include "global.h"
 #include "versions.h"
 
-#define ABS_ALT(x) ((x) < 0 ? -(x) : (x))
-
 #if !PLATFORM_N64
 #define AUDIO_PRINTF osSyncPrintf
 #elif IDO_PRINTF_WORKAROUND

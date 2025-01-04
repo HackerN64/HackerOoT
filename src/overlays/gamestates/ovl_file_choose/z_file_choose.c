@@ -2308,6 +2308,9 @@ void FileSelect_InitContext(GameState* thisx) {
 }
 
 void FileSelect_Destroy(GameState* thisx) {
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Destroy();
+#endif
 }
 
 void FileSelect_Init(GameState* thisx) {
@@ -2345,6 +2348,9 @@ void FileSelect_Init(GameState* thisx) {
 #endif
 
     Matrix_Init(&this->state);
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Init();
+#endif
     View_Init(&this->view, this->state.gfxCtx);
     this->state.main = FileSelect_Main;
     this->state.destroy = FileSelect_Destroy;

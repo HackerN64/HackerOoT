@@ -69,4 +69,21 @@
 // Make `Camera_KeepOn4`'s `case 9`, mimic how getting an item looks in Majora's Mask (Perspective from above)
 #define MM_GETITEM_CAM false
 
+/**
+ * Enable Animated Materials (from Majora's Mask)
+ */
+#define ENABLE_ANIMATED_MATERIALS true
+
+/**
+ * Enable New Letterbox (from Majora's Mask)
+ */
+#define ENABLE_NEW_LETTERBOX true
+
+/**
+ * Enable Cutscene Improvements (from Majora's Mask)
+ *
+ * This includes actor cutscenes
+ */
+#define ENABLE_CUTSCENE_IMPROVEMENTS true
+
 #endif

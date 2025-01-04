@@ -390,6 +390,34 @@ typedef struct SCmdOccPlaneCandList {
 } SCmdOccPlaneCandList;
 #endif
 
+#if ENABLE_ANIMATED_MATERIALS
+typedef struct {
+    /* 0x0 */ u8  code;
+    /* 0x1 */ u8  data1;
+    /* 0x4 */ void* segment;
+} SCmdTextureAnimations; // size = 0x8
+#endif
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+typedef struct {
+    /* 0x0 */ u8  code;
+    /* 0x1 */ u8  data1;
+    /* 0x4 */ void* segment;
+} SCmdCsCameraList; // size = 0x8
+
+typedef struct {
+    /* 0x0 */ u8  code;
+    /* 0x1 */ u8  num;
+    /* 0x4 */ void* segment;
+} SCmdCutsceneList; // size = 0x8
+
+typedef struct {
+    /* 0x0 */ s16 setting; // camera setting described by CameraSettingType enum
+    /* 0x2 */ s16 count;
+    /* 0x4 */ Vec3s* actorCsCamFuncData; // s16 data grouped in threes
+} ActorCsCamInfo; // size = 0x8
+#endif
+
 typedef union SceneCmd {
     SCmdBase              base;
     SCmdPlayerEntryList   playerEntryList;
@@ -419,6 +447,13 @@ typedef union SceneCmd {
     SCmdAltHeaders        altHeaders;
 #if ENABLE_F3DEX3
     SCmdOccPlaneCandList  occPlaneCandList;
+#endif
+#if ENABLE_ANIMATED_MATERIALS
+    SCmdTextureAnimations textureAnimations;
+#endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    SCmdCsCameraList actorCsCamList;
+    SCmdCutsceneList cutsceneList;
 #endif
 } SceneCmd; // size = 0x8
 
@@ -545,7 +580,11 @@ typedef enum SceneDrawConfig {
     /* 50 */ SDC_FISHING_POND,
     /* 51 */ SDC_GANONS_TOWER_COLLAPSE_INTERIOR,
     /* 52 */ SDC_INSIDE_GANONS_CASTLE_COLLAPSE,
-    /* 53 */ SDC_MAX
+#if ENABLE_ANIMATED_MATERIALS
+    /* 53 */ SDC_MAT_ANIM,
+    /* 54 */ SDC_MAT_ANIM_MANUAL_STEP,
+#endif
+    /* 55 */ SDC_MAX
 } SceneDrawConfig;
 
 typedef void (*SceneDrawConfigFunc)(struct PlayState*);
@@ -596,6 +635,13 @@ typedef enum SceneCommandTypeID {
     /* 0x19 */ SCENE_CMD_ID_MISC_SETTINGS,
 #if ENABLE_F3DEX3
                SCENE_CMD_ID_OCC_PLANE_CAND_LIST,
+#endif
+#if ENABLE_ANIMATED_MATERIALS
+               SCENE_CMD_ID_ANIMATED_MATERIAL_LIST,
+#endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+               SCENE_CMD_ID_ACTOR_CUTSCENE_LIST,
+               SCENE_CMD_ID_ACTOR_CUTSCENE_CAM_LIST,
 #endif
     /* 0x1A */ SCENE_CMD_ID_MAX
 } SceneCommandTypeID;
@@ -683,6 +729,20 @@ typedef enum SceneCommandTypeID {
 #define SCENE_CMD_OCCLUSION_PLANE_CANDIDATES_LIST(numPlanes, planeList) \
     { SCENE_CMD_ID_OCC_PLANE_CAND_LIST, numPlanes, CMD_PTR(planeList) }
 #endif
+
+#if ENABLE_ANIMATED_MATERIALS
+#define SCENE_CMD_ANIMATED_MATERIAL_LIST(matAnimList) \
+    { SCENE_CMD_ID_ANIMATED_MATERIAL_LIST, 0, CMD_PTR(matAnimList) }
+#endif
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+#define SCENE_CMD_ACTOR_CUTSCENE_LIST(numEntries, actorCutsceneList) \
+    { SCENE_CMD_ID_ACTOR_CUTSCENE_LIST, numEntries, CMD_PTR(actorCutsceneList) }
+
+#define SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(numCams, camList) \
+    { SCENE_CMD_ID_ACTOR_CUTSCENE_CAM_LIST, numCams, CMD_PTR(camList) }
+#endif
+
 
 s32 Scene_ExecuteCommands(struct PlayState* play, SceneCmd* sceneCmd);
 void Scene_ResetTransitionActorList(struct GameState* state, TransitionActorList* transitionActors);

@@ -562,11 +562,17 @@ void Room_DrawImage(PlayState* play, Room* room, u32 flags) {
 }
 
 void Room_Init(PlayState* play, Room* room) {
+    u8 i;
+
     room->num = -1;
     room->segment = NULL;
 #if ENABLE_F3DEX3
     room->occPlaneCount = 0;
 #endif
+
+    for (i = 0; i < ARRAY_COUNT(play->roomCtx.drawParams); i++) {
+        play->roomCtx.drawParams[i] = 0;
+    }
 }
 
 /**
