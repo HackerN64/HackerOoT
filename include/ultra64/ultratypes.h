@@ -38,6 +38,8 @@ typedef union MtxF {
     };
 } MtxF;
 
+typedef void* TexturePtr;
+
 #endif
 
 #endif

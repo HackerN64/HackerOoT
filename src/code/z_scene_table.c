@@ -2,6 +2,7 @@
 #include "quake.h"
 #include "versions.h"
 #include "z64frame_advance.h"
+#include "animated_materials.h"
 #include "config.h"
 #if PLATFORM_N64
 #include "n64dd.h"
@@ -85,6 +86,9 @@ void Scene_DrawConfigFishingPond(PlayState* play);
 void Scene_DrawConfigGanonsTowerCollapseInterior(PlayState* play);
 void Scene_DrawConfigInsideGanonsCastleCollapse(PlayState* play);
 
+void Scene_DrawConfigMatAnim(PlayState* play);
+void Scene_DrawConfigMatAnimManualStep(PlayState* play);
+
 // Entrance Table definition
 #define DEFINE_ENTRANCE(_0, sceneId, spawn, continueBgm, displayTitleCard, endTransType, startTransType) \
     { sceneId, spawn,                                                                                    \
@@ -137,8 +141,6 @@ Gfx sDefaultDisplayList[] = {
     gsDPSetEnvColor(128, 128, 128, 128),
     gsSPEndDisplayList(),
 };
-
-#if PLATFORM_N64 // Scene_Draw is at end of file in GC/iQue versions
 
 SceneDrawConfigFunc sSceneDrawConfigs[SDC_MAX] = {
     Scene_DrawConfigDefault,                     // SDC_DEFAULT
@@ -194,7 +196,11 @@ SceneDrawConfigFunc sSceneDrawConfigs[SDC_MAX] = {
     Scene_DrawConfigFishingPond,                 // SDC_FISHING_POND
     Scene_DrawConfigGanonsTowerCollapseInterior, // SDC_GANONS_TOWER_COLLAPSE_INTERIOR
     Scene_DrawConfigInsideGanonsCastleCollapse,  // SDC_INSIDE_GANONS_CASTLE_COLLAPSE
+    Scene_DrawConfigMatAnim,                     // SDC_MAT_ANIM
+    Scene_DrawConfigMatAnimManualStep,           // SDC_MAT_ANIM_MANUAL_STEP
 };
+
+#if PLATFORM_N64 // Scene_Draw is at end of file in GC/iQue versions
 
 void Scene_Draw(PlayState* play) {
     if ((B_80121220 != NULL) && (B_80121220->unk_6C != NULL)) {
@@ -1703,63 +1709,30 @@ void Scene_DrawConfigBesitu(PlayState* play) {
     CLOSE_DISPS(play->state.gfxCtx, "../z_scene_table.c", 7910);
 }
 
-#if !PLATFORM_N64 // Scene_Draw is at beginning of file in N64 versions
+/**
+ * Allows the usage of the animated material system in scenes.
+ */
+void Scene_DrawConfigMatAnim(PlayState* play) {
+#if ENABLE_ANIMATED_MATERIALS
+    AnimatedMat_Draw(play, play->sceneMaterialAnims);
+#else
+    Scene_DrawConfigDefault(play);
+#endif
+}
 
-SceneDrawConfigFunc sSceneDrawConfigs[SDC_MAX] = {
-    Scene_DrawConfigDefault,                     // SDC_DEFAULT
-    Scene_DrawConfigHyruleField,                 // SDC_HYRULE_FIELD
-    Scene_DrawConfigKakarikoVillage,             // SDC_KAKARIKO_VILLAGE
-    Scene_DrawConfigZorasRiver,                  // SDC_ZORAS_RIVER
-    Scene_DrawConfigKokiriForest,                // SDC_KOKIRI_FOREST
-    Scene_DrawConfigLakeHylia,                   // SDC_LAKE_HYLIA
-    Scene_DrawConfigZorasDomain,                 // SDC_ZORAS_DOMAIN
-    Scene_DrawConfigZorasFountain,               // SDC_ZORAS_FOUNTAIN
-    Scene_DrawConfigGerudoValley,                // SDC_GERUDO_VALLEY
-    Scene_DrawConfigLostWoods,                   // SDC_LOST_WOODS
-    Scene_DrawConfigDesertColossus,              // SDC_DESERT_COLOSSUS
-    Scene_DrawConfigGerudosFortress,             // SDC_GERUDOS_FORTRESS
-    Scene_DrawConfigHauntedWasteland,            // SDC_HAUNTED_WASTELAND
-    Scene_DrawConfigHyruleCastle,                // SDC_HYRULE_CASTLE
-    Scene_DrawConfigDeathMountainTrail,          // SDC_DEATH_MOUNTAIN_TRAIL
-    Scene_DrawConfigDeathMountainCrater,         // SDC_DEATH_MOUNTAIN_CRATER
-    Scene_DrawConfigGoronCity,                   // SDC_GORON_CITY
-    Scene_DrawConfigLonLonRanch,                 // SDC_LON_LON_RANCH
-    Scene_DrawConfigFireTemple,                  // SDC_FIRE_TEMPLE
-    Scene_DrawConfigDekuTree,                    // SDC_DEKU_TREE
-    Scene_DrawConfigDodongosCavern,              // SDC_DODONGOS_CAVERN
-    Scene_DrawConfigJabuJabu,                    // SDC_JABU_JABU
-    Scene_DrawConfigForestTemple,                // SDC_FOREST_TEMPLE
-    Scene_DrawConfigWaterTemple,                 // SDC_WATER_TEMPLE
-    Scene_DrawConfigShadowTempleAndWell,         // SDC_SHADOW_TEMPLE_AND_WELL
-    Scene_DrawConfigSpiritTemple,                // SDC_SPIRIT_TEMPLE
-    Scene_DrawConfigInsideGanonsCastle,          // SDC_INSIDE_GANONS_CASTLE
-    Scene_DrawConfigGerudoTrainingGround,        // SDC_GERUDO_TRAINING_GROUND
-    Scene_DrawConfigDekuTreeBoss,                // SDC_DEKU_TREE_BOSS
-    Scene_DrawConfigWaterTempleBoss,             // SDC_WATER_TEMPLE_BOSS
-    Scene_DrawConfigTempleOfTime,                // SDC_TEMPLE_OF_TIME
-    Scene_DrawConfigGrottos,                     // SDC_GROTTOS
-    Scene_DrawConfigChamberOfTheSages,           // SDC_CHAMBER_OF_THE_SAGES
-    Scene_DrawConfigGreatFairyFountain,          // SDC_GREAT_FAIRYS_FOUNTAIN
-    Scene_DrawConfigShootingGallery,             // SDC_SHOOTING_GALLERY
-    Scene_DrawConfigCastleCourtyardGuards,       // SDC_CASTLE_COURTYARD_GUARDS
-    Scene_DrawConfigOutsideGanonsCastle,         // SDC_OUTSIDE_GANONS_CASTLE
-    Scene_DrawConfigIceCavern,                   // SDC_ICE_CAVERN
-    Scene_DrawConfigGanonsTowerCollapseExterior, // SDC_GANONS_TOWER_COLLAPSE_EXTERIOR
-    Scene_DrawConfigFairysFountain,              // SDC_FAIRYS_FOUNTAIN
-    Scene_DrawConfigThievesHideout,              // SDC_THIEVES_HIDEOUT
-    Scene_DrawConfigBombchuBowlingAlley,         // SDC_BOMBCHU_BOWLING_ALLEY
-    Scene_DrawConfigRoyalFamilysTomb,            // SDC_ROYAL_FAMILYS_TOMB
-    Scene_DrawConfigLakesideLaboratory,          // SDC_LAKESIDE_LABORATORY
-    Scene_DrawConfigLonLonBuildings,             // SDC_LON_LON_BUILDINGS
-    Scene_DrawConfigMarketGuardHouse,            // SDC_MARKET_GUARD_HOUSE
-    Scene_DrawConfigPotionShopGranny,            // SDC_POTION_SHOP_GRANNY
-    Scene_DrawConfigCalmWater,                   // SDC_CALM_WATER
-    Scene_DrawConfigGraveExitLightShining,       // SDC_GRAVE_EXIT_LIGHT_SHINING
-    Scene_DrawConfigBesitu,                      // SDC_BESITU
-    Scene_DrawConfigFishingPond,                 // SDC_FISHING_POND
-    Scene_DrawConfigGanonsTowerCollapseInterior, // SDC_GANONS_TOWER_COLLAPSE_INTERIOR
-    Scene_DrawConfigInsideGanonsCastleCollapse,  // SDC_INSIDE_GANONS_CASTLE_COLLAPSE
-};
+/**
+ * This is a special draw config for Sakon's Hideout, as well as the Music Box House. Its step value is set manually
+ * rather than always animating like `Scene_DrawConfigMatAnim`.
+ */
+void Scene_DrawConfigMatAnimManualStep(PlayState* play) {
+#if ENABLE_ANIMATED_MATERIALS
+    AnimatedMat_DrawStep(play, play->sceneMaterialAnims, play->roomCtx.drawParams[0]);
+#else
+    Scene_DrawConfigDefault(play);
+#endif
+}
+
+#if !PLATFORM_N64 // Scene_Draw is at beginning of file in N64 versions
 
 void Scene_Draw(PlayState* play) {
 #if DEBUG_FEATURES

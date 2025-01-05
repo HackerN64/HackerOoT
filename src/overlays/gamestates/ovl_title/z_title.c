@@ -137,7 +137,7 @@ void ConsoleLogo_Main(GameState* thisx) {
     if (this->exit) {
 #if ENABLE_HACKER_DEBUG
 #if BOOT_TO_SCENE
-        Helpers_LoadDefinedScene(thisx),
+        Helpers_LoadDefinedScene(thisx);
 #elif IS_DEBUG_BOOT_ENABLED && BOOT_TO_DEBUG_OPENING
         this->state.running = false;
         SET_NEXT_GAMESTATE(&this->state, DebugOpening_Init, DebugOpeningState);
