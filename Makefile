@@ -283,6 +283,9 @@ CPP_DEFINES += -DOOT_REGION=REGION_$(REGION)
 CPP_DEFINES += -DBUILD_CREATOR="\"$(BUILD_CREATOR)\"" -DBUILD_DATE="\"$(BUILD_DATE)\"" -DBUILD_TIME="\"$(BUILD_TIME)\""
 CPP_DEFINES += -DLIBULTRA_VERSION=LIBULTRA_VERSION_$(LIBULTRA_VERSION)
 CPP_DEFINES += -DLIBULTRA_PATCH=$(LIBULTRA_PATCH)
+ifeq ($(PLATFORM),IQUE)
+  CPP_DEFINES += -DBBPLAYER
+endif
 
 ifeq ($(VERSION),hackeroot-mq)
   CPP_DEFINES += -DENABLE_HACKEROOT=1
@@ -355,6 +358,9 @@ OBJCOPY := $(MIPS_BINUTILS_PREFIX)objcopy
 OBJDUMP := $(MIPS_BINUTILS_PREFIX)objdump
 NM      := $(MIPS_BINUTILS_PREFIX)nm
 STRIP   := $(MIPS_BINUTILS_PREFIX)strip
+
+# Command to patch certain object files after they are built
+POSTPROCESS_OBJ := @:
 
 # The default iconv on macOS has some differences from GNU iconv, so we use the Homebrew version instead
 ifeq ($(UNAME_S),Darwin)
@@ -639,11 +645,6 @@ ifeq ($(TARGET),iso)
 endif
 endif
 
-SET_ABI_BIT = @:
-$(BUILD_DIR)/src/libultra/os/exceptasm.o: SET_ABI_BIT = $(PYTHON) tools/set_o32abi_bit.py $@
-$(BUILD_DIR)/src/libultra/libc/ll.o: SET_ABI_BIT = $(PYTHON) tools/set_o32abi_bit.py $@
-$(BUILD_DIR)/src/libultra/libc/llcvt.o: SET_ABI_BIT = $(PYTHON) tools/set_o32abi_bit.py $@
-
 #### Main Targets ###
 
 all: rom
@@ -883,6 +884,7 @@ $(BUILD_DIR)/src/makerom/ipl3.o: $(EXTRACTED_DIR)/incbin/ipl3
 $(BUILD_DIR)/src/%.o: src/%.s
 	$(call print,Compiling:,$<,$@)
 	$(V)$(CCAS) -c $(CCASFLAGS) $(MIPS_VERSION) $(ASOPTFLAGS) -o $@ $<
+	$(V)$(POSTPROCESS_OBJ) $@
 	$(V)$(OBJDUMP_CMD)
 
 # Incremental link to move z_message and z_game_over data into rodata
@@ -914,7 +916,7 @@ ifneq ($(RUN_CC_CHECK),0)
 endif
 	$(call print,Compiling:,$<,$@)
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
-	$(V)$(SET_ABI_BIT)
+	$(V)$(POSTPROCESS_OBJ) $@
 	$(V)$(OBJDUMP_CMD)
 
 $(BUILD_DIR)/src/audio/session_init.o: src/audio/session_init.c $(BUILD_DIR)/assets/audio/soundfont_sizes.h $(BUILD_DIR)/assets/audio/sequence_sizes.h
