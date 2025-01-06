@@ -23,7 +23,7 @@
  * this to false to save a small amount of CPU time and memory for logging
  * events.
  */
-#define ENABLE_PROFILER true
+#define ENABLE_PROFILER false
 
 /**
  * Options for booting directly into a scene, the debug boot or the file select, instead of the title screen.

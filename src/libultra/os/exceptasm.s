@@ -12,7 +12,7 @@
 
 #include "debug/profiler.h"
 #include "config.h"
-// Without these, the assembler doesn't understand C99-style bool. Only affects this file.
+/* Without these, the assembler doesn't understand C99-style bool. Only affects this file. */
 #define true 1
 #define false 0
 
@@ -220,7 +220,7 @@ endrcp:
 
 handle_interrupt:
 #if ENABLE_PROFILER
-    lw      a0, THREAD_ID($k0)
+    lw      a0, THREAD_ID(k0)
     jal     __osRecordProfilerEvent
     addiu  a0, a0, PROFILER_EVENT_TYPE_THREADEND
 #endif
@@ -720,7 +720,7 @@ LEAF(__osEnqueueAndYield)
     jal     __osEnqueueThread
 no_enqueue:
 #if ENABLE_PROFILER
-    lw      a0, THREAD_ID($a1)  // a1 is still the pointer to thread
+    lw      a0, THREAD_ID(a1)  /* a1 is still the pointer to thread */
     jal     __osRecordProfilerEvent
     addiu  a0, a0, PROFILER_EVENT_TYPE_THREADEND
 #endif

@@ -274,7 +274,7 @@ endif
 
 # Converts e.g. ntsc-1.0 to NTSC_1_0
 ifeq ($(VERSION),hackeroot-mq)
-CPP_DEFINES += -DOOT_VERSION=GC_EU_MQ_DBG
+CPP_DEFINES += -DOOT_VERSION=GC_EU_MQ_DBG -DOOT_REVISION=$(REVISION)
 else
 VERSION_MACRO := $(shell echo $(VERSION) | tr a-z-. A-Z__)
 CPP_DEFINES += -DOOT_VERSION=$(VERSION_MACRO) -DOOT_REVISION=$(REVISION)
@@ -784,12 +784,12 @@ ifeq ($(COMPRESSION),yaz)
 else
 	$(V)$(PYTHON) tools/z64compress_wrapper.py --codec $(COMPRESSION) --cache $(BUILD_DIR)/cache --threads $(N_THREADS) $< $@ $(ELF) $(BUILD_DIR)/$(SPEC)
 endif
-  $(V)$(PYTHON) -m ipl3checksum sum --cic $(CIC) --update $@
+	$(V)$(PYTHON) -m ipl3checksum sum --cic $(CIC) --update $@
 
 $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(UCODE_O_FILES) $(LDSCRIPT) $(BUILD_DIR)/linker_scripts/makerom.ld $(BUILD_DIR)/undefined_syms.txt \
         $(SAMPLEBANK_O_FILES) $(SOUNDFONT_O_FILES) $(SEQUENCE_O_FILES) \
         $(BUILD_DIR)/assets/audio/sequence_font_table.o $(BUILD_DIR)/assets/audio/audiobank_padding.o
-  $(call print,Linking:,,$@)
+	$(call print,Linking:,,$@)
 	$(V)$(LD) -T $(LDSCRIPT) -T $(BUILD_DIR)/linker_scripts/makerom.ld -T $(BUILD_DIR)/undefined_syms.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP) -o $@
 
 $(BUILD_DIR)/linker_scripts/makerom.ld: linker_scripts/makerom.ld
