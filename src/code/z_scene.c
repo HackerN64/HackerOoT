@@ -533,6 +533,18 @@ void Scene_CommandAnimatedMaterials(PlayState* play, SceneCmd* cmd) {
 #endif
 }
 
+void Scene_CommandCutsceneList(PlayState* play, SceneCmd* cmd) {
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    CutsceneManager_Init(play, SEGMENTED_TO_VIRTUAL(cmd->cutsceneList.segment), cmd->cutsceneList.num);
+#endif
+}
+
+void Scene_CommandActorCutsceneCamList(PlayState* play, SceneCmd* cmd) {
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    play->actorCsCamList = SEGMENTED_TO_VIRTUAL(cmd->actorCsCamList.segment);
+#endif
+}
+
 SceneCmdHandlerFunc sSceneCmdHandlers[SCENE_CMD_ID_MAX] = {
     Scene_CommandPlayerEntryList,          // SCENE_CMD_ID_SPAWN_LIST
     Scene_CommandActorEntryList,           // SCENE_CMD_ID_ACTOR_LIST
@@ -563,7 +575,9 @@ SceneCmdHandlerFunc sSceneCmdHandlers[SCENE_CMD_ID_MAX] = {
 #if ENABLE_F3DEX3
     Scene_CommandOccPlaneCandList, // SCENE_CMD_ID_OCC_PLANE_CAND_LIST
 #endif
-    Scene_CommandAnimatedMaterials, // SCENE_CMD_ID_ANIMATED_MATERIAL_LIST
+    Scene_CommandAnimatedMaterials,    // SCENE_CMD_ID_ANIMATED_MATERIAL_LIST
+    Scene_CommandCutsceneList,         // SCENE_CMD_ID_ACTOR_CUTSCENE_LIST
+    Scene_CommandActorCutsceneCamList, // SCENE_CMD_ID_ACTOR_CUTSCENE_CAM_LIST
 };
 
 RomFile sNaviQuestHintFiles[] = {

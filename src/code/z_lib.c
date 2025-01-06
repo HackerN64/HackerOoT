@@ -627,3 +627,30 @@ void Sfx_PlaySfxAtPos(Vec3f* projectedPos, u16 sfxId) {
     Audio_PlaySfxGeneral(sfxId, projectedPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultReverb);
 }
+
+s32 Math_StepToIImpl(s32 start, s32 target, s32 step) {
+    s32 ret;
+
+    if (target >= start) {
+        ret = start + step;
+        if (target >= ret) {
+            return ret;
+        }
+    } else {
+        ret = start - step;
+        if (ret >= target) {
+            return ret;
+        }
+    }
+    return target;
+}
+
+void Math_StepToIGet(s32* pValue, s32 target, s32 step) {
+    *pValue = Math_StepToIImpl(*pValue, target, step);
+}
+
+s32 Math_StepToI(s32* pValue, s32 target, s32 step) {
+    Math_StepToIGet(pValue, target, step);
+
+    return target == *pValue;
+}

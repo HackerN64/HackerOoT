@@ -254,6 +254,10 @@ void DebugOpening_Init(GameState* thisx) {
     gSaveContext.save.dayTime = gSaveContext.skyboxTime = CLOCK_TIME(15, 0);
     Helpers_InitSkybox(&this->state, &this->envCtx, &this->skyboxCtx, DEBUG_OPENING_SKYBOX_ID);
 
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Init();
+#endif
+
     this->state.main = DebugOpening_Main;
     this->state.destroy = DebugOpening_Destroy;
 
