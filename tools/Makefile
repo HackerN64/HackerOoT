@@ -1,3 +1,5 @@
+MAKEFLAGS += --no-builtin-rules --no-print-directory
+
 CFLAGS := -Wall -Wextra -pedantic -std=c99 -g -O2
 PROGRAMS := elf2rom makeromfs mkdmadata mkldscript preprocess_pragmas reloc_prereq
 
@@ -17,31 +19,39 @@ ifneq ($(LLD),0)
   CFLAGS += -fuse-ld=lld
 endif
 
+-include print_rules.mk
+
 all: $(PROGRAMS)
-	$(MAKE) -C ZAPD
-	$(MAKE) -C fado
+	$(call print_no_args,Building ZAPD...)
+	$(V)$(MAKE) -C ZAPD
+	$(call print_no_args,Building fado...)
+	$(V)$(MAKE) -C fado
+	$(call print_no_args,Building gzinject...)
 ifeq ($(wildcard ./gzinject/Makefile),)
-	cd ./gzinject && ./configure
+	$(V)cd ./gzinject && ./configure
 endif
-	$(MAKE) -C gzinject
-	$(MAKE) -C z64compress
-	$(MAKE) -C Flips TARGET=cli
-	$(MAKE) -C audio
+	$(V)$(MAKE) -C gzinject
+	$(call print_no_args,Building z64compress...)
+	$(V)$(MAKE) -C z64compress
+	$(call print_no_args,Building Flips...)
+	$(V)$(MAKE) -C Flips TARGET=cli
+	$(call print_no_args,Building audio tools...)
+	$(V)$(MAKE) -C audio
 
 clean:
-	$(RM) $(PROGRAMS) $(addsuffix .exe,$(PROGRAMS))
-	$(MAKE) -C ZAPD clean
-	$(MAKE) -C fado clean
+	$(V)$(RM) $(PROGRAMS) $(addsuffix .exe,$(PROGRAMS))
+	$(V)$(MAKE) -C ZAPD clean
+	$(V)$(MAKE) -C fado clean
 ifneq ($(wildcard ./gzinject/Makefile),)
-	$(MAKE) -C gzinject clean
+	$(V)$(MAKE) -C gzinject clean
 endif
-	$(MAKE) -C z64compress clean
-	$(MAKE) -C Flips clean
-	rm Flips/flips
-	$(MAKE) -C audio clean
+	$(V)$(MAKE) -C z64compress clean
+	$(V)$(MAKE) -C Flips clean
+	$(V)rm Flips/flips
+	$(V)$(MAKE) -C audio clean
 
 distclean: clean
-	$(MAKE) -C audio distclean
+	$(V)$(MAKE) -C audio distclean
 
 .PHONY: all clean distclean
 
@@ -55,7 +65,8 @@ reloc_prereq_SOURCES       := reloc_prereq.c spec.c util.c
 
 define COMPILE =
 $(1): $($1_SOURCES)
-	$(CC) $(CFLAGS) $$^ -o $$@
+	$(call print_two_args,Compiling:,$$^,$$@)
+	$(V)$(CC) $(CFLAGS) $$^ -o $$@
 endef
 
 $(foreach p,$(PROGRAMS),$(eval $(call COMPILE,$(p))))

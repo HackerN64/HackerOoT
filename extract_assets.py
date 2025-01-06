@@ -10,6 +10,11 @@ from pathlib import Path
 
 from tools import version_config
 
+VERBOSE = False
+
+def log(s):
+    if VERBOSE:
+        print(s)
 
 def SignalHandler(sig, frame):
     print(f'Signal {sig} received. Aborting...')
@@ -49,7 +54,7 @@ def ExtractFile(assetConfig: version_config.AssetConfig, outputPath: Path, outpu
     if globalUnaccounted:
         execStr += " -Wunaccounted"
 
-    print(execStr)
+    log(execStr)
     exitValue = os.system(execStr)
     if exitValue != 0:
         globalAbort.set()
@@ -110,7 +115,7 @@ def processZAPDArgs(argsZ):
         exit(1)
 
     ZAPDArgs = " ".join(f"-{z}" for z in argsZ)
-    print("Using extra ZAPD arguments: " + ZAPDArgs)
+    log("Using extra ZAPD arguments: " + ZAPDArgs)
     return ZAPDArgs
 
 def main():
@@ -131,7 +136,11 @@ def main():
     parser.add_argument("-j", "--jobs", help="Number of cpu cores to extract with.")
     parser.add_argument("-u", "--unaccounted", help="Enables ZAPD unaccounted detector warning system.", action="store_true")
     parser.add_argument("-Z", help="Pass the argument on to ZAPD, e.g. `-ZWunaccounted` to warn about unaccounted blocks in XMLs. Each argument should be passed separately, *without* the leading dash.", metavar="ZAPD_ARG", action="append")
+    parser.add_argument("--verbose", help="verbose output", action="store_true", default=False)
     args = parser.parse_args()
+
+    global VERBOSE
+    VERBOSE = args.verbose
 
     baseromSegmentsDir: Path = args.baserom_segments_dir
     version: str = args.oot_version

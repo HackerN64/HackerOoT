@@ -154,7 +154,7 @@ CPPFLAGS += -P -xc -fno-dollars-in-identifiers
 
 # Set PACKAGE_NAME define for printing commit name
 ifeq ($(origin PACKAGE_NAME), undefined)
-  PACKAGE_NAME := "$(shell git log -1 --pretty=%s | tr -d '\n' | sed 's/\"/\\\"/g')"
+  PACKAGE_NAME := "$(shell git log -1 --pretty=%s | tr -d '()"\n' | tr -d "'" | sed 's/\"/\\\"/g')"
   ifeq ($(PACKAGE_NAME),"")
     PACKAGE_NAME := "Unknown name"
   endif
@@ -535,31 +535,31 @@ endif
 all: rom
 
 rom:
-	$(call print,Building the rom...)
+	$(call print_no_args,Building the rom...)
 	$(V)python3 tools/mod_assets.py --oot-version $(VERSION)
 	$(V)$(MAKE) $(ROM)
 
 compress:
-	$(call print,Compressing the rom...)
+	$(call print_no_args,Compressing the rom...)
 # make sure z_std_dma.c and spec are up-to-date
 	$(V)$(shell touch spec)
 	$(V)$(shell touch src/boot/z_std_dma.c)
 	$(V)$(MAKE) $(ROMC)
-	$(call print,Success!)
+	$(call print_no_args,Success!)
 
 wad:
-	$(call print,Patching WAD...)
+	$(call print_no_args,Patching WAD...)
 ifeq ("$(wildcard baseroms/$(VERSION)/common-key.bin)", "")
 	$(error Please provide the common-key.bin file.)
 endif
 	$(V)$(MAKE) compress TARGET=wad
 	$(V)$(GZINJECT) -a inject -r 1 -k baseroms/$(VERSION)/common-key.bin -w baseroms/$(VERSION)/basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
 	$(V)$(RM) -r wadextract/
-	$(call print,Success!)
+	$(call print_no_args,Success!)
 
 iso:
 	$(V)$(MAKE) compress TARGET=iso
-	$(call print,Patching ISO...)
+	$(call print_no_args,Patching ISO...)
 	$(V)$(PYTHON) tools/gc_utility.py -v $(VERSION) -c $(COMPRESSION)
 	$(V)$(GZINJECT) -a extract -s baseroms/$(VERSION)/baseiso.iso
 	$(V)cp $(BUILD_DIR)/$(DMA_CONFIG_FILE) isoextract/zlj_f.tgc/$(DMA_CONFIG_FILE)
@@ -568,48 +568,48 @@ iso:
 	$(V)$(FLIPS) --apply tools/gamecube.bps isoextract/zlj_f.tgc/main.dol isoextract/zlj_f.tgc/main.dol
 	$(V)$(GZINJECT) -a pack -s $(ISO)
 	$(V)$(RM) -r isoextract/
-	$(call print,Success!)
+	$(call print_no_args,Success!)
 
 clean:
 	$(V)$(RM) -r $(BUILD_DIR)
-	$(call print,Success!)
+	$(call print_no_args,Success!)
 
 assetclean:
 	$(V)$(RM) -r $(EXTRACTED_DIR)
-	$(call print,Success!)
+	$(call print_no_args,Success!)
 
 distclean:
 	$(V)$(RM) -r extracted/
 	$(V)$(RM) -r build/
 	$(V)$(MAKE) -C tools distclean
 	$(V)$(RM) -r F3DEX3/*.code F3DEX3/*.data
-	$(call print,Success!)
+	$(call print_no_args,Success!)
 
 venv:
 # Create the virtual environment if it doesn't exist.
 # Delete the virtual environment directory if creation fails.
-	$(call print,Preparing the virtual environment...)
+	$(call print_no_args,Preparing the virtual environment...)
 	$(V)test -d $(VENV) || python3 -m venv $(VENV) || { rm -rf $(VENV); false; }
 	$(V)$(PYTHON) -m pip install -U pip
 	$(V)$(PYTHON) -m pip install -U -r requirements.txt
-	$(call print,Success!)
+	$(call print_no_args,Success!)
 
 # TODO this is a temporary rule for testing audio, to be removed
 setup-audio:
-	$(AUDIO_EXTRACT) -o $(EXTRACTED_DIR) -v $(VERSION) --read-xml
+	$(V)$(AUDIO_EXTRACT) -o $(EXTRACTED_DIR) -v $(VERSION) --read-xml
 
 setup: venv
-	$(call print,Setup in progress...)
+	$(call print_no_args,Setup in progress...)
 	$(V)$(MAKE) -C tools
-	$(call print,Tools: Done!)
+	$(call print_no_args,Tools: Done!)
 	$(V)$(PYTHON) tools/decompress_baserom.py $(VERSION)
-	$(call print,Decompressing baserom: Done!)
+	$(call print_no_args,Decompressing baserom: Done!)
 	$(V)$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 $(EXTRACTED_DIR)/baserom -v $(VERSION)
 	$(V)$(PYTHON) tools/extract_incbins.py $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR)/incbin -v $(VERSION)
 	$(V)$(PYTHON) tools/msgdis.py $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR)/text -v $(VERSION)
 	$(V)$(PYTHON) extract_assets.py $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR)/assets -v $(VERSION) -j$(N_THREADS)
 	$(V)$(AUDIO_EXTRACT) -o $(EXTRACTED_DIR) -v $(VERSION) --read-xml
-	$(call print,Extracting files: Done!)
+	$(call print_no_args,Extracting files: Done!)
 
 run: rom
 ifeq ($(N64_EMULATOR),)
@@ -618,12 +618,12 @@ endif
 	$(N64_EMULATOR) $(ROM)
 
 patch:
-	$(call print,Creating BPS patch...)
+	$(call print_no_args,Creating BPS patch...)
 	$(V)$(FLIPS) --create --bps $(BASEROM_PATCH) $(ROM) $(BPS)
-	$(call print,Success!)
+	$(call print_no_args,Success!)
 
 create_f3dex3_patches: F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
-	$(call print,Creating F3DEX3 patches...)
+	$(call print_no_args,Creating F3DEX3 patches...)
 	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.code.bps
 	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW.data F3DEX3/F3DEX3_BrW.data.bps
 	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_PA.code F3DEX3/F3DEX3_BrW_PA.code.bps
@@ -640,7 +640,7 @@ create_f3dex3_patches: F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
 	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC_PB.data F3DEX3/F3DEX3_BrW_NOC_PB.data.bps
 	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC_PC.code F3DEX3/F3DEX3_BrW_NOC_PC.code.bps
 	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC_PC.data F3DEX3/F3DEX3_BrW_NOC_PC.data.bps
-	$(call print,Success!)
+	$(call print_no_args,Success!)
 
 verify:
 	$(V)$(MAKE) clean
@@ -659,6 +659,8 @@ $(ROM): $(ELF)
 	@$(PRINT) "==== Build Options ====$(NO_COL)\n"
 	@$(PRINT) "${GREEN}OoT Version: $(BLUE)$(VERSION)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Code Version: $(BLUE)$(PACKAGE_VERSION)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}Build Author: $(BLUE)$(PACKAGE_AUTHOR)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}Commit Author: $(BLUE)$(PACKAGE_COMMIT_AUTHOR)$(NO_COL)\n"
 
 $(ROMC): $(ROM) $(ELF) $(BUILD_DIR)/compress_ranges.txt
 ifeq ($(COMPRESSION),yaz)
@@ -671,7 +673,7 @@ endif
 $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(UCODE_O_FILES) $(LDSCRIPT) $(BUILD_DIR)/undefined_syms.txt \
         $(SAMPLEBANK_O_FILES) $(SOUNDFONT_O_FILES) $(SEQUENCE_O_FILES) \
         $(BUILD_DIR)/assets/audio/sequence_font_table.o $(BUILD_DIR)/assets/audio/audiobank_padding.o
-	$(call print,Linking:,,$@)
+	$(call print_one_arg,Linking:,$@)
 	$(V)$(LD) -T $(LDSCRIPT) -T $(BUILD_DIR)/undefined_syms.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP) -o $@
 
 ## Order-only prerequisites
@@ -687,36 +689,36 @@ $(O_FILES): | asset_files
 .PHONY: o_files asset_files
 
 $(BUILD_DIR)/$(SPEC): $(SPEC)
-	$(call print,Preprocessing:,$<,$@)
+	$(call print_two_args,Preprocessing:,$<,$@)
 	$(V)$(CPP) $(CPPFLAGS) $< | $(BUILD_DIR_REPLACE) > $@
 
 $(LDSCRIPT): $(BUILD_DIR)/$(SPEC)
-	$(call print,Creating linker script:,$<,$@)
+	$(call print_two_args,Creating linker script:,$<,$@)
 	$(V)$(MKLDSCRIPT) $< $@
 
 $(BUILD_DIR)/undefined_syms.txt: undefined_syms.txt
-	$(call print,Preprocessing:,$<,$@)
+	$(call print_two_args,Preprocessing:,$<,$@)
 	$(V)$(CPP) $(CPPFLAGS) $< > $@
 
 $(BUILD_DIR)/baserom/%.o: $(EXTRACTED_DIR)/baserom/%
-	$(call print,Wrapping binary to ELF:,$<,$@)
+	$(call print_two_args,Wrapping binary to ELF:,$<,$@)
 	$(V)$(OBJCOPY) -I binary -O elf32-big $< $@
 	
 $(BUILD_DIR)/F3DEX3/%.o: F3DEX3/%
-	$(call print,Wrapping binary to ELF:,$<,$@)
+	$(call print_two_args,Wrapping binary to ELF:,$<,$@)
 	$(V)mkdir -p $(BUILD_DIR)/F3DEX3
 	$(V)$(OBJCOPY) -I binary -O elf32-big $< $@
 
 $(BUILD_DIR)/data/%.o: data/%.s
-	$(call print,Assembling:,$<,$@)
+	$(call print_two_args,Assembling:,$<,$@)
 	$(V)$(CPP) $(CPPFLAGS) -Iinclude $< | $(AS) $(ASFLAGS) -o $@
 
 $(BUILD_DIR)/assets/text/%.enc.jpn.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.txt
-	$(call print,Encoding:,$<,$@)
+	$(call print_two_args,Encoding:,$<,$@)
 	$(V)$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) $< | $(PYTHON) tools/msgenc.py --encoding jpn --charmap assets/text/charmap.txt - $@
 
 $(BUILD_DIR)/assets/text/%.enc.nes.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.txt
-	$(call print,Encoding:,$<,$@)
+	$(call print_two_args,Encoding:,$<,$@)
 	$(V)$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) $< | $(PYTHON) tools/msgenc.py --encoding nes --charmap assets/text/charmap.txt - $@
 
 # Dependencies for files including message data headers
@@ -729,7 +731,7 @@ $(BUILD_DIR)/assets/text/staff_message_data_static.o: $(BUILD_DIR)/assets/text/m
 $(BUILD_DIR)/src/code/z_message.o: assets/text/message_data.h assets/text/message_data_staff.h
 
 $(BUILD_DIR)/assets/text/%.o: assets/text/%.c
-	$(call print,Compiling:,$<,$@)
+	$(call print_two_args,Compiling:,$<,$@)
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)$(OBJCOPY) -O binary --only-section .rodata $@ $@.bin
 
@@ -738,12 +740,12 @@ $(BUILD_DIR)/assets/%.o: assets/%.c
 	$(OBJCOPY) -O binary $@ $@.bin
 
 $(BUILD_DIR)/assets/%.o: $(EXTRACTED_DIR)/assets/%.c
-	$(call print,Compiling:,$<,$@)
+	$(call print_two_args,Compiling:,$<,$@)
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)$(OBJCOPY) -O binary $@ $@.bin
 
 $(BUILD_DIR)/src/%.o: src/%.s
-	$(call print,Compiling:,$<,$@)
+	$(call print_two_args,Compiling:,$<,$@)
 	$(V)$(CPP) $(CPPFLAGS) -Iinclude $< | $(AS) $(ASFLAGS) -o $@
 
 # Incremental link to move z_message and z_game_over data into rodata
@@ -773,7 +775,7 @@ $(BUILD_DIR)/src/%.o: src/%.c
 ifneq ($(RUN_CC_CHECK),0)
 	$(V)$(CC_CHECK) $<
 endif
-	$(call print,Compiling:,$<,$@)
+	$(call print_two_args,Compiling:,$<,$@)
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
@@ -781,7 +783,7 @@ $(BUILD_DIR)/src/libultra/libc/ll.o: src/libultra/libc/ll.c
 ifneq ($(RUN_CC_CHECK),0)
 	$(V)$(CC_CHECK) $<
 endif
-	$(call print,Compiling:,$<,$@)
+	$(call print_two_args,Compiling:,$<,$@)
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)$(PYTHON) tools/set_o32abi_bit.py $@
 	$(V)@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
@@ -790,30 +792,30 @@ $(BUILD_DIR)/src/libultra/libc/llcvt.o: src/libultra/libc/llcvt.c
 ifneq ($(RUN_CC_CHECK),0)
 	$(V)$(CC_CHECK) $<
 endif
-	$(call print,Compiling:,$<,$@)
+	$(call print_two_args,Compiling:,$<,$@)
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)$(PYTHON) tools/set_o32abi_bit.py $@
 	$(V)@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
 $(BUILD_DIR)/src/overlays/%_reloc.o: $(BUILD_DIR)/$(SPEC)
-	$(call print,Generating Relocation:,$<,$@)
+	$(call print_two_args,Generating Relocation:,$<,$@)
 	$(V)$(FADO) $$(tools/reloc_prereq $< $(notdir $*)) -n $(notdir $*) -o $(@:.o=.s) -M $(@:.o=.d)
 	$(V)$(AS) $(ASFLAGS) $(@:.o=.s) -o $@
 
 $(BUILD_DIR)/assets/%.inc.c: assets/%.png
-	$(ZAPD) btex -eh -tt $(subst .,,$(suffix $*)) -i $< -o $@
+	$(V)$(ZAPD) btex -eh -tt $(subst .,,$(suffix $*)) -i $< -o $@
 
 $(BUILD_DIR)/assets/%.inc.c: $(EXTRACTED_DIR)/assets/%.png
 	$(V)$(ZAPD) btex -eh -tt $(subst .,,$(suffix $*)) -i $< -o $@
 
 $(BUILD_DIR)/assets/%.bin.inc.c: assets/%.bin
-	$(ZAPD) bblb -eh -i $< -o $@
+	$(V)$(ZAPD) bblb -eh -i $< -o $@
 
 $(BUILD_DIR)/assets/%.bin.inc.c: $(EXTRACTED_DIR)/assets/%.bin
 	$(V)$(ZAPD) bblb -eh -i $< -o $@
 
 $(BUILD_DIR)/assets/%.jpg.inc.c: assets/%.jpg
-	$(ZAPD) bren -eh -i $< -o $@
+	$(V)$(ZAPD) bren -eh -i $< -o $@
 
 $(BUILD_DIR)/assets/%.jpg.inc.c: $(EXTRACTED_DIR)/assets/%.jpg
 	$(V)$(ZAPD) bren -eh -i $< -o $@
@@ -846,22 +848,22 @@ endif
 .PRECIOUS: $(BUILD_DIR)/assets/audio/samples/%.half.aifc
 
 $(BUILD_DIR)/assets/audio/samples/%.half.aifc: assets/audio/samples/%.half.wav
-	$(call print,Building Sample:,$<,$@)
+	$(call print_two_args,Building Sample:,$<,$@)
 	$(V)$(SAMPLECONV) vadpcm-half $< $@
 
 $(BUILD_DIR)/assets/audio/samples/%.half.aifc: $(EXTRACTED_DIR)/assets/audio/samples/%.half.wav
-	$(call print,Building Sample:,$<,$@)
+	$(call print_two_args,Building Sample:,$<,$@)
 	$(V)$(SAMPLECONV) vadpcm-half $< $@
 ifeq ($(AUDIO_BUILD_DEBUG),1)
 	@(cmp $(<D)/aifc/$(<F:.half.wav=.half.aifc) $@ && echo "$(<F) OK") || (mkdir -p NONMATCHINGS/$(<D) && cp $(<D)/aifc/$(<F:.half.wav=.half.aifc) NONMATCHINGS/$(<D)/$(<F:.half.wav=.half.aifc))
 endif
 
 $(BUILD_DIR)/assets/audio/samples/%.aifc: assets/audio/samples/%.wav
-	$(call print,Building Sample:,$<,$@)
+	$(call print_two_args,Building Sample:,$<,$@)
 	$(V)$(SAMPLECONV) vadpcm $< $@
 
 $(BUILD_DIR)/assets/audio/samples/%.aifc: $(EXTRACTED_DIR)/assets/audio/samples/%.wav
-	$(call print,Building Sample:,$<,$@)
+	$(call print_two_args,Building Sample:,$<,$@)
 	$(V)$(SAMPLECONV) vadpcm $< $@
 ifeq ($(AUDIO_BUILD_DEBUG),1)
 	@(cmp $(<D)/aifc/$(<F:.wav=.aifc) $@ && echo "$(<F) OK") || (mkdir -p NONMATCHINGS/$(<D) && cp $(<D)/aifc/$(<F:.wav=.aifc) NONMATCHINGS/$(<D)/$(<F:.wav=.aifc))
@@ -884,57 +886,57 @@ $(BUILD_DIR)/assets/audio/samplebanks/%.s: $(BUILD_DIR)/assets/audio/samplebanks
 -include $(SAMPLEBANK_DEP_FILES)
 
 $(BUILD_DIR)/assets/audio/samplebanks/%.o: $(BUILD_DIR)/assets/audio/samplebanks/%.s
-	$(call print,Assembling Samplebank:,$<,$@)
+	$(call print_two_args,Assembling Samplebank:,$<,$@)
 	$(V)$(AS) $(ASFLAGS) $< -o $@
 ifeq ($(AUDIO_BUILD_DEBUG),1)
-	$(OBJCOPY) -O binary --only-section .rodata $@ $(@:.o=.bin)
+	$(V)$(OBJCOPY) -O binary --only-section .rodata $@ $(@:.o=.bin)
 	@cmp $(@:.o=.bin) $(patsubst $(BUILD_DIR)/assets/audio/samplebanks/%,$(EXTRACTED_DIR)/baserom_audiotest/audiotable_files/%,$(@:.o=.bin)) && echo "$(<F) OK"
 endif
 
 # also assemble the soundfonts and generate the associated headers...
 
 $(BUILD_DIR)/assets/audio/soundfonts/%.xml: assets/audio/soundfonts/%.xml
-	cat $< | $(BUILD_DIR_REPLACE) > $@
+	$(V)cat $< | $(BUILD_DIR_REPLACE) > $@
 
 $(BUILD_DIR)/assets/audio/soundfonts/%.xml: $(EXTRACTED_DIR)/assets/audio/soundfonts/%.xml
-	cat $< | $(BUILD_DIR_REPLACE) > $@
+	$(V)cat $< | $(BUILD_DIR_REPLACE) > $@
 
 .PRECIOUS: $(BUILD_DIR)/assets/audio/soundfonts/%.c $(BUILD_DIR)/assets/audio/soundfonts/%.h $(BUILD_DIR)/assets/audio/soundfonts/%.name
 $(BUILD_DIR)/assets/audio/soundfonts/%.c $(BUILD_DIR)/assets/audio/soundfonts/%.h $(BUILD_DIR)/assets/audio/soundfonts/%.name: $(BUILD_DIR)/assets/audio/soundfonts/%.xml | $(SAMPLEBANK_BUILD_XMLS) $(AIFC_FILES)
 # This rule can be triggered for either the .c or .h file, so $@ may refer to either the .c or .h file. A simple
 # substitution $(@:.c=.h) will fail ~50% of the time with -j. Instead, don't assume anything about the suffix of $@.
-	$(SFC) $(SFCFLAGS) --makedepend $(basename $@).d $< $(basename $@).c $(basename $@).h $(basename $@).name
+	$(V)$(SFC) $(SFCFLAGS) --makedepend $(basename $@).d $< $(basename $@).c $(basename $@).h $(basename $@).name
 
 -include $(SOUNDFONT_DEP_FILES)
 
 $(BUILD_DIR)/assets/audio/soundfonts/%.o: $(BUILD_DIR)/assets/audio/soundfonts/%.c $(BUILD_DIR)/assets/audio/soundfonts/%.name
 # compile c to unlinked object
-	$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -I include/audio -o $(@:.o=.tmp) $<
+	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -I include/audio -o $(@:.o=.tmp) $<
 # partial link
-	$(LD) -r -T linker_scripts/soundfont.ld $(@:.o=.tmp) -o $(@:.o=.tmp2)
+	$(V)$(LD) -r -T linker_scripts/soundfont.ld $(@:.o=.tmp) -o $(@:.o=.tmp2)
 # patch defined symbols to be ABS symbols so that they remain file-relative offsets forever
-	$(SFPATCH) $(@:.o=.tmp2) $(@:.o=.tmp2)
+	$(V)$(SFPATCH) $(@:.o=.tmp2) $(@:.o=.tmp2)
 # write start and size symbols afterwards, filename != symbolic name so source symbolic name from the .name file written by sfc
-	$(OBJCOPY) --add-symbol $$(cat $(<:.c=.name))_Start=.rodata:0,global --redefine-sym __LEN__=$$(cat $(<:.c=.name))_Size $(@:.o=.tmp2) $@
+	$(V)$(OBJCOPY) --add-symbol $$(cat $(<:.c=.name))_Start=.rodata:0,global --redefine-sym __LEN__=$$(cat $(<:.c=.name))_Size $(@:.o=.tmp2) $@
 # cleanup temp files
 	@$(RM) $(@:.o=.tmp) $(@:.o=.tmp2)
 ifeq ($(AUDIO_BUILD_DEBUG),1)
-	$(LD) $(foreach f,$(SAMPLEBANK_O_FILES),-R $f) -T linker_scripts/soundfont.ld $@ -o $(@:.o=.elf)
-	$(OBJCOPY) -O binary -j.rodata $(@:.o=.elf) $(@:.o=.bin)
+	$(V)$(LD) $(foreach f,$(SAMPLEBANK_O_FILES),-R $f) -T linker_scripts/soundfont.ld $@ -o $(@:.o=.elf)
+	$(V)$(OBJCOPY) -O binary -j.rodata $(@:.o=.elf) $(@:.o=.bin)
 	@(cmp $(@:.o=.bin) $(patsubst $(BUILD_DIR)/assets/audio/soundfonts/%,$(EXTRACTED_DIR)/baserom_audiotest/audiobank_files/%,$(@:.o=.bin)) && echo "$(<F) OK" || (mkdir -p NONMATCHINGS/soundfonts && cp $(@:.o=.bin) NONMATCHINGS/soundfonts/$(@F:.o=.bin)))
 endif
 
 # then assemble the sequences...
 
 $(BUILD_DIR)/assets/audio/sequences/%.o: assets/audio/sequences/%.seq include/audio/aseq.h $(SEQUENCE_TABLE) | $(SOUNDFONT_HEADERS)
-	$(SEQ_CPP) $(SEQ_CPPFLAGS) $< -o $(@:.o=.s) -MMD -MT $@
-	$(AS) $(ASFLAGS) -I $(BUILD_DIR)/assets/audio/soundfonts -I include/audio -I $(dir $<) $(@:.o=.s) -o $@
+	$(V)$(SEQ_CPP) $(SEQ_CPPFLAGS) $< -o $(@:.o=.s) -MMD -MT $@
+	$(V)$(AS) $(ASFLAGS) -I $(BUILD_DIR)/assets/audio/soundfonts -I include/audio -I $(dir $<) $(@:.o=.s) -o $@
 
 $(BUILD_DIR)/assets/audio/sequences/%.o: $(EXTRACTED_DIR)/assets/audio/sequences/%.seq include/audio/aseq.h $(SEQUENCE_TABLE) | $(SOUNDFONT_HEADERS)
-	$(SEQ_CPP) $(SEQ_CPPFLAGS) $< -o $(@:.o=.s) -MMD -MT $@
-	$(AS) $(ASFLAGS) -I $(BUILD_DIR)/assets/audio/soundfonts -I include/audio -I $(dir $<) $(@:.o=.s) -o $@
+	$(V)$(SEQ_CPP) $(SEQ_CPPFLAGS) $< -o $(@:.o=.s) -MMD -MT $@
+	$(V)$(AS) $(ASFLAGS) -I $(BUILD_DIR)/assets/audio/soundfonts -I include/audio -I $(dir $<) $(@:.o=.s) -o $@
 ifeq ($(AUDIO_BUILD_DEBUG),1)
-	$(OBJCOPY) -O binary -j.data $@ $(@:.o=.aseq)
+	$(V)$(OBJCOPY) -O binary -j.data $@ $(@:.o=.aseq)
 	@(cmp $(@:.o=.aseq) $(patsubst $(BUILD_DIR)/assets/audio/sequences/%,$(EXTRACTED_DIR)/baserom_audiotest/audioseq_files/%,$(@:.o=.aseq)) && echo "$(<F) OK" || (mkdir -p NONMATCHINGS/sequences && cp $(@:.o=.aseq) NONMATCHINGS/sequences/$(@F:.o=.aseq)))
 endif
 
@@ -946,15 +948,15 @@ $(BUILD_DIR)/assets/audio/samplebank_table.h: $(SAMPLEBANK_BUILD_XMLS)
 	$(V)$(ATBLGEN) --banks $@ $^
 
 $(BUILD_DIR)/assets/audio/soundfont_table.h: $(SOUNDFONT_BUILD_XMLS) $(SAMPLEBANK_BUILD_XMLS)
-	$(ATBLGEN) --fonts $@ $(SOUNDFONT_BUILD_XMLS)
+	$(V)$(ATBLGEN) --fonts $@ $(SOUNDFONT_BUILD_XMLS)
 
 SEQ_ORDER_DEFS := -DDEFINE_SEQUENCE_PTR\(name,seqId,_2,_3,_4\)=*\(name,seqId\) \
                   -DDEFINE_SEQUENCE\(name,seqId,_2,_3,_4\)=\(name,seqId\)
 $(BUILD_DIR)/assets/audio/sequence_order.in: $(SEQUENCE_TABLE)
-	$(CPP) $(CPPFLAGS) $< $(SEQ_ORDER_DEFS) -o $@
+	$(V)$(CPP) $(CPPFLAGS) $< $(SEQ_ORDER_DEFS) -o $@
 
 $(BUILD_DIR)/assets/audio/sequence_font_table.s: $(BUILD_DIR)/assets/audio/sequence_order.in $(SEQUENCE_O_FILES)
-	$(ATBLGEN) --sequences $@ $^
+	$(V)$(ATBLGEN) --sequences $@ $^
 
 # build the tables into objects, move data -> rodata
 
@@ -973,11 +975,11 @@ endif
 	@$(RM) $(@:.o=.tmp)
 
 $(BUILD_DIR)/assets/audio/sequence_font_table.o: $(BUILD_DIR)/assets/audio/sequence_font_table.s
-	$(AS) $(ASFLAGS) $< -o $@
+	$(V)$(AS) $(ASFLAGS) $< -o $@
 
 # Extra audiobank padding that doesn't belong to any soundfont file
 $(BUILD_DIR)/assets/audio/audiobank_padding.o:
-	echo ".section .rodata; .fill 0x20" | $(AS) $(ASFLAGS) -o $@
+	$(V)echo ".section .rodata; .fill 0x20" | $(AS) $(ASFLAGS) -o $@
 
 -include $(DEP_FILES)
 

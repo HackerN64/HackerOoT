@@ -1,3 +1,4 @@
+MAKEFLAGS += --no-builtin-rules --no-print-directory
 
 CC := gcc
 CFLAGS := -Wall -Wextra -MMD
@@ -15,22 +16,25 @@ DEP_FILES := $(foreach f,$(C_FILES:.c=.d),build/$f)
 
 $(shell mkdir -p build $(foreach dir,$(SRC_DIRS),build/$(dir)))
 
+-include ../../print_rules.mk
+
 .PHONY: all clean distclean format
 
 all: sampleconv
 
 clean:
-	$(RM) -rf build sampleconv
+	$(V)$(RM) -rf build sampleconv
 
 distclean: clean
 
 format:
-	$(CLANG_FORMAT) $(FORMAT_ARGS) $(C_FILES) $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.h))
+	$(V)$(CLANG_FORMAT) $(FORMAT_ARGS) $(C_FILES) $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.h))
 
 sampleconv: $(O_FILES)
-	$(CC) $(LDFLAGS) $(O_FILES) -lm -o $@
+	$(V)$(CC) $(LDFLAGS) $(O_FILES) -lm -o $@
 
 build/src/%.o: src/%.c
-	$(CC) -c $(CFLAGS) $(OPTFLAGS) $< -o $@
+	$(call print_two_args,Compiling:,$<,$@)
+	$(V)$(CC) -c $(CFLAGS) $(OPTFLAGS) $< -o $@
 
 -include $(DEP_FILES)

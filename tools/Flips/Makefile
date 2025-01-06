@@ -1,3 +1,5 @@
+MAKEFLAGS += --no-builtin-rules --no-print-directory
+
 #This script creates a debug-optimized binary by default. If you're on Linux, you'll get a faster binary from make.sh.
 
 SRCDIR := $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST))))))
@@ -69,11 +71,13 @@ ifeq ($(TARGET),gtk)
   endif
 endif
 
+-include ../print_rules.mk
+
 all: $(FNAME_$(TARGET))
 obj:
-	mkdir obj
+	$(V)mkdir obj
 clean: | obj
-	rm obj/* || true
+	$(V)rm obj/* || true
 
 ifeq ($(TARGET),windows)
   XFILES += obj/rc.o
@@ -92,28 +96,29 @@ ifeq ($(TARGET),gtk)
 endif
 
 $(FNAME_$(TARGET)): $(SOURCES) $(XFILES)
-	$(CXX) $^ -std=c++98 $(CFLAGS_G) $(MOREFLAGS) $(CPPFLAGS) $(CFLAGS) $(CXXFLAGS) $(LFLAGS) -o$@
+	$(call print_two_args,Compiling:,$<,$@)
+	$(V)$(CXX) $^ -std=c++98 $(CFLAGS_G) $(MOREFLAGS) $(CPPFLAGS) $(CFLAGS) $(CXXFLAGS) $(LFLAGS) -o$@
 ifeq ($(CFLAGS),-g)
 	echo 'Compiled Floating IPS in debug mode; for better performance, use ./make.sh instead'
 endif
 
 ifeq ($(TARGET),gtk)
 install: all
-	mkdir -p $(DESTDIR)$(BINDIR)
-	mkdir -p $(DESTDIR)$(DATAROOTDIR)/applications
-	mkdir -p $(DESTDIR)$(DATAROOTDIR)/icons/hicolor/scalable/apps
-	mkdir -p $(DESTDIR)$(DATAROOTDIR)/icons/hicolor/symbolic/apps
-	mkdir -p $(DESTDIR)$(DATAROOTDIR)/metainfo
-	install -p -m755 $(FNAME_$(TARGET)) $(DESTDIR)$(BINDIR)
-	install -p -m755 $(SRCDIR)/data/com.github.Alcaro.Flips.desktop $(DESTDIR)$(DATAROOTDIR)/applications
-	install -p -m644 $(SRCDIR)/data/com.github.Alcaro.Flips.svg $(DESTDIR)$(DATAROOTDIR)/icons/hicolor/scalable/apps
-	install -p -m644 $(SRCDIR)/data/com.github.Alcaro.Flips-symbolic.svg $(DESTDIR)$(DATAROOTDIR)/icons/hicolor/symbolic/apps
-	install -p -m644 $(SRCDIR)/data/com.github.Alcaro.Flips.metainfo.xml $(DESTDIR)$(DATAROOTDIR)/metainfo
+	$(V)mkdir -p $(DESTDIR)$(BINDIR)
+	$(V)mkdir -p $(DESTDIR)$(DATAROOTDIR)/applications
+	$(V)mkdir -p $(DESTDIR)$(DATAROOTDIR)/icons/hicolor/scalable/apps
+	$(V)mkdir -p $(DESTDIR)$(DATAROOTDIR)/icons/hicolor/symbolic/apps
+	$(V)mkdir -p $(DESTDIR)$(DATAROOTDIR)/metainfo
+	$(V)install -p -m755 $(FNAME_$(TARGET)) $(DESTDIR)$(BINDIR)
+	$(V)install -p -m755 $(SRCDIR)/data/com.github.Alcaro.Flips.desktop $(DESTDIR)$(DATAROOTDIR)/applications
+	$(V)install -p -m644 $(SRCDIR)/data/com.github.Alcaro.Flips.svg $(DESTDIR)$(DATAROOTDIR)/icons/hicolor/scalable/apps
+	$(V)install -p -m644 $(SRCDIR)/data/com.github.Alcaro.Flips-symbolic.svg $(DESTDIR)$(DATAROOTDIR)/icons/hicolor/symbolic/apps
+	$(V)install -p -m644 $(SRCDIR)/data/com.github.Alcaro.Flips.metainfo.xml $(DESTDIR)$(DATAROOTDIR)/metainfo
 
 uninstall:
-	rm -f $(DESTDIR)$(BINDIR)/$(FNAME_$(TARGET))
-	rm -f $(DESTDIR)$(DATAROOTDIR)/applications/com.github.Alcaro.Flips.desktop
-	rm -f $(DESTDIR)$(DATAROOTDIR)/icons/hicolor/scalable/apps/com.github.Alcaro.Flips.svg
-	rm -f $(DESTDIR)$(DATAROOTDIR)/icons/hicolor/symbolic/apps/com.github.Alcaro.Flips-symbolic.svg
-	rm -f $(DESTDIR)$(DATAROOTDIR)/metainfo/com.github.Alcaro.Flips.metainfo.xml
+	$(V)rm -f $(DESTDIR)$(BINDIR)/$(FNAME_$(TARGET))
+	$(V)rm -f $(DESTDIR)$(DATAROOTDIR)/applications/com.github.Alcaro.Flips.desktop
+	$(V)rm -f $(DESTDIR)$(DATAROOTDIR)/icons/hicolor/scalable/apps/com.github.Alcaro.Flips.svg
+	$(V)rm -f $(DESTDIR)$(DATAROOTDIR)/icons/hicolor/symbolic/apps/com.github.Alcaro.Flips-symbolic.svg
+	$(V)rm -f $(DESTDIR)$(DATAROOTDIR)/metainfo/com.github.Alcaro.Flips.metainfo.xml
 endif
