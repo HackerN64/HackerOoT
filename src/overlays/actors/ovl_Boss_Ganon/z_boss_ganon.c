@@ -10,7 +10,9 @@
 #include "assets/objects/object_ganon_anime2/object_ganon_anime2.h"
 #include "assets/scenes/dungeons/ganon_boss/ganon_boss_scene.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE | ACTOR_FLAG_4 | ACTOR_FLAG_5)
+#define FLAGS                                                                                 \
+    (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE | ACTOR_FLAG_UPDATE_CULLING_DISABLED | \
+     ACTOR_FLAG_DRAW_CULLING_DISABLED)
 
 void BossGanon_Init(Actor* thisx, PlayState* play2);
 void BossGanon_Destroy(Actor* thisx, PlayState* play);
@@ -578,7 +580,7 @@ void BossGanon_IntroCutscene(BossGanon* this, PlayState* play) {
             Play_ChangeCameraStatus(play, this->csCamIndex, CAM_STAT_ACTIVE);
             this->csCamFov = 60.0f;
 
-            if (GET_EVENTCHKINF(EVENTCHKINF_78)) {
+            if (GET_EVENTCHKINF(EVENTCHKINF_BEGAN_GANONDORF_BATTLE)) {
                 // watched cutscene already, skip most of it
                 this->csState = 17;
                 this->csTimer = 0;
@@ -1096,12 +1098,12 @@ void BossGanon_IntroCutscene(BossGanon* this, PlayState* play) {
                 gSegments[6] =
                     VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[Object_GetSlot(&play->objectCtx, OBJECT_GANON)].segment);
 
-                if (!GET_EVENTCHKINF(EVENTCHKINF_78)) {
+                if (!GET_EVENTCHKINF(EVENTCHKINF_BEGAN_GANONDORF_BATTLE)) {
                     TitleCard_InitBossName(play, &play->actorCtx.titleCtx, SEGMENTED_TO_VIRTUAL(gGanondorfTitleCardTex),
                                            160, 180, 128, 40);
                 }
 
-                SET_EVENTCHKINF(EVENTCHKINF_78);
+                SET_EVENTCHKINF(EVENTCHKINF_BEGAN_GANONDORF_BATTLE);
             }
 
             if (this->csTimer >= 20) {

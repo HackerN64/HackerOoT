@@ -5,6 +5,7 @@
 #include "terminal.h"
 #include "config.h"
 #include "versions.h"
+#include "line_numbers.h"
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
@@ -180,21 +181,7 @@ void Play_SetupTransition(PlayState* this, s32 transitionType) {
                 break;
 
             default:
-#if OOT_VERSION < NTSC_1_1
-                HUNGUP_AND_CRASH("../z_play.c", 2263);
-#elif OOT_VERSION < PAL_1_0
-                HUNGUP_AND_CRASH("../z_play.c", 2266);
-#elif OOT_VERSION < PAL_1_1
-                HUNGUP_AND_CRASH("../z_play.c", 2269);
-#elif OOT_VERSION < GC_JP
-                HUNGUP_AND_CRASH("../z_play.c", 2272);
-#elif OOT_VERSION < GC_EU_MQ_DBG
-                HUNGUP_AND_CRASH("../z_play.c", 2287);
-#elif OOT_VERSION < GC_JP_CE
-                HUNGUP_AND_CRASH("../z_play.c", 2290);
-#else
-                HUNGUP_AND_CRASH("../z_play.c", 2293);
-#endif
+                HUNGUP_AND_CRASH("../z_play.c", LN5(2263, 2266, 2269, 2272, 2287, 2290, 2293));
                 break;
         }
     }
@@ -497,8 +484,9 @@ void Play_Init(GameState* thisx) {
     Camera_InitDataUsingPlayer(&this->mainCamera, player);
     Camera_RequestMode(&this->mainCamera, CAM_MODE_NORMAL);
 
-    playerStartBgCamIndex = PARAMS_GET_U(player->actor.params, 0, 8);
-    if (playerStartBgCamIndex != 0xFF) {
+    playerStartBgCamIndex = PLAYER_GET_START_BG_CAM_INDEX(&player->actor);
+
+    if (playerStartBgCamIndex != PLAYER_START_BG_CAM_DEFAULT) {
         PRINTF("player has start camera ID (" VT_FGCOL(BLUE) "%d" VT_RST ")\n", playerStartBgCamIndex);
         Camera_RequestBgCam(&this->mainCamera, playerStartBgCamIndex);
     }
@@ -515,7 +503,7 @@ void Play_Init(GameState* thisx) {
     Environment_PlaySceneSequence(this);
     gSaveContext.seqId = this->sceneSequences.seqId;
     gSaveContext.natureAmbienceId = this->sceneSequences.natureAmbienceId;
-    func_8002DF18(this, GET_PLAYER(this));
+    Actor_InitPlayerHorse(this, GET_PLAYER(this));
     AnimTaskQueue_Update(this, &this->animTaskQueue);
     gSaveContext.respawnFlag = 0;
 
@@ -2137,6 +2125,7 @@ void Play_LoadToLastEntrance(PlayState* this) {
                (gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_12) ||
                (gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_13) ||
                (gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_15)) {
+        // Avoid re-triggering the hop over Lon Lon fence cutscenes
         this->nextEntranceIndex = ENTR_HYRULE_FIELD_6;
 #endif
     } else {
@@ -2147,7 +2136,7 @@ void Play_LoadToLastEntrance(PlayState* this) {
 }
 
 void Play_TriggerRespawn(PlayState* this) {
-    Play_SetupRespawnPoint(this, RESPAWN_MODE_DOWN, 0xDFF);
+    Play_SetupRespawnPoint(this, RESPAWN_MODE_DOWN, PLAYER_PARAMS(PLAYER_START_MODE_IDLE, PLAYER_START_BG_CAM_DEFAULT));
     Play_LoadToLastEntrance(this);
 }
 
