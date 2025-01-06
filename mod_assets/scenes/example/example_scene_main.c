@@ -19,6 +19,13 @@ SceneCmd example_scene_header00[] = {
     SCENE_CMD_ENTRANCE_LIST(example_scene_header00_entranceList),
     SCENE_CMD_SPAWN_LIST(7, example_scene_header00_playerEntryList),
     SCENE_CMD_CUTSCENE_DATA(gExampleCS),
+#if ENABLE_ANIMATED_MATERIALS
+    SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
+#endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
+    SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(2, debug1_scene_header00_ActorCutsceneCameraInfo),
+#endif
     SCENE_CMD_END(),
 };
 
@@ -153,6 +160,78 @@ EnvLightSettings example_scene_header00_lightSettings[4] = {
     },
 };
 
+#if ENABLE_ANIMATED_MATERIALS
+AnimatedMatTexScrollParams debug1_scene_header00_AnimatedMaterialTexScrollParams_00[] = {
+    { 0, -1, 32, 32 },
+    { 0, -1, 32, 32 }
+};
+
+AnimatedMatTexScrollParams debug1_scene_header00_AnimatedMaterialTexScrollParams_01[] = {
+    { 0, 1, 32, 32 },
+    { 0, -1, 32, 32 }
+};
+
+F3DPrimColor debug1_scene_header00_AnimatedMaterialColorPrimColor_02[] = {
+    { 255, 255, 255, 255, 128 },
+    { 255, 255, 255, 255, 128 },
+    { 128, 0, 0, 255, 128 },
+    { 255, 255, 255, 255, 128 },
+    { 255, 255, 255, 255, 128 }
+};
+
+F3DEnvColor debug1_scene_header00_AnimatedMaterialColorEnvColor_02[] = {
+    { 255, 255, 255, 255 },
+    { 255, 255, 255, 255 },
+    { 255, 255, 255, 255 },
+    { 255, 255, 255, 255 },
+    { 255, 255, 255, 255 }
+};
+
+u16 debug1_scene_header00_AnimatedMaterialColorKeyFrames_02[] = {
+    0,
+    5,
+    30,
+    55,
+    59
+};
+
+AnimatedMatColorParams debug1_scene_header00_AnimatedMaterialColorParams_02 = {
+    60,
+    5,
+    debug1_scene_header00_AnimatedMaterialColorPrimColor_02,
+    debug1_scene_header00_AnimatedMaterialColorEnvColor_02,
+    debug1_scene_header00_AnimatedMaterialColorKeyFrames_02,
+};
+
+AnimatedMaterial debug1_scene_header00_AnimatedMaterial[] = {
+    { 1 /* 8 */, 1, debug1_scene_header00_AnimatedMaterialTexScrollParams_00 },
+    { 2 /* 9 */, 1, debug1_scene_header00_AnimatedMaterialTexScrollParams_01 },
+    { -3 /* 10 */, 4, &debug1_scene_header00_AnimatedMaterialColorParams_02 }
+};
+#endif
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+Vec3s debug1_scene_header00_ActorCutsceneCameraData[] = {
+    {    608,    279,   -730 },
+    { 0x0C3B, 0xE10A, 0x0000 },
+    {   4000,     -1,     -1 },
+
+    {   -506,    279,   -730 },
+    { 0x0C3B, 0x2067, 0x0000 },
+    {     -1,     -1,     -1 },
+};
+
+ActorCsCamInfo debug1_scene_header00_ActorCutsceneCameraInfo[] = {
+    { CAM_SET_FIXED1, 3, &debug1_scene_header00_ActorCutsceneCameraData[0] },
+    { CAM_SET_FIXED1, 3, &debug1_scene_header00_ActorCutsceneCameraData[3] },
+};
+
+CutsceneEntry debug1_scene_header00_ActorCutsceneList[] = {
+    /* 0 */ { 500, 90, 0, -1, 1, CS_END_SFX_NONE, 255, CS_HUD_VISIBILITY_NONE, CS_END_CAM_SMOOTH, 20 },
+    /* 1 */ { 501, 90, 1, -1, -1, CS_END_SFX_TRE_BOX_APPEAR, 255, CS_HUD_VISIBILITY_NONE, CS_END_CAM_SMOOTH, 35 },
+};
+#endif
+
 /**
  * Header Child Night
 */
@@ -167,6 +246,13 @@ SceneCmd example_scene_header01[] = {
     SCENE_CMD_TRANSITION_ACTOR_LIST(1, example_scene_header01_transitionActors),
     SCENE_CMD_ENTRANCE_LIST(example_scene_header01_entranceList),
     SCENE_CMD_SPAWN_LIST(7, example_scene_header01_playerEntryList),
+#if ENABLE_ANIMATED_MATERIALS
+    SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
+#endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
+    SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(2, debug1_scene_header00_ActorCutsceneCameraInfo),
+#endif
     SCENE_CMD_END(),
 };
 
@@ -305,6 +391,13 @@ SceneCmd example_scene_header02[] = {
     SCENE_CMD_TRANSITION_ACTOR_LIST(1, example_scene_header02_transitionActors),
     SCENE_CMD_ENTRANCE_LIST(example_scene_header02_entranceList),
     SCENE_CMD_SPAWN_LIST(7, example_scene_header02_playerEntryList),
+#if ENABLE_ANIMATED_MATERIALS
+    SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
+#endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
+    SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(2, debug1_scene_header00_ActorCutsceneCameraInfo),
+#endif
     SCENE_CMD_END(),
 };
 
@@ -443,6 +536,13 @@ SceneCmd example_scene_header03[] = {
     SCENE_CMD_TRANSITION_ACTOR_LIST(1, example_scene_header03_transitionActors),
     SCENE_CMD_ENTRANCE_LIST(example_scene_header03_entranceList),
     SCENE_CMD_SPAWN_LIST(7, example_scene_header03_playerEntryList),
+#if ENABLE_ANIMATED_MATERIALS
+    SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
+#endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
+    SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(2, debug1_scene_header00_ActorCutsceneCameraInfo),
+#endif
     SCENE_CMD_END(),
 };
 

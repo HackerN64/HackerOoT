@@ -37,6 +37,10 @@
 
 #include "assets/scenes/misc/hakaana_ouke/hakaana_ouke_scene.h"
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+struct CutsceneCamera sCutsceneCameraInfo;
+#endif
+
 u16 sCurTextId = 0;
 u16 sCurOcarinaAction = 0;
 
@@ -167,7 +171,14 @@ void Cutscene_DrawDebugInfo(PlayState* play, Gfx** dlist, CutsceneContext* csCtx
 
 void Cutscene_InitContext(PlayState* play, CutsceneContext* csCtx) {
     csCtx->state = CS_STATE_IDLE;
+    csCtx->curFrame = 0;
     csCtx->timer = 0.0f;
+    csCtx->scriptListCount = 0;
+    csCtx->scriptIndex = 0;
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    csCtx->scriptList = NULL;
+#endif
+    Audio_SetCutsceneFlag(0);
 }
 
 void Cutscene_StartManual(PlayState* play, CutsceneContext* csCtx) {
@@ -2336,6 +2347,9 @@ void CutsceneHandler_StopScript(PlayState* play, CutsceneContext* csCtx) {
             Camera_SetFinishedFlag(play->cameraPtrs[sReturnToCamId]);
         }
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+        CutsceneManager_Stop(CS_ID_GLOBAL_END);
+#endif
         Audio_SetCutsceneFlag(0);
         csCtx->state = CS_STATE_IDLE;
     }
@@ -2353,7 +2367,6 @@ void Cutscene_SetupScripted(PlayState* play, CutsceneContext* csCtx) {
 
         sCurTextId = 0;
         sCurOcarinaAction = 0;
-        csCtx->unk_12 = 0;
         csCtx->playerCue = NULL;
 
         for (i = 0; i < ARRAY_COUNT(csCtx->actorCues); i++) {
@@ -2367,18 +2380,27 @@ void Cutscene_SetupScripted(PlayState* play, CutsceneContext* csCtx) {
 
             csCtx->curFrame = 0xFFFF;
 
-            csCtx->camEyeSplinePointsAppliedFrame = CS_CAM_DATA_NOT_APPLIED;
-            gCamAtSplinePointsAppliedFrame = CS_CAM_DATA_NOT_APPLIED;
-            gCamEyePointAppliedFrame = CS_CAM_DATA_NOT_APPLIED;
-            gCamAtPointAppliedFrame = CS_CAM_DATA_NOT_APPLIED;
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+            if (csCtx->scriptList != NULL) {
+                csCtx->subCamId = CutsceneManager_GetCurrentSubCamId(CS_ID_GLOBAL_END);
+                CutsceneCamera_Init(Play_GetCamera(play, csCtx->subCamId), &sCutsceneCameraInfo);
+                csCtx->camEyeSplinePointsAppliedFrame = CS_CAM_DATA_NOT_APPLIED;
+            } else
+#endif
+            {
+                csCtx->camEyeSplinePointsAppliedFrame = CS_CAM_DATA_NOT_APPLIED;
+                gCamAtSplinePointsAppliedFrame = CS_CAM_DATA_NOT_APPLIED;
+                gCamEyePointAppliedFrame = CS_CAM_DATA_NOT_APPLIED;
+                gCamAtPointAppliedFrame = CS_CAM_DATA_NOT_APPLIED;
 
-            csCtx->camAtReady = false;
-            csCtx->camEyeReady = false;
+                csCtx->camAtReady = false;
+                csCtx->camEyeReady = false;
 
-            sReturnToCamId = play->activeCamId;
+                sReturnToCamId = play->activeCamId;
 
-            if (gUseCutsceneCam) {
-                csCtx->subCamId = Play_CreateSubCamera(play);
+                if (gUseCutsceneCam) {
+                    csCtx->subCamId = Play_CreateSubCamera(play);
+                }
             }
 
             if (gSaveContext.cutsceneTrigger == 0) {
@@ -2489,4 +2511,13 @@ void Cutscene_SetScript(PlayState* play, void* script) {
     } else {
         play->csCtx.script = script;
     }
+}
+
+void Cutscene_StartScripted(PlayState* play, u8 scriptIndex) {
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    if (play->csCtx.scriptList != NULL) {
+        Cutscene_SetScript(play, play->csCtx.scriptList[scriptIndex].script);
+        gSaveContext.cutsceneTrigger = 1;
+    }
+#endif
 }

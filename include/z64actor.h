@@ -231,6 +231,13 @@ typedef struct ActorShape {
 // Flag controlling the use of `Actor.sfx`. Do not use directly. See Actor_PlaySfx_FlaggedTimer
 #define ACTOR_FLAG_SFX_TIMER (1 << 28)
 
+// Actor can update even if Player is currently in one of the `sCategoryFreezeMasks` states.
+// Typically an actor will halt while the player is in one of the `sCategoryFreezeMasks` states (depending on category).
+// This flag allows a given actor to be an exception.
+//
+// Note: Not implemented yet.
+#define ACTOR_FLAG_FREEZE_EXCEPTION (1 << 29)
+
 #define COLORFILTER_GET_COLORINTENSITY(colorFilterParams) (((colorFilterParams) & 0x1F00) >> 5)
 #define COLORFILTER_GET_DURATION(colorFilterParams) ((colorFilterParams) & 0xFF)
 

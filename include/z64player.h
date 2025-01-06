@@ -4,6 +4,7 @@
 #include "z64actor.h"
 #include "alignment.h"
 #include "face_change.h"
+#include "config.h"
 
 struct Player;
 
@@ -778,6 +779,12 @@ typedef struct WeaponInfo {
 #define PLAYER_STATE3_RESTORE_NAYRUS_LOVE (1 << 6) // Set by ocarina effects actors when destroyed to signal Nayru's Love may be restored (see `ACTOROVL_ALLOC_ABSOLUTE`)
 #define PLAYER_STATE3_FLYING_WITH_HOOKSHOT (1 << 7) // Flying in the air with the hookshot as it pulls Player toward its destination
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+#define PLAYER_STATE3_CS_HALT (1 << 8) // Prevents updating the actor while a cutscene is playing
+#else
+#define PLAYER_STATE3_CS_HALT (0)
+#endif
+
 #define PLAYER_ALLOC_GI_MIN 0x2880 // title card maximum file size
 
 typedef void (*PlayerActionFunc)(struct Player*, struct PlayState*);
@@ -874,7 +881,7 @@ typedef struct Player {
     /* 0x0688 */ Actor* boomerangActor;
     /* 0x068C */ Actor* naviActor;
     /* 0x0690 */ s16 naviTextId;
-    /* 0x0692 */ u8 stateFlags3;
+    /* 0x0692 */ u32 stateFlags3;
     /* 0x0693 */ s8 exchangeItemId;
     /* 0x0694 */ Actor* talkActor; // Actor offering to talk, or currently talking to, depending on context
     /* 0x0698 */ f32 talkActorDistance; // xz distance away from `talkActor`

@@ -967,7 +967,13 @@ beginseg
 #endif
     include "$(BUILD_DIR)/src/code/rainbow.o"
     include "$(BUILD_DIR)/src/code/helpers.o"
+#if ENABLE_ANIMATED_MATERIALS
     include "$(BUILD_DIR)/src/code/animated_materials.o"
+#endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    include "$(BUILD_DIR)/src/code/cutscene_camera.o"
+    include "$(BUILD_DIR)/src/code/cutscene_manager.o"
+#endif
 endseg
 
 #if ENABLE_HACKER_DEBUG

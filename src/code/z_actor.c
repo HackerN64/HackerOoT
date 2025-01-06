@@ -5,6 +5,7 @@
 #include "terminal.h"
 #include "versions.h"
 #include "z64horse.h"
+#include "config.h"
 
 #include "overlays/actors/ovl_Arms_Hook/z_arms_hook.h"
 #include "overlays/actors/ovl_En_Part/z_en_part.h"
@@ -328,6 +329,12 @@ void Attention_Init(Attention* attention, Actor* actor, PlayState* play) {
 
 void Attention_Draw(Attention* attention, PlayState* play) {
     Actor* actor; // used for both the reticle actor and arrow hover actor
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    if (GET_PLAYER(play)->stateFlags3 & PLAYER_STATE3_CS_HALT) {
+        return;
+    }
+#endif
 
     actor = attention->reticleActor;
 
@@ -2319,38 +2326,44 @@ void Actor_InitContext(PlayState* play, ActorContext* actorCtx, ActorEntry* play
     func_8002FA60(play);
 }
 
-u32 sCategoryFreezeMasks[ACTORCAT_MAX] = {
+typedef struct ActorFreezeMasks {
+    u32 mask1; // stateFlags1
+    u32 mask2; // stateFlags2
+    u32 mask3; // stateFlags3
+} ActorFreezeMasks;
+
+ActorFreezeMasks sCategoryFreezeMasks[ACTORCAT_MAX] = {
     // ACTORCAT_SWITCH
-    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28,
+    { PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28, 0, PLAYER_STATE3_CS_HALT },
     // ACTORCAT_BG
-    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28,
+    { PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28, 0, PLAYER_STATE3_CS_HALT },
     // ACTORCAT_PLAYER
-    0,
+    { 0, 0, PLAYER_STATE3_CS_HALT },
     // ACTORCAT_EXPLOSIVE
-    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_10 | PLAYER_STATE1_28,
+    { PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_10 | PLAYER_STATE1_28, 0, PLAYER_STATE3_CS_HALT },
     // ACTORCAT_NPC
-    PLAYER_STATE1_DEAD,
+    { PLAYER_STATE1_DEAD, 0, PLAYER_STATE3_CS_HALT },
     // ACTORCAT_ENEMY
-    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28 | PLAYER_STATE1_29,
+    { PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28 | PLAYER_STATE1_29, 0, PLAYER_STATE3_CS_HALT },
     // ACTORCAT_PROP
-    PLAYER_STATE1_DEAD | PLAYER_STATE1_28,
+    { PLAYER_STATE1_DEAD | PLAYER_STATE1_28, 0, PLAYER_STATE3_CS_HALT },
     // ACTORCAT_ITEMACTION
-    0,
+    { 0, 0, 0 },
     // ACTORCAT_MISC
-    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28 | PLAYER_STATE1_29,
+    { PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28 | PLAYER_STATE1_29, 0, PLAYER_STATE3_CS_HALT },
     // ACTORCAT_BOSS
-    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_10 | PLAYER_STATE1_28,
+    { PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_10 | PLAYER_STATE1_28, 0, PLAYER_STATE3_CS_HALT },
     // ACTORCAT_DOOR
-    0,
+    { 0, 0, 0 },
     // ACTORCAT_CHEST
-    PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28,
+    { PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28, 0, PLAYER_STATE3_CS_HALT },
 };
 
 void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
     s32 i;
     Actor* actor;
     Player* player;
-    u32* categoryFreezeMaskP;
+    ActorFreezeMasks* categoryFreezeMaskP;
     u32 freezeExceptionFlag;
     u32 canFreezeCategory;
     Actor* sp74;
@@ -2399,7 +2412,10 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
     }
 
     for (i = 0; i < ARRAY_COUNT(actorCtx->actorLists); i++, categoryFreezeMaskP++) {
-        canFreezeCategory = (*categoryFreezeMaskP & player->stateFlags1);
+        ActorFreezeMasks curEntry = *categoryFreezeMaskP;
+
+        canFreezeCategory = (curEntry.mask1 & player->stateFlags1) || (curEntry.mask2 & player->stateFlags2) ||
+                            (curEntry.mask3 & player->stateFlags3);
 
         actor = actorCtx->actorLists[i].head;
         while (actor != NULL) {
