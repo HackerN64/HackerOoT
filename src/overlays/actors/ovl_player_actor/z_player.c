@@ -14989,7 +14989,8 @@ void Player_Action_808507F4(Player* this, PlayState* play) {
                 gSaveContext.save.info.fwMain.entranceIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex;
                 gSaveContext.save.info.fwMain.roomIndex = gSaveContext.respawn[RESPAWN_MODE_DOWN].roomIndex;
                 gSaveContext.save.info.fwMain.tempSwchFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempSwchFlags;
-                gSaveContext.save.info.fwMain.tempCollectFlags = gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags;
+                gSaveContext.save.info.fwMain.tempCollectFlags =
+                    gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags;
                 this->av2.actionVar2 = 2;
             }
         } else if (this->av1.actionVar1 >= 0) {
