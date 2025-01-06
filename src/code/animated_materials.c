@@ -2,6 +2,9 @@
 #include "global.h"
 #include "z64.h"
 #include "helpers.h"
+#include "config.h"
+
+#if ENABLE_ANIMATED_MATERIALS
 
 static s32 sMatAnimStep;
 static u32 sMatAnimFlags;
@@ -397,3 +400,5 @@ void AnimatedMat_DrawAlphaStepOpa(PlayState* play, AnimatedMaterial* matAnim, f3
 void AnimatedMat_DrawAlphaStepXlu(PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step) {
     AnimatedMat_DrawMain(play, matAnim, alphaRatio, step, 2);
 }
+
+#endif

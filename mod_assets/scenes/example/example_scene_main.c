@@ -19,7 +19,9 @@ SceneCmd example_scene_header00[] = {
     SCENE_CMD_ENTRANCE_LIST(example_scene_header00_entranceList),
     SCENE_CMD_SPAWN_LIST(7, example_scene_header00_playerEntryList),
     SCENE_CMD_CUTSCENE_DATA(gExampleCS),
+#if ENABLE_ANIMATED_MATERIALS
     SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
+#endif
 #if ENABLE_CUTSCENE_IMPROVEMENTS
     SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
     SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(2, debug1_scene_header00_ActorCutsceneCameraInfo),
@@ -158,6 +160,7 @@ EnvLightSettings example_scene_header00_lightSettings[4] = {
     },
 };
 
+#if ENABLE_ANIMATED_MATERIALS
 AnimatedMatTexScrollParams debug1_scene_header00_AnimatedMaterialTexScrollParams_00[] = {
     { 0, -1, 32, 32 },
     { 0, -1, 32, 32 }
@@ -205,6 +208,7 @@ AnimatedMaterial debug1_scene_header00_AnimatedMaterial[] = {
     { 2 /* 9 */, 1, debug1_scene_header00_AnimatedMaterialTexScrollParams_01 },
     { -3 /* 10 */, 4, &debug1_scene_header00_AnimatedMaterialColorParams_02 }
 };
+#endif
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS
 Vec3s debug1_scene_header00_ActorCutsceneCameraData[] = {
@@ -242,7 +246,9 @@ SceneCmd example_scene_header01[] = {
     SCENE_CMD_TRANSITION_ACTOR_LIST(1, example_scene_header01_transitionActors),
     SCENE_CMD_ENTRANCE_LIST(example_scene_header01_entranceList),
     SCENE_CMD_SPAWN_LIST(7, example_scene_header01_playerEntryList),
+#if ENABLE_ANIMATED_MATERIALS
     SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
+#endif
 #if ENABLE_CUTSCENE_IMPROVEMENTS
     SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
     SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(2, debug1_scene_header00_ActorCutsceneCameraInfo),
@@ -385,7 +391,9 @@ SceneCmd example_scene_header02[] = {
     SCENE_CMD_TRANSITION_ACTOR_LIST(1, example_scene_header02_transitionActors),
     SCENE_CMD_ENTRANCE_LIST(example_scene_header02_entranceList),
     SCENE_CMD_SPAWN_LIST(7, example_scene_header02_playerEntryList),
+#if ENABLE_ANIMATED_MATERIALS
     SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
+#endif
 #if ENABLE_CUTSCENE_IMPROVEMENTS
     SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
     SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(2, debug1_scene_header00_ActorCutsceneCameraInfo),
@@ -528,7 +536,9 @@ SceneCmd example_scene_header03[] = {
     SCENE_CMD_TRANSITION_ACTOR_LIST(1, example_scene_header03_transitionActors),
     SCENE_CMD_ENTRANCE_LIST(example_scene_header03_entranceList),
     SCENE_CMD_SPAWN_LIST(7, example_scene_header03_playerEntryList),
+#if ENABLE_ANIMATED_MATERIALS
     SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
+#endif
 #if ENABLE_CUTSCENE_IMPROVEMENTS
     SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
     SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(2, debug1_scene_header00_ActorCutsceneCameraInfo),

@@ -86,8 +86,10 @@ void Scene_DrawConfigFishingPond(PlayState* play);
 void Scene_DrawConfigGanonsTowerCollapseInterior(PlayState* play);
 void Scene_DrawConfigInsideGanonsCastleCollapse(PlayState* play);
 
+#if ENABLE_ANIMATED_MATERIALS
 void Scene_DrawConfigMatAnim(PlayState* play);
 void Scene_DrawConfigMatAnimManualStep(PlayState* play);
+#endif
 
 // Entrance Table definition
 #define DEFINE_ENTRANCE(_0, sceneId, spawn, continueBgm, displayTitleCard, endTransType, startTransType) \
@@ -196,8 +198,10 @@ SceneDrawConfigFunc sSceneDrawConfigs[SDC_MAX] = {
     Scene_DrawConfigFishingPond,                 // SDC_FISHING_POND
     Scene_DrawConfigGanonsTowerCollapseInterior, // SDC_GANONS_TOWER_COLLAPSE_INTERIOR
     Scene_DrawConfigInsideGanonsCastleCollapse,  // SDC_INSIDE_GANONS_CASTLE_COLLAPSE
-    Scene_DrawConfigMatAnim,                     // SDC_MAT_ANIM
-    Scene_DrawConfigMatAnimManualStep,           // SDC_MAT_ANIM_MANUAL_STEP
+#if ENABLE_ANIMATED_MATERIALS
+    Scene_DrawConfigMatAnim,           // SDC_MAT_ANIM
+    Scene_DrawConfigMatAnimManualStep, // SDC_MAT_ANIM_MANUAL_STEP
+#endif
 };
 
 #if PLATFORM_N64 // Scene_Draw is at end of file in GC/iQue versions
@@ -1709,15 +1713,12 @@ void Scene_DrawConfigBesitu(PlayState* play) {
     CLOSE_DISPS(play->state.gfxCtx, "../z_scene_table.c", 7910);
 }
 
+#if ENABLE_ANIMATED_MATERIALS
 /**
  * Allows the usage of the animated material system in scenes.
  */
 void Scene_DrawConfigMatAnim(PlayState* play) {
-#if ENABLE_ANIMATED_MATERIALS
     AnimatedMat_Draw(play, play->sceneMaterialAnims);
-#else
-    Scene_DrawConfigDefault(play);
-#endif
 }
 
 /**
@@ -1725,12 +1726,9 @@ void Scene_DrawConfigMatAnim(PlayState* play) {
  * rather than always animating like `Scene_DrawConfigMatAnim`.
  */
 void Scene_DrawConfigMatAnimManualStep(PlayState* play) {
-#if ENABLE_ANIMATED_MATERIALS
     AnimatedMat_DrawStep(play, play->sceneMaterialAnims, play->roomCtx.drawParams[0]);
-#else
-    Scene_DrawConfigDefault(play);
-#endif
 }
+#endif
 
 #if !PLATFORM_N64 // Scene_Draw is at beginning of file in N64 versions
 

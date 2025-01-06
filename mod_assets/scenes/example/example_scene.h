@@ -16,6 +16,7 @@ extern ActorEntry example_scene_header00_playerEntryList[];
 extern Spawn example_scene_header00_entranceList[];
 extern TransitionActorEntry example_scene_header00_transitionActors[];
 extern EnvLightSettings example_scene_header00_lightSettings[4];
+#if ENABLE_ANIMATED_MATERIALS
 extern AnimatedMatTexScrollParams debug1_scene_header00_AnimatedMaterialTexScrollParams_00[];
 extern AnimatedMatTexScrollParams debug1_scene_header00_AnimatedMaterialTexScrollParams_01[];
 extern F3DPrimColor debug1_scene_header00_AnimatedMaterialColorPrimColor_02[];
@@ -23,8 +24,9 @@ extern F3DEnvColor debug1_scene_header00_AnimatedMaterialColorEnvColor_02[];
 extern u16 debug1_scene_header00_AnimatedMaterialColorKeyFrames_02[];
 extern AnimatedMatColorParams debug1_scene_header00_AnimatedMaterialColorParams_02;
 extern AnimatedMaterial debug1_scene_header00_AnimatedMaterial[];
-extern Vec3s debug1_scene_header00_ActorCutsceneCameraData[];
+#endif 
 #if ENABLE_CUTSCENE_IMPROVEMENTS
+extern Vec3s debug1_scene_header00_ActorCutsceneCameraData[];
 extern ActorCsCamInfo debug1_scene_header00_ActorCutsceneCameraInfo[];
 extern CutsceneEntry debug1_scene_header00_ActorCutsceneList[];
 #endif

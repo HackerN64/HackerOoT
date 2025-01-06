@@ -28,7 +28,7 @@
 /**
  * Options for booting directly into a scene, the debug boot or the file select, instead of the title screen.
  */
-#define BOOT_TO_SCENE true
+#define BOOT_TO_SCENE false
 #define BOOT_TO_SCENE_NEW_GAME_ONLY false
 #define BOOT_TO_FILE_SELECT false
 #define BOOT_TO_DEBUG_OPENING true

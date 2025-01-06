@@ -580,8 +580,10 @@ typedef enum SceneDrawConfig {
     /* 50 */ SDC_FISHING_POND,
     /* 51 */ SDC_GANONS_TOWER_COLLAPSE_INTERIOR,
     /* 52 */ SDC_INSIDE_GANONS_CASTLE_COLLAPSE,
+#if ENABLE_ANIMATED_MATERIALS
     /* 53 */ SDC_MAT_ANIM,
     /* 54 */ SDC_MAT_ANIM_MANUAL_STEP,
+#endif
     /* 55 */ SDC_MAX
 } SceneDrawConfig;
 
@@ -634,9 +636,13 @@ typedef enum SceneCommandTypeID {
 #if ENABLE_F3DEX3
                SCENE_CMD_ID_OCC_PLANE_CAND_LIST,
 #endif
+#if ENABLE_ANIMATED_MATERIALS
                SCENE_CMD_ID_ANIMATED_MATERIAL_LIST,
+#endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
                SCENE_CMD_ID_ACTOR_CUTSCENE_LIST,
                SCENE_CMD_ID_ACTOR_CUTSCENE_CAM_LIST,
+#endif
     /* 0x1A */ SCENE_CMD_ID_MAX
 } SceneCommandTypeID;
 
@@ -724,15 +730,18 @@ typedef enum SceneCommandTypeID {
     { SCENE_CMD_ID_OCC_PLANE_CAND_LIST, numPlanes, CMD_PTR(planeList) }
 #endif
 
+#if ENABLE_ANIMATED_MATERIALS
 #define SCENE_CMD_ANIMATED_MATERIAL_LIST(matAnimList) \
     { SCENE_CMD_ID_ANIMATED_MATERIAL_LIST, 0, CMD_PTR(matAnimList) }
+#endif
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
 #define SCENE_CMD_ACTOR_CUTSCENE_LIST(numEntries, actorCutsceneList) \
     { SCENE_CMD_ID_ACTOR_CUTSCENE_LIST, numEntries, CMD_PTR(actorCutsceneList) }
 
 #define SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(numCams, camList) \
     { SCENE_CMD_ID_ACTOR_CUTSCENE_CAM_LIST, numCams, CMD_PTR(camList) }
-
+#endif
 
 
 s32 Scene_ExecuteCommands(struct PlayState* play, SceneCmd* sceneCmd);

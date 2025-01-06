@@ -1413,7 +1413,9 @@ Gfx mat_example_room_0_dl_wall_layerOpaque[] = {
 	gsDPLoadBlock(7, 0, 0, 511, 512),
 	gsDPSetTile(G_IM_FMT_I, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 14, G_TX_WRAP | G_TX_NOMIRROR, 5, 14),
 	gsDPSetTileSize(0, 0, 0, 124, 124),
+#if ENABLE_ANIMATED_MATERIALS
 	gsSPDisplayList(0xA000000),
+#endif
 	gsSPEndDisplayList(),
 };
 
@@ -1664,7 +1666,9 @@ Gfx mat_example_room_0_dl_water_layerTransparent[] = {
 	gsDPSetTileSize(0, 0, 0, 124, 124),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 1, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 15, G_TX_WRAP | G_TX_NOMIRROR, 5, 15),
 	gsDPSetTileSize(1, 0, 0, 124, 124),
+#if ENABLE_ANIMATED_MATERIALS
 	gsSPDisplayList(0x8000000),
+#endif
 	gsSPDisplayList(0x9000000),
 	gsSPEndDisplayList(),
 };

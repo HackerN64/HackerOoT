@@ -2,6 +2,9 @@
 #define ANIMATED_MATERIALS_H
 
 #include "ultra64.h"
+#include "config.h"
+
+#if ENABLE_ANIMATED_MATERIALS
 
 typedef enum AnimatedMatType {
     /* 0 */ ANIM_MAT_TYPE_TEX_SCROLL,
@@ -80,5 +83,7 @@ void AnimatedMat_DrawStepXlu(struct PlayState* play, AnimatedMaterial* matAnim, 
 void AnimatedMat_DrawAlphaStep(struct PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step);
 void AnimatedMat_DrawAlphaStepOpa(struct PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step);
 void AnimatedMat_DrawAlphaStepXlu(struct PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step);
+
+#endif
 
 #endif
