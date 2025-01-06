@@ -221,8 +221,8 @@ endrcp:
 handle_interrupt:
 #if ENABLE_PROFILER
     lw      a0, THREAD_ID(k0)
+    addiu   a0, a0, PROFILER_EVENT_TYPE_THREADEND
     jal     __osRecordProfilerEvent
-    addiu  a0, a0, PROFILER_EVENT_TYPE_THREADEND
 #endif
     /* Determine the cause of the exception or interrupt and */
     /* enter appropriate handling routine */
@@ -721,8 +721,8 @@ LEAF(__osEnqueueAndYield)
 no_enqueue:
 #if ENABLE_PROFILER
     lw      a0, THREAD_ID(a1)  /* a1 is still the pointer to thread */
-    jal     __osRecordProfilerEvent
     addiu  a0, a0, PROFILER_EVENT_TYPE_THREADEND
+    jal     __osRecordProfilerEvent
 #endif
     j       __osDispatchThread
 END(__osEnqueueAndYield)
@@ -782,13 +782,12 @@ END(__osNop)
 LEAF(__osRecordProfilerEvent)
     lui     t0, %hi(activeProfilerState)
     lw      t0, %lo(activeProfilerState)(t0) /* activeProfilerState */
+    mfc0    t1, C0_COUNT /* count */
     beqz    t0, done
-     mfc0   t1, C0_COUNT /* count
     lw      a1, (9*PROFILER_EVENT_COUNT)(t0) /* ->numEvents */
-    slti    at, a1, PROFILER_EVENT_COUNT /* Profiler full? */
-    beqz    at, done
+    bge a1, PROFILER_EVENT_COUNT, done /* Profiler full? */
 get_time_no_interrupts: /* osGetTime, but without the interrupts */
-     lui    t2, %hi(__osBaseCounter)
+    lui     t2, %hi(__osBaseCounter)
     lw      t2, %lo(__osBaseCounter)(t2)
     subu    t2, t1, t2 /* base = count - __osBaseCounter */
     lui     t3, %hi(__osCurrentTime)
@@ -804,7 +803,6 @@ record:
     sw      a1, (9*PROFILER_EVENT_COUNT)(t0) /* Write back numEvents */
 done:
     jr      ra
-    nop
 END(__osRecordProfilerEvent)
 #endif
 
@@ -824,8 +822,8 @@ LEAF(__osDispatchThread)
 #if ENABLE_PROFILER
     move    s0, v0
     lw      a0, THREAD_ID(v0)
-    jal     __osRecordProfilerEvent
     addiu   a0, a0, PROFILER_EVENT_TYPE_THREADSTART
+    jal     __osRecordProfilerEvent
     move    v0, s0
 #endif
     /* Restore SR, masking out any interrupts that are not also */
