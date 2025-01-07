@@ -242,7 +242,7 @@ OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
 #### Files ####
 
 # ROM image
-ROM      := $(BUILD_DIR)/oot-$(VERSION).z64
+ROM      := $(BUILD_DIR)/hackeroot-$(VERSION).z64
 ROMC     := $(ROM:.z64=-compressed-$(COMPRESSION).z64)
 ELF      := $(ROM:.z64=.elf)
 MAP      := $(ROM:.z64=.map)
@@ -509,12 +509,13 @@ endif
 
 $(ROM): $(ELF)
 	$(V)$(ELF2ROM) -cic 6105 $< $@
-	@$(PRINT) "${BLINK}Build succeeded.\n$(NO_COL)"
 	@$(PRINT) "==== Build Options ====$(NO_COL)\n"
 	@$(PRINT) "${GREEN}OoT Version: $(BLUE)$(VERSION)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Code Version: $(BLUE)$(PACKAGE_VERSION)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Debug Build: $(BLUE)$(DEBUG_FEATURES)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Opt. Flags: $(BLUE)$(OPTFLAGS)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}Rom Path: $(BLUE)$(ROM)$(NO_COL)\n"
+	@$(PRINT) "${BLINK}Build succeeded.\n$(NO_COL)"
 
 $(ROMC): $(ROM) $(ELF) $(BUILD_DIR)/compress_ranges.txt
 ifeq ($(COMPRESSION),yaz)
