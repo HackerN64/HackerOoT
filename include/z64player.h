@@ -4,10 +4,23 @@
 #include "z64actor.h"
 #include "alignment.h"
 #include "face_change.h"
+#include "config.h"
 
 struct Player;
 
-#define PLAYER_GET_START_MODE(thisx) PARAMS_GET_S(thisx->params, 8, 4)
+#define PLAYER_PARAMS(startMode, startBgCamIndex) (PARAMS_PACK_NOMASK(startMode, 8) | PARAMS_PACK_NOMASK(startBgCamIndex, 0))
+
+// Determines behavior when spawning. See `PlayerStartMode`.
+#define PLAYER_GET_START_MODE(thisx) PARAMS_GET_S((thisx)->params, 8, 4)
+
+// Sets initial `bgCamIndex`, which determines camera behavior.
+// The value is used to index a list of `BgCamInfo` contained within the scene's collision data.
+// See `PLAYER_START_BG_CAM_DEFAULT` for what a value of -1 does.
+#define PLAYER_GET_START_BG_CAM_INDEX(thisx) PARAMS_GET_S((thisx)->params, 0, 8)
+
+// A value of -1 for `startBgCamIndex` indicates that default behavior should be used.
+// This means the `bgCamIndex` will be read from the current floor polygon.
+#define PLAYER_START_BG_CAM_DEFAULT ((u8)-1)
 
 typedef enum PlayerStartMode {
     /*  0 */ PLAYER_START_MODE_NOTHING, // Update is empty and draw function is NULL, nothing occurs. Useful in cutscenes, for example.
@@ -766,6 +779,12 @@ typedef struct WeaponInfo {
 #define PLAYER_STATE3_RESTORE_NAYRUS_LOVE (1 << 6) // Set by ocarina effects actors when destroyed to signal Nayru's Love may be restored (see `ACTOROVL_ALLOC_ABSOLUTE`)
 #define PLAYER_STATE3_FLYING_WITH_HOOKSHOT (1 << 7) // Flying in the air with the hookshot as it pulls Player toward its destination
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+#define PLAYER_STATE3_CS_HALT (1 << 8) // Prevents updating the actor while a cutscene is playing
+#else
+#define PLAYER_STATE3_CS_HALT (0)
+#endif
+
 #define PLAYER_ALLOC_GI_MIN 0x2880 // title card maximum file size
 
 typedef void (*PlayerActionFunc)(struct Player*, struct PlayState*);
@@ -862,7 +881,7 @@ typedef struct Player {
     /* 0x0688 */ Actor* boomerangActor;
     /* 0x068C */ Actor* naviActor;
     /* 0x0690 */ s16 naviTextId;
-    /* 0x0692 */ u8 stateFlags3;
+    /* 0x0692 */ u32 stateFlags3;
     /* 0x0693 */ s8 exchangeItemId;
     /* 0x0694 */ Actor* talkActor; // Actor offering to talk, or currently talking to, depending on context
     /* 0x0698 */ f32 talkActorDistance; // xz distance away from `talkActor`

@@ -131,6 +131,14 @@
     #define USE_WIDESCREEN (ENABLE_WIDESCREEN && gSaveContext.save.useWidescreen == true)
 #endif
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS && !ENABLE_NEW_LETTERBOX
+    #undef ENABLE_NEW_LETTERBOX
+    #define ENABLE_NEW_LETTERBOX true
+#endif
+
+/*****************
+ * config_graphics.h
+ */
 //! TODO: implement better Wii VC compatibility
 #ifdef CONSOLE_WIIVC
     #undef ENABLE_F3DEX3

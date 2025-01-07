@@ -590,8 +590,8 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_actor.o"
     include "$(BUILD_DIR)/src/code/z_actor_dlftbls.o"
     include "$(BUILD_DIR)/src/code/z_bgcheck.o"
-    include "$(BUILD_DIR)/src/code/code_800430A0.o"
-    include "$(BUILD_DIR)/src/code/code_80043480.o"
+    include "$(BUILD_DIR)/src/code/z_bg_collect.o"
+    include "$(BUILD_DIR)/src/code/z_bg_item.o"
     include "$(BUILD_DIR)/src/code/z_camera.o"
     include "$(BUILD_DIR)/src/code/z_collision_btltbls.o"
     include "$(BUILD_DIR)/src/code/z_collision_check.o"
@@ -599,12 +599,12 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_debug.o"
     include "$(BUILD_DIR)/src/code/z_debug_display.o"
     include "$(BUILD_DIR)/src/code/z_demo.o"
-    include "$(BUILD_DIR)/src/code/code_80069420.o"
+    include "$(BUILD_DIR)/src/code/z_memory_utils.o"
     include "$(BUILD_DIR)/src/code/z_draw.o"
     include "$(BUILD_DIR)/src/code/z_sfx_source.o"
     include "$(BUILD_DIR)/src/code/z_elf_message.o"
     include "$(BUILD_DIR)/src/code/z_face_reaction.o"
-    include "$(BUILD_DIR)/src/code/code_8006C3A0.o"
+    include "$(BUILD_DIR)/src/code/z_env_flags.o"
     include "$(BUILD_DIR)/src/code/z_fcurve_data.o"
     include "$(BUILD_DIR)/src/code/z_fcurve_data_skelanime.o"
     include "$(BUILD_DIR)/src/code/z_game_dlftbls.o"
@@ -638,7 +638,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_rcp.o"
     include "$(BUILD_DIR)/src/code/z_room.o"
     include "$(BUILD_DIR)/src/code/z_sample.o"
-    include "$(BUILD_DIR)/src/code/code_80097A00.o"
+    include "$(BUILD_DIR)/src/code/z_inventory.o"
     include "$(BUILD_DIR)/src/code/z_scene.o"
     include "$(BUILD_DIR)/src/code/object_table.o"
     include "$(BUILD_DIR)/src/code/z_scene_table.o"
@@ -670,7 +670,7 @@ beginseg
 #if IS_CAMERA_DEBUG_ENABLED
     include "$(BUILD_DIR)/src/code/db_camera.o"
 #endif
-    include "$(BUILD_DIR)/src/code/code_800BB0A0.o"
+    include "$(BUILD_DIR)/src/code/z_cutscene_spline.o"
 #if ENABLE_MEMPAK
     include "$(BUILD_DIR)/src/code/mempak.o"
 #endif
@@ -701,7 +701,10 @@ beginseg
     include "$(BUILD_DIR)/src/code/sys_matrix.o"
     include "$(BUILD_DIR)/src/code/sys_ucode.o"
     include "$(BUILD_DIR)/src/code/sys_rumble.o"
-    include "$(BUILD_DIR)/src/code/code_800D31A0.o"
+    include "$(BUILD_DIR)/src/code/sys_freeze.o"
+#if DEBUG_FEATURES
+    include "$(BUILD_DIR)/src/code/sys_debug_controller.o"
+#endif
     include "$(BUILD_DIR)/src/code/irqmgr.o"
 #if PLATFORM_N64
     include "$(BUILD_DIR)/src/code/code_n64dd_800AD410.o"
@@ -747,6 +750,7 @@ beginseg
     include "$(BUILD_DIR)/src/audio/sequence.o"
     include "$(BUILD_DIR)/src/audio/data.o"
     include "$(BUILD_DIR)/src/audio/session_config.o"
+    include "$(BUILD_DIR)/src/audio/session_init.o"
 #if PLATFORM_N64
     include "$(BUILD_DIR)/src/libu64/gfxprint.o"
     include "$(BUILD_DIR)/src/libu64/rcp_utils.o"
@@ -757,7 +761,7 @@ beginseg
     include "$(BUILD_DIR)/src/libu64/mtxuty-cvt.o"
 #endif
     include "$(BUILD_DIR)/src/libu64/pad.o"
-    include "$(BUILD_DIR)/src/libu64/code_800FC620.o"
+    include "$(BUILD_DIR)/src/libu64/system_heap.o"
     include "$(BUILD_DIR)/src/libu64/padsetup.o"
 #else
     include "$(BUILD_DIR)/src/libu64/logseverity_gc.o"
@@ -769,7 +773,7 @@ beginseg
 #endif
     include "$(BUILD_DIR)/src/libu64/relocation_gc.o"
     include "$(BUILD_DIR)/src/libu64/load_gc.o"
-    include "$(BUILD_DIR)/src/libu64/code_800FC620.o"
+    include "$(BUILD_DIR)/src/libu64/system_heap.o"
     include "$(BUILD_DIR)/src/libu64/pad.o"
     include "$(BUILD_DIR)/src/libu64/padsetup.o"
 #endif
@@ -899,7 +903,7 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/mgu/translate.o"
 #endif
     include "$(BUILD_DIR)/src/libultra/io/contramwrite.o"
-#if OOT_VERSION == NTSC_1_2 || (PLATFORM_GC && !DEBUG_FEATURES)
+#if OOT_VERSION >= PAL_1_0 && !(OOT_PAL_N64 || DEBUG_FEATURES)
     include "$(BUILD_DIR)/src/libultra/io/vimodefpallan1.o"
 #endif
 #if !DEBUG_FEATURES
@@ -963,6 +967,13 @@ beginseg
 #endif
     include "$(BUILD_DIR)/src/code/rainbow.o"
     include "$(BUILD_DIR)/src/code/helpers.o"
+#if ENABLE_ANIMATED_MATERIALS
+    include "$(BUILD_DIR)/src/code/animated_materials.o"
+#endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    include "$(BUILD_DIR)/src/code/cutscene_camera.o"
+    include "$(BUILD_DIR)/src/code/cutscene_manager.o"
+#endif
 endseg
 
 #if ENABLE_HACKER_DEBUG

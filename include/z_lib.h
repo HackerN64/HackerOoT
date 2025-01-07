@@ -41,4 +41,8 @@ void Sfx_PlaySfxCentered(u16 sfxId);
 void Sfx_PlaySfxCentered2(u16 sfxId);
 void Sfx_PlaySfxAtPos(Vec3f* projectedPos, u16 sfxId);
 
+s32 Math_StepToIImpl(s32 start, s32 target, s32 step);
+void Math_StepToIGet(s32* pValue, s32 target, s32 step);
+s32 Math_StepToI(s32* pValue, s32 target, s32 step);
+
 #endif

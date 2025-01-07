@@ -24,6 +24,7 @@
 #define VIRTUAL_TO_PHYSICAL(addr) (uintptr_t)((u8*)(addr) - 0x80000000)
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
+#define ABS_ALT(x) ((x) < 0 ? -(x) : (x))
 #define DECR(x) ((x) == 0 ? 0 : --(x))
 #define CLAMP(x, min, max) ((x) < (min) ? (min) : (x) > (max) ? (max) : (x))
 #define CLAMP_MAX(x, max) ((x) > (max) ? (max) : (x))
@@ -53,6 +54,8 @@
 #define PRINTF osSyncPrintf
 #elif IDO_PRINTF_WORKAROUND
 #define PRINTF(args) (void)0
+#elif defined(__GNUC__) && __GNUC__ < 3
+#define PRINTF(format, args...) (void)0
 #else
 #define PRINTF(format, ...) (void)0
 #endif

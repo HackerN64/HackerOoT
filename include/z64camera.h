@@ -205,7 +205,10 @@ typedef enum CameraSettingType {
     /* 0x3F */ CAM_SET_DIRECTED_YAW, // Does not auto-update yaw, tends to keep the camera pointed at a certain yaw (used by biggoron and final spirit lowering platform) "TEPPEN"
     /* 0x40 */ CAM_SET_PIVOT_FROM_SIDE, // Fixed side view, allows rotation of camera (eg. Potion Shop, Meadow at fairy grotto) "CIRCLE7"
     /* 0x41 */ CAM_SET_NORMAL4,
-    /* 0x42 */ CAM_SET_MAX
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    /* 0x42 */ CAM_SET_FIXED1,
+#endif
+    /* 0x43 */ CAM_SET_MAX
 } CameraSettingType;
 
 typedef enum CameraModeType {
@@ -305,7 +308,10 @@ typedef enum CameraFuncType {
     /* 0x44 */ CAM_FUNC_SPEC7,
     /* 0x45 */ CAM_FUNC_SPEC8,
     /* 0x46 */ CAM_FUNC_SPEC9,
-    /* 0x47 */ CAM_FUNC_MAX
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    /* 0x47 */ CAM_FUNC_FIXED1,
+#endif
+    /* 0x48 */ CAM_FUNC_MAX
 } CameraFuncType;
 
 typedef enum CameraDataType {
@@ -1732,5 +1738,14 @@ void Camera_SetCameraData(Camera* camera, s16 setDataFlags, void* data0, void* d
                           UNK_TYPE arg6);
 s32 func_8005B198(void);
 s16 Camera_SetFinishedFlag(Camera* camera);
+
+s16 Camera_GetBgCamOrActorCsCamSetting(Camera* camera, u32 camDataId);
+Vec3s* Camera_GetBgCamOrActorCsCamFuncData(Camera* camera, u32 camDataId);
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+s16 Camera_ChangeSettingFlags(Camera* camera, s16 setting, s16 flags);
+s32 Camera_ChangeSetting(Camera* camera, s16 setting);
+s32 Camera_ChangeActorCsCamIndex(Camera* camera, s32 bgCamIndex);
+void Camera_800E0348(Camera* camera);
+#endif
 
 #endif

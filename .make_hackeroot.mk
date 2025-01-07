@@ -32,14 +32,18 @@ TARGET ?=
 ifeq ($(TARGET),wad)
 CFLAGS := -fno-reorder-blocks -fno-optimize-sibling-calls
 CPP_DEFINES := -DCONSOLE_WIIVC
+REVISION := 0
+REVISION := 0
 else ifeq ($(TARGET),iso)
 CFLAGS := -fno-reorder-blocks -fno-optimize-sibling-calls
 CPP_DEFINES := -DCONSOLE_GC
+else
+REVISION := 15
 endif
 
 # Set PACKAGE_NAME define for printing commit name
 ifeq ($(origin PACKAGE_NAME), undefined)
-  PACKAGE_NAME := "$(shell git log -1 --pretty=%s | tr -d '\n' | sed 's/\"/\\\"/g')"
+  PACKAGE_NAME := "$(shell git log -1 --pretty=%s | tr -d '()`"\n' | tr -d "'" | sed 's/\"/\\\"/g')"
   ifeq ($(PACKAGE_NAME),"")
     PACKAGE_NAME := "Unknown name"
   endif
@@ -113,7 +117,7 @@ GZINJECT   := tools/gzinject/gzinject
 # Temporary measure to avoid issues on ISO builds (same for `CFLAGS_IDO`).
 # The real fix would be having the proper fixes in the N64 emulator itself
 # but this requires some time to figure it out.
-CC_IDO     := tools/ido_recomp/linux/5.3/cc
+CC_IDO     := tools/ido_recomp/$(DETECTED_OS)/5.3/cc
 
 #### Files ####
 

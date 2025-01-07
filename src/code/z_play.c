@@ -5,12 +5,14 @@
 #include "terminal.h"
 #include "config.h"
 #include "versions.h"
+#include "line_numbers.h"
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
 #include "z64frame_advance.h"
+#include "z64camera.h"
 
-#if INCLUDE_EXAMPLE_SCENE
+#if CAN_INCLUDE_EXAMPLE_SCENE
 #include "assets/scenes/example/example_scene.h"
 #endif
 
@@ -180,21 +182,7 @@ void Play_SetupTransition(PlayState* this, s32 transitionType) {
                 break;
 
             default:
-#if OOT_VERSION < NTSC_1_1
-                HUNGUP_AND_CRASH("../z_play.c", 2263);
-#elif OOT_VERSION < PAL_1_0
-                HUNGUP_AND_CRASH("../z_play.c", 2266);
-#elif OOT_VERSION < PAL_1_1
-                HUNGUP_AND_CRASH("../z_play.c", 2269);
-#elif OOT_VERSION < GC_JP
-                HUNGUP_AND_CRASH("../z_play.c", 2272);
-#elif OOT_VERSION < GC_EU_MQ_DBG
-                HUNGUP_AND_CRASH("../z_play.c", 2287);
-#elif OOT_VERSION < GC_JP_CE
-                HUNGUP_AND_CRASH("../z_play.c", 2290);
-#else
-                HUNGUP_AND_CRASH("../z_play.c", 2293);
-#endif
+                HUNGUP_AND_CRASH("../z_play.c", LN5(2263, 2266, 2269, 2272, 2287, 2290, 2293));
                 break;
         }
     }
@@ -247,6 +235,9 @@ void Play_Destroy(GameState* thisx) {
     }
 
     Letterbox_Destroy();
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Destroy();
+#endif
     TransitionFade_Destroy(&this->transitionFadeFlash);
     VisMono_Destroy(&gPlayVisMono);
 
@@ -308,6 +299,9 @@ void Play_Init(GameState* thisx) {
 #endif
 
     KaleidoManager_Init(this);
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Init();
+#endif
     View_Init(&this->view, gfxCtx);
     Audio_SetExtraFilter(0);
     Quake_Init();
@@ -392,6 +386,11 @@ void Play_Init(GameState* thisx) {
                LINK_IS_ADULT && !IS_CUTSCENE_LAYER) {
         gSaveContext.sceneLayer = GET_EVENTCHKINF(EVENTCHKINF_48) ? 3 : 2;
     }
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    // initialize default values to avoid issues
+    CutsceneManager_Init(this, NULL, 0);
+#endif
 
     Play_SpawnScene(
         this, gEntranceTable[((void)0, gSaveContext.save.entranceIndex) + ((void)0, gSaveContext.sceneLayer)].sceneId,
@@ -497,8 +496,17 @@ void Play_Init(GameState* thisx) {
     Camera_InitDataUsingPlayer(&this->mainCamera, player);
     Camera_RequestMode(&this->mainCamera, CAM_MODE_NORMAL);
 
-    playerStartBgCamIndex = PARAMS_GET_U(player->actor.params, 0, 8);
-    if (playerStartBgCamIndex != 0xFF) {
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    if ((player->actor.params & 0xFF) != 0xFF) {
+        Camera_ChangeActorCsCamIndex(&this->mainCamera, player->actor.params & 0xFF);
+    }
+
+    CutsceneManager_StoreCamera(&this->mainCamera);
+#endif
+
+    playerStartBgCamIndex = PLAYER_GET_START_BG_CAM_INDEX(&player->actor);
+
+    if (playerStartBgCamIndex != PLAYER_START_BG_CAM_DEFAULT) {
         PRINTF("player has start camera ID (" VT_FGCOL(BLUE) "%d" VT_RST ")\n", playerStartBgCamIndex);
         Camera_RequestBgCam(&this->mainCamera, playerStartBgCamIndex);
     }
@@ -515,7 +523,7 @@ void Play_Init(GameState* thisx) {
     Environment_PlaySceneSequence(this);
     gSaveContext.seqId = this->sceneSequences.seqId;
     gSaveContext.natureAmbienceId = this->sceneSequences.natureAmbienceId;
-    func_8002DF18(this, GET_PLAYER(this));
+    Actor_InitPlayerHorse(this, GET_PLAYER(this));
     AnimTaskQueue_Update(this, &this->animTaskQueue);
     gSaveContext.respawnFlag = 0;
 
@@ -531,6 +539,9 @@ void Play_Init(GameState* thisx) {
         DmaMgr_DmaRomToRam(0x03FEB000, gDebugCutsceneScript, sizeof(sDebugCutsceneScriptBuf));
     }
 #endif
+
+    //! TODO: investigate issue with this variable set to a random value
+    this->gameplayFrames = 0;
 }
 
 void Play_Update(PlayState* this) {
@@ -1076,6 +1087,10 @@ void Play_Update(PlayState* this) {
             PLAY_LOG(3777);
             Letterbox_Update(R_UPDATE_RATE);
 
+#if ENABLE_NEW_LETTERBOX
+            ShrinkWindow_Update(R_UPDATE_RATE);
+#endif
+
             PLAY_LOG(3783);
             TransitionFade_Update(&this->transitionFadeFlash, R_UPDATE_RATE);
         } else {
@@ -1132,11 +1147,29 @@ skip:
         }
     }
 
-#if INCLUDE_EXAMPLE_SCENE
-    if (this->sceneId == SCENE_EXAMPLE && CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_L | BTN_R) &&
-        CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A) && !Play_InCsMode(this)) {
-        Cutscene_SetScript(this, gExampleCS);
-        gSaveContext.cutsceneTrigger = 1;
+#if CAN_INCLUDE_EXAMPLE_SCENE
+    if (this->sceneId == SCENE_EXAMPLE) {
+        if (CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_Z | BTN_R) &&
+            CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A) && !Play_InCsMode(this)) {
+            Cutscene_SetScript(this, gExampleCS);
+            gSaveContext.cutsceneTrigger = 1;
+        }
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+        if (!Play_InCsMode(this)) {
+            // get the additional cutscene id and use it if the value is not -1
+            s16 optCsId = CutsceneManager_GetAdditionalCsId(0);
+            s16 csId = optCsId >= 0 ? optCsId : 0;
+
+            // check if the cutscene is the next on the queue, if it is play it,
+            // otherwise add it to the queue when the button L is pressed
+            if (CutsceneManager_IsNext(csId)) {
+                CutsceneManager_Start(csId, &GET_PLAYER(this)->actor);
+            } else if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_L)) {
+                CutsceneManager_Queue(csId);
+            }
+        }
+#endif
     }
 #endif
 }
@@ -1323,6 +1356,10 @@ void Play_Draw(PlayState* this) {
 #endif
 
     if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_DRAW) {
+#if ENABLE_NEW_LETTERBOX
+        ShrinkWindow_Draw(gfxCtx);
+#endif
+
         POLY_OPA_DISP = Play_SetFog(this, POLY_OPA_DISP);
         POLY_XLU_DISP = Play_SetFog(this, POLY_XLU_DISP);
 
@@ -1664,6 +1701,11 @@ void Play_Main(GameState* thisx) {
     Play_Draw(this);
 
     PLAY_LOG(4587);
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    CutsceneManager_Update();
+    CutsceneManager_ClearWaiting();
+#endif
 }
 
 // original name: "Game_play_demo_mode_check"
@@ -1770,6 +1812,14 @@ void Play_InitScene(PlayState* this, s32 spawn) {
     this->exitList = NULL;
     this->naviQuestHints = NULL;
     this->pathList = NULL;
+
+#if ENABLE_ANIMATED_MATERIALS
+    this->sceneMaterialAnims = NULL;
+#endif
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    this->actorCsCamList = NULL;
+#endif
 
     this->numActorEntries = 0;
 
@@ -2130,6 +2180,7 @@ void Play_LoadToLastEntrance(PlayState* this) {
                (gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_12) ||
                (gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_13) ||
                (gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_15)) {
+        // Avoid re-triggering the hop over Lon Lon fence cutscenes
         this->nextEntranceIndex = ENTR_HYRULE_FIELD_6;
 #endif
     } else {
@@ -2140,7 +2191,7 @@ void Play_LoadToLastEntrance(PlayState* this) {
 }
 
 void Play_TriggerRespawn(PlayState* this) {
-    Play_SetupRespawnPoint(this, RESPAWN_MODE_DOWN, 0xDFF);
+    Play_SetupRespawnPoint(this, RESPAWN_MODE_DOWN, PLAYER_PARAMS(PLAYER_START_MODE_IDLE, PLAYER_START_BG_CAM_DEFAULT));
     Play_LoadToLastEntrance(this);
 }
 
@@ -2197,3 +2248,17 @@ s32 func_800C0DB4(PlayState* this, Vec3f* pos) {
         return false;
     }
 }
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+u16 Play_GetActorCsCamSetting(PlayState* this, s32 csCamDataIndex) {
+    ActorCsCamInfo* actorCsCamList = &this->actorCsCamList[csCamDataIndex];
+
+    return actorCsCamList->setting;
+}
+
+Vec3s* Play_GetActorCsCamFuncData(PlayState* this, s32 csCamDataIndex) {
+    ActorCsCamInfo* actorCsCamList = &this->actorCsCamList[csCamDataIndex];
+
+    return SEGMENTED_TO_VIRTUAL(actorCsCamList->actorCsCamFuncData);
+}
+#endif

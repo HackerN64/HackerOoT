@@ -124,5 +124,9 @@
 #endif
 
 #if CAN_INCLUDE_EXAMPLE_SCENE
+#if ENABLE_ANIMATED_MATERIALS
+/* 0x6C */ DEFINE_SCENE(example_scene, none, SCENE_EXAMPLE, SDC_MAT_ANIM, 0, 0)
+#else
 /* 0x6C */ DEFINE_SCENE(example_scene, none, SCENE_EXAMPLE, SDC_HAUNTED_WASTELAND, 0, 0)
+#endif
 #endif

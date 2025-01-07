@@ -11,7 +11,7 @@ typedef union CutsceneData {
     s32 i;
     f32 f;
     s16 s[2];
-    s8  b[4];
+    s8 b[4];
 } CutsceneData;
 
 typedef enum CutsceneState {
@@ -23,6 +23,7 @@ typedef enum CutsceneState {
 } CutsceneState;
 
 typedef enum CutsceneCmd {
+    /* 0xFFFF */ CS_CMD_END_OF_SCRIPT = -1,
     /* 0x0001 */ CS_CMD_CAM_EYE_SPLINE = 0x01,
     /* 0x0002 */ CS_CMD_CAM_AT_SPLINE,
     /* 0x0003 */ CS_CMD_MISC,
@@ -152,7 +153,6 @@ typedef enum CutsceneCmd {
     /* 0x0090 */ CS_CMD_ACTOR_CUE_0_17,
     /* 0x03E8 */ CS_CMD_DESTINATION = 0x03E8,
     /* 0x03E9 */ CS_CMD_MOTION_BLUR,
-    /* 0xFFFF */ CS_CMD_END = 0xFFFF
 } CutsceneCmd;
 
 typedef enum CutsceneMiscType {
@@ -176,8 +176,8 @@ typedef enum CutsceneMiscType {
     /* 0x11 */ CS_MISC_QUAKE_STOP,
     /* 0x12 */ CS_MISC_STOP_STORM_AND_ADVANCE_TO_DAY,
     /* 0x13 */ CS_MISC_SET_FLAG_FAST_WINDMILL,
-    /* 0x14 */ CS_MISC_SET_FLAG_WELL_DRAINED,
-    /* 0x15 */ CS_MISC_SET_FLAG_LAKE_HYLIA_RESTORED,
+    /* 0x14 */ CS_MISC_SET_FLAG_DRAINED_WELL,
+    /* 0x15 */ CS_MISC_SET_FLAG_RESTORED_LAKE_HYLIA,
     /* 0x16 */ CS_MISC_VISMONO_BLACK_AND_WHITE,
     /* 0x17 */ CS_MISC_VISMONO_SEPIA,
     /* 0x18 */ CS_MISC_HIDE_ROOM,
@@ -198,7 +198,7 @@ typedef enum CutsceneTextType {
     /* 0x00 */ CS_TEXT_NORMAL,
     /* 0x01 */ CS_TEXT_CHOICE,
     /* 0x02 */ CS_TEXT_OCARINA_ACTION,
-    /* 0x03 */ CS_TEXT_GORON_RUBY, // use `altTextId1` in the ruby cutscene if sapphire is already obtained
+    /* 0x03 */ CS_TEXT_GORON_RUBY,   // use `altTextId1` in the ruby cutscene if sapphire is already obtained
     /* 0x04 */ CS_TEXT_ZORA_SAPPHIRE // use `altTextId1` in the sapphire cutscene if ruby is already obtained
 } CutsceneTextType;
 
@@ -240,7 +240,7 @@ typedef enum CutsceneDestination {
     /* 0x0D */ CS_DEST_ZORAS_FOUNTAIN_FROM_ZORAS_SAPPHIRE,
     /* 0x0E */ CS_DEST_KOKIRI_FOREST_FROM_KOKIRI_EMERALD,
     /* 0x0F */ CS_DEST_TEMPLE_OF_TIME_KOKIRI_EMERALD_RESTORED, // unused
-    /* 0x10 */ CS_DEST_TEMPLE_OF_TIME_GORON_RUBY_RESTORED, // unused
+    /* 0x10 */ CS_DEST_TEMPLE_OF_TIME_GORON_RUBY_RESTORED,     // unused
     /* 0x11 */ CS_DEST_TEMPLE_OF_TIME_ZORAS_SAPPHIRE_RESTORED, // unused
     /* 0x12 */ CS_DEST_TEMPLE_OF_TIME_AFTER_LIGHT_MEDALLION,
     /* 0x13 */ CS_DEST_DEATH_MOUNTAIN_TRAIL, // unused
@@ -251,7 +251,7 @@ typedef enum CutsceneDestination {
     /* 0x18 */ CS_DEST_JABU_JABU,
     /* 0x19 */ CS_DEST_CHAMBER_OF_SAGES_LIGHT_MEDALLION,
     /* 0x1A */ CS_DEST_TEMPLE_OF_TIME_KOKIRI_EMERALD_RESTORED_2, // unused
-    /* 0x1B */ CS_DEST_TEMPLE_OF_TIME_GORON_RUBY_RESTORED_2, // unused
+    /* 0x1B */ CS_DEST_TEMPLE_OF_TIME_GORON_RUBY_RESTORED_2,     // unused
     /* 0x1C */ CS_DEST_TEMPLE_OF_TIME_ZORAS_SAPPHIRE_RESTORED_2, // unused
     /* 0x1D */ CS_DEST_CHAMBER_OF_SAGES_FOREST_MEDALLION,
     /* 0x1E */ CS_DEST_CHAMBER_OF_SAGES_FIRE_MEDALLION,
@@ -303,15 +303,15 @@ typedef enum CutsceneDestination {
     /* 0x4C */ CS_DEST_LON_LON_RANCH_CREDITS_PART_4,
     /* 0x4D */ CS_DEST_LON_LON_RANCH_CREDITS_PART_5,
     /* 0x4E */ CS_DEST_LON_LON_RANCH_CREDITS_PART_6,
-    /* 0x4F */ CS_DEST_LON_LON_RANCH_1, // unused
-    /* 0x50 */ CS_DEST_LON_LON_RANCH_2, // unused
-    /* 0x51 */ CS_DEST_LON_LON_RANCH_3, // unused
-    /* 0x52 */ CS_DEST_LON_LON_RANCH_4, // unused
-    /* 0x53 */ CS_DEST_LON_LON_RANCH_5, // unused
-    /* 0x54 */ CS_DEST_LON_LON_RANCH_6, // unused
-    /* 0x55 */ CS_DEST_LON_LON_RANCH_7, // unused
-    /* 0x56 */ CS_DEST_LON_LON_RANCH_8, // unused
-    /* 0x57 */ CS_DEST_LON_LON_RANCH_9, // unused
+    /* 0x4F */ CS_DEST_LON_LON_RANCH_1,  // unused
+    /* 0x50 */ CS_DEST_LON_LON_RANCH_2,  // unused
+    /* 0x51 */ CS_DEST_LON_LON_RANCH_3,  // unused
+    /* 0x52 */ CS_DEST_LON_LON_RANCH_4,  // unused
+    /* 0x53 */ CS_DEST_LON_LON_RANCH_5,  // unused
+    /* 0x54 */ CS_DEST_LON_LON_RANCH_6,  // unused
+    /* 0x55 */ CS_DEST_LON_LON_RANCH_7,  // unused
+    /* 0x56 */ CS_DEST_LON_LON_RANCH_8,  // unused
+    /* 0x57 */ CS_DEST_LON_LON_RANCH_9,  // unused
     /* 0x58 */ CS_DEST_LON_LON_RANCH_10, // unused
     /* 0x59 */ CS_DEST_LON_LON_RANCH_11, // unused
     /* 0x5A */ CS_DEST_LON_LON_RANCH_12, // unused
@@ -354,7 +354,6 @@ typedef union CsCmdCam {
     };
     s32 _words[2];
 } CsCmdCam; // size = 0x8
-
 
 typedef union CsCmdMisc {
     struct {
@@ -421,8 +420,8 @@ typedef union CsCmdTime {
         /* 0x00 */ u16 unused0;
         /* 0x02 */ u16 startFrame;
         /* 0x04 */ u16 endFrame; // unused
-        /* 0x06 */ u8  hour;
-        /* 0x07 */ u8  minute;
+        /* 0x06 */ u8 hour;
+        /* 0x07 */ u8 minute;
     };
     s32 _words[3];
 } CsCmdTime; // size = 0xC
@@ -500,22 +499,240 @@ typedef struct CutsceneCameraMove {
     /* 0x8 */ s16 relativeToPlayer;
 } CutsceneCameraMove; // size = 0xC
 
+typedef struct CutsceneScriptEntry {
+    /* 0x0 */ CutsceneData* script;
+    /* 0x4 */ s16 nextEntrance;
+    /* 0x6 */ u8 spawn;
+    /* 0x7 */ u8 spawnFlags; // See `CS_SPAWN_FLAG_`
+} CutsceneScriptEntry;       // size = 0x8
+
+typedef struct CutsceneEntry {
+    /* 0x0 */ s16 priority; // Lower means higher priority. -1 means it ignores priority
+    /* 0x2 */ s16 length;
+    /* 0x4 */ s16 csCamId; // Index of CsCameraEntry to use. Negative indices use sGlobalCamDataSettings. Indices 0 and
+                           // above use CsCameraEntry from a sceneLayer
+    /* 0x6 */ s16 scriptIndex;
+    /* 0x8 */ s16 additionalCsId;
+    /* 0xA */ u8 endSfx;
+    /* 0xB */ u8 customValue; // 0 - 99: actor-specific custom value. 100+: spawn. 255: none
+    /* 0xC */ s16 hudVisibility;
+    /* 0xE */ u8 endCam;
+    /* 0xF */ u8 letterboxSize;
+} CutsceneEntry; // size = 0x10
+
+#define CS_SCRIPT_ID_NONE -1
+
+typedef enum CutsceneCamId {
+    // global (see sGlobalCamDataSettings)
+    /* -66 */ CS_CAM_ID_GLOBAL_NORMAL4 = -67,          // CAM_SET_NORMAL4 (set to -CAM_SET_MAX)
+    /* -65 */ CS_CAM_ID_GLOBAL_PIVOT_FROM_SIDE,        // CAM_SET_PIVOT_FROM_SIDE
+    /* -64 */ CS_CAM_ID_GLOBAL_DIRECTED_YAW,           // CAM_SET_DIRECTED_YAW
+    /* -63 */ CS_CAM_ID_GLOBAL_DUNGEON2,               // CAM_SET_DUNGEON2
+    /* -62 */ CS_CAM_ID_GLOBAL_JABU_TENTACLE,          // CAM_SET_JABU_TENTACLE
+    /* -61 */ CS_CAM_ID_GLOBAL_CS_C,                   // CAM_SET_CS_C
+    /* -60 */ CS_CAM_ID_GLOBAL_FISHING,                // CAM_SET_FISHING
+    /* -59 */ CS_CAM_ID_GLOBAL_NORMAL2,                // CAM_SET_NORMAL2
+    /* -58 */ CS_CAM_ID_GLOBAL_PIVOT_VERTICAL,         // CAM_SET_PIVOT_VERTICAL
+    /* -57 */ CS_CAM_ID_GLOBAL_TURN_AROUND,            // CAM_SET_TURN_AROUND
+    /* -56 */ CS_CAM_ID_GLOBAL_FIRE_BIRDS_EYE,         // CAM_SET_FIRE_BIRDS_EYE
+    /* -55 */ CS_CAM_ID_GLOBAL_MEADOW_UNUSED,          // CAM_SET_MEADOW_UNUSED
+    /* -54 */ CS_CAM_ID_GLOBAL_MEADOW_BIRDS_EYE,       // CAM_SET_MEADOW_BIRDS_EYE
+    /* -53 */ CS_CAM_ID_GLOBAL_BIG_OCTO,               // CAM_SET_BIG_OCTO
+    /* -52 */ CS_CAM_ID_GLOBAL_FOREST_DEFEAT_POE,      // CAM_SET_FOREST_DEFEAT_POE
+    /* -51 */ CS_CAM_ID_GLOBAL_FOREST_UNUSED,          // CAM_SET_FOREST_UNUSED
+    /* -50 */ CS_CAM_ID_GLOBAL_FIRE_STAIRCASE,         // CAM_SET_FIRE_STAIRCASE
+    /* -49 */ CS_CAM_ID_GLOBAL_ELEVATOR_PLATFORM,      // CAM_SET_ELEVATOR_PLATFORM
+    /* -48 */ CS_CAM_ID_GLOBAL_SCENE_TRANSITION,       // CAM_SET_SCENE_TRANSITION
+    /* -47 */ CS_CAM_ID_GLOBAL_SCENE_UNUSED,           // CAM_SET_SCENE_UNUSED
+    /* -46 */ CS_CAM_ID_GLOBAL_BEAN_LOST_WOODS,        // CAM_SET_BEAN_LOST_WOODS
+    /* -45 */ CS_CAM_ID_GLOBAL_BEAN_GENERIC,           // CAM_SET_BEAN_GENERIC
+    /* -44 */ CS_CAM_ID_GLOBAL_CS_ATTENTION,           // CAM_SET_CS_ATTENTION
+    /* -43 */ CS_CAM_ID_GLOBAL_CS_3,                   // CAM_SET_CS_3
+    /* -42 */ CS_CAM_ID_GLOBAL_ITEM_UNUSED,            // CAM_SET_ITEM_UNUSED
+    /* -41 */ CS_CAM_ID_GLOBAL_SLOW_CHEST_CS,          // CAM_SET_SLOW_CHEST_CS
+    /* -40 */ CS_CAM_ID_GLOBAL_FOREST_BIRDS_EYE,       // CAM_SET_FOREST_BIRDS_EYE
+    /* -39 */ CS_CAM_ID_GLOBAL_CS_TWISTED_HALLWAY,     // CAM_SET_CS_TWISTED_HALLWAY
+    /* -38 */ CS_CAM_ID_GLOBAL_CS_0,                   // CAM_SET_CS_0
+    /* -37 */ CS_CAM_ID_GLOBAL_PIVOT_WATER_SURFACE,    // CAM_SET_PIVOT_WATER_SURFACE
+    /* -36 */ CS_CAM_ID_GLOBAL_PIVOT_CORNER,           // CAM_SET_PIVOT_CORNER
+    /* -35 */ CS_CAM_ID_GLOBAL_FREE2,                  // CAM_SET_FREE2
+    /* -34 */ CS_CAM_ID_GLOBAL_FREE0,                  // CAM_SET_FREE0
+    /* -33 */ CS_CAM_ID_GLOBAL_START1,                 // CAM_SET_START1
+    /* -32 */ CS_CAM_ID_GLOBAL_START0,                 // CAM_SET_START0
+    /* -31 */ CS_CAM_ID_GLOBAL_CRAWLSPACE,             // CAM_SET_CRAWLSPACE
+    /* -30 */ CS_CAM_ID_GLOBAL_DOORC,                  // CAM_SET_DOORC
+    /* -29 */ CS_CAM_ID_GLOBAL_DOOR0,                  // CAM_SET_DOOR0
+    /* -28 */ CS_CAM_ID_GLOBAL_PREREND_SIDE_SCROLL,    // CAM_SET_PREREND_SIDE_SCROLL
+    /* -27 */ CS_CAM_ID_GLOBAL_PREREND_PIVOT,          // CAM_SET_PREREND_PIVOT
+    /* -26 */ CS_CAM_ID_GLOBAL_PREREND_FIXED,          // CAM_SET_PREREND_FIXED
+    /* -25 */ CS_CAM_ID_GLOBAL_PIVOT_IN_FRONT,         // CAM_SET_PIVOT_IN_FRONT
+    /* -24 */ CS_CAM_ID_GLOBAL_PIVOT_SHOP_BROWSING,    // CAM_SET_PIVOT_SHOP_BROWSING
+    /* -23 */ CS_CAM_ID_GLOBAL_PIVOT_CRAWLSPACE,       // CAM_SET_PIVOT_CRAWLSPACE
+    /* -22 */ CS_CAM_ID_GLOBAL_CHU_BOWLING,            // CAM_SET_CHU_BOWLING
+    /* -21 */ CS_CAM_ID_GLOBAL_MARKET_BALCONY,         // CAM_SET_MARKET_BALCONY
+    /* -20 */ CS_CAM_ID_GLOBAL_TOWER_UNUSED,           // CAM_SET_TOWER_UNUSED
+    /* -19 */ CS_CAM_ID_GLOBAL_TOWER_CLIMB,            // CAM_SET_TOWER_CLIMB
+    /* -18 */ CS_CAM_ID_GLOBAL_BOSS_GANON,             // CAM_SET_BOSS_GANON
+    /* -17 */ CS_CAM_ID_GLOBAL_BOSS_GANONDORF,         // CAM_SET_BOSS_GANONDORF
+    /* -16 */ CS_CAM_ID_GLOBAL_BOSS_TWINROVA_FLOOR,    // CAM_SET_BOSS_TWINROVA_FLOOR
+    /* -15 */ CS_CAM_ID_GLOBAL_BOSS_TWINROVA_PLATFORM, // CAM_SET_BOSS_TWINROVA_PLATFORM
+    /* -14 */ CS_CAM_ID_GLOBAL_BOSS_MORPHA,            // CAM_SET_BOSS_MORPHA
+    /* -13 */ CS_CAM_ID_GLOBAL_BOSS_BONGO,             // CAM_SET_BOSS_BONGO
+    /* -12 */ CS_CAM_ID_GLOBAL_BOSS_VOLVAGIA,          // CAM_SET_BOSS_VOLVAGIA
+    /* -11 */ CS_CAM_ID_GLOBAL_BOSS_PHANTOM_GANON,     // CAM_SET_BOSS_PHANTOM_GANON
+    /* -10 */ CS_CAM_ID_GLOBAL_BOSS_BARINADE,          // CAM_SET_BOSS_BARINADE
+    /*  -9 */ CS_CAM_ID_GLOBAL_BOSS_DODONGO,           // CAM_SET_BOSS_DODONGO
+    /*  -8 */ CS_CAM_ID_GLOBAL_BOSS_GOHMA,             // CAM_SET_BOSS_GOHMA
+    /*  -7 */ CS_CAM_ID_GLOBAL_HORSE,                  // CAM_SET_HORSE
+    /*  -6 */ CS_CAM_ID_GLOBAL_NORMAL3,                // CAM_SET_NORMAL3
+    /*  -5 */ CS_CAM_ID_GLOBAL_DUNGEON1,               // CAM_SET_DUNGEON1
+    /*  -4 */ CS_CAM_ID_GLOBAL_DUNGEON0,               // CAM_SET_DUNGEON0
+    /*  -3 */ CS_CAM_ID_GLOBAL_NORMAL1,                // CAM_SET_NORMAL1
+    /*  -2 */ CS_CAM_ID_GLOBAL_NORMAL0,                // CAM_SET_NORMAL0
+    /*  -1 */ CS_CAM_ID_NONE,
+    // CamCsId's 0+ are sceneLayer-specific and index `ActorCsCamInfo`
+} CutsceneCamId;
+
+typedef enum CutsceneHudVisibility {
+    /* -1 */ CS_HUD_VISIBILITY_ALL_ALT = -1,
+    /*  0 */ CS_HUD_VISIBILITY_NONE,
+    /*  1 */ CS_HUD_VISIBILITY_ALL,
+    /*  2 */ CS_HUD_VISIBILITY_A_HEARTS_MAGIC,
+    /*  3 */ CS_HUD_VISIBILITY_C_HEARTS_MAGIC,
+    /*  4 */ CS_HUD_VISIBILITY_ALL_NO_MINIMAP,
+    /*  5 */ CS_HUD_VISIBILITY_A_B_C,
+    /*  6 */ CS_HUD_VISIBILITY_B_MINIMAP,
+    /*  7 */ CS_HUD_VISIBILITY_A
+} CutsceneHudVisibility;
+
+typedef enum CutsceneEndSfx {
+    /*   0 */ CS_END_SFX_NONE,
+    /*   1 */ CS_END_SFX_TRE_BOX_APPEAR,
+    /*   2 */ CS_END_SFX_CORRECT_CHIME,
+    /* 255 */ CS_END_SFX_NONE_ALT = 0xFF
+} CutsceneEndSfx;
+
+typedef enum CutsceneEndCam {
+    /* 0 */ CS_END_CAM_0,
+    /* 1 */ CS_END_CAM_1,
+    /* 2 */ CS_END_CAM_SMOOTH
+} CutsceneEndCam;
+
+typedef enum CutsceneId {
+    /*   -1 */ CS_ID_NONE = -1,
+    // CsId's 0 - 119 are sceneLayer-specific and index `CutsceneEntry`
+    /* 0x78 */ CS_ID_GLOBAL_78 = 120,
+    /* 0x79 */ CS_ID_GLOBAL_79,
+    /* 0x7A */ CS_ID_GLOBAL_7A,
+    /* 0x7C */ CS_ID_GLOBAL_TALK,
+    /* 0x7D */ CS_ID_GLOBAL_DOOR,
+    /* 0x7F */ CS_ID_GLOBAL_END = 0x7F
+} CutsceneId;
+
+typedef struct {
+    /* 0x0 */ s16 numEntries;
+    /* 0x2 */ s16 unk_02;   // unused
+    /* 0x4 */ s16 unk_04;   // unused
+    /* 0x6 */ s16 duration; // total duration
+} CsCmdCamSpline;           // size = 0x8
+
+// Both camAt and camEye
+typedef struct {
+    /* 0x0 */ u8 interpType; // see `CutsceneCamInterpType`
+    /* 0x1 */ u8 weight;     // for certain types of interpTypes, shifts the weight to certain points. Default is 100.
+    /* 0x2 */ s16 duration;  // duration of current point
+    /* 0x4 */ Vec3s pos;
+    /* 0xA */ s16 relativeTo; // see `CutsceneCamRelativeTo`
+} CsCmdCamPoint;              // size = 0xC
+
+typedef enum CutsceneCamInterpType {
+    /* 0 */ CS_CAM_INTERP_NONE,     // values do not change.
+                                    // values 1-3 only uses a single point from the cmd
+    /* 1 */ CS_CAM_INTERP_SET,      // values immediately set to cmd values.
+    /* 2 */ CS_CAM_INTERP_LINEAR,   // Lerp to the target position
+    /* 3 */ CS_CAM_INTERP_SCALE,    // Step to the target position in increments scaled by the remaining distance
+                                    // values 4-5 uses multiple points from the cmd
+    /* 4 */ CS_CAM_INTERP_MP_CUBIC, // cubic multi-point (identical to SM64/OoT)
+    /* 5 */ CS_CAM_INTERP_MP_QUAD,  // quadratic multi-point
+                                    // value 6 only uses a single point from the cmd
+    /* 6 */ CS_CAM_INTERP_GEO,      // does VecGeo calculations using fov
+    /* 7 */ CS_CAM_INTERP_OFF       // interpolation is not processed.
+} CutsceneCamInterpType;
+
+typedef enum CutsceneCamRelativeTo {
+    /* 0 */ CS_CAM_REL_0,
+    /* 1 */ CS_CAM_REL_1,
+    /* 2 */ CS_CAM_REL_2,
+    /* 3 */ CS_CAM_REL_3,
+    /* 4 */ CS_CAM_REL_4,
+    /* 5 */ CS_CAM_REL_5
+} CutsceneCamRelativeTo;
+
+// Roll and Fov Data
+typedef struct CsCmdCamMisc {
+    /* 0x0 */ s16 unused0; // used only in the unused interp function
+    /* 0x2 */ s16 roll;
+    /* 0x4 */ s16 fov;
+    /* 0x6 */ s16 unused1; // unused
+} CsCmdCamMisc;            // size = 0x8
+
+typedef struct CutsceneCameraInterp {
+    /* 0x00 */ Vec3f curPos;
+    /* 0x0C */ Vec3f initPos;
+    /* 0x18 */ f32 initFov;
+    /* 0x1C */ f32 initRoll;
+    /* 0x2A */ f32 unk_20; // position adjustment based on fov?
+    /* 0x24 */ s16 curFrame;
+    /* 0x26 */ s16 waypoint;
+    /* 0x28 */ s16 duration;
+    /* 0x2A */ s16 numEntries;
+    /* 0x1E */ u8 curPoint;
+    /* 0x2D */ u8 type; // See `CutsceneCamInterpType`
+} CutsceneCameraInterp; // size = 0x30
+
+typedef struct CutsceneCamera {
+    /* 0x00 */ s16 splineIndex;
+    /* 0x02 */ s16 cmdIndex;
+    /* 0x04 */ s16 splineNeedsInit;
+    /* 0x06 */ s16 state;
+    /* 0x08 */ s16 nextSplineTimer;
+    /* 0x0A */ s16 updateSplineTimer;
+    /* 0x0C */ s16 duration; // Duration of the current spline
+    /* 0x10 */ CutsceneCameraInterp eyeInterp;
+    /* 0x40 */ CutsceneCameraInterp atInterp;
+    /* 0x70 */ CsCmdCamPoint* atCmd;
+    /* 0x74 */ CsCmdCamPoint* eyeCmd;
+    /* 0x78 */ CsCmdCamMisc* miscCmd;
+    /* 0x7C */ struct Camera* camera;
+} CutsceneCamera; // size = 0x80
+
+typedef enum {
+    /*   0 */ CS_CAM_STATE_UPDATE_ALL,    // Update spline and next spline timer
+    /*   1 */ CS_CAM_STATE_UPDATE_SPLINE, // Update spline, do not advance next spline timer
+    /*   2 */ CS_CAM_STATE_PAUSE,         // No updates
+    /*   3 */ CS_CAM_STATE_DONE_SPLINE,   // Finished the current spline, ready for the next one
+    /* 999 */ CS_CAM_STATE_DONE = 999     // Finished all the splines.
+} CutsceneCameraState;
+
 typedef struct CutsceneContext {
-    /* 0x00 */ char  unk_00[0x4];
+    /* 0x00 */ u8 scriptListCount;
     /* 0x04 */ void* script;
     /* 0x08 */ u8 state;
     /* 0x0C */ f32 timer;
     /* 0x10 */ u16 curFrame; // current frame of the script that is running
-    /* 0x12 */ u16 unk_12; // set but never used
+    /* 0x12 */ u16 scriptIndex;
     /* 0x14 */ s32 subCamId;
     /* 0x18 */ u16 camEyeSplinePointsAppliedFrame; // stores the frame the cam eye spline points data was last applied on
-    /* 0x1A */ u8 camAtReady; // cam `at` data is ready to be applied
-    /* 0x1B */ u8 camEyeReady; // cam `eye` data is ready to be applied
+    /* 0x1A */ u8 camAtReady;           // cam `at` data is ready to be applied
+    /* 0x1B */ u8 camEyeReady;          // cam `eye` data is ready to be applied
     /* 0x1C */ CutsceneCameraPoint* camAtPoints;
     /* 0x20 */ CutsceneCameraPoint* camEyePoints;
     /* 0x24 */ CsCmdActorCue* playerCue;
     /* 0x28 */ CsCmdActorCue* actorCues[10]; // "npcdemopnt"
     /* 0x38 */ u16 originalBlurAlpha;
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    CutsceneScriptEntry* scriptList;
+#endif
 } CutsceneContext; // size = 0x50
 
 typedef union {
@@ -541,5 +758,38 @@ void Cutscene_UpdateScripted(struct PlayState* play, CutsceneContext* csCtx);
 void Cutscene_HandleEntranceTriggers(struct PlayState* play);
 void Cutscene_HandleConditionalTriggers(struct PlayState* play);
 void Cutscene_SetScript(struct PlayState* play, void* script);
+void Cutscene_StartScripted(struct PlayState* play, u8 scriptIndex);
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+struct Camera;
+struct Actor;
+
+void CutsceneManager_Init(struct PlayState* play, CutsceneEntry* cutsceneList, s16 numEntries);
+void CutsceneManager_StoreCamera(struct Camera* camera);
+void CutsceneManager_ClearWaiting(void);
+s16 CutsceneManager_Update(void);
+void CutsceneManager_Queue(s16 csId);
+s16 CutsceneManager_IsNext(s16 csId);
+s16 CutsceneManager_StartWithPlayerCs(s16 csId, struct Actor* actor);
+s16 CutsceneManager_StartWithPlayerCsAndSetFlag(s16 csId, struct Actor* actor);
+s16 CutsceneManager_Start(s16 csId, struct Actor* actor);
+s16 CutsceneManager_Stop(s16 csId);
+s16 CutsceneManager_GetCurrentCsId(void);
+CutsceneEntry* CutsceneManager_GetCutsceneEntry(s16 csId);
+s16 CutsceneManager_GetAdditionalCsId(s16 csId);
+s16 CutsceneManager_GetLength(s16 csId);
+s16 CutsceneManager_GetCutsceneScriptIndex(s16 csId);
+s16 CutsceneManager_GetCutsceneCustomValue(s16 csId);
+s16 CutsceneManager_GetCurrentSubCamId(s16 csId);
+s16 CutsceneManager_FindEntranceCsId(void);
+s32 CutsceneManager_800F22C4(s16 csId, struct Actor* actor);
+void CutsceneManager_SetReturnCamera(s16 camId);
+s16 CutsceneManager_MarkNextCutscenes(void);
+
+s32 CutsceneCamera_Init(struct Camera* camera, CutsceneCamera* csCamera);
+s32 CutsceneCamera_UpdateSplines(u8* script, CutsceneCamera* csCamera);
+void CutsceneCamera_SetState(s16 state);
+void CutsceneCamera_Reset(void);
+#endif
 
 #endif

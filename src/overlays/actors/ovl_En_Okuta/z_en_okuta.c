@@ -1,5 +1,6 @@
 #include "z_en_okuta.h"
 #include "assets/objects/object_okuta/object_okuta.h"
+#include "config.h"
 
 #define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE)
 
@@ -146,7 +147,7 @@ void EnOkuta_Init(Actor* thisx, PlayState* play) {
     } else {
         ActorShape_Init(&thisx->shape, 1100.0f, ActorShadow_DrawCircle, 18.0f);
         thisx->flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
-        thisx->flags |= ACTOR_FLAG_4;
+        thisx->flags |= ACTOR_FLAG_UPDATE_CULLING_DISABLED;
         Collider_InitCylinder(play, &this->collider);
         Collider_SetCylinder(play, &this->collider, thisx, &sProjectileColliderInit);
         Actor_ChangeCategory(play, &play->actorCtx, thisx, ACTORCAT_PROP);
@@ -577,6 +578,12 @@ void EnOkuta_Update(Actor* thisx, PlayState* play2) {
     f32 ySurface;
     Vec3f prevPos;
     s32 canRestorePrevPos;
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    if (player->stateFlags3 & PLAYER_STATE3_CS_HALT) {
+        return;
+    }
+#endif
 
     if (!(player->stateFlags1 & (PLAYER_STATE1_TALKING | PLAYER_STATE1_DEAD | PLAYER_STATE1_28 | PLAYER_STATE1_29))) {
         if (this->actor.params == 0) {

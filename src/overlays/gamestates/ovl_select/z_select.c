@@ -43,6 +43,10 @@ void MapSelect_Init(GameState* thisx) {
     this->pageDownStops[6] = 91; // Escaping Ganon's Tower 3
     this->pageDownIndex = 0;
     this->sceneTotal = ARRAY_COUNT(sScenes);
+
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Init();
+#endif
     View_Init(&this->view, this->state.gfxCtx);
     this->view.flags = (VIEW_PROJECTION_ORTHO | VIEW_VIEWPORT);
     this->verticalInputAccumulator = 0;
@@ -121,6 +125,10 @@ void MapSelect_Destroy(GameState* thisx) {
     PRINTF("%c", BEL);
     // "view_cleanup will hang, so it won't be called"
     PRINTF("*** view_cleanupはハングアップするので、呼ばない ***\n");
+
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Destroy();
+#endif
 }
 
 void MapSelect_UpdateMenu(MapSelectState* this) {
