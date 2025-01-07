@@ -11,6 +11,10 @@
         #define NO_SYNCS_IN_TEXTURE_LOADS
     #endif
     #include "gbi.f3dex3.h"
+
+    // see `Error_please_update_viewport_Z_and_Y_see_GBI`
+    #undef G_MAXZ
+    #define G_MAXZ G_NEW_MAXZ
 #else
 
 #ifdef GBI_DOWHILE

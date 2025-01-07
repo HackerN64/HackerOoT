@@ -154,10 +154,6 @@
 #error "The profiler isn't supported yet on the other versions."
 #endif
 
-#if OOT_VERSION != GC_EU_MQ_DBG && ENABLE_F3DEX3
-#error "F3DEX3 isn't supported yet on the other versions."
-#endif
-
 /**
  * Game
 */
