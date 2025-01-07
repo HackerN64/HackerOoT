@@ -16,6 +16,14 @@
 #ifndef F3DEX3_H
 #define F3DEX3_H
 
+#ifdef F3DEX_GBI_2
+#undef F3DEX_GBI_2
+#endif
+
+#ifdef F3DEX_GBI_PL
+#undef F3DEX_GBI_PL
+#endif
+
 #define F3DEX_GBI_2  1
 #define F3DEX_GBI_PL 1
 #define F3DEX_GBI_3  1
