@@ -13,4 +13,5 @@ gzinject/obj/*
 z64compress/z64compress
 z64compress/o/*
 
-graphovl/
+ido_recomp/
+egcs/
