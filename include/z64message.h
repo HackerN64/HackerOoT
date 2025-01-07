@@ -9,6 +9,9 @@
 struct OcarinaStaff;
 struct Actor;
 struct PlayState;
+#if ENABLE_MM_TITLE_CARDS
+struct TitleCardInfo;
+#endif
 
 typedef enum TextBoxIcon {
     /* 0 */ TEXTBOX_ICON_TRIANGLE,
@@ -288,7 +291,7 @@ typedef struct MessageContext {
     /* 0xE40E */ s16 disableSunsSong; // disables Suns Song effect from occurring after song is played
     /* 0xE410 */ u8 lastOcarinaButtonIndex;
 #if ENABLE_MM_TITLE_CARDS
-                 TitleCardInfo* titleCardInfo;
+                 struct TitleCardInfo* titleCardInfo;
 #endif
 } MessageContext; // size = 0xE418
 
@@ -306,7 +309,7 @@ void Message_SetTables(void);
 void Message_Init(struct PlayState* play);
 
 #if ENABLE_MM_TITLE_CARDS
-void Message_SetTitleCardInfo(struct PlayState* play, TitleCardInfo* info);
+void Message_SetTitleCardInfo(struct PlayState* play, struct TitleCardInfo* info);
 void Message_DisplaySceneTitleCard(struct PlayState* play);
 #endif
 
