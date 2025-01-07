@@ -72,6 +72,39 @@ endif
 # Define author and package version for every OoT version
 CPP_DEFINES += -DCOMPRESS_$(COMPRESSION_TYPE)=1 -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DPACKAGE_NAME='$(PACKAGE_NAME)' -DPACKAGE_COMMIT_AUTHOR='$(PACKAGE_COMMIT_AUTHOR)' -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)'
 
+# F3DZEX2 offsets
+ifeq ($(VERSION),ntsc-1.0)
+# 0xB59ED0, 0x1390
+	UCODE_CODE_OFFSET := 11902672
+	UCODE_CODE_SIZE := 5008
+# 0xB8A520, 0x420
+	UCODE_DATA_OFFSET := 12100896
+	UCODE_DATA_SIZE := 1056
+else ifeq ($(VERSION),ntsc-1.1)
+# 0xB5A090, 0x1390
+	UCODE_CODE_OFFSET := 11903120
+	UCODE_CODE_SIZE := 5008
+# 0xB8A6E0, 0x420
+	UCODE_DATA_OFFSET := 12101344
+	UCODE_DATA_SIZE := 1056
+else ifeq ($(VERSION),ntsc-1.2)
+# 0xB59ED0, 0x1390
+	UCODE_CODE_OFFSET := 11902672
+	UCODE_CODE_SIZE := 5008
+# 0xB8A590, 0x420
+	UCODE_DATA_OFFSET := 12101008
+	UCODE_DATA_SIZE := 1056
+else ifeq ($(VERSION),gc-eu-mq-dbg)
+# 0xBCD0F0, 0x1630
+	UCODE_CODE_OFFSET := 12374256
+	UCODE_CODE_SIZE := 5680
+# 0xBCE720, 0x420
+	UCODE_DATA_OFFSET := 12379936
+	UCODE_DATA_SIZE := 1056
+else
+$(error Unsupported version for F3DEX3: $(VERSION))
+endif
+
 #### Tools ####
 
 FLIPS      := tools/Flips/flips
@@ -176,10 +209,10 @@ verify:
 .PHONY: wad iso patch create_f3dex3_patches verify
 
 F3DEX3/f3dzex2.code:
-	$(V)dd bs=1 if=$(BASEROM_DIR)/baserom-decompressed.z64 of=$@ skip=12374256 count=5680 status=none
+	$(V)dd bs=1 if=$(BASEROM_DIR)/baserom-decompressed.z64 of=$@ skip=$(UCODE_CODE_OFFSET) count=$(UCODE_CODE_SIZE) status=none
 
 F3DEX3/f3dzex2.data:
-	$(V)dd bs=1 if=$(BASEROM_DIR)/baserom-decompressed.z64 of=$@ skip=12379936 count=1056 status=none
+	$(V)dd bs=1 if=$(BASEROM_DIR)/baserom-decompressed.z64 of=$@ skip=$(UCODE_DATA_OFFSET) count=$(UCODE_DATA_SIZE) status=none
 
 F3DEX3/F3DEX3%.code: F3DEX3/F3DEX3%.code.bps F3DEX3/f3dzex2.code
 	$(V)$(FLIPS) --apply F3DEX3/F3DEX3$*.code.bps F3DEX3/f3dzex2.code $@
