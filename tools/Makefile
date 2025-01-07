@@ -61,7 +61,7 @@ clean:
 	$(V)$(MAKE) -C ZAPD clean
 	$(V)$(MAKE) -C fado clean
 ifneq ($(wildcard ./gzinject/Makefile),)
-	$(V)$(MAKE) -C gzinject clean
+	$(V)$(MAKE) -C gzinject distclean
 endif
 	$(V)$(MAKE) -C z64compress clean
 	$(V)$(MAKE) -C Flips clean

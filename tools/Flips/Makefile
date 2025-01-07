@@ -99,7 +99,7 @@ $(FNAME_$(TARGET)): $(SOURCES) $(XFILES)
 	$(call print_two_args,Compiling:,$<,$@)
 	$(V)$(CXX) $^ -std=c++98 $(CFLAGS_G) $(MOREFLAGS) $(CPPFLAGS) $(CFLAGS) $(CXXFLAGS) $(LFLAGS) -o$@
 ifeq ($(CFLAGS),-g)
-	echo 'Compiled Floating IPS in debug mode; for better performance, use ./make.sh instead'
+	$(V)echo 'Compiled Floating IPS in debug mode; for better performance, use ./make.sh instead'
 endif
 
 ifeq ($(TARGET),gtk)
