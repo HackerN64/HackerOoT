@@ -224,13 +224,6 @@ F3DEX3/F3DEX3%.code: F3DEX3/F3DEX3%.code.bps F3DEX3/f3dzex2.code
 F3DEX3/F3DEX3%.data: F3DEX3/F3DEX3%.data.bps F3DEX3/f3dzex2.data
 	$(V)$(FLIPS) --apply F3DEX3/F3DEX3$*.data.bps F3DEX3/f3dzex2.data $@
 
-.PRECIOUS: $(UCODE_FILES)
-
-$(BUILD_DIR)/F3DEX3/%.o: F3DEX3/%
-	$(call print,Wrapping binary to ELF:,$<,$@)
-	$(V)mkdir -p $(BUILD_DIR)/F3DEX3
-	$(V)$(OBJCOPY) -I binary -O elf32-big $< $@
-
 #### Output ####
 
 # Verbose toggle

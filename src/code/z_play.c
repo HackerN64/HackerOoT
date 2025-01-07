@@ -1162,10 +1162,11 @@ skip:
             s16 csId = optCsId >= 0 ? optCsId : 0;
 
             // check if the cutscene is the next on the queue, if it is play it,
-            // otherwise add it to the queue when the button L is pressed
+            // otherwise add it to the queue when the D-Left is pressed while L and Z are held
             if (CutsceneManager_IsNext(csId)) {
                 CutsceneManager_Start(csId, &GET_PLAYER(this)->actor);
-            } else if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_L)) {
+            } else if (CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_L | BTN_Z) &&
+                       CHECK_BTN_ALL(this->state.input[0].press.button, BTN_DLEFT)) {
                 CutsceneManager_Queue(csId);
             }
         }

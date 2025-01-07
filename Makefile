@@ -177,13 +177,13 @@ else
 $(error Unsupported version $(VERSION))
 endif
 
-# Add HackerOoT options
--include .make_hackeroot.mk
-
 CFLAGS ?=
 CPPFLAGS ?=
 CFLAGS_IDO ?=
 CPP_DEFINES ?=
+
+# Add HackerOoT options
+-include .make_hackeroot.mk
 
 ifeq ($(COMPILER),gcc)
   CPP_DEFINES += -DCOMPILER_GCC -DNON_MATCHING -DAVOID_UB -std=gnu11
@@ -218,7 +218,7 @@ endif
 
 # Converts e.g. ntsc-1.0 to NTSC_1_0
 VERSION_MACRO := $(shell echo $(VERSION) | tr a-z-. A-Z__)
-CPP_DEFINES += -DOOT_VERSION=$(VERSION_MACRO)
+CPP_DEFINES += -DOOT_VERSION=$(VERSION_MACRO) -DOOT_REVISION=$(REVISION)
 CPP_DEFINES += -DOOT_REGION=REGION_$(REGION)
 CPP_DEFINES += -DBUILD_CREATOR="\"$(BUILD_CREATOR)\"" -DBUILD_DATE="\"$(BUILD_DATE)\"" -DBUILD_TIME="\"$(BUILD_TIME)\""
 CPP_DEFINES += -DLIBULTRA_VERSION=LIBULTRA_VERSION_$(LIBULTRA_VERSION)
@@ -656,6 +656,13 @@ $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(
 
 $(BUILD_DIR)/linker_scripts/makerom.ld: linker_scripts/makerom.ld
 	$(V)$(CPP) -I include $(CPPFLAGS) $< > $@
+
+$(BUILD_DIR)/F3DEX3/%.o: F3DEX3/%
+	$(call print,Wrapping binary to ELF:,$<,$@)
+	$(V)mkdir -p $(BUILD_DIR)/F3DEX3
+	$(V)$(OBJCOPY) -I binary -O elf32-big $< $@
+
+.PRECIOUS: $(UCODE_FILES)
 
 ## Order-only prerequisites
 # These ensure e.g. the O_FILES are built before the OVL_RELOC_FILES.
