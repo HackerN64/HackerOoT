@@ -32,6 +32,7 @@ SceneCmd example_scene_header00[] = {
     SCENE_CMD_END(),
 };
 
+#if ENABLE_MM_TITLE_CARDS
 TitleCardInfo titleCardInfo = {
     .textId = 0x8000,
     .rgba = { 160, 160, 160, 255 },
@@ -44,6 +45,7 @@ TitleCardInfo titleCardInfo = {
     .alphaFadeOutIncr = TC_ALPHA_FADE_OUT_INCR,
     .alphaFadeInIncr = TC_ALPHA_FADE_IN_INCR,
 };
+#endif
 
 SceneCmd* example_scene_alternateHeaders[] = {
     example_scene_header01,
