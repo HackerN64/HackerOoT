@@ -1,3 +1,5 @@
+MAKEFLAGS += --no-builtin-rules --no-print-directory
+
 # use variables in submakes
 export
 OPTIMIZATION_ON ?= 1
@@ -103,49 +105,51 @@ O_FILES   += build/ZAPD/BuildInfo.o
 # create build directories
 $(shell mkdir -p $(foreach dir,$(SRC_DIRS),build/$(dir)))
 
+-include ../print_rules.mk
 
 # Main targets
 all: ZAPD.out copycheck
 
 build/ZAPD/BuildInfo.o:
-	python3 ZAPD/genbuildinfo.py $(COPYCHECK_ARGS)
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c $(OUTPUT_OPTION) build/ZAPD/BuildInfo.cpp
+	$(V)python3 ZAPD/genbuildinfo.py $(COPYCHECK_ARGS)
+	$(V)$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c $(OUTPUT_OPTION) build/ZAPD/BuildInfo.cpp
 
 copycheck: ZAPD.out
-	python3 copycheck.py
+	$(V)python3 copycheck.py
 
 clean:
-	rm -rf build ZAPD.out
-	$(MAKE) -C lib/libgfxd clean
-	$(MAKE) -C ZAPDUtils clean
-	$(MAKE) -C ExporterTest clean
+	$(V)rm -rf build ZAPD.out
+	$(V)$(MAKE) -C lib/libgfxd clean
+	$(V)$(MAKE) -C ZAPDUtils clean
+	$(V)$(MAKE) -C ExporterTest clean
 
 rebuild: clean all
 
 format:
-	clang-format-14 -i $(ZAPD_CPP_FILES) $(ZAPD_H_FILES)
-	$(MAKE) -C ZAPDUtils format
-	$(MAKE) -C ExporterTest format
+	$(V)clang-format-14 -i $(ZAPD_CPP_FILES) $(ZAPD_H_FILES)
+	$(V)$(MAKE) -C ZAPDUtils format
+	$(V)$(MAKE) -C ExporterTest format
 
 .PHONY: all build/ZAPD/BuildInfo.o copycheck clean rebuild format
 
 build/%.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c $(OUTPUT_OPTION) $<
+	$(call print_two_args,Compiling:,$<,$@)
+	$(V)$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c $(OUTPUT_OPTION) $<
 
 
 # Submakes
 lib/libgfxd/libgfxd.a:
-	$(MAKE) -C lib/libgfxd
+	$(V)$(MAKE) -C lib/libgfxd
 
 .PHONY: ExporterTest
 ExporterTest:
-	$(MAKE) -C ExporterTest
+	$(V)$(MAKE) -C ExporterTest
 
 .PHONY: ZAPDUtils
 ZAPDUtils:
-	$(MAKE) -C ZAPDUtils
+	$(V)$(MAKE) -C ZAPDUtils
 
 
 # Linking
 ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a ExporterTest ZAPDUtils
-	$(CXX) $(CXXFLAGS) $(O_FILES) lib/libgfxd/libgfxd.a ZAPDUtils/ZAPDUtils.a $(EXPORTERS) $(LDFLAGS) $(OUTPUT_OPTION)
+	$(V)$(CXX) $(CXXFLAGS) $(O_FILES) lib/libgfxd/libgfxd.a ZAPDUtils/ZAPDUtils.a $(EXPORTERS) $(LDFLAGS) $(OUTPUT_OPTION)

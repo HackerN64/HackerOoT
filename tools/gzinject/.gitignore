@@ -275,7 +275,7 @@ wadextract/
 isoextract/
 *.o
 Makefile
-config.*
+config.status
 gzinject
 *.zip
 autom4te.cache/
