@@ -3,6 +3,23 @@ MAKEFLAGS += --no-builtin-rules --no-print-directory
 CFLAGS := -Wall -Wextra -pedantic -std=c99 -g -O2
 PROGRAMS := elf2rom makeromfs mkdmadata mkldscript preprocess_pragmas reloc_prereq
 
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+  DETECTED_OS=linux
+else ifeq ($(UNAME_S),Darwin)
+  DETECTED_OS=macos
+else
+  $(error Unsupported OS: $(UNAME_S))
+endif
+
+IDO_RECOMP_VERSION := v1.2
+IDO_RECOMP_5_3_DIR := ido_recomp/$(DETECTED_OS)/5.3
+IDO_RECOMP_7_1_DIR := ido_recomp/$(DETECTED_OS)/7.1
+
+EGCS_BINUTILS_VERSION := 0.6
+EGCS_GCC_VERSION := 0.7
+EGCS_DIR := egcs/$(DETECTED_OS)
+
 ifeq ($(shell command -v clang >/dev/null 2>&1; echo $$?),0)
   CC := clang
 else
@@ -21,7 +38,7 @@ endif
 
 -include print_rules.mk
 
-all: $(PROGRAMS)
+all: $(PROGRAMS) $(IDO_RECOMP_5_3_DIR) $(IDO_RECOMP_7_1_DIR) $(EGCS_DIR)
 	$(call print_no_args,Building ZAPD...)
 	$(V)$(MAKE) -C ZAPD
 	$(call print_no_args,Building fado...)
@@ -40,6 +57,7 @@ endif
 
 clean:
 	$(V)$(RM) $(PROGRAMS) $(addsuffix .exe,$(PROGRAMS))
+	$(V)$(RM) -r ido_recomp egcs
 	$(V)$(MAKE) -C ZAPD clean
 	$(V)$(MAKE) -C fado clean
 ifneq ($(wildcard ./gzinject/Makefile),)
@@ -70,3 +88,16 @@ $(1): $($1_SOURCES)
 endef
 
 $(foreach p,$(PROGRAMS),$(eval $(call COMPILE,$(p))))
+
+$(IDO_RECOMP_5_3_DIR):
+	$(V)mkdir -p $@
+	$(V)curl -sL https://github.com/decompals/ido-static-recomp/releases/download/$(IDO_RECOMP_VERSION)/ido-5.3-recomp-$(DETECTED_OS).tar.gz | tar xz -C $@
+
+$(IDO_RECOMP_7_1_DIR):
+	$(V)mkdir -p $@
+	$(V)curl -sL https://github.com/decompals/ido-static-recomp/releases/download/$(IDO_RECOMP_VERSION)/ido-7.1-recomp-$(DETECTED_OS).tar.gz | tar xz -C $@
+
+$(EGCS_DIR):
+	$(V)mkdir -p $@
+	$(V)curl -sL https://github.com/decompals/mips-binutils-egcs-2.9.5/releases/download/$(EGCS_BINUTILS_VERSION)/mips-binutils-egcs-2.9.5-$(DETECTED_OS).tar.gz | tar xz -C $@
+	$(V)curl -sL https://github.com/decompals/mips-gcc-egcs-2.91.66/releases/download/$(EGCS_GCC_VERSION)/mips-gcc-egcs-2.91.66-$(DETECTED_OS).tar.gz | tar xz -C $@

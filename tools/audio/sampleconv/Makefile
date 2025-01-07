@@ -2,7 +2,7 @@ MAKEFLAGS += --no-builtin-rules --no-print-directory
 
 CC := gcc
 CFLAGS := -Wall -Wextra -MMD
-OPTFLAGS := -Og -g3
+OPTFLAGS := -O3
 LDFLAGS :=
 
 CLANG_FORMAT := clang-format-14
