@@ -20,25 +20,7 @@ else
   $(error Unable to detect a suitable MIPS toolchain installed)
 endif
 
-# Verbose toggle
-V := @
-ifeq (VERBOSE, 1)
-    V=
-endif
-
-# Colors
-NO_COL  := \033[0m
-GREEN   := \033[0;32m
-BLUE    := \033[0;36m
-YELLOW  := \033[0;33m
-BLINK   := \033[32;5m
-
-PRINT := printf
-
-# Generic print function for make rules
-define print
-  $(V)echo -e "$(GREEN)$(1) $(YELLOW)$(2)$(GREEN) -> $(BLUE)$(3)$(NO_COL)"
-endef
+-include tools/print_rules.mk
 
 # Enable optimization flags to use GDB on Ares
 ARES_GDB := 1

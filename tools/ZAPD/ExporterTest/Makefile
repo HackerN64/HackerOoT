@@ -1,3 +1,5 @@
+MAKEFLAGS += --no-builtin-rules --no-print-directory
+
 # Only used for standalone compilation, usually inherits these from the main makefile
 CXXFLAGS ?= -Wall -Wextra -O2 -g -std=c++17
 
@@ -11,18 +13,20 @@ LIB       := ExporterTest.a
 # create build directories
 $(shell mkdir -p $(foreach dir,$(SRC_DIRS),build/$(dir)))
 
+-include ../../print_rules.mk
+
 all: $(LIB)
 
 clean:
-	rm -rf build $(LIB)
+	$(V)rm -rf build $(LIB)
 
 format:
-	clang-format-14 -i $(CPP_FILES) $(H_FILES)
+	$(V)clang-format-14 -i $(CPP_FILES) $(H_FILES)
 
 .PHONY: all clean format
 
 build/%.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) -I ./ -I ../ZAPD -I ../ZAPDUtils -I ../lib/tinyxml2 -c $(OUTPUT_OPTION) $<
+	$(V)$(CXX) $(CXXFLAGS) $(OPTFLAGS) -I ./ -I ../ZAPD -I ../ZAPDUtils -I ../lib/tinyxml2 -c $(OUTPUT_OPTION) $<
 
 $(LIB): $(O_FILES)
-	$(AR) rcs $@ $^
+	$(V)$(AR) rcs $@ $^
