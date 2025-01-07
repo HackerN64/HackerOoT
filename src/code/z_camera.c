@@ -8979,7 +8979,7 @@ s16 Camera_SetFinishedFlag(Camera* camera) {
  */
 s16 Camera_GetBgCamOrActorCsCamSetting(Camera* camera, u32 camDataId) {
 #if ENABLE_CUTSCENE_IMPROVEMENTS
-    if (camDataId & CAM_DATA_IS_BG) {
+    if (camDataId & CAM_DATA_IS_BG || camera->play->actorCsCamList == NULL) {
         return BgCheck_GetBgCamSettingImpl(&camera->play->colCtx, camDataId & ~CAM_DATA_IS_BG, BGCHECK_SCENE);
     } else {
         return Play_GetActorCsCamSetting(camera->play, camDataId);

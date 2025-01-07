@@ -418,6 +418,27 @@ typedef struct {
 } ActorCsCamInfo; // size = 0x8
 #endif
 
+#if ENABLE_MM_TITLE_CARDS
+typedef struct SCmdTitleCard {
+    /* 0x0 */ u8 code;
+    /* 0x1 */ u8 data1;
+    /* 0x4 */ void* segment;
+} SCmdTitleCard; // size = 0x8
+
+typedef struct TitleCardInfo {
+    u16 textId;
+    Color_RGBA8 rgba; // MM default: R: 140, G: 40, B: 160, A: 255
+    u8 nextHudVisibility;
+    u8 duration; // MM default: 30
+    u8 textDelayTimer; // MM default: 0
+    Vec2s textPos; // HackerOoT default: X: 25, Y: 67
+    u8 gradientWidth; // HackerOoT default: 60
+    u8 gradientHeight; // HackerOoT default: 28
+    u8 alphaFadeOutIncr; // HackerOoT default: -40
+    u8 alphaFadeInIncr; // HackerOoT default: 30
+} TitleCardInfo;
+#endif
+
 typedef union SceneCmd {
     SCmdBase              base;
     SCmdPlayerEntryList   playerEntryList;
@@ -454,6 +475,9 @@ typedef union SceneCmd {
 #if ENABLE_CUTSCENE_IMPROVEMENTS
     SCmdCsCameraList actorCsCamList;
     SCmdCutsceneList cutsceneList;
+#endif
+#if ENABLE_MM_TITLE_CARDS
+    SCmdTitleCard titleCard;
 #endif
 } SceneCmd; // size = 0x8
 
@@ -643,6 +667,9 @@ typedef enum SceneCommandTypeID {
                SCENE_CMD_ID_ACTOR_CUTSCENE_LIST,
                SCENE_CMD_ID_ACTOR_CUTSCENE_CAM_LIST,
 #endif
+#if ENABLE_MM_TITLE_CARDS
+               SCENE_CMD_ID_TITLE_CARD,
+#endif
     /* 0x1A */ SCENE_CMD_ID_MAX
 } SceneCommandTypeID;
 
@@ -741,6 +768,11 @@ typedef enum SceneCommandTypeID {
 
 #define SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(numCams, camList) \
     { SCENE_CMD_ID_ACTOR_CUTSCENE_CAM_LIST, numCams, CMD_PTR(camList) }
+#endif
+
+#if ENABLE_MM_TITLE_CARDS
+#define SCENE_CMD_TITLE_CARD(titleCardInfo) \
+    { SCENE_CMD_ID_TITLE_CARD, 0, CMD_PTR(titleCardInfo) }
 #endif
 
 

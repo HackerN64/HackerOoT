@@ -3,6 +3,8 @@
 
 #include "z64view.h"
 #include "versions.h"
+#include "config.h"
+#include "color.h"
 
 struct OcarinaStaff;
 struct Actor;
@@ -112,7 +114,14 @@ typedef enum MessageMode {
     /* 0x34 */ MSGMODE_TEXT_AWAIT_NEXT,
     /* 0x35 */ MSGMODE_TEXT_DONE,
     /* 0x36 */ MSGMODE_TEXT_CLOSING,
-    /* 0x37 */ MSGMODE_PAUSED // Causes the message system to do nothing until external code sets a new message mode or calls a public function
+    /* 0x37 */ MSGMODE_PAUSED, // Causes the message system to do nothing until external code sets a new message mode or calls a public function
+#if ENABLE_MM_TITLE_CARDS
+               MSGMODE_SCENE_TITLE_CARD_FADE_IN_BACKGROUND,
+               MSGMODE_SCENE_TITLE_CARD_FADE_IN_TEXT,
+               MSGMODE_SCENE_TITLE_CARD_DISPLAYING,
+               MSGMODE_SCENE_TITLE_CARD_FADE_OUT_TEXT,
+               MSGMODE_SCENE_TITLE_CARD_FADE_OUT_BACKGROUND,
+#endif
 } MessageMode;
 
 typedef enum MaskReactionSet {
@@ -278,6 +287,9 @@ typedef struct MessageContext {
     /* 0xE40C */ s16 disableWarpSongs; // disables ability to warp with warp songs
     /* 0xE40E */ s16 disableSunsSong; // disables Suns Song effect from occurring after song is played
     /* 0xE410 */ u8 lastOcarinaButtonIndex;
+#if ENABLE_MM_TITLE_CARDS
+                 TitleCardInfo* titleCardInfo;
+#endif
 } MessageContext; // size = 0xE418
 
 void Message_UpdateOcarinaMemoryGame(struct PlayState* play);
@@ -292,5 +304,10 @@ void Message_Draw(struct PlayState* play);
 void Message_Update(struct PlayState* play);
 void Message_SetTables(void);
 void Message_Init(struct PlayState* play);
+
+#if ENABLE_MM_TITLE_CARDS
+void Message_SetTitleCardInfo(struct PlayState* play, TitleCardInfo* info);
+void Message_DisplaySceneTitleCard(struct PlayState* play);
+#endif
 
 #endif

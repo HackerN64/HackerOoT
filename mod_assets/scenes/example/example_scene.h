@@ -8,6 +8,9 @@
 
 
 extern SceneCmd example_scene_header00[];
+#if ENABLE_MM_TITLE_CARDS
+extern TitleCardInfo titleCardInfo;
+#endif
 extern SceneCmd* example_scene_alternateHeaders[];
 extern RomFile example_scene_roomList[];
 extern u8 _example_room_0SegmentRomStart[];

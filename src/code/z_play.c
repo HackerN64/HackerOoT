@@ -35,6 +35,22 @@ UNK_TYPE D_8012D1F4 = 0; // unused
 
 Input* D_8012D1F8 = NULL;
 
+#if ENABLE_MM_TITLE_CARDS
+// default title card info to use if there's no entry in the scene
+static TitleCardInfo sDefaultTitleCard = {
+    .textId = 0x8000,
+    .rgba = { 140, 40, 160, 255 },
+    .nextHudVisibility = HUD_VISIBILITY_NOTHING,
+    .duration = 30,
+    .textDelayTimer = 0,
+    .textPos = { TC_TEXT_POS_X, TC_TEXT_POS_Y },
+    .gradientWidth = TC_GRADIENT_WIDTH,
+    .gradientHeight = TC_GRADIENT_HEIGHT,
+    .alphaFadeOutIncr = TC_ALPHA_FADE_OUT_INCR,
+    .alphaFadeInIncr = TC_ALPHA_FADE_IN_INCR,
+};
+#endif
+
 void Play_SpawnScene(PlayState* this, s32 sceneId, s32 spawn);
 
 // This macro prints the number "1" with a file and line number if R_ENABLE_PLAY_LOGS is enabled.
@@ -1866,6 +1882,11 @@ void Play_SpawnScene(PlayState* this, s32 sceneId, s32 spawn) {
     this->sceneDrawConfig = scene->drawConfig;
 
     PRINTF("\nSCENE SIZE %fK\n", (scene->sceneFile.vromEnd - scene->sceneFile.vromStart) / 1024.0f);
+
+#if ENABLE_MM_TITLE_CARDS
+    sDefaultTitleCard.textId = 0x8000 | this->sceneId;
+    this->msgCtx.titleCardInfo = &sDefaultTitleCard;
+#endif
 
 #if PLATFORM_N64
     if ((B_80121220 != NULL) && (scene->unk_12 > 0)) {
