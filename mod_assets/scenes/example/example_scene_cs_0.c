@@ -4,7 +4,7 @@
 
 
 CutsceneData gExampleCS[] = {
-    CS_BEGIN_CUTSCENE(23, 308),
+    CS_HEADER(23, 308),
         // CS_DESTINATION(CS_DEST_KOKIRI_FOREST_FARORE, 99, 0),
         CS_TEXT_LIST(2),
             CS_TEXT(0x1234, 0, 0, CS_TEXT_CHOICE, 0x0001, 0x0002),
@@ -117,6 +117,6 @@ CutsceneData gExampleCS[] = {
             CS_CAM_POINT(CS_CAM_CONTINUE, 0, 30, 60.0f, 0, 42, 502, 0),
             CS_CAM_POINT(CS_CAM_CONTINUE, 0, 30, 60.0f, 0, 41, 502, 0),
             CS_CAM_POINT(CS_CAM_STOP, 0, 0, 0.0f, 0, 0, 0, 0),
-    CS_END(),
+    CS_END_OF_SCRIPT(),
 };
 
