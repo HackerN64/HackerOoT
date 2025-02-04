@@ -43,3 +43,20 @@ else ifeq ($(TARGET),iso)
 CFLAGS := -DCONSOLE_GC -fno-reorder-blocks -fno-optimize-sibling-calls
 CPPFLAGS := -DCONSOLE_GC
 endif
+
+### SummerCart64 Settings ###
+
+# path to the deployer program
+SC64_DEPLOYER ?=
+
+# upload the build
+sc64: rom
+ifeq ($(SC64_DEPLOYER),)
+	$(error sc64deployer path not set. Set SC64_DEPLOYER in the Makefile or define it as an environment variable)
+endif
+	$(SC64_DEPLOYER) upload $(ROM)
+	$(SC64_DEPLOYER) debug --isv 0x03FF0000
+
+# same as above and start listening to the IS-Viewer
+sc64v: sc64
+	$(SC64_DEPLOYER) debug --isv 0x03FF0000
