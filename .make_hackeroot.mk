@@ -55,7 +55,6 @@ ifeq ($(SC64_DEPLOYER),)
 	$(error sc64deployer path not set. Set SC64_DEPLOYER in the Makefile or define it as an environment variable)
 endif
 	$(SC64_DEPLOYER) upload $(ROM)
-	$(SC64_DEPLOYER) debug --isv 0x03FF0000
 
 # same as above and start listening to the IS-Viewer
 sc64v: sc64
