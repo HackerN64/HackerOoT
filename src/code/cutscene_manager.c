@@ -125,7 +125,9 @@ CutsceneEntry* CutsceneManager_GetCutsceneEntryImpl(s16 csId) {
 void CutsceneManager_Init(PlayState* play, CutsceneEntry* cutsceneList, s16 numEntries) {
     s32 i;
 
-    if (cutsceneList != NULL) {
+    play->actorCsUsed = cutsceneList != NULL;
+
+    if (play->actorCsUsed) {
         sSceneCutsceneList = cutsceneList;
         sSceneCutsceneCount = numEntries;
     }

@@ -8625,6 +8625,14 @@ s32 Camera_RequestBgCam(Camera* camera, s32 requestedBgCamIndex) {
     s16 requestedCamSetting;
     s16 settingChangeSuccessful;
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    //! TODO: better fix? though this is probably good enough as whatever function calls this one will be
+    // used for bg cameras, it's likely safe to assume this will never be related to actor cutscenes.
+    if (!(requestedBgCamIndex & CAM_DATA_IS_BG)) {
+        requestedBgCamIndex |= CAM_DATA_IS_BG;
+    }
+#endif
+
     if ((requestedBgCamIndex == -1) || (requestedBgCamIndex == camera->bgCamIndex)) {
         camera->behaviorFlags |= CAM_BEHAVIOR_BG_PROCESSED;
         return -1;
