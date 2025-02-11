@@ -1,3 +1,5 @@
+-include ../print_rules.mk
+
 TARGET := common-plugin.so
 SOURCES := plugin.c
 
@@ -11,9 +13,9 @@ DEP_FILES := $(TARGET:.so=.d)
 all: $(TARGET)
 
 clean:
-	$(RM) $(TARGET) $(DEP_FILES)
+	$(V)$(RM) $(TARGET) $(DEP_FILES)
 
 $(TARGET): $(SOURCES)
-	$(CC) -shared $(CFLAGS) -MMD -o $@ $(SOURCES)
+	$(V)$(CC) -shared $(CFLAGS) -MMD -o $@ $(SOURCES)
 
 -include $(DEP_FILES)

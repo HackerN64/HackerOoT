@@ -44,6 +44,7 @@ void ConsoleLogo_Calc(ConsoleLogoState* this) {
         this->uls = this->ult & 0x7F;
         this->ult++;
     }
+#endif
 }
 
 void ConsoleLogo_SetupView(ConsoleLogoState* this, f32 x, f32 y, f32 z) {

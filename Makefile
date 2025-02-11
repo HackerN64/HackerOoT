@@ -465,7 +465,6 @@ SPEC_INCLUDES := $(wildcard spec/*.inc)
 # Baserom to use when creating BPS patches
 BASEROM_PATCH ?= baseroms/$(VERSION)/baserom.z64
 
-ifeq ($(COMPILER),gcc)
 SRC_DIRS := $(shell find src -type d)
 UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
 
@@ -798,7 +797,7 @@ endif
 $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(UCODE_O_FILES) $(LDSCRIPT) $(BUILD_DIR)/linker_scripts/makerom.ld $(BUILD_DIR)/undefined_syms.txt \
         $(SAMPLEBANK_O_FILES) $(SOUNDFONT_O_FILES) $(SEQUENCE_O_FILES) \
         $(BUILD_DIR)/assets/audio/sequence_font_table.o $(BUILD_DIR)/assets/audio/audiobank_padding.o
-  $(call print_one_arg,Linking:,$@)
+	$(call print_one_arg,Linking:,$@)
 	$(V)$(LD) $(LDFLAGS) -o $@
 
 $(BUILD_DIR)/linker_scripts/makerom.ld: linker_scripts/makerom.ld

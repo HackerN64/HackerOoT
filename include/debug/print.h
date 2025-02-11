@@ -3,14 +3,15 @@
 
 #include "config.h"
 #include "ultra64.h"
-#include "gfxprint.h"
+#include "libu64/gfxprint.h"
+#include "libu64/pad.h"
 #include "z64math.h"
 #include "color.h"
 
 struct GraphicsContext;
 
 typedef struct PrintUtils {
-    GraphicsContext* gfxCtx;
+    struct GraphicsContext* gfxCtx;
     Gfx* dl;
     Gfx* gfxRef;
     GfxPrint gfxP;
