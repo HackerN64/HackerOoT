@@ -496,20 +496,24 @@ void Play_Init(GameState* thisx) {
     Camera_InitDataUsingPlayer(&this->mainCamera, player);
     Camera_RequestMode(&this->mainCamera, CAM_MODE_NORMAL);
 
+    playerStartBgCamIndex = PLAYER_GET_START_BG_CAM_INDEX(&player->actor);
+
 #if ENABLE_CUTSCENE_IMPROVEMENTS
-    if ((player->actor.params & 0xFF) != 0xFF) {
-        Camera_ChangeActorCsCamIndex(&this->mainCamera, player->actor.params & 0xFF);
+    if (playerStartBgCamIndex != PLAYER_START_BG_CAM_DEFAULT) {
+        if (this->actorCsUsed) {
+            Camera_ChangeActorCsCamIndex(&this->mainCamera, playerStartBgCamIndex);
+        } else {
+            Camera_RequestBgCam(&this->mainCamera, playerStartBgCamIndex);
+        }
     }
 
     CutsceneManager_StoreCamera(&this->mainCamera);
-#endif
-
-    playerStartBgCamIndex = PLAYER_GET_START_BG_CAM_INDEX(&player->actor);
-
+#else
     if (playerStartBgCamIndex != PLAYER_START_BG_CAM_DEFAULT) {
         PRINTF("player has start camera ID (" VT_FGCOL(BLUE) "%d" VT_RST ")\n", playerStartBgCamIndex);
         Camera_RequestBgCam(&this->mainCamera, playerStartBgCamIndex);
     }
+#endif
 
     if (R_SCENE_CAM_TYPE == SCENE_CAM_TYPE_FIXED_TOGGLE_VIEWPOINT) {
         this->viewpoint = VIEWPOINT_PIVOT;

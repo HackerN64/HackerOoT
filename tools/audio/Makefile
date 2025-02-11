@@ -1,3 +1,5 @@
+MAKEFLAGS += --no-builtin-rules --no-print-directory
+
 PROGRAMS := afile_sizes atblgen sbc sfc sfpatch
 
 ifeq ($(shell which xml2-config),)
@@ -14,21 +16,23 @@ OPTFLAGS := -O2
 XML_CFLAGS := $(shell xml2-config --cflags)
 XML_LDFLAGS := $(shell xml2-config --libs)
 
+-include ../print_rules.mk
+
 .PHONY: all clean distclean format
 
 all: $(PROGRAMS)
-	$(MAKE) -C sampleconv
+	$(V)$(MAKE) -C sampleconv
 
 clean:
-	$(RM) $(PROGRAMS)
-	$(MAKE) -C sampleconv clean
+	$(V)$(RM) $(PROGRAMS)
+	$(V)$(MAKE) -C sampleconv clean
 
 distclean: clean
-	$(MAKE) -C sampleconv distclean
+	$(V)$(MAKE) -C sampleconv distclean
 
 format:
-	$(CLANG_FORMAT) $(FORMAT_ARGS) $(shell find . -maxdepth 1 -type f -name "*.[ch]")
-	$(MAKE) -C sampleconv format
+	$(V)$(CLANG_FORMAT) $(FORMAT_ARGS) $(shell find . -maxdepth 1 -type f -name "*.[ch]")
+	$(V)$(MAKE) -C sampleconv format
 
 afile_sizes_SOURCES := afile_sizes.c util.c
 atblgen_SOURCES     := audio_tablegen.c samplebank.c soundfont.c xml.c util.c
@@ -46,7 +50,7 @@ sfc_LDFLAGS     := $(XML_LDFLAGS)
 
 define COMPILE =
 $(1): $($1_SOURCES)
-	$(CC) $(CFLAGS) $($1_CFLAGS) $$^ $($1_LDFLAGS) -o $$@
+	$(V)$(CC) $(CFLAGS) $($1_CFLAGS) $$^ $($1_LDFLAGS) -o $$@
 endef
 
 $(foreach p,$(PROGRAMS),$(eval $(call COMPILE,$(p))))

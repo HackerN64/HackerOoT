@@ -94,6 +94,9 @@ def run_clang_apply_replacements(tmp_dir: str):
     exec_str = f"{CLANG_APPLY_REPLACEMENTS} {APPLY_OPTS} {tmp_dir}"
     subprocess.run(exec_str, shell=True)
 
+def get_version():
+    exec_str = f"{CLANG_FORMAT} --version"
+    return subprocess.run(exec_str, shell=True, capture_output=True).stdout.decode("utf-8").removesuffix("\n")
 
 def cleanup_whitespace(file: str):
     """
@@ -151,7 +154,7 @@ def format_files(src_files: List[str], extra_files: List[str], nb_jobs: int):
     with multiprocessing.get_context("fork").Pool(nb_jobs) as pool:
         pool.map(cleanup_whitespace, src_files + extra_files)
 
-    print("Done formatting files.")
+    print(f"Done formatting files with version '{get_version()}'.")
 
 
 def list_files_to_format():

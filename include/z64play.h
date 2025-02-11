@@ -115,6 +115,7 @@ typedef struct PlayState {
 #endif
 #if ENABLE_CUTSCENE_IMPROVEMENTS
     ActorCsCamInfo* actorCsCamList;
+    u8 actorCsUsed;
 #endif
 } PlayState; // size = 0x12518
 

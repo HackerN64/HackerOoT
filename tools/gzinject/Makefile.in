@@ -1,3 +1,5 @@
+MAKEFLAGS += --no-builtin-rules --no-print-directory
+
 CC		= @CC@
 LD		= @CC@
 INSTALL		= @INSTALL@
@@ -16,24 +18,27 @@ LIBS		=
 OBJDIR		= obj
 OUTDIR		= $(OBJDIR)
 
+-include ../print_rules.mk
+
 .PHONY		: all install clean distclean
 
 all		:	$(PROGNAME)
 
 clean		:
-	rm -rf $(PROGNAME) obj
+	$(V)rm -rf $(PROGNAME) obj
 
 distclean	:	clean
-	rm -f Makefile
+	$(V)rm -f Makefile
 
 install		:	$(PROGNAME)
-	$(INSTALL) -p -D --target-directory=$(DESTDIR)$(bindir) $(PROGNAME)
+	$(V)$(INSTALL) -p -D --target-directory=$(DESTDIR)$(bindir) $(PROGNAME)
 
 $(PROGNAME)	:	$(COBJ)
-	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS)
+	$(V)$(LD) $(LDFLAGS) $^ -o $@ $(LIBS)
 
 $(OUTDIR)   	:
-	mkdir -p $@
+	$(V)mkdir -p $@
 
 $(COBJ)	 	:	$(OBJDIR)/%.o: $(SRCDIR)/% | $(OBJDIR)
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+	$(call print_files,Compiling:,$<,$@)
+	$(V)$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@

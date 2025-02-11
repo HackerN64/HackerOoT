@@ -21,6 +21,8 @@ else
 	$(error Unable to detect a suitable MIPS toolchain installed)
 endif
 
+-include tools/print_rules.mk
+
 # Compression algorithm. Valid algorithms are 'yaz', 'lzo' and 'aplib'
 # Default value: `yaz`
 COMPRESSION ?= yaz
@@ -136,14 +138,14 @@ BASEROM_PATCH ?= baseroms/$(VERSION)/baserom.z64
 #		- inject the binary in the wad file (and apply patches)
 #		- remove temporary folders
 wad:
-	$(call print,Patching WAD...)
+	$(call print_no_args,Patching WAD...)
 ifeq ("$(wildcard baseroms/$(VERSION)/common-key.bin)", "")
 	$(error Please provide the common-key.bin file.)
 endif
 	$(V)$(MAKE) compress TARGET=wad
 	$(V)$(GZINJECT) -a inject -r 1 -k baseroms/$(VERSION)/common-key.bin -w baseroms/$(VERSION)/basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
 	$(V)$(RM) -r wadextract/
-	$(call print,Success!)
+	$(call print_no_args,Success!)
 
 # Build the codebase to inject in a ISO file (for GameCube)
 # Steps:
@@ -157,7 +159,7 @@ endif
 #		- remove temporary folders
 iso:
 	$(V)$(MAKE) compress TARGET=iso
-	$(call print,Patching ISO...)
+	$(call print_no_args,Patching ISO...)
 	$(V)$(PYTHON) tools/gc_utility.py -v $(VERSION) -c $(COMPRESSION)
 	$(V)$(GZINJECT) -a extract -s baseroms/$(VERSION)/baseiso.iso
 	$(V)cp $(BUILD_DIR)/$(DMA_CONFIG_FILE) isoextract/zlj_f.tgc/$(DMA_CONFIG_FILE)
@@ -166,22 +168,22 @@ iso:
 	$(V)$(FLIPS) --apply tools/gamecube.bps isoextract/zlj_f.tgc/main.dol isoextract/zlj_f.tgc/main.dol
 	$(V)$(GZINJECT) -a pack -s $(ISO)
 	$(V)$(RM) -r isoextract/
-	$(call print,Success!)
+	$(call print_no_args,Success!)
 
 # Create a BPS patch for the built rom
 # Steps:
 #		- run Flips and create the patch
 # TODO: add compressed rom support.
 patch:
-	$(call print,Creating BPS patch...)
+	$(call print_no_args,Creating BPS patch...)
 	$(V)$(FLIPS) --create --bps $(BASEROM_PATCH) $(ROM) $(BPS)
-	$(call print,Success!)
+	$(call print_no_args,Success!)
 
 # Create F3DEX3 bps patches
 # Steps:
 #		- run Flips and create the patches
 create_f3dex3_patches: F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
-	$(call print,Creating F3DEX3 patches...)
+	$(call print_no_args,Creating F3DEX3 patches...)
 	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.code.bps
 	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW.data F3DEX3/F3DEX3_BrW.data.bps
 	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_PA.code F3DEX3/F3DEX3_BrW_PA.code.bps
@@ -198,7 +200,7 @@ create_f3dex3_patches: F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
 	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC_PB.data F3DEX3/F3DEX3_BrW_NOC_PB.data.bps
 	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC_PC.code F3DEX3/F3DEX3_BrW_NOC_PC.code.bps
 	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC_PC.data F3DEX3/F3DEX3_BrW_NOC_PC.data.bps
-	$(call print,Success!)
+	$(call print_no_args,Success!)
 
 # Build the rom and print its checksum (using md5)
 # Steps:
@@ -223,25 +225,18 @@ F3DEX3/F3DEX3%.code: F3DEX3/F3DEX3%.code.bps F3DEX3/f3dzex2.code
 	
 F3DEX3/F3DEX3%.data: F3DEX3/F3DEX3%.data.bps F3DEX3/f3dzex2.data
 	$(V)$(FLIPS) --apply F3DEX3/F3DEX3$*.data.bps F3DEX3/f3dzex2.data $@
+### SummerCart64 Settings ###
 
-#### Output ####
+# path to the deployer program
+SC64_DEPLOYER ?=
 
-# Verbose toggle
-V := @
-ifeq (VERBOSE, 1)
-	V=
+# upload the build
+sc64: rom
+ifeq ($(SC64_DEPLOYER),)
+	$(error sc64deployer path not set. Set SC64_DEPLOYER in the Makefile or define it as an environment variable)
 endif
+	$(SC64_DEPLOYER) upload $(ROM)
 
-# Colors
-NO_COL  := \033[0m
-GREEN   := \033[0;32m
-BLUE    := \033[0;36m
-YELLOW  := \033[0;33m
-BLINK   := \033[32;5m
-
-PRINT := printf
-
-# Generic print function for make rules
-define print
-	$(V)echo -e "$(GREEN)$(1) $(YELLOW)$(2)$(GREEN) -> $(BLUE)$(3)$(NO_COL)"
-endef
+# same as above and start listening to the IS-Viewer
+sc64v: sc64
+	$(SC64_DEPLOYER) debug --isv 0x03FF0000
