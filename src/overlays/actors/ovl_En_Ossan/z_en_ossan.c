@@ -1,5 +1,21 @@
 #include "z_en_ossan.h"
+#include "overlays/actors/ovl_En_Elf/z_en_elf.h"
+#include "overlays/actors/ovl_En_GirlA/z_en_girla.h"
+#include "overlays/actors/ovl_En_Tana/z_en_tana.h"
+
+#include "libc64/qrand.h"
+#include "controller.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "regs.h"
+#include "segmented_address.h"
+#include "sfx.h"
 #include "terminal.h"
+#include "z_lib.h"
+#include "z64play.h"
+#include "z64player.h"
+
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/object_ossan/object_ossan.h"
 #include "assets/objects/object_oF1d_map/object_oF1d_map.h"
@@ -7,7 +23,6 @@
 #include "assets/objects/object_zo/object_zo.h"
 #include "assets/objects/object_rs/object_rs.h"
 #include "assets/objects/object_ds2/object_ds2.h"
-#include "overlays/actors/ovl_En_Elf/z_en_elf.h"
 #include "assets/objects/object_masterkokiri/object_masterkokiri.h"
 #include "assets/objects/object_km1/object_km1.h"
 #include "assets/objects/object_mastergolon/object_mastergolon.h"
@@ -593,9 +608,9 @@ void EnOssan_Init(Actor* thisx, PlayState* play) {
     //! @bug This check will always evaluate to false, it should be || not &&
     if (this->actor.params > OSSAN_TYPE_MASK && this->actor.params < OSSAN_TYPE_KOKIRI) {
         Actor_Kill(&this->actor);
-        PRINTF(VT_COL(RED, WHITE));
+        PRINTF_COLOR_ERROR();
         PRINTF("引数がおかしいよ(arg_data=%d)！！\n", this->actor.params);
-        PRINTF(VT_RST);
+        PRINTF_RST();
         ASSERT(0, "0", "../z_en_oB1.c", 1246);
         return;
     }
@@ -622,18 +637,18 @@ void EnOssan_Init(Actor* thisx, PlayState* play) {
 
     if (this->objectSlot1 < 0) {
         Actor_Kill(&this->actor);
-        PRINTF(VT_COL(RED, WHITE));
+        PRINTF_COLOR_ERROR();
         PRINTF("バンクが無いよ！！(%s)\n", sShopkeeperPrintName[this->actor.params]);
-        PRINTF(VT_RST);
+        PRINTF_RST();
         ASSERT(0, "0", "../z_en_oB1.c", 1284);
         return;
     }
 
     if (EnOssan_TryGetObjBankIndices(this, play, objectIds) == 0) {
         Actor_Kill(&this->actor);
-        PRINTF(VT_COL(RED, WHITE));
+        PRINTF_COLOR_ERROR();
         PRINTF("予備バンクが無いよ！！(%s)\n", sShopkeeperPrintName[this->actor.params]);
-        PRINTF(VT_RST);
+        PRINTF_RST();
         ASSERT(0, "0", "../z_en_oB1.c", 1295);
         return;
     }
@@ -2127,10 +2142,10 @@ void EnOssan_InitActionFunc(EnOssan* this, PlayState* play) {
         this->shelves = (EnTana*)Actor_Find(&play->actorCtx, ACTOR_EN_TANA, ACTORCAT_PROP);
 
         if (this->shelves == NULL) {
-            PRINTF(VT_COL(RED, WHITE));
+            PRINTF_COLOR_ERROR();
             // "Warning!! There are no shelves!!"
             PRINTF("★★★ 警告！！ 棚がないよ！！ ★★★\n");
-            PRINTF(VT_RST);
+            PRINTF_RST();
             return;
         }
 

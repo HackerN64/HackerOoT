@@ -5,8 +5,15 @@
  */
 
 #include "z_bg_jya_zurerukabe.h"
-#include "assets/objects/object_jya_obj/object_jya_obj.h"
+
+#include "ichain.h"
+#include "sfx.h"
 #include "terminal.h"
+#include "z_lib.h"
+#include "z64play.h"
+#include "z64player.h"
+
+#include "assets/objects/object_jya_obj/object_jya_obj.h"
 
 #define FLAGS ACTOR_FLAG_UPDATE_CULLING_DISABLED
 
@@ -125,10 +132,10 @@ void BgJyaZurerukabe_Init(Actor* thisx, PlayState* play) {
     }
 
     if (i == ARRAY_COUNT(D_8089B9F0)) {
-        PRINTF(VT_COL(RED, WHITE));
+        PRINTF_COLOR_ERROR();
         PRINTF("home pos が変更されたみたい(%s %d)(arg_data 0x%04x)\n", "../z_bg_jya_zurerukabe.c", 299,
                this->dyna.actor.params);
-        PRINTF(VT_RST);
+        PRINTF_RST();
     }
 
     this->unk_16E = D_8089B9F8[this->unk_168];

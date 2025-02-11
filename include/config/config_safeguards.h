@@ -265,4 +265,8 @@
 #define COMPRESS_APLIB false
 #endif
 
+#ifndef COMPRESS_GZIP
+#define COMPRESS_GZIP false
+#endif
+
 #endif

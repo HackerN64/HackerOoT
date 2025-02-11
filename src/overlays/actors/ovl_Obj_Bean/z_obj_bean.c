@@ -5,9 +5,25 @@
  */
 
 #include "z_obj_bean.h"
-#include "assets/objects/object_mamenoki/object_mamenoki.h"
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+
+#include "libc64/qrand.h"
+#include "ichain.h"
+#include "one_point_cutscene.h"
+#include "regs.h"
+#include "segmented_address.h"
+#include "sfx.h"
+#include "sys_math3d.h"
+#include "sys_matrix.h"
 #include "terminal.h"
+#include "z_en_item00.h"
+#include "z_lib.h"
+#include "z64effect.h"
+#include "z64play.h"
+
+#include "global.h"
+
+#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/object_mamenoki/object_mamenoki.h"
 
 #define FLAGS ACTOR_FLAG_IGNORE_POINT_LIGHTS
 
@@ -472,18 +488,18 @@ void ObjBean_Init(Actor* thisx, PlayState* play) {
         if (Flags_GetSwitch(play, PARAMS_GET_U(this->dyna.actor.params, 0, 6)) || (DEBUG_FEATURES && mREG(1) == 1)) {
             path = PARAMS_GET_U(this->dyna.actor.params, 8, 5);
             if (path == 0x1F) {
-                PRINTF(VT_COL(RED, WHITE));
+                PRINTF_COLOR_ERROR();
                 // "No path data?"
                 PRINTF("パスデータが無い？(%s %d)(arg_data %xH)\n", "../z_obj_bean.c", 909, this->dyna.actor.params);
-                PRINTF(VT_RST);
+                PRINTF_RST();
                 Actor_Kill(&this->dyna.actor);
                 return;
             }
             if (play->pathList[path].count < 3) {
-                PRINTF(VT_COL(RED, WHITE));
+                PRINTF_COLOR_ERROR();
                 // "Incorrect number of path data"
                 PRINTF("パスデータ数が不正(%s %d)(arg_data %xH)\n", "../z_obj_bean.c", 921, this->dyna.actor.params);
-                PRINTF(VT_RST);
+                PRINTF_RST();
                 Actor_Kill(&this->dyna.actor);
                 return;
             }
@@ -888,10 +904,10 @@ void ObjBean_Update(Actor* thisx, PlayState* play) {
         this->dyna.actor.shape.shadowScale = this->dyna.actor.scale.x * 88.0f;
 
         if (ObjBean_CheckForHorseTrample(this, play)) {
-            PRINTF(VT_FGCOL(CYAN));
+            PRINTF_COLOR_CYAN();
             // "Horse and bean tree lift collision"
             PRINTF("馬と豆の木リフト衝突！！！\n");
-            PRINTF(VT_RST);
+            PRINTF_RST();
             ObjBean_Break(this, play);
             DynaPoly_DisableCollision(play, &play->colCtx.dyna, this->dyna.bgId);
             func_80B908EC(this);

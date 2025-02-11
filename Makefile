@@ -1,7 +1,7 @@
 MAKEFLAGS += --no-builtin-rules --no-print-directory
 
 # Ensure the build fails if a piped command fails
-SHELL = /bin/bash
+SHELL = /usr/bin/env bash
 .SHELLFLAGS = -o pipefail -c
 
 #### Build options ####
@@ -33,6 +33,7 @@ COMPILER ?= gcc
 #   gc-eu          GameCube Europe/PAL
 #   gc-eu-mq       GameCube Europe/PAL Master Quest
 #   gc-jp-ce       GameCube Japan (Collector's Edition disc)
+#   ique-cn        iQue Player (Simplified Chinese)
 #   hackeroot-mq   HackerOoT, based on gc-eu-mq-dbg (default)
 #
 # Note: choosing hackeroot-mq will enable HackerOoT features,
@@ -176,7 +177,6 @@ else ifeq ($(VERSION),gc-jp-ce)
   BUILD_TIME := 21:53:00
   REVISION := 15
 else ifeq ($(VERSION),ique-cn)
-  COMPARE := 0
   REGION ?= US
   PLATFORM := IQUE
   DEBUG_FEATURES ?= 0
@@ -233,7 +233,7 @@ else ifeq ($(PLATFORM),GC)
   LIBULTRA_VERSION := L
   LIBULTRA_PATCH := 0
 else ifeq ($(PLATFORM),IQUE)
-  CPP_DEFINES += -DPLATFORM_N64=0 -DPLATFORM_GC=0 -DPLATFORM_IQUE=1 -DBBPLAYER
+  CPP_DEFINES += -DPLATFORM_N64=0 -DPLATFORM_GC=0 -DPLATFORM_IQUE=1
   LIBULTRA_VERSION := L
   LIBULTRA_PATCH := 0
 else
@@ -280,7 +280,6 @@ VERSION_MACRO := $(shell echo $(VERSION) | tr a-z-. A-Z__)
 CPP_DEFINES += -DOOT_VERSION=$(VERSION_MACRO) -DOOT_REVISION=$(REVISION)
 endif
 CPP_DEFINES += -DOOT_REGION=REGION_$(REGION)
-CPP_DEFINES += -DBUILD_CREATOR="\"$(BUILD_CREATOR)\"" -DBUILD_DATE="\"$(BUILD_DATE)\"" -DBUILD_TIME="\"$(BUILD_TIME)\""
 CPP_DEFINES += -DLIBULTRA_VERSION=LIBULTRA_VERSION_$(LIBULTRA_VERSION)
 CPP_DEFINES += -DLIBULTRA_PATCH=$(LIBULTRA_PATCH)
 ifeq ($(PLATFORM),IQUE)
@@ -358,6 +357,9 @@ OBJCOPY := $(MIPS_BINUTILS_PREFIX)objcopy
 OBJDUMP := $(MIPS_BINUTILS_PREFIX)objdump
 NM      := $(MIPS_BINUTILS_PREFIX)nm
 STRIP   := $(MIPS_BINUTILS_PREFIX)strip
+
+# Command prefix to preprocess a file before running the compiler
+PREPROCESS :=
 
 # Command to patch certain object files after they are built
 POSTPROCESS_OBJ := @:
@@ -455,15 +457,17 @@ ELF      := $(ROM:.z64=.elf)
 MAP      := $(ROM:.z64=.map)
 LDSCRIPT := $(ROM:.z64=.ld)
 DMA_CONFIG_FILE := dma_config.txt
+
 # description of ROM segments
-SPEC := spec
+SPEC := spec/spec
+SPEC_INCLUDES := $(wildcard spec/*.inc)
 
 # Baserom to use when creating BPS patches
 BASEROM_PATCH ?= baseroms/$(VERSION)/baserom.z64
 
 ifeq ($(COMPILER),gcc)
 SRC_DIRS := $(shell find src -type d)
-endif
+UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
 
 ifneq ($(wildcard $(EXTRACTED_DIR)/assets/audio),)
   SAMPLE_EXTRACT_DIRS := $(shell find $(EXTRACTED_DIR)/assets/audio/samples -type d)
@@ -539,36 +543,22 @@ ASSET_BIN_DIRS := $(ASSET_BIN_DIRS_EXTRACTED) $(ASSET_BIN_DIRS_COMMITTED)
 ASSET_FILES_BIN_EXTRACTED := $(foreach dir,$(ASSET_BIN_DIRS_EXTRACTED),$(wildcard $(dir)/*.bin))
 ASSET_FILES_BIN_COMMITTED := $(foreach dir,$(ASSET_BIN_DIRS_COMMITTED),$(wildcard $(dir)/*.bin))
 ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_BIN_EXTRACTED:.bin=.bin.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
-                   $(foreach f,$(ASSET_FILES_BIN_COMMITTED:.bin=.bin.inc.c),$(BUILD_DIR)/$f) \
-                   $(foreach f,$(wildcard assets/text/*.c),$(BUILD_DIR)/$(f:.c=.o))
+                   $(foreach f,$(ASSET_FILES_BIN_COMMITTED:.bin=.bin.inc.c),$(BUILD_DIR)/$f)
 
-UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
+# Find all .o files included in the spec
+SPEC_O_FILES := $(shell $(CPP) $(CPPFLAGS) -I. $(SPEC) | $(BUILD_DIR_REPLACE) | sed -n -E 's/^[ \t]*include[ \t]*"([a-zA-Z0-9/_.-]+\.o)"/\1/p')
 
-BASEROM_BIN_FILES := $(wildcard $(EXTRACTED_DIR)/baserom/*)
-
-# source files
-ASSET_C_FILES_EXTRACTED := $(filter-out %.inc.c,$(foreach dir,$(ASSET_BIN_DIRS_EXTRACTED),$(wildcard $(dir)/*.c)))
-ASSET_C_FILES_COMMITTED := $(filter-out %.inc.c,$(foreach dir,$(ASSET_BIN_DIRS_COMMITTED),$(wildcard $(dir)/*.c)))
-SRC_C_FILES   := $(filter-out %.inc.c,$(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c)))
-S_FILES       := $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS),$(wildcard $(dir)/*.s))
-O_FILES       := $(foreach f,$(S_FILES:.s=.o),$(BUILD_DIR)/$f) \
-                 $(foreach f,$(SRC_C_FILES:.c=.o),$(BUILD_DIR)/$f) \
-                 $(foreach f,$(ASSET_C_FILES_EXTRACTED:.c=.o),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
-                 $(foreach f,$(ASSET_C_FILES_COMMITTED:.c=.o),$(BUILD_DIR)/$f) \
-                 $(foreach f,$(BASEROM_BIN_FILES),$(BUILD_DIR)/baserom/$(notdir $f).o) \
-                 $(BUILD_DIR)/src/code/z_message_z_game_over.o \
-                 $(BUILD_DIR)/src/makerom/ipl3.o
+# Split out reloc files
+O_FILES := $(filter-out %_reloc.o,$(SPEC_O_FILES))
+OVL_RELOC_FILES := $(filter %_reloc.o,$(SPEC_O_FILES))
 
 UCODE_PATCHES := $(wildcard F3DEX3/*.bps)
 UCODE_FILES   := $(foreach f,$(UCODE_PATCHES:.bps=),$f)
 UCODE_O_FILES := $(foreach f,$(UCODE_FILES),$(BUILD_DIR)/$f.o)
 
-OVL_RELOC_FILES := $(shell $(CPP) $(CPPFLAGS) $(SPEC) | $(BUILD_DIR_REPLACE) | grep -o '[^"]*_reloc.o' )
-
 # Automatic dependency files
 # (Only asm_processor dependencies and reloc dependencies are handled for now)
 DEP_FILES := $(O_FILES:.o=.asmproc.d) $(OVL_RELOC_FILES:.o=.d)
-
 
 TEXTURE_FILES_PNG_EXTRACTED := $(foreach dir,$(ASSET_BIN_DIRS_EXTRACTED),$(wildcard $(dir)/*.png))
 TEXTURE_FILES_PNG_COMMITTED := $(foreach dir,$(ASSET_BIN_DIRS_COMMITTED),$(wildcard $(dir)/*.png))
@@ -601,6 +591,8 @@ $(shell mkdir -p $(foreach dir, \
                       $(ASSET_BIN_DIRS_EXTRACTED), \
                     $(dir:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)))
 endif
+
+$(BUILD_DIR)/src/boot/build.o: CPP_DEFINES += -DBUILD_CREATOR="\"$(BUILD_CREATOR)\"" -DBUILD_DATE="\"$(BUILD_DATE)\"" -DBUILD_TIME="\"$(BUILD_TIME)\""
 
 ifeq ($(COMPILER),gcc)
 # Note that if adding additional assets directories for modding reasons these flags must also be used there
@@ -764,8 +756,22 @@ verify:
 
 #### Various Recipes ####
 
+ifeq ($(COMPRESSION),gzip)
+  COMPRESS_ARGS := --format gzip --pad-to 0x4000
+  CIC = 6102
+  USE_WRAPPER = 0
+else
+ifeq ($(COMPRESSION),yaz)
+  COMPRESS_ARGS := --format yaz0 --pad-to 0x800000 --fill-padding-bytes
+  CIC = 6105
+  USE_WRAPPER = 0
+else
+  USE_WRAPPER = 1
+endif
+endif
+
 $(ROM): $(ELF)
-	$(V)$(ELF2ROM) -cic 6105 $< $@
+	$(V)$(ELF2ROM) -cic $(CIC) $< $@
 	@$(PRINT) "${BLINK}Build succeeded.\n$(NO_COL)"
 	@$(PRINT) "==== Build Options ====$(NO_COL)\n"
 	@$(PRINT) "${GREEN}OoT Version: $(BLUE)$(VERSION)$(NO_COL)\n"
@@ -773,27 +779,27 @@ $(ROM): $(ELF)
 	@$(PRINT) "${GREEN}Build Author: $(BLUE)$(PACKAGE_AUTHOR)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Commit Author: $(BLUE)$(PACKAGE_COMMIT_AUTHOR)$(NO_COL)\n"
 
-ifeq ($(PLATFORM),IQUE)
-  COMPRESS_ARGS := --format gzip --pad-to 0x4000
-  CIC = 6102
-else
-  COMPRESS_ARGS := --format yaz0 --pad-to 0x800000 --fill-padding-bytes
-  CIC = 6105
-endif
-
 $(ROMC): $(ROM) $(ELF) $(BUILD_DIR)/compress_ranges.txt
-ifeq ($(COMPRESSION),yaz)
+ifeq ($(USE_WRAPPER),0)
 	$(V)$(PYTHON) tools/compress.py --in $(ROM) --out $@ --dmadata-start `./tools/dmadata_start.sh $(NM) $(ELF)` --compress `cat $(BUILD_DIR)/compress_ranges.txt` --threads $(N_THREADS) $(COMPRESS_ARGS)
 else
 	$(V)$(PYTHON) tools/z64compress_wrapper.py --codec $(COMPRESSION) --cache $(BUILD_DIR)/cache --threads $(N_THREADS) $< $@ $(ELF) $(BUILD_DIR)/$(SPEC)
 endif
 	$(V)$(PYTHON) -m ipl3checksum sum --cic $(CIC) --update $@
 
+COM_PLUGIN := tools/com-plugin/common-plugin.so
+
+LDFLAGS := -T $(LDSCRIPT) -T $(BUILD_DIR)/linker_scripts/makerom.ld -T $(BUILD_DIR)/undefined_syms.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP)
+ifeq ($(PLATFORM),IQUE)
+  LDFLAGS += -plugin $(COM_PLUGIN) -plugin-opt order=$(BASEROM_DIR)/bss-order.txt
+  $(ELF): $(BASEROM_DIR)/bss-order.txt
+endif
+
 $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(UCODE_O_FILES) $(LDSCRIPT) $(BUILD_DIR)/linker_scripts/makerom.ld $(BUILD_DIR)/undefined_syms.txt \
         $(SAMPLEBANK_O_FILES) $(SOUNDFONT_O_FILES) $(SEQUENCE_O_FILES) \
         $(BUILD_DIR)/assets/audio/sequence_font_table.o $(BUILD_DIR)/assets/audio/audiobank_padding.o
-	$(call print_one_arg,Linking:,$@)
-	$(V)$(LD) -T $(LDSCRIPT) -T $(BUILD_DIR)/linker_scripts/makerom.ld -T $(BUILD_DIR)/undefined_syms.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP) -o $@
+  $(call print_one_arg,Linking:,$@)
+	$(V)$(LD) $(LDFLAGS) -o $@
 
 $(BUILD_DIR)/linker_scripts/makerom.ld: linker_scripts/makerom.ld
 	$(V)$(CPP) -I include $(CPPFLAGS) $< > $@
@@ -810,11 +816,11 @@ $(O_FILES): | asset_files
 
 .PHONY: o_files asset_files
 
-$(BUILD_DIR)/$(SPEC): $(SPEC)
+$(BUILD_DIR)/spec: $(SPEC) $(SPEC_INCLUDES)
 	$(call print_two_args,Preprocessing:,$<,$@)
-	$(V)$(CPP) $(CPPFLAGS) $< | $(BUILD_DIR_REPLACE) > $@
+	$(V)$(CPP) $(CPPFLAGS) -I. $< | $(BUILD_DIR_REPLACE) > $@
 
-$(LDSCRIPT): $(BUILD_DIR)/$(SPEC)
+$(LDSCRIPT): $(BUILD_DIR)/spec
 	$(call print_two_args,Creating linker script:,$<,$@)
 	$(V)$(MKLDSCRIPT) $< $@
 
@@ -891,9 +897,10 @@ $(BUILD_DIR)/src/%.o: src/%.s
 
 # Incremental link to move z_message and z_game_over data into rodata
 $(BUILD_DIR)/src/code/z_message_z_game_over.o: $(BUILD_DIR)/src/code/z_message.o $(BUILD_DIR)/src/code/z_game_over.o
-	$(V)$(LD) -r -T linker_scripts/data_with_rodata.ld -o $@ $^
+	$(V)$(LD) -r -G 0 -T linker_scripts/data_with_rodata.ld -o $@ $^
+	$(V)$(PYTHON) tools/patch_data_with_rodata_mdebug.py $@
 
-$(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt: $(BUILD_DIR)/$(SPEC)
+$(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt: $(BUILD_DIR)/spec
 	$(V)$(MKDMADATA) $< $(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt
 
 # Dependencies for files that may include the dmadata header automatically generated from the spec file
@@ -917,7 +924,7 @@ ifneq ($(RUN_CC_CHECK),0)
 	$(V)$(CC_CHECK) $<
 endif
 	$(call print_two_args,Compiling:,$<,$@)
-	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
+	$(V)$(PREPROCESS) $(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)$(POSTPROCESS_OBJ) $@
 	$(V)$(OBJDUMP_CMD)
 
@@ -928,11 +935,19 @@ endif
 	$(call print_two_args,Compiling:,$<,$@)
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $(@:.o=.tmp) $<
 	$(V)$(LD) -r -T linker_scripts/data_with_rodata.ld -o $@ $(@:.o=.tmp)
-	$(V)$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
+	$(V)$(PYTHON) tools/patch_data_with_rodata_mdebug.py $@
+	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
 
-$(BUILD_DIR)/src/overlays/%_reloc.o: $(BUILD_DIR)/$(SPEC)
+ifeq ($(PLATFORM),IQUE)
+ifneq ($(NON_MATCHING),1)
+$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/ovl_kaleido_scope_reloc.o: POSTPROCESS_OBJ := $(PYTHON) tools/patch_ique_kaleido_reloc.py
+endif
+endif
+
+$(BUILD_DIR)/src/overlays/%_reloc.o: $(BUILD_DIR)/spec
 	$(call print_two_args,Generating Relocation:,$<,$@)
 	$(V)$(FADO) $$(tools/reloc_prereq $< $(notdir $*)) -n $(notdir $*) -o $(@:.o=.s) -M $(@:.o=.d)
+	$(V)$(POSTPROCESS_OBJ) $(@:.o=.s)
 	$(V)$(AS) $(ASFLAGS) $(@:.o=.s) -o $@
 
 $(BUILD_DIR)/assets/%.inc.c: assets/%.png
@@ -1106,6 +1121,7 @@ ifneq ($(RUN_CC_CHECK),0)
 endif
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $(@:.o=.tmp) $<
 	$(V)$(LD) -r -T linker_scripts/data_with_rodata.ld $(@:.o=.tmp) -o $@
+	$(V)$(PYTHON) tools/patch_data_with_rodata_mdebug.py $@
 	@$(RM) $(@:.o=.tmp)
 
 $(BUILD_DIR)/assets/audio/sequence_font_table.o: $(BUILD_DIR)/assets/audio/sequence_font_table.s

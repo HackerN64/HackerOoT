@@ -135,7 +135,7 @@ void EnFish_Init(Actor* thisx, PlayState* play) {
     Actor_ProcessInitChain(&this->actor, sInitChain);
     SkelAnime_InitFlex(play, &this->skelAnime, &gFishSkel, &gFishInWaterAnim, this->jointTable, this->morphTable, 7);
     Collider_InitJntSph(play, &this->collider);
-    Collider_SetJntSph(play, &this->collider, &this->actor, &sJntSphInit, this->colliderItems);
+    Collider_SetJntSph(play, &this->collider, &this->actor, &sJntSphInit, this->colliderElements);
     this->actor.colChkInfo.mass = 50;
     this->slowPhase = Rand_ZeroOne() * (0xFFFF + 0.5f);
     this->fastPhase = Rand_ZeroOne() * (0xFFFF + 0.5f);
@@ -384,10 +384,10 @@ void EnFish_Dropped_Fall(EnFish* this, PlayState* play) {
         EnFish_Dropped_SetupSwimAway(this);
     } else if ((this->timer <= 0) && (this->actor.params == FISH_DROPPED) &&
                (this->actor.floorHeight < BGCHECK_Y_MIN + 10.0f)) {
-        PRINTF(VT_COL(YELLOW, BLACK));
+        PRINTF_COLOR_WARNING();
         // "BG missing? Running Actor_delete"
         PRINTF("BG 抜け？ Actor_delete します(%s %d)\n", "../z_en_sakana.c", 822);
-        PRINTF(VT_RST);
+        PRINTF_RST();
         Actor_Kill(&this->actor);
     }
 }

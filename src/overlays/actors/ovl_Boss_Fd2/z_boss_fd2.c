@@ -185,7 +185,7 @@ void BossFd2_Init(Actor* thisx, PlayState* play) {
         this->actionFunc = BossFd2_Wait;
     }
     Collider_InitJntSph(play, &this->collider);
-    Collider_SetJntSph(play, &this->collider, &this->actor, &sJntSphInit, this->elements);
+    Collider_SetJntSph(play, &this->collider, &this->actor, &sJntSphInit, this->colliderElements);
 }
 
 void BossFd2_Destroy(Actor* thisx, PlayState* play) {
@@ -816,7 +816,7 @@ void BossFd2_CollisionCheck(BossFd2* this, PlayState* play) {
     if (this->actionFunc == BossFd2_ClawSwipe) {
         Player* player = GET_PLAYER(play);
 
-        for (i = 0; i < ARRAY_COUNT(this->elements); i++) {
+        for (i = 0; i < ARRAY_COUNT(this->colliderElements); i++) {
             if (this->collider.elements[i].base.atElemFlags & ATELEM_HIT) {
                 this->collider.elements[i].base.atElemFlags &= ~ATELEM_HIT;
                 Actor_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
@@ -877,10 +877,10 @@ void BossFd2_CollisionCheck(BossFd2* this, PlayState* play) {
             }
             if (((s8)bossFd->actor.colChkInfo.health > 2) || canKill) {
                 bossFd->actor.colChkInfo.health -= damage;
-                PRINTF(VT_FGCOL(GREEN));
+                PRINTF_COLOR_GREEN();
                 PRINTF("damage   %d\n", damage);
             }
-            PRINTF(VT_RST);
+            PRINTF_RST();
             PRINTF("hp %d\n", bossFd->actor.colChkInfo.health);
 
             if ((s8)bossFd->actor.colChkInfo.health <= 0) {

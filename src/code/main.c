@@ -5,7 +5,7 @@
 extern uintptr_t gSegments[NUM_SEGMENTS];
 
 #pragma increment_block_number "gc-eu:252 gc-eu-mq:252 gc-jp:252 gc-jp-ce:252 gc-jp-mq:252 gc-us:252 gc-us-mq:252" \
-                               "ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
+                               "ique-cn:252 ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
 
 extern struct PreNmiBuff* gAppNmiBufferPtr;
 extern struct Scheduler gScheduler;
@@ -23,8 +23,8 @@ extern struct IrqMgr gIrqMgr;
 #include "n64dd.h"
 #endif
 
-#pragma increment_block_number "gc-eu:160 gc-eu-mq:160 gc-jp:160 gc-jp-ce:160 gc-jp-mq:160 gc-us:160 gc-us-mq:160" \
-                               "ntsc-1.0:142 ntsc-1.1:142 ntsc-1.2:142 pal-1.0:140 pal-1.1:140"
+#pragma increment_block_number "gc-eu:144 gc-eu-mq:144 gc-jp:144 gc-jp-ce:144 gc-jp-mq:144 gc-us:144 gc-us-mq:144" \
+                               "ique-cn:160 ntsc-1.0:136 ntsc-1.1:136 ntsc-1.2:136 pal-1.0:134 pal-1.1:134"
 
 extern u8 _buffersSegmentEnd[];
 
@@ -67,11 +67,11 @@ u8 gRDPTimingsExist;
 
 #if DEBUG_FEATURES
 void Main_LogSystemHeap(void) {
-    PRINTF(VT_FGCOL(GREEN));
+    PRINTF_COLOR_GREEN();
     PRINTF(
         T("システムヒープサイズ %08x(%dKB) 開始アドレス %08x\n", "System heap size %08x (%dKB) Start address %08x\n"),
         gSystemHeapSize, gSystemHeapSize / 1024, _buffersSegmentEnd);
-    PRINTF(VT_RST);
+    PRINTF_RST();
 }
 #endif
 

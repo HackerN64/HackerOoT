@@ -1,16 +1,7 @@
 #ifndef STDARG_H
 #define STDARG_H
 
-// When building with modern GCC, use the official vaarg macros to avoid warnings and possibly bad codegen.
-
-#if __GNUC__ >= 3
-
-#define va_list  __builtin_va_list
-#define va_start __builtin_va_start
-#define va_arg   __builtin_va_arg
-#define va_end   __builtin_va_end
-
-#elif defined(__sgi) /* IDO */
+#if defined(__sgi) /* IDO */
 
 #ifndef _VA_LIST_
 # define _VA_LIST_
@@ -52,7 +43,7 @@ typedef char* va_list;
 /* No cleanup processing is required for the end of a varargs list: */
 #define va_end(__list)
 
-#else /* EGCS */
+#elif defined(EGCS) /* EGCS */
 
 typedef char * __gnuc_va_list;
 
@@ -66,13 +57,22 @@ typedef char * __gnuc_va_list;
 
 /* We cast to void * and then to TYPE * because this avoids
    a warning about increasing the alignment requirement.  */
-#define va_arg(__AP, __type)                                                \
-  ((__type *) (void *) (__AP = (char *) ((__alignof__(__type) > 4           \
-                                ? ((__PTRDIFF_TYPE__)__AP + 8 - 1) & -8     \
-                                : ((__PTRDIFF_TYPE__)__AP + 4 - 1) & -4)    \
-                                         + __va_rounded_size(__type))))[-1]
+#define va_arg(__AP, __type)                                                                \
+  ((__type *) (void *) (__AP = (char *) ((__alignof__(__type) > 4                           \
+                                ? ((__PTRDIFF_TYPE__)__AP + 8 - 1) & -8                     \
+                                : ((__PTRDIFF_TYPE__)__AP + 4 - 1) & -4)                    \
+                                + __va_rounded_size (__type))),                             \
+                                *(__type *) (void *) (__AP - __va_rounded_size (__type)))
 
 typedef __gnuc_va_list va_list;
+
+#else /* Modern GCC */
+
+// When building with modern GCC, use the official vaarg macros to avoid warnings and possibly bad codegen.
+#define va_list  __builtin_va_list
+#define va_start __builtin_va_start
+#define va_arg   __builtin_va_arg
+#define va_end   __builtin_va_end
 
 #endif
 

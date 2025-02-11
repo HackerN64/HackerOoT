@@ -1,6 +1,19 @@
 #include "file_select.h"
+
+#include "controller.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "rumble.h"
+#include "sfx.h"
+#include "sys_matrix.h"
 #include "terminal.h"
 #include "versions.h"
+#include "z64audio.h"
+#include "z64save.h"
+
+#include "macros.h"
+#include "global.h"
+
 #include "assets/textures/title_static/title_static.h"
 #include "assets/overlays/ovl_file_choose/ovl_file_choose.h"
 
@@ -1347,13 +1360,13 @@ void FileSelect_UpdateOptionsMenu(GameState* thisx) {
 #endif
         PRINTF("ＳＡＶＥ");
         Sram_WriteSramHeader(sramCtx);
-        PRINTF(VT_FGCOL(YELLOW));
+        PRINTF_COLOR_YELLOW();
         PRINTF("sram->read_buff[2] = J_N = %x\n", sramCtx->readBuff[2]);
         PRINTF("sram->read_buff[2] = J_N = %x\n", &sramCtx->readBuff[2]);
         PRINTF("Na_SetSoundOutputMode = %d\n", gSaveContext.audioSetting);
         PRINTF("Na_SetSoundOutputMode = %d\n", gSaveContext.audioSetting);
         PRINTF("Na_SetSoundOutputMode = %d\n", gSaveContext.audioSetting);
-        PRINTF(VT_RST);
+        PRINTF_RST();
         func_800F6700(gSaveContext.audioSetting);
         PRINTF("終了\n");
         return;

@@ -54,6 +54,8 @@ endif
 	$(V)$(MAKE) -C Flips TARGET=cli
 	$(call print_no_args,Building audio tools...)
 	$(V)$(MAKE) -C audio
+	$(call print_no_args,Building com-plugin...)
+	$(V)$(MAKE) -C com-plugin
 
 clean:
 	$(V)$(RM) $(PROGRAMS) $(addsuffix .exe,$(PROGRAMS))
@@ -67,6 +69,7 @@ endif
 	$(V)$(MAKE) -C Flips clean
 	$(V)rm Flips/flips
 	$(V)$(MAKE) -C audio clean
+	$(V)$(MAKE) -C com-plugin clean
 
 distclean: clean
 	$(V)$(MAKE) -C audio distclean

@@ -16,7 +16,7 @@
 #include "z_lib.h"
 
 #pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
-                               "ntsc-1.0:96 ntsc-1.1:96 ntsc-1.2:96 pal-1.0:96 pal-1.1:96"
+                               "ique-cn:128 ntsc-1.0:104 ntsc-1.1:104 ntsc-1.2:104 pal-1.0:104 pal-1.1:104"
 
 typedef s32 (*ColChkResetFunc)(PlayState*, Collider*);
 typedef void (*ColChkApplyFunc)(PlayState*, CollisionCheckContext*, Collider*);
@@ -46,7 +46,7 @@ void Collider_DrawPoly(GraphicsContext* gfxCtx, Vec3f* vA, Vec3f* vB, Vec3f* vC,
 
     OPEN_DISPS(gfxCtx, "../z_collision_check.c", 713);
 
-    gSPMatrix(POLY_OPA_DISP++, &gMtxClear, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPMatrix(POLY_OPA_DISP++, &gIdentityMtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(POLY_OPA_DISP++, 0x00, 0xFF, r, g, b, 50);
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetRenderMode(POLY_OPA_DISP++, G_RM_FOG_SHADE_A, G_RM_AA_ZB_OPA_SURF2);
@@ -367,9 +367,9 @@ s32 Collider_SetJntSphToActor(PlayState* play, ColliderJntSph* dest, ColliderJnt
 
     if (dest->elements == NULL) {
         dest->count = 0;
-        PRINTF(VT_FGCOL(RED));
+        PRINTF_COLOR_RED();
         PRINTF(T("ClObjJntSph_set():zelda_malloc()出来ません。\n", "ClObjJntSph_set():zelda_malloc() Can not.\n"));
-        PRINTF(VT_RST);
+        PRINTF_RST();
         return false;
     }
 
@@ -395,9 +395,9 @@ s32 Collider_SetJntSphAllocType1(PlayState* play, ColliderJntSph* dest, Actor* a
 
     if (dest->elements == NULL) {
         dest->count = 0;
-        PRINTF(VT_FGCOL(RED));
+        PRINTF_COLOR_RED();
         PRINTF(T("ClObjJntSph_set3():zelda_malloc_出来ません。\n", "ClObjJntSph_set3():zelda_malloc_ Can not.\n"));
-        PRINTF(VT_RST);
+        PRINTF_RST();
         return false;
     }
 
@@ -423,9 +423,9 @@ s32 Collider_SetJntSphAlloc(PlayState* play, ColliderJntSph* dest, Actor* actor,
 
     if (dest->elements == NULL) {
         dest->count = 0;
-        PRINTF(VT_FGCOL(RED));
+        PRINTF_COLOR_RED();
         PRINTF(T("ClObjJntSph_set5():zelda_malloc出来ません\n", "ClObjJntSph_set5():zelda_malloc Can not\n"));
-        PRINTF(VT_RST);
+        PRINTF_RST();
         return false;
     }
     for (destElem = dest->elements, srcElem = src->elements; destElem < dest->elements + dest->count;
@@ -729,9 +729,9 @@ s32 Collider_SetTrisAllocType1(PlayState* play, ColliderTris* dest, Actor* actor
     dest->elements = ZELDA_ARENA_MALLOC(dest->count * sizeof(ColliderTrisElement), "../z_collision_check.c", 2156);
     if (dest->elements == NULL) {
         dest->count = 0;
-        PRINTF(VT_FGCOL(RED));
+        PRINTF_COLOR_RED();
         PRINTF(T("ClObjTris_set3():zelda_malloc()出来ません\n", "ClObjTris_set3():zelda_malloc() Can not\n"));
-        PRINTF(VT_RST);
+        PRINTF_RST();
         return false;
     }
     for (destElem = dest->elements, srcElem = src->elements; destElem < dest->elements + dest->count;
@@ -755,9 +755,9 @@ s32 Collider_SetTrisAlloc(PlayState* play, ColliderTris* dest, Actor* actor, Col
     dest->elements = ZELDA_ARENA_MALLOC(dest->count * sizeof(ColliderTrisElement), "../z_collision_check.c", 2207);
 
     if (dest->elements == NULL) {
-        PRINTF(VT_FGCOL(RED));
+        PRINTF_COLOR_RED();
         PRINTF(T("ClObjTris_set5():zelda_malloc出来ません\n", "ClObjTris_set5():zelda_malloc Can not\n"));
-        PRINTF(VT_RST);
+        PRINTF_RST();
         dest->count = 0;
         return false;
     }
@@ -2233,7 +2233,7 @@ void CollisionCheck_ATTrisVsACCyl(PlayState* play, CollisionCheckContext* colChk
 }
 
 #pragma increment_block_number "gc-eu:252 gc-eu-mq:252 gc-jp:252 gc-jp-ce:252 gc-jp-mq:252 gc-us:252 gc-us-mq:252" \
-                               "ntsc-1.0:252 ntsc-1.1:252 ntsc-1.2:252 pal-1.0:252 pal-1.1:252"
+                               "ique-cn:252 ntsc-1.0:252 ntsc-1.1:252 ntsc-1.2:252 pal-1.0:252 pal-1.1:252"
 
 void CollisionCheck_ATCylVsACQuad(PlayState* play, CollisionCheckContext* colChkCtx, Collider* atCol, Collider* acCol) {
     static TriNorm tri1;

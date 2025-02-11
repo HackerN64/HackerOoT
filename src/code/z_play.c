@@ -9,6 +9,8 @@
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
+
+#include "z64debug_display.h"
 #include "z64frame_advance.h"
 #include "z64camera.h"
 
@@ -182,7 +184,7 @@ void Play_SetupTransition(PlayState* this, s32 transitionType) {
                 break;
 
             default:
-                HUNGUP_AND_CRASH("../z_play.c", LN5(2263, 2266, 2269, 2272, 2287, 2290, 2293));
+                HUNGUP_AND_CRASH("../z_play.c", LN5(2263, 2266, 2269, 2272, 2282, 2287, 2290, 2293));
                 break;
         }
     }
@@ -1927,7 +1929,7 @@ s16 Play_CreateSubCamera(PlayState* this) {
     return camId;
 }
 
-s16 Play_GetActiveCamId(PlayState* this) {
+s32 Play_GetActiveCamId(PlayState* this) {
     return this->activeCamId;
 }
 

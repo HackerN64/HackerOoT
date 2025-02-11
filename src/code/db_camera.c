@@ -3,6 +3,7 @@
 #include "config.h"
 
 #if IS_CAMERA_DEBUG_ENABLED
+#include "z64debug_display.h"
 
 #define DEBUG_CAM_CONTROLLER_PORT 2
 
@@ -2370,5 +2371,3 @@ void func_800BB060(void) {
 int func_800BB06C(void) {
     return sDebugCamPtr->unk_00 == 2 && sDebugCamAnim.unk_0A != 0;
 }
-
-#endif

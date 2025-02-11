@@ -1,6 +1,18 @@
 #include "z_bg_spot18_basket.h"
-#include "assets/objects/object_spot18_obj/object_spot18_obj.h"
+
+#include "libc64/qrand.h"
+#include "ichain.h"
+#include "one_point_cutscene.h"
+#include "sfx.h"
+#include "sys_math3d.h"
 #include "terminal.h"
+#include "z_en_item00.h"
+#include "z_lib.h"
+#include "z64audio.h"
+#include "z64effect.h"
+#include "z64play.h"
+
+#include "assets/objects/object_spot18_obj/object_spot18_obj.h"
 
 #define FLAGS ACTOR_FLAG_UPDATE_CULLING_DISABLED
 
@@ -155,9 +167,9 @@ void BgSpot18Basket_Init(Actor* thisx, PlayState* play) {
                        this->dyna.actor.shape.rot.y + 0x1555, this->dyna.actor.shape.rot.z, -1);
 
     if (this->dyna.actor.child == NULL) {
-        PRINTF(VT_FGCOL(RED));
+        PRINTF_COLOR_RED();
         PRINTF("Ｅｒｒｏｒ : 変化壷蓋発生失敗(%s %d)\n", "../z_bg_spot18_basket.c", 351);
-        PRINTF(VT_RST);
+        PRINTF_RST();
         Actor_Kill(&this->dyna.actor);
     }
 }
