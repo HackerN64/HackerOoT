@@ -3007,9 +3007,8 @@ void Message_DrawTextBox(PlayState* play, Gfx** p) {
     R_TEXTBOX_TEXHEIGHT = 442;
 #endif
 
-    gSPTextureRectangle(gfx++, posX << 2, R_TEXTBOX_Y << 2, (posX + width) << 2,
-                        (R_TEXTBOX_Y + R_TEXTBOX_HEIGHT) << 2, G_TX_RENDERTILE, 0, 0, texWidth << 1,
-                        R_TEXTBOX_TEXHEIGHT << 1);
+    gSPTextureRectangle(gfx++, posX << 2, R_TEXTBOX_Y << 2, (posX + width) << 2, (R_TEXTBOX_Y + R_TEXTBOX_HEIGHT) << 2,
+                        G_TX_RENDERTILE, 0, 0, texWidth << 1, R_TEXTBOX_TEXHEIGHT << 1);
 
     // Draw treble clef
     if (msgCtx->textBoxType == TEXTBOX_TYPE_OCARINA) {

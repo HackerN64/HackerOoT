@@ -589,7 +589,8 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
 
     if ((s16)this->effectPrimLodFrac != 0) {
         for (k = 0, i = 0, rectTop = 0; i < 3; i++) {
-            for (j = 0, rectLeft = WIDE_INCR(64 + LOGO_X_SHIFT, (u16)(WIDE_GET_RATIO * 10.0f)); j < 3; j++, k++, rectLeft += WIDE_INCR(64, -(u16)(WIDE_GET_16_9 * 10.0f))) {
+            for (j = 0, rectLeft = WIDE_INCR(64 + LOGO_X_SHIFT, (u16)(WIDE_GET_RATIO * 10.0f)); j < 3;
+                 j++, k++, rectLeft += WIDE_INCR(64, -(u16)(WIDE_GET_16_9 * 10.0f))) {
                 EnMag_DrawEffectTextures(&gfx, effectMaskTextures[k], gTitleFlameEffectTex, 64, 64, 32, 32, rectLeft,
                                          rectTop, 64, 64, 1024, 1024, 1, 1, k, this);
             }

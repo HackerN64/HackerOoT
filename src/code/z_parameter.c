@@ -3005,9 +3005,11 @@ void Magic_DrawMeter(PlayState* play) {
         gDPLoadTextureBlock(OVERLAY_DISP++, gMagicMeterEndTex, G_IM_FMT_IA, G_IM_SIZ_8b, 8, 16, 0,
                             G_TX_MIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 3, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
-        gSPTextureRectangle(OVERLAY_DISP++, WIDE_MULT(WIDE_INCR((R_MAGIC_METER_X + 8 + gSaveContext.magicCapacity), 1), WIDE_GET_RATIO) << 2, magicMeterY << 2,
-        WIDE_MULT((R_MAGIC_METER_X + 8 + gSaveContext.magicCapacity + 8), WIDE_GET_RATIO) << 2, (magicMeterY + 16) << 2,
-                            G_TX_RENDERTILE, 256, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
+        gSPTextureRectangle(
+            OVERLAY_DISP++,
+            WIDE_MULT(WIDE_INCR((R_MAGIC_METER_X + 8 + gSaveContext.magicCapacity), 1), WIDE_GET_RATIO) << 2,
+            magicMeterY << 2, WIDE_MULT((R_MAGIC_METER_X + 8 + gSaveContext.magicCapacity + 8), WIDE_GET_RATIO) << 2,
+            (magicMeterY + 16) << 2, G_TX_RENDERTILE, 256, 0, WIDE_DIV((1 << 10), WIDE_GET_RATIO), 1 << 10);
 
         gDPPipeSync(OVERLAY_DISP++);
         gDPSetCombineLERP(OVERLAY_DISP++, PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, 0, 0, 0, PRIMITIVE, PRIMITIVE,
@@ -3269,9 +3271,10 @@ void Interface_DrawItemButtons(PlayState* play) {
             gDPLoadTextureBlock_4b(OVERLAY_DISP++, cUpLabelTextures[gSaveContext.language], G_IM_FMT_IA, 32, 8, 0,
                                    G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
                                    G_TX_NOLOD, G_TX_NOLOD);
-            gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((R_C_UP_ICON_X << 2), WIDE_CUP_SHIFT), R_C_UP_ICON_Y << 2, 
-            WIDE_INCR((R_C_UP_ICON_X + 32), WIDE_CUP_SHIFT - (s32)WIDE_GET_4_3) << 2,
-                                (R_C_UP_ICON_Y + 8) << 2, G_TX_RENDERTILE, 0, 0, WIDE_N64_MODE(WIDE_DIV((1 << 10), WIDE_GET_RATIO), -20), WIDE_N64_MODE((1 << 10), -20));
+            gSPTextureRectangle(OVERLAY_DISP++, WIDE_INCR((R_C_UP_ICON_X << 2), WIDE_CUP_SHIFT), R_C_UP_ICON_Y << 2,
+                                WIDE_INCR((R_C_UP_ICON_X + 32), WIDE_CUP_SHIFT - (s32)WIDE_GET_4_3) << 2,
+                                (R_C_UP_ICON_Y + 8) << 2, G_TX_RENDERTILE, 0, 0,
+                                WIDE_N64_MODE(WIDE_DIV((1 << 10), WIDE_GET_RATIO), -20), WIDE_N64_MODE((1 << 10), -20));
 #else
             gDPLoadTextureBlock_4b(OVERLAY_DISP++, cUpLabelTextures[gSaveContext.language], G_IM_FMT_IA, 48, 16, 0,
                                    G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,

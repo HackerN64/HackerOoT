@@ -447,7 +447,7 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
 #elif COMPRESS_GZIP
                 gzip_decompress(romStart, ram, romSize);
 #else
-                #error "Wrong compression setting."
+#error "Wrong compression setting."
 #endif
 
                 osSetThreadPri(NULL, THREAD_PRI_DMAMGR);

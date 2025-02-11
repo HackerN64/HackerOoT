@@ -65,7 +65,7 @@ void Locale_Init(void) {
     PRINTF(T("z_locale_init:日本用かアメリカ用か３コンで判断させる\n",
              "z_locale_init: Determine whether it is for Japan or America using 3 controls\n"));
 #else
-    gCurrentRegion = REGION_US;
+        gCurrentRegion = REGION_US;
 #endif
 }
 
