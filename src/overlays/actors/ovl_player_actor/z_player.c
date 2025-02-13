@@ -3566,7 +3566,9 @@ void Player_UseItem(PlayState* play, Player* this, s32 item) {
                 // Handle "cutscene items"
                 if (!Player_CheckHostileLockOn(this) ||
                     ((itemAction >= PLAYER_IA_BOTTLE_POTION_RED) && (itemAction <= PLAYER_IA_BOTTLE_FAIRY))) {
+#if ENABLE_MM_TITLE_CARDS
                     TitleCard_Clear(play, &play->actorCtx.titleCtx);
+#endif
                     this->unk_6AD = 4;
                     this->itemAction = itemAction;
                 }
@@ -10781,7 +10783,9 @@ void Player_Init(Actor* thisx, PlayState* play2) {
                 ((play->sceneId != SCENE_BOMBCHU_SHOP) || GET_EVENTCHKINF(EVENTCHKINF_25))
 #endif
             ) {
+#if !ENABLE_MM_TITLE_CARDS
                 TitleCard_InitPlaceName(play, &play->actorCtx.titleCtx, this->giObjectSegment, 160, 120, 144, 24, 20);
+#endif
             }
         }
 

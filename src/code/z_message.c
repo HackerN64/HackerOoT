@@ -3,9 +3,11 @@
 #include "terminal.h"
 #include "versions.h"
 #include "assets/textures/parameter_static/parameter_static.h"
+#include "assets/textures/hud/hud.h"
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
+#include "config.h"
 
 #pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
                                "ntsc-1.0:96 ntsc-1.1:96 ntsc-1.2:96 pal-1.0:128 pal-1.1:128"
@@ -265,6 +267,72 @@ s16 sOcarinaButtonCPrimG;
 s16 sOcarinaButtonCEnvR;
 s16 sOcarinaButtonCEnvB;
 s16 sOcarinaButtonCEnvG;
+
+#if ENABLE_MM_TITLE_CARDS
+void Message_DrawText(PlayState* play, Gfx** gfxP, u16 textDrawPos);
+void Message_OpenText(PlayState* play, u16 textId);
+void Message_Decode(PlayState* play);
+
+static u16 titleCardPrevHudVisibility = HUD_VISIBILITY_ALL;
+
+void Message_SetTitleCardInfo(struct PlayState* play, TitleCardInfo* info) {
+    if (info == NULL) {
+        PRINTF("[HackerOoT:Error]: TitleCardInfo is NULL!\n");
+    }
+
+    play->msgCtx.titleCardInfo = info;
+}
+
+void Message_DrawSceneTitleCard(PlayState* play, Gfx** gfxP) {
+    MessageContext* msgCtx = &play->msgCtx;
+
+    if (msgCtx->titleCardInfo != NULL) {
+        Color_RGBA8* rgba = &msgCtx->titleCardInfo->rgba;
+        Gfx* gfx;
+
+        gfx = *gfxP;
+        Gfx_SetupDL_39Ptr(&gfx);
+
+        gDPSetCombineLERP(gfx++, PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0, PRIMITIVE,
+                          ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0);
+        gDPSetTextureFilter(gfx++, G_TF_BILERP);
+        gDPSetAlphaDither(gfx++, G_AD_NOTPATTERN);
+        gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, msgCtx->textboxColorAlphaCurrent);
+        gDPSetEnvColor(gfx++, rgba->r, rgba->g, rgba->b, rgba->a);
+        gDPLoadTextureBlock(gfx++, gSceneTitleCardGradientTex, G_IM_FMT_I, G_IM_SIZ_8b, 64, 1, 0,
+                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 6, G_TX_NOMASK, G_TX_NOLOD,
+                            G_TX_NOLOD);
+        gSPTextureRectangle(gfx++, 0, msgCtx->titleCardInfo->gradientWidth << 2, 320 << 2,
+                            (msgCtx->titleCardInfo->gradientWidth + msgCtx->titleCardInfo->gradientHeight) << 2,
+                            G_TX_RENDERTILE, 0, 0, 204, 1 << 10);
+        gDPPipeSync(gfx++);
+        gDPSetCombineLERP(gfx++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE,
+                          0);
+        gDPSetEnvColor(gfx++, 0, 0, 0, 255);
+
+        Message_DrawText(play, &gfx, 0);
+        *gfxP = gfx++;
+    }
+}
+
+void Message_DisplaySceneTitleCard(PlayState* play) {
+    MessageContext* msgCtx = &play->msgCtx;
+    TitleCardInfo* info = msgCtx->titleCardInfo;
+
+    if (info != NULL) {
+        msgCtx->msgLength = 0;
+        Message_OpenText(play, info->textId);
+        Message_Decode(play);
+        msgCtx->msgMode = MSGMODE_SCENE_TITLE_CARD_FADE_IN_BACKGROUND;
+        msgCtx->textDelayTimer = info->textDelayTimer;
+        msgCtx->textboxColorAlphaCurrent = msgCtx->textboxColorAlphaTarget = msgCtx->textColorAlpha = 0;
+        msgCtx->stateTimer = info->duration;
+
+        titleCardPrevHudVisibility = gSaveContext.hudVisibilityMode;
+        Interface_ChangeHudVisibilityMode(info->nextHudVisibility);
+    }
+}
+#endif
 
 void Message_ResetOcarinaNoteState(void) {
     R_OCARINA_BUTTONS_YPOS(0) = 189;
@@ -1396,7 +1464,7 @@ void Message_DrawTextWide(PlayState* play, Gfx** gfxP) {
  * Draws the text contents of an eng/ger/fra textbox, up to the current point that has
  * been scrolled to so far.
  */
-void Message_DrawText(PlayState* play, Gfx** gfxP) {
+void Message_DrawText(PlayState* play, Gfx** gfxP, u16 textDrawPos) {
     MessageContext* msgCtx = &play->msgCtx;
     s16 pad;
     u8 character;
@@ -1407,12 +1475,23 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
     Font* font = &play->msgCtx.font;
     Gfx* gfx = *gfxP;
 
-    play->msgCtx.textPosX = WIDE_INCR(R_TEXT_INIT_XPOS, 23);
+#if ENABLE_MM_TITLE_CARDS
+    if (msgCtx->msgMode >= MSGMODE_SCENE_TITLE_CARD_FADE_IN_BACKGROUND &&
+        msgCtx->msgMode <= MSGMODE_SCENE_TITLE_CARD_FADE_OUT_BACKGROUND) {
+        if (msgCtx->titleCardInfo != NULL) {
+            msgCtx->textPosX = msgCtx->titleCardInfo->textPos.x;
+            msgCtx->textPosY = msgCtx->titleCardInfo->textPos.y;
+        }
+    } else
+#endif
+    {
+        msgCtx->textPosX = WIDE_INCR(R_TEXT_INIT_XPOS, 23);
 
-    if (!sTextIsCredits) {
-        msgCtx->textPosY = R_TEXT_INIT_YPOS;
-    } else {
-        msgCtx->textPosY = YREG(1);
+        if (!sTextIsCredits) {
+            msgCtx->textPosY = R_TEXT_INIT_YPOS;
+        } else {
+            msgCtx->textPosY = YREG(1);
+        }
     }
 
     if (msgCtx->textBoxType == TEXTBOX_TYPE_NONE_NO_SHADOW) {
@@ -1424,7 +1503,7 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
     msgCtx->unk_E3D0 = 0;
     charTexIdx = 0;
 
-    for (i = 0; i < msgCtx->textDrawPos; i++) {
+    for (i = textDrawPos; i < msgCtx->textDrawPos; i++) {
         character = msgCtx->msgBufDecoded[i];
 
         switch (character) {
@@ -2943,9 +3022,9 @@ void Message_SetView(View* view) {
 #if OOT_NTSC
 #define DRAW_TEXT(play, gfx, isCredits)                                                         \
     ((gSaveContext.language == LANGUAGE_JPN) && !(isCredits)) ? Message_DrawTextWide(play, gfx) \
-                                                              : Message_DrawText(play, gfx)
+                                                              : Message_DrawText(play, gfx, 0)
 #else
-#define DRAW_TEXT(play, gfx, isCredits) Message_DrawText(play, gfx)
+#define DRAW_TEXT(play, gfx, isCredits) Message_DrawText(play, gfx, 0)
 #endif
 
 /**
@@ -3875,6 +3954,15 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
             case MSGMODE_TEXT_CLOSING:
             case MSGMODE_PAUSED:
                 break;
+#if ENABLE_MM_TITLE_CARDS
+            case MSGMODE_SCENE_TITLE_CARD_FADE_IN_BACKGROUND:
+            case MSGMODE_SCENE_TITLE_CARD_FADE_IN_TEXT:
+            case MSGMODE_SCENE_TITLE_CARD_DISPLAYING:
+            case MSGMODE_SCENE_TITLE_CARD_FADE_OUT_TEXT:
+            case MSGMODE_SCENE_TITLE_CARD_FADE_OUT_BACKGROUND:
+                Message_DrawSceneTitleCard(play, &gfx);
+                break;
+#endif
             case MSGMODE_UNK_20:
             default:
                 msgCtx->msgMode = MSGMODE_TEXT_DISPLAYING;
@@ -4385,6 +4473,57 @@ void Message_Update(PlayState* play) {
                 break;
             case MSGMODE_PAUSED:
                 break;
+#if ENABLE_MM_TITLE_CARDS
+            case MSGMODE_SCENE_TITLE_CARD_FADE_IN_BACKGROUND:
+                if (msgCtx->titleCardInfo != NULL) {
+                    msgCtx->textboxColorAlphaCurrent += msgCtx->titleCardInfo->alphaFadeInIncr;
+
+                    if (msgCtx->textboxColorAlphaCurrent >= 255) {
+                        msgCtx->textboxColorAlphaCurrent = 255;
+                        msgCtx->msgMode = MSGMODE_SCENE_TITLE_CARD_FADE_IN_TEXT;
+                    }
+                }
+                break;
+            case MSGMODE_SCENE_TITLE_CARD_FADE_IN_TEXT:
+                if (msgCtx->titleCardInfo != NULL) {
+                    msgCtx->textColorAlpha += msgCtx->titleCardInfo->alphaFadeInIncr;
+
+                    if (msgCtx->textColorAlpha >= 255) {
+                        msgCtx->textColorAlpha = 255;
+                        msgCtx->msgMode = MSGMODE_SCENE_TITLE_CARD_DISPLAYING;
+                    }
+                }
+                break;
+            case MSGMODE_SCENE_TITLE_CARD_DISPLAYING:
+                msgCtx->stateTimer--;
+                if (msgCtx->stateTimer == 0) {
+                    msgCtx->msgMode = MSGMODE_SCENE_TITLE_CARD_FADE_OUT_TEXT;
+                }
+                break;
+            case MSGMODE_SCENE_TITLE_CARD_FADE_OUT_TEXT:
+                if (msgCtx->titleCardInfo != NULL) {
+                    msgCtx->textColorAlpha -= msgCtx->titleCardInfo->alphaFadeOutIncr;
+
+                    if (msgCtx->textColorAlpha <= 0) {
+                        msgCtx->textColorAlpha = 0;
+                        msgCtx->msgMode = MSGMODE_SCENE_TITLE_CARD_FADE_OUT_BACKGROUND;
+                    }
+                }
+                break;
+            case MSGMODE_SCENE_TITLE_CARD_FADE_OUT_BACKGROUND:
+                if (msgCtx->titleCardInfo != NULL) {
+                    msgCtx->textboxColorAlphaCurrent -= msgCtx->titleCardInfo->alphaFadeOutIncr;
+
+                    if (msgCtx->textboxColorAlphaCurrent <= 0) {
+                        msgCtx->textboxColorAlphaCurrent = 0;
+                        msgCtx->msgLength = 0;
+                        msgCtx->msgMode = MSGMODE_NONE;
+                        msgCtx->stateTimer = 0;
+                        Interface_ChangeHudVisibilityMode(titleCardPrevHudVisibility);
+                    }
+                }
+                break;
+#endif
             default:
                 msgCtx->lastOcarinaButtonIndex = OCARINA_BTN_INVALID;
                 break;

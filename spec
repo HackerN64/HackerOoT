@@ -11203,6 +11203,9 @@ beginseg
     compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/parameter_static/parameter_static.o"
+#if ENABLE_MM_TITLE_CARDS
+    include "$(BUILD_DIR)/assets/textures/hud/hud.o"
+#endif
     number 2
 endseg
 

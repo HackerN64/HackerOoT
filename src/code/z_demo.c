@@ -379,7 +379,11 @@ void CutsceneCmd_Misc(PlayState* play, CutsceneContext* csCtx, CsCmdMisc* cmd) {
 
         case CS_MISC_SHOW_TITLE_CARD:
             if (isFirstFrame) {
+#if ENABLE_MM_TITLE_CARDS
+                Message_DisplaySceneTitleCard(play);
+#else
                 TitleCard_InitPlaceName(play, &play->actorCtx.titleCtx, player->giObjectSegment, 160, 120, 144, 24, 20);
+#endif
             }
             break;
 
@@ -2461,6 +2465,13 @@ void Cutscene_HandleEntranceTriggers(PlayState* play) {
             break;
         }
     }
+
+#if ENABLE_MM_TITLE_CARDS
+    if (gSaveContext.showTitleCard) {
+        Message_DisplaySceneTitleCard(play);
+        gSaveContext.showTitleCard = false;
+    }
+#endif
 }
 
 void Cutscene_HandleConditionalTriggers(PlayState* play) {

@@ -1,6 +1,7 @@
 #include "global.h"
 #include "terminal.h"
 #include "versions.h"
+#include "config.h"
 
 SceneCmdHandlerFunc sSceneCmdHandlers[SCENE_CMD_ID_MAX];
 RomFile sNaviQuestHintFiles[];
@@ -527,23 +528,27 @@ void Scene_SetTransitionForNextEntrance(PlayState* play) {
     play->transitionType = ENTRANCE_INFO_START_TRANS_TYPE(gEntranceTable[entranceIndex].field);
 }
 
-void Scene_CommandAnimatedMaterials(PlayState* play, SceneCmd* cmd) {
 #if ENABLE_ANIMATED_MATERIALS
+void Scene_CommandAnimatedMaterials(PlayState* play, SceneCmd* cmd) {
     play->sceneMaterialAnims = SEGMENTED_TO_VIRTUAL(cmd->textureAnimations.segment);
-#endif
 }
-
-void Scene_CommandCutsceneList(PlayState* play, SceneCmd* cmd) {
-#if ENABLE_CUTSCENE_IMPROVEMENTS
-    CutsceneManager_Init(play, SEGMENTED_TO_VIRTUAL(cmd->cutsceneList.segment), cmd->cutsceneList.num);
 #endif
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+void Scene_CommandCutsceneList(PlayState* play, SceneCmd* cmd) {
+    CutsceneManager_Init(play, SEGMENTED_TO_VIRTUAL(cmd->cutsceneList.segment), cmd->cutsceneList.num);
 }
 
 void Scene_CommandActorCutsceneCamList(PlayState* play, SceneCmd* cmd) {
-#if ENABLE_CUTSCENE_IMPROVEMENTS
     play->actorCsCamList = SEGMENTED_TO_VIRTUAL(cmd->actorCsCamList.segment);
-#endif
 }
+#endif
+
+#if ENABLE_MM_TITLE_CARDS
+void Scene_CommandTitleCard(PlayState* play, SceneCmd* cmd) {
+    Message_SetTitleCardInfo(play, SEGMENTED_TO_VIRTUAL(cmd->titleCard.segment));
+}
+#endif
 
 SceneCmdHandlerFunc sSceneCmdHandlers[SCENE_CMD_ID_MAX] = {
     Scene_CommandPlayerEntryList,          // SCENE_CMD_ID_SPAWN_LIST
@@ -575,9 +580,16 @@ SceneCmdHandlerFunc sSceneCmdHandlers[SCENE_CMD_ID_MAX] = {
 #if ENABLE_F3DEX3
     Scene_CommandOccPlaneCandList, // SCENE_CMD_ID_OCC_PLANE_CAND_LIST
 #endif
-    Scene_CommandAnimatedMaterials,    // SCENE_CMD_ID_ANIMATED_MATERIAL_LIST
+#if ENABLE_ANIMATED_MATERIALS
+    Scene_CommandAnimatedMaterials, // SCENE_CMD_ID_ANIMATED_MATERIAL_LIST
+#endif
+#if ENABLE_CUTSCENE_IMPROVEMENTS
     Scene_CommandCutsceneList,         // SCENE_CMD_ID_ACTOR_CUTSCENE_LIST
     Scene_CommandActorCutsceneCamList, // SCENE_CMD_ID_ACTOR_CUTSCENE_CAM_LIST
+#endif
+#if ENABLE_MM_TITLE_CARDS
+    Scene_CommandTitleCard, // SCENE_CMD_ID_TITLE_CARD
+#endif
 };
 
 RomFile sNaviQuestHintFiles[] = {
