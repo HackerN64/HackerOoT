@@ -2318,10 +2318,12 @@ void Inventory_DeleteItem(u16 item, u16 invSlot) {
 
     PRINTF("\nItem_Register(%d)\n", invSlot, gSaveContext.save.info.inventory.items[invSlot]);
 
-    for (i = 1; i < 4; i++) {
-        if (gSaveContext.save.info.equips.buttonItems[i] == item) {
-            gSaveContext.save.info.equips.buttonItems[i] = ITEM_NONE;
-            gSaveContext.save.info.equips.cButtonSlots[i - 1] = SLOT_NONE;
+    if (!IS_INV_EDITOR_ACTIVE) {
+        for (i = 1; i < 4; i++) {
+            if (gSaveContext.save.info.equips.buttonItems[i] == item) {
+                gSaveContext.save.info.equips.buttonItems[i] = ITEM_NONE;
+                gSaveContext.save.info.equips.cButtonSlots[i - 1] = SLOT_NONE;
+            }
         }
     }
 }
@@ -2977,11 +2979,16 @@ void Magic_DrawMeter(PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx, "../z_parameter.c", 2650);
 
-    if (gSaveContext.save.info.playerData.magicLevel != 0) {
+    if (gSaveContext.save.info.playerData.magicLevel != 0 ||
+        (gDebug.invDebug.miscDebug.showMiscScreen && gSaveContext.save.info.playerData.isMagicAcquired)) {
         if (gSaveContext.save.info.playerData.healthCapacity > 0xA0) {
             magicMeterY = R_MAGIC_METER_Y_LOWER; // two rows of hearts
         } else {
             magicMeterY = R_MAGIC_METER_Y_HIGHER; // one row of hearts
+        }
+
+        if (IS_INV_EDITOR_ACTIVE) {
+            magicMeterY += gDebug.invDebug.miscDebug.hudTopPosY;
         }
 
         Gfx_SetupDL_39Overlay(play->state.gfxCtx);
@@ -3512,8 +3519,67 @@ void func_8008A994(InterfaceContext* interfaceCtx) {
     View_ApplyOrthoToOverlay(&interfaceCtx->view);
 }
 
+void Interface_DrawSmallKeyCounter(PlayState* play) {
+    InterfaceContext* interfaceCtx = &play->interfaceCtx;
+    s16 svar3;
+    s16 smallKeyPosY = 0;
+    u16 mapIndex = gSaveContext.mapIndex;
+
+    if (IS_INV_EDITOR_ACTIVE) {
+        smallKeyPosY = gDebug.invDebug.miscDebug.hudBottomPosY;
+
+        if (smallKeyPosY > 0) {
+            smallKeyPosY -= gDebug.invDebug.miscDebug.invertVal;
+        }
+
+        if (gDebug.invDebug.miscDebug.showMiscScreen) {
+            mapIndex = gDebug.invDebug.miscDebug.mapIndex;
+        }
+    }
+
+    OPEN_DISPS(play->state.gfxCtx, __FILE__, __LINE__);
+
+    if (gSaveContext.save.info.inventory.dungeonKeys[mapIndex] >= 0 ||
+        (IS_INV_EDITOR_ACTIVE && gDebug.invDebug.miscDebug.showMiscScreen)) {
+        // Small Key Icon
+        gDPPipeSync(OVERLAY_DISP++);
+        gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 200, 230, 255, interfaceCtx->magicAlpha);
+        gDPSetEnvColor(OVERLAY_DISP++, 0, 0, 20, 255);
+        OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, gSmallKeyCounterIconTex, 16, 16, WIDE_INCR(26, -7),
+                                      190 - smallKeyPosY, WIDE_INCR(16, -4), 16, 1 << 10, 1 << 10);
+
+        // Small Key Counter
+        gDPPipeSync(OVERLAY_DISP++);
+        gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 255, 255, 255, interfaceCtx->magicAlpha);
+        gDPSetCombineLERP(OVERLAY_DISP++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0,
+                          PRIMITIVE, 0);
+
+        interfaceCtx->counterDigits[2] = 0;
+        interfaceCtx->counterDigits[3] = gSaveContext.save.info.inventory.dungeonKeys[mapIndex];
+
+        while (interfaceCtx->counterDigits[3] >= 10) {
+            interfaceCtx->counterDigits[2]++;
+            interfaceCtx->counterDigits[3] -= 10;
+        }
+
+        svar3 = 42;
+
+        if (interfaceCtx->counterDigits[2] != 0) {
+            OVERLAY_DISP =
+                Gfx_TextureI8(OVERLAY_DISP, ((u8*)gCounterDigit0Tex + (8 * 16 * interfaceCtx->counterDigits[2])), 8, 16,
+                              svar3, 190 - smallKeyPosY, 8, 16, 1 << 10, 1 << 10);
+            svar3 += 8;
+        }
+
+        OVERLAY_DISP = Gfx_TextureI8(OVERLAY_DISP, ((u8*)gCounterDigit0Tex + (8 * 16 * interfaceCtx->counterDigits[3])),
+                                     8, 16, svar3, 190 - smallKeyPosY, 8, 16, 1 << 10, 1 << 10);
+    }
+
+    CLOSE_DISPS(play->state.gfxCtx, __FILE__, __LINE__);
+}
+
 #if DEBUG_FEATURES && (ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR)
-#define CAN_DRAW_INTERFACE (pauseCtx->debugState == 0)
+#define CAN_DRAW_INTERFACE (pauseCtx->debugState == 0 && !IS_INV_EDITOR_ACTIVE)
 #else
 #define CAN_DRAW_INTERFACE true
 #endif
@@ -3549,6 +3615,19 @@ void Interface_Draw(PlayState* play) {
     s16 svar5;
     s16 timerId;
 
+    s16 rupeePosY = 0;
+    if (IS_INV_EDITOR_ACTIVE) {
+        // if ((gDebug.invDebug.showInfoScreen && gDebug.invDebug.elementsAlpha == 0) ||
+        //     (!gDebug.invDebug.miscDebug.showMiscScreen && gDebug.invDebug.miscElementsAlpha == 0)) {
+        //     return;
+        // }
+
+        rupeePosY = gDebug.invDebug.miscDebug.hudBottomPosY;
+        if (rupeePosY > 0) {
+            rupeePosY += gDebug.invDebug.miscDebug.invertVal;
+        }
+    }
+
     OPEN_DISPS(play->state.gfxCtx, "../z_parameter.c", 3405);
 
     gSPSegment(OVERLAY_DISP++, 0x02, interfaceCtx->parameterSegment);
@@ -3556,7 +3635,7 @@ void Interface_Draw(PlayState* play) {
     gSPSegment(OVERLAY_DISP++, 0x08, interfaceCtx->iconItemSegment);
     gSPSegment(OVERLAY_DISP++, 0x0B, interfaceCtx->mapSegment);
 
-    if (CAN_DRAW_INTERFACE) {
+    if (CAN_DRAW_INTERFACE || IS_INV_EDITOR_ACTIVE) {
         Interface_InitVertices(play);
         func_8008A994(interfaceCtx);
         Health_DrawMeter(play);
@@ -3578,63 +3657,32 @@ void Interface_Draw(PlayState* play) {
             gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 200, 255, 100, interfaceCtx->magicAlpha);
         }
         gDPSetEnvColor(OVERLAY_DISP++, 0, 80, 0, 255);
-        OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, gRupeeCounterIconTex, 16, 16, WIDE_MULT(26, WIDE_GET_RATIO), 206,
-                                      16, 16, WIDE_INCR(1, (u16)(WIDE_GET_RATIO)) << 10, 1 << 10);
+        OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, gRupeeCounterIconTex, 16, 16, WIDE_MULT(26, WIDE_GET_RATIO),
+                                      206 - rupeePosY, 16, 16, WIDE_INCR(1, (u16)(WIDE_GET_RATIO)) << 10, 1 << 10);
 
-        switch (play->sceneId) {
-            case SCENE_FOREST_TEMPLE:
-            case SCENE_FIRE_TEMPLE:
-            case SCENE_WATER_TEMPLE:
-            case SCENE_SPIRIT_TEMPLE:
-            case SCENE_SHADOW_TEMPLE:
-            case SCENE_BOTTOM_OF_THE_WELL:
-            case SCENE_ICE_CAVERN:
-            case SCENE_GANONS_TOWER:
-            case SCENE_GERUDO_TRAINING_GROUND:
-            case SCENE_THIEVES_HIDEOUT:
-            case SCENE_INSIDE_GANONS_CASTLE:
-            case SCENE_GANONS_TOWER_COLLAPSE_INTERIOR:
-            case SCENE_INSIDE_GANONS_CASTLE_COLLAPSE:
-            case SCENE_TREASURE_BOX_SHOP:
-                if (gSaveContext.save.info.inventory.dungeonKeys[gSaveContext.mapIndex] >= 0) {
-                    // Small Key Icon
-                    gDPPipeSync(OVERLAY_DISP++);
-                    gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 200, 230, 255, interfaceCtx->magicAlpha);
-                    gDPSetEnvColor(OVERLAY_DISP++, 0, 0, 20, 255);
-                    OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, gSmallKeyCounterIconTex, 16, 16, WIDE_INCR(26, -7), 190,
-                                                  WIDE_INCR(16, -4), 16, 1 << 10, 1 << 10);
-
-                    // Small Key Counter
-                    gDPPipeSync(OVERLAY_DISP++);
-                    gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 255, 255, 255, interfaceCtx->magicAlpha);
-                    gDPSetCombineLERP(OVERLAY_DISP++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE,
-                                      TEXEL0, 0, PRIMITIVE, 0);
-
-                    interfaceCtx->counterDigits[2] = 0;
-                    interfaceCtx->counterDigits[3] =
-                        gSaveContext.save.info.inventory.dungeonKeys[gSaveContext.mapIndex];
-
-                    while (interfaceCtx->counterDigits[3] >= 10) {
-                        interfaceCtx->counterDigits[2]++;
-                        interfaceCtx->counterDigits[3] -= 10;
-                    }
-
-                    svar3 = 42;
-
-                    if (interfaceCtx->counterDigits[2] != 0) {
-                        OVERLAY_DISP = Gfx_TextureI8(
-                            OVERLAY_DISP, ((u8*)gCounterDigit0Tex + (8 * 16 * interfaceCtx->counterDigits[2])), 8, 16,
-                            svar3, 190, 8, 16, 1 << 10, 1 << 10);
-                        svar3 += 8;
-                    }
-
-                    OVERLAY_DISP = Gfx_TextureI8(OVERLAY_DISP,
-                                                 ((u8*)gCounterDigit0Tex + (8 * 16 * interfaceCtx->counterDigits[3])),
-                                                 8, 16, svar3, 190, 8, 16, 1 << 10, 1 << 10);
-                }
-                break;
-            default:
-                break;
+        if (IS_INV_EDITOR_ACTIVE) {
+            Interface_DrawSmallKeyCounter(play);
+        } else {
+            switch (play->sceneId) {
+                case SCENE_FOREST_TEMPLE:
+                case SCENE_FIRE_TEMPLE:
+                case SCENE_WATER_TEMPLE:
+                case SCENE_SPIRIT_TEMPLE:
+                case SCENE_SHADOW_TEMPLE:
+                case SCENE_BOTTOM_OF_THE_WELL:
+                case SCENE_ICE_CAVERN:
+                case SCENE_GANONS_TOWER:
+                case SCENE_GERUDO_TRAINING_GROUND:
+                case SCENE_THIEVES_HIDEOUT:
+                case SCENE_INSIDE_GANONS_CASTLE:
+                case SCENE_GANONS_TOWER_COLLAPSE_INTERIOR:
+                case SCENE_INSIDE_GANONS_CASTLE_COLLAPSE:
+                case SCENE_TREASURE_BOX_SHOP:
+                    Interface_DrawSmallKeyCounter(play);
+                    break;
+                default:
+                    break;
+            }
         }
 
         // Rupee Counter
@@ -3674,10 +3722,15 @@ void Interface_Draw(PlayState* play) {
         for (svar1 = 0, svar3 = 42; svar1 < svar4; svar1++, svar2++, svar3 += 8) {
             OVERLAY_DISP =
                 Gfx_TextureI8(OVERLAY_DISP, ((u8*)gCounterDigit0Tex + (8 * 16 * interfaceCtx->counterDigits[svar2])), 8,
-                              16, svar3, 206, 8, 16, 1 << 10, 1 << 10);
+                              16, svar3, 206 - rupeePosY, 8, 16, 1 << 10, 1 << 10);
         }
 
         Magic_DrawMeter(play);
+
+        if (IS_INV_EDITOR_ENABLED && gDebug.invDebug.miscDebug.showMiscScreen && gDebug.invDebug.elementsAlpha == 0) {
+            return;
+        }
+
         Minimap_Draw(play); // TODO: fix the arrows
 
         if ((R_PAUSE_BG_PRERENDER_STATE != PAUSE_BG_PRERENDER_PROCESS) &&

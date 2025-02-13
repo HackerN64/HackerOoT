@@ -277,6 +277,10 @@ void Play_Init(GameState* thisx) {
 
 #if ENABLE_HACKER_DEBUG
     gDebug.play = this;
+    gDebug.invDebug.state = INVEDITOR_STATE_OFF;
+    gDebug.invDebug.gfxCtx = this->state.gfxCtx;
+    gDebug.invDebug.pauseCtx = &this->pauseCtx;
+    gDebug.invDebug.elementsAlpha = 255;
 #endif
 
     if (gSaveContext.save.entranceIndex == ENTR_LOAD_OPENING) {

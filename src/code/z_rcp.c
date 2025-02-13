@@ -1199,6 +1199,14 @@ void Gfx_SetupDL_39Overlay(GraphicsContext* gfxCtx) {
     CLOSE_DISPS(gfxCtx, "../z_rcp.c", 1811);
 }
 
+void Gfx_SetupDL_39Debug(GraphicsContext* gfxCtx) {
+    OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
+
+    DEBUG_DISP = Gfx_SetupDL_39(DEBUG_DISP);
+
+    CLOSE_DISPS(gfxCtx, __FILE__, __LINE__);
+}
+
 void Gfx_SetupDL_39Ptr(Gfx** gfxP) {
     Gfx* gfx = *gfxP;
 

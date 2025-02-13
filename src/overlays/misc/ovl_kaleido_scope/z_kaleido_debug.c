@@ -646,9 +646,9 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
 
     // Handles exiting the inventory editor with the L button
     // The editor is opened with `debugState` set to 1, and becomes closable after a frame once `debugState` is set to 2
-    if (pauseCtx->debugState == 1) {
+    if (pauseCtx->debugState == 3) {
         pauseCtx->debugState = 2;
-    } else if ((pauseCtx->debugState == 2) && CHECK_BTN_ALL(input->press.button, BTN_L)) {
+    } else if ((pauseCtx->debugState == 2) && CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
         pauseCtx->debugState = 0;
     }
 

@@ -92,7 +92,6 @@ f32 Path_OrientAndGetDistSq(Actor* actor, Path* path, s16 waypoint, s16* yaw);
 void Path_CopyLastPoint(Path* path, Vec3f* dest);
 
 void PreNMI_Init(GameState* thisx);
-
 void func_80095AA0(PlayState* play, Room* room, Input* input, s32 arg3);
 void Room_DrawBackground2D(Gfx** gfxP, void* tex, void* tlut, u16 width, u16 height, u8 fmt, u8 siz, u16 tlutMode,
                            u16 tlutCount, f32 offsetX, f32 offsetY);

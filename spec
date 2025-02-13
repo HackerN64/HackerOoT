@@ -984,6 +984,7 @@ beginseg
     include "$(BUILD_DIR)/src/debug/utility.o"
     include "$(BUILD_DIR)/src/debug/collider_view.o"
     include "$(BUILD_DIR)/src/debug/collision_view.o"
+    include "$(BUILD_DIR)/src/debug/inventory_editor.o"
     include "$(BUILD_DIR)/src/debug/menu.o"
 #if ENABLE_PROFILER
     include "$(BUILD_DIR)/src/debug/profiler.o"

@@ -72,7 +72,7 @@
 
 /**** [INVENTORY EDITOR] ****/
 // ``IS_INV_EDITOR_ENABLED``
-#define ENABLE_INV_EDITOR false
+#define ENABLE_INV_EDITOR true
 
 /**** [EVENT EDITOR] ****/
 // ``IS_EVENT_EDITOR_ENABLED``
