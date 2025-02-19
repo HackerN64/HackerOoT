@@ -1,3 +1,11 @@
+#include "buffers.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "gfxalloc.h"
+#include "letterbox.h"
+#include "regs.h"
+#include "z64play.h"
+
 #include "global.h"
 
 #if ENABLE_F3DEX3

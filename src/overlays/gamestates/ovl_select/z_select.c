@@ -4,8 +4,6 @@
  * Description: Debug Scene Select Menu
  */
 #include "ultra64.h"
-#include "global.h"
-#include "terminal.h"
 #include "alloca.h"
 #include "z_select.h"
 

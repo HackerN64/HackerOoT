@@ -4,7 +4,6 @@
 #include "ultra64.h"
 
 #include "prerender.h"
-
 #include "z64actor.h"
 #include "z64bgcheck.h"
 #include "z64camera.h"
@@ -18,6 +17,7 @@
 #include "z64message.h"
 #include "z64object.h"
 #include "z64pause.h"
+#include "z64room.h"
 #include "z64scene.h"
 #include "z64sfx_source.h"
 #include "z64skybox.h"
@@ -28,6 +28,7 @@
 #include "config.h"
 
 union Color_RGBA8_u32;
+struct Path;
 struct Player;
 struct QuestHintCmd;
 struct VisMono;
@@ -90,7 +91,7 @@ typedef struct PlayState {
     /* 0x11DFC */ void* unk_11DFC;
     /* 0x11E00 */ Spawn* spawnList;
     /* 0x11E04 */ s16* exitList;
-    /* 0x11E08 */ Path* pathList;
+    /* 0x11E08 */ struct Path* pathList;
     /* 0x11E0C */ struct QuestHintCmd* naviQuestHints;
     /* 0x11E10 */ void* specialEffects;
     /* 0x11E14 */ u8 skyboxId;
@@ -118,6 +119,8 @@ typedef struct PlayState {
     u8 actorCsUsed;
 #endif
 } PlayState; // size = 0x12518
+
+extern Mtx D_01000000; // billboardMtx
 
 #define GET_ACTIVE_CAM(play) ((play)->cameraPtrs[(play)->activeCamId])
 #define GET_PLAYER(play) ((Player*)(play)->actorCtx.actorLists[ACTORCAT_PLAYER].head)

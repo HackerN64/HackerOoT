@@ -4,7 +4,6 @@
 #include "ultra64.h"
 #include "z64cutscene.h"
 #include "z64math.h"
-#include "z64save.h"
 
 #include "config.h"
 
@@ -1708,6 +1707,8 @@ typedef enum DebugCamTextColor {
     /* 6 */ DEBUG_CAM_TEXT_BLUE,
     /* 7 */ DEBUG_CAM_TEXT_GREEN
 } DebugCamTextColor;
+
+extern s32 gDebugCamEnabled; // ENABLE_CAMERA_DEBUGGER
 
 void Camera_Init(Camera* camera, struct View* view, struct CollisionContext* colCtx, struct PlayState* play);
 void Camera_InitDataUsingPlayer(Camera* camera, struct Player* player);

@@ -8,56 +8,28 @@
 #include "audiomgr.h"
 #include "controller.h"
 #include "versions.h"
-#include "z64save.h"
-#include "z64light.h"
-#include "z64bgcheck.h"
-#include "z64actor.h"
 #include "z64player.h"
 #include "z64audio.h"
-#include "z64object.h"
 #include "z64ocarina.h"
-#include "z64camera.h"
-#include "z64environment.h"
-#include "z64cutscene.h"
-#include "z64collision_check.h"
 #include "z64curve.h"
-#include "z64scene.h"
 #include "z64effect.h"
-#include "z64game_over.h"
-#include "z64inventory.h"
-#include "z64item.h"
 #include "z64animation.h"
 #include "z64animation_legacy.h"
-#include "z64dma.h"
 #include "letterbox.h"
 #include "z64math.h"
 #include "z64map_mark.h"
-#include "z64message.h"
-#include "z64olib.h"
 #include "one_point_cutscene.h"
-#include "z64pause.h"
 #include "z64play.h"
 #include "z64skin.h"
 #include "z64skin_matrix.h"
-#include "z64game.h"
-#include "z64transition.h"
-#include "z64transition_instances.h"
-#include "z64interface.h"
-#include "z64sfx_source.h"
-#include "z64skybox.h"
-#include "z64sram.h"
-#include "z64view.h"
 #include "z64vis.h"
 #include "zelda_arena.h"
 #include "alignment.h"
 #include "audiothread_cmd.h"
-#include "seqcmd.h"
-#include "sequence.h"
 #include "sfx.h"
 #include "color.h"
 #include "libu64/gfxprint.h"
 #include "z_lib.h"
-#include "ichain.h"
 #include "regs.h"
 #include "irqmgr.h"
 #include "padmgr.h"
@@ -70,10 +42,8 @@
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "gfxalloc.h"
-#include "jpeg.h"
 #include "prerender.h"
 #include "rand.h"
-#include "libc64/qrand.h"
 #include "sys_math.h"
 #include "sys_math3d.h"
 #include "widescreen.h"
@@ -102,53 +72,6 @@
 #include "libc64/sleep.h"
 #include "libc64/sprintf.h"
 #include "libu64/debug.h"
-
-#define SCREEN_WIDTH  320
-#define SCREEN_HEIGHT 240
-
-#define THREAD_PRI_IDLE_INIT    10
-#define THREAD_PRI_MAIN_INIT    10
-#define THREAD_PRI_DMAMGR_LOW   10  // Used when decompressing files
-#define THREAD_PRI_GRAPH        11
-#define THREAD_PRI_AUDIOMGR     12
-#define THREAD_PRI_N64DD        13
-#define THREAD_PRI_DDMSG        13
-#define THREAD_PRI_PADMGR       14
-#define THREAD_PRI_MAIN         15
-#define THREAD_PRI_SCHED        15
-#define THREAD_PRI_DMAMGR       16
-#define THREAD_PRI_IRQMGR       17
-#define THREAD_PRI_FAULT_CLIENT (OS_PRIORITY_APPMAX - 1)
-#define THREAD_PRI_FAULT        OS_PRIORITY_APPMAX
-
-#define THREAD_ID_IDLE        1
-#define THREAD_ID_FAULT       2
-#define THREAD_ID_MAIN        3
-#define THREAD_ID_GRAPH       4
-#define THREAD_ID_SCHED       5
-#define THREAD_ID_PADMGR      7
-
-#if ENABLE_PROFILER
-#define THREAD_ID_PIMGR       8
-#define THREAD_ID_VIMGR       9
-#else
-// Not sure why these are zero in vanilla.
-#define THREAD_ID_PIMGR       0
-#define THREAD_ID_VIMGR       0
-#endif
-
-#define THREAD_ID_N64DD       8
-#define THREAD_ID_DDMSG       9
-#define THREAD_ID_AUDIOMGR   10
-#define THREAD_ID_DMAMGR     18
-#define THREAD_ID_IRQMGR     19
-
-#define VI_CUSTOM_PAL60_LAN1 56 // Custom PAL60 VI mode
-
-typedef enum LensMode {
-    /* 0 */ LENS_MODE_SHOW_ACTORS, // lens actors are invisible by default, and shown by using lens (for example, invisible enemies)
-    /* 1 */ LENS_MODE_HIDE_ACTORS // lens actors are visible by default, and hidden by using lens (for example, fake walls)
-} LensMode;
 
 typedef struct SetupState {
     /* 0x00 */ GameState state;
@@ -218,13 +141,6 @@ typedef struct SampleState {
     /* 0x00A4 */ u8* staticSegment;
     /* 0x00A8 */ View view;
 } SampleState; // size = 0x1D0
-
-typedef struct QuestHintCmd {
-    /* 0x00 */ u8 byte0;
-    /* 0x01 */ u8 byte1;
-    /* 0x02 */ u8 byte2;
-    /* 0x03 */ u8 byte3;
-} QuestHintCmd; // size = 0x4
 
 typedef enum PauseBgPreRenderState {
     /* 0 */ PAUSE_BG_PRERENDER_OFF, // Inactive, do nothing.

@@ -4,6 +4,9 @@
 #include "terminal.h"
 #include "versions.h"
 
+#define SCREEN_WIDTH  320
+#define SCREEN_HEIGHT 240
+
 #ifndef AVOID_UB
 #define BAD_RETURN(type) type
 #else
@@ -87,24 +90,6 @@
 #define PRINTF_RST()            (void)0
 #endif
 
-#if DEBUG_FEATURES
-#define LOG(exp, value, format, ...)                \
-    do {                                            \
-        LogUtils_LogThreadId(__FILE__, __LINE__);   \
-        osSyncPrintf(exp " = " format "\n", value); \
-    } while (0)
-#else
-#define LOG(exp, value, format, ...) (void)(value)
-#endif
-
-#define LOG_STRING(string, ...) LOG(#string, string, "%s", __VA_ARGS__)
-#define LOG_ADDRESS(exp, value, ...) LOG(exp, value, "%08x", __VA_ARGS__)
-#define LOG_TIME(exp, value, ...) LOG(exp, value, "%lld", __VA_ARGS__)
-#define LOG_NUM(exp, value, ...) LOG(exp, value, "%d", __VA_ARGS__)
-#define LOG_HEX(exp, value, ...) LOG(exp, value, "%x", __VA_ARGS__)
-#define LOG_HEX32(exp, value, ...) LOG(exp, value, "%08x", __VA_ARGS__)
-#define LOG_FLOAT(exp, value, ...) LOG(exp, value, "%f", __VA_ARGS__)
-
 #define SET_NEXT_GAMESTATE(curState, newInit, newStruct) \
     if (1) {                                             \
         GameState* state = curState;                     \
@@ -114,36 +99,12 @@
     } (void)0
 
 #if DEBUG_FEATURES
-
 #define DMA_REQUEST_SYNC(ram, vrom, size, ...) DmaMgr_RequestSyncDebug(ram, vrom, size,  __FILE__, __LINE__)
 #define DMA_REQUEST_ASYNC(req, ram, vrom, size, unk5, queue, msg, ...) DmaMgr_RequestAsyncDebug(req, ram, vrom, size, unk5, queue, msg,  __FILE__, __LINE__)
-#define GAME_STATE_ALLOC(gameState, size, ...) GameState_Alloc(gameState, size,  __FILE__, __LINE__)
-#define DEBUG_ARENA_MALLOC(size, ...) DebugArena_MallocDebug(size,  __FILE__, __LINE__)
-#define DEBUG_ARENA_MALLOC_R(size, ...) DebugArena_MallocRDebug(size,  __FILE__, __LINE__)
-#define DEBUG_ARENA_FREE(size, ...) DebugArena_FreeDebug(size,  __FILE__, __LINE__)
-#define SYSTEM_ARENA_MALLOC(size, ...) SystemArena_MallocDebug(size,  __FILE__, __LINE__)
-#define SYSTEM_ARENA_MALLOC_R(size, ...) SystemArena_MallocRDebug(size,  __FILE__, __LINE__)
-#define SYSTEM_ARENA_FREE(size, ...) SystemArena_FreeDebug(size,  __FILE__, __LINE__)
-#define LOG_UTILS_CHECK_NULL_POINTER(exp, ptr, ...) LogUtils_CheckNullPointer(exp, ptr,  __FILE__, __LINE__)
-#define LOG_UTILS_CHECK_VALID_POINTER(exp, ptr, ...) LogUtils_CheckValidPointer(exp, ptr,  __FILE__, __LINE__)
-#define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_MallocDebug(alloc, size,  __FILE__, __LINE__)
-
 #else
-
 #define DMA_REQUEST_SYNC(ram, vrom, size, ...) DmaMgr_RequestSync(ram, vrom, size)
 #define DMA_REQUEST_ASYNC(req, ram, vrom, size, unk5, queue, msg, ...) DmaMgr_RequestAsync(req, ram, vrom, size, unk5, queue, msg)
-#define GAME_STATE_ALLOC(gameState, size, ...) THA_AllocTailAlign16(&(gameState)->tha, size)
-#define DEBUG_ARENA_MALLOC(size, ...) DebugArena_Malloc(size)
-#define DEBUG_ARENA_MALLOC_R(size, ...) DebugArena_MallocR(size)
-#define DEBUG_ARENA_FREE(size, ...) DebugArena_Free(size)
-#define SYSTEM_ARENA_MALLOC(size, ...) SystemArena_Malloc(size)
-#define SYSTEM_ARENA_MALLOC_R(size, ...) SystemArena_MallocR(size)
-#define SYSTEM_ARENA_FREE(size, ...) SystemArena_Free(size)
-#define LOG_UTILS_CHECK_NULL_POINTER(exp, ptr, ...) (void)0
-#define LOG_UTILS_CHECK_VALID_POINTER(exp, ptr, ...) (void)0
-#define GAME_ALLOC_MALLOC(alloc, size, ...) GameAlloc_Malloc(alloc, size)
-
-#endif /* DEBUG_FEATURES */
+#endif
 
 #if PLATFORM_N64 || DEBUG_FEATURES
 #define HUNGUP_AND_CRASH(...) Fault_AddHungupAndCrash(__FILE__, __LINE__)
