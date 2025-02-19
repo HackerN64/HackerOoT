@@ -13,7 +13,7 @@ def symInfoMain():
     parser.add_argument("-e", "--expected", dest="use_expected", action="store_true", help="use the map file in expected/build/ instead of build/")
 
     args = parser.parse_args()
-    mapFile = f"oot-{args.oot_version}.map"
+    mapFile = f"hackeroot-{args.oot_version}.map"
 
     BUILTMAP = Path("build") / args.oot_version / mapFile
 
