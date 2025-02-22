@@ -36,25 +36,8 @@ void* MemCpy(void* dest, const void* src, s32 len);
 void MapMark_Init(PlayState* play);
 void MapMark_ClearPointers(PlayState* play);
 void MapMark_Draw(PlayState* play);
-void PreNmiBuff_Init(PreNmiBuff* this);
-void PreNmiBuff_SetReset(PreNmiBuff* this);
-u32 PreNmiBuff_IsResetting(PreNmiBuff* this);
 void Sched_FlushTaskQueue(void);
 
-void PreNMI_Init(GameState* thisx);
-
-void Sample_Destroy(GameState* thisx);
-void Sample_Init(GameState* thisx);
-
-void ViMode_LogPrint(OSViMode* osViMode);
-void ViMode_Configure(ViMode* viMode, s32 type, s32 tvType, s32 loRes, s32 antialiasOff, s32 modeN, s32 fb16Bit,
-                      s32 width, s32 height, s32 leftAdjust, s32 rightAdjust, s32 upperAdjust, s32 lowerAdjust);
-void ViMode_Save(ViMode* viMode);
-void ViMode_Load(ViMode* viMode);
-void ViMode_Init(ViMode* viMode);
-void ViMode_Destroy(ViMode* viMode);
-void ViMode_ConfigureFeatures(ViMode* viMode, s32 viFeatures);
-void ViMode_Update(ViMode* viMode, Input* input);
 void PlayerCall_InitFuncPtrs(void);
 void TransitionTile_Destroy(TransitionTile* this);
 TransitionTile* TransitionTile_Init(TransitionTile* this, s32 cols, s32 rows);
@@ -138,47 +121,12 @@ void func_800D3210(void);
 
 void RcpUtils_PrintRegisterStatus(void);
 void RcpUtils_Reset(void);
-void* Overlay_AllocateAndLoad(uintptr_t vromStart, uintptr_t vromEnd, void* vramStart, void* vramEnd);
-void Overlay_Relocate(void* allocatedRamAddr, OverlayRelocationSection* ovlRelocs, void* vramStart);
-size_t Overlay_Load(uintptr_t vromStart, uintptr_t vromEnd, void* vramStart, void* vramEnd, void* allocatedRamAddr);
-// ? func_800FC800(?);
-// ? func_800FC83C(?);
-// ? func_800FCAB4(?);
+
 void SystemHeap_Init(void* start, u32 size);
 
 f32 absf(f32);
 
 void Regs_InitData(PlayState* play);
-
-void Setup_Init(GameState* thisx);
-void Setup_Destroy(GameState* thisx);
-void ConsoleLogo_Init(GameState* thisx);
-void ConsoleLogo_Destroy(GameState* thisx);
-
-// ENABLE_MAP_SELECT
-void MapSelect_Init(GameState* thisx);
-void MapSelect_Destroy(GameState* thisx);
-
-void DebugOpening_Init(GameState* thisx);
-void DebugOpening_Destroy(GameState* thisx);
-
-void TitleSetup_Init(GameState* thisx);
-void TitleSetup_Destroy(GameState* thisx);
-void FileSelect_Init(GameState* thisx);
-void FileSelect_Destroy(GameState* thisx);
-
-#if ENABLE_MOTION_BLUR
-void Play_DrawMotionBlur(PlayState* this);
-void Play_InitMotionBlur(PlayState* this);
-void Play_DestroyMotionBlur(void);
-void Play_SetMotionBlurPriorityAlpha(u32 alpha);
-void Play_EnableMotionBlurPriority(u32 alpha);
-void Play_DisableMotionBlurPriority(void);
-#endif
-
-void Play_SetMotionBlurAlpha(u32 alpha);
-void Play_EnableMotionBlur(u32 alpha);
-void Play_DisableMotionBlur(void);
 
 #if ENABLE_F3DEX3
 void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase phase);

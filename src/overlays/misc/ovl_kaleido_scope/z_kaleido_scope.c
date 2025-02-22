@@ -4,6 +4,7 @@
 #endif
 #include "seqcmd.h"
 #include "terminal.h"
+#include "title_setup_state.h"
 #include "versions.h"
 #include "z64save.h"
 
@@ -19,7 +20,7 @@
 #endif
 #include "assets/textures/icon_item_gameover_static/icon_item_gameover_static.h"
 
-#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
+#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
 
 #if N64_BTN_COLORS
 #define KALEIDO_PROMPT_CURSOR_R 100

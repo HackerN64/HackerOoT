@@ -6,13 +6,13 @@
 
 #if IS_DEBUG_BOOT_ENABLED
 
-typedef enum {
+typedef enum CurrentPage {
     /* 1 */ OPTIONS_PAGE = 1,
     /* 2 */ COMMANDS_PAGE,
     /* 3 */ BUILDINFO_PAGE
 } CurrentPage;
 
-typedef enum {
+typedef enum CurrentOption {
     /* 0 */ OPTION_CHOOSE_SAVE_FILE,
     /* 1 */ OPTION_LOAD_DEFINED_SCENE,
     /* 2 */ OPTION_LOAD_MAP_SELECT,
@@ -20,11 +20,19 @@ typedef enum {
     /* 4 */ OPTION_LOAD_FILE_SELECT,
 } CurrentOption;
 
-struct DebugOpeningState;
+typedef struct DebugOpeningState {
+    GameState state;
+    View view;
+    s32 currentOption;
+    char* controlGuideString;
+    u8 page;
+    SkyboxContext skyboxCtx;
+    EnvironmentContext envCtx;
+} DebugOpeningState;
 
 typedef void (*OptionFunc)(DebugOpeningState*);
 
-typedef struct {
+typedef struct OptionInfo {
     OptionFunc func;
     char* name;
 } OptionInfo;

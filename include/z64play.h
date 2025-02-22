@@ -33,6 +33,21 @@ struct Player;
 struct QuestHintCmd;
 struct VisMono;
 
+typedef enum PauseBgPreRenderState {
+    /* 0 */ PAUSE_BG_PRERENDER_OFF, // Inactive, do nothing.
+    /* 1 */ PAUSE_BG_PRERENDER_SETUP, // The current frame is only drawn for the purpose of serving as the pause background.
+    /* 2 */ PAUSE_BG_PRERENDER_PROCESS, // The previous frame was PAUSE_BG_PRERENDER_SETUP, now apply prerender filters.
+    /* 3 */ PAUSE_BG_PRERENDER_READY, // The pause background is ready to be used.
+    /* 4 */ PAUSE_BG_PRERENDER_MAX
+} PauseBgPreRenderState;
+
+typedef enum TransitionTileState {
+    /* 0 */ TRANS_TILE_OFF, // Inactive, do nothing
+    /* 1 */ TRANS_TILE_SETUP, // Save the necessary buffers
+    /* 2 */ TRANS_TILE_PROCESS, // Initialize the transition
+    /* 3 */ TRANS_TILE_READY // The transition is ready, so will update and draw each frame
+} TransitionTileState;
+
 typedef struct SceneSequences {
     /* 0x00 */ u8 seqId;
     /* 0x01 */ u8 natureAmbienceId;
@@ -129,8 +144,6 @@ void Play_SetViewpoint(PlayState* this, s16 viewpoint);
 s32 Play_CheckViewpoint(PlayState* this, s16 viewpoint);
 void Play_SetShopBrowsingViewpoint(PlayState* this);
 Gfx* Play_SetFog(PlayState* this, Gfx* gfx);
-void Play_Destroy(GameState* thisx);
-void Play_Init(GameState* thisx);
 void Play_Main(GameState* thisx);
 int Play_InCsMode(PlayState* this);
 f32 func_800BFCB8(PlayState* this, MtxF* mf, Vec3f* pos);
@@ -158,10 +171,26 @@ int Play_CamIsNotFixed(PlayState* this);
 s32 func_800C0D34(PlayState* this, Actor* actor, s16* yaw);
 s32 func_800C0DB4(PlayState* this, Vec3f* pos);
 
+void Play_Init(GameState* thisx);
+void Play_Destroy(GameState* thisx);
+
 #if ENABLE_CUTSCENE_IMPROVEMENTS
 u16 Play_GetActorCsCamSetting(PlayState* this, s32 csCamDataIndex);
 Vec3s* Play_GetActorCsCamFuncData(PlayState* this, s32 csCamDataIndex);
 #endif
+
+#if ENABLE_MOTION_BLUR
+void Play_DrawMotionBlur(PlayState* this);
+void Play_InitMotionBlur(PlayState* this);
+void Play_DestroyMotionBlur(void);
+void Play_SetMotionBlurPriorityAlpha(u32 alpha);
+void Play_EnableMotionBlurPriority(u32 alpha);
+void Play_DisableMotionBlurPriority(void);
+#endif
+
+void Play_SetMotionBlurAlpha(u32 alpha);
+void Play_EnableMotionBlur(u32 alpha);
+void Play_DisableMotionBlur(void);
 
 #if DEBUG_FEATURES
 extern void* gDebugCutsceneScript;

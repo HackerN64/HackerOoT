@@ -117,7 +117,7 @@ void MapSelect_Destroy(GameState* thisx) {
 void MapSelect_UpdateMenu(MapSelectState* this) {
     Input* input = &this->state.input[0];
     s32 pad;
-    SceneSelectEntry* selectedScene;
+    MapSelectEntry* selectedScene;
     u16 sfx, sfxIndex;
 
     if (CHECK_BTN_ALL(input->press.button, BTN_CDOWN)) {
@@ -173,9 +173,9 @@ void MapSelect_UpdateMenu(MapSelectState* this) {
     if (this->verticalInputAccumulator == 0) {
         // load the scene
         if (CHECK_BTN_ALL(input->press.button, BTN_A) || CHECK_BTN_ALL(input->press.button, BTN_START)) {
-            selectedScene = &this->scenes[this->currentScene];
-            if (selectedScene->loadFunc != NULL) {
-                selectedScene->loadFunc(this, selectedScene->entranceIndex);
+            selectedEntry = &this->entries[this->currentEntry];
+            if (selectedEntry->loadFunc != NULL) {
+                selectedEntry->loadFunc(this, selectedEntry->entranceIndex);
             }
         }
 
@@ -273,7 +273,7 @@ void MapSelect_UpdateMenu(MapSelectState* this) {
         this->pageDownIndex++;
         this->pageDownIndex =
             (this->pageDownIndex + ARRAY_COUNT(this->pageDownStops)) % ARRAY_COUNT(this->pageDownStops);
-        this->currentScene = this->topDisplayedScene = this->pageDownStops[this->pageDownIndex];
+        this->currentEntry = this->topDisplayedEntry = this->pageDownStops[this->pageDownIndex];
     }
 
     this->verticalInputAccumulator += this->verticalInput;
@@ -312,8 +312,8 @@ void MapSelect_UpdateMenu(MapSelectState* this) {
     this->currentScene = (this->currentScene + this->sceneTotal) % this->sceneTotal;
     this->topDisplayedScene = (this->topDisplayedScene + this->sceneTotal) % this->sceneTotal;
 
-    dREG(80) = this->currentScene;
-    dREG(81) = this->topDisplayedScene;
+    dREG(80) = this->currentEntry;
+    dREG(81) = this->topDisplayedEntry;
     dREG(82) = this->pageDownIndex;
 
     if (this->timerUp != 0) {
