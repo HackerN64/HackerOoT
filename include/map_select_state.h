@@ -6,6 +6,7 @@
 #include "z64view.h"
 
 struct MapSelectState;
+struct GfxPrint;
 
 typedef struct MapSelectEntry {
     /* 0x00 */ char* name;
@@ -45,10 +46,10 @@ void MapSelect_DrawLoadingScreen(MapSelectState* this);
 void MapSelect_LoadTitle(MapSelectState* this);
 void MapSelect_LoadDebugOpening(MapSelectState* this);
 void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex);
-void MapSelect_PrintMenu(MapSelectState* this, GfxPrint* printer);
-void MapSelect_PrintLoadingMessage(MapSelectState* this, GfxPrint* printer, u8 yPos);
-void MapSelect_PrintAgeSetting(MapSelectState* this, GfxPrint* printer, s32 age);
-void MapSelect_PrintSceneLayerSetting(MapSelectState* this, GfxPrint* printer);
-void MapSelect_PrintControls(MapSelectState* this, GfxPrint* printer);
+void MapSelect_PrintMenu(MapSelectState* this, struct GfxPrint* printer);
+void MapSelect_PrintLoadingMessage(MapSelectState* this, struct GfxPrint* printer, u8 yPos);
+void MapSelect_PrintAgeSetting(MapSelectState* this, struct GfxPrint* printer, s32 age);
+void MapSelect_PrintSceneLayerSetting(MapSelectState* this, struct GfxPrint* printer);
+void MapSelect_PrintControls(MapSelectState* this, struct GfxPrint* printer);
 
 #endif

@@ -1,7 +1,7 @@
 MAKEFLAGS += --no-builtin-rules --no-print-directory
 
 CFLAGS := -Wall -Wextra -pedantic -std=gnu99 -g -O2
-PROGRAMS := bin2c elf2rom makeromfs mkdmadata mkldscript preprocess_pragmas reloc_prereq vtxdis
+PROGRAMS := bin2c elf2rom makeromfs mkdmadata mkldscript preprocess_pragmas reloc_prereq
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
@@ -69,7 +69,7 @@ ifneq ($(wildcard ./gzinject/Makefile),)
 endif
 	$(V)$(MAKE) -C z64compress clean
 	$(V)$(MAKE) -C Flips clean
-	$(V)rm Flips/flips
+	$(V)rm -f Flips/flips
 	$(V)$(MAKE) -C audio clean
 	$(V)$(MAKE) -C com-plugin clean
 	$(V)$(MAKE) -C assets clean

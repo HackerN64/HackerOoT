@@ -12,6 +12,7 @@
 #include "versions.h"
 #include "z64play.h"
 #include "z64player.h"
+#include "widescreen.h"
 
 #define FLAGS (ACTOR_FLAG_UPDATE_CULLING_DISABLED | ACTOR_FLAG_DRAW_CULLING_DISABLED)
 

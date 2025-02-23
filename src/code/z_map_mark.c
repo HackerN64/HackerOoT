@@ -11,6 +11,7 @@
 #include "z64map_mark.h"
 #include "z64play.h"
 #include "z64save.h"
+#include "widescreen.h"
 
 #include "global.h"
 

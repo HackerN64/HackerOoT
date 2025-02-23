@@ -1,10 +1,12 @@
+-include ../print_rules.mk
+
 all:
-	$(MAKE) -C n64texconv
+	$(V)$(MAKE) -C n64texconv
 
 clean:
-	$(MAKE) -C n64texconv clean
+	$(V)$(MAKE) -C n64texconv clean
 
 distclean: clean
-	$(MAKE) -C n64texconv distclean
+	$(V)$(MAKE) -C n64texconv distclean
 
 .PHONY: all clean distclean

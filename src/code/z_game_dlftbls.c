@@ -4,6 +4,7 @@
 #include "z64play.h"
 #include "title_setup_state.h"
 #include "file_select_state.h"
+#include "debug_opening_state.h"
 
 #include "global.h"
 

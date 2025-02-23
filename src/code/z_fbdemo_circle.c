@@ -1,4 +1,5 @@
 #include "global.h"
+#include "widescreen.h"
 
 typedef enum TransitionCircleDirection {
     /* 0 */ TRANS_CIRCLE_DIR_IN,

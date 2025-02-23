@@ -50,28 +50,33 @@ $(shell mkdir -p $(BUILD_DIR) $(foreach dir,$(SRC_DIRS) $(LIB_DIRS) $(APP_SRC_DI
 
 $(BUILD_DIR)/lib/libimagequant/%.o: CFLAGS += $(OMPFLAGS) -Wno-sign-compare -Wno-unused-parameter -Wno-shadow
 
+-include ../../print_rules.mk
+
 .PHONY: all clean distclean format
 
 all: $(LIB) $(SOLIB) $(APP)
 
 clean:
-	$(RM) -r $(LIB) $(SOLIB) $(APP) $(BUILD_DIR)
+	$(V)$(RM) -r $(LIB) $(SOLIB) $(APP) $(BUILD_DIR)
 
 distclean: clean
 
 format:
-	$(CLANG_FORMAT) $(FORMAT_ARGS) $(FMT_FILES)
+	$(V)$(CLANG_FORMAT) $(FORMAT_ARGS) $(FMT_FILES)
 
 $(LIB): $(O_FILES)
-	$(AR) $(ARFLAGS) $@ $^
+	$(V)$(AR) $(ARFLAGS) $@ $^
 
 $(SOLIB): $(O_FILES)
-	$(CC) -shared $^ $(LDLIBS) -o $@
+	$(call print_two_args,Linking:,$<,$@)
+	$(V)$(CC) -shared $^ $(LDLIBS) -o $@
 
 $(APP): $(APP_O_FILES) $(LIB)
-	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
+	$(call print_two_args,Linking:,$<,$@)
+	$(V)$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
 $(BUILD_DIR)/%.o: %.c
-	$(CC) $(CFLAGS) $(OPTFLAGS) -c $< -o $@
+	$(call print_two_args,Compiling:,$<,$@)
+	$(V)$(CC) $(CFLAGS) $(OPTFLAGS) -c $< -o $@
 
 -include $(DEP_FILES) $(APP_DEP_FILES)

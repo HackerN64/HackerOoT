@@ -15,7 +15,6 @@
 #include "padmgr.h"
 #include "regs.h"
 #include "rumble.h"
-#include "speed_meter.h"
 #include "terminal.h"
 #include "versions.h"
 #include "vi_mode.h"

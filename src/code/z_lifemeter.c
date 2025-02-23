@@ -7,6 +7,7 @@
 #include "z64play.h"
 #include "z64player.h"
 #include "z64save.h"
+#include "widescreen.h"
 
 #include "assets/textures/parameter_static/parameter_static.h"
 

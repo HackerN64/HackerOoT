@@ -1,8 +1,11 @@
 #ifndef DEBUG_OPENING_H
 #define DEBUG_OPENING_H
 
-#include "global.h"
 #include "config.h"
+#include "z64game.h"
+#include "z64view.h"
+#include "z64skybox.h"
+#include "z64environment.h"
 
 #if IS_DEBUG_BOOT_ENABLED
 

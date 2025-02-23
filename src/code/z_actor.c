@@ -22,6 +22,7 @@
 #include "z64save.h"
 #include "z64skin_matrix.h"
 #include "config.h"
+#include "widescreen.h"
 
 #include "global.h"
 

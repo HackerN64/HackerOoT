@@ -21,6 +21,7 @@
 #include "z64play.h"
 #include "z64save.h"
 #include "z64ss_sram.h"
+#include "widescreen.h"
 
 #include "assets/objects/object_mag/object_mag.h"
 

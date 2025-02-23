@@ -72,6 +72,8 @@ vs32 sSchedDebugPrintfEnabled = false;
 #define SCHED_DEBUG_PRINTF(format, ...) (void)0
 #endif
 
+void SysUcode_LoadNewUcodeIfChanged();
+
 /**
  * Set the current framebuffer to the swapbuffer pointed to by the provided cfb
  */

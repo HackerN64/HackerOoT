@@ -5,6 +5,7 @@
 #include "z64dma.h"
 #include "z64font.h"
 #include "z64message.h"
+#include "widescreen.h"
 
 #include "macros.h"
 

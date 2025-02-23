@@ -1,5 +1,6 @@
 #include "global.h"
 #include "terminal.h"
+#include "widescreen.h"
 
 vu32 sLogOnNextViewInit = true;
 

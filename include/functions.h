@@ -128,11 +128,6 @@ f32 absf(f32);
 
 void Regs_InitData(PlayState* play);
 
-#if ENABLE_F3DEX3
-void OcclusionPlane_Draw_Phase(PlayState* play, OcclusionPlanePhase phase);
-void OcclusionPlane_Draw_PostCamUpdate(PlayState* play);
-#endif
-
 #if ENABLE_PROFILER
 #include "debug/profiler_inline.h"
 #endif

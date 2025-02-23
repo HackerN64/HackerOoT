@@ -77,7 +77,7 @@ all: $(FNAME_$(TARGET))
 obj:
 	$(V)mkdir obj
 clean: | obj
-	$(V)rm obj/* || true
+	$(V)rm -r -f obj/* || true
 
 ifeq ($(TARGET),windows)
   XFILES += obj/rc.o

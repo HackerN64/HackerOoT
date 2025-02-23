@@ -24,6 +24,7 @@
 #include "z64sram.h"
 #include "z64ss_sram.h"
 #include "z64view.h"
+#include "widescreen.h"
 
 #include "global.h"
 

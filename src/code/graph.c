@@ -20,6 +20,7 @@
 #include "versions.h"
 #include "z64save.h"
 #include "z64play.h"
+#include "debug_opening_state.h"
 
 #include "macros.h"
 #include "global.h"

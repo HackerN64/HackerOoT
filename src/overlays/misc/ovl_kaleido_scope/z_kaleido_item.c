@@ -1,6 +1,7 @@
 #include "z_kaleido_scope.h"
 
 #include "z64save.h"
+#include "widescreen.h"
 
 #include "assets/textures/parameter_static/parameter_static.h"
 

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "z64.h"
+#include "z64thread.h"
 
 #if ENABLE_PROFILER
 

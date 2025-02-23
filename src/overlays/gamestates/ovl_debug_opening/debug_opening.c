@@ -11,9 +11,10 @@
 #if IS_DEBUG_BOOT_ENABLED
 
 #include "alloca.h"
-#include "debug_opening.h"
+#include "debug_opening_state.h"
 #include "macros.h"
 #include "helpers.h"
+#include "seqcmd.h"
 
 #define DEBUG_OPENING_SKYBOX_ID SKYBOX_NORMAL_SKY
 static f32 sSkyboxAngle = 0.0f;

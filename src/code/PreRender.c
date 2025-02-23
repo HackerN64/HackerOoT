@@ -7,6 +7,7 @@
  */
 #include "global.h"
 #include "alloca.h"
+#include "sys_ucode.h"
 
 void PreRender_SetValuesSave(PreRender* this, u32 width, u32 height, void* fbuf, void* zbuf, void* cvg) {
     this->widthSave = width;
