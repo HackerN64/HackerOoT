@@ -26,6 +26,7 @@
 #include "z64save.h"
 #include "widescreen.h"
 #include "debug_opening_state.h"
+#include "letterbox.h"
 
 #include "global.h"
 

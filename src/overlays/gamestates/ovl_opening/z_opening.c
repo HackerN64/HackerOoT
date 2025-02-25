@@ -13,6 +13,7 @@
 #include "z64save.h"
 #include "z64sram.h"
 #include "z64view.h"
+#include "letterbox.h"
 
 void TitleSetup_SetupTitleScreen(TitleSetupState* this) {
     gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;

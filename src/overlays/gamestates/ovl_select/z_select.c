@@ -9,6 +9,7 @@
 #include "debug_opening_state.h"
 #include "console_logo_state.h"
 #include "seqcmd.h"
+#include "letterbox.h"
 
 void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;

@@ -37,7 +37,7 @@ typedef struct GameState {
         (state)->size = sizeof(newStruct);               \
     } (void)0
 
-void GameState_SetFBFilter(struct Gfx** gfxP);
+void GameState_SetFBFilter(Gfx** gfxP);
 void GameState_Draw(GameState* gameState, struct GraphicsContext* gfxCtx);
 void GameState_SetFrameBuffer(struct GraphicsContext* gfxCtx);
 void GameState_ReqPadData(GameState* gameState);
