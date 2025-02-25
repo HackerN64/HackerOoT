@@ -1,5 +1,6 @@
 #include "fault.h"
 #include "ultra64.h"
+#include "sys_ucode.h"
 #include "segment_symbols.h"
 #include "occlusionplanes.h"
 #include "z64dma.h"
