@@ -1,3 +1,5 @@
+#include "gfx.h"
+
 #include "global.h"
 #include "widescreen.h"
 

@@ -1,4 +1,7 @@
-#include "global.h"
+#include "letterbox.h"
+#include "regs.h"
+
+#include "macros.h"
 
 #if ENABLE_NEW_LETTERBOX
 
