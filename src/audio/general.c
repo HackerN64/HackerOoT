@@ -6,10 +6,9 @@
 #include "seqcmd.h"
 #include "sequence.h"
 #include "versions.h"
+#include "macros.h"
 
 #include "global.h"
-
-#define ABS_ALT(x) ((x) < 0 ? -(x) : (x))
 
 #if !PLATFORM_N64
 #define AUDIO_PRINTF osSyncPrintf

@@ -15,6 +15,11 @@
 #include "macros.h"
 #include "helpers.h"
 #include "seqcmd.h"
+#include "regs.h"
+#include "controller.h"
+#include "gfxalloc.h"
+#include "letterbox.h"
+#include "widescreen.h"
 
 #define DEBUG_OPENING_SKYBOX_ID SKYBOX_NORMAL_SKY
 static f32 sSkyboxAngle = 0.0f;

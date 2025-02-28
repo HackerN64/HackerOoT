@@ -12,6 +12,7 @@
 #include "gfx.h"
 #include "prerender.h"
 #include "regs.h"
+#include "gfxalloc.h"
 
 #include "macros.h"
 #include "global.h"

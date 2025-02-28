@@ -38,6 +38,8 @@
 #include "z64player.h"
 #include "z64save.h"
 #include "z64vis.h"
+#include "occlusionplanes.h"
+#include "libu64/gfxprint.h"
 
 #if CAN_INCLUDE_EXAMPLE_SCENE
 #include "assets/scenes/example/example_scene.h"

@@ -10,6 +10,12 @@
 #include "console_logo_state.h"
 #include "seqcmd.h"
 #include "letterbox.h"
+#include "regs.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "controller.h"
+#include "libu64/gfxprint.h"
+#include "libc64/qrand.h"
 
 void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;

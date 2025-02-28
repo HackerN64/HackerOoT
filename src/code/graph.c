@@ -14,7 +14,6 @@
 #include "prenmi_state.h"
 #include "regs.h"
 #include "setup_state.h"
-#include "speed_meter.h"
 #include "sys_debug_controller.h"
 #include "sys_ucode.h"
 #include "terminal.h"

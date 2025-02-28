@@ -45,7 +45,6 @@
 #include "main.h"
 #include "regs.h"
 #include "sched.h"
-#include "speed_meter.h"
 #include "versions.h"
 #include "z64thread.h"
 

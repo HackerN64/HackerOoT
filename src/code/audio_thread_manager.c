@@ -7,7 +7,6 @@
 
 #include "audiomgr.h"
 #include "regs.h"
-#include "speed_meter.h"
 #include "z64dma.h"
 
 #include "macros.h"

@@ -2,6 +2,8 @@
 #include "file_select_state.h"
 #include "title_setup_state.h"
 #include "map_select_state.h"
+#include "z64save.h"
+#include "z_lib.h"
 
 void Helpers_LoadDefinedScene(GameState* gameState) {
     if (gSaveContext.fileNum == 0xff) {

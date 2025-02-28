@@ -30,6 +30,7 @@ extern struct IrqMgr gIrqMgr;
 #endif
 #include "z64debug.h"
 #include "z64thread.h"
+#include "rainbow.h"
 
 #include "global.h"
 

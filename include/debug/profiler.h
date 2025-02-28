@@ -1,6 +1,10 @@
 #ifndef PROFILER_H
 #define PROFILER_H
 
+#include "config.h"
+#include "ultra64/ultratypes.h"
+#include "ultra64/time.h"
+
 #define PROFILER_EVENT_COUNT 384
 
 // These can't be an enum because they're used by asm.

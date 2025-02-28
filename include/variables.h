@@ -8,8 +8,6 @@
 
 #if ENABLE_HACKER_DEBUG
 #include "debug.h"
-
-extern Debug gDebug;
 #endif
 
 struct MapData;
