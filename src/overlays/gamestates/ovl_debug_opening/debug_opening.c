@@ -5,21 +5,22 @@
  * Author: @Trueffeloot
  */
 
-#include "global.h"
 #include "config.h"
 
 #if IS_DEBUG_BOOT_ENABLED
 
-#include "alloca.h"
 #include "debug_opening_state.h"
-#include "macros.h"
 #include "helpers.h"
 #include "seqcmd.h"
 #include "regs.h"
 #include "controller.h"
 #include "gfxalloc.h"
+#include "z64save.h"
+#include "sfx.h"
+#include "debug.h"
+#include "variables.h"
+#include "gfx.h"
 #include "letterbox.h"
-#include "widescreen.h"
 
 #define DEBUG_OPENING_SKYBOX_ID SKYBOX_NORMAL_SKY
 static f32 sSkyboxAngle = 0.0f;
@@ -133,7 +134,7 @@ void DebugOpening_DrawCommitInfo(DebugOpeningState* this) {
 
     // for some reasons using `Print_ScreenPx` doesn't work well here so we're doing the print manually
 
-    OPEN_DISPS(this->state.gfxCtx, "../debug_opening.c", __LINE__);
+    OPEN_DISPS(this->state.gfxCtx, __FILE__, __LINE__);
 
     dl = Gfx_Open(gfxRef = POLY_OPA_DISP);
     gSPDisplayList(OVERLAY_DISP++, dl);
@@ -159,7 +160,7 @@ void DebugOpening_DrawCommitInfo(DebugOpeningState* this) {
     Gfx_Close(gfxRef, dl);
     POLY_OPA_DISP = dl;
 
-    CLOSE_DISPS(this->state.gfxCtx, "../debug_opening.c", __LINE__);
+    CLOSE_DISPS(this->state.gfxCtx, __FILE__, __LINE__);
 
     // as soon as commit info leaves the screen, go back to the right side of the screen
     if (sCommitStringPos == 0 - (s32)(max * GFX_CHAR_X_SPACING)) {
@@ -190,15 +191,33 @@ void DebugOpening_DrawOptions(DebugOpeningState* this) {
 void DebugOpening_Draw(DebugOpeningState* this) {
     GraphicsContext* gfxCtx = this->state.gfxCtx;
     GfxPrint* printer;
+    Vec3f eye;
+    Vec3f at;
+    Vec3f up;
 
     Color_RGBA8 rgba = { 0, 0, 0, 80 };
 
-    OPEN_DISPS(gfxCtx, "../debug_opening.c", __LINE__);
+    eye.x = 0.0f;
+    eye.y = 0.0f;
+    eye.z = 3000.0f;
+    at.x = 0.0f;
+    at.y = 0.0f;
+    at.z = 0.0f;
+    up.x = 0.0f;
+    up.z = 0.0f;
+    up.y = 1.0f;
+
+    OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
+    gSPSegment(POLY_XLU_DISP++, 0x00, NULL);
+    gSPSegment(OVERLAY_DISP++, 0x00, NULL);
+
     Gfx_SetupFrame(gfxCtx, true, 0, 0, 0);
+    View_LookAt(&this->view, &eye, &at, &up);
     SET_FULLSCREEN_VIEWPORT(&this->view);
     View_Apply(&this->view, VIEW_ALL);
+
     Helpers_DrawSkybox(&this->state, &this->view, &this->envCtx, &this->skyboxCtx, DEBUG_OPENING_SKYBOX_ID, 0.0f,
                        -10.0f);
 
@@ -239,7 +258,7 @@ void DebugOpening_Draw(DebugOpeningState* this) {
 
     DebugOpening_DrawCommitInfo(this);
 
-    CLOSE_DISPS(gfxCtx, "../debug_opening.c", __LINE__);
+    CLOSE_DISPS(gfxCtx, __FILE__, __LINE__);
 }
 
 void DebugOpening_Init(GameState* thisx) {
