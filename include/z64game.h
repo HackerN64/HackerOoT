@@ -11,7 +11,6 @@
 
 struct GraphicsContext;
 struct GameState;
-struct Gfx;
 
 typedef void (*GameStateFunc)(struct GameState* gameState);
 
