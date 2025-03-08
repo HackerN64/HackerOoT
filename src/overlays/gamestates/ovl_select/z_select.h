@@ -2,6 +2,8 @@
 #define Z_SELECT_H
 
 #include "config.h"
+#include "versions.h"
+
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
@@ -13,6 +15,11 @@
 #include "map_select_state.h"
 
 #include "global.h"
+
+#if PLATFORM_N64
+void func_80800AD0_unknown(MapSelectState* this, s32 arg1);
+void func_80800B08_unknown(MapSelectState* this, s32 arg1);
+#endif
 
 static const char* sAgeLabels[] = {
     "Adult",

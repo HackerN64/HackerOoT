@@ -1,12 +1,32 @@
-/* Modded GBI for use with F3DEX3 custom microcode. */
+/**
+ * @file gbi.h
+ * @brief Modded GBI for use with F3DEX3 custom microcode
+ */
 
-#include "mbi.h"
+/* List of options; the documentation for each is where it is used below. */
+/* #define REQUIRE_SEMICOLONS_AFTER_GBI_COMMANDS */ /* recommended */
+/* #define NO_SYNCS_IN_TEXTURE_LOADS */ /* see documentation */
+/* #define F3DEX2_SEGMENTS */ /* see documentation */
+/* #define DISABLE_AA */ /* developer taste */
+/* #define RISKY_RDP_SYNCS */ /* see documentation */
+/* #define KAZE_GBI_HACKS */ /* not recommended unless you are Kaze */
+
+#include "ultra64/mbi.h"
 
 #ifndef F3DEX3_H
 #define F3DEX3_H
 
-#define F3DEX_GBI_2 1
-#define F3DEX_GBI_3 1
+#ifdef F3DEX_GBI_2
+#undef F3DEX_GBI_2
+#endif
+
+#ifdef F3DEX_GBI_PL
+#undef F3DEX_GBI_PL
+#endif
+
+#define F3DEX_GBI_2  1
+#define F3DEX_GBI_PL 1
+#define F3DEX_GBI_3  1
 
 #ifdef REQUIRE_SEMICOLONS_AFTER_GBI_COMMANDS
 /* OoT style, semicolons required after using macros, cleaner code. If modding
@@ -129,7 +149,6 @@ of warnings if you use -Wpedantic. */
 #define G_TEXTURE_ENABLE        0x00000000  /* actually 2, but controlled by SPTexture */
 #define G_SHADE                 0x00000004
 #define G_AMBOCCLUSION          0x00000040
-#define G_ATTROFFSET_Z_ENABLE   0x00000080
 #define G_ATTROFFSET_ST_ENABLE  0x00000100
 #define G_CULL_NEITHER          0x00000000
 #define G_CULL_FRONT            0x00000200
@@ -154,11 +173,35 @@ of warnings if you use -Wpedantic. */
 #define G_DL_NOPUSH     1
 
 /* See SPMatrix */
+/**
+ * @brief specifies whether the matrix operation will be performed on the projection or the model view matrix.
+ *
+ */
 #define G_MTX_MODELVIEW    0x00    /* matrix types */
+/**
+ * @brief @copybrief G_MTX_MODELVIEW
+ *
+ */
 #define G_MTX_PROJECTION   0x04
+/**
+ * @brief concatenates the matrix (m) with the top of the matrix stack.
+ *
+ */
 #define G_MTX_MUL          0x00    /* concat or load */
+/**
+ * @brief loads the matrix (m) onto the top of the matrix stack.
+ *
+ */
 #define G_MTX_LOAD         0x02
+/**
+ * @brief specifies do not push the matrix stack prior to matrix operations
+ *
+ */
 #define G_MTX_NOPUSH       0x00    /* push or not */
+/**
+ * @brief specifies push the matrix stack prior to matrix operations
+ *
+ */
 #define G_MTX_PUSH         0x01
 
 /* See SPNormalsMode */
@@ -248,10 +291,28 @@ longer a multiple of 8 (DMA word). This was not used in any command anyway. */
 #define G_MWO_aLIGHT_10          0x90
 #define G_MWO_bLIGHT_10          0x94
 
+/**
+ * @brief changes the color of the vertex. The val parameter is interpreted as 4 bytes: red (high byte), green, blue, and alpha (low byte).
+ *
+ */
 #define G_MWO_POINT_RGBA         0x10
+/**
+ * @brief changes the S and T values (texture coordinates of the vertex). The high 16 bits of val specify the S coordinate, and the low 16 bits specify the T coordinate. Each coordinate is an S10.5 number.
+ *
+ */
 #define G_MWO_POINT_ST           0x14
-#define G_MWO_POINT_XYSCREEN     0x18 /* not recommended to use, won't work if */
-#define G_MWO_POINT_ZSCREEN      0x1C /* the tri gets clipped */
+/**
+ * @brief change the screen coordinates of the vertex. The high 16 bits of val specify the X coordinate and the low 16 bits specify the Y coordinate. Both coordinates are S13.2 numbers with 0,0 being the upper-left of the screen, positive X going right, and positive Y going down.
+ *
+ * @deprecated to use, won't work if the tri gets clipped.
+ */
+#define G_MWO_POINT_XYSCREEN     0x18
+/**
+ * @brief changes the screen Z coordinate of the vertex. The entire 32-bit val is taken as the new screen Z value. It is a 16.16 number in the range 0x00000000 to 0x03ff0000.
+ *
+ * @deprecated to use, won't work if the tri gets clipped.
+ */
+#define G_MWO_POINT_ZSCREEN      0x1C
 
 #define G_MWO_AO_AMBIENT         0x00
 #define G_MWO_AO_DIRECTIONAL     0x02
@@ -261,10 +322,9 @@ longer a multiple of 8 (DMA word). This was not used in any command anyway. */
 #define G_MWO_FRESNEL_OFFSET     0x0E
 #define G_MWO_ATTR_OFFSET_S      0x10
 #define G_MWO_ATTR_OFFSET_T      0x12
-#define G_MWO_ATTR_OFFSET_Z      0x14
-#define G_MWO_ALPHA_COMPARE_CULL 0x16
-#define G_MWO_NORMALS_MODE       0x18
-#define G_MWO_LAST_MAT_DL_ADDR   0x1A
+#define G_MWO_ALPHA_COMPARE_CULL 0x14
+#define G_MWO_NORMALS_MODE       0x16
+#define G_MWO_LAST_MAT_DL_ADDR   0x18
 
 /*
  * RDP command argument defines
@@ -458,40 +518,6 @@ longer a multiple of 8 (DMA word). This was not used in any command anyway. */
 #define	G_CC_TRILERP                TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0, TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0
 #define	G_CC_INTERFERENCE           TEXEL0, 0, TEXEL1, 0, TEXEL0, 0, TEXEL1, 0
 
-/*
- *  One-cycle color convert operation
- */
-#define	G_CC_1CYUV2RGB              TEXEL0, K4, K5, TEXEL0, 0, 0, 0, SHADE
-
-/*
- *  NOTE: YUV2RGB expects TF step1 color conversion to occur in 2nd clock.
- * Therefore, CC looks for step1 results in TEXEL1
- */
-#define	G_CC_YUV2RGB                TEXEL1, K4, K5, TEXEL1, 0, 0, 0, 0
-
-/* typical CC cycle 2 modes */
-#define	G_CC_PASS2                  0, 0, 0, COMBINED, 0, 0, 0, COMBINED
-#define	G_CC_MODULATEI2             COMBINED, 0, SHADE, 0, 0, 0, 0, SHADE
-#define	G_CC_MODULATEIA2            COMBINED, 0, SHADE, 0, COMBINED, 0, SHADE, 0
-#define	G_CC_MODULATERGB2           G_CC_MODULATEI2
-#define	G_CC_MODULATERGBA2          G_CC_MODULATEIA2
-#define	G_CC_MODULATEI_PRIM2        COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE
-#define	G_CC_MODULATEIA_PRIM2       COMBINED, 0, PRIMITIVE, 0, COMBINED, 0, PRIMITIVE, 0
-#define	G_CC_MODULATERGB_PRIM2      G_CC_MODULATEI_PRIM2
-#define	G_CC_MODULATERGBA_PRIM2     G_CC_MODULATEIA_PRIM2
-#define	G_CC_DECALRGB2              0, 0, 0, COMBINED, 0, 0, 0, SHADE
-/*
- * ?
-#define	G_CC_DECALRGBA2		        COMBINED, SHADE, COMBINED_ALPHA, SHADE, 0, 0, 0, SHADE
-*/
-#define	G_CC_BLENDI2                ENVIRONMENT, SHADE, COMBINED, SHADE, 0, 0, 0, SHADE
-#define	G_CC_BLENDIA2               ENVIRONMENT, SHADE, COMBINED, SHADE, COMBINED, 0, SHADE, 0
-#define	G_CC_CHROMA_KEY2            TEXEL0, CENTER, SCALE, 0, 0, 0, 0, 0
-#define G_CC_HILITERGB2             ENVIRONMENT, COMBINED, TEXEL0, COMBINED, 0, 0, 0, SHADE
-#define G_CC_HILITERGBA2            ENVIRONMENT, COMBINED, TEXEL0, COMBINED, ENVIRONMENT, COMBINED, TEXEL0, COMBINED
-#define G_CC_HILITERGBDECALA2       ENVIRONMENT, COMBINED, TEXEL0, COMBINED, 0, 0, 0, TEXEL0
-#define G_CC_HILITERGBPASSA2        ENVIRONMENT, COMBINED, TEXEL0, COMBINED, 0, 0, 0, COMBINED
-
 
 /*
  *  One-cycle color convert operation
@@ -614,6 +640,20 @@ longer a multiple of 8 (DMA word). This was not used in any command anyway. */
 #define G_ZS_PIXEL          (0 << G_MDSFT_ZSRCSEL)
 #define G_ZS_PRIM           (1 << G_MDSFT_ZSRCSEL)
 
+#ifdef DISABLE_AA
+/* Disables antialiasing in all preset rendermodes, saving RDP time. Note that
+this does NOT disable antialiasing in manually written rendermodes, e.g.
+exported from fast64 with advanced options enabled. We can't redefine the real
+IM_RD because IM_RD is needed for transparency also, and we can't distinguish
+between a manually written rendermode using IM_RD for transparency and one using
+it for antialiasing. */
+#define AA_DEF 0
+#define RD_DEF 0
+#else
+#define AA_DEF AA_EN
+#define RD_DEF IM_RD
+#endif
+
 /* G_SETOTHERMODE_L gSetRenderMode */
 #define AA_EN           0x0008
 #define Z_CMP           0x0010
@@ -631,7 +671,7 @@ longer a multiple of 8 (DMA word). This was not used in any command anyway. */
 #define CVG_X_ALPHA     0x1000
 #define ALPHA_CVG_SEL   0x2000
 #define FORCE_BL        0x4000
-#define TEX_EDGE        0x0000  /* used to be 0x8000 */
+#define TEX_EDGE        0x0000  /* not in HW V2; is 0x8000 in older HW */
 
 #define G_BL_CLR_IN     0
 #define G_BL_CLR_MEM    1
@@ -651,148 +691,150 @@ longer a multiple of 8 (DMA word). This was not used in any command anyway. */
     (m1a) << 28 | (m1b) << 24 | (m2a) << 20 | (m2b) << 16
 
 #define RM_AA_ZB_OPA_SURF(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
+    AA_DEF | Z_CMP | Z_UPD | RD_DEF | CVG_DST_CLAMP |           \
     ZMODE_OPA | ALPHA_CVG_SEL |                                 \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
 #define RM_RA_ZB_OPA_SURF(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | CVG_DST_CLAMP |                     \
+    AA_DEF | Z_CMP | Z_UPD | CVG_DST_CLAMP |                    \
     ZMODE_OPA | ALPHA_CVG_SEL |                                 \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
 #define RM_AA_ZB_XLU_SURF(clk)                                  \
-    AA_EN | Z_CMP | IM_RD | CVG_DST_WRAP | CLR_ON_CVG |         \
+    AA_DEF | Z_CMP | IM_RD | CVG_DST_WRAP | CLR_ON_CVG |        \
     FORCE_BL | ZMODE_XLU |                                      \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 #define RM_AA_ZB_OPA_DECAL(clk)                                 \
-    AA_EN | Z_CMP | IM_RD | CVG_DST_WRAP | ALPHA_CVG_SEL |      \
+    AA_DEF | Z_CMP | RD_DEF | CVG_DST_WRAP | ALPHA_CVG_SEL |    \
     ZMODE_DEC |                                                 \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
 #define RM_RA_ZB_OPA_DECAL(clk)                                 \
-    AA_EN | Z_CMP | CVG_DST_WRAP | ALPHA_CVG_SEL |              \
+    AA_DEF | Z_CMP | CVG_DST_WRAP | ALPHA_CVG_SEL |             \
     ZMODE_DEC |                                                 \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
 #define RM_AA_ZB_XLU_DECAL(clk)                                 \
-    AA_EN | Z_CMP | IM_RD | CVG_DST_WRAP | CLR_ON_CVG |         \
+    AA_DEF | Z_CMP | IM_RD | CVG_DST_WRAP | CLR_ON_CVG |        \
     FORCE_BL | ZMODE_DEC |                                      \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 #define RM_AA_ZB_OPA_INTER(clk)                                 \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
+    AA_DEF | Z_CMP | Z_UPD | RD_DEF | CVG_DST_CLAMP |           \
     ALPHA_CVG_SEL | ZMODE_INTER |                               \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
 #define RM_RA_ZB_OPA_INTER(clk)                                 \
-    AA_EN | Z_CMP | Z_UPD | CVG_DST_CLAMP |                     \
+    AA_DEF | Z_CMP | Z_UPD | CVG_DST_CLAMP |                    \
     ALPHA_CVG_SEL | ZMODE_INTER |                               \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
 #define RM_AA_ZB_XLU_INTER(clk)                                 \
-    AA_EN | Z_CMP | IM_RD | CVG_DST_WRAP | CLR_ON_CVG |         \
+    AA_DEF | Z_CMP | IM_RD | CVG_DST_WRAP | CLR_ON_CVG |        \
     FORCE_BL | ZMODE_INTER |                                    \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 #define RM_AA_ZB_XLU_LINE(clk)                                  \
-    AA_EN | Z_CMP | IM_RD | CVG_DST_CLAMP | CVG_X_ALPHA |       \
+    AA_DEF | Z_CMP | IM_RD | CVG_DST_CLAMP | CVG_X_ALPHA |      \
     ALPHA_CVG_SEL | FORCE_BL | ZMODE_XLU |                      \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 #define RM_AA_ZB_DEC_LINE(clk)                                  \
-    AA_EN | Z_CMP | IM_RD | CVG_DST_SAVE | CVG_X_ALPHA |        \
+    AA_DEF | Z_CMP | IM_RD | CVG_DST_SAVE | CVG_X_ALPHA |       \
     ALPHA_CVG_SEL | FORCE_BL | ZMODE_DEC |                      \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
+/* Note that this uses AA_EN not AA_DEF */
 #define RM_AA_ZB_TEX_EDGE(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
+    AA_EN | Z_CMP | Z_UPD | RD_DEF | CVG_DST_CLAMP |            \
     CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_OPA | TEX_EDGE |        \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
 #define RM_AA_ZB_TEX_INTER(clk)                                 \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
+    AA_DEF | Z_CMP | Z_UPD | RD_DEF | CVG_DST_CLAMP |           \
     CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_INTER | TEX_EDGE |      \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
 #define RM_AA_ZB_SUB_SURF(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_FULL |              \
+    AA_DEF | Z_CMP | Z_UPD | IM_RD | CVG_DST_FULL |             \
     ZMODE_OPA | ALPHA_CVG_SEL |                                 \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
 #define RM_AA_ZB_PCL_SURF(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
+    AA_DEF | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |            \
     ZMODE_OPA | G_AC_DITHER |                                   \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 #define RM_AA_ZB_OPA_TERR(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
+    AA_DEF | Z_CMP | Z_UPD | RD_DEF | CVG_DST_CLAMP |           \
     ZMODE_OPA | ALPHA_CVG_SEL |                                 \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 #define RM_AA_ZB_TEX_TERR(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_CLAMP |             \
+    AA_DEF | Z_CMP | Z_UPD | RD_DEF | CVG_DST_CLAMP |           \
     CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_OPA | TEX_EDGE |        \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 #define RM_AA_ZB_SUB_TERR(clk)                                  \
-    AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_DST_FULL |              \
+    AA_DEF | Z_CMP | Z_UPD | IM_RD | CVG_DST_FULL |             \
     ZMODE_OPA | ALPHA_CVG_SEL |                                 \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 
 #define RM_AA_OPA_SURF(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_CLAMP |                             \
+    AA_DEF | RD_DEF | CVG_DST_CLAMP |                           \
     ZMODE_OPA | ALPHA_CVG_SEL |                                 \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
 #define RM_RA_OPA_SURF(clk)                                     \
-    AA_EN | CVG_DST_CLAMP |                                     \
+    AA_DEF | CVG_DST_CLAMP |                                    \
     ZMODE_OPA | ALPHA_CVG_SEL |                                 \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
 #define RM_AA_XLU_SURF(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_WRAP | CLR_ON_CVG | FORCE_BL |      \
+    AA_DEF | IM_RD | CVG_DST_WRAP | CLR_ON_CVG | FORCE_BL |     \
     ZMODE_OPA |                                                 \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 #define RM_AA_XLU_LINE(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_CLAMP | CVG_X_ALPHA |               \
+    AA_DEF | IM_RD | CVG_DST_CLAMP | CVG_X_ALPHA |              \
     ALPHA_CVG_SEL | FORCE_BL | ZMODE_OPA |                      \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 #define RM_AA_DEC_LINE(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_FULL | CVG_X_ALPHA |                \
+    AA_DEF | IM_RD | CVG_DST_FULL | CVG_X_ALPHA |               \
     ALPHA_CVG_SEL | FORCE_BL | ZMODE_OPA |                      \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
+/* Note that this uses AA_EN not AA_DEF */
 #define RM_AA_TEX_EDGE(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_CLAMP |                             \
+    AA_EN | RD_DEF | CVG_DST_CLAMP |                            \
     CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_OPA | TEX_EDGE |        \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
 #define RM_AA_SUB_SURF(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_FULL |                              \
+    AA_DEF | IM_RD | CVG_DST_FULL |                             \
     ZMODE_OPA | ALPHA_CVG_SEL |                                 \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
 
 #define RM_AA_PCL_SURF(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_CLAMP |                             \
+    AA_DEF | IM_RD | CVG_DST_CLAMP |                            \
     ZMODE_OPA | G_AC_DITHER |                                   \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 #define RM_AA_OPA_TERR(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_CLAMP |                             \
+    AA_DEF | RD_DEF | CVG_DST_CLAMP |                           \
     ZMODE_OPA | ALPHA_CVG_SEL |                                 \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 #define RM_AA_TEX_TERR(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_CLAMP |                             \
+    AA_DEF | RD_DEF | CVG_DST_CLAMP |                           \
     CVG_X_ALPHA | ALPHA_CVG_SEL | ZMODE_OPA | TEX_EDGE |        \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
 #define RM_AA_SUB_TERR(clk)                                     \
-    AA_EN | IM_RD | CVG_DST_FULL |                              \
+    AA_DEF | IM_RD | CVG_DST_FULL |                             \
     ZMODE_OPA | ALPHA_CVG_SEL |                                 \
     GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
 
@@ -995,36 +1037,39 @@ longer a multiple of 8 (DMA word). This was not used in any command anyway. */
  * Data Structures
  */
 
-/*
+/**
  * Vertex (set up for use with colors)
  */
 typedef struct {
-    short          ob[3];   /* x, y, z */
-    unsigned short flag;    /* Holds packed normals, or unused */
-    short          tc[2];   /* texture coord */
-    unsigned char  cn[4];   /* color & alpha */
+    short          ob[3];   /** x, y, z */
+    unsigned short flag;    /** Holds packed normals, or unused */
+    short          tc[2];   /** texture coord */
+    unsigned char  cn[4];   /** color & alpha */
 } Vtx_t;
 
-/*
- * Vertex (set up for use with normals)
+/**
+ * @copydetails Vtx_t
  */
 typedef struct {
-    short          ob[3];   /* x, y, z */
-    unsigned short flag;    /* Packed normals are not used when normals are in colors */
-    short          tc[2];   /* texture coord */
-    signed char    n[3];    /* normal */
-    unsigned char  a;       /* alpha  */
+    short          ob[3];   /** x, y, z */
+    unsigned short flag;    /** Packed normals are not used when normals are in colors */
+    short          tc[2];   /** texture coord */
+    signed char    n[3];    /** normal */
+    unsigned char  a;       /** alpha  */
 } Vtx_tn;
 
+/**
+ * @copydetails Vtx_t
+ */
 typedef union {
-    Vtx_t  v;   /* Use this one for colors  */
-    Vtx_tn n;   /* Use this one for normals */
+    Vtx_t  v;   /** Use this one for colors  */
+    Vtx_tn n;   /** Use this one for normals */
     long long int force_structure_alignment;
 } Vtx;
 
 typedef struct {
     short pos[3];
-    short pad; /* value ignored, need not be 0 */
+    short pad; /** value ignored, need not be 0 */
 } PlainVtx_t;
 
 typedef union {
@@ -1032,7 +1077,7 @@ typedef union {
     long long int force_structure_alignment;
 } PlainVtx;
 
-/*
+/**
  * Triangle face
  */
 typedef struct {
@@ -1040,7 +1085,7 @@ typedef struct {
     unsigned char v[3];
 } Tri;
 
-/*
+/**
  * 4x4 matrix, fixed point s15.16 format.
  * First 8 words are integer portion of the 4x4 matrix
  * Last 8 words are the fraction portion of the 4x4 matrix
@@ -1086,25 +1131,48 @@ typedef union {
  * Viewport
  */
 
-/*
- * This magic value is the maximum INTEGER z-range of the hardware
- * (there are also 16-bits of fraction, which are introduced during
- * any transformations). This is not just a good idea, it's the law.
- * Feeding the hardware eventual z-coordinates (after any transforms
- * or scaling) bigger than this, will not work.
+/**
+ * There have been two breaking changes made to the F3DEX3 viewport relative to
+ * F3DEX2 and all previous F3D microcodes.
+ * - Max Z value changed from 0x03FF to 0x7FFF
+ * - Y scale is negated (offset is not negated)
  *
- * This number is DIFFERENT than G_MAXFBZ, which is the maximum value
- * you want to use to initialize the z-buffer.
+ * The reason for these changes is as follows. Apparently, SGI initially
+ * intended the actual range of Z values in RDP triangle commands to be 0x03FF
+ * (integer, plus 16 fractional bits). So this was set up in the GBI and games
+ * were initially made this way. The actual range is 0x7FFF (plus 16 frac), at
+ * least for RCP HW V2 (retail). So, instead of updating the value in the GBI,
+ * SGI just added a scale up by 0x20 at the very end of the triangle processing
+ * when writing out the Z coefficients to the RDP. Because of the way this
+ * writing was implemented, there did not appear to be any performance penalty
+ * to this scaling, so it just worked.
  *
- * The reason these are different is mildly interesting, but too long
- * to explain here. It is basically the result of optimizations in the
- * hardware. A more generic API might hide this detail from the users,
- * but we don't have the ucode to do that...
+ * F3DEX3 moves this scale up to the viewport affine transformation step at the
+ * end of the vertex processing, which allows an extra 5 bits of Z precision to
+ * be retained during some intermediate calculations for the attributes in the
+ * triangle write. In EX2, precision is sometimes lost in these calculations,
+ * leading to Z fighting. In addition, F3DEX3 optimizes the Z writing, saving a
+ * few cycles per written tri.
  *
+ * As far as the Y scale being negated, F3DEX2 did this at the cost of 3
+ * instructions, but doing this on the CPU when creating the viewport is
+ * effectively free.
+ *
+ * Both of these changes were made together--and this macro was changed to an
+ * error instead of just being changed to the new value--in order to maximize
+ * the chances the developer actually changes their viewport. Some game
+ * codebases might have the value derived from G_MAXZ hardcoded, so they might
+ * miss this change and start getting weird Z buffer issues. But they won't miss
+ * their game being upside down.
  */
-#define G_MAXZ  0x03FF  /* 10 bits of integer screen-Z precision */
+#define G_MAXZ Error_please_update_viewport_Z_and_Y_see_GBI
 
-/*
+/**
+ * New max Z value for viewport.
+ */
+#define G_NEW_MAXZ 0x7FFF
+
+/**
  * The viewport structure elements have 2 bits of fraction, necessary
  * to accomodate the sub-pixel positioning scaling for the hardware.
  * This can also be exploited to handle odd-sized viewports.
@@ -1112,12 +1180,12 @@ typedef union {
  * Accounting for these fractional bits, using the default projection
  * and viewing matrices, the viewport structure is initialized thusly:
  *
- *      (SCREEN_WD/2)*4, (SCREEN_HT/2)*4, G_MAXZ, 0,
- *      (SCREEN_WD/2)*4, (SCREEN_HT/2)*4, 0, 0,
+ *      (SCREEN_WD/2)*4, -(SCREEN_HT/2)*4, G_NEW_MAXZ/2, 0,
+ *      (SCREEN_WD/2)*4,  (SCREEN_HT/2)*4, G_NEW_MAXZ/2, 0,
  */
 typedef struct {
-    short vscale[4];    /* scale, 2 bits fraction */
-    short vtrans[4];    /* translate, 2 bits fraction */
+    short vscale[4];    /** scale, 2 bits fraction (X and Y only) */
+    short vtrans[4];    /** translate, 2 bits fraction (X and Y only) */
     /* both the above arrays are padded to 64-bit boundary */
 } Vp_t;
 
@@ -1126,48 +1194,56 @@ typedef union {
     long long int force_structure_alignment[2];
 } Vp;
 
-/*
+/**
  * Light structure.
  *
  * Note: the weird order is for the DMEM alignment benefit of
  * the microcode.
  */
-
 typedef struct {
-    unsigned char col[3];   /* diffuse light color (rgb) */
-    unsigned char type;     /* formerly pad1; MUST SET TO 0 to indicate directional light */
-    unsigned char colc[3];  /* copy of diffuse light color (rgb) */
+    unsigned char col[3];   /** diffuse light color (rgb) */
+    unsigned char type;     /** formerly pad1; MUST SET TO 0 to indicate directional light */
+    unsigned char colc[3];  /** copy of diffuse light color (rgb) */
     char          pad2;
-    signed char   dir[3];   /* direction of light (normalized) */
+    signed char   dir[3];   /** direction of light (normalized) */
     char          pad3;
     char          pad4[3];
-    unsigned char size;     /* For specular only; reasonable values are 1-4 */
+    unsigned char size;     /** For specular only; reasonable values are 1-4 */
 } Light_t;
 
+/**
+ * Light structure.
+ *
+ * Note: the weird order is for the DMEM alignment benefit of
+ * the microcode.
+ */
 typedef struct {
-    unsigned char col[3];   /* point light color (rgb) */
-    unsigned char kc;       /* point light enable flag (> 0) & constant attenuation Kc */
-    unsigned char colc[3];  /* copy of point light color (rgb) */
-    unsigned char kl;       /* linear attenuation Kl */
-    short pos[3];           /* light position x, y, z in world space */
-    unsigned char kq;       /* quadratic attenuation Kq */
-    unsigned char size;     /* For specular only; reasonable values are 1-4 */
-} PosLight_t;
+    unsigned char col[3];   /** point light color (rgb) */
+    unsigned char kc;       /** constant attenuation (> 0 indicates point light) */
+    unsigned char colc[3];  /** copy of point light color (rgb) */
+    unsigned char kl;       /** linear attenuation */
+    short         pos[3];   /** world-space position of light */
+    unsigned char kq;       /** quadratic attenuation */
+    unsigned char size;     /** For specular only; reasonable values are 1-4 */
+} PointLight_t;
 
+/**
+ * @copydetails PosLight_t
+ */
 typedef struct {
-    unsigned char col[3];   /* ambient light color (rgb) */
+    unsigned char col[3];   /** ambient light color (rgb) */
     char          pad1;
-    unsigned char colc[3];  /* copy of ambient light color (rgb) */
+    unsigned char colc[3];  /** copy of ambient light color (rgb) */
     char          pad2;
 } Ambient_t;
 
 typedef struct {
-    signed char   dir[3];   /* direction of lookat (normalized) */
+    signed char   dir[3];   /** direction of lookat (normalized) */
     char          pad1;
 } LookAt_t;
 
 typedef struct {
-    LookAt_t      l;        /* for backwards compatibility */
+    LookAt_t      l;        /** for backwards compatibility */
 } LookAtWrapper;
 
 typedef struct {
@@ -1194,17 +1270,17 @@ typedef struct {
 } OcclusionPlane_t;
 
 typedef struct {
-    /* Four vertices of a quad, XYZ components in world space */
     struct {
         short x;
         short y;
         short z;
-    } v[4];
-    float weight; /* Higher if there's a lot of stuff behind it */
+    } v[4]; /** Four vertices of a quad, XYZ components in world space */
+    float weight; /** Higher if there's a lot of stuff behind it */
 } OcclusionPlaneCandidate;
 
 typedef union {
-    Light_t l;
+    Light_t       l;
+    PointLight_t  p;
     long long int force_structure_alignment[2];
 } Light;
 
@@ -1212,12 +1288,6 @@ typedef union {
     Ambient_t l;
     long long int force_structure_alignment[1];
 } Ambient;
-
-typedef union {
-    PosLight_t p;
-    Light_t    l;
-    long long int force_structure_alignment[2];
-} PosLight;
 
 typedef union {
     LookAtWrapper l[2];
@@ -1291,554 +1361,349 @@ typedef struct {
     Ambient a;
 } Lights9;
 
-typedef struct {
-    PosLight    l[9];
-    Ambient     a;
-} PosLightsn;
+#define gDefAmbient(r, g, b)    \
+    {{                          \
+        { (r), (g), (b) }, 0,   \
+        { (r), (g), (b) }, 0,   \
+    }}
 
-typedef struct {
-    /* F3DEX3 properly supports zero lights, unlike F3DEX2 where you need
-    to include one black directional light. */
-    Ambient     a;
-} PosLights0;
+#define gDefLight(r, g, b, x, y, z) \
+    {{                              \
+        { (r), (g), (b) }, 0,       \
+        { (r), (g), (b) }, 0,       \
+        { (x), (y), (z) }, 0,       \
+        {  0,   0,   0  }, 0,       \
+    }}
 
-typedef struct {
-    PosLight    l[1];
-    Ambient     a;
-} PosLights1;
+#define gdSPDefLights0(ar, ag, ab)                  \
+        {                                           \
+            gDefAmbient(ar, ag, ab),                \
+        }
 
-typedef struct {
-    PosLight    l[2];
-    Ambient     a;
-} PosLights2;
+#define gdSPDefLights1(ar, ag, ab,                  \
+                       r1, g1, b1, x1, y1, z1)      \
+        {                                           \
+            {                                       \
+                gDefLight(r1, g1, b1, x1, y1, z1),  \
+            },                                      \
+            gDefAmbient(ar, ag, ab),                \
+        }
 
-typedef struct {
-    PosLight    l[3];
-    Ambient     a;
-} PosLights3;
+#define gdSPDefLights2(ar, ag, ab,                  \
+                       r1, g1, b1, x1, y1, z1,      \
+                       r2, g2, b2, x2, y2, z2)      \
+        {                                           \
+            {                                       \
+                gDefLight(r1, g1, b1, x1, y1, z1),  \
+                gDefLight(r2, g2, b2, x2, y2, z2),  \
+            },                                      \
+            gDefAmbient(ar, ag, ab),                \
+        }
 
-typedef struct {
-    PosLight    l[4];
-    Ambient     a;
-} PosLights4;
+#define gdSPDefLights3(ar, ag, ab,                  \
+                       r1, g1, b1, x1, y1, z1,      \
+                       r2, g2, b2, x2, y2, z2)      \
+                       r3, g3, b3, x3, y3, z3)      \
+        {                                           \
+            {                                       \
+                gDefLight(r1, g1, b1, x1, y1, z1),  \
+                gDefLight(r2, g2, b2, x2, y2, z2),  \
+                gDefLight(r3, g3, b3, x3, y3, z3),  \
+            },                                      \
+            gDefAmbient(ar, ag, ab),                \
+        }
 
-typedef struct {
-    PosLight    l[5];
-    Ambient     a;
-} PosLights5;
+#define gdSPDefLights4(ar, ag, ab,                  \
+                       r1, g1, b1, x1, y1, z1,      \
+                       r2, g2, b2, x2, y2, z2,      \
+                       r3, g3, b3, x3, y3, z3,      \
+                       r4, g4, b4, x4, y4, z4)      \
+        {                                           \
+            {                                       \
+                gDefLight(r1, g1, b1, x1, y1, z1),  \
+                gDefLight(r2, g2, b2, x2, y2, z2),  \
+                gDefLight(r3, g3, b3, x3, y3, z3),  \
+                gDefLight(r4, g4, b4, x4, y4, z4),  \
+            },                                      \
+            gDefAmbient(ar, ag, ab),                \
+        }
 
-typedef struct {
-    PosLight    l[6];
-    Ambient     a;
-} PosLights6;
+#define gdSPDefLights5(ar, ag, ab,                  \
+                       r1, g1, b1, x1, y1, z1,      \
+                       r2, g2, b2, x2, y2, z2,      \
+                       r3, g3, b3, x3, y3, z3,      \
+                       r4, g4, b4, x4, y4, z4,      \
+                       r5, g5, b5, x5, y5, z5)      \
+        {                                           \
+            {                                       \
+                gDefLight(r1, g1, b1, x1, y1, z1),  \
+                gDefLight(r2, g2, b2, x2, y2, z2),  \
+                gDefLight(r3, g3, b3, x3, y3, z3),  \
+                gDefLight(r4, g4, b4, x4, y4, z4),  \
+                gDefLight(r5, g5, b5, x5, y5, z5),  \
+            },                                      \
+            gDefAmbient(ar, ag, ab),                \
+        }
 
-typedef struct {
-    PosLight    l[7];
-    Ambient     a;
-} PosLights7;
+#define gdSPDefLights6(ar, ag, ab,                  \
+                       r1, g1, b1, x1, y1, z1,      \
+                       r2, g2, b2, x2, y2, z2,      \
+                       r3, g3, b3, x3, y3, z3,      \
+                       r4, g4, b4, x4, y4, z4,      \
+                       r5, g5, b5, x5, y5, z5,      \
+                       r6, g6, b6, x6, y6, z6)      \
+        {                                           \
+            {                                       \
+                gDefLight(r1, g1, b1, x1, y1, z1),  \
+                gDefLight(r2, g2, b2, x2, y2, z2),  \
+                gDefLight(r3, g3, b3, x3, y3, z3),  \
+                gDefLight(r4, g4, b4, x4, y4, z4),  \
+                gDefLight(r5, g5, b5, x5, y5, z5),  \
+                gDefLight(r6, g6, b6, x6, y6, z6),  \
+            },                                      \
+            gDefAmbient(ar, ag, ab),                \
+        }
 
-typedef struct {
-    PosLight    l[8];
-    Ambient     a;
-} PosLights8;
+#define gdSPDefLights7(ar, ag, ab,                  \
+                       r1, g1, b1, x1, y1, z1,      \
+                       r2, g2, b2, x2, y2, z2,      \
+                       r3, g3, b3, x3, y3, z3,      \
+                       r4, g4, b4, x4, y4, z4,      \
+                       r5, g5, b5, x5, y5, z5,      \
+                       r6, g6, b6, x6, y6, z6,      \
+                       r7, g7, b7, x7, y7, z7)      \
+        {                                           \
+            {                                       \
+                gDefLight(r1, g1, b1, x1, y1, z1),  \
+                gDefLight(r2, g2, b2, x2, y2, z2),  \
+                gDefLight(r3, g3, b3, x3, y3, z3),  \
+                gDefLight(r4, g4, b4, x4, y4, z4),  \
+                gDefLight(r5, g5, b5, x5, y5, z5),  \
+                gDefLight(r6, g6, b6, x6, y6, z6),  \
+                gDefLight(r7, g7, b7, x7, y7, z7),  \
+            },                                      \
+            gDefAmbient(ar, ag, ab),                \
+        }
 
-typedef struct {
-    PosLight    l[9];
-    Ambient     a;
-} PosLights9;
+#define gdSPDefLights8(ar, ag, ab,                  \
+                       r1, g1, b1, x1, y1, z1,      \
+                       r2, g2, b2, x2, y2, z2,      \
+                       r3, g3, b3, x3, y3, z3,      \
+                       r4, g4, b4, x4, y4, z4,      \
+                       r5, g5, b5, x5, y5, z5,      \
+                       r6, g6, b6, x6, y6, z6,      \
+                       r7, g7, b7, x7, y7, z7,      \
+                       r8, g8, b8, x8, y8, z8)      \
+        {                                           \
+            {                                       \
+                gDefLight(r1, g1, b1, x1, y1, z1),  \
+                gDefLight(r2, g2, b2, x2, y2, z2),  \
+                gDefLight(r3, g3, b3, x3, y3, z3),  \
+                gDefLight(r4, g4, b4, x4, y4, z4),  \
+                gDefLight(r5, g5, b5, x5, y5, z5),  \
+                gDefLight(r6, g6, b6, x6, y6, z6),  \
+                gDefLight(r7, g7, b7, x7, y7, z7),  \
+                gDefLight(r8, g8, b8, x8, y8, z8),  \
+            },                                      \
+            gDefAmbient(ar, ag, ab),                \
+        }
 
-#define gdSPDefLights0(ar, ag, ab)  \
-    {                               \
-        {{                          \
-            { ar, ag, ab }, 0,      \
-            { ar, ag, ab }, 0,      \
-        }}                          \
-    }
+#define gdSPDefLights9(ar, ag, ab,                  \
+                       r1, g1, b1, x1, y1, z1,      \
+                       r2, g2, b2, x2, y2, z2,      \
+                       r3, g3, b3, x3, y3, z3,      \
+                       r4, g4, b4, x4, y4, z4,      \
+                       r5, g5, b5, x5, y5, z5,      \
+                       r6, g6, b6, x6, y6, z6,      \
+                       r7, g7, b7, x7, y7, z7,      \
+                       r8, g8, b8, x8, y8, z8,      \
+                       r9, g9, b9, x9, y9, z9)      \
+        {                                           \
+            {                                       \
+                gDefLight(r1, g1, b1, x1, y1, z1),  \
+                gDefLight(r2, g2, b2, x2, y2, z2),  \
+                gDefLight(r3, g3, b3, x3, y3, z3),  \
+                gDefLight(r4, g4, b4, x4, y4, z4),  \
+                gDefLight(r5, g5, b5, x5, y5, z5),  \
+                gDefLight(r6, g6, b6, x6, y6, z6),  \
+                gDefLight(r7, g7, b7, x7, y7, z7),  \
+                gDefLight(r8, g8, b8, x8, y8, z8),  \
+                gDefLight(r9, g9, b9, x9, y9, z9),  \
+            },                                      \
+            gDefAmbient(ar, ag, ab),                \
+        }
 
-#define gdSPDefLights1(ar, ag, ab,              \
-                       r1, g1, b1, x1, y1, z1)  \
-    {                                           \
-        {                                       \
-            {{                                  \
-                { r1, g1, b1 }, 0,              \
-                { r1, g1, b1 }, 0,              \
-                { x1, y1, z1 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }}                                  \
-        },                                      \
-        {{                                      \
-            { ar, ag, ab }, 0,                  \
-            { ar, ag, ab }, 0,                  \
-        }}                                      \
-    }
+#define gDefPointLight(r, g, b, x, y, z, kc, kl, kq)    \
+    {{                                                  \
+        { (r1), (g1), (b1) }, (kc),                     \
+        { (r1), (g1), (b1) }, (kl),                     \
+        { (x1), (y1), (z1) }, (kq),                     \
+        0,                                              \
+    }}
 
-#define gdSPDefLights2(ar, ag, ab,              \
-                       r1, g1, b1, x1, y1, z1,  \
-                       r2, g2, b2, x2, y2, z2)  \
-    {                                           \
-        {                                       \
-            {{                                  \
-                { r1, g1, b1 }, 0,              \
-                { r1, g1, b1 }, 0,              \
-                { x1, y1, z1 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r2, g2, b2 }, 0,              \
-                { r2, g2, b2 }, 0,              \
-                { x2, y2, z2 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }}                                  \
-        },                                      \
-        {{                                      \
-            { ar, ag, ab }, 0,                  \
-            { ar, ag, ab }, 0,                  \
-        }}                                      \
-    }
+#define gdSPDefPointLights0(ar, ag, ab)                     \
+        {                                                   \
+            gDefAmbient(ar, ag, ab),                        \
+        }
 
-#define gdSPDefLights3(ar, ag, ab,              \
-                       r1, g1, b1, x1, y1, z1,  \
-                       r2, g2, b2, x2, y2, z2,  \
-                       r3, g3, b3, x3, y3, z3)  \
-    {                                           \
-        {                                       \
-            {{                                  \
-                { r1, g1, b1 }, 0,              \
-                { r1, g1, b1 }, 0,              \
-                { x1, y1, z1 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r2, g2, b2 }, 0,              \
-                { r2, g2, b2 }, 0,              \
-                { x2, y2, z2 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r3, g3, b3 }, 0,              \
-                { r3, g3, b3 }, 0,              \
-                { x3, y3, z3 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }}                                  \
-        },                                      \
-        {{                                      \
-            { ar, ag, ab }, 0,                  \
-            { ar, ag, ab }, 0,                  \
-        }}                                      \
-    }
+#define gdSPDefPointLights1(ar, ag, ab,                             \
+                            r1, g1, b1, x1, y1, z1, c1, l1, q1)     \
+        {                                                           \
+            {                                                       \
+                gDefPointLight(r1, g1, b1, x1, y1, z1, c1, l1, q1), \
+            },                                                      \
+            gDefAmbient(ar, ag, ab),                                \
+        }
 
-#define gdSPDefLights4(ar, ag, ab,              \
-                       r1, g1, b1, x1, y1, z1,  \
-                       r2, g2, b2, x2, y2, z2,  \
-                       r3, g3, b3, x3, y3, z3,  \
-                       r4, g4, b4, x4, y4, z4)  \
-    {                                           \
-        {                                       \
-            {{                                  \
-                { r1, g1, b1 }, 0,              \
-                { r1, g1, b1 }, 0,              \
-                { x1, y1, z1 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r2, g2, b2 }, 0,              \
-                { r2, g2, b2 }, 0,              \
-                { x2, y2, z2 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r3, g3, b3 }, 0,              \
-                { r3, g3, b3 }, 0,              \
-                { x3, y3, z3 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r4, g4, b4 }, 0,              \
-                { r4, g4, b4 }, 0,              \
-                { x4, y4, z4 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }}                                  \
-        },                                      \
-        {{                                      \
-            { ar, ag, ab }, 0,                  \
-            { ar, ag, ab }, 0,                  \
-        }}                                      \
-    }
+#define gdSPDefPointLights2(ar, ag, ab,                             \
+                            r1, g1, b1, x1, y1, z1, c1, l1, q1,     \
+                            r2, g2, b2, x2, y2, z2, c2, l2, q2)     \
+        {                                                           \
+            {                                                       \
+                gDefPointLight(r1, g1, b1, x1, y1, z1, c1, l1, q1), \
+                gDefPointLight(r2, g2, b2, x2, y2, z2, c2, l2, q2), \
+            },                                                      \
+            gDefAmbient(ar, ag, ab),                                \
+        }
 
-#define gdSPDefLights5(ar, ag, ab,              \
-                       r1, g1, b1, x1, y1, z1,  \
-                       r2, g2, b2, x2, y2, z2,  \
-                       r3, g3, b3, x3, y3, z3,  \
-                       r4, g4, b4, x4, y4, z4,  \
-                       r5, g5, b5, x5, y5, z5)  \
-    {                                           \
-        {                                       \
-            {{                                  \
-                { r1, g1, b1 }, 0,              \
-                { r1, g1, b1 }, 0,              \
-                { x1, y1, z1 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r2, g2, b2 }, 0,              \
-                { r2, g2, b2 }, 0,              \
-                { x2, y2, z2 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r3, g3, b3 }, 0,              \
-                { r3, g3, b3 }, 0,              \
-                { x3, y3, z3 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r4, g4, b4 }, 0,              \
-                { r4, g4, b4 }, 0,              \
-                { x4, y4, z4 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r5, g5, b5 }, 0,              \
-                { r5, g5, b5 }, 0,              \
-                { x5, y5, z5 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }}                                  \
-        },                                      \
-        {{                                      \
-            { ar, ag, ab }, 0,                  \
-            { ar, ag, ab }, 0,                  \
-        }}                                      \
-    }
+#define gdSPDefPointLights3(ar, ag, ab,                             \
+                            r1, g1, b1, x1, y1, z1, c1, l1, q1,     \
+                            r2, g2, b2, x2, y2, z2, c2, l2, q2,     \
+                            r3, g3, b3, x3, y3, z3, c3, l3, q3)     \
+        {                                                           \
+            {                                                       \
+                gDefPointLight(r1, g1, b1, x1, y1, z1, c1, l1, q1), \
+                gDefPointLight(r2, g2, b2, x2, y2, z2, c2, l2, q2), \
+                gDefPointLight(r3, g3, b3, x3, y3, z3, c3, l3, q3), \
+            },                                                      \
+            gDefAmbient(ar, ag, ab),                                \
+        }
 
-#define gdSPDefLights6(ar, ag, ab,              \
-                       r1, g1, b1, x1, y1, z1,  \
-                       r2, g2, b2, x2, y2, z2,  \
-                       r3, g3, b3, x3, y3, z3,  \
-                       r4, g4, b4, x4, y4, z4,  \
-                       r5, g5, b5, x5, y5, z5,  \
-                       r6, g6, b6, x6, y6, z6)  \
-    {                                           \
-        {                                       \
-            {{                                  \
-                { r1, g1, b1 }, 0,              \
-                { x1, y1, z1 }, 0,              \
-                { r1, g1, b1 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r2, g2, b2 }, 0,              \
-                { r2, g2, b2 }, 0,              \
-                { x2, y2, z2 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r3, g3, b3 }, 0,              \
-                { r3, g3, b3 }, 0,              \
-                { x3, y3, z3 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r4, g4, b4 }, 0,              \
-                { r4, g4, b4 }, 0,              \
-                { x4, y4, z4 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r5, g5, b5 }, 0,              \
-                { r5, g5, b5 }, 0,              \
-                { x5, y5, z5 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r6, g6, b6 }, 0,              \
-                { r6, g6, b6 }, 0,              \
-                { x6, y6, z6 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }}                                  \
-        },                                      \
-        {{                                      \
-            { ar, ag, ab }, 0,                  \
-            { ar, ag, ab }, 0,                  \
-        }}                                      \
-    }
+#define gdSPDefPointLights4(ar, ag, ab,                             \
+                            r1, g1, b1, x1, y1, z1, c1, l1, q1,     \
+                            r2, g2, b2, x2, y2, z2, c2, l2, q2,     \
+                            r3, g3, b3, x3, y3, z3, c3, l3, q3,     \
+                            r4, g4, b4, x4, y4, z4, c4, l4, q4)     \
+        {                                                           \
+            {                                                       \
+                gDefPointLight(r1, g1, b1, x1, y1, z1, c1, l1, q1), \
+                gDefPointLight(r2, g2, b2, x2, y2, z2, c2, l2, q2), \
+                gDefPointLight(r3, g3, b3, x3, y3, z3, c3, l3, q3), \
+                gDefPointLight(r4, g4, b4, x4, y4, z4, c4, l4, q4), \
+            },                                                      \
+            gDefAmbient(ar, ag, ab),                                \
+        }
 
-#define gdSPDefLights7(ar, ag, ab,              \
-                       r1, g1, b1, x1, y1, z1,  \
-                       r2, g2, b2, x2, y2, z2,  \
-                       r3, g3, b3, x3, y3, z3,  \
-                       r4, g4, b4, x4, y4, z4,  \
-                       r5, g5, b5, x5, y5, z5,  \
-                       r6, g6, b6, x6, y6, z6,  \
-                       r7, g7, b7, x7, y7, z7)  \
-    {                                           \
-        {                                       \
-            {{                                  \
-                { r1, g1, b1 }, 0,              \
-                { r1, g1, b1 }, 0,              \
-                { x1, y1, z1 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r2, g2, b2 }, 0,              \
-                { r2, g2, b2 }, 0,              \
-                { x2, y2, z2 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r3, g3, b3 }, 0,              \
-                { r3, g3, b3 }, 0,              \
-                { x3, y3, z3 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r4, g4, b4 }, 0,              \
-                { r4, g4, b4 }, 0,              \
-                { x4, y4, z4 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r5, g5, b5 }, 0,              \
-                { r5, g5, b5 }, 0,              \
-                { x5, y5, z5 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r6, g6, b6 }, 0,              \
-                { r6, g6, b6 }, 0,              \
-                { x6, y6, z6 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r7, g7, b7 }, 0,              \
-                { r7, g7, b7 }, 0,              \
-                { x7, y7, z7 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }}                                  \
-        },                                      \
-        {{                                      \
-            { ar, ag, ab }, 0,                  \
-            { ar, ag, ab }, 0,                  \
-        }}                                      \
-    }
+#define gdSPDefPointLights5(ar, ag, ab,                             \
+                            r1, g1, b1, x1, y1, z1, c1, l1, q1,     \
+                            r2, g2, b2, x2, y2, z2, c2, l2, q2,     \
+                            r3, g3, b3, x3, y3, z3, c3, l3, q3,     \
+                            r4, g4, b4, x4, y4, z4, c4, l4, q4,     \
+                            r5, g5, b5, x5, y5, z5, c5, l5, q5)     \
+        {                                                           \
+            {                                                       \
+                gDefPointLight(r1, g1, b1, x1, y1, z1, c1, l1, q1), \
+                gDefPointLight(r2, g2, b2, x2, y2, z2, c2, l2, q2), \
+                gDefPointLight(r3, g3, b3, x3, y3, z3, c3, l3, q3), \
+                gDefPointLight(r4, g4, b4, x4, y4, z4, c4, l4, q4), \
+                gDefPointLight(r5, g5, b5, x5, y5, z5, c5, l5, q5), \
+            },                                                      \
+            gDefAmbient(ar, ag, ab),                                \
+        }
 
-#define gdSPDefLights8(ar, ag, ab,              \
-                       r1, g1, b1, x1, y1, z1,  \
-                       r2, g2, b2, x2, y2, z2,  \
-                       r3, g3, b3, x3, y3, z3,  \
-                       r4, g4, b4, x4, y4, z4,  \
-                       r5, g5, b5, x5, y5, z5,  \
-                       r6, g6, b6, x6, y6, z6,  \
-                       r7, g7, b7, x7, y7, z7,  \
-                       r8, g8, b8, x8, y8, z8)  \
-    {                                           \
-        {                                       \
-            {{                                  \
-                { r1, g1, b1 }, 0,              \
-                { r1, g1, b1 }, 0,              \
-                { x1, y1, z1 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r2, g2, b2 }, 0,              \
-                { r2, g2, b2 }, 0,              \
-                { x2, y2, z2 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r3, g3, b3 }, 0,              \
-                { r3, g3, b3 }, 0,              \
-                { x3, y3, z3 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r4, g4, b4 }, 0,              \
-                { r4, g4, b4 }, 0,              \
-                { x4, y4, z4 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r5, g5, b5 }, 0,              \
-                { r5, g5, b5 }, 0,              \
-                { x5, y5, z5 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r6, g6, b6 }, 0,              \
-                { r6, g6, b6 }, 0,              \
-                { x6, y6, z6 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r7, g7, b7 }, 0,              \
-                { r7, g7, b7 }, 0,              \
-                { x7, y7, z7 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r8, g8, b8 }, 0,              \
-                { r8, g8, b8 }, 0,              \
-                { x8, y8, z8 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }}                                  \
-        },                                      \
-        {{                                      \
-            { ar, ag, ab }, 0,                  \
-            { ar, ag, ab }, 0,                  \
-        }}                                      \
-    }
+#define gdSPDefPointLights6(ar, ag, ab,                             \
+                            r1, g1, b1, x1, y1, z1, c1, l1, q1,     \
+                            r2, g2, b2, x2, y2, z2, c2, l2, q2,     \
+                            r3, g3, b3, x3, y3, z3, c3, l3, q3,     \
+                            r4, g4, b4, x4, y4, z4, c4, l4, q4,     \
+                            r5, g5, b5, x5, y5, z5, c5, l5, q5,     \
+                            r6, g6, b6, x6, y6, z6, c6, l6, q6)     \
+        {                                                           \
+            {                                                       \
+                gDefPointLight(r1, g1, b1, x1, y1, z1, c1, l1, q1), \
+                gDefPointLight(r2, g2, b2, x2, y2, z2, c2, l2, q2), \
+                gDefPointLight(r3, g3, b3, x3, y3, z3, c3, l3, q3), \
+                gDefPointLight(r4, g4, b4, x4, y4, z4, c4, l4, q4), \
+                gDefPointLight(r5, g5, b5, x5, y5, z5, c5, l5, q5), \
+                gDefPointLight(r6, g6, b6, x6, y6, z6, c6, l6, q6), \
+            },                                                      \
+            gDefAmbient(ar, ag, ab),                                \
+        }
 
-#define gdSPDefLights9(ar, ag, ab,              \
-                       r1, g1, b1, x1, y1, z1,  \
-                       r2, g2, b2, x2, y2, z2,  \
-                       r3, g3, b3, x3, y3, z3,  \
-                       r4, g4, b4, x4, y4, z4,  \
-                       r5, g5, b5, x5, y5, z5,  \
-                       r6, g6, b6, x6, y6, z6,  \
-                       r7, g7, b7, x7, y7, z7,  \
-                       r8, g8, b8, x8, y8, z8,  \
-                       r9, g9, b9, x9, y9, z9)  \
-    {                                           \
-        {                                       \
-            {{                                  \
-                { r1, g1, b1 }, 0,              \
-                { r1, g1, b1 }, 0,              \
-                { x1, y1, z1 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r2, g2, b2 }, 0,              \
-                { r2, g2, b2 }, 0,              \
-                { x2, y2, z2 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r3, g3, b3 }, 0,              \
-                { r3, g3, b3 }, 0,              \
-                { x3, y3, z3 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r4, g4, b4 }, 0,              \
-                { r4, g4, b4 }, 0,              \
-                { x4, y4, z4 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r5, g5, b5 }, 0,              \
-                { r5, g5, b5 }, 0,              \
-                { x5, y5, z5 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r6, g6, b6 }, 0,              \
-                { r6, g6, b6 }, 0,              \
-                { x6, y6, z6 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r7, g7, b7 }, 0,              \
-                { r7, g7, b7 }, 0,              \
-                { x7, y7, z7 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r8, g8, b8 }, 0,              \
-                { r8, g8, b8 }, 0,              \
-                { x8, y8, z8 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }},                                 \
-            {{                                  \
-                { r9, g9, b9 }, 0,              \
-                { r9, g9, b9 }, 0,              \
-                { x9, y9, z9 }, 0,              \
-                { 0, 0, 0 }, 0                  \
-            }}                                  \
-        },                                      \
-        {{                                      \
-            { ar, ag, ab }, 0,                  \
-            { ar, ag, ab }, 0,                  \
-        }}                                      \
-    }
+#define gdSPDefPointLights7(ar, ag, ab,                             \
+                            r1, g1, b1, x1, y1, z1, c1, l1, q1,     \
+                            r2, g2, b2, x2, y2, z2, c2, l2, q2,     \
+                            r3, g3, b3, x3, y3, z3, c3, l3, q3,     \
+                            r4, g4, b4, x4, y4, z4, c4, l4, q4,     \
+                            r5, g5, b5, x5, y5, z5, c5, l5, q5,     \
+                            r6, g6, b6, x6, y6, z6, c6, l6, q6,     \
+                            r7, g7, b7, x7, y7, z7, c7, l7, q7)     \
+        {                                                           \
+            {                                                       \
+                gDefPointLight(r1, g1, b1, x1, y1, z1, c1, l1, q1), \
+                gDefPointLight(r2, g2, b2, x2, y2, z2, c2, l2, q2), \
+                gDefPointLight(r3, g3, b3, x3, y3, z3, c3, l3, q3), \
+                gDefPointLight(r4, g4, b4, x4, y4, z4, c4, l4, q4), \
+                gDefPointLight(r5, g5, b5, x5, y5, z5, c5, l5, q5), \
+                gDefPointLight(r6, g6, b6, x6, y6, z6, c6, l6, q6), \
+                gDefPointLight(r7, g7, b7, x7, y7, z7, c7, l7, q7), \
+            },                                                      \
+            gDefAmbient(ar, ag, ab),                                \
+        }
+
+#define gdSPDefPointLights8(ar, ag, ab,                             \
+                            r1, g1, b1, x1, y1, z1, c1, l1, q1,     \
+                            r2, g2, b2, x2, y2, z2, c2, l2, q2,     \
+                            r3, g3, b3, x3, y3, z3, c3, l3, q3,     \
+                            r4, g4, b4, x4, y4, z4, c4, l4, q4,     \
+                            r5, g5, b5, x5, y5, z5, c5, l5, q5,     \
+                            r6, g6, b6, x6, y6, z6, c6, l6, q6,     \
+                            r7, g7, b7, x7, y7, z7, c7, l7, q7,     \
+                            r8, g8, b8, x8, y8, z8, c8, l8, q8)     \
+        {                                                           \
+            {                                                       \
+                gDefPointLight(r1, g1, b1, x1, y1, z1, c1, l1, q1), \
+                gDefPointLight(r2, g2, b2, x2, y2, z2, c2, l2, q2), \
+                gDefPointLight(r3, g3, b3, x3, y3, z3, c3, l3, q3), \
+                gDefPointLight(r4, g4, b4, x4, y4, z4, c4, l4, q4), \
+                gDefPointLight(r5, g5, b5, x5, y5, z5, c5, l5, q5), \
+                gDefPointLight(r6, g6, b6, x6, y6, z6, c6, l6, q6), \
+                gDefPointLight(r7, g7, b7, x7, y7, z7, c7, l7, q7), \
+                gDefPointLight(r8, g8, b8, x8, y8, z8, c8, l8, q8), \
+            },                                                      \
+            gDefAmbient(ar, ag, ab),                                \
+        }
+
+#define gdSPDefPointLights9(ar, ag, ab,                             \
+                            r1, g1, b1, x1, y1, z1, c1, l1, q1,     \
+                            r2, g2, b2, x2, y2, z2, c2, l2, q2,     \
+                            r3, g3, b3, x3, y3, z3, c3, l3, q3,     \
+                            r4, g4, b4, x4, y4, z4, c4, l4, q4,     \
+                            r5, g5, b5, x5, y5, z5, c5, l5, q5,     \
+                            r6, g6, b6, x6, y6, z6, c6, l6, q6,     \
+                            r7, g7, b7, x7, y7, z7, c7, l7, q7,     \
+                            r8, g8, b8, x8, y8, z8, c8, l8, q8,     \
+                            r9, g9, b9, x9, y9, z9, c9, l9, q9)     \
+        {                                                           \
+            {                                                       \
+                gDefPointLight(r1, g1, b1, x1, y1, z1, c1, l1, q1), \
+                gDefPointLight(r2, g2, b2, x2, y2, z2, c2, l2, q2), \
+                gDefPointLight(r3, g3, b3, x3, y3, z3, c3, l3, q3), \
+                gDefPointLight(r4, g4, b4, x4, y4, z4, c4, l4, q4), \
+                gDefPointLight(r5, g5, b5, x5, y5, z5, c5, l5, q5), \
+                gDefPointLight(r6, g6, b6, x6, y6, z6, c6, l6, q6), \
+                gDefPointLight(r7, g7, b7, x7, y7, z7, c7, l7, q7), \
+                gDefPointLight(r8, g8, b8, x8, y8, z8, c8, l8, q8), \
+                gDefPointLight(r9, g9, b9, x9, y9, z9, c9, l9, q9), \
+            },                                                      \
+            gDefAmbient(ar, ag, ab),                                \
+        }
 
 #define gdSPDefLookAt(rightx, righty, rightz, upx, upy, upz)    \
     {                                                           \
         {{{ rightx, righty, rightz }, 0 }},                     \
         {{{ upx, upy, upz }, 0 }},                              \
     }
-
-
-#define _gdSPDefAmbient(ar,ag,ab) \
-    {{ {ar,ag,ab},0,{ar,ag,ab},0}}
-#define _gdSPDefPosLight(r,g,b,x,y,z,c,l,q) \
-    {{ {r,g,b},c,{r,g,b},l,{x,y,z},q,0 }}
-#define _gdSPDefInfLight(r,g,b,x,y,z) \
-    {{ {r,g,b},0,{r,g,b},0,{((x)<<8)|((y)&0xff),(z)<<8,0},0,0}}
-#define gdSPDefPosLights0(ar,ag,ab) \
-    {   _gdSPDefAmbient(ar,ag,ab) }
-#define gdSPDefPosLights1(ar,ag,ab,r1,g1,b1,x1,y1,z1,c1,l1,q1) \
-    {{  _gdSPDefPosLight(r1,g1,b1,x1,y1,z1,c1,l1,q1) }, \
-        _gdSPDefAmbient(ar,ag,ab) }
-#define gdSPDefPosLights2(ar,ag,ab,r1,g1,b1,x1,y1,z1,c1,l1,q1,r2,g2,b2,x2,y2,z2,c2,l2,q2) \
-    {{  _gdSPDefPosLight(r1,g1,b1,x1,y1,z1,c1,l1,q1), \
-        _gdSPDefPosLight(r2,g2,b2,x2,y2,z2,c2,l2,q2) }, \
-        _gdSPDefAmbient(ar,ag,ab) }
-#define gdSPDefPosLights3(ar,ag,ab,r1,g1,b1,x1,y1,z1,c1,l1,q1,r2,g2,b2,x2,y2,z2,c2,l2,q2,r3,g3,b3,x3,y3,z3,c3,l3,q3) \
-    {{  _gdSPDefPosLight(r1,g1,b1,x1,y1,z1,c1,l1,q1), \
-        _gdSPDefPosLight(r2,g2,b2,x2,y2,z2,c2,l2,q2), \
-        _gdSPDefPosLight(r3,g3,b3,x3,y3,z3,c3,l3,q3) }, \
-        _gdSPDefAmbient(ar,ag,ab) }
-#define gdSPDefPosLights4(ar,ag,ab,r1,g1,b1,x1,y1,z1,c1,l1,q1,r2,g2,b2,x2,y2,z2,c2,l2,q2,r3,g3,b3,x3,y3,z3,c3,l3,q3,r4,g4,b4,x4,y4,z4,c4,l4,q4) \
-    {{  _gdSPDefPosLight(r1,g1,b1,x1,y1,z1,c1,l1,q1), \
-        _gdSPDefPosLight(r2,g2,b2,x2,y2,z2,c2,l2,q2), \
-        _gdSPDefPosLight(r3,g3,b3,x3,y3,z3,c3,l3,q3), \
-        _gdSPDefPosLight(r4,g4,b4,x4,y4,z4,c4,l4,q4) }, \
-        _gdSPDefAmbient(ar,ag,ab) }
-#define gdSPDefPosLights5(ar,ag,ab,r1,g1,b1,x1,y1,z1,c1,l1,q1,r2,g2,b2,x2,y2,z2,c2,l2,q2,r3,g3,b3,x3,y3,z3,c3,l3,q3,r4,g4,b4,x4,y4,z4,c4,l4,q4,r5,g5,b5,x5,y5,z5,c5,l5,q5) \
-    {{  _gdSPDefPosLight(r1,g1,b1,x1,y1,z1,c1,l1,q1), \
-        _gdSPDefPosLight(r2,g2,b2,x2,y2,z2,c2,l2,q2), \
-        _gdSPDefPosLight(r3,g3,b3,x3,y3,z3,c3,l3,q3), \
-        _gdSPDefPosLight(r4,g4,b4,x4,y4,z4,c4,l4,q4), \
-        _gdSPDefPosLight(r5,g5,b5,x5,y5,z5,c5,l5,q5) }, \
-        _gdSPDefAmbient(ar,ag,ab) }
-#define gdSPDefPosLights6(ar,ag,ab,r1,g1,b1,x1,y1,z1,c1,l1,q1,r2,g2,b2,x2,y2,z2,c2,l2,q2,r3,g3,b3,x3,y3,z3,c3,l3,q3,r4,g4,b4,x4,y4,z4,c4,l4,q4,r5,g5,b5,x5,y5,z5,c5,l5,q5,r6,g6,b6,x6,y6,z6,c6,l6,q6) \
-    {{  _gdSPDefPosLight(r1,g1,b1,x1,y1,z1,c1,l1,q1), \
-        _gdSPDefPosLight(r2,g2,b2,x2,y2,z2,c2,l2,q2), \
-        _gdSPDefPosLight(r3,g3,b3,x3,y3,z3,c3,l3,q3), \
-        _gdSPDefPosLight(r4,g4,b4,x4,y4,z4,c4,l4,q4), \
-        _gdSPDefPosLight(r5,g5,b5,x5,y5,z5,c5,l5,q5), \
-        _gdSPDefPosLight(r6,g6,b6,x6,y6,z6,c6,l6,q6) }, \
-        _gdSPDefAmbient(ar,ag,ab) }
-#define gdSPDefPosLights7(ar,ag,ab,r1,g1,b1,x1,y1,z1,c1,l1,q1,r2,g2,b2,x2,y2,z2,c2,l2,q2,r3,g3,b3,x3,y3,z3,c3,l3,q3,r4,g4,b4,x4,y4,z4,c4,l4,q4,r5,g5,b5,x5,y5,z5,c5,l5,q5,r6,g6,b6,x6,y6,z6,c6,l6,q6,r7,g7,b7,x7,y7,z7,c7,l7,q7) \
-    {{  _gdSPDefPosLight(r1,g1,b1,x1,y1,z1,c1,l1,q1), \
-        _gdSPDefPosLight(r2,g2,b2,x2,y2,z2,c2,l2,q2), \
-        _gdSPDefPosLight(r3,g3,b3,x3,y3,z3,c3,l3,q3), \
-        _gdSPDefPosLight(r4,g4,b4,x4,y4,z4,c4,l4,q4), \
-        _gdSPDefPosLight(r5,g5,b5,x5,y5,z5,c5,l5,q5), \
-        _gdSPDefPosLight(r6,g6,b6,x6,y6,z6,c6,l6,q6), \
-        _gdSPDefPosLight(r7,g7,b7,x7,y7,z7,c7,l7,q7) }, \
-        _gdSPDefAmbient(ar,ag,ab) }
-#define gdSPDefPosLights8(ar,ag,ab,r1,g1,b1,x1,y1,z1,c1,l1,q1,r2,g2,b2,x2,y2,z2,c2,l2,q2,r3,g3,b3,x3,y3,z3,c3,l3,q3,r4,g4,b4,x4,y4,z4,c4,l4,q4,r5,g5,b5,x5,y5,z5,c5,l5,q5,r6,g6,b6,x6,y6,z6,c6,l6,q6,r7,g7,b7,x7,y7,z7,c7,l7,q7,r8,g8,b8,x8,y8,z8,c8,l8,q8) \
-    {{  _gdSPDefPosLight(r1,g1,b1,x1,y1,z1,c1,l1,q1), \
-        _gdSPDefPosLight(r2,g2,b2,x2,y2,z2,c2,l2,q2), \
-        _gdSPDefPosLight(r3,g3,b3,x3,y3,z3,c3,l3,q3), \
-        _gdSPDefPosLight(r4,g4,b4,x4,y4,z4,c4,l4,q4), \
-        _gdSPDefPosLight(r5,g5,b5,x5,y5,z5,c5,l5,q5), \
-        _gdSPDefPosLight(r6,g6,b6,x6,y6,z6,c6,l6,q6), \
-        _gdSPDefPosLight(r7,g7,b7,x7,y7,z7,c7,l7,q7), \
-        _gdSPDefPosLight(r8,g8,b8,x8,y8,z8,c8,l8,q8) }, \
-        _gdSPDefAmbient(ar,ag,ab) }
-#define gdSPDefPosLights9(ar,ag,ab,r1,g1,b1,x1,y1,z1,c1,l1,q1,r2,g2,b2,x2,y2,z2,c2,l2,q2,r3,g3,b3,x3,y3,z3,c3,l3,q3,r4,g4,b4,x4,y4,z4,c4,l4,q4,r5,g5,b5,x5,y5,z5,c5,l5,q5,r6,g6,b6,x6,y6,z6,c6,l6,q6,r7,g7,b7,x7,y7,z7,c7,l7,q7,r8,g8,b8,x8,y8,z8,c8,l8,q8,r9,g9,b9,x9,y9,z9,c9,l9,q9) \
-    {{  _gdSPDefPosLight(r1,g1,b1,x1,y1,z1,c1,l1,q1), \
-        _gdSPDefPosLight(r2,g2,b2,x2,y2,z2,c2,l2,q2), \
-        _gdSPDefPosLight(r3,g3,b3,x3,y3,z3,c3,l3,q3), \
-        _gdSPDefPosLight(r4,g4,b4,x4,y4,z4,c4,l4,q4), \
-        _gdSPDefPosLight(r5,g5,b5,x5,y5,z5,c5,l5,q5), \
-        _gdSPDefPosLight(r6,g6,b6,x6,y6,z6,c6,l6,q6), \
-        _gdSPDefPosLight(r7,g7,b7,x7,y7,z7,c7,l7,q7), \
-        _gdSPDefPosLight(r8,g8,b8,x8,y8,z8,c8,l8,q8), \
-        _gdSPDefPosLight(r9,g9,b9,x9,y9,z9,c9,l9,q9) }, \
-        _gdSPDefAmbient(ar,ag,ab) }
-
 
 typedef struct {
     int          cmd  : 8;
@@ -1855,7 +1720,7 @@ typedef struct {
     } value;
 } Gnoop;
 
-/*
+/**
  *  Graphics DMA Packet
  */
 typedef struct {
@@ -1865,6 +1730,9 @@ typedef struct {
     unsigned int addr;
 } Gdma;
 
+/**
+ * @copydoc Gdma
+ */
 typedef struct {
     int          cmd : 8;
     unsigned int len : 8;
@@ -1873,8 +1741,8 @@ typedef struct {
     unsigned int addr;
 } Gdma2;
 
-/*
- *  Graphics Moveword Packet
+/**
+ * Graphics Moveword Packet
  */
 typedef struct {
     int          cmd    : 8;
@@ -1883,8 +1751,8 @@ typedef struct {
     unsigned int data;
 } Gmovewd;
 
-/*
- *  Graphics Movemem Packet
+/**
+ * @copydetails Gmovewd
  */
 typedef struct {
     int          cmd    : 8;
@@ -1894,7 +1762,7 @@ typedef struct {
     unsigned int data;
 } Gmovemem;
 
-/*
+/**
  * Graphics Immediate Mode Packet types
  */
 typedef struct {
@@ -1978,7 +1846,7 @@ typedef struct {
 } Gperspnorm;
 
 
-/*
+/**
  * RDP Packet types
  */
 typedef struct {
@@ -2094,7 +1962,7 @@ typedef struct {
 #define MakeTexRect(xh,yh,flip,tile,xl,yl,s,t,dsdx,dtdy)        \
     G_TEXRECT, xh, yh, 0, flip, 0, tile, xl, yl, s, t, dsdx, dtdy
 
-/*
+/**
  * Textured rectangles are 128 bits not 64 bits
  */
 typedef struct {
@@ -2113,7 +1981,7 @@ typedef struct {
     unsigned int  addr;
 } Gvtx;
 
-/*
+/**
  * Generic Gfx Packet
  */
 typedef struct {
@@ -2121,7 +1989,7 @@ typedef struct {
     unsigned int w1;
 } Gwords;
 
-/*
+/**
  * This union is the fundamental type of the display list.
  * It is, by law, exactly 64 bits in size.
  */
@@ -2219,22 +2087,138 @@ _DW({                                                   \
 #define gSPNoOp(pkt)    gDma0p(pkt, G_SPNOOP, 0, 0)
 #define gsSPNoOp()      gsDma0p(    G_SPNOOP, 0, 0)
 
+/**
+ * @brief macro which inserts a matrix operation at the end display list.
+ *
+ * It inserts a matrix operation in the display list. The parameters allow you to select which matrix stack to use (projection or model view), where to load or concatenate, and whether or not to push the matrix stack. The following parameters are bit OR'ed together:
+ * - @ref G_MTX_PROJECTION @ref G_MTX_MODELVIEW - @copybrief G_MTX_MODELVIEW
+ * - @ref G_MTX_MUL - @copybrief G_MTX_MUL
+ * - @ref G_MTX_LOAD - @copybrief G_MTX_LOAD
+ * - @ref G_MTX_NOPUSH - @copybrief G_MTX_NOPUSH
+ * - @ref G_MTX_PUSH - @copybrief G_MTX_PUSH
+ * # Matrix Format
+ * The format of the fixed-point matrices may seem a little awkward to the application programmer because it is optimized for the RSP geometry engine. This unusual format is hidden in the graphics utility libraries and not usually exposed to the application programmer, but in some cases (static matrix declarations or direct element manipulation) it is necessary to understand the format.
+ *
+ * The integer and fractional components of the matrix elements are separated. The first 8 words (16 shorts) hold the 16-bit integer elements, the second 8 words (16 shorts) hold the 16-bit fractional elements. The fact that the Mtx type is declared as a long [4][4] array is slightly misleading. For example, to declare a static identity matrix, use code similar to this:
+ * ```#include "gbi.h"
+ * static Mtx ident =
+ * {
+ * // integer portion:
+ * 0x00010000, 0x00000000,
+ * 0x00000001, 0x00000000,
+ * 0x00000000, 0x00010000,
+ * 0x00000000, 0x00000001,
+ *
+ * // fractional portion:
+ * 0x00000000, 0x00000000,
+ * 0x00000000, 0x00000000,
+ * 0x00000000, 0x00000000,
+ * 0x00000000, 0x00000000,
+ * };
+ * ```
+ * To force the translation elements of a matrix to be (10.5, 20.5, 30.5), use code similar to this:
+ * ```
+ * #include "gbi.h"
+ *
+ * mat.m[1][2] =
+ *    (10 << 16) | (20);
+ * mat.m[1][3] =
+ *    (30 << 16) | (1);
+ *
+ * mat.m[3][2] =
+ *    (0x8000 << 16) | (0x8000);
+ * mat.m[3][3] =
+ *    (0x8000 << 16) | (0);
+ * ```
+ * @note
+ * Matrix concatenation in the RSP geometry engine is done using 32-bit integer arithmetic. A 32 x 32 bit multiply results in a 64-bit number. Only the middle 32 bits of this 64-bit result are kept for the new matrix. Therefore, when concatenating matrices, remember about the resulting fixed-point numerical error.
+ *
+ * For example, to retain maximum precision, the number ranges must be similar. Large-scale and translate parameters can decrease the transformation precision. Because rotation and projection matrices require quite a bit of fractional accuracy, these fractions may get tossed out if multiplied against large integer numbers.
+ *
+ * Each concatenation results in the rounding of the LSB of each matrix term. This means that each concatenation injects 1/2 LSB of error into the matrix. To keep full precision, concatenate matrices in floating-point on the processor and just load the result into the RSP.
+ *
+ * # Performance
+ * Each @ref G_MTX_MODELVIEW matrix operation has an implicit matrix multiplication even if you specify @ref G_MTX_LOAD. This is the combined model view (M) and projection (P) matrix that is necessary for the vertex transformation to use a single matrix during transformation.
+ *
+ * You can optimize this by concatenating modeling matrices on the CPU and then putting the viewing (V) and projection matrices on the projection stack. By doing this, you only incur the single MxVP matrix concatenation each time you load a modeling matrix. Furthermore, the application has more information on how to do a cheap hack for modeling matrix concatenation. For example, if you want to combine a single axis rotation with a translation, just place the coefficients in the correct entries of the resulting matrix.
+ *
+ * @param m is the pointer to the 4x4 fixed-point matrix (see note below about format)
+ * @param p are the bit OR'd parameters to the matrix macro (@ref G_MTX_PROJECTION, @ref G_MTX_MODELVIEW, @ref G_MTX_MUL, @ref G_MTX_LOAD, @ref G_MTX_NOPUSH)
+ */
 #define gSPMatrix(pkt, m, p) \
         gDma2p((pkt),G_MTX, (m), sizeof(Mtx), (p) ^ G_MTX_PUSH, 0)
+/**
+ * @brief macro which inserts a matrix operation in a static display list.
+ *
+ * @copydetails gSPMatrix
+ */
 #define gsSPMatrix(m, p) \
         gsDma2p(     G_MTX, (m), sizeof(Mtx), (p) ^ G_MTX_PUSH, 0)
 
+/**
+ * @brief macro which pops one of the matrix stacks at the end display list.
+ *
+ * It pops `num` of the matrix stacks. The model view stack can be up to 10 matrices deep. The projection stack is 1 matrix deep, so it cannot be popped.
+ *
+ * @note
+ * If the stack is empty, the macro is ignored.
+ *
+ * @param n is the flag field that identifies which matrix stack to pop:
+ * - @ref G_MTX_MODELVIEW pops the modeling/viewing matrix stack
+ * - @ref G_MTX_PROJECTION pops the projection matrix stack (NOT IMPLEMENTED)
+ * @param num is the number of matrices to pop
+ */
 #define gSPPopMatrixN(pkt, n, num) gDma2p((pkt), G_POPMTX, (num) * 64, 64, 2, 0)
+/**
+ * @brief macro which pops one of the matrix stacks in a static display list.
+ *
+ * @copydetails gSPPopMatrixN
+ */
 #define gsSPPopMatrixN(n, num)     gsDma2p(      G_POPMTX, (num) * 64, 64, 2, 0)
+/**
+ * @brief macro which pops one of the matrix stacks at the end display list.
+ *
+ * It pops one of the matrix stacks. The model view stack can be up to 10 matrices deep. The projection stack is 1 matrix deep, so it cannot be popped.
+ *
+ * @note
+ * If the stack is empty, the macro is ignored.
+ *
+ * @param n is the flag field that identifies which matrix stack to pop:
+ * - @ref G_MTX_MODELVIEW pops the modeling/viewing matrix stack
+ * - @ref G_MTX_PROJECTION pops the projection matrix stack (NOT IMPLEMENTED)
+ */
 #define gSPPopMatrix(pkt, n)       gSPPopMatrixN((pkt), (n), 1)
+/**
+ * @brief macro which pops one of the matrix stacks in a static display list.
+ *
+ * @copydetails gSPPopMatrix
+ */
 #define gsSPPopMatrix(n)           gsSPPopMatrixN(      (n), 1)
 
-/*
- *        +--------+----+---+---+----+------+-+
- *  G_VTX |  cmd:8 |0000|  n:8  |0000|v0+n:7|0|
- *        +-+---+--+----+---+---+----+------+-+
- *        | |seg|         address             |
- *        +-+---+-----------------------------+
+/**
+ * @brief macro which loads an internal vertex buffer in the RSP with points that are used by @ref gSP1Triangle macros to generate polygons at the end display list.
+ *
+ *
+ * It loads an internal vertex buffer in the RSP with points that are used by @ref gSP1Triangle macros to generate polygons. This vertex cache can hold up to 56 vertices, and the vertex loading can begin at any entry (index) within the cache. The vertex coordinates (x,y,z) are encoded in signed 2's complement, 16-bit integers. The texture coordinates (s,t) are encoded in S10.5 format. A vertex either has a color or a normal (for shading). These values are 8-bit values. The colors and alphas are treated as 8-bit unsigned values (0-255), but the normals are treated as 8-bit signed values (-128 to 127). Therefore, the appropriate member of the union to use (.v. or .n.) depends on whether you are using colors or normals.
+ *
+ * Normal coordinates range from -1.0 to 1.0. A value of -1.0 is represented as -128, and a value of 1.0 is represented as 128, but because the maximum positive value of a signed byte is 127, a value of 1.0 can't really be represented. Therefore, 0.992 is the maximum representable positive value, which is good enough for this purpose.
+ *
+ * The flag value is used for the packed normals feature to store normals with octahedral encoding.
+ *
+ * The coordinates (x,y,z) are transformed using the current 4x4 projection and model view matrices, and (s,t) are transformed using the scale defined by gSPTexture.
+ *
+ * # Example
+ * To load vertex cache entry 2,3,4, use this code:
+ * ```c
+ * gSPVertex(glistp++, v, 3, 2);
+ * ```
+ *
+ * @note
+ * Because the RSP geometry transformation engine uses a vertex list with triangle list architecture, it is quite powerful. A simple one-triangle macro retains least performance compared to @ref gSP2Triangles or the new 5 tris commands in EX3 (@ref gSPTriStrip, @ref gSPTriFan).
+ *
+ * @param v is the pointer to the vertex list (segment address)
+ * @param n is the number of vertices
+ * @param v0 is the load vertex by index vo(0~55) in vertex buffer
  */
 #define gSPVertex(pkt, v, n, v0)                    \
 _DW({                                               \
@@ -2246,6 +2230,11 @@ _DW({                                               \
     _g->words.w1 = (unsigned int)(v);               \
 })
 
+/**
+ * @brief macro which loads an internal vertex buffer in the RSP with points that are used by gSP1Triangle macros to generate polygons in a static display list.
+ *
+ * @copydetails gSPVertex
+ */
 #define gsSPVertex(v, n, v0)        \
 {                                   \
    (_SHIFTL(G_VTX,      24, 8) |    \
@@ -2280,7 +2269,7 @@ _DW({                                               \
     (((count) > 0 && ((count) % G_INPUT_BUFFER_CMDS) > 0) ? \
     ((G_INPUT_BUFFER_CMDS - ((count) % G_INPUT_BUFFER_CMDS)) << 3) : 0)
 
-/*
+/**
  * Optimization for reduced memory traffic. In count, put the estimated number
  * of DL commands in the target DL (the DL being called / jumped to, or the DL
  * being returned to, starting from the next command to be executed) up to and
@@ -2290,32 +2279,62 @@ _DW({                                               \
  * will be best if count is correct, and potentially worse than not specifying
  * count if it is wrong.
  * Feature suggested by Kaze Emanuar
-*/
-
+ */
 #define gSPDisplayListHint(pkt, dl, count) _gSPDisplayListRaw(pkt, dl, _DLHINTVALUE(count))
+/**
+ * @copydetails gSPDisplayListHint
+ */
 #define gsSPDisplayListHint(    dl, count) _gsSPDisplayListRaw(    dl, _DLHINTVALUE(count))
 
+/**
+ * @copydetails gSPDisplayListHint
+ */
 #define gSPBranchListHint(pkt, dl, count) _gSPBranchListRaw( pkt, dl, _DLHINTVALUE(count))
+
+/**
+ * @copydetails gSPDisplayListHint
+ */
 #define gsSPBranchListHint(    dl, count) _gsSPBranchListRaw(     dl, _DLHINTVALUE(count))
 
+/**
+ * @copydetails gSPDisplayListHint
+ */
 #define gSPEndDisplayListHint(pkt, count) _gSPEndDisplayListRaw( pkt, _DLHINTVALUE(count))
+
+/**
+ * @copydetails gSPDisplayListHint
+ */
 #define gsSPEndDisplayListHint(    count) _gsSPEndDisplayListRaw(     _DLHINTVALUE(count))
 
-/*
- * Normal control flow commands; same as above but with hint of 0
+/**
+ * Normal control flow commands; same as @ref gSPDisplayListHint but with hint of 0
  */
-
 #define gSPDisplayList(pkt, dl) _gSPDisplayListRaw(pkt, dl, 0)
+/**
+ * Normal control flow commands; same as @ref gsSPDisplayListHint but with hint of 0
+ */
 #define gsSPDisplayList(    dl) _gsSPDisplayListRaw(    dl, 0)
 
+/**
+ * Normal control flow commands; same as @ref gSPBranchListHint but with hint of 0
+ */
 #define gSPBranchList(pkt, dl)  _gSPBranchListRaw( pkt, dl, 0)
+/**
+ * Normal control flow commands; same as @ref gsSPBranchListHint but with hint of 0
+ */
 #define gsSPBranchList(    dl)  _gsSPBranchListRaw(     dl, 0)
 
+/**
+ * Normal control flow commands; same as @ref gSPEndDisplayListHint but with hint of 0
+ */
 #define gSPEndDisplayList(pkt)  _gSPEndDisplayListRaw( pkt, 0)
+/**
+ * Normal control flow commands; same as @ref gsSPEndDisplayListHint but with hint of 0
+ */
 #define gsSPEndDisplayList(  )  _gsSPEndDisplayListRaw(     0)
 
 
-/*
+/**
  * gSPLoadUcode   RSP loads specified ucode.
  *
  * uc_start  = ucode text section start
@@ -2335,6 +2354,9 @@ _DW({                                                       \
     _g->words.w1 = (unsigned int)(uc_start);                \
 })
 
+/**
+ * @copydetails gSPLoadUcodeEx
+ */
 #define gsSPLoadUcodeEx(uc_start, uc_dstart, uc_dsize)  \
 {                                                       \
     _SHIFTL(G_RDPHALF_1, 24, 8),                        \
@@ -2358,7 +2380,7 @@ _DW({                                                       \
         gsSPLoadUcode(      OS_K0_TO_PHYSICAL(& ucode##TextStart),  \
                             OS_K0_TO_PHYSICAL(& ucode##DataStart))
 
-/*
+/**
  * gSPDma_io  DMA to/from DMEM/IMEM for DEBUG.
  */
 #define gSPDma_io(pkt, flag, dmem, dram, size)      \
@@ -2372,6 +2394,9 @@ _DW({                                               \
     _g->words.w1 = (unsigned int)(dram);            \
 })
 
+/**
+ * @copydetails gSPDma_io
+ */
 #define gsSPDma_io(flag, dmem, dram, size)  \
 {                                           \
    (_SHIFTL(G_DMA_IO,   24,  8) |           \
@@ -2402,11 +2427,14 @@ _DW({                                                   \
     gDma0p(pkt, G_MEMSET, (dram), ((size) & 0xFFFFF0)); \
 })
 
+/**
+ * @copydetails gSPMemset
+ */
 #define gsSPMemset(pkt, dram, value, size)    \
     gsImmp1(G_RDPHALF_1, ((value) & 0xFFFF)), \
     gsDma0p(G_MEMSET, (dram), ((size) & 0xFFFFF0))
 
-/*
+/**
  * RSP short command (no DMA required) macros
  */
 #define gImmp0(pkt, c)                  \
@@ -2416,6 +2444,9 @@ _DW({                                   \
     _g->words.w0 = _SHIFTL((c), 24, 8); \
 })
 
+/**
+ * @copydetails gImmp0
+ */
 #define gsImmp0(c)      \
 {                       \
     _SHIFTL((c), 24, 8) \
@@ -2525,9 +2556,9 @@ _DW({                                       \
                     __gsSP1Triangle_w1(v3, v1, v2))
 
 
-/***
- ***  1 Triangle
- ***/
+/**
+ * 1 Triangle
+ */
 #define gSP1Triangle(pkt, v0, v1, v2, flag)                 \
 _DW({                                                       \
     Gfx *_g = (Gfx *)(pkt);                                 \
@@ -2535,6 +2566,9 @@ _DW({                                                       \
                     __gsSP1Triangle_w1f(v0, v1, v2, flag)); \
     _g->words.w1 = 0;                                       \
 })
+/**
+ * @copydetails gSP1Triangle
+ */
 #define gsSP1Triangle(v0, v1, v2, flag)     \
 {                                           \
    (_SHIFTL(G_TRI1, 24, 8) |                \
@@ -2542,9 +2576,9 @@ _DW({                                                       \
     0                                       \
 }
 
-/***
- ***  1 Quadrangle
- ***/
+/**
+ * 1 Quadrangle
+ */
 #define gSP1Quadrangle(pkt, v0, v1, v2, v3, flag)                   \
 _DW({                                                               \
     Gfx *_g = (Gfx *)(pkt);                                         \
@@ -2553,6 +2587,9 @@ _DW({                                                               \
     _g->words.w1 = (__gsSP1Quadrangle_w2f(v0, v1, v2, v3, flag));   \
 })
 
+/**
+ * @copydetails gSP1Quadrangle
+ */
 #define gsSP1Quadrangle(v0, v1, v2, v3, flag)       \
 {                                                   \
    (_SHIFTL(G_QUAD, 24, 8) |                        \
@@ -2560,9 +2597,9 @@ _DW({                                                               \
     __gsSP1Quadrangle_w2f(v0, v1, v2, v3, flag)     \
 }
 
-/***
- ***  2 Triangles
- ***/
+/**
+ * 2 Triangles
+ */
 #define gSP2Triangles(pkt, v00, v01, v02, flag0, v10, v11, v12, flag1)  \
 _DW({                                                                   \
     Gfx *_g = (Gfx *)(pkt);                                             \
@@ -2571,6 +2608,9 @@ _DW({                                                                   \
     _g->words.w1 =  __gsSP1Triangle_w1f(v10, v11, v12, flag1);          \
 })
 
+/**
+ * @copydetails gSP2Triangles
+ */
 #define gsSP2Triangles(v00, v01, v02, flag0, v10, v11, v12, flag1)  \
 {                                                                   \
    (_SHIFTL(G_TRI2, 24, 8) |                                        \
@@ -2603,8 +2643,8 @@ _DW({                                                        \
      _SHIFTL((v5)*2, 16, 8) |                                \
      _SHIFTL((v6)*2,  8, 8) |                                \
      _SHIFTL((v7)*2,  0, 8))                                 \
-})
-/*
+}
+/**
  * 5 Triangles in strip arrangement. Draws the following tris:
  * v1-v2-v3, v3-v2-v4, v3-v4-v5, v5-v4-v6, v5-v6-v7
  * If you want to draw fewer tris, set indices to -1 from the right.
@@ -2616,15 +2656,21 @@ _DW({                                                        \
  */
 #define gSPTriStrip(pkt, v1, v2, v3, v4, v5, v6, v7) \
     _gSP5Triangles(pkt, G_TRISTRIP, v1, v2, v3, v4, v5, v6, v7)
+/**
+ * @copydetails gSPTriStrip
+ */
 #define gsSPTriStrip(v1, v2, v3, v4, v5, v6, v7) \
     _gsSP5Triangles(G_TRISTRIP, v1, v2, v3, v4, v5, v6, v7)
-/*
+/**
  * 5 Triangles in fan arrangement. Draws the following tris:
  * v1-v2-v3, v1-v3-v4, v1-v4-v5, v1-v5-v6, v1-v6-v7
  * Otherwise works the same as SPTriStrip, see above.
  */
 #define gSPTriFan(pkt, v1, v2, v3, v4, v5, v6, v7) \
     _gSP5Triangles(pkt, G_TRIFAN, v1, v2, v3, v4, v5, v6, v7)
+/**
+ * @copydetails gSPTriFan
+ */
 #define gsSPTriFan(v1, v2, v3, v4, v5, v6, v7) \
     _gsSP5Triangles(G_TRIFAN, v1, v2, v3, v4, v5, v6, v7)
 
@@ -2632,30 +2678,54 @@ _DW({                                                        \
 /*
  * Moveword commands
  */
-/* not strictly a moveword command anymore */
+#ifdef F3DEX2_SEGMENTS
+/* Use F3DEX2 style segment setup binary encoding. F3DEX3 supports both the
+F3DEX2 encoding and the F3DEX3 encoding, but the former does not have the
+relative segment resolution behavior. */
+#define gSPSegment(pkt, segment, base)              \
+    gMoveWd(pkt, G_MW_SEGMENT, (segment) * 4, (base))
+#define gsSPSegment(segment, base)                  \
+    gsMoveWd(    G_MW_SEGMENT, (segment) * 4, (base))
+#else
+/* F3DEX3 style segment setup, which resolves segment addresses relative to
+other segments. */
 #define gSPSegment(pkt, segment, base)              \
     gDma1p((pkt), G_RELSEGMENT, (base), ((segment) * 4) & 0xFFF, G_MW_SEGMENT)
 #define gsSPSegment(segment, base)                  \
     gsDma1p(      G_RELSEGMENT, (base), ((segment) * 4) & 0xFFF, G_MW_SEGMENT)
+#endif
 
 #define gSPPerspNormalize(pkt, s)   gMoveHalfwd(pkt, G_MW_FX, G_MWO_PERSPNORM, (s))
 #define gsSPPerspNormalize(s)       gsMoveHalfwd(    G_MW_FX, G_MWO_PERSPNORM, (s))
 
-/*
- * Clipping Macros - Deprecated, encodes SP no-ops
- * It is not possible to change the clip ratio from 2 in F3DEX3.
+/**
+ * @brief Clipping Macros
+ * @deprecated
+ * encodes SP no-ops it is not possible to change the clip ratio from 2 in F3DEX3.
  */
 #define gSPClipRatio(pkt, r) gSPNoOp(pkt)
+/**
+ * @brief @copybrief gSPClipRatio
+ * @deprecated
+ * @copydetails gSPClipRatio
+ */
 #define gsSPClipRatio(r) gsSPNoOp()
 
-/*
- * Load new MVP matrix directly.
+/**
+ * @brief Load new MVP matrix directly.
+ *
  * This is no longer supported as there is no MVP matrix in F3DEX3.
+ * @deprecated
  */
 #define gSPForceMatrix(pkt, mptr) gSPNoOp(pkt)
+/**
+ * @brief Load new MVP matrix directly.
+ *
+ * @copydetails gSPForceMatrix
+ */
 #define gsSPForceMatrix(mptr)    gsSPNoOp()
 
-/*
+/**
  * Ambient occlusion
  * Enabled with the G_AMBOCCLUSION bit in geometry mode.
  * Each of these factors sets how much ambient occlusion affects lights of
@@ -2690,12 +2760,26 @@ _DW({                                                        \
  *   lights
  * - To allow the lighting to be adjusted at the scene level on-the-fly
  */
-
 #define gSPAmbOcclusionAmb(pkt, amb)     gMoveHalfwd(pkt, G_MW_FX, G_MWO_AO_AMBIENT, amb)
+/**
+ * @copydetails gSPAmbOcclusionAmb
+ */
 #define gsSPAmbOcclusionAmb(amb)        gsMoveHalfwd(     G_MW_FX, G_MWO_AO_AMBIENT, amb)
+/**
+ * @copydetails gSPAmbOcclusionAmb
+ */
 #define gSPAmbOcclusionDir(pkt, dir)     gMoveHalfwd(pkt, G_MW_FX, G_MWO_AO_DIRECTIONAL, dir)
+/**
+ * @copydetails gSPAmbOcclusionAmb
+ */
 #define gsSPAmbOcclusionDir(dir)        gsMoveHalfwd(     G_MW_FX, G_MWO_AO_DIRECTIONAL, dir)
+/**
+ * @copydetails gSPAmbOcclusionAmb
+ */
 #define gSPAmbOcclusionPoint(pkt, point) gMoveHalfwd(pkt, G_MW_FX, G_MWO_AO_POINT, point)
+/**
+ * @copydetails gSPAmbOcclusionAmb
+ */
 #define gsSPAmbOcclusionPoint(point)    gsMoveHalfwd(     G_MW_FX, G_MWO_AO_POINT, point)
 
 #define gSPAmbOcclusionAmbDir(pkt, amb, dir) \
@@ -2720,7 +2804,7 @@ _DW({                                         \
     gsSPAmbOcclusionAmbDir(amb, dir),         \
     gsSPAmbOcclusionPoint(point)
 
-/*
+/**
  * Fresnel - Feature suggested by thecozies
  * Enabled with the G_FRESNEL bit in geometry mode.
  * The dot product between a vertex normal and the vector from the vertex to the
@@ -2755,44 +2839,54 @@ _DW({                                         \
  */
 #define gSPFresnelScale(pkt, scale) \
     gMoveHalfwd(pkt, G_MW_FX, G_MWO_FRESNEL_SCALE, scale)
+/**
+ * @copydetails gSPFresnelScale
+ */
 #define gsSPFresnelScale(scale) \
     gsMoveHalfwd(G_MW_FX, G_MWO_FRESNEL_SCALE, scale)
+/**
+ * @copydetails gSPFresnelScale
+ */
 #define gSPFresnelOffset(pkt, offset) \
     gMoveHalfwd(pkt, G_MW_FX, G_MWO_FRESNEL_OFFSET, offset)
+/**
+ * @copydetails gSPFresnelScale
+ */
 #define gsSPFresnelOffset(offset) \
     gsMoveHalfwd(G_MW_FX, G_MWO_FRESNEL_OFFSET, offset)
+/**
+ * @copydetails gSPFresnelScale
+ */
 #define gSPFresnel(pkt, scale, offset) \
     gMoveWd(pkt, G_MW_FX, G_MWO_FRESNEL_SCALE, \
         (_SHIFTL((scale), 16, 16) | _SHIFTL((offset), 0, 16)))
+/**
+ * @copydetails gSPFresnelScale
+ */
 #define gsSPFresnel(scale, offset) \
     gsMoveWd(G_MW_FX, G_MWO_FRESNEL_SCALE, \
         (_SHIFTL((scale), 16, 16) | _SHIFTL((offset), 0, 16)))
 
-/*
+/**
  * Attribute offsets
- * These are added to ST or Z values after vertices are loaded and transformed.
- * They are all s16s.
- * For ST, the addition is after the multiplication for ST scale in SPTexture.
- * For Z, this simply adds to the Z offset from the viewport.
- * Whether each feature is enabled or disabled at a given time is determined
- * by the G_ATTROFFSET_ST_ENABLE and G_ATTROFFSET_Z_ENABLE bits respectively in
- * the geometry mode.
- * Normally you would use ST offsets for UV scrolling, and you would use a Z
- * offset of -2 (which it is set to by default) to fix decal mode. For the
- * latter, enable the Z offset and set the Z mode to opaque.
+ * These are added to ST values after vertices are loaded and transformed.
+ * The values are s16s. The addition is after the multiplication for ST scale in
+ * SPTexture. Whether it is enabled or disabled at a given time is determined
+ * by the G_ATTROFFSET_ST_ENABLE bit in the geometry mode. Normally you would
+ * use ST offsets for UV scrolling.
  */
 #define gSPAttrOffsetST(pkt, s, t) \
     gMoveWd(pkt, G_MW_FX, G_MWO_ATTR_OFFSET_S, \
         (_SHIFTL((s), 16, 16) | _SHIFTL((t), 0, 16)))
+/**
+ * @copydetails gSPAttrOffsetST
+ */
 #define gsSPAttrOffsetST(s, t) \
     gsMoveWd(G_MW_FX, G_MWO_ATTR_OFFSET_S, \
         (_SHIFTL((s), 16, 16) | _SHIFTL((t), 0, 16)))
-#define gSPAttrOffsetZ(pkt, z) \
-    gMoveHalfwd(pkt, G_MW_FX, G_MWO_ATTR_OFFSET_Z, z)
-#define gsSPAttrOffsetZ(z) \
-    gsMoveHalfwd(G_MW_FX, G_MWO_ATTR_OFFSET_Z, z)
 
-/*
+
+/**
  * Alpha compare culling. Optimization for cel shading, could also be used for
  * other scenarios where lots of tris are being drawn with alpha compare.
  *
@@ -2831,11 +2925,14 @@ _DW({                                         \
 #define gSPAlphaCompareCull(pkt, mode, thresh) \
     gMoveHalfwd(pkt, G_MW_FX, G_MWO_ALPHA_COMPARE_CULL, \
         (_SHIFTL((mode), 8, 8) | _SHIFTL((thresh), 0, 8)))
+/**
+ * @copydetails gSPAlphaCompareCull
+ */
 #define gsSPAlphaCompareCull(mode, thresh) \
     gsMoveHalfwd(G_MW_FX, G_MWO_ALPHA_COMPARE_CULL, \
         (_SHIFTL((mode), 8, 8) | _SHIFTL((thresh), 0, 8)))
 
-/*
+/**
  * Normals mode: How to handle transformation of vertex normals from model to
  * world space for lighting.
  *
@@ -2872,10 +2969,13 @@ _DW({                                         \
  */
 #define gSPNormalsMode(pkt, mode) \
     gMoveHalfwd(pkt, G_MW_FX, G_MWO_NORMALS_MODE, (mode) & 0xFF)
+/**
+ * @copydetails gSPNormalsMode
+ */
 #define gsSPNormalsMode(mode) \
     gsMoveHalfwd(G_MW_FX, G_MWO_NORMALS_MODE, (mode) & 0xFF)
 
-/*
+/**
  * F3DEX3 has a basic auto-batched rendering system. At a high level, if a
  * material display list being run is the same as the last material, the texture
  * loads are automatically skipped the second time as they should already be in
@@ -2889,7 +2989,8 @@ _DW({                                         \
  *
  * Internally, a material is defined to start with any set image command, and
  * end on any of the following: call, branch, return, vertex, all tri commands,
- * modify vertex, branch Z/W, or cull. The physical address of the display list
+ * tex/fill rectangles, and successes on cull or branch w/z (which are usually
+ * preceded by vertex loads anyway). The physical address of the display list
  * --not the address of the image--is stored when a material is started. If a
  * material starts and its physical address is the same as the stored last start
  * address, i.e. we're executing the same material display list as the last
@@ -2904,18 +3005,21 @@ _DW({                                         \
  */
 #define gSPDontSkipTexLoadsAcross(pkt) \
     gMoveWd(pkt, G_MW_FX, G_MWO_LAST_MAT_DL_ADDR, 0xFFFFFFFF)
+/**
+ * @copydetails gSPDontSkipTexLoadsAcross
+ */
 #define gsSPDontSkipTexLoadsAcross() \
     gsMoveWd(G_MW_FX, G_MWO_LAST_MAT_DL_ADDR, 0xFFFFFFFF)
 
 typedef union {
     struct {
-        s16 intPart[3][4];  /* Fourth row containing translations is omitted. */
-        u16 fracPart[3][4]; /* Also the fourth column data is ignored, need not be 0. */
+        s16 intPart[3][4];  /** Fourth row containing translations is omitted. */
+        u16 fracPart[3][4]; /** Also the fourth column data is ignored, need not be 0. */
     };
     long long int force_structure_alignment;
 } MITMtx;
 
-/*
+/**
  * See SPNormalsMode. mtx is the address of a MITMtx (M inverse transpose).
  *
  * The matrix values must be scaled down so that the matrix norm is <= 1,
@@ -2930,16 +3034,61 @@ typedef union {
  */
 #define gSPMITMatrix(pkt, mit) \
         gDma2p((pkt), G_MOVEMEM, (mit), sizeof(MITMtx), G_MV_MMTX, 0x80)
+/**
+ * @copydetails gSPMITMatrix
+ */
 #define gsSPMITMatrix(mtx) \
         gsDma2p(      G_MOVEMEM, (mit), sizeof(MITMtx), G_MV_MMTX, 0x80)
 
 
-/*
- * Insert values into Vertices
+/**
+ * @brief You can use this macro to modify certain sections of a vertex after it has been sent to the RSP (by the gSPVertex macro).
  *
- * vtx = vertex number 0-55
- * where = which element of point to modify (byte offset into vertex)
- * num   = new value (32 bit)
+ * This is an advanced macro. You need a good understanding of how vertices work in the RSP microcode before you use this macro (refer to gSPVertex).
+ *
+ * You can use this macro to modify certain sections of a vertex after it has been sent to the RSP (by the gSPVertex macro). This is useful for vertices that are shared between two or more triangles that must have different properties when associated with one triangle versus the other triangle.
+ *
+ * For example, you might have two adjacent triangles that both need smooth-shaded color, but one is smooth-shaded red-to-yellow and the other is smooth-shaded green-to-cyan. In this case, the vertex that is shared by both triangles is sent with red/yellow color by using the gSPVertex macro. The first triangle is drawn. Then, the gSPModifyVertex macro is used to change the color to green/cyan, and the second triangle is drawn.
+
+ * The primary use of the gSPModifyVertex macro is to modify the texture coordinate of a vertex so that a vertex that is shared by two triangles with different textures and different texture coordinate spaces can contain the texture coordinate for the first texture and then be modified to contain the texture coordinate for the second texture.
+ *
+ * It is faster to use the gSPModifyVertex macro than to send a new vertex macro with a different but similar vertex because no transformations or lighting are done to the vertex when you use the gSPModifyVertex macro.
+ *
+ * The where argument specifies which part of the vertex is to be modified. It can hold one of the following values:
+ * - @ref G_MWO_POINT_RGBA - @copybrief G_MWO_POINT_RGBA
+ * - @ref G_MWO_POINT_ST - @copybrief G_MWO_POINT_ST
+ * - @ref G_MWO_POINT_XYSCREEN - @copybrief G_MWO_POINT_XYSCREEN
+ * - @ref G_MWO_POINT_ZSCREEN - @copybrief G_MWO_POINT_ZSCREEN
+ *
+ * @note
+ * Lighting is not performed after a gSPModifyVertex macro, so modifying the color of the vertex with @ref G_MWO_POINT_RGBA is just that - modifying the actual color that will be output. It is not a modification of normal values. This means it cannot be used to update vertex normals for lighting.
+ *
+ * The S and T coordinates supplied in the gSPModifyVertex macro are never multiplied by the texture scale (from the gSPTexture macro), so you must pre-scale them before sending them. For example, if you want a texture scale of 1/2 (0x8000), make the S and T values sent with the gSPModifyVertex macro half the value of the equivalent values used with the gSPVertex macro.
+ *
+ * # Example
+ * To share a vertex between two triangles with different textures and texture coordinates, use this code:
+ * ```c
+ * // load vertex by gSPVertex
+ * gSPVertex(...);
+ * // load texture of triangle 1
+ * gDPLoadTextureBlock(...);
+ *
+ * // draw triangle 1 using vertex #3
+ * gSP1Triangle(glistp++, 1,2,3,0);
+ *
+ * // change a value of vertex 3 to S=3.0 and T=2.5
+ * gSPModifyVertex(glistp++, 3, G_MWO_POINT_ST, 0x00600050);
+ *
+ * // load texture of triangle 2
+ * gDPLoadTextureBlock(...);
+ *
+ * // draw triangle 2 using vertex #3
+ * gSP1Triangle(glistp++, 1,2,3,0);
+ * ```
+ *
+ * @param vtx specifies which of the RSP's vertices (0-55) to modify
+ * @param where specifies which part of the vertex to modify (@ref G_MWO_POINT_RGBA, @ref G_MWO_POINT_ST, @ref G_MWO_POINT_XYSCREEN or @ref G_MWO_POINT_ZSCREEN)
+ * @param val is the new value for the part of the vertex to be modified (a 32 bit integer number)
  */
 # define gSPModifyVertex(pkt, vtx, where, val)      \
 _DW({                                               \
@@ -2950,6 +3099,11 @@ _DW({                                               \
                     _SHIFTL((vtx) * 2,    0, 16));  \
     _g->words.w1 = (unsigned int)(val);             \
 })
+/**
+ * @brief You can use this macro to modify certain sections of a vertex after it has been sent to the RSP (by the gSPVertex macro).
+ *
+ * @copydetails gSPModifyVertex
+ */
 # define gsSPModifyVertex(vtx, where, val)  \
 {                                           \
    (_SHIFTL(G_MODIFYVTX, 24,  8) |          \
@@ -2962,7 +3116,7 @@ _DW({                                               \
  * Display list optimization / object culling
  */
 
-/*
+/**
  * Cull the display list based on screen clip flags of range of loaded verts.
  * Executes SPEndDisplayList if the convex hull formed by the specified range of
  * already-loaded vertices is offscreen.
@@ -2975,7 +3129,9 @@ _DW({                                                   \
                     _SHIFTL((vstart) * 2,  0, 16));     \
     _g->words.w1 = _SHIFTL((vend) * 2, 0, 16);          \
 })
-
+/**
+ * @copydetails gSPCullDisplayList
+ */
 #define gsSPCullDisplayList(vstart,vend)    \
 {                                           \
    (_SHIFTL(G_CULLDL,     24, 8) |          \
@@ -3047,7 +3203,7 @@ _DW({                                                                       \
 #define gsSPBranchLessZ(dl, vtx, zval, near, far, flag)             \
     gsSPBranchLessZrg(dl, vtx, zval, near, far, flag, 0, G_MAXZ)
 
-/*
+/**
  *  gSPBranchLessZraw   Branch DL if (vtx.z) less than or equal (raw zval).
  *
  *  dl   = DL branch to
@@ -3069,6 +3225,9 @@ _DW({                                               \
     _g->words.w1 = (unsigned int)(zval);            \
 })
 
+/**
+ * @copydetails gSPBranchLessZraw
+ */
 #define gsSPBranchLessZraw(dl, vtx, zval)   \
 {                                           \
     _SHIFTL(G_RDPHALF_1, 24, 8),            \
@@ -3102,12 +3261,15 @@ _DW({                                               \
 #define NUMLIGHTS_8 8
 #define NUMLIGHTS_9 9
 
-/*
+/**
  * Number of directional / point lights, in the range 0-9. There is also always
  * one ambient light not counted in this number.
  */
 #define gSPNumLights(pkt, n)                            \
     gMoveWd(pkt, G_MW_NUMLIGHT, G_MWO_NUMLIGHT, NUML(n))
+/**
+ * @copydetails gSPNumLights
+ */
 #define gsSPNumLights(n)                                \
     gsMoveWd(    G_MW_NUMLIGHT, G_MWO_NUMLIGHT, NUML(n))
 
@@ -3123,8 +3285,10 @@ _DW({                                               \
 #define LIGHT_9     9
 #define LIGHT_10    10
 
-/*
- * l should point to a Light or PosLight struct.
+#define _LIGHT_TO_OFFSET(n) (((n) - 1) * 0x10 + 0x10) /* The + 0x10 skips cam pos and lookat */
+
+/**
+ * l should point to a Light struct.
  * n should be an integer 1-9 to load lights 0-8.
  * Can also load Ambient lights to lights 0-8 with this. However, if you have
  * 9 directional / point lights, you must use SPAmbient to load light 9
@@ -3134,22 +3298,27 @@ _DW({                                               \
  * New code should not generally use SPLight, and instead use SPSetLights to set
  * all lights in one memory transaction.
  */
-#define _LIGHT_TO_OFFSET(n) (((n) - 1) * 0x10 + 0x10) /* The + 0x10 skips cam pos and lookat */
 #define gSPLight(pkt, l, n) \
     gDma2p((pkt), G_MOVEMEM, (l), sizeof(Light), G_MV_LIGHT, _LIGHT_TO_OFFSET(n))
+/**
+ * @copydetails gSPLight
+ */
 #define gsSPLight(l, n) \
     gsDma2p(      G_MOVEMEM, (l), sizeof(Light), G_MV_LIGHT, _LIGHT_TO_OFFSET(n))
 
-/*
+/**
  * l should point to an Ambient struct.
  * n should be an integer 1-10 to load lights 0-9.
  */
 #define gSPAmbient(pkt, l, n) \
     gDma2p((pkt), G_MOVEMEM, (l), sizeof(Ambient), G_MV_LIGHT, _LIGHT_TO_OFFSET(n))
+/**
+ * @copydetails gSPAmbient
+ */
 #define gsSPAmbient(l, n) \
     gsDma2p(      G_MOVEMEM, (l), sizeof(Ambient), G_MV_LIGHT, _LIGHT_TO_OFFSET(n))
 
-/*
+/**
  * gSPLightColor changes the color of a directional light without an additional
  * DMA transfer.
  * col is a 32 bit word where (col >> 24) & 0xFF is red, (col >> 16) & 0xFF is
@@ -3162,6 +3331,9 @@ _DW({                                               \
     gMoveWd(pkt, G_MW_LIGHTCOL, ((((n) - 1) * 0x10) + 0), ((col) & 0xFFFFFF00));   \
     gMoveWd(pkt, G_MW_LIGHTCOL, ((((n) - 1) * 0x10) + 4), ((col) & 0xFFFFFF00));   \
 })
+/**
+ * @copydetails gSPLightColor
+ */
 #define gsSPLightColor(n, col)                      \
     gsMoveWd(G_MW_LIGHTCOL, ((((n) - 1) * 0x10) + 0), ((col) & 0xFFFFFF00)),       \
     gsMoveWd(G_MW_LIGHTCOL, ((((n) - 1) * 0x10) + 4), ((col) & 0xFFFFFF00))
@@ -3181,21 +3353,21 @@ _DW({\
   gsMoveWd(G_MW_LIGHTCOL, ((((n) - 1) * 0x10) + 4), col2)
 
 
-/*
+/**
  * Set all your scene's lights (directional/point + ambient) with one memory
  * transaction.
  * n is the number of directional / point lights, from 0 to 9. There is also
  * always an ambient light.
- * name should be the NAME of a Lights or PosLights struct (NOT A POINTER)
+ * name should be the NAME of a Lights struct (NOT A POINTER)
  * filled in with all the lighting data. You can use the gdSPDef* macros to fill
  * in the struct or just do it manually. Example:
- * PosLights2 myLights; // 2 pos + 1 ambient
+ * Lights2 myLights; // 2 dir/pos + 1 ambient
  * <code to fill in the fields of myLights>
  * gSPSetLights(POLY_OPA_DISP++, 2, myLights);
  *
  * If you need to use a pointer, e.g. if the number of lights is variable at
  * runtime:
- * PosLight *lights = memory_allocate((numLights + 1) * sizeof(PosLight));
+ * Light *lights = memory_allocate((numLights + 1) * sizeof(Light));
  * lights[0].p.pos = ...;
  * lights[1].l.dir = ...;
  * ...
@@ -3210,6 +3382,9 @@ _DW({ \
     gSPNumLights(pkt, n); \
     gDma2p((pkt),  G_MOVEMEM, &(name), (n) * 0x10 + 8, G_MV_LIGHT, 0x10); \
 })
+/**
+ * @copydetails gSPSetLights
+ */
 #define gsSPSetLights(n, name) \
     gsSPNumLights(n), \
     gsDma2p(G_MOVEMEM, &(name), (n) * 0x10 + 8, G_MV_LIGHT, 0x10)
@@ -3217,7 +3392,11 @@ _DW({ \
 #define  gSPSetLights0(pkt, name)  gSPSetLights(pkt, 0, name)
 #define gsSPSetLights0(name)      gsSPSetLights(     0, name)
 #define  gSPSetLights1(pkt, name)  gSPSetLights(pkt, 1, name)
+#ifdef KAZE_GBI_HACKS
+#define gsSPSetLights1(name)      gsSPNoOp()
+#else
 #define gsSPSetLights1(name)      gsSPSetLights(     1, name)
+#endif
 #define  gSPSetLights2(pkt, name)  gSPSetLights(pkt, 2, name)
 #define gsSPSetLights2(name)      gsSPSetLights(     2, name)
 #define  gSPSetLights3(pkt, name)  gSPSetLights(pkt, 3, name)
@@ -3236,36 +3415,52 @@ _DW({ \
 #define gsSPSetLights9(name)      gsSPSetLights(     9, name)
 
 
-/*
+/**
  * Camera world position for Fresnel and specular lighting. Set this whenever
  * you set the VP matrix, viewport, etc. cam is the address of a PlainVtx struct.
  */
 #define gSPCameraWorld(pkt, cam) \
     gDma2p((pkt), G_MOVEMEM, (cam), sizeof(PlainVtx), G_MV_LIGHT, 0)
+/**
+ * @copydetails gSPCameraWorld
+ */
 #define gsSPCameraWorld(cam) \
     gsDma2p(      G_MOVEMEM, (cam), sizeof(PlainVtx), G_MV_LIGHT, 0)
 
 
-/*
+/**
  * Reflection/Hiliting Macros.
  * la is the address of a LookAt struct.
  */
 #define gSPLookAt(pkt, la) \
     gDma2p((pkt), G_MOVEMEM, (la), sizeof(LookAt), G_MV_LIGHT, 8)
+/**
+ * @copydetails gSPLookAt
+ */
 #define gsSPLookAt(la) \
     gsDma2p(      G_MOVEMEM, (la), sizeof(LookAt), G_MV_LIGHT, 8)
 
-/*
+/**
  * These versions are deprecated, please use g*SPLookAt. The two directions
  * cannot be set independently anymore as they both fit within one memory word.
  * (They could be set with moveword, but then the values would have to be within
  * the command itself, not at a memory address.)
  * This deprecated version has the X command set both (assuming l is the name /
  * address of a LookAt struct) and has the Y command as a SP no-op.
+ * @deprecated
  */
 #define gSPLookAtX(pkt, l) gSPLookAt(pkt, l)
+/**
+ * @copydetails gSPLookAtX
+ */
 #define gsSPLookAtX(l)     gsSPLookAt(l)
+/**
+ * @copydetails gSPLookAtX
+ */
 #define gSPLookAtY(pkt, l) gSPNoOp(pkt)
+/**
+ * @copydetails gSPLookAtX
+ */
 #define gsSPLookAtY(l)     gsSPNoOp()
 
 
@@ -3296,7 +3491,7 @@ _DW({ \
         ((((height) - 1) * 4) + (hilite)->h.y2) & 0xFFF)
 
 
-/*
+/**
  * Set the occlusion plane. This is a quadrilateral in 3D space where all
  * geometry behind it is culled. You should create occlusion plane candidates
  * just behind walls and other large objects, and have your game engine pick
@@ -3311,12 +3506,15 @@ _DW({ \
 #define gSPOcclusionPlane(pkt, o) \
     gDma2p((pkt), G_MOVEMEM, (o), sizeof(OcclusionPlane), G_MV_LIGHT, \
         (G_MAX_LIGHTS * 0x10) + 0x18)
+/**
+ * @copydetails gSPOcclusionPlane
+ */
 #define gsSPOcclusionPlane(o) \
     gsDma2p(      G_MOVEMEM, (o), sizeof(OcclusionPlane), G_MV_LIGHT, \
         (G_MAX_LIGHTS * 0x10) + 0x18)
 
 
-/*
+/**
  * FOG macros
  * fm = z multiplier
  * fo = z offset
@@ -3333,6 +3531,9 @@ _DW({ \
     gMoveWd(pkt, G_MW_FOG, G_MWO_FOG,               \
        (_SHIFTL(fm, 16, 16) | _SHIFTL(fo, 0, 16)))
 
+/**
+ * @copydetails gSPFogFactor
+ */
 #define gsSPFogFactor(fm, fo)                       \
     gsMoveWd(G_MW_FOG, G_MWO_FOG,                   \
        (_SHIFTL(fm, 16, 16) | _SHIFTL(fo, 0, 16)))
@@ -3348,7 +3549,7 @@ _DW({ \
         _SHIFTL(((500 - (min)) * 256 / ((max) - (min))), 0, 16)))
 
 
-/*
+/**
  * Macros to turn texture on/off
  */
 #define gSPTexture(pkt, s, t, level, tile, on)                 \
@@ -3362,6 +3563,9 @@ _DW({                                                           \
     _g->words.w1 = (_SHIFTL((s), 16, 16) |                      \
                     _SHIFTL((t),  0, 16));                      \
 })
+/**
+ * @copydetails gSPTexture
+ */
 #define gsSPTexture(s, t, level, tile, on) \
 {                                           \
    (_SHIFTL(G_TEXTURE,  24, 8) |            \
@@ -3372,16 +3576,19 @@ _DW({                                                           \
     _SHIFTL((t),  0, 16))                   \
 }
 
-/*
+/**
  * The bowtie value is a workaround for a bug in HW V1, and is not supported
  * by F3DEX2, let alone F3DEX3.
  */
 #define gSPTextureL(pkt, s, t, level, bowtie, tile, on) \
     gSPTexture(pkt, s, t, level, tile, on)
+/**
+ * @copydetails gSPTextureL
+ */
 #define gsSPTextureL(s, t, level, bowtie, tile, on) \
     gsSPTexture(s, t, level, tile, on)
 
-/*
+/**
  *  One gSPGeometryMode(pkt,c,s) GBI is equal to these two GBIs.
  *
  *      gSPClearGeometryMode(pkt,c)
@@ -3398,6 +3605,9 @@ _DW({                                                   \
     _g->words.w1 = (u32)(s);                            \
 })
 
+/**
+ * @copydetails gSPGeometryMode
+ */
 #define gsSPGeometryMode(c, s)          \
 {                                       \
    (_SHIFTL(G_GEOMETRYMODE, 24,  8) |   \
@@ -3432,11 +3642,14 @@ _DW({                                                       \
     (unsigned int)(data)                        \
 }
 
-/*
+/**
  * RDP setothermode register commands - register shadowed in RSP
  */
 #define gDPPipelineMode(pkt, mode)  \
     gSPSetOtherMode(pkt, G_SETOTHERMODE_H, G_MDSFT_PIPELINE, 1, mode)
+/**
+ * @copydetails gDPPipelineMode
+ */
 #define gsDPPipelineMode(mode)      \
     gsSPSetOtherMode(    G_SETOTHERMODE_H, G_MDSFT_PIPELINE, 1, mode)
 
@@ -3490,12 +3703,17 @@ _DW({                                                       \
 #define gsDPSetAlphaDither(mode)        \
     gsSPSetOtherMode(    G_SETOTHERMODE_H, G_MDSFT_ALPHADITHER, 2, mode)
 
-/* 'blendmask' is not supported anymore.
+/**
+ * 'blendmask' is not supported anymore.
  * The bits are reserved for future use.
  * Fri May 26 13:45:55 PDT 1995
+ * @deprecated
  */
-#define gDPSetBlendMask(pkt, mask)  gDPNoOp(pkt)
-#define gsDPSetBlendMask(mask)      gsDPNoOp()
+#define gDPSetBlendMask(pkt, mask)  gSPNoOp(pkt)
+/**
+ * @copydetails gDPSetBlendMask
+ */
+#define gsDPSetBlendMask(mask)      gsSPNoOp()
 
 #define gDPSetAlphaCompare(pkt, type)   \
     gSPSetOtherMode(pkt, G_SETOTHERMODE_L, G_MDSFT_ALPHACOMPARE, 2, type)
@@ -3622,7 +3840,7 @@ _DW({                                                                       \
                            G_ACMUX_##Ab1, G_ACMUX_##Ad1))       \
 }
 
-/*
+/**
  * SetCombineMode macros are NOT redunant. It allow the C preprocessor
  * to substitute single parameter which includes commas in the token and
  * rescan for higher parameter count macro substitution.
@@ -3631,8 +3849,10 @@ _DW({                                                                       \
  *  gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, TEXEL0, 0, SHADE, 0,
  *      TEXEL0, 0, SHADE, 0, TEXEL0, 0, SHADE, 0)
  */
-
 #define gDPSetCombineMode(pkt, a, b)    gDPSetCombineLERP(pkt, a, b)
+/**
+ * @copydetails gDPSetCombineMode
+ */
 #define gsDPSetCombineMode(a, b)        gsDPSetCombineLERP(    a, b)
 
 #define gDPSetColor(pkt, c, d)          \
@@ -3666,8 +3886,13 @@ _DW({                                   \
 #define gDPSetEnvColor(pkt, r, g, b, a) \
             DPRGBColor(pkt, G_SETENVCOLOR,   r, g, b, a)
 
+#ifdef KAZE_GBI_HACKS
+#define gsDPSetEnvColor(r, g, b, a) \
+            gsSPNoOp()
+#else
 #define gsDPSetEnvColor(r, g, b, a) \
             sDPRGBColor(    G_SETENVCOLOR,   r, g, b, a)
+#endif
 
 #define gDPSetBlendColor(pkt, r, g, b, a) \
             DPRGBColor(pkt, G_SETBLENDCOLOR, r, g, b, a)
@@ -3719,7 +3944,7 @@ _DW({                                                   \
     _SHIFTL(a,  0, 8))                      \
 }
 
-/*
+/**
  * Send the color of the specified light to one of the RDP's color registers.
  * light is the index of a light in the RSP counting from the end, i.e. 0 is
  * the ambient light, 1 is the last directional / point light, etc. The RGB
@@ -3737,6 +3962,9 @@ _DW({                                              \
                     _SHIFTL(alpha,         0, 8)); \
     _g->words.w1 = (word0);                        \
 })
+/**
+ * @copydetails gSPLightToRDP
+ */
 #define gsSPLightToRDP(light, alpha, word0) \
 {                                           \
    (_SHIFTL(G_LIGHTTORDP, 24, 8) |          \
@@ -3755,7 +3983,7 @@ _DW({                                              \
 #define gsSPLightToFogColor(light, alpha) \
     gsSPLightToRDP(light, alpha, _SHIFTL(G_SETFOGCOLOR, 24, 8))
 
-/*
+/**
  * gDPSetOtherMode (This is for expert user.)
  *
  * This command makes all othermode parameters set.
@@ -3792,6 +4020,9 @@ _DW({                                                   \
     _g->words.w1 = (unsigned int)(mode1);               \
 })
 
+/**
+ * @copydetails gDPSetOtherMode
+ */
 #define gsDPSetOtherMode(mode0, mode1)      \
 {                                           \
    (_SHIFTL(G_RDPSETOTHERMODE, 24,  8) |    \
@@ -4121,7 +4352,7 @@ _DW({                                                                       \
         ((height) - 1) << G_TEXTURE_IMAGE_FRAC);                            \
 })
 
-/*
+/**
  *  Allow tmem address and render tile to be specified.
  *  The S at the end means odd lines are already word Swapped
  */
@@ -4207,7 +4438,7 @@ _DW({                                                                           
         ((height) - 1) << G_TEXTURE_IMAGE_FRAC);                                        \
 })
 
-/*
+/**
  *  allows tmem address and render tile to be specified
  */
 #define gDPLoadMultiBlock(pkt, timg, tmem, rtile, fmt, siz, width, height, pal, \
@@ -4311,7 +4542,7 @@ _DW({                                                                           
         ((height) - 1) << G_TEXTURE_IMAGE_FRAC)
 
 
-/*
+/**
  *  Allow tmem address and render_tile to be specified, useful when loading
  *  mutilple tiles at a time.
  */
@@ -4332,7 +4563,7 @@ _DW({                                                                           
         ((width)  - 1) << G_TEXTURE_IMAGE_FRAC,                             \
         ((height) - 1) << G_TEXTURE_IMAGE_FRAC)
 
-/*
+/**
  *  Allows tmem and render tile to be specified.  Useful when loading
  *  several tiles at a time.
  *
@@ -4340,7 +4571,6 @@ _DW({                                                                           
  *  See gDPLoadTextureBlockS() for reference.  Basically, just don't
  *  calculate DxT, use 0
  */
-
 #define gsDPLoadMultiBlockS(timg, tmem, rtile, fmt, siz, width, height, pal,    \
                             cms, cmt, masks, maskt, shifts, shiftt)             \
     gsDPSetTextureImage(fmt, siz##_LOAD_BLOCK, 1, timg),                        \
@@ -4399,7 +4629,7 @@ _DW({                                                                           
         ((height) - 1) << G_TEXTURE_IMAGE_FRAC);                                \
 })
 
-/*
+/**
  *  4-bit load block.  Useful when loading multiple tiles
  */
 #define gDPLoadMultiBlock_4b(pkt, timg, tmem, rtile, fmt, width, height, pal,   \
@@ -4421,7 +4651,7 @@ _DW({                                                                           
         ((height) - 1) << G_TEXTURE_IMAGE_FRAC);                                \
 })
 
-/*
+/**
  *  4-bit load block.  Allows tmem and render tile to be specified.  Useful when
  *  loading multiple tiles.  The S means odd lines are already word swapped.
  */
@@ -4498,7 +4728,7 @@ _DW({                                                                           
         ((width)  - 1) << G_TEXTURE_IMAGE_FRAC,                             \
         ((height) - 1) << G_TEXTURE_IMAGE_FRAC)
 
-/*
+/**
  *  4-bit load block.  Allows tmem address and render tile to be specified.
  *  Useful when loading multiple tiles.
  */
@@ -4520,7 +4750,7 @@ _DW({                                                                           
         ((height)-1) << G_TEXTURE_IMAGE_FRAC)
 
 
-/*
+/**
  *  4-bit load block.  Allows tmem address and render tile to be specified.
  *  Useful when loading multiple tiles.  S means odd lines are already swapped.
  */
@@ -4588,7 +4818,7 @@ _DW({                                                                   \
         (lrt) << G_TEXTURE_IMAGE_FRAC);                                 \
 })
 
-/*
+/**
  *  Load texture tile.  Allows tmem address and render tile to be specified.
  *  Useful for loading multiple tiles.
  */
@@ -4641,7 +4871,7 @@ _DW({                                                                       \
         (lrs) << G_TEXTURE_IMAGE_FRAC,                                  \
         (lrt) << G_TEXTURE_IMAGE_FRAC)
 
-/*
+/**
  *  Load texture tile.  Allows tmem address and render tile to be specified.
  *  Useful for loading multiple tiles.
  */
@@ -4693,7 +4923,7 @@ _DW({                                                                       \
         (lrt) << G_TEXTURE_IMAGE_FRAC);                                     \
 })
 
-/*
+/**
  *  Load texture tile.  Allows tmem address and render tile to be specified.
  *  Useful for loading multiple tiles.
  */
@@ -4745,9 +4975,8 @@ _DW({                                                                       \
         (lrs) << G_TEXTURE_IMAGE_FRAC,                                  \
         (lrt) << G_TEXTURE_IMAGE_FRAC)
 
-/*
- *  Load texture tile.  Allows tmem address and render tile to be specified.
- *  Useful for loading multiple tiles.
+/**
+ * @copydetails gDPLoadMultiTile_4b
  */
 #define gsDPLoadMultiTile_4b(timg, tmem, rtile, fmt, width, height,        \
                              uls, ult, lrs, lrt, pal,                      \
@@ -4773,13 +5002,12 @@ _DW({                                                                       \
         (lrs) << G_TEXTURE_IMAGE_FRAC,                                     \
         (lrt) << G_TEXTURE_IMAGE_FRAC)
 
-/*
+/**
  *  Load a 16-entry palette (for 4-bit CI textures)
  *  Assumes a 16 entry tlut is being loaded, palette # is 0-15
  *  With NO_SYNCS_IN_TEXTURE_LOADS: assumes that palette 0 is for multitexture
  *  texture 0 and palette 1 is for texture 1 (uses load tiles 5 and 4)
  */
-
 #define gDPLoadTLUT_pal16(pkt, pal, dram)                            \
 _DW({                                                                \
     gDPSetTextureImage(pkt, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, dram);   \
@@ -4790,7 +5018,9 @@ _DW({                                                                \
     gDPLoadTLUTCmd(pkt, _G_PALLOADTILE((pal) & 1), 15);              \
     gDPPipeSyncInTexLoad(pkt);                                       \
 })
-
+/**
+ * @copydetails gDPLoadTLUT_pal16
+ */
 #define gsDPLoadTLUT_pal16(pal, dram)                            \
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, dram),   \
     gsDPTileSyncInTexLoad                                        \
@@ -4800,11 +5030,10 @@ _DW({                                                                \
     gsDPLoadTLUTCmd(_G_PALLOADTILE((pal) & 1), 15)               \
     gsDPPipeSyncEndOfTexLoad
 
-/*
+/**
  *  Load a 256-entry palette (for 8-bit CI textures)
  *  Assumes a 256 entry tlut is being loaded, palette # is not used
  */
-
 #define gDPLoadTLUT_pal256(pkt, dram)                                   \
 _DW({                                                                   \
     gDPSetTextureImage(pkt, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, dram);      \
@@ -4816,6 +5045,9 @@ _DW({                                                                   \
     gDPPipeSyncInTexLoad(pkt);                                          \
 })
 
+/**
+ * @copydetails gDPLoadTLUT_pal256
+ */
 #define gsDPLoadTLUT_pal256(dram)                               \
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, dram),  \
     gsDPTileSyncInTexLoad                                       \
@@ -5028,7 +5260,8 @@ _DW({                                   \
     (param)                     \
 }
 
-/* Notice that textured rectangles are 128-bit commands, therefore
+/**
+ * Notice that textured rectangles are 128-bit commands, therefore
  * gsDPTextureRectangle() should not be used in display lists
  * under normal circumstances (use gsSPTextureRectangle()).
  * That is also why there is no gDPTextureRectangle() macros.
@@ -5049,6 +5282,9 @@ _DW({                                   \
     _SHIFTL(dtdy,  0, 16))                                              \
 }
 
+/**
+ * @copydetails gsDPTextureRectangle
+ */
 #define gDPTextureRectangle(pkt, xl, yl, xh, yh, tile, s, t, dsdx, dtdy)    \
 _DW({                                                                       \
     Gfx *_g = (Gfx *)(pkt);                                                 \
@@ -5197,17 +5433,28 @@ _DW({                                                                           
 #define gDPWord(pkt, wordhi, wordlo)                    \
 _DW({                                                   \
     Gfx *_g = (Gfx *)(pkt);                             \
-                                                        \
     gImmp1(pkt, G_RDPHALF_1, (unsigned int)(wordhi));   \
     gImmp1(pkt, G_RDPHALF_2, (unsigned int)(wordlo));   \
 })
+
+#ifdef RISKY_RDP_SYNCS
+/*
+ * The community has found that in nearly all instances, a tile sync is
+ * sufficient where a pipe sync is normally used--between rendering something
+ * and changing critical RDP settings. However, we are not 100% sure this is
+ * true for all obscure settings, so it is risky.
+*/
+#define G_USEASPIPESYNC G_RDPTILESYNC
+#else
+#define G_USEASPIPESYNC G_RDPPIPESYNC
+#endif
 
 #define gDPFullSync(pkt)        gDPNoParam(pkt, G_RDPFULLSYNC)
 #define gsDPFullSync()          gsDPNoParam(    G_RDPFULLSYNC)
 #define gDPTileSync(pkt)        gDPNoParam(pkt, G_RDPTILESYNC)
 #define gsDPTileSync()          gsDPNoParam(    G_RDPTILESYNC)
-#define gDPPipeSync(pkt)        gDPNoParam(pkt, G_RDPPIPESYNC)
-#define gsDPPipeSync()          gsDPNoParam(    G_RDPPIPESYNC)
+#define gDPPipeSync(pkt)        gDPNoParam(pkt, G_USEASPIPESYNC)
+#define gsDPPipeSync()          gsDPNoParam(    G_USEASPIPESYNC)
 #define gDPLoadSync(pkt)        gDPNoParam(pkt, G_RDPLOADSYNC)
 #define gsDPLoadSync()          gsDPNoParam(    G_RDPLOADSYNC)
 #define gDPNoOp(pkt)            gDPNoParam(pkt, G_NOOP)

@@ -45,7 +45,7 @@ A more complete `c_cpp_properties.json` with configurations for all supported ve
 {
     "configurations": [
         {
-            "name": "hackeroot-mq",
+            "name": "ntsc-1.2",
             "compilerArgs": [
                 "-m32" // Removes integer truncation warnings with gbi macros
             ],
@@ -53,14 +53,13 @@ A more complete `c_cpp_properties.json` with configurations for all supported ve
                 "include",
                 "include/libc",
                 "src",
-                "build/hackeroot-mq",
+                "build/ntsc-1.2",
                 ".",
-                "extracted/hackeroot-mq"
+                "extracted/ntsc-1.2"
             ],
             "defines": [
                 "_LANGUAGE_C", // For gbi.h
                 "ENABLE_HACKEROOT=1",
-                "RELEASE_ROM=0",
                 "COMPRESS_YAZ=1",
                 // Version-specific
                 "OOT_VERSION=GC_EU_MQ_DBG",
@@ -108,7 +107,7 @@ Add the following to (or create) the `.vscode/settings.json` file for VSCode to 
             "name": "Ares GDB (Linux)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/hackeroot-mq/hackeroot-mq.elf",
+            "program": "${workspaceFolder}/build/ntsc-1.2/oot-ntsc-1.2.elf",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "externalConsole": false,

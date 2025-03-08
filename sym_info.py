@@ -269,12 +269,12 @@ def sym_info_main():
         "-v",
         "--version",
         dest="oot_version",
-        help="which version should be processed (default: hackeroot-mq)",
-        default="hackeroot-mq",
+        help="which version should be processed (default: ntsc-1.2)",
+        default="ntsc-1.2",
     )
 
     args = parser.parse_args()
-    filename = f"oot-{args.oot_version}" if args.oot_version != "hackeroot-mq" else "hackeroot-mq"
+    filename = f"hackeroot-{args.oot_version}"
 
     BUILTMAP = Path("build") / args.oot_version / f"{filename}.map"
     BUILTELF = Path("build") / args.oot_version / f"{filename}.elf"

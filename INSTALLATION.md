@@ -68,7 +68,7 @@ cd HackerOoT
 
 #### 3. Prepare a base ROM
 
-Place a copy of the Master Quest (Debug) ROM inside the `baseroms/hackeroot-mq/` folder.
+Place a copy of the Master Quest (Debug) ROM inside the `baseroms/ntsc-1.2/` folder.
 
 Rename the file to `baserom.z64`, `baserom.n64` or `baserom.v64`, depending on the original extension.
 
@@ -83,7 +83,7 @@ make setup
 ```
 
 This downloads some dependencies (from pip), and compiles tools for the build process.
-Then it generates a new ROM "baseroms/hackeroot-mq/baserom-decompressed.z64" that will have the overdump removed and the header patched.
+Then it generates a new ROM "baseroms/ntsc-1.2/baserom-decompressed.z64" that will have the overdump removed and the header patched.
 It will also extract the individual assets from the ROM. This command will also setup F3DEX3 binaries.
 
 **NOTE:** the decompressed baserom will be copied to ``baseroms/gc-eu-mq-dbg/``, this is a temporary solution.
@@ -97,7 +97,7 @@ Make sure your path to the project is not too long, otherwise this process may e
 make
 ```
 
-If all goes well, a new ROM should be built at `build/hackeroot-mq/hackeroot-mq.z64`.
+If all goes well, a new ROM should be built at `build/ntsc-1.2/oot-ntsc-1.2.z64`.
 
 **NOTE:** to speed up the build, you can either:
 
@@ -131,7 +131,7 @@ To generate a .bps patch you can run the following command:
 make patch
 ```
 
-The patch will be in the ``build/hackeroot-mq/`` folder.
+The patch will be in the ``build/ntsc-1.2/`` folder.
 
 #### 7. Toggle HackerOoT Features
 
