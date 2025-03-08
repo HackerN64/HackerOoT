@@ -58,6 +58,8 @@ typedef struct GraphicsContext {
 #endif
 } GraphicsContext; // size = 0x300
 
+extern Gfx gEmptyDL[];
+
 Gfx* Gfx_SetFog(Gfx* gfx, s32 r, s32 g, s32 b, s32 a, s32 near, s32 far);
 Gfx* Gfx_SetFogWithSync(Gfx* gfx, s32 r, s32 g, s32 b, s32 a, s32 near, s32 far);
 Gfx* Gfx_SetFog2(Gfx* gfx, s32 r, s32 g, s32 b, s32 a, s32 near, s32 far);
@@ -109,12 +111,12 @@ void Graph_CloseDisps(Gfx** dispRefs, GraphicsContext* gfxCtx, const char* file,
 
 #else
 
-#define OPEN_DISPS(gfxCtx, file, line)      \
+#define OPEN_DISPS(gfxCtx, ...)      \
     {                                       \
         GraphicsContext* __gfxCtx = gfxCtx; \
         s32 __dispPad
 
-#define CLOSE_DISPS(gfxCtx, file, line) \
+#define CLOSE_DISPS(gfxCtx, ...) \
         do {} while (0);                \
     }                                   \
     (void)0

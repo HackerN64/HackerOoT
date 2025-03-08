@@ -14,6 +14,8 @@
 #include "letterbox.h"
 #include "config.h"
 #include "z64camera.h"
+#include "z64save.h"
+#include "z_lib.h"
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS
 

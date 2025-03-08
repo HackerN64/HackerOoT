@@ -1,9 +1,16 @@
-#include "global.h"
+#include "buffers.h"
+#include "main.h"
+#include "segment_symbols.h"
 #include "stack.h"
+#include "stackcheck.h"
 #include "terminal.h"
 #include "versions.h"
+#include "z64thread.h"
 
-#pragma increment_block_number "gc-eu:64 gc-eu-mq:64 gc-jp:64 gc-jp-ce:64 gc-jp-mq:64 gc-us:64 gc-us-mq:64 ntsc-1.2:64"
+#include "global.h"
+
+#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
+                               "ntsc-1.0:138 ntsc-1.1:138 ntsc-1.2:138 pal-1.0:136 pal-1.1:136"
 
 OSThread sMainThread;
 #if OOT_VERSION < PAL_1_0
@@ -63,7 +70,7 @@ void Main_ThreadEntry(void* arg) {
 
 void Idle_ThreadEntry(void* arg) {
     PRINTF(T("アイドルスレッド(idleproc)実行開始\n", "Idle thread (idleproc) execution started\n"));
-    PRINTF(VT_FGCOL(GREEN));
+    PRINTF_COLOR_GREEN();
     PRINTF(T("ＲＡＭサイズは %d キロバイトです(osMemSize/osGetMemSize)\n",
              "RAM size is %d kilobytes (osMemSize/osGetMemSize)\n"),
            (s32)osMemSize / 1024);
@@ -76,7 +83,7 @@ void Idle_ThreadEntry(void* arg) {
     PRINTF(T("ＹＩＥＬＤバッファのサイズは %d キロバイトです\n", "YIELD buffer size is %d kilobytes\n"), 3);
     PRINTF(T("オーディオヒープのサイズは %d キロバイトです\n", "Audio heap size is %d kilobytes\n"),
            ((intptr_t)&gAudioHeap[ARRAY_COUNT(gAudioHeap)] - (intptr_t)gAudioHeap) / 1024);
-    PRINTF(VT_RST);
+    PRINTF_RST();
 
     osCreateViManager(OS_PRIORITY_VIMGR);
 

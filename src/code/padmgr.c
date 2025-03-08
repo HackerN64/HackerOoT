@@ -28,16 +28,19 @@
  * `osContStartReadData` to receiving the data. By running this on a separate thread to the game state, work can be
  * done while waiting for this operation to complete.
  */
-#include "global.h"
+#include "libu64/debug.h"
+#include "libu64/padsetup.h"
+#include "macros.h"
+#include "padmgr.h"
 #include "fault.h"
 #include "terminal.h"
 #include "line_numbers.h"
 
 #define PADMGR_LOG(controllerNum, msg)                                                                \
     if (DEBUG_FEATURES) {                                                                             \
-        PRINTF(VT_FGCOL(YELLOW));                                                                     \
+        PRINTF_COLOR_YELLOW();                                                                        \
         PRINTF(T("padmgr: %dコン: %s\n", "padmgr: Controller %d: %s\n"), (controllerNum) + 1, (msg)); \
-        PRINTF(VT_RST);                                                                               \
+        PRINTF_RST();                                                                                 \
     }                                                                                                 \
     (void)0
 
@@ -327,7 +330,7 @@ void PadMgr_UpdateInputs(PadMgr* padMgr) {
             default:
                 // Unknown error response
                 LOG_HEX("padnow1->errno", pad->errno, "../padmgr.c", 396);
-                Fault_AddHungupAndCrash("../padmgr.c", LN3(379, 382, 397));
+                Fault_AddHungupAndCrash("../padmgr.c", LN3(379, 382, 397, 397));
                 break;
         }
 

@@ -1,15 +1,39 @@
-#include "global.h"
+#include "libc64/malloc.h"
+#include "libc64/sprintf.h"
+#include "libu64/debug.h"
+
+#include "buffers.h"
+#include "console_logo_state.h"
+#include "controller.h"
+#include "gfx.h"
 #include "fault.h"
+#include "file_select_state.h"
+#include "line_numbers.h"
+#include "map_select_state.h"
+#include "prenmi_buff.h"
+#include "prenmi_state.h"
+#include "regs.h"
+#include "setup_state.h"
+#include "sys_debug_controller.h"
+#include "sys_ucode.h"
 #include "terminal.h"
+#include "title_setup_state.h"
 #include "ucode_disas.h"
 #include "versions.h"
-#include "line_numbers.h"
+#include "z_game_dlftbls.h"
+#include "z64audio.h"
+#include "z64save.h"
+#include "z64play.h"
+#include "debug_opening_state.h"
+
+#include "macros.h"
+#include "global.h"
 
 #define GFXPOOL_HEAD_MAGIC 0x1234
 #define GFXPOOL_TAIL_MAGIC 0x5678
 
-#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0 ntsc-1.0:160" \
-                               "ntsc-1.1:160 ntsc-1.2:160 pal-1.0:160 pal-1.1:160"
+#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0 ique-cn:128" \
+                               "ntsc-1.0:96 ntsc-1.1:96 ntsc-1.2:96 pal-1.0:96 pal-1.1:96"
 
 /**
  * The time at which the previous `Graph_Update` ended.
@@ -201,9 +225,9 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
 
         if (msg == (OSMesg)666) {
 #if DEBUG_FEATURES
-            PRINTF(VT_FGCOL(RED));
+            PRINTF_COLOR_RED();
             PRINTF(T("RCPが帰ってきませんでした。", "RCP did not return."));
-            PRINTF(VT_RST);
+            PRINTF_RST();
 
             LogUtils_LogHexDump((void*)PHYS_TO_K1(SP_BASE_REG), 0x20);
             LogUtils_LogHexDump((void*)PHYS_TO_K1(DPC_BASE_REG), 0x20);
@@ -387,7 +411,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
             PRINTF("%c", BEL);
             PRINTF(VT_COL(RED, WHITE) T("ダイナミック領域先頭が破壊されています\n", "Dynamic area head is destroyed\n")
                        VT_RST);
-            Fault_AddHungupAndCrash("../graph.c", LN4(937, 940, 951, 1070, 1067));
+            Fault_AddHungupAndCrash("../graph.c", LN4(937, 940, 951, 1067, 1070));
         }
 
         if (pool->tailMagic != GFXPOOL_TAIL_MAGIC) {
@@ -395,7 +419,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
             PRINTF("%c", BEL);
             PRINTF(VT_COL(RED, WHITE)
                        T("ダイナミック領域末尾が破壊されています\n", "Dynamic region tail is destroyed\n") VT_RST);
-            Fault_AddHungupAndCrash("../graph.c", LN4(943, 946, 957, 1076, 1073));
+            Fault_AddHungupAndCrash("../graph.c", LN4(943, 946, 957, 1073, 1076));
         }
     }
 
@@ -481,7 +505,7 @@ void Graph_ThreadEntry(void* arg0) {
             sprintf(faultMsg, "CLASS SIZE= %d bytes", size);
             Fault_AddHungupAndCrashImpl("GAME CLASS MALLOC FAILED", faultMsg);
 #else
-            Fault_AddHungupAndCrash("../graph.c", LN4(1067, 1070, 1081, 1200, 1197));
+            Fault_AddHungupAndCrash("../graph.c", LN4(1067, 1070, 1081, 1197, 1200));
 #endif
         }
 

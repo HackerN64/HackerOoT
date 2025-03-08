@@ -4,21 +4,45 @@
  * Description: Displays the Nintendo Logo
  */
 
-#include "global.h"
-#include "alloca.h"
-#include "versions.h"
 #include "helpers.h"
-
+#include "libu64/gfxprint.h"
 #if PLATFORM_N64
 #include "cic6105.h"
 #include "n64dd.h"
 #endif
 
+#include "alloca.h"
+#include "console_logo_state.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "padmgr.h"
+#include "regs.h"
+#include "segment_symbols.h"
+#include "sequence.h"
+#include "sys_matrix.h"
+#include "sys_debug_controller.h"
+#include "sys_freeze.h"
+#include "title_setup_state.h"
+#include "versions.h"
+#include "z64actor.h"
+#include "z64environment.h"
+#include "z64save.h"
+#include "widescreen.h"
+#include "debug_opening_state.h"
+#include "letterbox.h"
+
+#include "global.h"
+
 #include "assets/textures/nintendo_rogo_static/nintendo_rogo_static.h"
 
 void ConsoleLogo_Calc(ConsoleLogoState* this) {
-    if (SKIP_N64_BOOT_LOGO) {
-        this->exit = true;
+#if !PLATFORM_GC
+    if ((this->coverAlpha == 0) && (this->visibleDuration != 0)) {
+        this->unk_1D4--;
+        this->visibleDuration--;
+        if (this->unk_1D4 == 0) {
+            this->unk_1D4 = 400;
+        }
     } else {
         if (this->coverAlpha == 0 && this->visibleDuration != 0) {
             this->timer--;
@@ -39,6 +63,7 @@ void ConsoleLogo_Calc(ConsoleLogoState* this) {
         this->uls = this->ult & 0x7F;
         this->ult++;
     }
+#endif
 }
 
 void ConsoleLogo_SetupView(ConsoleLogoState* this, f32 x, f32 y, f32 z) {
@@ -51,8 +76,8 @@ void ConsoleLogo_SetupView(ConsoleLogoState* this, f32 x, f32 y, f32 z) {
     eye.y = y;
     eye.z = z;
     up.x = up.z = 0.0f;
-    lookAt.x = lookAt.y = lookAt.z = 0.0f;
     up.y = 1.0f;
+    lookAt.x = lookAt.y = lookAt.z = 0.0f;
 
     View_SetPerspective(view, 30.0f, 10.0f, 12800.0f);
     View_LookAt(view, &eye, &lookAt, &up);
@@ -69,7 +94,8 @@ void ConsoleLogo_Draw(ConsoleLogoState* this) {
     Vec3f v3;
     Vec3f v1;
     Vec3f v2;
-    s32 pad2[2];
+    s32 pad2;
+    s32 pad3;
 
     OPEN_DISPS(this->state.gfxCtx, "../z_title.c", 395);
 
@@ -131,8 +157,13 @@ void ConsoleLogo_Main(GameState* thisx) {
     gSPSegment(POLY_OPA_DISP++, 1, this->staticSegment);
     Gfx_SetupFrame(this->state.gfxCtx, true, 0, 0, 0);
     Gfx_ClearZBuffer(this->state.gfxCtx);
+
+#if SKIP_N64_BOOT_LOGO
+    this->exit = true;
+#else
     ConsoleLogo_Calc(this);
     ConsoleLogo_Draw(this);
+#endif
 
     if (this->exit) {
 #if ENABLE_HACKER_DEBUG
@@ -204,7 +235,7 @@ void ConsoleLogo_Init(GameState* thisx) {
     this->state.destroy = ConsoleLogo_Destroy;
     this->exit = false;
 
-#if OOT_VERSION < GC_US
+#if OOT_VERSION < GC_US || PLATFORM_IQUE
     if (!(gPadMgr.validCtrlrsMask & 1)) {
         gSaveContext.fileNum = 0xFEDC;
     } else {

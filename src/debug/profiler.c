@@ -1,5 +1,11 @@
+#include "debug/profiler.h"
 #include "global.h"
 #include "z64.h"
+#include "z64thread.h"
+#include "libu64/gfxprint.h"
+#include "gfxalloc.h"
+#include "gfx.h"
+#include "ultra64.h"
 
 #if ENABLE_PROFILER
 

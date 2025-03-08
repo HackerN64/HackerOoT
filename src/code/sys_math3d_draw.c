@@ -1,5 +1,9 @@
-#include "z64.h"
-#include "functions.h"
+#include "sys_math3d.h"
+#include "z64play.h"
+#include "gfx.h"
+#include "sys_matrix.h"
+#include "libc64/math64.h"
+#include "z_lib.h"
 
 #if DEBUG_FEATURES
 void Math3D_VtxF2L(Vtx* r, Vec3f* v) {

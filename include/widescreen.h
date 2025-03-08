@@ -1,6 +1,9 @@
 #ifndef WIDESCREEN_H
 #define WIDESCREEN_H
 
+#include "ultra64/ultratypes.h"
+#include "z64save.h"
+
 // This file provides macros to handle switching between 4:3 and 16:9 and fixing issues.
 // It is not meant to be something the users can edit.
 

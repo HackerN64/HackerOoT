@@ -1,6 +1,7 @@
 #include "global.h"
 #include "terminal.h"
 #include "z64environment.h"
+#include "z64save.h"
 
 typedef struct SkyboxFaceParams {
     /* 0x000 */ s32 xStart;
@@ -1030,7 +1031,7 @@ void Skybox_Init(GameState* state, SkyboxContext* skyboxCtx, s16 skyboxId) {
 
     // Precompute vertices and display lists for drawing the skybox
     if (skyboxId != SKYBOX_NONE) {
-        PRINTF(VT_FGCOL(GREEN));
+        PRINTF_COLOR_GREEN();
 
         if (skyboxCtx->drawType != SKYBOX_DRAW_128) {
             skyboxCtx->dListBuf = GAME_STATE_ALLOC(state, 8 * 150 * sizeof(Gfx), "../z_vr_box.c", 1636);
@@ -1049,6 +1050,6 @@ void Skybox_Init(GameState* state, SkyboxContext* skyboxCtx, s16 skyboxId) {
             // compute all 6 faces, may be drawn black or with a texture (see Skybox_Draw)
             Skybox_Calculate128(skyboxCtx, 6);
         }
-        PRINTF(VT_RST);
+        PRINTF_RST();
     }
 }

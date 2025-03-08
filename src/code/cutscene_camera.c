@@ -2,6 +2,8 @@
 #include "string.h"
 #include "z64olib.h"
 #include "config.h"
+#include "z64save.h"
+#include "libc64/math64.h"
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS
 

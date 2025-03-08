@@ -3,6 +3,9 @@
 #include "z64.h"
 #include "helpers.h"
 #include "config.h"
+#include "gfx.h"
+#include "segmented_address.h"
+#include "macros.h"
 
 #if ENABLE_ANIMATED_MATERIALS
 

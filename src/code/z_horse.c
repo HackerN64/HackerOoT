@@ -4,7 +4,8 @@
 #include "z64horse.h"
 #include "z64play.h"
 #include "z64player.h"
-#include "src/overlays/actors/ovl_En_Horse/z_en_horse.h"
+#include "z64save.h"
+#include "overlays/actors/ovl_En_Horse/z_en_horse.h"
 
 /**
  * Tests if the player horse can be spawned
@@ -115,11 +116,11 @@ void Horse_SetupInGameplay(PlayState* play, Player* player) {
                 horseActor->room = -1;
             }
         } else {
-            PRINTF(VT_COL(RED, WHITE));
+            PRINTF_COLOR_ERROR();
             PRINTF(
                 T("Horse_SetNormal():%d セットスポットまずいです。\n", "Horse_SetNormal():%d set spot is no good.\n"),
                 gSaveContext.save.info.horseData.sceneId);
-            PRINTF(VT_RST);
+            PRINTF_RST();
             Horse_ResetHorseData(play);
         }
     } else if ((play->sceneId == SCENE_LON_LON_RANCH) &&
@@ -291,11 +292,11 @@ void Horse_SetupInCutscene(PlayState* play, Player* player) {
 void Horse_InitPlayerHorse(PlayState* play, Player* player) {
     if (LINK_IS_ADULT) {
         if (!Horse_CanSpawn(gSaveContext.save.info.horseData.sceneId)) {
-            PRINTF(VT_COL(RED, WHITE));
+            PRINTF_COLOR_ERROR();
             PRINTF(
                 T("Horse_Set_Check():%d セットスポットまずいです。\n", "Horse_Set_Check():%d set spot is no good.\n"),
                 gSaveContext.save.info.horseData.sceneId);
-            PRINTF(VT_RST);
+            PRINTF_RST();
             Horse_ResetHorseData(play);
         }
 

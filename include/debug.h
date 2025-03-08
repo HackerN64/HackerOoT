@@ -28,4 +28,6 @@ typedef struct Debug {
 void Debug_DrawColorRectangle(Vec2s rectLeft, Vec2s rectRight, Color_RGBA8 rgba);
 void Debug_ConfigureNewRectangle(Input* controller);
 
+extern Debug gDebug;
+
 #endif

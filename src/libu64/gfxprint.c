@@ -1,4 +1,9 @@
-#include "global.h"
+#include "libc64/aprintf.h"
+#include "libu64/gfxprint.h"
+#include "attributes.h"
+#include "widescreen.h"
+
+#include "macros.h"
 
 u16 sGfxPrintFontTLUT[64] = {
     0x0000, 0xFFFF, 0x0000, 0xFFFF, 0x0000, 0xFFFF, 0x0000, 0xFFFF, 0x0000, 0xFFFF, 0x0000, 0xFFFF, 0x0000,

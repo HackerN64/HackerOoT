@@ -1,8 +1,18 @@
 #include "z_bg_jya_cobra.h"
 #include "overlays/actors/ovl_Bg_Jya_Bigmirror/z_bg_jya_bigmirror.h"
 #include "overlays/actors/ovl_Mir_Ray/z_mir_ray.h"
-#include "assets/objects/object_jya_obj/object_jya_obj.h"
+
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "sfx.h"
+#include "sys_matrix.h"
 #include "terminal.h"
+#include "z_lib.h"
+#include "z64play.h"
+#include "z64player.h"
+
+#include "assets/objects/object_jya_obj/object_jya_obj.h"
 
 #define FLAGS ACTOR_FLAG_UPDATE_CULLING_DISABLED
 
@@ -140,10 +150,10 @@ void BgJyaCobra_SpawnRay(BgJyaCobra* this, PlayState* play) {
 
 #if DEBUG_FEATURES
     if (this->dyna.actor.child == NULL) {
-        PRINTF(VT_FGCOL(RED));
+        PRINTF_COLOR_RED();
         // "Ｅｒｒｏｒ : Mir Ray occurrence failure"
         PRINTF("Ｅｒｒｏｒ : Mir Ray 発生失敗 (%s %d)\n", "../z_bg_jya_cobra.c", 270);
-        PRINTF(VT_RST);
+        PRINTF_RST();
     }
 #endif
 }
