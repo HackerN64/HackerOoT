@@ -1,4 +1,11 @@
-#include "global.h"
+#include "buffers.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "gfxalloc.h"
+#include "letterbox.h"
+#include "main.h"
+#include "regs.h"
+#include "z64play.h"
 
 #if ENABLE_F3DEX3
 u8 gUseMemsetForZBuffer = 1;

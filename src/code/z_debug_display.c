@@ -2,7 +2,12 @@
 
 #if !NO_DEBUG_DISPLAY
 
-#include "global.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "sys_matrix.h"
+#include "z64play.h"
+#include "z64debug_display.h"
+
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
 typedef struct DebugDispObjectInfo {

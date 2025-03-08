@@ -1,6 +1,9 @@
 #include "config.h"
 #include "global.h"
 #include "debug.h"
+#include "controller.h"
+#include "gfx.h"
+#include "gfxalloc.h"
 
 #if ENABLE_HACKER_DEBUG
 

@@ -2,22 +2,17 @@
 #define Z_SELECT_H
 
 #include "config.h"
+#if PLATFORM_N64
+#include "n64dd.h"
+#endif
+#include "seqcmd.h"
+#include "sequence.h"
+#include "terminal.h"
+#include "z64save.h"
+#include "z64sram.h"
+#include "map_select_state.h"
 
-void MapSelect_Init(GameState* thisx);
-void MapSelect_Main(GameState* thisx);
-void MapSelect_Draw(MapSelectState* this);
-void MapSelect_Destroy(GameState* thisx);
-void MapSelect_UpdateMenu(MapSelectState* this);
-void MapSelect_DrawMenu(MapSelectState* this);
-void MapSelect_DrawLoadingScreen(MapSelectState* this);
-void MapSelect_LoadTitle(MapSelectState* this);
-void MapSelect_LoadDebugOpening(MapSelectState* this);
-void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex);
-void MapSelect_PrintMenu(MapSelectState* this, GfxPrint* printer);
-void MapSelect_PrintLoadingMessage(MapSelectState* this, GfxPrint* printer, u8 yPos);
-void MapSelect_PrintAgeSetting(MapSelectState* this, GfxPrint* printer, s32 age);
-void MapSelect_PrintSceneLayerSetting(MapSelectState* this, GfxPrint* printer);
-void MapSelect_PrintControls(MapSelectState* this, GfxPrint* printer);
+#include "global.h"
 
 static const char* sAgeLabels[] = {
     "Adult",
@@ -61,7 +56,7 @@ static const Color_RGBA8 sColors[] = {
     { 255, 255, 255, 255 }, // White
 };
 
-static SceneSelectEntry sScenes[] = {
+static MapSelectEntry sScenes[] = {
 #if IS_DEBUG_BOOT_ENABLED
     { "Boot Menu", (void*)MapSelect_LoadDebugOpening, 0 },
 #endif

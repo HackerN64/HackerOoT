@@ -29,7 +29,7 @@ ARES_GDB := 1
 # Note: currently only used for HackerOoT
 RELEASE := 0
 
-# Valid compression algorithms are 'yaz', 'lzo' and 'aplib'
+# Valid compression algorithms are 'yaz', 'gzip', 'lzo' and 'aplib'
 COMPRESSION ?= yaz
 COMPRESSION_TYPE ?= $(shell echo $(COMPRESSION) | tr '[:lower:]' '[:upper:]')
 

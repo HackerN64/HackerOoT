@@ -1,6 +1,9 @@
 #include "z64.h"
 #include "functions.h"
 #include "variables.h"
+#include "occlusionplanes.h"
+#include "gfx.h"
+#include "sys_math3d.h"
 
 #if ENABLE_F3DEX3
 

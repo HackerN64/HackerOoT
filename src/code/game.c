@@ -1,12 +1,34 @@
-#include "global.h"
+#include "libc64/malloc.h"
+#include "libu64/debug.h"
+#include "libu64/gfxprint.h"
+#include "audiomgr.h"
+#include "buffers.h"
+#include "controller.h"
+#include "debug_arena.h"
+#include "gfx.h"
+#include "gfxalloc.h"
 #include "fault.h"
 #include "libc64/os_malloc.h"
-#include "terminal.h"
-#include "versions.h"
 #include "line_numbers.h"
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
+#include "padmgr.h"
+#include "regs.h"
+#include "rumble.h"
+#include "sys_debug_controller.h"
+#include "terminal.h"
+#include "versions.h"
+#include "vi_mode.h"
+#include "zelda_arena.h"
+#include "z64debug.h"
+#include "z64dma.h"
+#include "z64game.h"
+#include "z64vis.h"
+#include "rainbow.h"
+
+#include "macros.h"
+#include "global.h"
 
 VisCvg sVisCvg;
 VisZBuf sVisZBuf;
@@ -426,12 +448,12 @@ void GameState_Realloc(GameState* gameState, size_t size) {
     SystemArena_GetSizes(&systemMaxFree, &systemFree, &systemAlloc);
     if ((systemMaxFree - 0x10) < size) {
         PRINTF("%c", BEL);
-        PRINTF(VT_FGCOL(RED));
+        PRINTF_COLOR_RED();
 
         PRINTF(T("メモリが足りません。ハイラルサイズを可能な最大値に変更します\n",
                  "Not enough memory. Change Hyrule size to maximum possible value\n"));
         PRINTF("(hyral=%08x max=%08x free=%08x alloc=%08x)\n", size, systemMaxFree, systemFree, systemAlloc);
-        PRINTF(VT_RST);
+        PRINTF_RST();
         size = systemMaxFree - 0x10;
     }
 
@@ -587,9 +609,9 @@ void* GameState_Alloc(GameState* gameState, size_t size, const char* file, int l
         }
     }
     if (ret != NULL) {
-        PRINTF(VT_FGCOL(GREEN));
+        PRINTF_COLOR_GREEN();
         PRINTF("game_alloc(%08x) %08x-%08x [%s:%d]\n", size, ret, (uintptr_t)ret + size, file, line);
-        PRINTF(VT_RST);
+        PRINTF_RST();
     }
     return ret;
 }

@@ -19,6 +19,10 @@
 
 #ifdef _LANGUAGE_C
 
+#include "config.h"
+#include "ultra64/ultratypes.h"
+#include "ultra64/time.h"
+
 #if ENABLE_F3DEX3
 
 typedef enum {

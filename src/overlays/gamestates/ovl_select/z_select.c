@@ -4,10 +4,18 @@
  * Description: Debug Scene Select Menu
  */
 #include "ultra64.h"
-#include "global.h"
-#include "terminal.h"
 #include "alloca.h"
 #include "z_select.h"
+#include "debug_opening_state.h"
+#include "console_logo_state.h"
+#include "seqcmd.h"
+#include "letterbox.h"
+#include "regs.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "controller.h"
+#include "libu64/gfxprint.h"
+#include "libc64/qrand.h"
 
 void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;
@@ -119,7 +127,7 @@ void MapSelect_Destroy(GameState* thisx) {
 void MapSelect_UpdateMenu(MapSelectState* this) {
     Input* input = &this->state.input[0];
     s32 pad;
-    SceneSelectEntry* selectedScene;
+    MapSelectEntry* selectedScene;
     u16 sfx, sfxIndex;
 
     if (CHECK_BTN_ALL(input->press.button, BTN_CDOWN)) {

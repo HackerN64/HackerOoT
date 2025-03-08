@@ -2,6 +2,7 @@
 #define REGS_H
 
 #include "config.h"
+#include "ultra64.h"
 #include "versions.h"
 
 #define REG_GROUPS 29 // number of REG groups, i.e. REG, SREG, OREG, etc.
