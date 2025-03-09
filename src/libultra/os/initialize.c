@@ -1,6 +1,8 @@
 #include "global.h"
 #include "ultra64/bcp.h"
 
+void* __printfunc = NULL;
+
 typedef struct __osExceptionVector {
     u32 inst1; // lui     $k0, %hi(__osException)
     u32 inst2; // addiu   $k0, $k0, %lo(__osException)

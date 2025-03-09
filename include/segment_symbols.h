@@ -92,6 +92,12 @@ DECLARE_ROM_SEGMENT(debug)
 DECLARE_BSS_SEGMENT(debug)
 #endif
 
+#if ENABLE_UNF
+DECLARE_SEGMENT(usb)
+DECLARE_ROM_SEGMENT(usb)
+DECLARE_BSS_SEGMENT(usb)
+#endif
+
 // N64-only, these are not wrapped in an `#if PLATFORM_N64`
 // so that the N64DD code can always be built.
 DECLARE_SEGMENT(n64dd)

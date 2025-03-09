@@ -53,6 +53,7 @@
     include "$(BUILD_DIR)/src/libultra/gu/cosf.o"
     include "$(BUILD_DIR)/src/libultra/gu/libm_vals.o"
     include "$(BUILD_DIR)/src/libultra/gu/coss.o"
+    include "$(BUILD_DIR)/src/libultra/os/settime.o"
     include "$(BUILD_DIR)/src/libultra/io/visetevent.o"
 #if DEBUG_FEATURES
     include "$(BUILD_DIR)/src/libultra/io/pfsisplug.o"
