@@ -877,6 +877,19 @@ beginseg
 #if ENABLE_PROFILER
     include "$(BUILD_DIR)/src/debug/profiler.o"
 #endif
+#if ENABLE_UNF
+    include "$(BUILD_DIR)/src/debug/commands.o"
+#endif
+endseg
+#endif
+
+#if ENABLE_UNF
+beginseg
+    name "usb"
+    compress
+    include "$(BUILD_DIR)/src/usb/missing_libultra_functions.o"
+    include "$(BUILD_DIR)/src/usb/usb.o"
+    include "$(BUILD_DIR)/src/usb/debug.o"
 endseg
 #endif
 

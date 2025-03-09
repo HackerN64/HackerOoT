@@ -59,3 +59,15 @@ endif
 # same as above and start listening to the IS-Viewer
 sc64v: sc64
 	$(SC64_DEPLOYER) debug --isv 0x03FF0000
+
+### UNFLoader Settings ###
+
+# TODO: download this automatically
+UNFLOADER ?= UNFLoader
+
+# upload the build
+unf: rom
+ifeq ($(UNFLOADER),)
+	$(error sc64deployer path not set. Set UNFLOADER in the Makefile or define it as an environment variable)
+endif
+	$(UNFLOADER) -r $(ROM) -d

@@ -64,6 +64,14 @@ void Main_ThreadEntry(void* arg) {
     PRINTF("[HackerOoT:Info]: Completed!\n");
 #endif
 
+#if ENABLE_UNF
+    PRINTF("[HackerOoT:Info]: Loading 'usb' segment...\n");
+    DMA_REQUEST_SYNC(_usbSegmentStart, (uintptr_t)_usbSegmentRomStart, _usbSegmentRomEnd - _usbSegmentRomStart,
+                     __BASE_FILE__, __LINE__);
+    bzero(_usbSegmentBssStart, _usbSegmentBssEnd - _usbSegmentBssStart);
+    PRINTF("[HackerOoT:Info]: Completed!\n");
+#endif
+
     Main(arg);
     PRINTF(T("mainx 実行終了\n", "mainx execution finished\n"));
 }

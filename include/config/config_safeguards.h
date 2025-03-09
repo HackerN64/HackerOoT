@@ -50,6 +50,7 @@
     #undef ENABLE_MOTION_BLUR_DEBUG
     #undef ENABLE_HACKER_DEBUG
     #undef ENABLE_PROFILER
+    #undef ENABLE_UNF
 
     #define SHOW_CS_INFOS false
     #define SHOW_INPUT_DISPLAY false
@@ -73,6 +74,7 @@
     #define ENABLE_MOTION_BLUR_DEBUG false
     #define ENABLE_HACKER_DEBUG false
     #define ENABLE_PROFILER false
+    #define ENABLE_UNF false
 
     #ifndef NDEBUG
         #define NDEBUG
