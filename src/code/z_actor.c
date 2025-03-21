@@ -2478,10 +2478,19 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
             } else if (!Object_IsLoaded(&play->objectCtx, actor->objectSlot)) {
                 Actor_Kill(actor);
                 actor = actor->next;
-            } else if ((freezeExceptionFlag != 0 && !(actor->flags & freezeExceptionFlag)) ||
-                       (freezeExceptionFlag == 0 && canFreezeCategory &&
-                        !((sp74 == actor) || (player->naviActor == actor) || (player->heldActor == actor) ||
-                          (actor->parent == &player->actor)))) {
+            } else if {
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+                ((freezeExceptionFlag && !(actor->flags & freezeExceptionFlag)) ||
+                ((!freezeExceptionFlag) && (!(actor->flags & ACTOR_FLAG_FREEZE_EXCEPTION)) &&
+                canFreezeCategory && (actor != sp74) && (actor != player->heldActor) && (actor != player->naviActor) &&
+                (actor->parent != &player->actor)))
+
+#else
+                ((freezeExceptionFlag != 0 && !(actor->flags & freezeExceptionFlag)) ||
+                (freezeExceptionFlag == 0 && canFreezeCategory &&
+                !((sp74 == actor) || (player->naviActor == actor) || (player->heldActor == actor) ||
+                (actor->parent == &player->actor))))
+#endif
                 CollisionCheck_ResetDamage(&actor->colChkInfo);
                 actor = actor->next;
             } else if (actor->update == NULL) {
