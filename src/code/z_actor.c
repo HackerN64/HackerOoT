@@ -2478,10 +2478,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
             } else if (!Object_IsLoaded(&play->objectCtx, actor->objectSlot)) {
                 Actor_Kill(actor);
                 actor = actor->next;
-            } else {
-                i
-            }
-            f {
+            } else if
 #if ENABLE_CUTSCENE_IMPROVEMENTS
                 ((freezeExceptionFlag && !(actor->flags & freezeExceptionFlag)) ||
                  ((!freezeExceptionFlag) && (!(actor->flags & ACTOR_FLAG_FREEZE_EXCEPTION)) && canFreezeCategory &&
@@ -2494,18 +2491,17 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
                   !((sp74 == actor) || (player->naviActor == actor) || (player->heldActor == actor) ||
                     (actor->parent == &player->actor))))
 #endif
-                    CollisionCheck_ResetDamage(&actor->colChkInfo);
+            {
+                CollisionCheck_ResetDamage(&actor->colChkInfo);
                 actor = actor->next;
-            }
-            else if (actor->update == NULL) {
+            } else if (actor->update == NULL) {
                 if (!actor->isDrawn) {
                     actor = Actor_Delete(&play->actorCtx, actor, play);
                 } else {
                     Actor_Destroy(actor, play);
                     actor = actor->next;
                 }
-            }
-            else {
+            } else {
                 Math_Vec3f_Copy(&actor->prevPos, &actor->world.pos);
                 actor->xzDistToPlayer = Actor_WorldDistXZToActor(actor, &player->actor);
                 actor->yDistToPlayer = Actor_HeightDiff(actor, &player->actor);
