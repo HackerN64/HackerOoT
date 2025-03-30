@@ -46,6 +46,7 @@
 #include "regs.h"
 #include "sched.h"
 #include "versions.h"
+#include "vi_mode.h"
 #include "z64thread.h"
 
 #include "macros.h"

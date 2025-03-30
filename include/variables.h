@@ -32,13 +32,8 @@ extern u32 __osBbSramSize;
 extern u32 __osBbSramAddress;
 extern u32 __osBbHackFlags;
 
-extern s8 D_80009430;
-extern vu8 gViConfigBlack;
-extern u8 gViConfigAdditionalScanLines;
-extern u32 gViConfigFeatures;
-extern f32 gViConfigXScale;
-extern f32 gViConfigYScale;
 extern OSPiHandle* gCartHandle;
+
 extern u32 __osPiAccessQueueEnabled;
 extern OSViMode osViModePalLan1;
 extern s32 osViClock;
@@ -59,11 +54,13 @@ extern OSViContext* __osViNext;
 extern OSViMode osViModeFpalLan1;
 extern OSViMode gCustomViModePal60Lan1;
 extern u32 __additional_scanline;
-extern const char* gBuildAuthor;
-extern const char* gCommitAuthor;
-extern const char* gBuildDate;
-extern const char* gBuildGitVersion;
-extern const char* gCommitGitString;
+
+extern const char gBuildAuthor[];
+extern const char gCommitAuthor[];
+extern const char gBuildDate[];
+extern const char gBuildGitVersion[];
+extern const char gCommitGitString[];
+
 extern OSMesgQueue gPiMgrCmdQueue;
 extern OSViMode gViConfigMode;
 extern u8 gViConfigModeType;
@@ -80,7 +77,6 @@ extern s16 gSpoilingItemReverts[3];
 // 4 16-colors palettes
 extern u64 gMojiFontTLUTs[4][4]; // original name: "moji_tlut"
 extern u64 gMojiFontTex[]; // original name: "font_ff"
-extern u8 gBossMarkState;
 
 extern s16* gWaveSamples[9];
 extern f32 gBendPitchOneOctaveFrequencies[256];
@@ -130,11 +126,10 @@ extern u8 gStartSeqDisabled;
 #if IS_AUDIO_DEBUG_ENABLED
 extern u8 gAudioDebugPrintSeqCmd;
 #endif
-extern u8 gSoundModeList[];
+extern u8 gSoundOutputModes[];
 extern u8 gAudioSpecId;
 extern u8 D_80133418;
 extern AudioSpec gAudioSpecs[18];
-extern s32 gSystemArenaLogSeverity;
 extern u8 __osPfsInodeCacheBank;
 extern s32 __osPfsLastChannel;
 
@@ -147,6 +142,7 @@ extern u8 gSequenceTable[];
 extern AudioTable gSampleBankTable;
 
 extern struct MapData* gMapData;
+extern u8 gBossMarkState;
 extern f32 gBossMarkScale;
 extern u32 D_8016139C;
 extern PauseMapMarksData* gLoadedPauseMarkDataTable;
