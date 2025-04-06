@@ -27,6 +27,7 @@
 #include "z64vis.h"
 #include "rainbow.h"
 #include "debug/profiler_inline.h"
+#include "idle.h"
 
 #include "macros.h"
 #include "global.h"

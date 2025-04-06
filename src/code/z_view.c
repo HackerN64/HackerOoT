@@ -8,7 +8,7 @@
 #include "terminal.h"
 #include "z64view.h"
 #include "widescreen.h"
-#include "variables.h"
+#include "idle.h"
 
 vu32 sLogOnNextViewInit = true;
 

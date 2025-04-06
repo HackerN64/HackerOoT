@@ -18,9 +18,9 @@
 #include "z64save.h"
 #include "sfx.h"
 #include "debug.h"
-#include "variables.h"
 #include "gfx.h"
 #include "letterbox.h"
+#include "build.h"
 
 #define DEBUG_OPENING_SKYBOX_ID SKYBOX_NORMAL_SKY
 static f32 sSkyboxAngle = 0.0f;

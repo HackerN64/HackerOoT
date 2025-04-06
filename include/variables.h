@@ -55,14 +55,7 @@ extern OSViMode osViModeFpalLan1;
 extern OSViMode gCustomViModePal60Lan1;
 extern u32 __additional_scanline;
 
-extern const char gBuildAuthor[];
-extern const char gCommitAuthor[];
-extern const char gBuildDate[];
-extern const char gBuildGitVersion[];
-extern const char gCommitGitString[];
-
 extern OSMesgQueue gPiMgrCmdQueue;
-extern OSViMode gViConfigMode;
 extern u8 gViConfigModeType;
 extern OSMesgQueue __osPiAccessQueue;
 extern OSPiHandle __Dom1SpeedParam;

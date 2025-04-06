@@ -8,6 +8,7 @@
 #include "versions.h"
 #include "vi_mode.h"
 #include "z64thread.h"
+#include "ultra64.h"
 
 #include "global.h"
 
