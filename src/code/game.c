@@ -26,6 +26,7 @@
 #include "z64game.h"
 #include "z64vis.h"
 #include "rainbow.h"
+#include "debug/profiler_inline.h"
 
 #include "macros.h"
 #include "global.h"

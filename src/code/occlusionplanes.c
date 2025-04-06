@@ -1,6 +1,6 @@
-#include "z64.h"
-#include "functions.h"
+#include "ultra64.h"
 #include "variables.h"
+#include "debug/profiler_inline.h"
 #include "occlusionplanes.h"
 #include "gfx.h"
 #include "sys_math3d.h"

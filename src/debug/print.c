@@ -1,5 +1,4 @@
 #include "config.h"
-#include "global.h"
 #include "debug.h"
 #include "controller.h"
 #include "gfx.h"

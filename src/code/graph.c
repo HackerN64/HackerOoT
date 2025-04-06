@@ -14,6 +14,7 @@
 #include "prenmi_state.h"
 #include "regs.h"
 #include "setup_state.h"
+#include "sys_cfb.h"
 #include "sys_debug_controller.h"
 #include "sys_ucode.h"
 #include "terminal.h"
@@ -26,6 +27,7 @@
 #include "z64save.h"
 #include "z64play.h"
 #include "debug_opening_state.h"
+#include "f3dex3.h"
 
 #include "macros.h"
 #include "global.h"

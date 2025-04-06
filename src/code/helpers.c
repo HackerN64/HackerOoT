@@ -3,6 +3,9 @@
 #include "title_setup_state.h"
 #include "map_select_state.h"
 #include "z64save.h"
+#include "z64scene.h"
+#include "z64play.h"
+#include "sequence.h"
 #include "z_lib.h"
 
 void Helpers_LoadDefinedScene(GameState* gameState) {
