@@ -7,5 +7,6 @@ extern OSViMode osViModeNtscLan1;
 extern OSViMode osViModePalLan1;
 extern OSViMode osViModeMpalLan1;
 extern OSViMode osViModeFpalLan1;
+extern OSViMode gCustomViModePal60Lan1;
 
 #endif

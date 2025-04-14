@@ -28,6 +28,7 @@
 #include "rainbow.h"
 #include "debug/profiler_inline.h"
 #include "idle.h"
+#include "debug.h"
 
 #include "macros.h"
 #include "global.h"

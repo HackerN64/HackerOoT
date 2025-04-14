@@ -45,6 +45,7 @@
 #include "z64vis.h"
 #include "occlusionplanes.h"
 #include "libu64/gfxprint.h"
+#include "debug.h"
 
 #if CAN_INCLUDE_EXAMPLE_SCENE
 #include "assets/scenes/example/example_scene.h"
