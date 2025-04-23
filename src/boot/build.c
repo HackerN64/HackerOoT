@@ -1,3 +1,5 @@
+#include "build.h"
+
 #include "config.h"
 #include "versions.h"
 #include "macros.h"

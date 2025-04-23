@@ -90,14 +90,6 @@
 #define PRINTF_RST()            (void)0
 #endif
 
-#if DEBUG_FEATURES
-#define DMA_REQUEST_SYNC(ram, vrom, size, ...) DmaMgr_RequestSyncDebug(ram, vrom, size,  __FILE__, __LINE__)
-#define DMA_REQUEST_ASYNC(req, ram, vrom, size, unk5, queue, msg, ...) DmaMgr_RequestAsyncDebug(req, ram, vrom, size, unk5, queue, msg,  __FILE__, __LINE__)
-#else
-#define DMA_REQUEST_SYNC(ram, vrom, size, ...) DmaMgr_RequestSync(ram, vrom, size)
-#define DMA_REQUEST_ASYNC(req, ram, vrom, size, unk5, queue, msg, ...) DmaMgr_RequestAsync(req, ram, vrom, size, unk5, queue, msg)
-#endif
-
 #if PLATFORM_N64 || DEBUG_FEATURES
 #define HUNGUP_AND_CRASH(...) Fault_AddHungupAndCrash(__FILE__, __LINE__)
 #else

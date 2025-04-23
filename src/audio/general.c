@@ -1,12 +1,16 @@
 #include "libu64/gfxprint.h"
 #include "ultra64.h"
 #include "attributes.h"
+#include "audiothread_cmd.h"
 #include "controller.h"
 #include "padmgr.h"
 #include "seqcmd.h"
 #include "sequence.h"
+#include "sfx.h"
 #include "versions.h"
 #include "macros.h"
+#include "z64audio.h"
+#include "z64ocarina.h"
 
 #include "global.h"
 
