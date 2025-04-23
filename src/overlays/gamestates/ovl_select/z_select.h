@@ -12,7 +12,10 @@
 #include "z64sram.h"
 #include "map_select_state.h"
 
-#include "global.h"
+#include "color.h"
+#include "z64scene.h"
+#include "z64play.h"
+#include "sfx.h"
 
 static const char* sAgeLabels[] = {
     "Adult",

@@ -1,4 +1,5 @@
 #include "ultra64.h"
+#include "attributes.h"
 
 NO_REORDER __OSThreadTail __osThreadTail = { NULL, OS_PRIORITY_THREADTAIL };
 NO_REORDER OSThread* __osRunQueue = (OSThread*)&__osThreadTail;

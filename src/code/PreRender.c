@@ -13,6 +13,9 @@
 #include "prerender.h"
 #include "regs.h"
 #include "gfxalloc.h"
+#include "ultra64.h"
+#include "ultra64/gbi.h"
+#include "ultra64/gs2dex.h"
 
 #include "macros.h"
 #include "global.h"
