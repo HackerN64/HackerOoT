@@ -1,11 +1,10 @@
 #include "animated_materials.h"
-#include "global.h"
-#include "z64.h"
 #include "helpers.h"
 #include "config.h"
 #include "gfx.h"
 #include "segmented_address.h"
 #include "macros.h"
+#include "z64play.h"
 
 #if ENABLE_ANIMATED_MATERIALS
 

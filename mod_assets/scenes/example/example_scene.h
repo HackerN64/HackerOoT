@@ -3,8 +3,17 @@
 
 #include "ultra64.h"
 #include "macros.h"
-#include "z64.h"
 #include "config.h"
+#include "z64scene.h"
+#include "z64cutscene.h"
+#include "z64room.h"
+#include "z64player.h"
+#include "z64camera.h"
+#include "z64object.h"
+#include "z64ocarina.h"
+#include "sfx.h"
+#include "sequence.h"
+#include "animated_materials.h"
 
 
 extern SceneCmd example_scene_header00[];
