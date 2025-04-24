@@ -11,6 +11,7 @@
 #include "color.h"
 #include "gfx.h"
 #include "prerender.h"
+#include "printf.h"
 #include "regs.h"
 #include "gfxalloc.h"
 #include "ultra64.h"

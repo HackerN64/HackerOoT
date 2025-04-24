@@ -2,6 +2,7 @@
 #include "libu64/gfxprint.h"
 #include "attributes.h"
 #include "widescreen.h"
+#include "translation.h"
 
 #include "macros.h"
 
