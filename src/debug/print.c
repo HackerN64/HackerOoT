@@ -3,6 +3,7 @@
 #include "controller.h"
 #include "gfx.h"
 #include "gfxalloc.h"
+#include "printf.h"
 
 #if ENABLE_HACKER_DEBUG
 

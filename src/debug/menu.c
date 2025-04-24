@@ -5,6 +5,7 @@
 #include "occlusionplanes.h"
 #include "libc64/sprintf.h"
 #include "f3dex3.h"
+#include "printf.h"
 
 #if ENABLE_HACKER_DEBUG
 
