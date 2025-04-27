@@ -21,6 +21,7 @@
 #include "gfx.h"
 #include "letterbox.h"
 #include "build.h"
+#include "array_count.h"
 
 #define STRINGIFY(s) #s
 #define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)

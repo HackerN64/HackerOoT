@@ -13,7 +13,7 @@
 #include "sfx.h"
 #include "sequence.h"
 #include "animated_materials.h"
-
+#include "array_count.h"
 
 extern SceneCmd example_scene_header00[];
 extern SceneCmd* example_scene_alternateHeaders[];

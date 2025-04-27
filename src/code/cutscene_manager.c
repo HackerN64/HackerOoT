@@ -18,6 +18,8 @@
 #include "z64player.h"
 #include "sfx.h"
 #include "z_lib.h"
+#include "array_count.h"
+#include "gfx.h"
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS
 
