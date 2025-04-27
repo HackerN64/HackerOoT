@@ -1,5 +1,6 @@
 #include "libc64/math64.h"
 #include "libu64/overlay.h"
+#include "array_count.h"
 #include "fault.h"
 #include "gfx.h"
 #include "gfx_setupdl.h"
@@ -28,8 +29,6 @@
 #include "z64skin_matrix.h"
 #include "config.h"
 #include "widescreen.h"
-
-#include "global.h"
 
 #include "overlays/actors/ovl_Arms_Hook/z_arms_hook.h"
 #include "overlays/actors/ovl_En_Part/z_en_part.h"
@@ -603,7 +602,7 @@ void Attention_Update(Attention* attention, Player* player, Actor* playerFocusAc
                 attention->reticleFadeAlphaControl = 0;
             }
 
-            lockOnSfxId = CHECK_FLAG_ALL(playerFocusActor->flags, ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE)
+            lockOnSfxId = ACTOR_FLAGS_CHECK_ALL(playerFocusActor, ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE)
                               ? NA_SE_SY_LOCK_ON
                               : NA_SE_SY_LOCK_ON_HUMAN;
             Sfx_PlaySfxCentered(lockOnSfxId);
@@ -3492,9 +3491,9 @@ void Attention_FindActorInCategory(PlayState* play, ActorContext* actorCtx, Play
 
     while (actor != NULL) {
         if ((actor->update != NULL) && ((Player*)actor != player) &&
-            CHECK_FLAG_ALL(actor->flags, ACTOR_FLAG_ATTENTION_ENABLED)) {
+            ACTOR_FLAGS_CHECK_ALL(actor, ACTOR_FLAG_ATTENTION_ENABLED)) {
             if ((actorCategory == ACTORCAT_ENEMY) &&
-                CHECK_FLAG_ALL(actor->flags, ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE) &&
+                ACTOR_FLAGS_CHECK_ALL(actor, ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE) &&
                 (actor->xyzDistToPlayerSq < SQ(500.0f)) && (actor->xyzDistToPlayerSq < sBgmEnemyDistSq)) {
                 actorCtx->attention.bgmEnemy = actor;
                 sBgmEnemyDistSq = actor->xyzDistToPlayerSq;

@@ -22,6 +22,9 @@
 #include "letterbox.h"
 #include "build.h"
 
+#define STRINGIFY(s) #s
+#define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)
+
 #define DEBUG_OPENING_SKYBOX_ID SKYBOX_NORMAL_SKY
 static f32 sSkyboxAngle = 0.0f;
 

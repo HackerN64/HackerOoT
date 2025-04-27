@@ -8,6 +8,9 @@
 #include "config.h"
 #include "versions.h"
 
+#define SCREEN_WIDTH  320
+#define SCREEN_HEIGHT 240
+
 // Texture memory size, 4 KiB
 #define TMEM_SIZE 0x1000
 
@@ -129,5 +132,79 @@ void Graph_ThreadEntry(void*);
 
 extern u64 gMojiFontTLUTs[4][4]; // original name: "moji_tlut"
 extern u64 gMojiFontTex[]; // original name: "font_ff"
+
+/**
+ * `x` vertex x
+ * `y` vertex y
+ * `z` vertex z
+ * `s` texture s coordinate
+ * `t` texture t coordinate
+ * `crnx` red component of color vertex, or x component of normal vertex
+ * `cgny` green component of color vertex, or y component of normal vertex
+ * `cbnz` blue component of color vertex, or z component of normal vertex
+ * `a` alpha
+ */
+#define VTX(x,y,z,s,t,crnx,cgny,cbnz,a) { { { x, y, z }, 0, { s, t }, { crnx, cgny, cbnz, a } } }
+
+#define VTX_T(x,y,z,s,t,cr,cg,cb,a) { { x, y, z }, 0, { s, t }, { cr, cg, cb, a } }
+
+#define gDPSetTileCustom(pkt, fmt, siz, uls, ult, lrs, lrt, pal,        \
+                         cms, cmt, masks, maskt, shifts, shiftt)        \
+_DW({                                                                   \
+    gDPPipeSync(pkt);                                                   \
+    gDPTileSync(pkt);                                                   \
+    gDPSetTile(pkt, fmt, siz,                                           \
+        (((((lrs) - (uls) + 1) * siz##_TILE_BYTES) + 7) >> 3), 0,       \
+        G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks,               \
+        shifts);                                                        \
+    gDPTileSync(pkt);                                                   \
+    gDPSetTile(pkt, fmt, siz,                                           \
+        (((((lrs) - (uls) + 1) * siz##_LINE_BYTES) + 7) >> 3), 0,       \
+        G_TX_RENDERTILE, pal, cmt, maskt, shiftt, cms, masks, shifts);  \
+    gDPSetTileSize(pkt, G_TX_RENDERTILE,                                \
+        (uls) << G_TEXTURE_IMAGE_FRAC,                                  \
+        (ult) << G_TEXTURE_IMAGE_FRAC,                                  \
+        (lrs) << G_TEXTURE_IMAGE_FRAC,                                  \
+        (lrt) << G_TEXTURE_IMAGE_FRAC);                                 \
+})
+
+// HackerOoT
+
+// System for inserting SPDontSkipTexLoadsAcross for actors/effects which
+// manipulate segments to select texture indices. Note that this only needs to
+// be done for things which have a single material and which can appear multiple
+// times consecutively in the scene, such as Rupees and effects.
+#if ENABLE_F3DEX3
+
+// It might seem that we'd need to ensure this is reset every frame. But we
+// actually only care about when this changes within a frame, as the texture
+// loads would only ever be skipped between two or more rupees drawn
+// consecutively. This is s32 so it can hold an actual texture pointer in case
+// an "index" is not available.
+#define IF_F3DEX3_DONT_SKIP_TEX_INIT() \
+    static s32 _lastTexIndex = -1; \
+    (void)0
+
+// If we have consecutive items rendering with different textures, F3DEX3's
+// optimizer will incorrectly believe the texture loads can be skipped, so this
+// command tells it not to skip them. However, if the texture really is the same
+// as last time, then we can let the optimizer skip the load.
+#define IF_F3DEX3_DONT_SKIP_TEX_HERE(pkt, texIndex) \
+    if ((s32)(texIndex) != _lastTexIndex) { \
+        gSPDontSkipTexLoadsAcross(pkt); \
+        _lastTexIndex = (s32)(texIndex); \
+    } \
+    (void)0
+
+// In some cases we are sure things are rendered consecutively with different
+// textures, e.g. in Fire Temple fire objects.
+#define IF_F3DEX3_ALWAYS_DONT_SKIP_TEX(pkt) \
+    gSPDontSkipTexLoadsAcross(pkt)
+
+#else
+#define IF_F3DEX3_DONT_SKIP_TEX_INIT() (void)0
+#define IF_F3DEX3_DONT_SKIP_TEX_HERE(pkt, texIndex) (void)0
+#define IF_F3DEX3_ALWAYS_DONT_SKIP_TEX(pkt) (void)0
+#endif
 
 #endif

@@ -1,7 +1,9 @@
 #include "libc64/malloc.h"
 #include "libc64/qrand.h"
 #include "libu64/debug.h"
+#include "array_count.h"
 #include "buffers.h"
+#include "color.h"
 #include "controller.h"
 #include "fault.h"
 #include "config.h"
@@ -53,8 +55,6 @@
 #if CAN_INCLUDE_EXAMPLE_SCENE
 #include "assets/scenes/example/example_scene.h"
 #endif
-
-#include "global.h"
 
 #pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0 ique-cn:224" \
                                "ntsc-1.0:240 ntsc-1.1:240 ntsc-1.2:240 pal-1.0:240 pal-1.1:240"

@@ -2,7 +2,9 @@
 
 #include "config.h"
 #include "versions.h"
-#include "macros.h"
+
+#define STRINGIFY(s) #s
+#define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)
 
 #ifdef PACKAGE_AUTHOR
 const char gBuildAuthor[] = EXPAND_AND_STRINGIFY(PACKAGE_AUTHOR);

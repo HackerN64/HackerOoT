@@ -3,7 +3,6 @@
 #include "config.h"
 #include "gfx.h"
 #include "segmented_address.h"
-#include "macros.h"
 #include "z64play.h"
 
 #if ENABLE_ANIMATED_MATERIALS
@@ -312,7 +311,7 @@ void AnimatedMat_DrawMain(PlayState* play, AnimatedMaterial* matAnim, f32 alphaR
     if ((matAnim != NULL) && (matAnim->segment != 0)) {
         do {
             segment = matAnim->segment;
-            segmentAbs = ABS_ALT(segment) + 7;
+            segmentAbs = ABS(segment) + 7;
             sMatAnimDrawHandlers[matAnim->type](play, segmentAbs, SEGMENTED_TO_VIRTUAL(matAnim->params));
             matAnim++;
         } while (segment >= 0);

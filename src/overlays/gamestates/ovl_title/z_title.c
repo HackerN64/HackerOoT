@@ -33,8 +33,6 @@
 #include "debug_opening_state.h"
 #include "letterbox.h"
 
-#include "global.h"
-
 #include "assets/textures/nintendo_rogo_static/nintendo_rogo_static.h"
 
 void ConsoleLogo_Calc(ConsoleLogoState* this) {

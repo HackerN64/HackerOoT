@@ -2,8 +2,6 @@
 #include "printf.h"
 #include "regs.h"
 
-#include "macros.h"
-
 #if ENABLE_NEW_LETTERBOX
 
 #include "gfx.h"

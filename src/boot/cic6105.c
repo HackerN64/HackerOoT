@@ -6,8 +6,6 @@
 #include "fault.h"
 #include "regs.h"
 #include "sched.h"
-#include "fault.h"
-#include "build.h"
 
 s32 func_80001714(void);
 

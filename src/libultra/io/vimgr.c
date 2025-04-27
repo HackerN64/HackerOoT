@@ -1,8 +1,8 @@
-#include "ultra64.h"
-#include "stack.h"
 #include "ultra64/internal.h"
 #include "z64thread.h"
-#include "macros.h"
+#include "array_count.h"
+#include "stack.h"
+#include "ultra64.h"
 
 static OSThread viThread;
 static STACK(viThreadStack, 0x1000);

@@ -1,8 +1,10 @@
+#include "array_count.h"
 #include "attributes.h"
 #include "controller.h"
 #include "flag_set.h"
 #include "gfx.h"
 #include "gfx_setupdl.h"
+#include "language_array.h"
 #include "main.h"
 #include "map.h"
 #include "printf.h"
@@ -23,8 +25,6 @@
 #include "z64player.h"
 #include "z64save.h"
 #include "widescreen.h"
-
-#include "global.h"
 
 #include "assets/textures/parameter_static/parameter_static.h"
 #include "assets/textures/do_action_static/do_action_static.h"

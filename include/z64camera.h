@@ -1630,6 +1630,7 @@ typedef struct Camera {
 } Camera; // size = 0x16C
 
 extern s32 gDebugCamEnabled;
+#define IS_DEBUG_CAM_ENABLED (IS_CAMERA_DEBUG_ENABLED ? gDebugCamEnabled : false)
 
 void Camera_Init(Camera* camera, struct View* view, struct CollisionContext* colCtx, struct PlayState* play);
 void Camera_InitDataUsingPlayer(Camera* camera, struct Player* player);

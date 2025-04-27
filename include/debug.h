@@ -3,7 +3,6 @@
 
 #include "config.h"
 #include "ultra64.h"
-#include "macros.h"
 #include "padmgr.h"
 #include "debug/print.h"
 #include "debug/collision_view.h"

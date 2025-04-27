@@ -1,13 +1,13 @@
-#include "global.h"
-#include "ultra64.h"
-#include "attributes.h"
 #include "jpeg.h"
+
+#include "array_count.h"
+#include "attributes.h"
+#include "gfx.h"
 #include "printf.h"
 #include "sys_ucode.h"
 #include "terminal.h"
 #include "translation.h"
-
-#include "macros.h"
+#include "ultra64.h"
 
 #define MARKER_ESCAPE 0x00
 #define MARKER_SOI 0xD8

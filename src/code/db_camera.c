@@ -2,6 +2,7 @@
 
 #if IS_CAMERA_DEBUG_ENABLED
 #include "libu64/gfxprint.h"
+#include "array_count.h"
 #include "attributes.h"
 #include "controller.h"
 #include "db_camera.h"

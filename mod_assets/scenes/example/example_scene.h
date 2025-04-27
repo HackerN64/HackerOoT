@@ -2,7 +2,6 @@
 #define EXAMPLE_SCENE_H
 
 #include "ultra64.h"
-#include "macros.h"
 #include "config.h"
 #include "z64scene.h"
 #include "z64cutscene.h"
