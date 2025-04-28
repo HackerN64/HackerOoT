@@ -9,13 +9,17 @@
 #include "string.h"
 #include "attributes.h"
 
-#include "global.h"
 #include "z64olib.h"
 #include "letterbox.h"
 #include "config.h"
 #include "z64camera.h"
 #include "z64save.h"
+#include "z64play.h"
+#include "z64player.h"
+#include "sfx.h"
 #include "z_lib.h"
+#include "array_count.h"
+#include "gfx.h"
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS
 

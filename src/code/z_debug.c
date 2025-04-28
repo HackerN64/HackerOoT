@@ -2,6 +2,7 @@
 #include "libc64/malloc.h"
 #include "libu64/gfxprint.h"
 #include "libu64/pad.h"
+#include "array_count.h"
 #include "color.h"
 #include "controller.h"
 #include "gfx.h"
@@ -10,8 +11,6 @@
 #include "rumble.h"
 #include "ultra64.h"
 #include "z64debug.h"
-
-#include "macros.h"
 
 // ENABLE_CAMERA_DEBUGGER
 typedef struct DebugCamTextBufferEntry {
@@ -27,8 +26,8 @@ typedef struct InputCombo {
     /* 0x2 */ u16 press;
 } InputCombo; // size = 0x4
 
-#pragma increment_block_number "gc-eu:160 gc-eu-mq:160 gc-jp:160 gc-jp-ce:160 gc-jp-mq:160 gc-us:160 gc-us-mq:160" \
-                               "ique-cn:160 ntsc-1.0:160 ntsc-1.1:160 ntsc-1.2:160 pal-1.0:160 pal-1.1:160"
+#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0 ique-cn:0" \
+                               "ntsc-1.0:0 ntsc-1.1:0 ntsc-1.2:0 pal-1.0:0 pal-1.1:0"
 
 RegEditor* gRegEditor; // ``gRegEditor->data`` is used by non-debug features in normal gameplay
 

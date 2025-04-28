@@ -8,8 +8,7 @@
  * N = Deinterlaced
  * 1 = 16-bit Framebuffer
  */
-#include "global.h"
-#include "ultra64/viint.h"
+#include "ultra64.h"
 
 // clang-format off
 

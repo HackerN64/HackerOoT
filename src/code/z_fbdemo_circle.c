@@ -1,6 +1,8 @@
-#include "gfx.h"
+#include "transition_circle.h"
 
-#include "global.h"
+#include "color.h"
+#include "gfx.h"
+#include "sfx.h"
 #include "widescreen.h"
 
 typedef enum TransitionCircleDirection {

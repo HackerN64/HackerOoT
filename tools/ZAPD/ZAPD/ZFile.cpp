@@ -810,7 +810,6 @@ void ZFile::GenerateSourceFiles()
 
 	sourceOutput += "#include \"ultra64.h\"\n";
 	sourceOutput += "#include \"z64.h\"\n";
-	sourceOutput += "#include \"macros.h\"\n";
 	sourceOutput += GetHeaderInclude();
 
 	bool hasZRoom = false;
@@ -905,7 +904,7 @@ std::string ZFile::GetZRoomHeaderInclude() const
 	headers += "#include \"segment_symbols.h\"\n";
 	headers += "#include \"command_macros_base.h\"\n";
 	headers += "#include \"z64cutscene_commands.h\"\n";
-	headers += "#include \"variables.h\"\n";
+	/* headers += "#include \"variables.h\"\n"; */
 	return headers;
 }
 

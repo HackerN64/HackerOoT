@@ -1,5 +1,8 @@
-#include "global.h"
+#include "array_count.h"
+#include "audiothread_cmd.h"
+#include "ultra64.h"
 #include "versions.h"
+#include "z64audio.h"
 
 #define SAMPLES_TO_OVERPRODUCE 0x10
 #define EXTRA_BUFFERED_AI_SAMPLES_TARGET 0x80
@@ -226,8 +229,8 @@ void AudioThread_ProcessGlobalCmd(AudioCmd* cmd) {
             }
             break;
 
-        case AUDIOCMD_OP_GLOBAL_SET_SOUND_MODE:
-            gAudioCtx.soundMode = cmd->asUInt;
+        case AUDIOCMD_OP_GLOBAL_SET_SOUND_OUTPUT_MODE:
+            gAudioCtx.soundOutputMode = cmd->asUInt;
             break;
 
         case AUDIOCMD_OP_GLOBAL_MUTE:

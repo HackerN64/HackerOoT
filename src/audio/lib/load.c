@@ -1,9 +1,10 @@
-#include "ultra64.h"
+#include "array_count.h"
 #include "attributes.h"
 #include "buffers.h"
+#include "segment_symbols.h"
+#include "ultra64.h"
 #include "versions.h"
-
-#include "global.h"
+#include "z64audio.h"
 
 #define MK_ASYNC_MSG(retData, tableType, id, loadStatus) \
     (((retData) << 24) | ((tableType) << 16) | ((id) << 8) | (loadStatus))
@@ -1192,7 +1193,7 @@ void AudioLoad_Init(void* heap, u32 heapSize) {
     gAudioCtx.totalTaskCount = 0;
     gAudioCtx.rspTaskIndex = 0;
     gAudioCtx.curAiBufIndex = 0;
-    gAudioCtx.soundMode = SOUNDMODE_STEREO;
+    gAudioCtx.soundOutputMode = SOUND_OUTPUT_STEREO;
     gAudioCtx.curTask = NULL;
     gAudioCtx.rspTask[0].task.t.data_size = 0;
     gAudioCtx.rspTask[1].task.t.data_size = 0;
@@ -1228,7 +1229,7 @@ void AudioLoad_Init(void* heap, u32 heapSize) {
     }
 
     // Set audio tables pointers
-    gAudioCtx.sequenceTable = (AudioTable*)gSequenceTable;
+    gAudioCtx.sequenceTable = &gSequenceTable;
     gAudioCtx.soundFontTable = &gSoundFontTable;
     gAudioCtx.sampleBankTable = &gSampleBankTable;
     gAudioCtx.sequenceFontTable = gSequenceFontTable;

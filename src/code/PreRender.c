@@ -11,11 +11,12 @@
 #include "color.h"
 #include "gfx.h"
 #include "prerender.h"
+#include "printf.h"
 #include "regs.h"
 #include "gfxalloc.h"
-
-#include "macros.h"
-#include "global.h"
+#include "ultra64.h"
+#include "ultra64/gbi.h"
+#include "ultra64/gs2dex.h"
 
 void PreRender_SetValuesSave(PreRender* this, u32 width, u32 height, void* fbuf, void* zbuf, void* cvg) {
     this->widthSave = width;

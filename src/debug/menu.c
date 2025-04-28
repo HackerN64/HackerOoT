@@ -1,9 +1,12 @@
-#include "global.h"
 #include "debug.h"
 #include "controller.h"
 #include "z64save.h"
+#include "z64play.h"
 #include "occlusionplanes.h"
 #include "libc64/sprintf.h"
+#include "f3dex3.h"
+#include "printf.h"
+#include "array_count.h"
 
 #if ENABLE_HACKER_DEBUG
 

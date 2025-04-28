@@ -1,9 +1,10 @@
-#include "z64.h"
-#include "functions.h"
-#include "variables.h"
+#include "ultra64.h"
+#include "debug/profiler_inline.h"
 #include "occlusionplanes.h"
 #include "gfx.h"
 #include "sys_math3d.h"
+#include "z64play.h"
+#include "z64skin_matrix.h"
 
 #if ENABLE_F3DEX3
 

@@ -1,5 +1,7 @@
+#include "array_count.h"
+#include "sfx.h"
 #include "ultra64.h"
-#include "global.h"
+#include "z64audio.h"
 
 // sSfxRequests ring buffer endpoints. read index <= write index, wrapping around mod 256.
 u8 gSfxRequestWriteIndex = 0;
@@ -59,11 +61,11 @@ u8 gStartSeqDisabled = false;
 u8 gAudioDebugPrintSeqCmd = true;
 #endif
 
-u8 gSoundModeList[] = {
-    SOUNDMODE_STEREO,
-    SOUNDMODE_HEADSET,
-    SOUNDMODE_SURROUND,
-    SOUNDMODE_MONO,
+u8 gSoundOutputModes[] = {
+    SOUND_OUTPUT_STEREO,
+    SOUND_OUTPUT_HEADSET,
+    SOUND_OUTPUT_SURROUND,
+    SOUND_OUTPUT_MONO,
 };
 
 u8 gAudioSpecId = 0;

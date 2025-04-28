@@ -24,4 +24,13 @@
 #define CHECK_BTN_ALL(state, combo) (~((state) | ~(combo)) == 0)
 #endif
 
+// HackerOoT
+
+#if DEBUG_FEATURES
+// if using button combo check for the input, else simply return true
+#define DEBUG_BTN_COMBO(useCombo, btnToHold, btnToPress, input) ((useCombo ? CHECK_BTN_ALL(input->cur.button, btnToHold) : true) && CHECK_BTN_ALL(input->press.button, btnToPress))
+#else
+#define DEBUG_BTN_COMBO(useCombo, btnToHold, btnToPress, input) true
+#endif
+
 #endif

@@ -16,6 +16,8 @@
 #include "controller.h"
 #include "libu64/gfxprint.h"
 #include "libc64/qrand.h"
+#include "printf.h"
+#include "array_count.h"
 
 void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;

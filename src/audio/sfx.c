@@ -1,6 +1,10 @@
-#include "ultra64.h"
-#include "global.h"
+#include "array_count.h"
+#include "audiothread_cmd.h"
+#include "printf.h"
+#include "sfx.h"
 #include "terminal.h"
+#include "ultra64.h"
+#include "z64audio.h"
 
 typedef struct SfxRequest {
     /* 0x00 */ u16 sfxId;
