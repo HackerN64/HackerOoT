@@ -470,6 +470,10 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
     }
 }
 
+#if ENABLE_UNF
+void Commands_Init(void);
+#endif
+
 void Graph_ThreadEntry(void* arg0) {
     GraphicsContext gfxCtx;
     GameState* gameState;
@@ -484,6 +488,10 @@ void Graph_ThreadEntry(void* arg0) {
 
     PRINTF(T("グラフィックスレッド実行開始\n", "Start graphic thread execution\n"));
     Graph_Init(&gfxCtx);
+
+#if ENABLE_UNF
+    Commands_Init();
+#endif
 
     while (nextOvl != NULL) {
         ovl = nextOvl;
