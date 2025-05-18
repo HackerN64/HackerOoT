@@ -707,9 +707,9 @@ setup: venv
 	$(V)$(PYTHON) tools/decompress_baserom.py $(VERSION)
 	$(call print_no_args,Decompressing baserom: Done!)
 	$(V)$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 $(EXTRACTED_DIR)/baserom -v $(VERSION)
+	$(V)$(PYTHON) -m tools.assets.extract $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR) -v $(VERSION) -j$(N_THREADS)
 	$(V)$(PYTHON) tools/extract_incbins.py $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR)/incbin -v $(VERSION)
 	$(V)$(PYTHON) tools/extract_text.py $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR)/text -v $(VERSION)
-	$(V)$(PYTHON) tools/extract_assets.py $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR)/assets -v $(VERSION) -j$(N_THREADS)
 	$(V)$(PYTHON) tools/extract_audio.py -b $(EXTRACTED_DIR)/baserom -o $(EXTRACTED_DIR) -v $(VERSION) --read-xml
 	$(call print_no_args,Extracting files: Done!)
 
@@ -938,20 +938,24 @@ $(BUILD_DIR)/src/overlays/%_reloc.o: $(BUILD_DIR)/spec
 	$(V)$(POSTPROCESS_OBJ) $(@:.o=.s)
 	$(V)$(AS) $(ASFLAGS) $(@:.o=.s) -o $@
 
-$(BUILD_DIR)/assets/%.inc.c: assets/%.png
-	$(V)$(N64TEXCONV) $(subst .,,$(suffix $*)) "$(findstring u32,$(subst .,,$(suffix $(basename $*))))" $< $@ $(@:.inc.c=.pal.inc.c)
+# Assets from assets/
 
-$(BUILD_DIR)/assets/%.inc.c: $(EXTRACTED_DIR)/assets/%.png
-	$(V)$(N64TEXCONV) $(subst .,,$(suffix $*)) "$(findstring u32,$(subst .,,$(suffix $(basename $*))))" $< $@ $(@:.inc.c=.pal.inc.c)
+$(BUILD_DIR)/assets/%.inc.c: assets/%.png
+	$(V)tools/assets/build_from_png/build_from_png $< $(dir $@) assets/$(dir $*) $(wildcard $(EXTRACTED_DIR)/assets/$(dir $*))
 
 $(BUILD_DIR)/assets/%.bin.inc.c: assets/%.bin
 	$(V)$(BIN2C) -t 1 $< $@
 
-$(BUILD_DIR)/assets/%.bin.inc.c: $(EXTRACTED_DIR)/assets/%.bin
-	$(V)$(BIN2C) -t 1 $< $@
-
 $(BUILD_DIR)/assets/%.jpg.inc.c: assets/%.jpg
 	$(V)$(N64TEXCONV) JFIF "" $< $@
+
+# Assets from extracted/
+
+$(BUILD_DIR)/assets/%.inc.c: $(EXTRACTED_DIR)/assets/%.png
+	$(V)tools/assets/build_from_png/build_from_png $< $(dir $@) $(wildcard assets/$(dir $*)) $(EXTRACTED_DIR)/assets/$(dir $*)
+
+$(BUILD_DIR)/assets/%.bin.inc.c: $(EXTRACTED_DIR)/assets/%.bin
+	$(V)$(BIN2C) -t 1 $< $@
 
 $(BUILD_DIR)/assets/%.jpg.inc.c: $(EXTRACTED_DIR)/assets/%.jpg
 	$(V)$(N64TEXCONV) JFIF "" $< $@
