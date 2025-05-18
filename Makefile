@@ -1050,7 +1050,7 @@ $(BUILD_DIR)/assets/audio/soundfonts/%.c $(BUILD_DIR)/assets/audio/soundfonts/%.
 -include $(SOUNDFONT_DEP_FILES)
 
 $(BUILD_DIR)/assets/audio/soundfonts/%.o: $(BUILD_DIR)/assets/audio/soundfonts/%.c $(BUILD_DIR)/assets/audio/soundfonts/%.name
-	$(CPP) $(MIPS_BUILTIN_DEFS) $(CPPFLAGS) -x assembler-with-cpp $(INC) -I include/audio -MD -MF $(@:.o=.d) -MT $@ $< -o /dev/null
+	$(V)$(CPP) $(MIPS_BUILTIN_DEFS) $(CPPFLAGS) -x assembler-with-cpp $(INC) -I include/audio -MD -MF $(@:.o=.d) -MT $@ $< -o /dev/null
 # compile c to unlinked object
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -I include/audio -o $(@:.o=.tmp) $<
 # partial link
