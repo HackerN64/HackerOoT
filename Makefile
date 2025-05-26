@@ -183,20 +183,14 @@ else ifeq ($(VERSION),ique-cn)
   BUILD_TIME := 16:23:19
   REVISION := 0
 else ifeq ($(VERSION),hackeroot-mq)
-  REGION := NULL
+  REGION ?= JP
   PLATFORM := GC
   DEBUG := 1
   DEBUG_FEATURES ?= 1
   BUILD_CREATOR := none
   BUILD_DATE := none
   BUILD_TIME := none
-ifeq ($(TARGET),iso)
-  REVISION := 0
-else ifeq ($(TARGET),wad)
-  REVISION := 0
-else
   REVISION := 15
-endif
 else
 $(error Unsupported version $(VERSION))
 endif
@@ -449,13 +443,10 @@ else
   ROM      := $(BUILD_DIR)/oot-$(VERSION).z64
 endif
 ROMC     := $(ROM:.z64=-compressed-$(COMPRESSION).z64)
-WAD      := $(ROM:.z64=.wad)
-ISO      := $(ROM:.z64=.iso)
 BPS      := $(ROM:.z64=.bps)
 ELF      := $(ROM:.z64=.elf)
 MAP      := $(ROM:.z64=.map)
 LDSCRIPT := $(ROM:.z64=.ld)
-DMA_CONFIG_FILE := dma_config.txt
 
 # description of ROM segments
 SPEC := spec/spec
@@ -599,42 +590,9 @@ ifeq ($(COMPILER),gcc)
   $(BUILD_DIR)/src/%.o: CFLAGS += -fexec-charset=utf-8
   $(BUILD_DIR)/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
   $(BUILD_DIR)/src/overlays/%.o: CFLAGS += -fno-merge-constants -mno-explicit-relocs -mno-split-addresses
-
-  $(BUILD_DIR)/src/overlays/actors/ovl_Item_Shield/%.o: OPTFLAGS := -O2
-  $(BUILD_DIR)/src/overlays/actors/ovl_En_Part/%.o: OPTFLAGS := -O2
-  $(BUILD_DIR)/src/overlays/actors/ovl_Item_B_Heart/%.o: OPTFLAGS := -O0
-  $(BUILD_DIR)/src/overlays/actors/ovl_Bg_Mori_Hineri/%.o: OPTFLAGS := -O0
-
-# library overrides for Gamecube
-ifeq ($(TARGET),iso)
-  MIPS_VERSION_IDO := -mips2
-  CFLAGS_IDO += -G 0 -non_shared -fullwarn -verbose -Xcpluscomm $(INC) -Wab,-r4300_mul -woff 516,609,649,838,712
-  $(BUILD_DIR)/src/libultra/io/viswapbuf.o: OPTFLAGS := -O2
-  $(BUILD_DIR)/src/libultra/io/viswapbuf.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
-  $(BUILD_DIR)/src/libultra/io/viswapbuf.o: CFLAGS := $(CFLAGS_IDO)
-  $(BUILD_DIR)/src/libultra/io/viswapbuf.o: CC := $(CC_IDO)
-  $(BUILD_DIR)/src/libultra/gu/sinf.o: OPTFLAGS := -O2
-  $(BUILD_DIR)/src/libultra/gu/sinf.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
-  $(BUILD_DIR)/src/libultra/gu/sinf.o: CFLAGS := $(CFLAGS_IDO)
-  $(BUILD_DIR)/src/libultra/gu/sinf.o: CC := $(CC_IDO)
-  $(BUILD_DIR)/src/libultra/gu/cosf.o: OPTFLAGS := -O2
-  $(BUILD_DIR)/src/libultra/gu/cosf.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
-  $(BUILD_DIR)/src/libultra/gu/cosf.o: CFLAGS := $(CFLAGS_IDO)
-  $(BUILD_DIR)/src/libultra/gu/cosf.o: CC := $(CC_IDO)
-  $(BUILD_DIR)/src/libultra/gu/perspective.o: OPTFLAGS := -O2
-  $(BUILD_DIR)/src/libultra/gu/perspective.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
-  $(BUILD_DIR)/src/libultra/gu/perspective.o: CFLAGS := $(CFLAGS_IDO)
-  $(BUILD_DIR)/src/libultra/gu/perspective.o: CC := $(CC_IDO)
-  $(BUILD_DIR)/src/libultra/os/getmemsize.o: OPTFLAGS := -O1
-  $(BUILD_DIR)/src/libultra/os/getmemsize.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
-  $(BUILD_DIR)/src/libultra/os/getmemsize.o: CFLAGS := $(CFLAGS_IDO)
-  $(BUILD_DIR)/src/libultra/os/getmemsize.o: CC := $(CC_IDO)
-  $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: OPTFLAGS := -O1
-  $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
-  $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: CFLAGS := $(CFLAGS_IDO)
-  $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: CC := $(CC_IDO)
 endif
-endif
+
+-include .make_wii-vc.mk
 
 #### Main Targets ###
 
@@ -651,29 +609,6 @@ compress:
 	$(V)$(shell touch spec)
 	$(V)$(shell touch src/boot/z_std_dma.c)
 	$(V)$(MAKE) $(ROMC)
-	$(call print_no_args,Success!)
-
-wad:
-	$(call print_no_args,Patching WAD...)
-ifeq ("$(wildcard baseroms/$(VERSION)/common-key.bin)", "")
-	$(error Please provide the common-key.bin file.)
-endif
-	$(V)$(MAKE) compress TARGET=wad
-	$(V)$(GZINJECT) -a inject -r 1 -k baseroms/$(VERSION)/common-key.bin -w baseroms/$(VERSION)/basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
-	$(V)$(RM) -r wadextract/
-	$(call print_no_args,Success!)
-
-iso:
-	$(V)$(MAKE) compress TARGET=iso
-	$(call print_no_args,Patching ISO...)
-	$(V)$(PYTHON) tools/gc_utility.py -v $(VERSION) -c $(COMPRESSION)
-	$(V)$(GZINJECT) -a extract -s baseroms/$(VERSION)/baseiso.iso
-	$(V)cp $(BUILD_DIR)/$(DMA_CONFIG_FILE) isoextract/zlj_f.tgc/$(DMA_CONFIG_FILE)
-	$(V)cp $(ROMC) isoextract/zlj_f.tgc/zlj_f.n64
-	$(V)$(RM) -r isoextract/S_*.tgc/ isoextract/zlj_f.tgc/*.thp
-	$(V)$(FLIPS) --apply tools/gamecube.bps isoextract/zlj_f.tgc/main.dol isoextract/zlj_f.tgc/main.dol
-	$(V)$(GZINJECT) -a pack -s $(ISO)
-	$(V)$(RM) -r isoextract/
 	$(call print_no_args,Success!)
 
 clean:
@@ -749,7 +684,7 @@ verify:
 	$(V)$(MAKE) rom
 	@md5sum $(ROM)
 
-.PHONY: all rom compress clean assetclean distclean venv setup run wad iso patch create_f3dex3_patches verify
+.PHONY: all rom compress clean assetclean distclean venv setup run patch create_f3dex3_patches verify
 
 .DEFAULT_GOAL := rom
 
@@ -777,6 +712,7 @@ $(ROM): $(ELF)
 	@$(PRINT) "${GREEN}Code Version: $(BLUE)$(PACKAGE_VERSION)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Build Author: $(BLUE)$(PACKAGE_AUTHOR)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Commit Author: $(BLUE)$(PACKAGE_COMMIT_AUTHOR)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}Target: $(BLUE)$(TARGET)$(NO_COL)\n"
 
 $(ROMC): $(ROM) $(ELF) $(BUILD_DIR)/compress_ranges.txt
 ifeq ($(USE_WRAPPER),0)

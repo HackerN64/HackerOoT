@@ -146,17 +146,9 @@
  * config_graphics.h
  */
 //! TODO: implement better Wii VC compatibility
-#ifdef CONSOLE_WIIVC
-    #undef ENABLE_F3DEX3
+#ifdef TARGET_GC
     #undef ENABLE_MOTION_BLUR
-
-    #define ENABLE_F3DEX3 false
     #define ENABLE_MOTION_BLUR false
-#endif
-
-#ifdef CONSOLE_GC
-    #undef ENABLE_F3DEX3
-    #define ENABLE_F3DEX3 false
 #endif
 
 
