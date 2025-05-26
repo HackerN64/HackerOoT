@@ -63,7 +63,7 @@ CPPFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls -fno-toplevel-reorde
 # Disables `.set gp=64` in exceptasm.s
 CCASFLAGS += -DTARGET_GC
 
-$(BUILD_DIR)/src/audio/internal/seqplayer.o: OPTFLAGS := -O1
+$(BUILD_DIR)/src/audio/lib/seqplayer.o: OPTFLAGS := -O1
 endif
 endif
 

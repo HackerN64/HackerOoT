@@ -59,11 +59,6 @@ N64_EMULATOR ?=
 # This may also be used to disable debug features on debug ROMs by setting DEBUG_FEATURES to 0
 # DEBUG_FEATURES ?= 1
 
-CFLAGS ?=
-CPPFLAGS ?=
-CFLAGS_IDO ?=
-CPP_DEFINES ?=
-
 # Version-specific settings
 REGIONAL_CHECKSUM := 0
 ifeq ($(VERSION),ntsc-1.0)
@@ -284,7 +279,6 @@ ifeq ($(VERSION),hackeroot-mq)
 
   ifeq ($(RELEASE),1)
     CPP_DEFINES += -DRELEASE_ROM=1 -DDEBUG_FEATURES=0 -DNDEBUG
-    CFLAGS_IDO += -DDEBUG_FEATURES=0
   else
     CPP_DEFINES += -DRELEASE_ROM=0 -DDEBUG_FEATURES=1
   endif
@@ -381,7 +375,6 @@ FADO       := tools/fado/fado.elf
 PYTHON     ?= $(VENV)/bin/python3
 FLIPS      := tools/Flips/flips
 GZINJECT   := tools/gzinject/gzinject
-CC_IDO     := tools/ido_recomp/$(DETECTED_OS)/5.3/cc
 
 # Command to replace $(BUILD_DIR) in some files with the build path.
 # We can't use the C preprocessor for this because it won't substitute inside string literals.
@@ -400,10 +393,6 @@ SEQ_CPPFLAGS  := -D_LANGUAGE_ASEQ -DMML_VERSION=MML_VERSION_OOT $(CPP_DEFINES) -
 
 SBCFLAGS := --matching
 SFCFLAGS := --matching
-
-CFLAGS += $(CPP_DEFINES)
-CPPFLAGS += $(CPP_DEFINES)
-CFLAGS_IDO += $(CPP_DEFINES)
 
 # Extra debugging steps
 ifeq ($(DEBUG_OBJECTS),1)
@@ -582,7 +571,9 @@ $(shell mkdir -p $(foreach dir, \
 endif
 
 $(BUILD_DIR)/src/boot/build.o: CPP_DEFINES += -DBUILD_CREATOR="\"$(BUILD_CREATOR)\"" -DBUILD_DATE="\"$(BUILD_DATE)\"" -DBUILD_TIME="\"$(BUILD_TIME)\""
-$(BUILD_DIR)/src/audio/lib/seqplayer.o: CPP_DEFINES += -DMML_VERSION=MML_VERSION_OOT
+
+$(BUILD_DIR)/src/audio/lib/seqplayer.o: CFLAGS += -DMML_VERSION=MML_VERSION_OOT
+$(BUILD_DIR)/src/audio/lib/seqplayer.o: CPPFLAGS += -DMML_VERSION=MML_VERSION_OOT
 
 ifeq ($(COMPILER),gcc)
 # Note that if adding additional assets directories for modding reasons these flags must also be used there
