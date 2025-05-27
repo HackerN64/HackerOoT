@@ -60,7 +60,8 @@ ifneq ($(TARGET),)
 CFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls -fno-toplevel-reorder
 CPPFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls -fno-toplevel-reorder
 
-# Disables `.set gp=64` in exceptasm.s
+# Disables `.set gp=64` in exceptasm.s and the 3ms audio delay in `audio_thread_manager.c`
+CFLAGS += -DTARGET_GC
 CCASFLAGS += -DTARGET_GC
 
 $(BUILD_DIR)/src/audio/lib/seqplayer.o: OPTFLAGS := -O1
