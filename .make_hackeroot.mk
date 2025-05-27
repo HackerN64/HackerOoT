@@ -33,17 +33,6 @@ RELEASE := 0
 COMPRESSION ?= yaz
 COMPRESSION_TYPE ?= $(shell echo $(COMPRESSION) | tr '[:lower:]' '[:upper:]')
 
-# Platform compatibility flags
-TARGET ?=
-
-ifeq ($(TARGET),wad)
-CFLAGS := -DCONSOLE_WIIVC -fno-reorder-blocks -fno-optimize-sibling-calls
-CPPFLAGS := -DCONSOLE_WIIVC
-else ifeq ($(TARGET),iso)
-CFLAGS := -DCONSOLE_GC -fno-reorder-blocks -fno-optimize-sibling-calls
-CPPFLAGS := -DCONSOLE_GC
-endif
-
 ### SummerCart64 Settings ###
 
 # path to the deployer program
