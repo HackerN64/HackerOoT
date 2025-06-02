@@ -1,5 +1,5 @@
-#pragma increment_block_number "gc-eu:192 gc-eu-mq:192 gc-jp:192 gc-jp-ce:192 gc-jp-mq:192 gc-us:192 gc-us-mq:192" \
-                               "ique-cn:192 ntsc-1.0:192 ntsc-1.1:192 ntsc-1.2:192 pal-1.0:192 pal-1.1:192"
+#pragma increment_block_number "gc-eu:192 gc-eu-mq:192 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
+                               "ique-cn:128 ntsc-1.0:192 ntsc-1.1:192 ntsc-1.2:192 pal-1.0:192 pal-1.1:192"
 
 #include "libc64/qrand.h"
 #include "libu64/gfxprint.h"
@@ -238,8 +238,8 @@ s16 sLightningFlashAlpha;
 s16 sSunDepthTestX;
 s16 sSunDepthTestY;
 
-#pragma increment_block_number "gc-eu:192 gc-eu-mq:192 gc-jp:192 gc-jp-ce:192 gc-jp-mq:192 gc-us:192 gc-us-mq:192" \
-                               "ique-cn:160 ntsc-1.0:192 ntsc-1.1:192 ntsc-1.2:192 pal-1.0:192 pal-1.1:192"
+#pragma increment_block_number "gc-eu:192 gc-eu-mq:192 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
+                               "ique-cn:128 ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:192 pal-1.1:192"
 
 LightNode* sNGameOverLightNode;
 LightInfo sNGameOverLightInfo;
@@ -1436,7 +1436,7 @@ void Environment_DrawSunAndMoon(PlayState* play) {
                          G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_PRIM_A | G_RM_XLU_SURF2),
         gsDPLoadTextureBlock(gMoonTex, G_IM_FMT_IA, G_IM_SIZ_8b, 64, 64, 0, G_TX_NOMIRROR | G_TX_WRAP,
                              G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD),
-        gsSPVertex(gameplay_keepVtx_038F70, 4, 0),
+        gsSPVertex(gMoonDL_04038F70_Vtx, 4, 0),
         gsSP2Triangles(0, 1, 2, 0, 1, 3, 2, 0),
         gsSPEndDisplayList(),
     };

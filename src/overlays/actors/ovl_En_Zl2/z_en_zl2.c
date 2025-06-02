@@ -1019,7 +1019,8 @@ void func_80B50A04(EnZl2* this, PlayState* play) {
                     func_80B50644(this, play);
                     break;
                 default:
-                    PRINTF("En_Zl2_inAgain_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF(T("En_Zl2_inAgain_Check_DemoMode:そんな動作は無い!!!!!!!!\n",
+                             "En_Zl2_inAgain_Check_DemoMode: There is no such action!!!!!!!!\n"));
             }
             this->cueId = nextCueId;
         }
@@ -1410,7 +1411,8 @@ void func_80B51948(EnZl2* this, PlayState* play) {
                     func_80B513A8(this, play);
                     break;
                 default:
-                    PRINTF("En_Zl2_inEnding_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF(T("En_Zl2_inEnding_Check_DemoMode:そんな動作は無い!!!!!!!!\n",
+                             "En_Zl2_inEnding_Check_DemoMode: There is no such action!!!!!!!!\n"));
             }
             this->cueId = nextCueId;
         }
@@ -1574,7 +1576,8 @@ void func_80B51FA8(EnZl2* this, PlayState* play) {
                     Actor_Kill(&this->actor);
                     break;
                 default:
-                    PRINTF("En_Zl2_inRunning_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF(T("En_Zl2_inRunning_Check_DemoMode:そんな動作は無い!!!!!!!!\n",
+                             "En_Zl2_inRunning_Check_DemoMode: There is no such action!!!!!!!!\n"));
                     break;
             }
             this->cueId = nextCueId;
