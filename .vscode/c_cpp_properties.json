@@ -19,12 +19,9 @@
                 "OOT_REGION=REGION_JP",
                 "PLATFORM_N64=1",
                 "PLATFORM_GC=0",
-                "DEBUG_FEATURES=0",
+                "DEBUG_FEATURES=1",
                 "NDEBUG",
-                "F3DEX_GBI_2",
-                "ENABLE_HACKEROOT=1",
-                "RELEASE_ROM=0",
-                "COMPRESS_YAZ=1"
+                "F3DEX_GBI_2"
             ],
             "cStandard": "gnu89"
         },
@@ -241,36 +238,6 @@
                 "F3DEX_GBI_2",
                 "F3DEX_GBI_PL",
                 "GBI_DOWHILE"
-            ],
-            "cStandard": "gnu89"
-        },
-        {
-            "name": "hackeroot",
-            "compilerArgs": [
-                "-m32"
-            ],
-            "includePath": [
-                "include",
-                "include/libc",
-                "src",
-                "build/hackeroot-mq",
-                ".",
-                "extracted/hackeroot-mq"
-            ],
-            "defines": [
-                "_LANGUAGE_C",
-                "OOT_VERSION=OOT_GC_EU_MQ_DBG",
-                "OOT_REGION=REGION_EU",
-                "PLATFORM_N64=0",
-                "PLATFORM_GC=1",
-                "DEBUG_FEATURES=1",
-                "NDEBUG",
-                "F3DEX_GBI_2",
-                "F3DEX_GBI_PL",
-                "GBI_DOWHILE",
-                "ENABLE_HACKEROOT=1",
-                "RELEASE_ROM=0",
-                "COMPRESS_YAZ=1"
             ],
             "cStandard": "gnu89"
         }

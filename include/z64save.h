@@ -12,14 +12,10 @@ typedef enum ZTargetSetting {
 } ZTargetSetting;
 
 typedef enum Language {
-#if OOT_NTSC
     /* 0 */ LANGUAGE_JPN,
     /* 1 */ LANGUAGE_ENG,
-#else
-    /* 0 */ LANGUAGE_ENG,
-    /* 1 */ LANGUAGE_GER,
-    /* 2 */ LANGUAGE_FRA,
-#endif
+    /* 2 */ LANGUAGE_GER,
+    /* 3 */ LANGUAGE_FRA,
     /*   */ LANGUAGE_MAX
 } Language;
 

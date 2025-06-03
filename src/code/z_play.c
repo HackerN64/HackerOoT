@@ -252,7 +252,7 @@ void Play_Destroy(GameState* thisx) {
     this->state.gfxCtx->callback = NULL;
     this->state.gfxCtx->callbackParam = NULL;
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     Play_DestroyMotionBlur();
 #endif
 
@@ -451,7 +451,7 @@ void Play_Init(GameState* thisx) {
     KaleidoScopeCall_Init(this);
     Interface_Init(this);
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     Play_InitMotionBlur(this);
 #endif
 
@@ -1172,7 +1172,7 @@ skip:
     Environment_Update(this, &this->envCtx, &this->lightCtx, &this->pauseCtx, &this->msgCtx, &this->gameOverCtx,
                        this->state.gfxCtx);
 
-    if (ENABLE_MOTION_BLUR && ENABLE_MOTION_BLUR_DEBUG) {
+    if (IS_MOTION_BLUR_ENABLED && ENABLE_MOTION_BLUR_DEBUG) {
         // motion blur testing controls
         if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_DUP)) {
             R_MOTION_BLUR_ENABLED ^= 1;
@@ -1207,10 +1207,11 @@ skip:
             s16 csId = optCsId >= 0 ? optCsId : 0;
 
             // check if the cutscene is the next on the queue, if it is play it,
-            // otherwise add it to the queue when the button L is pressed
+            // otherwise add it to the queue when the D-Left is pressed while L and Z are held
             if (CutsceneManager_IsNext(csId)) {
                 CutsceneManager_Start(csId, &GET_PLAYER(this)->actor);
-            } else if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_L)) {
+            } else if (CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_L | BTN_Z) &&
+                       CHECK_BTN_ALL(this->state.input[0].press.button, BTN_DLEFT)) {
                 CutsceneManager_Queue(csId);
             }
         }
@@ -1239,7 +1240,7 @@ void Play_DrawOverlayElements(PlayState* this) {
     }
 }
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
 void PreRender_MotionBlurOpaque(PreRender* this, Gfx** gfxP);
 void PreRender_MotionBlur(PreRender* this, Gfx** gfxp, s32 alpha);
 
@@ -1317,25 +1318,25 @@ void Play_DestroyMotionBlur(void) {
 #endif
 
 void Play_SetMotionBlurAlpha(u32 alpha) {
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     R_MOTION_BLUR_ALPHA = alpha;
 #endif
 }
 
 void Play_EnableMotionBlur(u32 alpha) {
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     R_MOTION_BLUR_ALPHA = alpha;
     R_MOTION_BLUR_ENABLED = true;
 #endif
 }
 
 void Play_DisableMotionBlur(void) {
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     R_MOTION_BLUR_ENABLED = false;
 #endif
 }
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
 void Play_SetMotionBlurPriorityAlpha(u32 alpha) {
     R_MOTION_BLUR_PRIORITY_ALPHA = alpha;
 }
@@ -1489,7 +1490,7 @@ void Play_Draw(PlayState* this) {
             R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_OFF;
         }
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
         Play_DrawMotionBlur(this);
 #endif
 
@@ -1663,7 +1664,7 @@ void Play_Draw(PlayState* this) {
     }
 
 Play_Draw_skip:
-    if (ENABLE_MOTION_BLUR && ENABLE_MOTION_BLUR_DEBUG) {
+    if (IS_MOTION_BLUR_ENABLED && ENABLE_MOTION_BLUR_DEBUG) {
         // motion blur testing display
         GfxPrint printer;
         Gfx* gfxRef;
