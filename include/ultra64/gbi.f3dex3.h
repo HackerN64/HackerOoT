@@ -13,8 +13,8 @@
 
 #include "ultra64/mbi.h"
 
-#ifndef F3DEX3_H
-#define F3DEX3_H
+#ifndef GBI_F3DEX3_H
+#define GBI_F3DEX3_H
 
 #ifdef F3DEX_GBI_2
 #undef F3DEX_GBI_2
@@ -5473,4 +5473,4 @@ _DW({                                                   \
 #define gDPNoOpCloseDisp(pkt, file, line)   gDma1p(pkt, G_NOOP, file, line, 8)
 #define gDPNoOpTag3(pkt, type, data, n)     gDma1p(pkt, G_NOOP, data, n, type)
 
-#endif /* F3DEX3_H */
+#endif /* GBI_F3DEX3_H */

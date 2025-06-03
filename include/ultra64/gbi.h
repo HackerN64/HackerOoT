@@ -1,4 +1,3 @@
-#include "mbi.h"
 
 #ifndef ULTRA64_GBI_H
 #define ULTRA64_GBI_H
@@ -16,6 +15,8 @@
     #undef G_MAXZ
     #define G_MAXZ G_NEW_MAXZ
 #else
+#include "mbi.h"
+#include "ultratypes.h"
 
 #ifdef GBI_DOWHILE
 /* Private macro to wrap other macros in do {...} while (0) */

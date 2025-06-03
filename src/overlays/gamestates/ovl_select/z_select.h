@@ -14,7 +14,10 @@
 #include "z64sram.h"
 #include "map_select_state.h"
 
-#include "global.h"
+#include "color.h"
+#include "z64scene.h"
+#include "z64play.h"
+#include "sfx.h"
 
 #if PLATFORM_N64
 void func_80800AD0_unknown(MapSelectState* this, s32 arg1);

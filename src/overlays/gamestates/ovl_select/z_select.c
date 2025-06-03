@@ -16,6 +16,8 @@
 #include "controller.h"
 #include "libu64/gfxprint.h"
 #include "libc64/qrand.h"
+#include "printf.h"
+#include "array_count.h"
 
 #if PLATFORM_N64
 void func_80800AD0_unknown(MapSelectState* this, s32 arg1) {

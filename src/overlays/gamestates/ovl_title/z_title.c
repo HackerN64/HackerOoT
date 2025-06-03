@@ -12,10 +12,12 @@
 #endif
 
 #include "alloca.h"
+#include "build.h"
 #include "console_logo_state.h"
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "padmgr.h"
+#include "printf.h"
 #include "regs.h"
 #include "segment_symbols.h"
 #include "sequence.h"
@@ -30,8 +32,6 @@
 #include "widescreen.h"
 #include "debug_opening_state.h"
 #include "letterbox.h"
-
-#include "global.h"
 
 #include "assets/textures/nintendo_rogo_static/nintendo_rogo_static.h"
 

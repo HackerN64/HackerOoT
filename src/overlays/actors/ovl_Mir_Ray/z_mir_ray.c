@@ -10,9 +10,11 @@
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "ichain.h"
+#include "printf.h"
 #include "sfx.h"
 #include "sys_math3d.h"
 #include "sys_matrix.h"
+#include "translation.h"
 #include "z_lib.h"
 #include "z64light.h"
 #include "z64play.h"
@@ -179,8 +181,8 @@ void MirRay_Init(Actor* thisx, PlayState* play) {
 
     Actor_ProcessInitChain(&this->actor, sInitChain);
     ActorShape_Init(&this->actor.shape, 0.0f, NULL, 0.0f);
-    // "Generation of reflectable light!"
-    PRINTF("反射用 光の発生!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    PRINTF(T("反射用 光の発生!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n",
+             "Generation of reflectable light!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"));
     LOG_NUM("this->actor.arg_data", this->actor.params, "../z_mir_ray.c", 518);
 
     if (this->actor.params >= 0xA) {

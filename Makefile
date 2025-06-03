@@ -34,8 +34,6 @@ COMPILER ?= gcc
 VERSION ?= ntsc-1.2
 # Number of threads to extract and compress with.
 N_THREADS ?= $(shell nproc)
-# Check code syntax with host compiler.
-RUN_CC_CHECK ?= 1
 # If DEBUG_OBJECTS is 1, produce additional debugging files such as objdump output or raw binaries for assets
 DEBUG_OBJECTS ?= 0
 # Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
@@ -348,10 +346,10 @@ CPPFLAGS += -P -xc -fno-dollars-in-identifiers $(CPP_DEFINES)
 ASFLAGS += -march=vr4300 -32 -no-pad-sections -Iinclude -I$(EXTRACTED_DIR)
 
 ifeq ($(COMPILER),gcc)
-  CFLAGS += $(CPP_DEFINES) $(GBI_DEFINES) -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -mdivide-breaks -fno-PIC -fno-common -ffreestanding -funsigned-char -fbuiltin -fno-builtin-sinf -fno-builtin-cosf $(CHECK_WARNINGS)
-  CCASFLAGS += $(CPP_DEFINES) $(GBI_DEFINES) -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -fno-PIC -fno-common -Wa,-no-pad-sections
+  CFLAGS += $(CPP_DEFINES) $(GBI_DEFINES) -G 0 -nostdinc -MD $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -mdivide-breaks -fno-PIC -fno-common -ffreestanding -funsigned-char -fbuiltin -fno-builtin-sinf -fno-builtin-cosf $(CHECK_WARNINGS)
+  CCASFLAGS += $(CPP_DEFINES) $(GBI_DEFINES) -G 0 -nostdinc -MD $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -fno-PIC -fno-common -Wa,-no-pad-sections
   MIPS_VERSION := -mips3
-  RUN_CC_CHECK := 0
+  CC_CHECK = @:
 endif
 
 OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
@@ -430,7 +428,7 @@ SOUNDFONT_EXTRACT_XMLS := $(foreach dir,$(SOUNDFONT_EXTRACT_DIRS),$(wildcard $(d
 SOUNDFONT_BUILD_XMLS   := $(foreach f,$(SOUNDFONT_XMLS),$(BUILD_DIR)/$f) $(foreach f,$(SOUNDFONT_EXTRACT_XMLS),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%))
 SOUNDFONT_O_FILES      := $(foreach f,$(SOUNDFONT_BUILD_XMLS),$(f:.xml=.o))
 SOUNDFONT_HEADERS      := $(foreach f,$(SOUNDFONT_BUILD_XMLS),$(f:.xml=.h))
-SOUNDFONT_DEP_FILES    := $(foreach f,$(SOUNDFONT_O_FILES),$(f:.o=.d))
+SOUNDFONT_DEP_FILES    := $(foreach f,$(SOUNDFONT_O_FILES),$(f:.o=.c.d))
 
 SEQUENCE_FILES         := $(foreach dir,$(SEQUENCE_DIRS),$(wildcard $(dir)/*.seq))
 SEQUENCE_EXTRACT_FILES := $(foreach dir,$(SEQUENCE_EXTRACT_DIRS),$(wildcard $(dir)/*.seq))
@@ -468,7 +466,7 @@ UCODE_O_FILES := $(foreach f,$(UCODE_FILES),$(BUILD_DIR)/$f.o)
 
 # Automatic dependency files
 # (Only asm_processor dependencies and reloc dependencies are handled for now)
-DEP_FILES := $(O_FILES:.o=.asmproc.d) $(OVL_RELOC_FILES:.o=.d)
+DEP_FILES := $(O_FILES:.o=.d) $(O_FILES:.o=.asmproc.d) $(OVL_RELOC_FILES:.o=.d) $(BUILD_DIR)/spec.d
 
 TEXTURE_FILES_PNG_EXTRACTED := $(foreach dir,$(ASSET_BIN_DIRS_EXTRACTED),$(wildcard $(dir)/*.png))
 TEXTURE_FILES_PNG_COMMITTED := $(foreach dir,$(ASSET_BIN_DIRS_COMMITTED),$(wildcard $(dir)/*.png))
@@ -503,7 +501,7 @@ $(shell mkdir -p $(foreach dir, \
 endif
 
 $(BUILD_DIR)/src/boot/build.o: CPP_DEFINES += -DBUILD_CREATOR="\"$(BUILD_CREATOR)\"" -DBUILD_DATE="\"$(BUILD_DATE)\"" -DBUILD_TIME="\"$(BUILD_TIME)\""
-$(BUILD_DIR)/src/audio/lib/seqplayer.o: CPP_DEFINES += -DMML_VERSION=MML_VERSION_OOT
+$(BUILD_DIR)/src/audio/internal/seqplayer.o: CPP_DEFINES += -DMML_VERSION=MML_VERSION_OOT
 
 ifeq ($(COMPILER),gcc)
 # Note that if adding additional assets directories for modding reasons these flags must also be used there
@@ -598,10 +596,10 @@ setup: venv
 	$(V)$(PYTHON) tools/decompress_baserom.py $(VERSION)
 	$(call print_no_args,Decompressing baserom: Done!)
 	$(V)$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 $(EXTRACTED_DIR)/baserom -v $(VERSION)
+	$(V)$(PYTHON) -m tools.assets.extract $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR) -v $(VERSION) -j$(N_THREADS)
 	$(V)$(PYTHON) tools/extract_incbins.py $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR)/incbin -v $(VERSION)
 	$(V)$(PYTHON) tools/extract_text.py $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR)/text -v $(VERSION)
-	$(V)$(PYTHON) tools/extract_assets.py $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR)/assets -v $(VERSION) -j$(N_THREADS)
-	$(V)$(PYTHON) tools/extract_audio.py -o $(EXTRACTED_DIR) -v $(VERSION) --read-xml
+	$(V)$(PYTHON) tools/extract_audio.py -b $(EXTRACTED_DIR)/baserom -o $(EXTRACTED_DIR) -v $(VERSION) --read-xml
 	$(call print_no_args,Extracting files: Done!)
 
 run: rom
@@ -689,7 +687,7 @@ $(O_FILES): | asset_files
 
 $(BUILD_DIR)/spec: $(SPEC) $(SPEC_INCLUDES)
 	$(call print_two_args,Preprocessing:,$<,$@)
-	$(V)$(CPP) $(CPPFLAGS) -I. $< | $(BUILD_DIR_REPLACE) > $@
+	$(V)$(CPP) $(CPPFLAGS) -MD -MF $@.d -MT $@ -I. $< | $(BUILD_DIR_REPLACE) > $@
 
 $(LDSCRIPT): $(BUILD_DIR)/spec
 	$(call print_two_args,Creating linker script:,$<,$@)
@@ -705,7 +703,7 @@ $(BUILD_DIR)/baserom/%.o: $(EXTRACTED_DIR)/baserom/%
 
 $(BUILD_DIR)/data/%.o: data/%.s
 	$(call print_two_args,Assembling:,$<,$@)
-	$(V)$(CPP) $(CPPFLAGS) -Iinclude $< | $(AS) $(ASFLAGS) -o $@
+	$(V)$(CPP) $(CPPFLAGS) -MD -MF $(@:.o=.d) -MT $@ -Iinclude $< | $(AS) $(ASFLAGS) -o $@
 
 ifeq ($(PLATFORM),IQUE)
   NES_CHARMAP := assets/text/charmap.chn.txt
@@ -715,20 +713,19 @@ endif
 
 $(BUILD_DIR)/assets/text/%.enc.nes.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h $(NES_CHARMAP)
 	$(call print_two_args,Encoding:,$<,$@)
-	$(V)$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) $< | $(PYTHON) tools/msgenc.py --encoding utf-8 --charmap $(NES_CHARMAP) - $@
+	$(V)$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) -MD -MF $(@:.o=.d) -MT $@ $< | $(PYTHON) tools/msgenc.py --encoding utf-8 --charmap $(NES_CHARMAP) - $@
 
 $(BUILD_DIR)/assets/text/%.enc.jpn.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.jpn.txt
 	$(call print_two_args,Encoding:,$<,$@)
-	$(V)$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) $< | $(PYTHON) tools/msgenc.py --encoding SHIFT-JIS --wchar --charmap assets/text/charmap.jpn.txt - $@
+	$(V)$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) -MD -MF $(@:.o=.d) -MT $@ $< | $(PYTHON) tools/msgenc.py --encoding SHIFT-JIS --wchar --charmap assets/text/charmap.jpn.txt - $@
 
-# Dependencies for files including message data headers
-# TODO remove when full header dependencies are used.
+# Dependencies for encoded message headers. These dependencies are not automatic as these headers are generated
+# as part of the build. A clean build must know to generate them before the relevant .d files are created.
 $(BUILD_DIR)/assets/text/jpn_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.jpn.h
 $(BUILD_DIR)/assets/text/nes_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.nes.h
 $(BUILD_DIR)/assets/text/ger_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.nes.h
 $(BUILD_DIR)/assets/text/fra_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.nes.h
 $(BUILD_DIR)/assets/text/staff_message_data_static.o: $(BUILD_DIR)/assets/text/message_data_staff.enc.nes.h
-$(BUILD_DIR)/src/code/z_message.o: assets/text/message_data.h assets/text/message_data_staff.h
 
 $(BUILD_DIR)/assets/text/%.o: assets/text/%.c
 	$(call print_two_args,Compiling:,$<,$@)
@@ -737,11 +734,13 @@ $(BUILD_DIR)/assets/text/%.o: assets/text/%.c
 
 $(BUILD_DIR)/assets/%.o: assets/%.c
 	$(call print,Compiling:,$<,$@)
+	$(V)$(CC_CHECK) $< -o $@
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)$(OBJCOPY_CMD)
 
 $(BUILD_DIR)/assets/%.o: $(EXTRACTED_DIR)/assets/%.c
 	$(call print_two_args,Compiling:,$<,$@)
+	$(V)$(CC_CHECK) $< -o $@
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)$(OBJCOPY_CMD)
 
@@ -766,6 +765,8 @@ $(BUILD_DIR)/src/code/z_message_z_game_over.o: $(BUILD_DIR)/src/code/z_message.o
 	$(V)$(LD) -r -G 0 -T linker_scripts/data_with_rodata.ld -o $@ $^
 	$(V)$(PYTHON) tools/patch_data_with_rodata_mdebug.py $@
 
+DEP_FILES += $(BUILD_DIR)/src/code/z_message.d $(BUILD_DIR)/src/code/z_game_over.d
+
 $(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt: $(BUILD_DIR)/spec
 	$(V)$(MKDMADATA) $< $(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt
 
@@ -773,36 +774,20 @@ $(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt: $(BUILD_DIR)
 $(BUILD_DIR)/src/boot/z_std_dma.o: $(BUILD_DIR)/dmadata_table_spec.h
 $(BUILD_DIR)/src/dmadata/dmadata.o: $(BUILD_DIR)/dmadata_table_spec.h
 
-# Dependencies for files including from include/tables/
-# TODO remove when full header dependencies are used.
-$(BUILD_DIR)/src/code/graph.o: include/tables/gamestate_table.h
-$(BUILD_DIR)/src/code/object_table.o: include/tables/object_table.h
-$(BUILD_DIR)/src/code/z_actor.o: include/tables/actor_table.h # so uses of ACTOR_ID_MAX update when the table length changes
-$(BUILD_DIR)/src/code/z_actor_dlftbls.o: include/tables/actor_table.h
-$(BUILD_DIR)/src/code/z_effect_soft_sprite_dlftbls.o: include/tables/effect_ss_table.h
-$(BUILD_DIR)/src/code/z_game_dlftbls.o: include/tables/gamestate_table.h
-$(BUILD_DIR)/src/code/z_scene_table.o: include/tables/scene_table.h include/tables/entrance_table.h
-$(BUILD_DIR)/src/audio/general.o: $(SEQUENCE_TABLE) include/tables/sfx/*.h
-$(BUILD_DIR)/src/audio/sfx_params.o: include/tables/sfx/*.h
-
 $(BUILD_DIR)/src/%.o: src/%.c
-ifneq ($(RUN_CC_CHECK),0)
-	$(V)$(CC_CHECK) $<
-endif
 	$(call print_two_args,Compiling:,$<,$@)
+	$(V)$(CC_CHECK) $< -o $@
 	$(V)$(PREPROCESS) $(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)$(POSTPROCESS_OBJ) $@
 	$(V)$(OBJDUMP_CMD)
 
-$(BUILD_DIR)/src/audio/session_init.o: src/audio/session_init.c $(BUILD_DIR)/assets/audio/soundfont_sizes.h $(BUILD_DIR)/assets/audio/sequence_sizes.h
-ifneq ($(RUN_CC_CHECK),0)
-	$(V)$(CC_CHECK) $<
-endif
+$(BUILD_DIR)/src/audio/game/session_init.o: src/audio/game/session_init.c $(BUILD_DIR)/assets/audio/soundfont_sizes.h $(BUILD_DIR)/assets/audio/sequence_sizes.h
 	$(call print_two_args,Compiling:,$<,$@)
+	$(V)$(CC_CHECK) $< -o $@
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $(@:.o=.tmp) $<
 	$(V)$(LD) -r -T linker_scripts/data_with_rodata.ld -o $@ $(@:.o=.tmp)
 	$(V)$(PYTHON) tools/patch_data_with_rodata_mdebug.py $@
-	@$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
+	$(V)$(OBJDUMP_CMD)
 
 ifeq ($(PLATFORM),IQUE)
 ifneq ($(NON_MATCHING),1)
@@ -816,20 +801,24 @@ $(BUILD_DIR)/src/overlays/%_reloc.o: $(BUILD_DIR)/spec
 	$(V)$(POSTPROCESS_OBJ) $(@:.o=.s)
 	$(V)$(AS) $(ASFLAGS) $(@:.o=.s) -o $@
 
-$(BUILD_DIR)/assets/%.inc.c: assets/%.png
-	$(V)$(N64TEXCONV) $(subst .,,$(suffix $*)) "$(findstring u32,$(subst .,,$(suffix $(basename $*))))" $< $@ $(@:.inc.c=.pal.inc.c)
+# Assets from assets/
 
-$(BUILD_DIR)/assets/%.inc.c: $(EXTRACTED_DIR)/assets/%.png
-	$(V)$(N64TEXCONV) $(subst .,,$(suffix $*)) "$(findstring u32,$(subst .,,$(suffix $(basename $*))))" $< $@ $(@:.inc.c=.pal.inc.c)
+$(BUILD_DIR)/assets/%.inc.c: assets/%.png
+	$(V)tools/assets/build_from_png/build_from_png $< $(dir $@) assets/$(dir $*) $(wildcard $(EXTRACTED_DIR)/assets/$(dir $*))
 
 $(BUILD_DIR)/assets/%.bin.inc.c: assets/%.bin
 	$(V)$(BIN2C) -t 1 $< $@
 
-$(BUILD_DIR)/assets/%.bin.inc.c: $(EXTRACTED_DIR)/assets/%.bin
-	$(V)$(BIN2C) -t 1 $< $@
-
 $(BUILD_DIR)/assets/%.jpg.inc.c: assets/%.jpg
 	$(V)$(N64TEXCONV) JFIF "" $< $@
+
+# Assets from extracted/
+
+$(BUILD_DIR)/assets/%.inc.c: $(EXTRACTED_DIR)/assets/%.png
+	$(V)tools/assets/build_from_png/build_from_png $< $(dir $@) $(wildcard assets/$(dir $*)) $(EXTRACTED_DIR)/assets/$(dir $*)
+
+$(BUILD_DIR)/assets/%.bin.inc.c: $(EXTRACTED_DIR)/assets/%.bin
+	$(V)$(BIN2C) -t 1 $< $@
 
 $(BUILD_DIR)/assets/%.jpg.inc.c: $(EXTRACTED_DIR)/assets/%.jpg
 	$(V)$(N64TEXCONV) JFIF "" $< $@
@@ -905,11 +894,12 @@ $(BUILD_DIR)/assets/audio/soundfonts/%.xml: $(EXTRACTED_DIR)/assets/audio/soundf
 $(BUILD_DIR)/assets/audio/soundfonts/%.c $(BUILD_DIR)/assets/audio/soundfonts/%.h $(BUILD_DIR)/assets/audio/soundfonts/%.name: $(BUILD_DIR)/assets/audio/soundfonts/%.xml | $(SAMPLEBANK_BUILD_XMLS) $(AIFC_FILES)
 # This rule can be triggered for either the .c or .h file, so $@ may refer to either the .c or .h file. A simple
 # substitution $(@:.c=.h) will fail ~50% of the time with -j. Instead, don't assume anything about the suffix of $@.
-	$(V)$(SFC) $(SFCFLAGS) --makedepend $(basename $@).d $< $(basename $@).c $(basename $@).h $(basename $@).name
+	$(V)$(SFC) $(SFCFLAGS) --makedepend $(basename $@).c.d $< $(basename $@).c $(basename $@).h $(basename $@).name
 
 -include $(SOUNDFONT_DEP_FILES)
 
 $(BUILD_DIR)/assets/audio/soundfonts/%.o: $(BUILD_DIR)/assets/audio/soundfonts/%.c $(BUILD_DIR)/assets/audio/soundfonts/%.name
+	$(V)$(CPP) $(MIPS_BUILTIN_DEFS) $(CPPFLAGS) -x assembler-with-cpp $(INC) -I include/audio -MD -MF $(@:.o=.d) -MT $@ $< -o /dev/null
 # compile c to unlinked object
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -I include/audio -o $(@:.o=.tmp) $<
 # partial link
@@ -930,11 +920,11 @@ endif
 # then assemble the sequences...
 
 $(BUILD_DIR)/assets/audio/sequences/%.o: assets/audio/sequences/%.seq include/audio/aseq.h $(SEQUENCE_TABLE) | $(SOUNDFONT_HEADERS)
-	$(V)$(SEQ_CPP) $(SEQ_CPPFLAGS) $< -o $(@:.o=.s) -MMD -MT $@
+	$(V)$(SEQ_CPP) $(SEQ_CPPFLAGS) -MD -MT $@ $< -o $(@:.o=.s)
 	$(V)$(AS) $(ASFLAGS) -I $(BUILD_DIR)/assets/audio/soundfonts -I include/audio -I $(dir $<) $(@:.o=.s) -o $@
 
 $(BUILD_DIR)/assets/audio/sequences/%.o: $(EXTRACTED_DIR)/assets/audio/sequences/%.seq include/audio/aseq.h $(SEQUENCE_TABLE) | $(SOUNDFONT_HEADERS)
-	$(V)$(SEQ_CPP) $(SEQ_CPPFLAGS) $< -o $(@:.o=.s) -MMD -MT $@
+	$(V)$(SEQ_CPP) $(SEQ_CPPFLAGS) -MD -MT $@ $< -o $(@:.o=.s)
 	$(V)$(AS) $(ASFLAGS) -I $(BUILD_DIR)/assets/audio/soundfonts -I include/audio -I $(dir $<) $(@:.o=.s) -o $@
 ifeq ($(AUDIO_BUILD_DEBUG),1)
 	$(V)$(OBJCOPY) -O binary -j.data $@ $(@:.o=.aseq)
@@ -968,9 +958,7 @@ $(BUILD_DIR)/src/audio/tables/sequence_table.o: src/audio/tables/sequence_table.
 $(BUILD_DIR)/src/audio/tables/sequence_table.o: CFLAGS += -I include/tables
 
 $(BUILD_DIR)/src/audio/tables/%.o: src/audio/tables/%.c
-ifneq ($(RUN_CC_CHECK),0)
-	$(V)$(CC_CHECK) $<
-endif
+	$(V)$(CC_CHECK) $< -o $@
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $(@:.o=.tmp) $<
 	$(V)$(LD) -r -T linker_scripts/data_with_rodata.ld $(@:.o=.tmp) -o $@
 	$(V)$(PYTHON) tools/patch_data_with_rodata_mdebug.py $@

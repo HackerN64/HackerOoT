@@ -1,5 +1,9 @@
-#include "global.h"
+#include "yaz0.h"
+
 #include "compression.h"
+#include "alignment.h"
+#include "ultra64.h"
+#include "z64dma.h"
 
 #if COMPRESS_YAZ
 

@@ -7,9 +7,12 @@
 #include "z_magic_wind.h"
 
 #include "libu64/debug.h"
+#include "array_count.h"
 #include "gfx.h"
 #include "gfx_setupdl.h"
+#include "printf.h"
 #include "sfx.h"
+#include "translation.h"
 #include "z64curve.h"
 #include "z64play.h"
 #include "z64player.h"
@@ -54,8 +57,7 @@ void MagicWind_Init(Actor* thisx, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (!SkelCurve_Init(play, &this->skelCurve, &sSkel, &sAnim)) {
-        // "Magic_Wind_Actor_ct (): Construct failed"
-        PRINTF("Magic_Wind_Actor_ct():コンストラクト失敗\n");
+        PRINTF(T("Magic_Wind_Actor_ct():コンストラクト失敗\n", "Magic_Wind_Actor_ct(): Construct failed\n"));
     }
     this->actor.room = -1;
     switch (this->actor.params) {
