@@ -157,11 +157,6 @@
 #error "ENABLE_PROFILER requires ENABLE_HACKER_DEBUG"
 #endif
 
-// Temporary
-#if OOT_VERSION != GC_EU_MQ_DBG && ENABLE_PROFILER
-#error "The profiler isn't supported yet on the other versions."
-#endif
-
 /**
  * Game
 */
