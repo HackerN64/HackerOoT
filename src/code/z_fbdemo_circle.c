@@ -4,7 +4,7 @@
 #include "gfx.h"
 #include "sfx.h"
 #include "widescreen.h"
-#include "z64transition.h"
+#include "transition.h"
 
 typedef enum TransitionCircleDirection {
     /* 0 */ TRANS_CIRCLE_DIR_IN,

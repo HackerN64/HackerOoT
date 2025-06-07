@@ -5,7 +5,7 @@
 #include "letterbox.h"
 #include "main.h"
 #include "regs.h"
-#include "z64play.h"
+#include "play_state.h"
 
 #if ENABLE_F3DEX3
 u8 gUseMemsetForZBuffer = 1;

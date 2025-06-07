@@ -18,6 +18,17 @@
 #include "libc64/qrand.h"
 #include "printf.h"
 #include "array_count.h"
+#include "regs.h"
+#include "segment_symbols.h"
+#include "seqcmd.h"
+#include "sequence.h"
+#include "sfx.h"
+#include "terminal.h"
+#include "translation.h"
+#include "ultra64.h"
+#include "play_state.h"
+#include "save.h"
+#include "sram.h"
 
 void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;

@@ -1,5 +1,5 @@
 #include "sys_math3d.h"
-#include "z64play.h"
+#include "play_state.h"
 #include "gfx.h"
 #include "sys_matrix.h"
 #include "libc64/math64.h"

@@ -8,9 +8,9 @@
 #include "regs.h"
 #include "sfx.h"
 #include "translation.h"
-#include "z64play.h"
-#include "z64save.h"
 #include "widescreen.h"
+#include "play_state.h"
+#include "save.h"
 
 #include "assets/textures/parameter_static/parameter_static.h"
 
