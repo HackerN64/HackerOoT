@@ -232,6 +232,10 @@ void func_800BC88C(PlayState* this) {
     this->transitionCtx.transitionType = -1;
 }
 
+/**
+ * Set the environment fog, from parameters controlled by the environment system.
+ * If a custom fog state is used at any point in drawing, the environment fog is expected to be restored afterwards.
+ */
 Gfx* Play_SetFog(PlayState* this, Gfx* gfx) {
     s32 fogA = 0;
     if (this->skyboxId != SKYBOX_NONE && this->lightCtx.fogNear < 980) {

@@ -72,7 +72,7 @@ s32 Camera_QRegInit(void);
  * runtime. If a small f32 is being stored as an s16, it is common to store that value 100 times larger than the
  * original value. This is then scaled back down during runtime with the CAM_DATA_SCALED macro.
  */
-#define CAM_DATA_SCALED(x) ((x)*0.01f)
+#define CAM_DATA_SCALED(x) ((x) * 0.01f)
 
 // Load the next value from camera read-only data stored in CameraModeValue
 #define GET_NEXT_RO_DATA(values) ((values++)->val)
@@ -7716,81 +7716,79 @@ s16 Camera_ChangeStatus(Camera* camera, s16 status) {
 
 #if IS_CAMERA_DEBUG_ENABLED
 void Camera_PrintSettings(Camera* camera) {
-    if (IS_CAMERA_DEBUG_ENABLED) {
-        char sp58[8];
-        char sp50[8];
-        char sp48[8];
-        s32 i;
+    char sp58[8];
+    char sp50[8];
+    char sp48[8];
+    s32 i;
 
-        if ((OREG(0) & 1) && (camera->play->activeCamId == camera->camId) && !gDebugCamEnabled) {
-            for (i = 0; i < NUM_CAMS; i++) {
-                if (camera->play->cameraPtrs[i] == NULL) {
-                    sp58[i] = '-';
-                    sp48[i] = ' ';
-                } else {
-                    switch (camera->play->cameraPtrs[i]->status) {
-                        case 0:
-                            sp58[i] = 'c';
-                            break;
-                        case 1:
-                            sp58[i] = 'w';
-                            break;
-                        case 3:
-                            sp58[i] = 's';
-                            break;
-                        case 7:
-                            sp58[i] = 'a';
-                            break;
-                        case 0x100:
-                            sp58[i] = 'd';
-                            break;
-                        default:
-                            sp58[i] = '*';
-                            break;
-                    }
-                }
+    if ((OREG(0) & 1) && (camera->play->activeCamId == camera->camId) && !gDebugCamEnabled) {
+        for (i = 0; i < NUM_CAMS; i++) {
+            if (camera->play->cameraPtrs[i] == NULL) {
+                sp58[i] = '-';
                 sp48[i] = ' ';
+            } else {
+                switch (camera->play->cameraPtrs[i]->status) {
+                    case 0:
+                        sp58[i] = 'c';
+                        break;
+                    case 1:
+                        sp58[i] = 'w';
+                        break;
+                    case 3:
+                        sp58[i] = 's';
+                        break;
+                    case 7:
+                        sp58[i] = 'a';
+                        break;
+                    case 0x100:
+                        sp58[i] = 'd';
+                        break;
+                    default:
+                        sp58[i] = '*';
+                        break;
+                }
             }
-            sp58[i] = '\0';
-            sp48[i] = '\0';
-
-            sp48[camera->play->activeCamId] = 'a';
-            DebugCamera_ScreenTextColored(3, 22, DEBUG_CAM_TEXT_WHITE, sp58);
-            DebugCamera_ScreenTextColored(3, 22, DEBUG_CAM_TEXT_PEACH, sp48);
-            DebugCamera_ScreenTextColored(3, 23, DEBUG_CAM_TEXT_WHITE, "S:");
-            DebugCamera_ScreenTextColored(5, 23, DEBUG_CAM_TEXT_GOLD, sCameraSettingNames[camera->setting]);
-            DebugCamera_ScreenTextColored(3, 24, DEBUG_CAM_TEXT_WHITE, "M:");
-            DebugCamera_ScreenTextColored(5, 24, DEBUG_CAM_TEXT_GOLD, sCameraModeNames[camera->mode]);
-            DebugCamera_ScreenTextColored(3, 25, DEBUG_CAM_TEXT_WHITE, "F:");
-            DebugCamera_ScreenTextColored(
-                5, 25, DEBUG_CAM_TEXT_GOLD,
-                sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx]);
-
-            i = 0;
-            if (camera->bgCamIndex < 0) {
-                sp50[i++] = '-';
-            }
-
-            //! @bug: this code was clearly meaning to print `abs(camera->bgCamIndex)` as a
-            //! one-or-two-digit number, instead of `i`.
-            // "sp50[i++] = ..." matches here, but is undefined behavior due to conflicting
-            // reads/writes between sequence points, triggering warnings. Work around by
-            // putting i++ afterwards while on the same line.
-            // clang-format off
-            if (camera->bgCamIndex / 10 != 0) {
-                sp50[i] = i / 10 + '0'; i++;
-            }
-            sp50[i] = i % 10 + '0'; i++;
-            // clang-format on
-
-            sp50[i++] = ' ';
-            sp50[i++] = ' ';
-            sp50[i++] = ' ';
-            sp50[i++] = ' ';
-            sp50[i] = '\0';
-            DebugCamera_ScreenTextColored(3, 26, DEBUG_CAM_TEXT_WHITE, "I:");
-            DebugCamera_ScreenTextColored(5, 26, DEBUG_CAM_TEXT_GOLD, sp50);
+            sp48[i] = ' ';
         }
+        sp58[i] = '\0';
+        sp48[i] = '\0';
+
+        sp48[camera->play->activeCamId] = 'a';
+        DebugCamera_ScreenTextColored(3, 22, DEBUG_CAM_TEXT_WHITE, sp58);
+        DebugCamera_ScreenTextColored(3, 22, DEBUG_CAM_TEXT_PEACH, sp48);
+        DebugCamera_ScreenTextColored(3, 23, DEBUG_CAM_TEXT_WHITE, "S:");
+        DebugCamera_ScreenTextColored(5, 23, DEBUG_CAM_TEXT_GOLD, sCameraSettingNames[camera->setting]);
+        DebugCamera_ScreenTextColored(3, 24, DEBUG_CAM_TEXT_WHITE, "M:");
+        DebugCamera_ScreenTextColored(5, 24, DEBUG_CAM_TEXT_GOLD, sCameraModeNames[camera->mode]);
+        DebugCamera_ScreenTextColored(3, 25, DEBUG_CAM_TEXT_WHITE, "F:");
+        DebugCamera_ScreenTextColored(
+            5, 25, DEBUG_CAM_TEXT_GOLD,
+            sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx]);
+
+        i = 0;
+        if (camera->bgCamIndex < 0) {
+            sp50[i++] = '-';
+        }
+
+        //! @bug this code was clearly meaning to print `abs(camera->bgCamIndex)` as a
+        //! one-or-two-digit number, instead of `i`.
+        // "sp50[i++] = ..." matches here, but is undefined behavior due to conflicting
+        // reads/writes between sequence points, triggering warnings. Work around by
+        // putting i++ afterwards while on the same line.
+        // clang-format off
+        if (camera->bgCamIndex / 10 != 0) {
+            sp50[i] = i / 10 + '0'; i++;
+        }
+        sp50[i] = i % 10 + '0'; i++;
+        // clang-format on
+
+        sp50[i++] = ' ';
+        sp50[i++] = ' ';
+        sp50[i++] = ' ';
+        sp50[i++] = ' ';
+        sp50[i] = '\0';
+        DebugCamera_ScreenTextColored(3, 26, DEBUG_CAM_TEXT_WHITE, "I:");
+        DebugCamera_ScreenTextColored(5, 26, DEBUG_CAM_TEXT_GOLD, sp50);
     }
 }
 #endif
@@ -8672,9 +8670,8 @@ s32 Camera_RequestBgCam(Camera* camera, s32 requestedBgCamIndex) {
             camera->behaviorFlags |= CAM_BEHAVIOR_BG_SUCCESS;
             Camera_CopyDataToRegs(camera, camera->mode);
         } else if (settingChangeSuccessful < -1) {
-            //! @bug: `settingChangeSuccessful` is a bool and is likely checking the wrong value. This can never
-            //! pass.
-            // The actual return of Camera_RequestSettingImpl or bgCamIndex would make more sense.
+            //! @bug: `settingChangeSuccessful` is a bool and is likely checking the wrong value. This can never pass.
+            //! The actual return of Camera_RequestSettingImpl or bgCamIndex would make more sense.
             PRINTF(VT_COL(RED, WHITE) "camera: error: illegal camera ID (%d) !! (%d|%d|%d)\n" VT_RST,
                    requestedBgCamIndex, camera->camId, BGCHECK_SCENE, requestedCamSetting);
         }
