@@ -32,7 +32,7 @@ extern F3DEnvColor debug1_scene_header00_AnimatedMaterialColorEnvColor_02[];
 extern u16 debug1_scene_header00_AnimatedMaterialColorKeyFrames_02[];
 extern AnimatedMatColorParams debug1_scene_header00_AnimatedMaterialColorParams_02;
 extern AnimatedMaterial debug1_scene_header00_AnimatedMaterial[];
-#endif 
+#endif
 #if ENABLE_CUTSCENE_IMPROVEMENTS
 extern Vec3s debug1_scene_header00_ActorCutsceneCameraData[];
 extern ActorCsCamInfo debug1_scene_header00_ActorCutsceneCameraInfo[];

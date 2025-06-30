@@ -173,6 +173,11 @@ def list_files_to_format():
         if assets_text_f in files:
             files.remove(assets_text_f)
 
+    # Do not format assets/scenes/example/ files
+    for file in glob.glob("assets/scenes/example/**/*.c", recursive=True):
+        if file in files:
+            files.remove(file)
+
     return files, extra_files
 
 
