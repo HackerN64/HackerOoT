@@ -1,5 +1,7 @@
 #include "compression.h"
 
+#if COMPRESS_LZO
+
 /* <z64.me> adapted from lzo1x_d.ch */
 
 /* negative indexing distance */
@@ -218,3 +220,5 @@ L_done:
     dec.buf_end = 0;
 #endif
 }
+
+#endif

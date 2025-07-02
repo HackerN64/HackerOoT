@@ -32,13 +32,13 @@ class DmaEntry:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="gamecube utility")
-    parser.add_argument("-v", "--version", help="OoT Version", default="hackeroot-mq")
+    parser.add_argument("-v", "--version", help="OoT Version", default="ntsc-1.2")
     parser.add_argument("-c", "--codec", help="Compression Codec", default="yaz")
     args = parser.parse_args()
 
     VERSION = args.version
     DMATABLE_PATH = f"build/{VERSION}/dmadata_table_spec.h"
-    ROM_PATH = f"build/{VERSION}/{'oot-' if VERSION != 'hackeroot-mq' else ''}{VERSION}-compressed{'-' + args.codec if VERSION == 'hackeroot-mq' else ''}.z64"
+    ROM_PATH = f"build/{VERSION}/oot-{VERSION}-compressed-{args.codec}.z64"
     sceneFiles: list[DmaInfo] = []
     otherFiles: list[DmaInfo] = []
     allFiles: list[DmaInfo] = []
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     entryName = dmaTable[i + 1].removeprefix("DEFINE_DMA_ENTRY(").removesuffix(")").split(", ")[0]
     sceneFiles.append(DmaInfo(entryName, i + 1))
     
-    mapFile = f"oot-{VERSION}.map" if VERSION != "hackeroot-mq" else "hackeroot-mq.map"
+    mapFile = f"oot-{VERSION}.map"
     BUILTMAP = Path("build") / VERSION / mapFile
     mapPath = BUILTMAP
     with Capturing() as stdout:

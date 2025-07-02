@@ -2021,6 +2021,10 @@ void Player_DrawPauseImpl(PlayState* play, void* gameplayKeep, void* linkObject,
 
     viewport.vp.vscale[0] = viewport.vp.vtrans[0] = width * ((1 << 2) / 2);
     viewport.vp.vscale[1] = viewport.vp.vtrans[1] = height * ((1 << 2) / 2);
+#if ENABLE_F3DEX3
+    // see `Error_please_update_viewport_Z_and_Y_see_GBI`
+    viewport.vp.vscale[1] = -viewport.vp.vscale[1];
+#endif
     gSPViewport(POLY_OPA_DISP++, &viewport);
 
     guPerspective(perspMtx, &perspNorm, fovy, (f32)width / (f32)height, 10.0f, 4000.0f, 1.0f);

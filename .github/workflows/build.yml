@@ -12,13 +12,13 @@ jobs:
       matrix:
         include:
           - name: "Debug, No F3DEX3"
-            args: RELEASE=0 CPP_DEFINES=-DENABLE_F3DEX3=0
+            args: DEBUG_FEATURES=1 CPP_DEFINES=-DENABLE_F3DEX3=0
           - name: "Debug, F3DEX3"
-            args: RELEASE=0 CPP_DEFINES=-DENABLE_F3DEX3=1
+            args: DEBUG_FEATURES=1 CPP_DEFINES=-DENABLE_F3DEX3=1
           - name: "Release, No F3DEX3"
-            args: RELEASE=1 CPP_DEFINES=-DENABLE_F3DEX3=0
+            args: DEBUG_FEATURES=0 CPP_DEFINES=-DENABLE_F3DEX3=0
           - name: "Release, F3DEX3"
-            args: RELEASE=1 CPP_DEFINES=-DENABLE_F3DEX3=1
+            args: DEBUG_FEATURES=0 CPP_DEFINES=-DENABLE_F3DEX3=1
     defaults:
       run:
         shell: bash

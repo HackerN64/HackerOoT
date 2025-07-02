@@ -30,7 +30,7 @@ APPLY_OPTS = "--format --style=file"
 
 # Compiler options used with Clang-Tidy
 # Normal warnings are disabled with -Wno-everything to focus only on tidying
-INCLUDES = "-Iinclude -Isrc -Ibuild/gc-eu-mq-dbg -I. -Ibuild/hackeroot-mq -I."
+INCLUDES = "-Iinclude -Isrc -Ibuild/gc-eu-mq-dbg -Ibuild/ntsc-1.2 -I."
 DEFINES = "-D_LANGUAGE_C -DNON_MATCHING -DF3DEX_GBI_2 -DBUILD_CREATOR=\"\" -DBUILD_DATE=__DATE__ -DBUILD_TIME=__TIME__"
 COMPILER_OPTS = f"-fno-builtin -std=gnu90 -m32 -Wno-everything {INCLUDES} {DEFINES}"
 
@@ -172,6 +172,11 @@ def list_files_to_format():
     for assets_text_f in glob.glob("assets/text/**/*.c", recursive=True):
         if assets_text_f in files:
             files.remove(assets_text_f)
+
+    # Do not format assets/scenes/example/ files
+    for file in glob.glob("assets/scenes/example/**/*.c", recursive=True):
+        if file in files:
+            files.remove(file)
 
     return files, extra_files
 
