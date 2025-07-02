@@ -46,8 +46,8 @@
 #include "z64dma.h"
 #include "z64thread.h"
 
-#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0 ntsc-1.2:66" \
-                               "pal-1.0:64 pal-1.1:64"
+#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0 ntsc-1.2:82" \
+                               "pal-1.0:80 pal-1.1:80"
 
 StackEntry sDmaMgrStackInfo;
 OSMesgQueue sDmaMgrMsgQueue;
@@ -455,7 +455,6 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
                 // Reduce the thread priority and decompress the file, the decompression routine handles the DMA
                 // in chunks. Restores the thread priority when done.
                 osSetThreadPri(NULL, THREAD_PRI_DMAMGR_LOW);
-
 #if COMPRESS_YAZ
                 Yaz0_Decompress(romStart, ram, romSize);
 #elif COMPRESS_LZO

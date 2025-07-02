@@ -34,7 +34,7 @@ class DmaEntry:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="gamecube utility")
-    parser.add_argument("-v", "--version", help="OoT Version", default="gc-jp")
+    parser.add_argument("-v", "--version", help="OoT Version", default="ntsc-1.2")
     parser.add_argument("-c", "--codec", help="Compression Codec", default="yaz")
     args = parser.parse_args()
 
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     entryName = dmaTable[i + 1].removeprefix("DEFINE_DMA_ENTRY(").removesuffix(")").split(", ")[0]
     sceneFiles.append(DmaInfo(entryName, i + 1))
     
-    mapFile = f"oot-{VERSION}.map" if VERSION != "hackeroot-mq" else "hackeroot-mq.map"
+    mapFile = f"oot-{VERSION}.map"
     BUILTMAP = Path("build") / VERSION / mapFile
     mapPath = BUILTMAP
     with Capturing() as stdout:

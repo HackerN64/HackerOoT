@@ -6,6 +6,7 @@
 #include "z64view.h"
 #include "z64skybox.h"
 #include "z64environment.h"
+#include "color.h"
 
 #if IS_DEBUG_BOOT_ENABLED
 

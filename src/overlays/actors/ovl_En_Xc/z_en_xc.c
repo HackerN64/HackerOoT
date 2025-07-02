@@ -376,10 +376,10 @@ void EnXc_SetupSerenadeAction(EnXc* this, PlayState* play) {
         s32 pad;
 
         this->action = SHEIK_ACTION_SERENADE;
-        PRINTF("水のセレナーデ シーク誕生!!!!!!!!!!!!!!!!!!\n");
+        PRINTF(T("水のセレナーデ シーク誕生!!!!!!!!!!!!!!!!!!\n", "Water serenade Sheik's birth!!!!!!!!!!!!!!!!!!\n"));
     } else {
         Actor_Kill(&this->actor);
-        PRINTF("水のセレナーデ シーク消滅!!!!!!!!!!!!!!!!!!\n");
+        PRINTF(T("水のセレナーデ シーク消滅!!!!!!!!!!!!!!!!!!\n", "Water serenade Sheik vanishes!!!!!!!!!!!!!!!!!!\n"));
     }
 }
 
@@ -396,10 +396,10 @@ s32 EnXc_SerenadeCS(EnXc* this, PlayState* play) {
             gSaveContext.cutsceneTrigger = 1;
             SET_EVENTCHKINF(EVENTCHKINF_52); // Learned Serenade of Water Flag
             Item_Give(play, ITEM_SONG_SERENADE);
-            PRINTF("ブーツを取った!!!!!!!!!!!!!!!!!!\n");
+            PRINTF(T("ブーツを取った!!!!!!!!!!!!!!!!!!\n", "I took the boots!!!!!!!!!!!!!!!!!!\n"));
             return true;
         } else {
-            PRINTF("はやくブーツを取るべし!!!!!!!!!!!!!!!!!!\n");
+            PRINTF(T("はやくブーツを取るべし!!!!!!!!!!!!!!!!!!\n", "Quickly get your boots!!!!!!!!!!!!!!!!!!\n"));
             return false;
         }
     }
@@ -1415,8 +1415,8 @@ void func_80B3F3D8(void) {
     Sfx_PlaySfxCentered2(NA_SE_PL_SKIP);
 }
 
-#pragma increment_block_number "gc-eu:128 gc-eu-mq:64 gc-jp:128 gc-jp-ce:128 gc-jp-mq:64 gc-us:128 gc-us-mq:64" \
-                               "ique-cn:64 ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
+#pragma increment_block_number "gc-eu:64 gc-eu-mq:64 gc-jp:64 gc-jp-ce:64 gc-jp-mq:64 gc-us:64 gc-us-mq:64 ique-cn:64" \
+                               "ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
 
 void EnXc_PlayDiveSFX(Vec3f* src, PlayState* play) {
     static Vec3f D_80B42DA0;
@@ -2043,7 +2043,8 @@ s32 EnXc_SetupNocturneState(Actor* thisx, PlayState* play) {
                     Actor_Kill(thisx);
                     break;
                 default:
-                    PRINTF("En_Oa2_Stalker_Check_DemoMode:そんな動作は無い!!!!!!!!\n");
+                    PRINTF(T("En_Oa2_Stalker_Check_DemoMode:そんな動作は無い!!!!!!!!\n",
+                             "En_Oa2_Stalker_Check_DemoMode: There is no such action!!!!!!!!\n"));
                     break;
             }
 
@@ -2401,7 +2402,8 @@ void EnXc_Init(Actor* thisx, PlayState* play) {
             break;
 #endif
         default:
-            PRINTF(VT_FGCOL(RED) " En_Oa2 の arg_data がおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n" VT_RST);
+            PRINTF(VT_FGCOL(RED) T(" En_Oa2 の arg_data がおかしい!!!!!!!!!!!!!!!!!!!!!!!!!\n",
+                                   " En_Oa2 arg_data is wrong!!!!!!!!!!!!!!!!!!!!!!!!!\n") VT_RST);
             EnXc_DoNothing(this, play);
     }
 }

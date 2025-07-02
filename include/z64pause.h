@@ -52,6 +52,8 @@ typedef enum PauseMenuPage {
 
 #define PAUSE_EQUIP_PLAYER_WIDTH 64
 #define PAUSE_EQUIP_PLAYER_HEIGHT 112
+#define PAUSE_EQUIP_PLAYER_FRAG_HEIGHT (TMEM_SIZE / (PAUSE_EQUIP_PLAYER_WIDTH * G_IM_SIZ_16b_BYTES))
+#define PAUSE_EQUIP_PLAYER_FRAG_NUM (((PAUSE_EQUIP_PLAYER_HEIGHT - 1) / PAUSE_EQUIP_PLAYER_FRAG_HEIGHT) + 1)
 
 #define PAUSE_EQUIP_BUFFER_SIZE sizeof(u16[PAUSE_EQUIP_PLAYER_HEIGHT][PAUSE_EQUIP_PLAYER_WIDTH])
 #define PAUSE_PLAYER_SEGMENT_GAMEPLAY_KEEP_BUFFER_SIZE 0x5000
@@ -79,12 +81,19 @@ typedef enum PauseState {
     /* 19 */ PAUSE_STATE_RESUME_GAMEPLAY // Handles returning to normal gameplay once the pause menu is visually closed
 } PauseState;
 
+typedef enum PauseDebugState {
+    /* 0 */ PAUSE_DEBUG_STATE_CLOSED,
+    /* 1 */ PAUSE_DEBUG_STATE_INVENTORY_EDITOR_OPENING,
+    /* 2 */ PAUSE_DEBUG_STATE_INVENTORY_EDITOR_OPEN,
+    /* 3 */ PAUSE_DEBUG_STATE_FLAG_SET_OPEN
+} PauseDebugState;
+
 #define IS_PAUSE_STATE_GAMEOVER(pauseCtx) \
     (((pauseCtx)->state >= PAUSE_STATE_GAME_OVER_START) && ((pauseCtx)->state <= PAUSE_STATE_GAME_OVER_FINISH))
 
-#if ENABLE_INV_EDITOR || ENABLE_EVENT_EDITOR
+#if IS_INV_EDITOR_ENABLED || IS_EVENT_EDITOR_ENABLED
     #define IS_PAUSED(pauseCtx) \
-        (((pauseCtx)->state != PAUSE_STATE_OFF) || ((pauseCtx)->debugState != 0))
+        (((pauseCtx)->state != PAUSE_STATE_OFF) || ((pauseCtx)->debugState != PAUSE_DEBUG_STATE_CLOSED))
 #else
     #define IS_PAUSED(pauseCtx) \
         ((pauseCtx)->state != PAUSE_STATE_OFF)
@@ -99,7 +108,7 @@ typedef enum PauseMainState {
     /* 4 */ PAUSE_MAIN_STATE_SONG_PROMPT_INIT, // Start the prompt for the player to play the song.
     /* 5 */ PAUSE_MAIN_STATE_SONG_PROMPT, // Waiting for the player to play the song.
     /* 6 */ PAUSE_MAIN_STATE_SONG_PROMPT_DONE, // The song prompt is done, the player either played the song successfully or made a mistake.
-    /* 7 */ PAUSE_MAIN_STATE_7,
+    /* 7 */ PAUSE_MAIN_STATE_EQUIP_CHANGED,
     /* 8 */ PAUSE_MAIN_STATE_IDLE_CURSOR_ON_SONG, // Like PAUSE_MAIN_STATE_IDLE, but the quest page is active and the cursor is positioned on a song.
     /* 9 */ PAUSE_MAIN_STATE_SONG_PLAYBACK_START // Start playing the song back to the player.
 } PauseMainState;

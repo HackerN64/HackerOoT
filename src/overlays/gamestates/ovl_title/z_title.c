@@ -38,10 +38,10 @@
 void ConsoleLogo_Calc(ConsoleLogoState* this) {
 #if !PLATFORM_GC
     if ((this->coverAlpha == 0) && (this->visibleDuration != 0)) {
-        this->unk_1D4--;
+        this->timer--;
         this->visibleDuration--;
-        if (this->unk_1D4 == 0) {
-            this->unk_1D4 = 400;
+        if (this->timer == 0) {
+            this->timer = 400;
         }
     } else {
         if (this->coverAlpha == 0 && this->visibleDuration != 0) {

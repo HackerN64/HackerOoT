@@ -4,7 +4,9 @@ __pycache__/
 .DS_Store
 
 # IDE files
-.vscode/
+.vscode/*.*
+.vscode/**/.*
+!.vscode/c_cpp_properties.json
 .vs/
 .idea/
 .cache/
@@ -24,8 +26,8 @@ docs/doxygen/
 *.bin
 *.blend1
 *.dol
-F3DEX3/*.code
-F3DEX3/*.data
+F3DEX3/*/*.code
+F3DEX3/*/*.data
 wadextract/
 isoextract/
 
