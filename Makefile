@@ -303,9 +303,9 @@ N64TEXCONV := tools/assets/n64texconv/n64texconv
 FADO       := tools/fado/fado.elf
 PYTHON     ?= $(VENV)/bin/python3
 
-# Command to replace $(BUILD_DIR) in some files with the build path.
+# Command to replace $(BUILD_DIR) and $(F3DEX3_DIR) in some files with the build path.
 # We can't use the C preprocessor for this because it won't substitute inside string literals.
-BUILD_DIR_REPLACE := sed -e 's|$$(BUILD_DIR)|$(BUILD_DIR)|g'
+BUILD_DIR_REPLACE := sed -e 's|$$(BUILD_DIR)|$(BUILD_DIR)|g' | sed -e 's|$$(F3DEX3_DIR)|$(F3DEX3_DIR)|g'
 
 # Audio tools
 SAMPLECONV    := tools/audio/sampleconv/sampleconv
@@ -370,7 +370,7 @@ SPEC_INCLUDES := $(wildcard spec/*.inc)
 WAD      := $(ROM:.z64=.wad)
 ISO      := $(ROM:.z64=.iso)
 BPS      := $(ROM:.z64=.bps)
-UCODE_PATCHES := $(wildcard F3DEX3/*.bps)
+UCODE_PATCHES := $(wildcard $(F3DEX3_DIR)/*.bps)
 UCODE_FILES   := $(foreach f,$(UCODE_PATCHES:.bps=),$f)
 UCODE_O_FILES := $(foreach f,$(UCODE_FILES),$(BUILD_DIR)/$f.o)
 
@@ -460,7 +460,7 @@ SPEC_O_FILES := $(shell $(CPP) $(CPPFLAGS) -I. $(SPEC) | $(BUILD_DIR_REPLACE) | 
 O_FILES := $(filter-out %_reloc.o,$(SPEC_O_FILES))
 OVL_RELOC_FILES := $(filter %_reloc.o,$(SPEC_O_FILES))
 
-UCODE_PATCHES := $(wildcard F3DEX3/*.bps)
+UCODE_PATCHES := $(wildcard $(F3DEX3_DIR)/*.bps)
 UCODE_FILES   := $(foreach f,$(UCODE_PATCHES:.bps=),$f)
 UCODE_O_FILES := $(foreach f,$(UCODE_FILES),$(BUILD_DIR)/$f.o)
 
@@ -577,7 +577,7 @@ distclean:
 	$(V)$(RM) -r extracted/
 	$(V)$(RM) -r build/
 	$(V)$(MAKE) -C tools distclean
-	$(V)$(RM) -r F3DEX3/*.code F3DEX3/*.data
+	$(V)$(RM) -r F3DEX3/*/*.code F3DEX3/*/*.data
 	$(call print_no_args,Success!)
 
 venv:
@@ -666,9 +666,9 @@ $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(
 $(BUILD_DIR)/linker_scripts/makerom.ld: linker_scripts/makerom.ld
 	$(V)$(CPP) -I include $(CPPFLAGS) $< > $@
 
-$(BUILD_DIR)/F3DEX3/%.o: F3DEX3/%
+$(BUILD_DIR)/$(F3DEX3_DIR)/%.o: $(F3DEX3_DIR)/%
 	$(call print_two_args,Wrapping binary to ELF:,$<,$@)
-	$(V)mkdir -p $(BUILD_DIR)/F3DEX3
+	$(V)mkdir -p $(BUILD_DIR)/$(F3DEX3_DIR)
 	$(V)$(OBJCOPY) -I binary -O elf32-big $< $@
 
 .PRECIOUS: $(UCODE_FILES)

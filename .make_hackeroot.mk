@@ -111,6 +111,14 @@ else
 $(error Unsupported version for F3DEX3: $(VERSION))
 endif
 
+# F3DEX3 directory
+ifeq ($(PLATFORM),GC)
+F3DEX3_BASE_DIR := gc
+else
+F3DEX3_BASE_DIR := n64
+endif
+F3DEX3_DIR = F3DEX3/$(F3DEX3_BASE_DIR)
+
 #### Tools ####
 
 FLIPS      := tools/Flips/flips
@@ -184,22 +192,22 @@ patch:
 #		- run Flips and create the patches
 create_f3dex3_patches: F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
 	$(call print_no_args,Creating F3DEX3 patches...)
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW.data F3DEX3/F3DEX3_BrW.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_PA.code F3DEX3/F3DEX3_BrW_PA.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_PA.data F3DEX3/F3DEX3_BrW_PA.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_PB.code F3DEX3/F3DEX3_BrW_PB.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_PB.data F3DEX3/F3DEX3_BrW_PB.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_PC.code F3DEX3/F3DEX3_BrW_PC.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_PC.data F3DEX3/F3DEX3_BrW_PC.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC.code F3DEX3/F3DEX3_BrW_NOC.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC.data F3DEX3/F3DEX3_BrW_NOC.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC_PA.code F3DEX3/F3DEX3_BrW_NOC_PA.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC_PA.data F3DEX3/F3DEX3_BrW_NOC_PA.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC_PB.code F3DEX3/F3DEX3_BrW_NOC_PB.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC_PB.data F3DEX3/F3DEX3_BrW_NOC_PB.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC_PC.code F3DEX3/F3DEX3_BrW_NOC_PC.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC_PC.data F3DEX3/F3DEX3_BrW_NOC_PC.data.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/F3DEX3_BrW.code $(F3DEX3_DIR)/F3DEX3_BrW.code.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.data $(F3DEX3_DIR)/F3DEX3_BrW.data $(F3DEX3_DIR)/F3DEX3_BrW.data.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/F3DEX3_BrW_PA.code $(F3DEX3_DIR)/F3DEX3_BrW_PA.code.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.data $(F3DEX3_DIR)/F3DEX3_BrW_PA.data $(F3DEX3_DIR)/F3DEX3_BrW_PA.data.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/F3DEX3_BrW_PB.code $(F3DEX3_DIR)/F3DEX3_BrW_PB.code.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.data $(F3DEX3_DIR)/F3DEX3_BrW_PB.data $(F3DEX3_DIR)/F3DEX3_BrW_PB.data.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/F3DEX3_BrW_PC.code $(F3DEX3_DIR)/F3DEX3_BrW_PC.code.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.data $(F3DEX3_DIR)/F3DEX3_BrW_PC.data $(F3DEX3_DIR)/F3DEX3_BrW_PC.data.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/F3DEX3_BrW_NOC.code $(F3DEX3_DIR)/F3DEX3_BrW_NOC.code.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.data $(F3DEX3_DIR)/F3DEX3_BrW_NOC.data $(F3DEX3_DIR)/F3DEX3_BrW_NOC.data.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/F3DEX3_BrW_NOC_PA.code $(F3DEX3_DIR)/F3DEX3_BrW_NOC_PA.code.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.data $(F3DEX3_DIR)/F3DEX3_BrW_NOC_PA.data $(F3DEX3_DIR)/F3DEX3_BrW_NOC_PA.data.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/F3DEX3_BrW_NOC_PB.code $(F3DEX3_DIR)/F3DEX3_BrW_NOC_PB.code.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.data $(F3DEX3_DIR)/F3DEX3_BrW_NOC_PB.data $(F3DEX3_DIR)/F3DEX3_BrW_NOC_PB.data.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/F3DEX3_BrW_NOC_PC.code $(F3DEX3_DIR)/F3DEX3_BrW_NOC_PC.code.bps
+	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.data $(F3DEX3_DIR)/F3DEX3_BrW_NOC_PC.data $(F3DEX3_DIR)/F3DEX3_BrW_NOC_PC.data.bps
 	$(call print_no_args,Success!)
 
 # Build the rom and print its checksum (using md5)
@@ -214,17 +222,17 @@ verify:
 
 .PHONY: wad iso patch create_f3dex3_patches verify
 
-F3DEX3/f3dzex2.code:
+$(F3DEX3_DIR)/f3dzex2.code:
 	$(V)dd bs=1 if=$(BASEROM_DIR)/baserom-decompressed.z64 of=$@ skip=$(UCODE_CODE_OFFSET) count=$(UCODE_CODE_SIZE) status=none
 
-F3DEX3/f3dzex2.data:
+$(F3DEX3_DIR)/f3dzex2.data:
 	$(V)dd bs=1 if=$(BASEROM_DIR)/baserom-decompressed.z64 of=$@ skip=$(UCODE_DATA_OFFSET) count=$(UCODE_DATA_SIZE) status=none
 
-F3DEX3/F3DEX3%.code: F3DEX3/F3DEX3%.code.bps F3DEX3/f3dzex2.code
-	$(V)$(FLIPS) --apply F3DEX3/F3DEX3$*.code.bps F3DEX3/f3dzex2.code $@
+$(F3DEX3_DIR)/F3DEX3%.code: $(F3DEX3_DIR)/F3DEX3%.code.bps $(F3DEX3_DIR)/f3dzex2.code
+	$(V)$(FLIPS) --apply $(F3DEX3_DIR)/F3DEX3$*.code.bps $(F3DEX3_DIR)/f3dzex2.code $@
 	
-F3DEX3/F3DEX3%.data: F3DEX3/F3DEX3%.data.bps F3DEX3/f3dzex2.data
-	$(V)$(FLIPS) --apply F3DEX3/F3DEX3$*.data.bps F3DEX3/f3dzex2.data $@
+$(F3DEX3_DIR)/F3DEX3%.data: $(F3DEX3_DIR)/F3DEX3%.data.bps $(F3DEX3_DIR)/f3dzex2.data
+	$(V)$(FLIPS) --apply $(F3DEX3_DIR)/F3DEX3$*.data.bps $(F3DEX3_DIR)/f3dzex2.data $@
 ### SummerCart64 Settings ###
 
 # path to the deployer program

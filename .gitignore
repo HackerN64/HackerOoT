@@ -25,8 +25,8 @@ docs/doxygen/
 *.iso
 *.bin
 *.blend1
-F3DEX3/*.code
-F3DEX3/*.data
+F3DEX3/*/*.code
+F3DEX3/*/*.data
 wadextract/
 isoextract/
 
