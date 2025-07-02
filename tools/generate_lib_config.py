@@ -102,13 +102,13 @@ funcs_to_process = [
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="gamecube utility")
-    parser.add_argument("-v", "--version", help="OoT Version", default="hackeroot-mq")
+    parser.add_argument("-v", "--version", help="OoT Version", default="ntsc-1.2")
     parser.add_argument("-c", "--codec", help="Compression Codec", default="yaz")
     args = parser.parse_args()
 
     VERSION = args.version
-    map_file = f"hackeroot-mq.map" if VERSION == "hackeroot-mq" else f"oot-{VERSION}.map"
-    ROM_PATH = Path(f"build/{VERSION}/hackeroot-mq.z64" if VERSION == "hackeroot-mq" else f"build/{VERSION}/oot-{VERSION}.z64").resolve()
+    map_file = f"hackeroot-{VERSION}.map"
+    ROM_PATH = Path(f"build/{VERSION}/hackeroot-{VERSION}.z64").resolve()
     BUILTMAP = Path("build") / VERSION / map_file
 
     # header
