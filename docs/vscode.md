@@ -37,7 +37,7 @@ Many of VS Code's other shortcuts can be found on [its getting started page](htt
 
 You can create a `.vscode/c_cpp_properties.json` file with `C/C++: Edit Configurations (JSON)` in the command box to customise how IntelliSense reads the repository (stuff like where to look for includes, flags, compiler defines, etc.) to make VSCode's IntelliSense plugin better able to understand the structure of the repository.
 
-Below is a good default one to use for this project's repository, for the oot-gc-eu-mq-dbg version specifically.
+Below is a good default one to use for this project's repository, for the gc-eu-mq-dbg version specifically.
 
 A more complete `c_cpp_properties.json` with configurations for all supported versions [can be found here](c_cpp_properties.json).
 
@@ -107,7 +107,7 @@ Add the following to (or create) the `.vscode/settings.json` file for VSCode to 
             "name": "Ares GDB (Linux)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/ntsc-1.2/oot-ntsc-1.2.elf",
+            "program": "${workspaceFolder}/build/ntsc-1.2/hackeroot-ntsc-1.2.elf",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "externalConsole": false,

@@ -47,7 +47,7 @@ def main():
     )
 
     mapfile = mapfile_parser.mapfile.MapFile()
-    mapfile_path = Path(f"build/{version}/oot-{version}.map")
+    mapfile_path = Path(f"build/{version}/hackeroot-{version}.map")
     mapfile.readMapFile(mapfile_path)
 
     map_symbols = set()

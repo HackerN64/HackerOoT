@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     VERSION = args.version
     DMATABLE_PATH = f"build/{VERSION}/dmadata_table_spec.h"
-    ROM_PATH = f"build/{VERSION}/oot-{VERSION}-compressed-{args.codec}.z64"
+    ROM_PATH = f"build/{VERSION}/hackeroot-{VERSION}-compressed-{args.codec}.z64"
     sceneFiles: list[DmaInfo] = []
     otherFiles: list[DmaInfo] = []
     allFiles: list[DmaInfo] = []
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     entryName = dmaTable[i + 1].removeprefix("DEFINE_DMA_ENTRY(").removesuffix(")").split(", ")[0]
     sceneFiles.append(DmaInfo(entryName, i + 1))
     
-    mapFile = f"oot-{VERSION}.map"
+    mapFile = f"hackeroot-{VERSION}.map"
     BUILTMAP = Path("build") / VERSION / mapFile
     mapPath = BUILTMAP
     with Capturing() as stdout:

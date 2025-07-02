@@ -340,13 +340,13 @@ def sym_info_main():
             Path("expected")
             / "build"
             / args.oot_version
-            / f"oot-{args.oot_version}.map"
+            / f"hackeroot-{args.oot_version}.map"
         )
         elf_path = (
             Path("expected")
             / "build"
             / args.oot_version
-            / f"oot-{args.oot_version}.elf"
+            / f"hackeroot-{args.oot_version}.elf"
         )
 
     if not map_path.exists():
