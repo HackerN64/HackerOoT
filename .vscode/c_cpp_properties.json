@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "oot-ntsc-1.2",
+            "name": "hackeroot-ntsc-1.2",
             "compilerArgs": [
                 "-m32"
             ],
@@ -26,7 +26,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-jp",
+            "name": "hackeroot-gc-jp",
             "compilerArgs": [
                 "-m32"
             ],
@@ -53,7 +53,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-jp-mq",
+            "name": "hackeroot-gc-jp-mq",
             "compilerArgs": [
                 "-m32"
             ],
@@ -80,7 +80,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-us",
+            "name": "hackeroot-gc-us",
             "compilerArgs": [
                 "-m32"
             ],
@@ -107,7 +107,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-us-mq",
+            "name": "hackeroot-gc-us-mq",
             "compilerArgs": [
                 "-m32"
             ],
@@ -134,7 +134,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-eu-mq-dbg",
+            "name": "hackeroot-gc-eu-mq-dbg",
             "compilerArgs": [
                 "-m32"
             ],
@@ -161,7 +161,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-eu",
+            "name": "hackeroot-gc-eu",
             "compilerArgs": [
                 "-m32"
             ],
@@ -188,7 +188,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-eu-mq",
+            "name": "hackeroot-gc-eu-mq",
             "compilerArgs": [
                 "-m32"
             ],
@@ -215,7 +215,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-jp-ce",
+            "name": "hackeroot-gc-jp-ce",
             "compilerArgs": [
                 "-m32"
             ],

@@ -41,7 +41,7 @@ code. In order to keep the code readable, we should try to minimize the amount o
     ```
 
     where `N` is the number of cores on your machine. This will build into
-    `build/ntsc-1.2` and produce `build/ntsc-1.2/oot-ntsc-1.2.z64`.
+    `build/ntsc-1.2` and produce `build/ntsc-1.2/hackeroot-ntsc-1.2.z64`.
 
     If you later want to delete all output files, run
 
