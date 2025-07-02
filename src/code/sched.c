@@ -727,6 +727,10 @@ void Sched_Init(Scheduler* sc, void* stack, OSPri priority, u8 viModeType, UNK_T
     bzero(sc, sizeof(Scheduler));
     sc->isFirstSwap = true;
 
+#if ENABLE_PROFILER
+    Profiler_Init();
+#endif
+
     // Create message queues for receiving interrupt events and tasks
     osCreateMesgQueue(&sc->interruptQueue, sc->interruptMsgBuf, ARRAY_COUNT(sc->interruptMsgBuf));
     osCreateMesgQueue(&sc->cmdQueue, sc->cmdMsgBuf, ARRAY_COUNT(sc->cmdMsgBuf));

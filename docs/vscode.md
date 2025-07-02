@@ -37,7 +37,7 @@ Many of VS Code's other shortcuts can be found on [its getting started page](htt
 
 You can create a `.vscode/c_cpp_properties.json` file with `C/C++: Edit Configurations (JSON)` in the command box to customise how IntelliSense reads the repository (stuff like where to look for includes, flags, compiler defines, etc.) to make VSCode's IntelliSense plugin better able to understand the structure of the repository.
 
-Below is a good default one to use for this project's repository, for the oot-gc-eu-mq-dbg version specifically.
+Below is a good default one to use for this project's repository, for the gc-eu-mq-dbg version specifically.
 
 A more complete `c_cpp_properties.json` with configurations for all supported versions [can be found here](c_cpp_properties.json).
 
@@ -45,7 +45,7 @@ A more complete `c_cpp_properties.json` with configurations for all supported ve
 {
     "configurations": [
         {
-            "name": "hackeroot-mq",
+            "name": "ntsc-1.2",
             "compilerArgs": [
                 "-m32" // Removes integer truncation warnings with gbi macros
             ],
@@ -53,14 +53,13 @@ A more complete `c_cpp_properties.json` with configurations for all supported ve
                 "include",
                 "include/libc",
                 "src",
-                "build/hackeroot-mq",
+                "build/ntsc-1.2",
                 ".",
-                "extracted/hackeroot-mq"
+                "extracted/ntsc-1.2"
             ],
             "defines": [
                 "_LANGUAGE_C", // For gbi.h
                 "ENABLE_HACKEROOT=1",
-                "RELEASE_ROM=0",
                 "COMPRESS_YAZ=1",
                 // Version-specific
                 "OOT_VERSION=GC_EU_MQ_DBG",
@@ -108,7 +107,7 @@ Add the following to (or create) the `.vscode/settings.json` file for VSCode to 
             "name": "Ares GDB (Linux)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/hackeroot-mq/hackeroot-mq.elf",
+            "program": "${workspaceFolder}/build/ntsc-1.2/hackeroot-ntsc-1.2.elf",
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "externalConsole": false,
