@@ -1,4 +1,4 @@
-#ifdef __GNUC__
+#if (defined __GNUC__) && !(defined TARGET_GC)
 .set gp=64
 #endif
 #include "ultra64/asm.h"
