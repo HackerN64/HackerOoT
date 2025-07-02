@@ -2,7 +2,7 @@
 #include "libc64/math64.h"
 #include "olib.h"
 #include "z_lib.h"
-#include "z64olib.h"
+#include "olib.h"
 
 /**
  * Calculates the distances between `a` and `b`

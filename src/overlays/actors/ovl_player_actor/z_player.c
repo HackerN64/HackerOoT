@@ -50,6 +50,7 @@
 #include "play_state.h"
 #include "save.h"
 #include "skin_matrix.h"
+#include "z_debug.h"
 
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/object_link_child/object_link_child.h"

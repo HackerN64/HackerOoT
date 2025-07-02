@@ -1,6 +1,6 @@
 #include "example_scene.h"
-#include "z64cutscene.h"
-#include "z64cutscene_commands.h"
+#include "cutscene.h"
+#include "cutscene_commands.h"
 
 
 CutsceneData gExampleCS[] = {

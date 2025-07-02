@@ -10,7 +10,7 @@
 #include "regs.h"
 #include "sys_matrix.h"
 #include "terminal.h"
-#include "z64view.h"
+#include "view.h"
 #include "widescreen.h"
 #include "idle.h"
 #include "translation.h"

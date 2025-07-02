@@ -3,7 +3,7 @@
 #include "sys_ucode.h"
 #include "segment_symbols.h"
 #include "occlusionplanes.h"
-#include "z64dma.h"
+#include "dma.h"
 
 #if !ENABLE_F3DEX3
 u64* sDefaultGSPUCodeText = gspF3DZEX2_NoN_PosLight_fifoTextStart;
