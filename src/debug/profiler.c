@@ -1,5 +1,5 @@
 #include "debug/profiler.h"
-#include "z64thread.h"
+#include "thread.h"
 #include "libu64/gfxprint.h"
 #include "gfxalloc.h"
 #include "gfx.h"

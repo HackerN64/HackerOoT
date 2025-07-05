@@ -1,5 +1,5 @@
 #include "ultra64/internal.h"
-#include "z64thread.h"
+#include "thread.h"
 #include "array_count.h"
 #include "stack.h"
 #include "ultra64.h"

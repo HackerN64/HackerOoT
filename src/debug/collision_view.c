@@ -1,7 +1,7 @@
 #include "debug.h"
 #include "fault.h"
-#include "z64camera.h"
-#include "z64play.h"
+#include "camera.h"
+#include "play_state.h"
 #include "gfx.h"
 #include "sys_matrix.h"
 

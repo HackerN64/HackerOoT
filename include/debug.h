@@ -8,6 +8,7 @@
 #include "debug/collision_view.h"
 #include "debug/menu.h"
 #include "debug/profiler.h"
+#include "z_math.h"
 
 #define DEBUG_PRINT_VAR(var) PRINTF("%s: %d\n", #var, var)
 

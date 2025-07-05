@@ -3,7 +3,7 @@
 #include "config.h"
 #include "gfx.h"
 #include "segmented_address.h"
-#include "z64play.h"
+#include "play_state.h"
 
 #if ENABLE_ANIMATED_MATERIALS
 

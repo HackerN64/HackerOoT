@@ -1,11 +1,10 @@
 #ifndef MESSAGE_DATA_FMT_H
 #define MESSAGE_DATA_FMT_H
 
-#include "config.h"
-
-#include "z64save.h" // For highscores
-#include "z64item.h" // For item ids
+#include "save.h" // For highscores
+#include "item.h" // For item ids
 #include "sfx.h" // For sfx ids
+#include "config.h"
 
 /*
  * Text control characters

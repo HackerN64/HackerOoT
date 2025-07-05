@@ -5,7 +5,7 @@
 #include "ultra64.h"
 #include "libu64/gfxprint.h"
 #include "libu64/pad.h"
-#include "z64math.h"
+#include "math.h"
 #include "color.h"
 
 struct GraphicsContext;

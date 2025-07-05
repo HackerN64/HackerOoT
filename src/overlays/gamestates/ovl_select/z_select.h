@@ -10,13 +10,13 @@
 #include "seqcmd.h"
 #include "sequence.h"
 #include "terminal.h"
-#include "z64save.h"
-#include "z64sram.h"
+#include "save.h"
+#include "sram.h"
 #include "map_select_state.h"
 
 #include "color.h"
-#include "z64scene.h"
-#include "z64play.h"
+#include "scene.h"
+#include "play_state.h"
 #include "sfx.h"
 
 #if PLATFORM_N64
