@@ -10,6 +10,7 @@
 *.md     text eol=lf
 *.txt    text eol=lf
 *.make   text eol=lf
+*.mk     text eol=lf
 Makefile text eol=lf
 
 # Set browser syntax highlighting for certain files
