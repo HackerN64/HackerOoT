@@ -1,5 +1,18 @@
-# Auto detect text files and perform LF normalization
-* text eol=lf
+# Apply LF only to known text/code file types
+*.c      text eol=lf
+*.h      text eol=lf
+*.cpp    text eol=lf
+*.hpp    text eol=lf
+*.sh     text eol=lf
+*.py     text eol=lf
+*.js     text eol=lf
+*.json   text eol=lf
+*.md     text eol=lf
+*.txt    text eol=lf
+*.make   text eol=lf
+*.mk     text eol=lf
+Makefile text eol=lf
+
 # Set browser syntax highlighting for certain files
 *.inc linguist-language=gas
 *.seq linguist-language=gas
