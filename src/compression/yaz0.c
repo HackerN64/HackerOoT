@@ -3,7 +3,7 @@
 #include "compression.h"
 #include "alignment.h"
 #include "ultra64.h"
-#include "z64dma.h"
+#include "dma.h"
 
 #if COMPRESS_YAZ
 

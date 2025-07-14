@@ -10,7 +10,7 @@
 #include "regs.h"
 #include "rumble.h"
 #include "ultra64.h"
-#include "z64debug.h"
+#include "debug.h"
 
 // ENABLE_CAMERA_DEBUGGER
 typedef struct DebugCamTextBufferEntry {

@@ -15,7 +15,7 @@
 #include "regs.h"
 #include "controller.h"
 #include "gfxalloc.h"
-#include "z64save.h"
+#include "save.h"
 #include "sfx.h"
 #include "debug.h"
 #include "gfx.h"

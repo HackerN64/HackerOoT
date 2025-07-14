@@ -24,13 +24,13 @@
 #include "translation.h"
 #include "versions.h"
 #include "z_lib.h"
-#include "z64audio.h"
-#include "z64cutscene.h"
-#include "z64frame_advance.h"
-#include "z64environment.h"
-#include "z64play.h"
-#include "z64player.h"
-#include "z64save.h"
+#include "audio.h"
+#include "cutscene.h"
+#include "frame_advance.h"
+#include "environment.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
 
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/gameplay_field_keep/gameplay_field_keep.h"
@@ -238,8 +238,8 @@ s16 sLightningFlashAlpha;
 s16 sSunDepthTestX;
 s16 sSunDepthTestY;
 
-#pragma increment_block_number "gc-eu:192 gc-eu-mq:192 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
-                               "ique-cn:128 ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:192 pal-1.1:192"
+#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
+                               "ique-cn:128 ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
 
 LightNode* sNGameOverLightNode;
 LightInfo sNGameOverLightInfo;
@@ -1423,13 +1423,6 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
     }
 }
 
-//! TODO: remove once this is documented
-#if OOT_VERSION == NTSC_1_2
-#define MOON_VTX gMoonDL_04039410_Vtx
-#else
-#define MOON_VTX gMoonDL_04038F70_Vtx
-#endif
-
 void Environment_DrawSunAndMoon(PlayState* play) {
     // This replace gMoonDL in gameplay_keep. TODO make this gMoonDL once asset replacement is sophisticated enough
     static Gfx sMoonDL[] = {
@@ -1443,7 +1436,7 @@ void Environment_DrawSunAndMoon(PlayState* play) {
                          G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_PRIM_A | G_RM_XLU_SURF2),
         gsDPLoadTextureBlock(gMoonTex, G_IM_FMT_IA, G_IM_SIZ_8b, 64, 64, 0, G_TX_NOMIRROR | G_TX_WRAP,
                              G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD),
-        gsSPVertex(MOON_VTX, 4, 0),
+        gsSPVertex(&gMoonVtx[0], 4, 0),
         gsSP2Triangles(0, 1, 2, 0, 1, 3, 2, 0),
         gsSPEndDisplayList(),
     };
@@ -2648,7 +2641,7 @@ void Environment_StopStormNatureAmbience(PlayState* play) {
 
 void Environment_WarpSongLeave(PlayState* play) {
     gWeatherMode = WEATHER_MODE_CLEAR;
-    gSaveContext.save.cutsceneIndex = 0;
+    gSaveContext.save.cutsceneIndex = CS_INDEX_NONE;
     gSaveContext.respawnFlag = -3;
     play->nextEntranceIndex = gSaveContext.respawn[RESPAWN_MODE_RETURN].entranceIndex;
     play->transitionTrigger = TRANS_TRIGGER_START;

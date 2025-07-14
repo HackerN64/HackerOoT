@@ -1,7 +1,7 @@
 #include "debug.h"
 #include "config.h"
 #include "controller.h"
-#include "z64math.h"
+#include "math.h"
 #include "gfx.h"
 
 #if ENABLE_HACKER_DEBUG

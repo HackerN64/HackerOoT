@@ -4,10 +4,10 @@
 #include "segment_symbols.h"
 #include "translation.h"
 #include "versions.h"
-#include "z64dma.h"
-#include "z64font.h"
-#include "z64message.h"
 #include "widescreen.h"
+#include "dma.h"
+#include "font.h"
+#include "message.h"
 
 /**
  * Loads a texture from kanji for the requested `character` into the character texture buffer

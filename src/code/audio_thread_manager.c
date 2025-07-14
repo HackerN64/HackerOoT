@@ -10,7 +10,7 @@
 #include "printf.h"
 #include "regs.h"
 #include "translation.h"
-#include "z64dma.h"
+#include "dma.h"
 
 void AudioMgr_NotifyTaskDone(AudioMgr* audioMgr) {
     AudioTask* task = audioMgr->rspTask;

@@ -1,6 +1,6 @@
 #include "debug.h"
-#include "z64collision_check.h"
-#include "z64play.h"
+#include "collision_check.h"
+#include "play_state.h"
 
 #if ENABLE_HACKER_DEBUG
 

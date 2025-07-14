@@ -608,24 +608,21 @@ void Color_RGBA8_Copy(Color_RGBA8* dst, Color_RGBA8* src) {
  * Play a sound effect at the center of the screen.
  */
 void Sfx_PlaySfxCentered(u16 sfxId) {
-    Audio_PlaySfxGeneral(sfxId, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
-                         &gSfxDefaultReverb);
+    SFX_PLAY_CENTERED(sfxId);
 }
 
 /**
  * Play a sound effect at the center of the screen. Identical to `Sfx_PlaySfxCentered`.
  */
 void Sfx_PlaySfxCentered2(u16 sfxId) {
-    Audio_PlaySfxGeneral(sfxId, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
-                         &gSfxDefaultReverb);
+    SFX_PLAY_CENTERED(sfxId);
 }
 
 /**
  * Play a sound effect at the requested position.
  */
 void Sfx_PlaySfxAtPos(Vec3f* projectedPos, u16 sfxId) {
-    Audio_PlaySfxGeneral(sfxId, projectedPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
-                         &gSfxDefaultReverb);
+    SFX_PLAY_AT_POS(projectedPos, sfxId);
 }
 
 s32 Math_StepToIImpl(s32 start, s32 target, s32 step) {

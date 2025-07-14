@@ -1,7 +1,7 @@
 #include "ultra64.h"
 #include "stack.h"
 #include "ultra64/internal.h"
-#include "z64thread.h"
+#include "thread.h"
 
 OSDevMgr __osPiDevMgr = { 0 };
 

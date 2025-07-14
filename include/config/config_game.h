@@ -66,7 +66,7 @@
 */
 #define ENABLE_VINE_CLIMB_FIX true
 
-// Make `Camera_KeepOn4`'s `case 9`, mimic how getting an item looks in Majora's Mask (Perspective from above)
+// Make `Camera_KeepOn4`'s `case CAM_ITEM_TYPE_9`, mimic how getting an item looks in Majora's Mask (Perspective from above)
 #define MM_GETITEM_CAM false
 
 /**

@@ -3,10 +3,10 @@
 
 #include "ultra64/ultratypes.h"
 #include "config.h"
-#include "z64game.h"
-#include "z64environment.h"
-#include "z64skybox.h"
-#include "z64view.h"
+#include "game.h"
+#include "environment.h"
+#include "skybox.h"
+#include "view.h"
 
 void Helpers_LoadDefinedScene(GameState* gameState);
 void Helpers_LoadTitleScreen(GameState* gameState);
