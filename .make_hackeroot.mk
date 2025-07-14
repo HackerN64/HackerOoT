@@ -190,7 +190,7 @@ patch:
 # Create F3DEX3 bps patches
 # Steps:
 #		- run Flips and create the patches
-create_f3dex3_patches: F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
+create_f3dex3_patches: $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/f3dzex2.data
 	$(call print_no_args,Creating F3DEX3 patches...)
 	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/F3DEX3_BrW.code $(F3DEX3_DIR)/F3DEX3_BrW.code.bps
 	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.data $(F3DEX3_DIR)/F3DEX3_BrW.data $(F3DEX3_DIR)/F3DEX3_BrW.data.bps
