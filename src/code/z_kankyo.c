@@ -1424,7 +1424,7 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
 }
 
 //! TODO: remove once this is documented
-#if VERSION == NTSC_1_2
+#if OOT_VERSION == NTSC_1_2
 #define MOON_VTX gMoonDL_04039410_Vtx
 #else
 #define MOON_VTX gMoonDL_04038F70_Vtx
