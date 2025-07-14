@@ -16,6 +16,9 @@
 #ifndef GBI_F3DEX3_H
 #define GBI_F3DEX3_H
 
+/* Don't remove this block which defines F3DEX3 as F3DEX2. Other headers in your
+romhack codebase will likely assume that if the microcode is not F3DEX2, it is
+F3DEX1 or older, thus breaking F3DEX3 compatibility even more. */
 #ifdef F3DEX_GBI_2
 #undef F3DEX_GBI_2
 #endif
@@ -27,6 +30,13 @@
 #define F3DEX_GBI_2  1
 #define F3DEX_GBI_PL 1
 #define F3DEX_GBI_3  1
+
+/* This is only included to check correctness of OS_YIELD_DATA_SIZE. If you are
+sure this is correct in your project, you can remove this include. */
+#include "ultra64/sptask.h"
+#if OS_YIELD_DATA_SIZE != 0xC00
+#error "F3DEX3 requires OS_YIELD_DATA_SIZE == 0xC00"
+#endif
 
 #ifdef REQUIRE_SEMICOLONS_AFTER_GBI_COMMANDS
 /* OoT style, semicolons required after using macros, cleaner code. If modding
@@ -63,7 +73,8 @@ of warnings if you use -Wpedantic. */
  */
 /*#define G_SPECIAL_3       0xD3  no-op in F3DEX2 */
 /*#define G_SPECIAL_2       0xD4  no-op in F3DEX2 */
-/*#define G_SPECIAL_1       0xD5  triggered MVP recalculation, not supported in F3DEX3 */
+/*#define G_SPECIAL_1       0xD5  triggered MVP recalculation in F3DEX2 for debug */
+#define G_FLUSH             0xD4
 #define G_MEMSET            0xD5
 #define G_DMA_IO            0xD6
 #define G_TEXTURE           0xD7
@@ -578,8 +589,12 @@ longer a multiple of 8 (DMA word). This was not used in any command anyway. */
 #define G_MDSFT_PIPELINE        23
 
 /* G_SETOTHERMODE_H gPipelineMode */
-#define G_PM_1PRIMITIVE     (1 << G_MDSFT_PIPELINE)
 #define G_PM_NPRIMITIVE     (0 << G_MDSFT_PIPELINE)
+#ifdef KAZE_GBI_HACKS
+#define G_PM_1PRIMITIVE     G_PM_NPRIMITIVE
+#else
+#define G_PM_1PRIMITIVE     (1 << G_MDSFT_PIPELINE)
+#endif
 
 /* G_SETOTHERMODE_H gSetCycleType */
 #define G_CYC_1CYCLE        (0 << G_MDSFT_CYCLETYPE)
@@ -1193,6 +1208,18 @@ typedef union {
     Vp_t vp;
     long long int force_structure_alignment[2];
 } Vp;
+
+/*
+ * Light types, encoded in the kc coefficient.
+ */
+/**
+ * Standard directional light. Equivalent to kc = 0.
+ */
+#define LIGHT_TYPE_DIR 0
+/**
+ * Identifies the light as a point light, with x acting as the kc coefficient.
+ */
+#define LIGHT_TYPE_POINT(x) x
 
 /**
  * Light structure.
@@ -2028,6 +2055,26 @@ typedef union {
  */
 
 /*
+ * Command where only the first word (containing the command byte) is used,
+ * saving one CPU instruction to write the second word as zero.
+ */
+#define g1Word(pkt, c, l)                   \
+_DW({                                       \
+    Gfx *_g = (Gfx *)(pkt);                 \
+    _g->words.w0 = (_SHIFTL((c), 24,  8) |  \
+                    _SHIFTL((l),  0, 24));  \
+})
+/*
+ * The static version has to fill in the second word with something.
+ */
+#define gs1Word(c, l)       \
+{                           \
+   (_SHIFTL((c), 24,  8) |  \
+    _SHIFTL((l),  0, 24)),  \
+    0                       \
+}
+
+/*
  * DMA macros
  */
 #define gDma0p(pkt, c, s, l)                \
@@ -2084,8 +2131,8 @@ _DW({                                                   \
     (unsigned int)(adrs)                \
 }
 
-#define gSPNoOp(pkt)    gDma0p(pkt, G_SPNOOP, 0, 0)
-#define gsSPNoOp()      gsDma0p(    G_SPNOOP, 0, 0)
+#define gSPNoOp(pkt)    g1Word(pkt, G_SPNOOP, 0)
+#define gsSPNoOp()      gs1Word(    G_SPNOOP, 0)
 
 /**
  * @brief macro which inserts a matrix operation at the end display list.
@@ -2258,8 +2305,8 @@ _DW({                                               \
 #define _gSPBranchListRaw(pkt,dl,hint)   gDma1p(pkt, G_DL, dl, hint, G_DL_NOPUSH)
 #define _gsSPBranchListRaw(   dl,hint)   gsDma1p(    G_DL, dl, hint, G_DL_NOPUSH)
 
-#define _gSPEndDisplayListRaw(pkt,hint)  gDma0p(pkt, G_ENDDL, 0, hint)
-#define _gsSPEndDisplayListRaw(hint)     gsDma0p(    G_ENDDL, 0, hint)
+#define _gSPEndDisplayListRaw(pkt,hint)  g1Word(pkt, G_ENDDL, hint)
+#define _gsSPEndDisplayListRaw(hint)     gs1Word(    G_ENDDL, hint)
 
 /*
  * Converts a total expected count of DL commands to a number of bytes to
@@ -2430,27 +2477,36 @@ _DW({                                                   \
 /**
  * @copydetails gSPMemset
  */
-#define gsSPMemset(pkt, dram, value, size)    \
+#define gsSPMemset(dram, value, size)    \
     gsImmp1(G_RDPHALF_1, ((value) & 0xFFFF)), \
     gsDma0p(G_MEMSET, (dram), ((size) & 0xFFFFF0))
 
 /**
- * RSP short command (no DMA required) macros
+ * Flush the internal DMEM buffer of RDP commands to the RDP FIFO in DRAM,
+ * causing the RDP to immediately begin executing any previous commands.
+ * Without SPFlush, the RDP may not begin executing any given command until up
+ * to 46 more RDP commands after that have been processed by the RSP (or the
+ * final end of the display list for the frame).
+ *
+ * The primary use case is if your frame's display list begins with clearing
+ * the framebuffer and/or Z buffer, and then proceeds to things which take
+ * significant time on the RSP before emitting many RDP commands, such as
+ * matrix and lighting for drawing a character model. You should insert SPFlush
+ * after the first large buffer clear to cause the RDP to begin executing those
+ * long operations immediately while the RSP is continuing to work. If you are
+ * clearing both the framebuffer and Z buffer, you would usually only need one
+ * SPFlush after the first of these two DPFillRect commands.
  */
-#define gImmp0(pkt, c)                  \
-_DW({                                   \
-    Gfx *_g = (Gfx *)(pkt);             \
-                                        \
-    _g->words.w0 = _SHIFTL((c), 24, 8); \
-})
+#define gSPFlush(pkt)   g1Word(pkt, G_FLUSH, 0)
 
 /**
- * @copydetails gImmp0
+ * @copydetails gSPFlush
  */
-#define gsImmp0(c)      \
-{                       \
-    _SHIFTL((c), 24, 8) \
-}
+#define gsSPFlush()    gs1Word(     G_FLUSH, 0)
+
+/*
+ * RSP short command (no DMA required) macros
+ */
 
 #define gImmp1(pkt, c, p0)              \
 _DW({                                   \
@@ -2464,58 +2520,6 @@ _DW({                                   \
 {                           \
     _SHIFTL((c), 24, 8),    \
     (unsigned int)(p0)      \
-}
-
-#define gImmp2(pkt, c, p0, p1)              \
-_DW({                                       \
-    Gfx *_g = (Gfx *)(pkt);                 \
-                                            \
-    _g->words.w0 = _SHIFTL((c), 24, 8);     \
-    _g->words.w1 = (_SHIFTL((p0), 16, 16) | \
-                    _SHIFTL((p1),  8,  8)); \
-})
-
-#define gsImmp2(c, p0, p1)  \
-{                           \
-    _SHIFTL((c), 24, 8),    \
-   (_SHIFTL((p0), 16, 16) | \
-    _SHIFTL((p1),  8,  8))  \
-}
-
-#define gImmp3(pkt, c, p0, p1, p2)          \
-_DW({                                       \
-    Gfx *_g = (Gfx *)(pkt);                 \
-                                            \
-    _g->words.w0 = _SHIFTL((c), 24, 8);     \
-    _g->words.w1 = (_SHIFTL((p0), 16, 16) | \
-                    _SHIFTL((p1),  8,  8) | \
-                    _SHIFTL((p2),  0,  8)); \
-})
-
-#define gsImmp3(c, p0, p1, p2)  \
-{                               \
-    _SHIFTL((c), 24, 8),        \
-   (_SHIFTL((p0), 16, 16) |     \
-    _SHIFTL((p1),  8,  8) |     \
-    _SHIFTL((p2),  0,  8))      \
-}
-
-#define gImmp21(pkt, c, p0, p1, dat)        \
-_DW({                                       \
-    Gfx *_g = (Gfx *)(pkt);                 \
-                                            \
-    _g->words.w0 = (_SHIFTL((c),  24,  8) | \
-                    _SHIFTL((p0),  8, 16) | \
-                    _SHIFTL((p1),  0,  8)); \
-    _g->words.w1 = (unsigned int) (dat);    \
-})
-
-#define gsImmp21(c, p0, p1, dat)    \
-{                                   \
-   (_SHIFTL((c),  24,  8) |         \
-    _SHIFTL((p0),  8, 16) |         \
-    _SHIFTL((p1),  0,  8)),         \
-    (unsigned int) (dat)            \
 }
 
 #define gMoveWd(pkt, index, offset, data) \
@@ -2559,22 +2563,13 @@ _DW({                                       \
 /**
  * 1 Triangle
  */
-#define gSP1Triangle(pkt, v0, v1, v2, flag)                 \
-_DW({                                                       \
-    Gfx *_g = (Gfx *)(pkt);                                 \
-    _g->words.w0 = (_SHIFTL(G_TRI1, 24, 8) |                \
-                    __gsSP1Triangle_w1f(v0, v1, v2, flag)); \
-    _g->words.w1 = 0;                                       \
-})
+#define gSP1Triangle(pkt, v0, v1, v2, flag) \
+    g1Word(pkt, G_TRI1, __gsSP1Triangle_w1f(v0, v1, v2, flag))
 /**
  * @copydetails gSP1Triangle
  */
 #define gsSP1Triangle(v0, v1, v2, flag)     \
-{                                           \
-   (_SHIFTL(G_TRI1, 24, 8) |                \
-    __gsSP1Triangle_w1f(v0, v1, v2, flag)), \
-    0                                       \
-}
+    gs1Word(G_TRI1, __gsSP1Triangle_w1f(v0, v1, v2, flag))
 
 /**
  * 1 Quadrangle
@@ -5232,19 +5227,8 @@ _DW({                                               \
     _SHIFTL(sB,  0,  8))                        \
 }
 
-#define gDPNoParam(pkt, cmd)            \
-_DW({                                   \
-    Gfx *_g = (Gfx *)(pkt);             \
-                                        \
-    _g->words.w0 = _SHIFTL(cmd, 24, 8); \
-    _g->words.w1 = 0;                   \
-})
-
-#define gsDPNoParam(cmd)    \
-{                           \
-    _SHIFTL(cmd, 24, 8),    \
-    0                       \
-}
+#define gDPNoParam(pkt, cmd)   g1Word(pkt, cmd, 0)
+#define gsDPNoParam(cmd)      gs1Word(     cmd, 0)
 
 #define gDPParam(pkt, cmd, param)       \
 _DW({                                   \
@@ -5473,4 +5457,4 @@ _DW({                                                   \
 #define gDPNoOpCloseDisp(pkt, file, line)   gDma1p(pkt, G_NOOP, file, line, 8)
 #define gDPNoOpTag3(pkt, type, data, n)     gDma1p(pkt, G_NOOP, data, n, type)
 
-#endif /* GBI_F3DEX3_H */
+#endif /* F3DEX3_H */
