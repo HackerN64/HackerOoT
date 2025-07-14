@@ -53,7 +53,7 @@ jobs:
 
     # Setup the project
     - name: Setup
-      run: make setup -j$(nproc)
+      run: make setup -j$(nproc) VERSION=${{ matrix.version }}
 
     # Build the project
     - name: Build
