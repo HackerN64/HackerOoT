@@ -16,6 +16,9 @@
 #ifndef GBI_F3DEX3_H
 #define GBI_F3DEX3_H
 
+/* Don't remove this block which defines F3DEX3 as F3DEX2. Other headers in your
+romhack codebase will likely assume that if the microcode is not F3DEX2, it is
+F3DEX1 or older, thus breaking F3DEX3 compatibility even more. */
 #ifdef F3DEX_GBI_2
 #undef F3DEX_GBI_2
 #endif
@@ -27,6 +30,13 @@
 #define F3DEX_GBI_2  1
 #define F3DEX_GBI_PL 1
 #define F3DEX_GBI_3  1
+
+/* This is only included to check correctness of OS_YIELD_DATA_SIZE. If you are
+sure this is correct in your project, you can remove this include. */
+#include "ultra64/sptask.h"
+#if OS_YIELD_DATA_SIZE != 0xC00
+#error "F3DEX3 requires OS_YIELD_DATA_SIZE == 0xC00"
+#endif
 
 #ifdef REQUIRE_SEMICOLONS_AFTER_GBI_COMMANDS
 /* OoT style, semicolons required after using macros, cleaner code. If modding
@@ -63,7 +73,8 @@ of warnings if you use -Wpedantic. */
  */
 /*#define G_SPECIAL_3       0xD3  no-op in F3DEX2 */
 /*#define G_SPECIAL_2       0xD4  no-op in F3DEX2 */
-/*#define G_SPECIAL_1       0xD5  triggered MVP recalculation, not supported in F3DEX3 */
+/*#define G_SPECIAL_1       0xD5  triggered MVP recalculation in F3DEX2 for debug */
+#define G_FLUSH             0xD4
 #define G_MEMSET            0xD5
 #define G_DMA_IO            0xD6
 #define G_TEXTURE           0xD7
@@ -175,32 +186,32 @@ of warnings if you use -Wpedantic. */
 /* See SPMatrix */
 /**
  * @brief specifies whether the matrix operation will be performed on the projection or the model view matrix.
- *
+ * 
  */
 #define G_MTX_MODELVIEW    0x00    /* matrix types */
 /**
  * @brief @copybrief G_MTX_MODELVIEW
- *
+ * 
  */
 #define G_MTX_PROJECTION   0x04
 /**
  * @brief concatenates the matrix (m) with the top of the matrix stack.
- *
+ * 
  */
 #define G_MTX_MUL          0x00    /* concat or load */
 /**
  * @brief loads the matrix (m) onto the top of the matrix stack.
- *
+ * 
  */
 #define G_MTX_LOAD         0x02
 /**
  * @brief specifies do not push the matrix stack prior to matrix operations
- *
+ * 
  */
 #define G_MTX_NOPUSH       0x00    /* push or not */
 /**
  * @brief specifies push the matrix stack prior to matrix operations
- *
+ * 
  */
 #define G_MTX_PUSH         0x01
 
@@ -293,23 +304,23 @@ longer a multiple of 8 (DMA word). This was not used in any command anyway. */
 
 /**
  * @brief changes the color of the vertex. The val parameter is interpreted as 4 bytes: red (high byte), green, blue, and alpha (low byte).
- *
+ * 
  */
 #define G_MWO_POINT_RGBA         0x10
 /**
  * @brief changes the S and T values (texture coordinates of the vertex). The high 16 bits of val specify the S coordinate, and the low 16 bits specify the T coordinate. Each coordinate is an S10.5 number.
- *
+ * 
  */
 #define G_MWO_POINT_ST           0x14
 /**
  * @brief change the screen coordinates of the vertex. The high 16 bits of val specify the X coordinate and the low 16 bits specify the Y coordinate. Both coordinates are S13.2 numbers with 0,0 being the upper-left of the screen, positive X going right, and positive Y going down.
- *
+ * 
  * @deprecated to use, won't work if the tri gets clipped.
  */
 #define G_MWO_POINT_XYSCREEN     0x18
 /**
  * @brief changes the screen Z coordinate of the vertex. The entire 32-bit val is taken as the new screen Z value. It is a 16.16 number in the range 0x00000000 to 0x03ff0000.
- *
+ * 
  * @deprecated to use, won't work if the tri gets clipped.
  */
 #define G_MWO_POINT_ZSCREEN      0x1C
@@ -578,8 +589,12 @@ longer a multiple of 8 (DMA word). This was not used in any command anyway. */
 #define G_MDSFT_PIPELINE        23
 
 /* G_SETOTHERMODE_H gPipelineMode */
-#define G_PM_1PRIMITIVE     (1 << G_MDSFT_PIPELINE)
 #define G_PM_NPRIMITIVE     (0 << G_MDSFT_PIPELINE)
+#ifdef KAZE_GBI_HACKS
+#define G_PM_1PRIMITIVE     G_PM_NPRIMITIVE
+#else
+#define G_PM_1PRIMITIVE     (1 << G_MDSFT_PIPELINE)
+#endif
 
 /* G_SETOTHERMODE_H gSetCycleType */
 #define G_CYC_1CYCLE        (0 << G_MDSFT_CYCLETYPE)
@@ -1136,7 +1151,7 @@ typedef union {
  * F3DEX2 and all previous F3D microcodes.
  * - Max Z value changed from 0x03FF to 0x7FFF
  * - Y scale is negated (offset is not negated)
- *
+ * 
  * The reason for these changes is as follows. Apparently, SGI initially
  * intended the actual range of Z values in RDP triangle commands to be 0x03FF
  * (integer, plus 16 fractional bits). So this was set up in the GBI and games
@@ -1146,18 +1161,18 @@ typedef union {
  * when writing out the Z coefficients to the RDP. Because of the way this
  * writing was implemented, there did not appear to be any performance penalty
  * to this scaling, so it just worked.
- *
+ * 
  * F3DEX3 moves this scale up to the viewport affine transformation step at the
  * end of the vertex processing, which allows an extra 5 bits of Z precision to
  * be retained during some intermediate calculations for the attributes in the
  * triangle write. In EX2, precision is sometimes lost in these calculations,
  * leading to Z fighting. In addition, F3DEX3 optimizes the Z writing, saving a
  * few cycles per written tri.
- *
+ * 
  * As far as the Y scale being negated, F3DEX2 did this at the cost of 3
  * instructions, but doing this on the CPU when creating the viewport is
  * effectively free.
- *
+ * 
  * Both of these changes were made together--and this macro was changed to an
  * error instead of just being changed to the new value--in order to maximize
  * the chances the developer actually changes their viewport. Some game
@@ -1193,6 +1208,18 @@ typedef union {
     Vp_t vp;
     long long int force_structure_alignment[2];
 } Vp;
+
+/*
+ * Light types, encoded in the kc coefficient.
+ */
+/**
+ * Standard directional light. Equivalent to kc = 0.
+ */
+#define LIGHT_TYPE_DIR 0
+/**
+ * Identifies the light as a point light, with x acting as the kc coefficient.
+ */
+#define LIGHT_TYPE_POINT(x) x
 
 /**
  * Light structure.
@@ -2028,6 +2055,26 @@ typedef union {
  */
 
 /*
+ * Command where only the first word (containing the command byte) is used,
+ * saving one CPU instruction to write the second word as zero.
+ */
+#define g1Word(pkt, c, l)                   \
+_DW({                                       \
+    Gfx *_g = (Gfx *)(pkt);                 \
+    _g->words.w0 = (_SHIFTL((c), 24,  8) |  \
+                    _SHIFTL((l),  0, 24));  \
+})
+/*
+ * The static version has to fill in the second word with something.
+ */
+#define gs1Word(c, l)       \
+{                           \
+   (_SHIFTL((c), 24,  8) |  \
+    _SHIFTL((l),  0, 24)),  \
+    0                       \
+}
+
+/*
  * DMA macros
  */
 #define gDma0p(pkt, c, s, l)                \
@@ -2084,12 +2131,12 @@ _DW({                                                   \
     (unsigned int)(adrs)                \
 }
 
-#define gSPNoOp(pkt)    gDma0p(pkt, G_SPNOOP, 0, 0)
-#define gsSPNoOp()      gsDma0p(    G_SPNOOP, 0, 0)
+#define gSPNoOp(pkt)    g1Word(pkt, G_SPNOOP, 0)
+#define gsSPNoOp()      gs1Word(    G_SPNOOP, 0)
 
 /**
  * @brief macro which inserts a matrix operation at the end display list.
- *
+ * 
  * It inserts a matrix operation in the display list. The parameters allow you to select which matrix stack to use (projection or model view), where to load or concatenate, and whether or not to push the matrix stack. The following parameters are bit OR'ed together:
  * - @ref G_MTX_PROJECTION @ref G_MTX_MODELVIEW - @copybrief G_MTX_MODELVIEW
  * - @ref G_MTX_MUL - @copybrief G_MTX_MUL
@@ -2098,7 +2145,7 @@ _DW({                                                   \
  * - @ref G_MTX_PUSH - @copybrief G_MTX_PUSH
  * # Matrix Format
  * The format of the fixed-point matrices may seem a little awkward to the application programmer because it is optimized for the RSP geometry engine. This unusual format is hidden in the graphics utility libraries and not usually exposed to the application programmer, but in some cases (static matrix declarations or direct element manipulation) it is necessary to understand the format.
- *
+ * 
  * The integer and fractional components of the matrix elements are separated. The first 8 words (16 shorts) hold the 16-bit integer elements, the second 8 words (16 shorts) hold the 16-bit fractional elements. The fact that the Mtx type is declared as a long [4][4] array is slightly misleading. For example, to declare a static identity matrix, use code similar to this:
  * ```#include "gbi.h"
  * static Mtx ident =
@@ -2108,7 +2155,7 @@ _DW({                                                   \
  * 0x00000001, 0x00000000,
  * 0x00000000, 0x00010000,
  * 0x00000000, 0x00000001,
- *
+ * 
  * // fractional portion:
  * 0x00000000, 0x00000000,
  * 0x00000000, 0x00000000,
@@ -2119,12 +2166,12 @@ _DW({                                                   \
  * To force the translation elements of a matrix to be (10.5, 20.5, 30.5), use code similar to this:
  * ```
  * #include "gbi.h"
- *
+ * 
  * mat.m[1][2] =
  *    (10 << 16) | (20);
  * mat.m[1][3] =
  *    (30 << 16) | (1);
- *
+ * 
  * mat.m[3][2] =
  *    (0x8000 << 16) | (0x8000);
  * mat.m[3][3] =
@@ -2132,16 +2179,16 @@ _DW({                                                   \
  * ```
  * @note
  * Matrix concatenation in the RSP geometry engine is done using 32-bit integer arithmetic. A 32 x 32 bit multiply results in a 64-bit number. Only the middle 32 bits of this 64-bit result are kept for the new matrix. Therefore, when concatenating matrices, remember about the resulting fixed-point numerical error.
- *
+ * 
  * For example, to retain maximum precision, the number ranges must be similar. Large-scale and translate parameters can decrease the transformation precision. Because rotation and projection matrices require quite a bit of fractional accuracy, these fractions may get tossed out if multiplied against large integer numbers.
- *
+ * 
  * Each concatenation results in the rounding of the LSB of each matrix term. This means that each concatenation injects 1/2 LSB of error into the matrix. To keep full precision, concatenate matrices in floating-point on the processor and just load the result into the RSP.
- *
+ * 
  * # Performance
  * Each @ref G_MTX_MODELVIEW matrix operation has an implicit matrix multiplication even if you specify @ref G_MTX_LOAD. This is the combined model view (M) and projection (P) matrix that is necessary for the vertex transformation to use a single matrix during transformation.
- *
+ * 
  * You can optimize this by concatenating modeling matrices on the CPU and then putting the viewing (V) and projection matrices on the projection stack. By doing this, you only incur the single MxVP matrix concatenation each time you load a modeling matrix. Furthermore, the application has more information on how to do a cheap hack for modeling matrix concatenation. For example, if you want to combine a single axis rotation with a translation, just place the coefficients in the correct entries of the resulting matrix.
- *
+ * 
  * @param m is the pointer to the 4x4 fixed-point matrix (see note below about format)
  * @param p are the bit OR'd parameters to the matrix macro (@ref G_MTX_PROJECTION, @ref G_MTX_MODELVIEW, @ref G_MTX_MUL, @ref G_MTX_LOAD, @ref G_MTX_NOPUSH)
  */
@@ -2149,7 +2196,7 @@ _DW({                                                   \
         gDma2p((pkt),G_MTX, (m), sizeof(Mtx), (p) ^ G_MTX_PUSH, 0)
 /**
  * @brief macro which inserts a matrix operation in a static display list.
- *
+ * 
  * @copydetails gSPMatrix
  */
 #define gsSPMatrix(m, p) \
@@ -2157,12 +2204,12 @@ _DW({                                                   \
 
 /**
  * @brief macro which pops one of the matrix stacks at the end display list.
- *
+ * 
  * It pops `num` of the matrix stacks. The model view stack can be up to 10 matrices deep. The projection stack is 1 matrix deep, so it cannot be popped.
- *
+ * 
  * @note
  * If the stack is empty, the macro is ignored.
- *
+ * 
  * @param n is the flag field that identifies which matrix stack to pop:
  * - @ref G_MTX_MODELVIEW pops the modeling/viewing matrix stack
  * - @ref G_MTX_PROJECTION pops the projection matrix stack (NOT IMPLEMENTED)
@@ -2171,18 +2218,18 @@ _DW({                                                   \
 #define gSPPopMatrixN(pkt, n, num) gDma2p((pkt), G_POPMTX, (num) * 64, 64, 2, 0)
 /**
  * @brief macro which pops one of the matrix stacks in a static display list.
- *
+ * 
  * @copydetails gSPPopMatrixN
  */
 #define gsSPPopMatrixN(n, num)     gsDma2p(      G_POPMTX, (num) * 64, 64, 2, 0)
 /**
  * @brief macro which pops one of the matrix stacks at the end display list.
- *
+ * 
  * It pops one of the matrix stacks. The model view stack can be up to 10 matrices deep. The projection stack is 1 matrix deep, so it cannot be popped.
- *
+ * 
  * @note
  * If the stack is empty, the macro is ignored.
- *
+ * 
  * @param n is the flag field that identifies which matrix stack to pop:
  * - @ref G_MTX_MODELVIEW pops the modeling/viewing matrix stack
  * - @ref G_MTX_PROJECTION pops the projection matrix stack (NOT IMPLEMENTED)
@@ -2190,32 +2237,32 @@ _DW({                                                   \
 #define gSPPopMatrix(pkt, n)       gSPPopMatrixN((pkt), (n), 1)
 /**
  * @brief macro which pops one of the matrix stacks in a static display list.
- *
+ * 
  * @copydetails gSPPopMatrix
  */
 #define gsSPPopMatrix(n)           gsSPPopMatrixN(      (n), 1)
 
 /**
  * @brief macro which loads an internal vertex buffer in the RSP with points that are used by @ref gSP1Triangle macros to generate polygons at the end display list.
- *
- *
+ * 
+ * 
  * It loads an internal vertex buffer in the RSP with points that are used by @ref gSP1Triangle macros to generate polygons. This vertex cache can hold up to 56 vertices, and the vertex loading can begin at any entry (index) within the cache. The vertex coordinates (x,y,z) are encoded in signed 2's complement, 16-bit integers. The texture coordinates (s,t) are encoded in S10.5 format. A vertex either has a color or a normal (for shading). These values are 8-bit values. The colors and alphas are treated as 8-bit unsigned values (0-255), but the normals are treated as 8-bit signed values (-128 to 127). Therefore, the appropriate member of the union to use (.v. or .n.) depends on whether you are using colors or normals.
- *
+ * 
  * Normal coordinates range from -1.0 to 1.0. A value of -1.0 is represented as -128, and a value of 1.0 is represented as 128, but because the maximum positive value of a signed byte is 127, a value of 1.0 can't really be represented. Therefore, 0.992 is the maximum representable positive value, which is good enough for this purpose.
- *
+ * 
  * The flag value is used for the packed normals feature to store normals with octahedral encoding.
- *
+ * 
  * The coordinates (x,y,z) are transformed using the current 4x4 projection and model view matrices, and (s,t) are transformed using the scale defined by gSPTexture.
- *
+ * 
  * # Example
  * To load vertex cache entry 2,3,4, use this code:
  * ```c
  * gSPVertex(glistp++, v, 3, 2);
  * ```
- *
+ * 
  * @note
  * Because the RSP geometry transformation engine uses a vertex list with triangle list architecture, it is quite powerful. A simple one-triangle macro retains least performance compared to @ref gSP2Triangles or the new 5 tris commands in EX3 (@ref gSPTriStrip, @ref gSPTriFan).
- *
+ * 
  * @param v is the pointer to the vertex list (segment address)
  * @param n is the number of vertices
  * @param v0 is the load vertex by index vo(0~55) in vertex buffer
@@ -2232,7 +2279,7 @@ _DW({                                               \
 
 /**
  * @brief macro which loads an internal vertex buffer in the RSP with points that are used by gSP1Triangle macros to generate polygons in a static display list.
- *
+ * 
  * @copydetails gSPVertex
  */
 #define gsSPVertex(v, n, v0)        \
@@ -2258,8 +2305,8 @@ _DW({                                               \
 #define _gSPBranchListRaw(pkt,dl,hint)   gDma1p(pkt, G_DL, dl, hint, G_DL_NOPUSH)
 #define _gsSPBranchListRaw(   dl,hint)   gsDma1p(    G_DL, dl, hint, G_DL_NOPUSH)
 
-#define _gSPEndDisplayListRaw(pkt,hint)  gDma0p(pkt, G_ENDDL, 0, hint)
-#define _gsSPEndDisplayListRaw(hint)     gsDma0p(    G_ENDDL, 0, hint)
+#define _gSPEndDisplayListRaw(pkt,hint)  g1Word(pkt, G_ENDDL, hint)
+#define _gsSPEndDisplayListRaw(hint)     gs1Word(    G_ENDDL, hint)
 
 /*
  * Converts a total expected count of DL commands to a number of bytes to
@@ -2416,7 +2463,7 @@ _DW({                                               \
  * clear the color framebuffer or Z-buffer faster than the RDP can in fill mode.
  * SPMemset overwrites the DMEM vertex buffer, so vertices loaded before this
  * command cannot be used after it (though this would not normally be done).
- *
+ * 
  * dram: Segmented or physical start address. Must be aligned to 16 bytes.
  * value: 16-bit value to fill the memory with. e.g. 0 for color, 0xFFFC for Z.
  * size: Size in bytes to fill, must be nonzero and a multiple of 16 bytes.
@@ -2430,27 +2477,36 @@ _DW({                                                   \
 /**
  * @copydetails gSPMemset
  */
-#define gsSPMemset(pkt, dram, value, size)    \
+#define gsSPMemset(dram, value, size)    \
     gsImmp1(G_RDPHALF_1, ((value) & 0xFFFF)), \
     gsDma0p(G_MEMSET, (dram), ((size) & 0xFFFFF0))
 
 /**
- * RSP short command (no DMA required) macros
+ * Flush the internal DMEM buffer of RDP commands to the RDP FIFO in DRAM,
+ * causing the RDP to immediately begin executing any previous commands.
+ * Without SPFlush, the RDP may not begin executing any given command until up
+ * to 46 more RDP commands after that have been processed by the RSP (or the
+ * final end of the display list for the frame).
+ * 
+ * The primary use case is if your frame's display list begins with clearing
+ * the framebuffer and/or Z buffer, and then proceeds to things which take
+ * significant time on the RSP before emitting many RDP commands, such as
+ * matrix and lighting for drawing a character model. You should insert SPFlush
+ * after the first large buffer clear to cause the RDP to begin executing those
+ * long operations immediately while the RSP is continuing to work. If you are
+ * clearing both the framebuffer and Z buffer, you would usually only need one
+ * SPFlush after the first of these two DPFillRect commands.
  */
-#define gImmp0(pkt, c)                  \
-_DW({                                   \
-    Gfx *_g = (Gfx *)(pkt);             \
-                                        \
-    _g->words.w0 = _SHIFTL((c), 24, 8); \
-})
+#define gSPFlush(pkt)   g1Word(pkt, G_FLUSH, 0)
 
 /**
- * @copydetails gImmp0
+ * @copydetails gSPFlush
  */
-#define gsImmp0(c)      \
-{                       \
-    _SHIFTL((c), 24, 8) \
-}
+#define gsSPFlush()    gs1Word(     G_FLUSH, 0)
+
+/*
+ * RSP short command (no DMA required) macros
+ */
 
 #define gImmp1(pkt, c, p0)              \
 _DW({                                   \
@@ -2466,63 +2522,11 @@ _DW({                                   \
     (unsigned int)(p0)      \
 }
 
-#define gImmp2(pkt, c, p0, p1)              \
-_DW({                                       \
-    Gfx *_g = (Gfx *)(pkt);                 \
-                                            \
-    _g->words.w0 = _SHIFTL((c), 24, 8);     \
-    _g->words.w1 = (_SHIFTL((p0), 16, 16) | \
-                    _SHIFTL((p1),  8,  8)); \
-})
-
-#define gsImmp2(c, p0, p1)  \
-{                           \
-    _SHIFTL((c), 24, 8),    \
-   (_SHIFTL((p0), 16, 16) | \
-    _SHIFTL((p1),  8,  8))  \
-}
-
-#define gImmp3(pkt, c, p0, p1, p2)          \
-_DW({                                       \
-    Gfx *_g = (Gfx *)(pkt);                 \
-                                            \
-    _g->words.w0 = _SHIFTL((c), 24, 8);     \
-    _g->words.w1 = (_SHIFTL((p0), 16, 16) | \
-                    _SHIFTL((p1),  8,  8) | \
-                    _SHIFTL((p2),  0,  8)); \
-})
-
-#define gsImmp3(c, p0, p1, p2)  \
-{                               \
-    _SHIFTL((c), 24, 8),        \
-   (_SHIFTL((p0), 16, 16) |     \
-    _SHIFTL((p1),  8,  8) |     \
-    _SHIFTL((p2),  0,  8))      \
-}
-
-#define gImmp21(pkt, c, p0, p1, dat)        \
-_DW({                                       \
-    Gfx *_g = (Gfx *)(pkt);                 \
-                                            \
-    _g->words.w0 = (_SHIFTL((c),  24,  8) | \
-                    _SHIFTL((p0),  8, 16) | \
-                    _SHIFTL((p1),  0,  8)); \
-    _g->words.w1 = (unsigned int) (dat);    \
-})
-
-#define gsImmp21(c, p0, p1, dat)    \
-{                                   \
-   (_SHIFTL((c),  24,  8) |         \
-    _SHIFTL((p0),  8, 16) |         \
-    _SHIFTL((p1),  0,  8)),         \
-    (unsigned int) (dat)            \
-}
-
 #define gMoveWd(pkt, index, offset, data) \
     gDma1p((pkt), G_MOVEWORD, data, (offset & 0xFFF), index)
 #define gsMoveWd(    index, offset, data) \
     gsDma1p(      G_MOVEWORD, data, (offset & 0xFFF), index)
-
+    
 #define gMoveHalfwd(pkt, index, offset, data) \
     gDma1p((pkt), G_MOVEWORD, data, (offset & 0xFFF) | G_MW_HALFWORD_FLAG, index)
 #define gsMoveHalfwd(    index, offset, data) \
@@ -2559,22 +2563,13 @@ _DW({                                       \
 /**
  * 1 Triangle
  */
-#define gSP1Triangle(pkt, v0, v1, v2, flag)                 \
-_DW({                                                       \
-    Gfx *_g = (Gfx *)(pkt);                                 \
-    _g->words.w0 = (_SHIFTL(G_TRI1, 24, 8) |                \
-                    __gsSP1Triangle_w1f(v0, v1, v2, flag)); \
-    _g->words.w1 = 0;                                       \
-})
+#define gSP1Triangle(pkt, v0, v1, v2, flag) \
+    g1Word(pkt, G_TRI1, __gsSP1Triangle_w1f(v0, v1, v2, flag))
 /**
  * @copydetails gSP1Triangle
  */
 #define gsSP1Triangle(v0, v1, v2, flag)     \
-{                                           \
-   (_SHIFTL(G_TRI1, 24, 8) |                \
-    __gsSP1Triangle_w1f(v0, v1, v2, flag)), \
-    0                                       \
-}
+    gs1Word(G_TRI1, __gsSP1Triangle_w1f(v0, v1, v2, flag))
 
 /**
  * 1 Quadrangle
@@ -2713,14 +2708,14 @@ other segments. */
 
 /**
  * @brief Load new MVP matrix directly.
- *
+ * 
  * This is no longer supported as there is no MVP matrix in F3DEX3.
  * @deprecated
  */
 #define gSPForceMatrix(pkt, mptr) gSPNoOp(pkt)
 /**
  * @brief Load new MVP matrix directly.
- *
+ * 
  * @copydetails gSPForceMatrix
  */
 #define gsSPForceMatrix(mptr)    gsSPNoOp()
@@ -2732,7 +2727,7 @@ other segments. */
  * the given type (ambient, directional, point). They are u16s.
  * You can set each independently or two adjacent values with one moveword.
  * A two-command macro is also provided to set all three values.
- *
+ * 
  * When building the model, you must encode the amount of ambient occlusion at
  * each vertex--effectively the shadow map for the model--in vertex alpha, where
  * 00 means darkest and FF means lightest. Then, the factors set with the
@@ -2741,19 +2736,19 @@ other segments. */
  * means that in the darkest parts of the model, the ambient light intensity
  * will be reduced by 50%, and in the lightest parts of the model, the ambient
  * light intensity won't be reduced at all.
- *
+ * 
  * The default is:
  * amb = 0xFFFF (ambient light fully affected by vertex alpha)
  * dir = 0xA000 (directional lights 62% affected by vertex alpha)
  * point = 0    (point lights not at all affected by vertex alpha)
- *
+ * 
  * Two reasons to use ambient occlusion rather than darkening the vertex colors:
  * - With ambient occlusion, the geometry can be fully lit up with point and/or
  *   directional lights, depending on your settings here.
  * - Ambient occlusion can be used with cel shading to create areas which are
  *   "darker" for the cel shading thresholds, but still have bright / white
  *   vertex colors.
- *
+ * 
  * Two reasons to use these factors to modify ambient occlusion rather than
  * just manually scaling and offsetting all the vertex alpha values:
  * - To allow the behavior to differ between ambient, directional, and point
@@ -2812,17 +2807,17 @@ _DW({                                         \
  * value. This is useful for making surfaces fade between transparent when
  * viewed straight-on and opaque when viewed at a large angle, or for applying a
  * fake "outline" around the border of meshes.
- *
+ * 
  * If using Fresnel, you need to set the camera world position whenever you set
  * the VP matrix, viewport, etc. See SPCameraWorld.
- *
+ * 
  * The RSP does:
  * s16 dotProduct = dot(vertex normal, camera pos - vertex pos);
  * dotProduct = abs(dotProduct); // 0 = points to side, 7FFF = points at or away
  * s32 factor = ((scale * dotProduct) >> 15) + offset;
  * s16 result = clamp(factor << 8, 0, 7FFF);
  * color_or_alpha = result >> 7;
- *
+ * 
  * At dotMax, color_or_alpha = FF, result = 7F80, factor = 7F
  * At dotMin, color_or_alpha = 00, result = 0, factor = 0
  * 7F = ((scale * dotMax) >> 15) + offset
@@ -2832,7 +2827,7 @@ _DW({                                         \
  *           scale = 3F8000 / (dotMax - dotMin)                <--
  * offset = -(((3F8000 / (dotMax - dotMin)) * dotMin) >> 15)
  * offset = -((7F * dotMin) / (dotMax - dotMin))               <--
- *
+ * 
  * To convert in the opposite direction:
  * ((7F - offset) << 15) / scale = dotMax
  * ((00 - offset) << 15) / scale = dotMin
@@ -2885,13 +2880,13 @@ _DW({                                         \
     gsMoveWd(G_MW_FX, G_MWO_ATTR_OFFSET_S, \
         (_SHIFTL((s), 16, 16) | _SHIFTL((t), 0, 16)))
 
-
+    
 /**
  * Alpha compare culling. Optimization for cel shading, could also be used for
  * other scenarios where lots of tris are being drawn with alpha compare.
- *
+ * 
  * If mode == G_ALPHA_COMPARE_CULL_DISABLE, tris are drawn normally.
- *
+ * 
  * Otherwise:
  * - "vertex alpha" means the post-transform alpha value at each vertex being
  *   sent to the RDP. This may be the original model vertex alpha, fog, light
@@ -2900,7 +2895,7 @@ _DW({                                         \
  *   tris once and want to write all pixels where shade alpha >= thresh. Then
  *   you change color settings and draw tris again, and want to write all other
  *   pixels, i.e. where shade alpha < thresh.
- *
+ * 
  * For the light pass:
  * - Set blend color alpha to thresh
  * - Set CC alpha cycle 1 (or only cycle) to (shade alpha - 0) * tex alpha + 0
@@ -2909,7 +2904,7 @@ _DW({                                         \
  * - Set mode = G_ALPHA_COMPARE_CULL_BELOW in SPAlphaCompareCull, and thresh
  * - The RSP will cull any tris where all three vertex alpha values (i.e. light
  *   level) are < thresh
- *
+ * 
  * For the dark pass:
  * - Set blend color alpha to 0x100 - thresh (yes, not 0xFF - thresh).
  * - Set CC alpha cycle 1 (or only cycle) to (1 - shade alpha) * tex alpha + 0
@@ -2918,7 +2913,7 @@ _DW({                                         \
  * - Set mode = G_ALPHA_COMPARE_CULL_ABOVE in SPAlphaCompareCull, and thresh
  * - The RSP will cull any tris where all three vertex alpha values (i.e. light
  *   level) are >= thresh
- *
+ * 
  * The idea is to cull tris early on the RSP which won't have any of their
  * fragments drawn on the RDP, to save RDP time and memory bandwidth.
  */
@@ -2935,14 +2930,14 @@ _DW({                                         \
 /**
  * Normals mode: How to handle transformation of vertex normals from model to
  * world space for lighting.
- *
+ * 
  * If mode = G_NORMALS_MODE_FAST, transforms normals from model space to world
  * space with the M matrix. This is correct if the object's transformation
  * matrix stack only included translations, rotations, and uniform scale (i.e.
  * same scale in X, Y, and Z); otherwise, if the transformation matrix has
  * nonuniform scale or shear, the lighting on the object will be somewhat
  * distorted.
- *
+ * 
  * If mode = G_NORMALS_MODE_AUTO, transforms normals from model space to world
  * space with M inverse transpose, which renders lighting correctly for the
  * object regardless of its transformation matrix (nonuniform scale or shear is
@@ -2953,7 +2948,7 @@ _DW({                                         \
  * happens effectively once per matrix, which is once per normal object or
  * separated limb or about twice per flex skeleton limb. So in a scene with lots
  * of complex skeletons, this may have a noticeable performance impact.
- *
+ * 
  * If mode = G_NORMALS_MODE_MANUAL, uses M inverse transpose for correct results
  * like G_NORMALS_MODE_AUTO, but it never internally computes M inverse
  * transpose. You have to upload M inverse transpose to the RSP using
@@ -2961,7 +2956,7 @@ _DW({                                         \
  * extra matrix uploads is much smaller than the overlay swaps, so if you can
  * efficiently compute M inverse transpose on the CPU, this may be faster than
  * G_NORMALS_MODE_AUTO.
- *
+ * 
  * Recommended to leave this set to G_NORMALS_MODE_FAST generally, and only set
  * it to G_NORMALS_MODE_AUTO for specific objects at times when they actually
  * have a nonuniform scale. For example, G_NORMALS_MODE_FAST for Mario
@@ -2980,13 +2975,13 @@ _DW({                                         \
  * material display list being run is the same as the last material, the texture
  * loads are automatically skipped the second time as they should already be in
  * TMEM.
- *
+ * 
  * This design generally works, but can break if you call a display list twice
  * but in between change a segment mapping so that a referenced image inside is
  * actually different the two times. In these cases, run the below command
  * between the two calls (e.g. when you change the segment) and the microcode
  * will not skip the second texture loads.
- *
+ * 
  * Internally, a material is defined to start with any set image command, and
  * end on any of the following: call, branch, return, vertex, all tri commands,
  * tex/fill rectangles, and successes on cull or branch w/z (which are usually
@@ -2996,7 +2991,7 @@ _DW({                                         \
  * address, i.e. we're executing the same material display list as the last
  * material, material cull mode is set. In this mode, load block, load tile, and
  * load TLUT all are skipped. This mode is cleared when the material ends.
- *
+ * 
  * This design has the benefit that it works correctly even with complex
  * materials, e.g. with two CI4 textures (four loads), whereas it would be
  * difficult to implement tracking all these loads separately. Furthermore, a
@@ -3021,7 +3016,7 @@ typedef union {
 
 /**
  * See SPNormalsMode. mtx is the address of a MITMtx (M inverse transpose).
- *
+ * 
  * The matrix values must be scaled down so that the matrix norm is <= 1,
  * i.e. multiplying this matrix by any vector length <= 1 must produce a vector
  * with length <= 1. Normally, M scales things down substantially, so M inverse
@@ -3043,28 +3038,28 @@ typedef union {
 
 /**
  * @brief You can use this macro to modify certain sections of a vertex after it has been sent to the RSP (by the gSPVertex macro).
- *
+ * 
  * This is an advanced macro. You need a good understanding of how vertices work in the RSP microcode before you use this macro (refer to gSPVertex).
- *
+ * 
  * You can use this macro to modify certain sections of a vertex after it has been sent to the RSP (by the gSPVertex macro). This is useful for vertices that are shared between two or more triangles that must have different properties when associated with one triangle versus the other triangle.
- *
+ * 
  * For example, you might have two adjacent triangles that both need smooth-shaded color, but one is smooth-shaded red-to-yellow and the other is smooth-shaded green-to-cyan. In this case, the vertex that is shared by both triangles is sent with red/yellow color by using the gSPVertex macro. The first triangle is drawn. Then, the gSPModifyVertex macro is used to change the color to green/cyan, and the second triangle is drawn.
 
  * The primary use of the gSPModifyVertex macro is to modify the texture coordinate of a vertex so that a vertex that is shared by two triangles with different textures and different texture coordinate spaces can contain the texture coordinate for the first texture and then be modified to contain the texture coordinate for the second texture.
- *
+ * 
  * It is faster to use the gSPModifyVertex macro than to send a new vertex macro with a different but similar vertex because no transformations or lighting are done to the vertex when you use the gSPModifyVertex macro.
- *
+ * 
  * The where argument specifies which part of the vertex is to be modified. It can hold one of the following values:
  * - @ref G_MWO_POINT_RGBA - @copybrief G_MWO_POINT_RGBA
  * - @ref G_MWO_POINT_ST - @copybrief G_MWO_POINT_ST
  * - @ref G_MWO_POINT_XYSCREEN - @copybrief G_MWO_POINT_XYSCREEN
  * - @ref G_MWO_POINT_ZSCREEN - @copybrief G_MWO_POINT_ZSCREEN
- *
+ * 
  * @note
  * Lighting is not performed after a gSPModifyVertex macro, so modifying the color of the vertex with @ref G_MWO_POINT_RGBA is just that - modifying the actual color that will be output. It is not a modification of normal values. This means it cannot be used to update vertex normals for lighting.
- *
+ * 
  * The S and T coordinates supplied in the gSPModifyVertex macro are never multiplied by the texture scale (from the gSPTexture macro), so you must pre-scale them before sending them. For example, if you want a texture scale of 1/2 (0x8000), make the S and T values sent with the gSPModifyVertex macro half the value of the equivalent values used with the gSPVertex macro.
- *
+ * 
  * # Example
  * To share a vertex between two triangles with different textures and texture coordinates, use this code:
  * ```c
@@ -3072,20 +3067,20 @@ typedef union {
  * gSPVertex(...);
  * // load texture of triangle 1
  * gDPLoadTextureBlock(...);
- *
+ * 
  * // draw triangle 1 using vertex #3
  * gSP1Triangle(glistp++, 1,2,3,0);
- *
+ * 
  * // change a value of vertex 3 to S=3.0 and T=2.5
  * gSPModifyVertex(glistp++, 3, G_MWO_POINT_ST, 0x00600050);
- *
+ * 
  * // load texture of triangle 2
  * gDPLoadTextureBlock(...);
- *
+ * 
  * // draw triangle 2 using vertex #3
  * gSP1Triangle(glistp++, 1,2,3,0);
  * ```
- *
+ * 
  * @param vtx specifies which of the RSP's vertices (0-55) to modify
  * @param where specifies which part of the vertex to modify (@ref G_MWO_POINT_RGBA, @ref G_MWO_POINT_ST, @ref G_MWO_POINT_XYSCREEN or @ref G_MWO_POINT_ZSCREEN)
  * @param val is the new value for the part of the vertex to be modified (a 32 bit integer number)
@@ -3101,7 +3096,7 @@ _DW({                                               \
 })
 /**
  * @brief You can use this macro to modify certain sections of a vertex after it has been sent to the RSP (by the gSPVertex macro).
- *
+ * 
  * @copydetails gSPModifyVertex
  */
 # define gsSPModifyVertex(vtx, where, val)  \
@@ -3364,7 +3359,7 @@ _DW({\
  * Lights2 myLights; // 2 dir/pos + 1 ambient
  * <code to fill in the fields of myLights>
  * gSPSetLights(POLY_OPA_DISP++, 2, myLights);
- *
+ * 
  * If you need to use a pointer, e.g. if the number of lights is variable at
  * runtime:
  * Light *lights = memory_allocate((numLights + 1) * sizeof(Light));
@@ -3373,7 +3368,7 @@ _DW({\
  * ...
  * lights[numLights].l.col = ambient_color();
  * gSPSetLights(POLY_OPA_DISP++, numLights, *lights); // <- NOTE DEREFERENCE
- *
+ * 
  * If you're wondering why this macro takes a name / dereference instead of a
  * pointer, it's for backwards compatibility.
  */
@@ -3439,7 +3434,7 @@ _DW({ \
  */
 #define gsSPLookAt(la) \
     gsDma2p(      G_MOVEMEM, (la), sizeof(LookAt), G_MV_LIGHT, 8)
-
+ 
 /**
  * These versions are deprecated, please use g*SPLookAt. The two directions
  * cannot be set independently anymore as they both fit within one memory word.
@@ -3496,11 +3491,11 @@ _DW({ \
  * geometry behind it is culled. You should create occlusion plane candidates
  * just behind walls and other large objects, and have your game engine pick
  * the most optimal one every frame to send to the RSP.
- *
+ * 
  * Computing the coefficients for the occlusion plane is far too complicated to
  * explain here. The reference implementation `guOcclusionPlane` is provided
  * separately.
- *
+ * 
  * o is the address of an OcclusionPlane struct
  */
 #define gSPOcclusionPlane(pkt, o) \
@@ -3885,7 +3880,7 @@ _DW({                                   \
 
 #define gDPSetEnvColor(pkt, r, g, b, a) \
             DPRGBColor(pkt, G_SETENVCOLOR,   r, g, b, a)
-
+            
 #ifdef KAZE_GBI_HACKS
 #define gsDPSetEnvColor(r, g, b, a) \
             gsSPNoOp()
@@ -3950,7 +3945,7 @@ _DW({                                                   \
  * the ambient light, 1 is the last directional / point light, etc. The RGB
  * color of the selected light is combined with the alpha specified in this
  * command as word 1 of a RDP command, and word 0 is specified in this command.
- * Specialized versions are provided below for prim color and fog color,
+ * Specialized versions are provided below for prim color and fog color, 
  * because these are the two versions needed for cel shading, but any RDP color
  * command could be specified this way.
  */
@@ -4039,18 +4034,18 @@ _DW({                                                   \
 
 /*
  * Define this to remove syncs from texture loading multi-command macros.
- *
+ * 
  * You should convert your romhack codebase to F3DEX3 without this defined
  * first, then once everything is stable, define it and fix any crashes or
  * graphical issues that arise.
- *
+ * 
  * How the syncs work: load, tile, and pipe sync all delay the RDP by fixed
  * numbers of cycles. It is the smallest number for load, a medium number for
  * tile, and the largest number for pipe. These syncs do NOT wait until
  * something is finished being used; they just stall for a fixed time.
  * (DPFullSync is different and DOES wait for writebacks to memory to be done;
  * that is not considered in this explanation.)
- *
+ * 
  * Syncs always happen after rendering something and before changing some
  * settings. In other words:
  * - gsSP2Triangles(), gsSPTextureRectangle(), etc.
@@ -4058,16 +4053,16 @@ _DW({                                                   \
  * - gsDPSetSomething()
  * You never need the opposite, i.e. you never need a sync after changing
  * settings but before rendering.
- *
+ * 
  * Which sync you use depends on which settings you are changing. If you are
  * doing a texture load (DPLoadBlock or DPLoadTile), you need a load sync (or
  * either of the other syncs which wait for even longer). If you are changing
  * tile settings, you need a tile sync (or pipe sync which is longer). If you
  * are changing CC, othermode, env color, or other things like that, you need
  * a pipe sync.
- *
+ * 
  * Display lists overall should be structured like:
- *
+ * 
  * - ...
  * - previous draw tris
  * - pipe sync
@@ -4077,13 +4072,13 @@ _DW({                                                   \
  * - pipe sync
  * - next material setup
  * - ...
- *
+ * 
  * In SM64, the pipe sync is at the end of each object or sub-object; in OoT
  * it is at the start of each display list. This ends up being the same thing
  * when the display lists are effectively concatenated: you have a pipe sync
  * after each set of rendering things, and before each new set of changing
  * settings.
- *
+ * 
  * If you are doing multitexture and/or CI texture loads, use a different tile
  * for each load, and then you don't need any syncs in the loads. As an extreme
  * example with two CI textures:
@@ -4106,7 +4101,7 @@ _DW({                                                   \
  * hand or they were vanilla DLs not using the multi-command macros, they may
  * need to be updated. (Then again, in that case the syncs are also written by
  * hand, so these syncs changes do not affect them.)
- *
+ * 
  * If you are writing GUI display lists with texture rectangle which look like
  * - load tex
  * - tex rect
@@ -5232,19 +5227,8 @@ _DW({                                               \
     _SHIFTL(sB,  0,  8))                        \
 }
 
-#define gDPNoParam(pkt, cmd)            \
-_DW({                                   \
-    Gfx *_g = (Gfx *)(pkt);             \
-                                        \
-    _g->words.w0 = _SHIFTL(cmd, 24, 8); \
-    _g->words.w1 = 0;                   \
-})
-
-#define gsDPNoParam(cmd)    \
-{                           \
-    _SHIFTL(cmd, 24, 8),    \
-    0                       \
-}
+#define gDPNoParam(pkt, cmd)   g1Word(pkt, cmd, 0)
+#define gsDPNoParam(cmd)      gs1Word(     cmd, 0)
 
 #define gDPParam(pkt, cmd, param)       \
 _DW({                                   \
@@ -5473,4 +5457,4 @@ _DW({                                                   \
 #define gDPNoOpCloseDisp(pkt, file, line)   gDma1p(pkt, G_NOOP, file, line, 8)
 #define gDPNoOpTag3(pkt, type, data, n)     gDma1p(pkt, G_NOOP, data, n, type)
 
-#endif /* GBI_F3DEX3_H */
+#endif /* F3DEX3_H */
