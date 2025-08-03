@@ -19,6 +19,7 @@
 #include "zelda_arena.h"
 #include "audio.h"
 #include "cutscene_spline.h"
+#include "z_debug.h"
 #include "debug.h"
 #include "olib.h"
 #include "play_state.h"
