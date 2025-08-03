@@ -39,7 +39,7 @@
 
 /**
  * @brief How much space is given to the object bank used for loading
- * actor objects. Vanilla is about `0xfa000`, ~0.98MB, though vanilla
+ * actor objects. Vanilla is about `0xFA000`, ~0.98MB, though vanilla
  * changes the value slightly depending on the scene
  */
 #define OBJECT_BANK_SIZE 0x200000
@@ -94,10 +94,6 @@
  * account for greater memory usage in other areas. Required for most
  * of the following memory increases to actually work.
  */
-#if IS_DEBUG_HEAP_ENABLED
-#define SYS_CFB_END 0x8044BE80
-#else
 #define SYS_CFB_END 0x80800000
-#endif
 
 #endif

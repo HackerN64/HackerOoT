@@ -8231,20 +8231,20 @@ Vec3s Camera_Update(Camera* camera) {
         } else if (camera->play->csCtx.state != CS_STATE_IDLE) {
             Cutscene_StopManual(camera->play, &camera->play->csCtx);
         }
-
-        // Debug cam update
-        if (gDebugCamEnabled) {
-            camera->play->view.fovy = D_8015BD80.fov;
-            DebugCamera_Update(&D_8015BD80, camera);
-            View_LookAt(&camera->play->view, &D_8015BD80.eye, &D_8015BD80.at, &D_8015BD80.unk_1C);
-            if (ENABLE_DEBUG_CAM_UPDATE) {
-                PRINTF("camera: debug out\n");
-            }
-            return D_8015BD80.sub.unk_104A;
-        }
-
-        OREG(0) &= ~8;
     }
+
+    // Debug cam update
+    if (gDebugCamEnabled) {
+        camera->play->view.fovy = D_8015BD80.fov;
+        DebugCamera_Update(&D_8015BD80, camera);
+        View_LookAt(&camera->play->view, &D_8015BD80.eye, &D_8015BD80.at, &D_8015BD80.unk_1C);
+        if (ENABLE_DEBUG_CAM_UPDATE) {
+            PRINTF("camera: debug out\n");
+        }
+        return D_8015BD80.sub.unk_104A;
+    }
+
+    OREG(0) &= ~8;
 #endif
 
     if (camera->status == CAM_STAT_UNK3) {

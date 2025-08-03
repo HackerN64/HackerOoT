@@ -1712,7 +1712,7 @@ void Play_Main(GameState* thisx) {
 
     D_8012D1F8 = &this->state.input[0];
 
-#ifndef NO_DEBUG_DISPLAY
+#if DEBUG_FEATURES && !NO_DEBUG_DISPLAY
     DebugDisplay_Init();
 #endif
 
