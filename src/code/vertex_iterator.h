@@ -1,0 +1,47 @@
+#ifndef VERTEX_ITERATOR_H
+#define VERTEX_ITERATOR_H
+
+#include "ultra64.h"
+#include "actor.h"
+#include "libc64/qrand.h"
+#include "libu64/debug.h"
+#include "array_count.h"
+#include "avoid_ub.h"
+#include "controller.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "letterbox.h"
+#include "map.h"
+#include "one_point_cutscene.h"
+#include "printf.h"
+#include "quake.h"
+#include "rand.h"
+#include "regs.h"
+#include "rumble.h"
+#include "sequence.h"
+#include "sfx.h"
+#include "sys_math.h"
+#include "sys_math3d.h"
+#include "sys_matrix.h"
+#include "ultra64.h"
+#include "versions.h"
+#include "z_en_item00.h"
+#include "z_lib.h"
+#include "zelda_arena.h"
+#include "audio.h"
+#include "debug.h"
+#include "effect.h"
+#include "lifemeter.h"
+#include "ocarina.h"
+#include "play_state.h"
+#include "save.h"
+#include "skin_matrix.h"
+#include "z_debug.h"
+#include "segmented_address.h"
+
+
+
+
+
+#endif
