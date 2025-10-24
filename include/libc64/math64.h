@@ -42,7 +42,7 @@ f32 Math_FAsinF(f32 x);
 /**
  * @return arccos(x) in radians, in [0,pi] range
  */
- 
+
 static inline f32 Math_FAcosF(f32 x) {
     return M_PI / 2 - Math_FAsinF(x);
 }
