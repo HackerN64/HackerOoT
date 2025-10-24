@@ -5,7 +5,6 @@
 s32 gUseAtanContFrac;
 #endif
 
-
 #if PLATFORM_N64
 f64 Math_FAbs(f64 x) {
     return x < 0.0 ? -x : x;
@@ -15,7 +14,6 @@ f32 Math_FAbsF(f32 x) {
     return x < 0.0f ? -x : x;
 }
 #endif
-
 
 #if !PLATFORM_N64
 /* Arctangent approximation using a Taylor series (one quadrant) */
@@ -210,4 +208,3 @@ f32 Math_FAtan2F(f32 y, f32 x) {
 f32 Math_FAsinF(f32 x) {
     return Math_FAtan2F(x, sqrtf(1.0f - SQ(x)));
 }
-
