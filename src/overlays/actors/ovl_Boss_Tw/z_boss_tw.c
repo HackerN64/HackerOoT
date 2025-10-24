@@ -3878,7 +3878,7 @@ void BossTw_TwinrovaDraw(Actor* thisx, PlayState* play2) {
 
         POLY_OPA_DISP = (this->work[FOG_TIMER] & 2) ? Gfx_SetFog(POLY_OPA_DISP, 255, 50, 0, 0, 900, 1099)
                                                     : Gfx_SetFog(POLY_OPA_DISP, (u32)this->fogR, (u32)this->fogG,
-                                                                  (u32)this->fogB, 0, this->fogNear, this->fogFar);
+                                                                 (u32)this->fogB, 0, this->fogNear, this->fogFar);
 
         Matrix_Push();
         SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
@@ -3887,7 +3887,7 @@ void BossTw_TwinrovaDraw(Actor* thisx, PlayState* play2) {
 
         Matrix_MultVec3f(&D_8094A9EC, &this->beamOrigin);
         POLY_OPA_DISP = Gfx_SetFog(POLY_OPA_DISP, play->lightCtx.fogColor[0], play->lightCtx.fogColor[1],
-                                    play->lightCtx.fogColor[2], 0, play->lightCtx.fogNear, 1000);
+                                   play->lightCtx.fogColor[2], 0, play->lightCtx.fogNear, 1000);
     }
 
     BossTw_DrawEffects(play);

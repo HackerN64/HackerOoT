@@ -119,5 +119,3 @@ void LogUtils_HungupThread(const char* name, int line) {
 #endif
     Fault_AddHungupAndCrash(name, line);
 }
-
-
