@@ -5,11 +5,6 @@
 s32 gUseAtanContFrac;
 #endif
 
-/**
- * @param angle radians
- * @return tan(angle)
- */
-
 
 #if PLATFORM_N64
 f64 Math_FAbs(f64 x) {
@@ -215,8 +210,4 @@ f32 Math_FAtan2F(f32 y, f32 x) {
 f32 Math_FAsinF(f32 x) {
     return Math_FAtan2F(x, sqrtf(1.0f - SQ(x)));
 }
-
-/**
- * @return arccos(x) in radians, in [0,pi] range
- */
 
