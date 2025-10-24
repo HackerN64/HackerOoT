@@ -26,17 +26,6 @@ void isPrintfInit(void) {
 }
 #endif
 
-void osSyncPrintfUnused(const char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-
-#if DEBUG_FEATURES
-    _Printf(is_proutSyncPrintf, NULL, fmt, args);
-#endif
-
-    va_end(args);
-}
-
 void osSyncPrintf(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);

@@ -189,8 +189,10 @@ u32 StackCheck_GetState(StackEntry* entry) {
     return ret;
 }
 
-u32 StackCheck_CheckAll(void) {
-    u32 ret = 0;
+
+u32 StackCheck_Check(StackEntry* entry) {
+    if (entry == NULL) {
+         u32 ret = 0;
     StackEntry* iter = sStackInfoListStart;
 
     while (iter) {
@@ -201,13 +203,7 @@ u32 StackCheck_CheckAll(void) {
         }
         iter = iter->next;
     }
-
     return ret;
-}
-
-u32 StackCheck_Check(StackEntry* entry) {
-    if (entry == NULL) {
-        return StackCheck_CheckAll();
     } else {
         return StackCheck_GetState(entry);
     }

@@ -120,9 +120,4 @@ void LogUtils_HungupThread(const char* name, int line) {
     Fault_AddHungupAndCrash(name, line);
 }
 
-void LogUtils_ResetHungup(void) {
-#if PLATFORM_N64 || DEBUG_FEATURES
-    osSyncPrintf("*** Reset ***\n");
-#endif
-    Fault_AddHungupAndCrash("Reset", 0);
-}
+

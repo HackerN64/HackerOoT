@@ -91,37 +91,6 @@ void Locale_Init(void) {
 #endif
 }
 
-void Locale_ResetRegion(void) {
-    gCurrentRegion = REGION_NULL;
-}
 
 #if DEBUG_FEATURES
-u32 func_80001F48(void) {
-    if (gCurrentRegion == OOT_REGION) {
-        return 0;
-    }
-
-    if (gPadMgr.validCtrlrsMask & 4) {
-        return 0;
-    }
-
-    return 1;
-}
-
-u32 func_80001F8C(void) {
-    if (gCurrentRegion == OOT_REGION) {
-        return 0;
-    }
-
-    if (gPadMgr.validCtrlrsMask & 4) {
-        return 1;
-    }
-
-    return 0;
-}
-
-// This function appears to be unused?
-u32 Locale_IsRegionNative(void) {
-    return gCurrentRegion == OOT_REGION;
-}
 #endif

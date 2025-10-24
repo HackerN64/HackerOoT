@@ -1011,7 +1011,7 @@ void func_80B0EDB8(PlayState* play, Color_RGBA8* arg1, s16 arg2, s16 arg3) {
         temp_f2 = 11500;
     }
 
-    POLY_OPA_DISP = Gfx_SetFog2(POLY_OPA_DISP, arg1->r, arg1->g, arg1->b, arg1->a, 0, (s16)temp_f2);
+    POLY_OPA_DISP = Gfx_SetFog(POLY_OPA_DISP, arg1->r, arg1->g, arg1->b, arg1->a, 0, (s16)temp_f2);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_sw.c", 2197);
 }
