@@ -36,7 +36,7 @@ void Sample_Draw(SampleState* this) {
         gSPMatrix(POLY_OPA_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     }
 
-    POLY_OPA_DISP = Gfx_SetFog2(POLY_OPA_DISP, 255, 255, 255, 0, 0, 0);
+    POLY_OPA_DISP = Gfx_SetFog(POLY_OPA_DISP, 255, 255, 255, 0, 0, 0);
     Gfx_SetupDL_25Opa(gfxCtx);
 
     gDPSetCycleType(POLY_OPA_DISP++, G_CYC_1CYCLE);

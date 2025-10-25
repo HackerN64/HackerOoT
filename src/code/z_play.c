@@ -240,8 +240,8 @@ Gfx* Play_SetFog(PlayState* this, Gfx* gfx) {
         fogA = (255 * (1000 - this->lightCtx.fogNear) + 25) / 50;
         fogA = CLAMP(fogA, 0, 255);
     }
-    return Gfx_SetFog2(gfx, this->lightCtx.fogColor[0], this->lightCtx.fogColor[1], this->lightCtx.fogColor[2], fogA,
-                       this->lightCtx.fogNear, 1000);
+    return Gfx_SetFog(gfx, this->lightCtx.fogColor[0], this->lightCtx.fogColor[1], this->lightCtx.fogColor[2], fogA,
+                      this->lightCtx.fogNear, 1000);
 }
 
 void Play_Destroy(GameState* thisx) {
