@@ -637,6 +637,9 @@ $(ROM): $(ELF)
 	@$(PRINT) "${GREEN}Rom Path: $(BLUE)$(ROM)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Build Author: $(BLUE)$(PACKAGE_AUTHOR)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Commit Author: $(BLUE)$(PACKAGE_COMMIT_AUTHOR)$(NO_COL)\n"
+ifeq ($(TESTSUITE_MODE),1)
+	@$(PRINT) "${GREEN}Made with HackerTestSuite$(NO_COL)\n"
+endif
 	@$(PRINT) "${BLINK}Build succeeded.\n$(NO_COL)"
 
 $(ROMC): $(ROM) $(ELF) $(BUILD_DIR)/compress_ranges.txt
