@@ -67,6 +67,9 @@ static const Color_RGBA8 sColors[] = {
 };
 
 static MapSelectEntry sScenes[] = {
+#if TESTSUITE_MODE
+#include "testsuite/map_select.h"
+#endif
 #if IS_DEBUG_BOOT_ENABLED
     { "Boot Menu", (void*)MapSelect_LoadDebugOpening, 0 },
 #endif
