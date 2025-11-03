@@ -1,8 +1,8 @@
+#include "gfx.h"
 #include "debug.h"
 #include "fault.h"
 #include "camera.h"
 #include "play_state.h"
-#include "gfx.h"
 #include "sys_matrix.h"
 
 #if ENABLE_HACKER_DEBUG

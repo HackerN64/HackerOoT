@@ -10,7 +10,17 @@
  * - improvement: add the possibility to remove the magic meter (draw "None"?)
  */
 
-#include "global.h"
+#include "gfx.h"
+#include "debug.h"
+#include "scene.h"
+#include "play_state.h"
+#include "controller.h"
+#include "save.h"
+#include "attributes.h"
+#include "build.h"
+#include "array_count.h"
+#include "printf.h"
+#include "gfx_setupdl.h"
 
 #include "assets/textures/parameter_static/parameter_static.h"
 #include "assets/textures/icon_item_24_static/icon_item_24_static.h"

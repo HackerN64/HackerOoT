@@ -8,6 +8,8 @@
 #include "audio.h"
 #include "play_state.h"
 #include "save.h"
+#include "gfx.h"
+#include "debug.h"
 
 /*
  * The following three arrays are effectively unused.

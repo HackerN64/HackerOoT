@@ -110,6 +110,10 @@ void InventoryEditor_Draw(InventoryEditor* this);
 bool InventoryEditor_Destroy(InventoryEditor* this);
 void InventoryEditor_Main(InventoryEditor* this);
 
+#define IS_IN_RANGE(val, min, max) ((val >= min) && (val <= max))
+#define TIMER_DECR(val, target, changeBy) (((val - changeBy) < target) ? target : (val > target) ? (val - changeBy) : val)
+#define TIMER_INCR(val, target, changeBy) (((val + changeBy) > target) ? target : (val < target) ? (val + changeBy) : val)
+
 // General
 #define INVEDITOR_PRINT_NEWLINE "\n  "
 #define INVEDITOR_ANIM_BASE_SPEED 16

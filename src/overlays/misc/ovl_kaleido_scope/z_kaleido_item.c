@@ -11,6 +11,7 @@
 #include "widescreen.h"
 #include "play_state.h"
 #include "save.h"
+#include "debug.h"
 
 #include "assets/textures/parameter_static/parameter_static.h"
 

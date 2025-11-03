@@ -9,6 +9,7 @@
 #include "ocarina.h"
 #include "play_state.h"
 #include "save.h"
+#include "debug.h"
 
 #include "assets/textures/parameter_static/parameter_static.h"
 #include "assets/textures/icon_item_static/icon_item_static.h"

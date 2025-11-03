@@ -3547,8 +3547,66 @@ void func_8008A994(InterfaceContext* interfaceCtx) {
     View_ApplyOrthoToOverlay(&interfaceCtx->view);
 }
 
+void Interface_DrawSmallKeyCounter(PlayState* play) {
+    InterfaceContext* interfaceCtx = &play->interfaceCtx;
+    s16 svar3;
+    s16 smallKeyPosY = 0;
+    u16 mapIndex = gSaveContext.mapIndex;
+
+    if (IS_INV_EDITOR_ACTIVE) {
+        smallKeyPosY = gDebug.invDebug.miscDebug.hudBottomPosY;
+
+        if (smallKeyPosY > 0) {
+            smallKeyPosY -= gDebug.invDebug.miscDebug.invertVal;
+        }
+
+        if (gDebug.invDebug.miscDebug.showMiscScreen) {
+            mapIndex = gDebug.invDebug.miscDebug.mapIndex;
+        }
+    }
+
+    OPEN_DISPS(play->state.gfxCtx, __FILE__, __LINE__);
+
+    if (gSaveContext.save.info.inventory.dungeonKeys[gSaveContext.mapIndex] >= 0) {
+        // Small Key Icon
+        gDPPipeSync(OVERLAY_DISP++);
+        gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 200, 230, 255, interfaceCtx->magicAlpha);
+        gDPSetEnvColor(OVERLAY_DISP++, 0, 0, 20, 255);
+        OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, gSmallKeyCounterIconTex, 16, 16, WIDE_INCR(26, -7), 190,
+                                      WIDE_INCR(16, -4), 16, 1 << 10, 1 << 10);
+
+        // Small Key Counter
+        gDPPipeSync(OVERLAY_DISP++);
+        gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 255, 255, 255, interfaceCtx->magicAlpha);
+        gDPSetCombineLERP(OVERLAY_DISP++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0,
+                          PRIMITIVE, 0);
+
+        interfaceCtx->counterDigits[2] = 0;
+        interfaceCtx->counterDigits[3] = gSaveContext.save.info.inventory.dungeonKeys[gSaveContext.mapIndex];
+
+        while (interfaceCtx->counterDigits[3] >= 10) {
+            interfaceCtx->counterDigits[2]++;
+            interfaceCtx->counterDigits[3] -= 10;
+        }
+
+        svar3 = 42;
+
+        if (interfaceCtx->counterDigits[2] != 0) {
+            OVERLAY_DISP =
+                Gfx_TextureI8(OVERLAY_DISP, ((u8*)gCounterDigit0Tex + (8 * 16 * interfaceCtx->counterDigits[2])), 8, 16,
+                              svar3, 190, 8, 16, 1 << 10, 1 << 10);
+            svar3 += 8;
+        }
+
+        OVERLAY_DISP = Gfx_TextureI8(OVERLAY_DISP, ((u8*)gCounterDigit0Tex + (8 * 16 * interfaceCtx->counterDigits[3])),
+                                     8, 16, svar3, 190, 8, 16, 1 << 10, 1 << 10);
+    }
+
+    CLOSE_DISPS(play->state.gfxCtx, __FILE__, __LINE__);
+}
+
 #if IS_INV_EDITOR_ENABLED || IS_EVENT_EDITOR_ENABLED
-#define CAN_DRAW_INTERFACE (pauseCtx->debugState == PAUSE_DEBUG_STATE_CLOSED)
+#define CAN_DRAW_INTERFACE (pauseCtx->debugState == PAUSE_DEBUG_STATE_CLOSED && !IS_INV_EDITOR_ACTIVE)
 #else
 #define CAN_DRAW_INTERFACE true
 #endif

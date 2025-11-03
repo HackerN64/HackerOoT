@@ -1106,7 +1106,7 @@ void KaleidoScope_SetupPageSwitch(PauseContext* pauseCtx, u8 pt) {
 }
 
 void KaleidoScope_HandlePageToggles(PauseContext* pauseCtx, Input* input) {
-    if ((pauseCtx->debugState == PAUSE_DEBUG_STATE_CLOSED) && CHECK_BTN_ALL(input->press.button, BTN_L)) {
+    if ((pauseCtx->debugState == PAUSE_DEBUG_STATE_CLOSED) && CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
 #if IS_INV_EDITOR_ENABLED
         pauseCtx->debugState = PAUSE_DEBUG_STATE_INVENTORY_EDITOR_OPENING;
 #endif
@@ -4831,7 +4831,7 @@ void KaleidoScope_Update(PlayState* play) {
 
     if (IS_INV_EDITOR_ENABLED && pauseCtx->state != PAUSE_STATE_SAVE_PROMPT && !IS_PAUSE_STATE_GAMEOVER(pauseCtx)) {
         if (!IS_INV_EDITOR_ACTIVE && CHECK_BTN_ALL(play->state.input[0].press.button, BTN_L) &&
-            (pauseCtx->debugState == 0)) {
+            (pauseCtx->debugState == PAUSE_DEBUG_STATE_CLOSED)) {
             gDebug.invDebug.state = INVEDITOR_STATE_INIT;
         }
 
