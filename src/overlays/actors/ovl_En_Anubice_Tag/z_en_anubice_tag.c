@@ -5,9 +5,17 @@
  */
 
 #include "z_en_anubice_tag.h"
-#include "terminal.h"
+#include "overlays/actors/ovl_En_Anubice/z_en_anubice.h"
 
-#define FLAGS ACTOR_FLAG_4
+#include "printf.h"
+#include "regs.h"
+#include "terminal.h"
+#include "translation.h"
+#include "z_lib.h"
+#include "debug_display.h"
+#include "play_state.h"
+
+#define FLAGS ACTOR_FLAG_UPDATE_CULLING_DISABLED
 
 void EnAnubiceTag_Init(Actor* thisx, PlayState* play);
 void EnAnubiceTag_Destroy(Actor* thisx, PlayState* play);
@@ -33,8 +41,9 @@ void EnAnubiceTag_Init(Actor* thisx, PlayState* play) {
     EnAnubiceTag* this = (EnAnubiceTag*)thisx;
 
     PRINTF("\n\n");
-    // "Anubis control tag generated"
-    PRINTF(VT_FGCOL(GREEN) "☆☆☆☆☆ アヌビス制御タグ発生 ☆☆☆☆☆ %d\n" VT_RST, this->actor.params);
+    PRINTF(VT_FGCOL(GREEN) T("☆☆☆☆☆ アヌビス制御タグ発生 ☆☆☆☆☆ %d\n", "☆☆☆☆☆ Anubis control tag spawn ☆☆☆☆☆ %d\n")
+               VT_RST,
+           this->actor.params);
 
     if (this->actor.params < -1) {
         this->actor.params = 0;

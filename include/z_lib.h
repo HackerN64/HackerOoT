@@ -1,9 +1,9 @@
 #ifndef Z_LIB_H
 #define Z_LIB_H
 
-#include "libc/stddef.h"
-#include "padmgr.h"
-#include "z64math.h"
+#include "stddef.h"
+#include "libu64/pad.h"
+#include "z_math.h"
 #include "color.h"
 
 void Lib_MemSet(u8* dest, size_t len, u8 val);
@@ -40,5 +40,9 @@ void Color_RGBA8_Copy(Color_RGBA8* dst, Color_RGBA8* src);
 void Sfx_PlaySfxCentered(u16 sfxId);
 void Sfx_PlaySfxCentered2(u16 sfxId);
 void Sfx_PlaySfxAtPos(Vec3f* projectedPos, u16 sfxId);
+
+s32 Math_StepToIImpl(s32 start, s32 target, s32 step);
+void Math_StepToIGet(s32* pValue, s32 target, s32 step);
+s32 Math_StepToI(s32* pValue, s32 target, s32 step);
 
 #endif

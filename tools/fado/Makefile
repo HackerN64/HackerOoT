@@ -1,3 +1,5 @@
+MAKEFLAGS += --no-builtin-rules --no-print-directory
+
 DEBUG       ?= 0
 LLD         ?= 0
 ASAN        ?= 0
@@ -42,14 +44,16 @@ LIB_DIRS    := $(shell find lib -type d)
 C_LIB_FILES := $(filter-out lib/vc_vector/vc_vector_test.c, $(foreach dir,$(LIB_DIRS),$(wildcard $(dir)/*.c)))
 O_LIB_FILES := $(foreach f,$(C_LIB_FILES:.c=.o),build/$f)
 
+-include ../print_rules.mk
+
 # Main targets
 all: $(ELF)
 
 clean:
-	$(RM) -r build $(ELF)
+	$(V)$(RM) -r build $(ELF)
 
 format:
-	clang-format-14 -i $(C_FILES) $(H_FILES) lib/fairy/*
+	$(V)clang-format-14 -i $(C_FILES) $(H_FILES) lib/fairy/*
 
 .PHONY: all clean format
 
@@ -57,10 +61,12 @@ format:
 $(shell mkdir -p $(foreach dir,$(SRC_DIRS),build/$(dir)) $(foreach dir,$(LIB_DIRS),build/$(dir)))
 
 $(ELF): $(O_FILES) $(O_LIB_FILES)
-	$(CC) $(INC) $(WARNINGS) $(CFLAGS) $(OPTFLAGS) $(LDFLAGS) -o $@ $^
+	$(V)$(CC) $(INC) $(WARNINGS) $(CFLAGS) $(OPTFLAGS) $(LDFLAGS) -o $@ $^
 
 build/%.o: %.c $(H_FILES)
-	$(CC) -c $(INC) $(WARNINGS) $(CFLAGS) $(OPTFLAGS) -o $@ $<
+	$(call print_two_args,Compiling:,$<,$@)
+	$(V)$(CC) -c $(INC) $(WARNINGS) $(CFLAGS) $(OPTFLAGS) -o $@ $<
 
 build/lib/%.o: lib/%.c
-	$(CC) -c $(INC) $(WARNINGS) $(CFLAGS) $(OPTFLAGS) -o $@ $<
+	$(call print_two_args,Compiling:,$<,$@)
+	$(V)$(CC) -c $(INC) $(WARNINGS) $(CFLAGS) $(OPTFLAGS) -o $@ $<

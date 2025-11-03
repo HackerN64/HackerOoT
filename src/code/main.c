@@ -1,30 +1,52 @@
+#include "sys_cfb.h"
 #include "ultra64.h"
 #include "versions.h"
+
+#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
+                               "ique-cn:0 ntsc-1.0:0 ntsc-1.1:0 ntsc-1.2:0 pal-1.0:0 pal-1.1:0"
 
 // Declared before including other headers for BSS ordering
 extern uintptr_t gSegments[NUM_SEGMENTS];
 
 #pragma increment_block_number "gc-eu:252 gc-eu-mq:252 gc-jp:252 gc-jp-ce:252 gc-jp-mq:252 gc-us:252 gc-us-mq:252" \
-                               "ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
+                               "ique-cn:252 ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
 
 extern struct PreNmiBuff* gAppNmiBufferPtr;
 extern struct Scheduler gScheduler;
 extern struct PadMgr gPadMgr;
 extern struct IrqMgr gIrqMgr;
 
-#include "global.h"
+#include "libc64/malloc.h"
+#include "libu64/rcp_utils.h"
+#include "libu64/runtime.h"
+#include "array_count.h"
+#include "audiomgr.h"
+#include "debug_arena.h"
 #include "fault.h"
+#include "gfx.h"
+#include "idle.h"
+#include "padmgr.h"
+#include "prenmi_buff.h"
+#include "printf.h"
+#include "regs.h"
+#include "segment_symbols.h"
 #include "segmented_address.h"
 #include "stack.h"
+#include "stackcheck.h"
 #include "terminal.h"
+#include "translation.h"
 #include "versions.h"
 #if PLATFORM_N64
 #include "cic6105.h"
 #include "n64dd.h"
 #endif
+#include "z_debug.h"
+#include "thread.h"
+#include "rainbow.h"
+#include "debug.h"
 
-#pragma increment_block_number "gc-eu:160 gc-eu-mq:160 gc-jp:160 gc-jp-ce:160 gc-jp-mq:160 gc-us:160 gc-us-mq:160" \
-                               "ntsc-1.0:148 ntsc-1.1:148 ntsc-1.2:148 pal-1.0:146 pal-1.1:146"
+#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
+                               "ique-cn:0 ntsc-1.0:51 ntsc-1.1:51 ntsc-1.2:51 pal-1.0:49 pal-1.1:49"
 
 extern u8 _buffersSegmentEnd[];
 
@@ -67,11 +89,11 @@ u8 gRDPTimingsExist;
 
 #if DEBUG_FEATURES
 void Main_LogSystemHeap(void) {
-    PRINTF(VT_FGCOL(GREEN));
+    PRINTF_COLOR_GREEN();
     PRINTF(
         T("システムヒープサイズ %08x(%dKB) 開始アドレス %08x\n", "System heap size %08x (%dKB) Start address %08x\n"),
         gSystemHeapSize, gSystemHeapSize / 1024, _buffersSegmentEnd);
-    PRINTF(VT_RST);
+    PRINTF_RST();
 }
 #endif
 
@@ -107,7 +129,7 @@ void Main(void* arg) {
     gSystemHeapSize = fb - systemHeapStart;
     PRINTF(T("システムヒープ初期化 %08x-%08x %08x\n", "System heap initialization %08x-%08x %08x\n"), systemHeapStart,
            fb, gSystemHeapSize);
-    SystemHeap_Init((void*)systemHeapStart, gSystemHeapSize); // initializes the system heap
+    Runtime_Init((void*)systemHeapStart, gSystemHeapSize);
 
 #if IS_DEBUG_HEAP_ENABLED
     {

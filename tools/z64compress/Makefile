@@ -1,3 +1,5 @@
+MAKEFLAGS += --no-builtin-rules --no-print-directory
+
 CC := gcc
 CFLAGS := -DNDEBUG -s -Os -flto -Wall -Wextra
 
@@ -32,6 +34,8 @@ C_FILES  := $(foreach dir,$(C_DIRS),$(wildcard $(dir)/*.c))
 C_FILES  += src/enc/libdeflate/lib/deflate_compress.c src/enc/libdeflate/lib/utils.c
 O_FILES  := $(foreach f,$(C_FILES:.c=.o),$(OBJ_DIR)/$f)
 
+-include ../print_rules.mk
+
 # Make build directories
 $(shell mkdir -p $(foreach dir,$(SRC_DIRS),$(OBJ_DIR)/$(dir)))
 
@@ -40,10 +44,11 @@ $(shell mkdir -p $(foreach dir,$(SRC_DIRS),$(OBJ_DIR)/$(dir)))
 all: z64compress
 
 z64compress: $(O_FILES)
-	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(O_FILES) -lm -lpthread -lz $(TARGET_LIBS) -o z64compress
+	$(V)$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(O_FILES) -lm -lpthread -lz $(TARGET_LIBS) -o z64compress
 
 $(OBJ_DIR)/%.o: %.c
-	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $< -o $@
+	$(call print_two_args,Compiling:,$<,$@)
+	$(V)$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $< -o $@
 
 clean:
-	$(RM) -rf z64compress bin o
+	$(V)$(RM) -rf z64compress bin o

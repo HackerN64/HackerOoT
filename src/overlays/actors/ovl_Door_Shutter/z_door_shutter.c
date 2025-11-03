@@ -6,15 +6,31 @@
 
 #include "z_door_shutter.h"
 #include "overlays/actors/ovl_Boss_Goma/z_boss_goma.h"
+
+#include "array_count.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "one_point_cutscene.h"
+#include "printf.h"
+#include "rumble.h"
+#include "segmented_address.h"
+#include "sfx.h"
+#include "sys_matrix.h"
 #include "quake.h"
 #include "versions.h"
+#include "z_lib.h"
+#include "audio.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
 
+#include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/object_gnd/object_gnd.h"
 #include "assets/objects/object_goma/object_goma.h"
 #include "assets/objects/object_ydan_objects/object_ydan_objects.h"
 #include "assets/objects/object_ddan_objects/object_ddan_objects.h"
 #include "assets/objects/object_bdan_objects/object_bdan_objects.h"
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/object_bdoor/object_bdoor.h"
 #include "assets/objects/object_hidan_objects/object_hidan_objects.h"
 #include "assets/objects/object_ganon_objects/object_ganon_objects.h"
@@ -26,7 +42,7 @@
 #include "assets/objects/object_demo_kekkai/object_demo_kekkai.h"
 #include "assets/objects/object_ouke_haka/object_ouke_haka.h"
 
-#define FLAGS ACTOR_FLAG_4
+#define FLAGS ACTOR_FLAG_UPDATE_CULLING_DISABLED
 
 void DoorShutter_Init(Actor* thisx, PlayState* play2);
 void DoorShutter_Destroy(Actor* thisx, PlayState* play);
@@ -273,9 +289,9 @@ static s8 sTypeStyles[] = {
 
 static InitChainEntry sInitChain[] = {
     ICHAIN_VEC3F(scale, 1, ICHAIN_CONTINUE),
-    ICHAIN_F32(uncullZoneForward, 4000, ICHAIN_CONTINUE),
-    ICHAIN_F32(uncullZoneScale, 100, ICHAIN_CONTINUE),
-    ICHAIN_F32(uncullZoneDownward, 400, ICHAIN_STOP),
+    ICHAIN_F32(cullingVolumeDistance, 4000, ICHAIN_CONTINUE),
+    ICHAIN_F32(cullingVolumeScale, 100, ICHAIN_CONTINUE),
+    ICHAIN_F32(cullingVolumeDownward, 400, ICHAIN_STOP),
 };
 
 typedef struct DoorShutterSceneInfo {
@@ -457,7 +473,7 @@ void DoorShutter_Init(Actor* thisx, PlayState* play2) {
     } else if (styleType == DOORSHUTTER_STYLE_JABU_JABU) {
         Actor_SetScale(&this->dyna.actor, 0.1f);
         this->jabuDoorClosedAmount = 100;
-        this->dyna.actor.uncullZoneScale = 200.0f;
+        this->dyna.actor.cullingVolumeScale = 200.0f;
         Actor_SetFocus(&this->dyna.actor, 0.0f);
     } else {
         Actor_SetFocus(&this->dyna.actor, 60.0f);
@@ -821,7 +837,8 @@ void DoorShutter_SetupClosed(DoorShutter* this, PlayState* play) {
             play->roomCtx.activeBufPage ^= 1;
         }
         Room_FinishRoomChange(play, &play->roomCtx);
-        Play_SetupRespawnPoint(play, RESPAWN_MODE_DOWN, 0x0EFF);
+        Play_SetupRespawnPoint(play, RESPAWN_MODE_DOWN,
+                               PLAYER_PARAMS(PLAYER_START_MODE_MOVE_FORWARD_SLOW, PLAYER_START_BG_CAM_DEFAULT));
     }
     this->isActive = false;
     this->dyna.actor.velocity.y = 0.0f;
@@ -878,7 +895,7 @@ void DoorShutter_GohmaBlockFall(DoorShutter* this, PlayState* play) {
     Actor_UpdateBgCheckInfo(play, &this->dyna.actor, 0.0f, 0.0f, 0.0f, UPDBGCHECKINFO_FLAG_2);
     if (this->dyna.actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
         DoorShutter_SetupAction(this, DoorShutter_GohmaBlockBounce);
-        if (!GET_EVENTCHKINF(EVENTCHKINF_70)) {
+        if (!GET_EVENTCHKINF(EVENTCHKINF_BEGAN_GOHMA_BATTLE)) {
             BossGoma* parent = (BossGoma*)this->dyna.actor.parent;
 
             this->isActive = 10;

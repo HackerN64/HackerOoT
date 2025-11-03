@@ -5,12 +5,21 @@
  */
 
 #include "z_en_okarina_effect.h"
+
+#include "printf.h"
+#include "regs.h"
+#include "sequence.h"
 #include "terminal.h"
+#include "translation.h"
 #include "versions.h"
+#include "audio.h"
+#include "cutscene_flags.h"
+#include "debug_display.h"
+#include "frame_advance.h"
+#include "play_state.h"
+#include "save.h"
 
-#include "z64frame_advance.h"
-
-#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_UPDATE_DURING_OCARINA)
+#define FLAGS (ACTOR_FLAG_UPDATE_CULLING_DISABLED | ACTOR_FLAG_UPDATE_DURING_OCARINA)
 
 void EnOkarinaEffect_Init(Actor* thisx, PlayState* play);
 void EnOkarinaEffect_Destroy(Actor* thisx, PlayState* play);
@@ -56,8 +65,8 @@ void EnOkarinaEffect_Init(Actor* thisx, PlayState* play) {
     EnOkarinaEffect* this = (EnOkarinaEffect*)thisx;
 
     PRINTF("\n\n");
-    // "Ocarina Storm Effect"
-    PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ オカリナあらし効果ビカビカビカ〜 ☆☆☆☆☆ \n" VT_RST);
+    PRINTF(VT_FGCOL(YELLOW) T("☆☆☆☆☆ オカリナあらし効果ビカビカビカ〜 ☆☆☆☆☆ \n",
+                              "☆☆☆☆☆ Ocarina storm effect sparkle sparkle sparkle ☆☆☆☆☆ \n") VT_RST);
     PRINTF("\n\n");
     if (play->envCtx.precipitation[PRECIP_RAIN_CUR] != 0) {
         Actor_Kill(&this->actor);
@@ -89,7 +98,7 @@ void EnOkarinaEffect_ManageStorm(EnOkarinaEffect* this, PlayState* play) {
         }
         PRINTF("\nthis->timer=[%d]", this->timer);
         if (this->timer == 308) {
-            PRINTF("\n\n\n豆よ のびろ 指定\n\n\n"); // "Let's grow some beans"
+            PRINTF(T("\n\n\n豆よ のびろ 指定\n\n\n", "\n\n\nBeans, grow!\n\n\n"));
             CutsceneFlags_Set(play, 5);
         }
     }

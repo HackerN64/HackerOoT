@@ -5,7 +5,22 @@
  */
 
 #include "z_en_hy.h"
+
+#include "attributes.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "segmented_address.h"
+#include "sequence.h"
+#include "sfx.h"
+#include "sys_matrix.h"
 #include "versions.h"
+#include "z_lib.h"
+#include "audio.h"
+#include "face_reaction.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
+
 #include "assets/objects/object_aob/object_aob.h"
 #include "assets/objects/object_ahg/object_ahg.h"
 #include "assets/objects/object_bob/object_bob.h"
@@ -16,7 +31,7 @@
 #include "assets/objects/object_cob/object_cob.h"
 #include "assets/objects/object_os_anime/object_os_anime.h"
 
-#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_4)
+#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_UPDATE_CULLING_DISABLED)
 
 void EnHy_Init(Actor* thisx, PlayState* play);
 void EnHy_Destroy(Actor* thisx, PlayState* play);
@@ -45,7 +60,7 @@ ActorProfile En_Hy_Profile = {
     /**/ EnHy_Draw,
 };
 
-static ColliderCylinderInit sColCylInit = {
+static ColliderCylinderInit sColliderCylinderInit = {
     {
         COL_MATERIAL_NONE,
         AT_NONE,
@@ -56,8 +71,8 @@ static ColliderCylinderInit sColCylInit = {
     },
     {
         ELEM_MATERIAL_UNK0,
-        { 0x00000000, 0x00, 0x00 },
-        { 0x00000000, 0x00, 0x00 },
+        { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+        { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
         ATELEM_NONE,
         ACELEM_NONE,
         OCELEM_ON,
@@ -605,7 +620,7 @@ u16 EnHy_GetTextId(PlayState* play, Actor* thisx) {
     switch (ENHY_GET_TYPE(&this->actor)) {
         case ENHY_TYPE_DOG_LADY:
             if (play->sceneId == SCENE_KAKARIKO_CENTER_GUEST_HOUSE) {
-                return (this->talonEventChkInf & EVENTCHKINF_TALON_RETURNED_FROM_KAKARIKO_MASK)
+                return (this->talonEventChkInf & EVENTCHKINF_MASK(EVENTCHKINF_TALON_RETURNED_FROM_KAKARIKO))
                            ? 0x508D
                            : (GET_INFTABLE(INFTABLE_CB) ? 0x508C : 0x508B);
             } else if (play->sceneId == SCENE_MARKET_DAY) {
@@ -738,7 +753,7 @@ u16 EnHy_GetTextId(PlayState* play, Actor* thisx) {
             if (!LINK_IS_ADULT) {
                 return GET_EVENTCHKINF(EVENTCHKINF_80) ? 0x505F : (GET_INFTABLE(INFTABLE_163) ? 0x505E : 0x505D);
             } else {
-                return (this->talonEventChkInf & EVENTCHKINF_TALON_RETURNED_FROM_KAKARIKO_MASK)
+                return (this->talonEventChkInf & EVENTCHKINF_MASK(EVENTCHKINF_TALON_RETURNED_FROM_KAKARIKO))
                            ? 0x5062
                            : (GET_INFTABLE(INFTABLE_164) ? 0x5061 : 0x5060);
             }
@@ -774,9 +789,7 @@ s16 EnHy_UpdateTalkState(PlayState* play, Actor* thisx) {
                 case 0x709E:
                 case 0x709F:
                     if (!this->playedSfx) {
-                        Audio_PlaySfxGeneral(this->actor.textId == 0x709F ? NA_SE_SY_CORRECT_CHIME : NA_SE_SY_ERROR,
-                                             &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                        SFX_PLAY_CENTERED(this->actor.textId == 0x709F ? NA_SE_SY_CORRECT_CHIME : NA_SE_SY_ERROR);
                         this->playedSfx = true;
                     }
                     break;
@@ -957,7 +970,7 @@ void EnHy_OfferBuyBottledItem(EnHy* this, PlayState* play) {
     if (ENHY_GET_TYPE(&this->actor) == ENHY_TYPE_BEGGAR) {
         if (!Inventory_HasSpecificBottle(ITEM_BOTTLE_BLUE_FIRE) && !Inventory_HasSpecificBottle(ITEM_BOTTLE_BUG) &&
             !Inventory_HasSpecificBottle(ITEM_BOTTLE_FISH)) {
-            switch (func_8002F368(play)) {
+            switch (Actor_GetPlayerExchangeItemId(play)) {
                 case EXCH_ITEM_BOTTLE_POE:
                 case EXCH_ITEM_BOTTLE_BIG_POE:
                 case EXCH_ITEM_BOTTLE_RUTOS_LETTER:
@@ -971,7 +984,7 @@ void EnHy_OfferBuyBottledItem(EnHy* this, PlayState* play) {
                     break;
             }
         } else {
-            switch (func_8002F368(play)) {
+            switch (Actor_GetPlayerExchangeItemId(play)) {
                 case EXCH_ITEM_BOTTLE_BLUE_FIRE:
                     this->actor.textId = 0x70F0;
                     break;
@@ -1147,25 +1160,25 @@ void EnHy_Destroy(Actor* thisx, PlayState* play) {
 void EnHy_WaitForObjects(EnHy* this, PlayState* play) {
     if (EnHy_IsOsAnimeObjectLoaded(this, play) && EnHy_AreSkelAndHeadObjectsLoaded(this, play)) {
         this->actor.objectSlot = this->objectSlotLowerSkel;
-        gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[this->actor.objectSlot].segment);
+        gSegments[6] = OS_K0_TO_PHYSICAL(play->objectCtx.slots[this->actor.objectSlot].segment);
         SkelAnime_InitFlex(play, &this->skelAnime,
                            sSkeletonInfo[sModelInfo[ENHY_GET_TYPE(&this->actor)].lowerSkelInfoIndex].skeleton, NULL,
                            this->jointTable, this->morphTable, ENHY_LIMB_MAX);
         ActorShape_Init(&this->actor.shape, 0.0f, ActorShadow_DrawCircle, 0.0f);
-        gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[this->objectSlotOsAnime].segment);
+        gSegments[6] = OS_K0_TO_PHYSICAL(play->objectCtx.slots[this->objectSlotOsAnime].segment);
         Collider_InitCylinder(play, &this->collider);
-        Collider_SetCylinder(play, &this->collider, &this->actor, &sColCylInit);
+        Collider_SetCylinder(play, &this->collider, &this->actor, &sColliderCylinderInit);
         EnHy_InitCollider(this);
         CollisionCheck_SetInfo2(&this->actor.colChkInfo, NULL, &sColChkInfoInit);
         Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, sModelInfo[ENHY_GET_TYPE(&this->actor)].animInfoIndex);
 
         if ((play->sceneId == SCENE_BACK_ALLEY_DAY) || (play->sceneId == SCENE_MARKET_DAY)) {
-            this->actor.flags &= ~ACTOR_FLAG_4;
-            this->actor.uncullZoneScale = 0.0f;
+            this->actor.flags &= ~ACTOR_FLAG_UPDATE_CULLING_DISABLED;
+            this->actor.cullingVolumeScale = 0.0f;
         }
 
         if (play->sceneId == SCENE_KAKARIKO_CENTER_GUEST_HOUSE) {
-            this->talonEventChkInf = gSaveContext.save.info.eventChkInf[EVENTCHKINF_TALON_RETURNED_FROM_KAKARIKO_INDEX];
+            this->talonEventChkInf = gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX_TALON_RETURNED_FROM_KAKARIKO];
         }
 
         EnHy_InitSetProperties(this);
@@ -1335,7 +1348,7 @@ void EnHy_Update(Actor* thisx, PlayState* play) {
     EnHy* this = (EnHy*)thisx;
 
     if (this->actionFunc != EnHy_WaitForObjects) {
-        gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[this->objectSlotOsAnime].segment);
+        gSegments[6] = OS_K0_TO_PHYSICAL(play->objectCtx.slots[this->objectSlotOsAnime].segment);
         SkelAnime_Update(&this->skelAnime);
         EnHy_UpdateEyes(this);
 
@@ -1362,7 +1375,7 @@ s32 EnHy_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* po
 
     if (limbIndex == ENHY_LIMB_HEAD) {
         gSPSegment(POLY_OPA_DISP++, 0x06, play->objectCtx.slots[this->objectSlotHead].segment);
-        gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[this->objectSlotHead].segment);
+        gSegments[6] = OS_K0_TO_PHYSICAL(play->objectCtx.slots[this->objectSlotHead].segment);
         headInfoIndex = sModelInfo[ENHY_GET_TYPE(&this->actor)].headInfoIndex;
         *dList = sHeadInfo[headInfoIndex].headDList;
 
@@ -1371,7 +1384,7 @@ s32 EnHy_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* po
             gSPSegment(POLY_OPA_DISP++, 0x0A, SEGMENTED_TO_VIRTUAL(eyeTex));
         }
 
-        gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[this->objectSlotLowerSkel].segment);
+        gSegments[6] = OS_K0_TO_PHYSICAL(play->objectCtx.slots[this->objectSlotLowerSkel].segment);
     }
 
     if (limbIndex == ENHY_LIMB_HEAD) {
@@ -1408,7 +1421,7 @@ void EnHy_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, 
 
     if (limbIndex == ENHY_LIMB_RIGHT_FOOT) {
         gSPSegment(POLY_OPA_DISP++, 0x06, play->objectCtx.slots[this->objectSlotUpperSkel].segment);
-        gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[this->objectSlotUpperSkel].segment);
+        gSegments[6] = OS_K0_TO_PHYSICAL(play->objectCtx.slots[this->objectSlotUpperSkel].segment);
     }
 
     if (ENHY_GET_TYPE(&this->actor) == ENHY_TYPE_MAN_2_BALD && limbIndex == ENHY_LIMB_TORSO) {

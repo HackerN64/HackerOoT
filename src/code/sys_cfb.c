@@ -1,5 +1,12 @@
-#include "global.h"
 #include "config.h"
+#include "sys_cfb.h"
+
+#include "libu64/debug.h"
+#include "attributes.h"
+#include "gfx.h"
+#include "line_numbers.h"
+#include "printf.h"
+#include "translation.h"
 
 #pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
                                "pal-1.1:128"
@@ -30,15 +37,7 @@ void SysCfb_Init(s32 n64dd) {
         PRINTF("RAM4M mode\n");
         sSysCfbEnd = 0x80400000;
     } else {
-#if OOT_VERSION < NTSC_1_1
-        LogUtils_HungupThread("../sys_cfb.c", 305);
-#elif OOT_VERSION < PAL_1_0
-        LogUtils_HungupThread("../sys_cfb.c", 308);
-#elif OOT_VERSION < GC_JP
-        LogUtils_HungupThread("../sys_cfb.c", 322);
-#else
-        LogUtils_HungupThread("../sys_cfb.c", 354);
-#endif
+        LogUtils_HungupThread("../sys_cfb.c", LN4(305, 308, 322, 341, 354));
     }
 
     screenSize = SCREEN_WIDTH * SCREEN_HEIGHT;

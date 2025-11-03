@@ -1,9 +1,10 @@
-#include "global.h"
-#include "fault.h"
 #include "libc64/os_malloc.h"
-#include "terminal.h"
 
-#if PLATFORM_GC
+#include "alignment.h"
+#include "fault.h"
+#include "printf.h"
+#include "terminal.h"
+#include "translation.h"
 
 #define FILL_ALLOC_BLOCK_FLAG (1 << 0)
 #define FILL_FREE_BLOCK_FLAG (1 << 1)
@@ -890,6 +891,4 @@ s32 __osCheckArena(Arena* arena) {
 u8 ArenaImpl_GetAllocFailures(Arena* arena) {
     return arena->allocFailures;
 }
-#endif
-
 #endif

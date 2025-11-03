@@ -2,7 +2,7 @@
 #define INVENTORY_EDITOR_H
 
 #include "config.h"
-#include "z64pause.h"
+#include "pause.h"
 
 typedef enum InvEditorCursorPos {
     INVEDITOR_CURSOR_POS_MIN = -1,
@@ -99,7 +99,8 @@ void InventoryEditor_UpdateQuestScreen(InventoryEditor* this);
 void InventoryEditor_UpdateEquipmentScreen(InventoryEditor* this);
 void InventoryEditor_UpdateItemScreen(InventoryEditor* this);
 void InventoryEditor_UpdateInformationScreen(InventoryEditor* this);
-void InventoryEditor_DrawRectangle(InventoryEditor* this, s32 leftX, s32 leftY, s32 rightX, s32 rightY, Color_RGBA8 rgba);
+void InventoryEditor_DrawRectangle(InventoryEditor* this, s32 leftX, s32 leftY, s32 rightX, s32 rightY,
+                                   Color_RGBA8 rgba);
 void InventoryEditor_DrawMiscScreen(InventoryEditor* this);
 void InventoryEditor_DrawEquipmentUpgrades(InventoryEditor* this, u16 i, s16 alpha);
 void InventoryEditor_DrawInformationScreen(InventoryEditor* this);
@@ -125,8 +126,8 @@ void InventoryEditor_Main(InventoryEditor* this);
 #define INVEDITOR_ALPHA_TRANS_SPEED INVEDITOR_ANIM_BASE_SPEED * 2
 
 // Items
-#define INVEDITOR_GET_BOTTLE_ITEM(invDebug)                                                      \
-    (IS_IN_RANGE((invDebug)->common.selectedSlot, SLOT_BOTTLE_1, SLOT_BOTTLE_4)                     \
+#define INVEDITOR_GET_BOTTLE_ITEM(invDebug)                                                   \
+    (IS_IN_RANGE((invDebug)->common.selectedSlot, SLOT_BOTTLE_1, SLOT_BOTTLE_4)               \
          ? (invDebug)->itemDebug.bottleItems[(invDebug)->common.selectedSlot - SLOT_BOTTLE_1] \
          : ITEM_NONE)
 
@@ -139,16 +140,16 @@ void InventoryEditor_Main(InventoryEditor* this);
 #define INVEDITOR_GET_HOOKSHOT(invDebug) \
     (((invDebug)->common.selectedSlot == SLOT_HOOKSHOT) ? (invDebug)->itemDebug.hookshotType : ITEM_NONE)
 
-#define INVEDITOR_GET_VARIABLE_ITEM(invDebug)                                                          \
+#define INVEDITOR_GET_VARIABLE_ITEM(invDebug)                                                             \
     ((INVEDITOR_GET_BOTTLE_ITEM(invDebug) != ITEM_NONE)        ? INVEDITOR_GET_BOTTLE_ITEM(invDebug)      \
      : (INVEDITOR_GET_CHILD_TRADE_ITEM(invDebug) != ITEM_NONE) ? INVEDITOR_GET_CHILD_TRADE_ITEM(invDebug) \
      : (INVEDITOR_GET_ADULT_TRADE_ITEM(invDebug) != ITEM_NONE) ? INVEDITOR_GET_ADULT_TRADE_ITEM(invDebug) \
      : (INVEDITOR_GET_HOOKSHOT(invDebug) != ITEM_NONE)         ? INVEDITOR_GET_HOOKSHOT(invDebug)         \
-                                                            : ITEM_NONE)
+                                                               : ITEM_NONE)
 
-#define INVEDITOR_UPDATE_ITEM(invDbgCommon, min, max)                                                      \
+#define INVEDITOR_UPDATE_ITEM(invDbgCommon, min, max)                                                   \
     {                                                                                                   \
-        if (IS_IN_RANGE(invDbgCommon.selectedItem, min, max)) {                                               \
+        if (IS_IN_RANGE(invDbgCommon.selectedItem, min, max)) {                                         \
             gSaveContext.save.info.inventory.items[invDbgCommon.selectedSlot] += invDbgCommon.changeBy; \
             if (gSaveContext.save.info.inventory.items[invDbgCommon.selectedSlot] > max) {              \
                 gSaveContext.save.info.inventory.items[invDbgCommon.selectedSlot] = min;                \
@@ -161,7 +162,7 @@ void InventoryEditor_Main(InventoryEditor* this);
     }
 
 // Equipment
-#define INVEDITOR_IS_UPGRADE(invDbgCommon)                                                                        \
+#define INVEDITOR_IS_UPGRADE(invDbgCommon)                                                                     \
     (((invDbgCommon).selectedSlot == SLOT_UPG_QUIVER) || ((invDbgCommon).selectedSlot == SLOT_UPG_BOMB_BAG) || \
      ((invDbgCommon).selectedSlot == SLOT_UPG_STRENGTH) || ((invDbgCommon).selectedSlot == SLOT_UPG_SCALE))
 

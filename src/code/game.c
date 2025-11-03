@@ -1,11 +1,41 @@
-#include "global.h"
-#include "fault.h"
+#include "libc64/malloc.h"
 #include "libc64/os_malloc.h"
-#include "terminal.h"
-#include "versions.h"
+#include "libu64/debug.h"
+#include "libu64/gfxprint.h"
+#include "array_count.h"
+#include "audiomgr.h"
+#include "buffers.h"
+#include "controller.h"
+#include "debug_arena.h"
+#include "gfx.h"
+#include "gfxalloc.h"
+#include "fault.h"
+#include "idle.h"
+#include "line_numbers.h"
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
+#include "padmgr.h"
+#include "printf.h"
+#include "regs.h"
+#include "rumble.h"
+#include "sys_debug_controller.h"
+#include "terminal.h"
+#include "translation.h"
+#include "versions.h"
+#include "vi_mode.h"
+#include "zelda_arena.h"
+#include "z_debug.h"
+#include "dma.h"
+#include "game.h"
+#include "play_state.h"
+#include "vis.h"
+#include "rainbow.h"
+#include "debug/profiler_inline.h"
+#include "idle.h"
+#include "debug.h"
+
+#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0"
 
 VisCvg sVisCvg;
 VisZBuf sVisZBuf;
@@ -407,15 +437,7 @@ void GameState_InitArena(GameState* gameState, size_t size) {
     } else {
         THA_Init(&gameState->tha, NULL, 0);
         PRINTF(T("ハイラル確保失敗\n", "Failure to secure Hyrule\n"));
-#if OOT_VERSION < NTSC_1_1
-        HUNGUP_AND_CRASH("../game.c", 895);
-#elif OOT_VERSION < PAL_1_0
-        HUNGUP_AND_CRASH("../game.c", 898);
-#elif OOT_VERSION < GC_JP
-        HUNGUP_AND_CRASH("../game.c", 985);
-#else
-        HUNGUP_AND_CRASH("../game.c", 999);
-#endif
+        HUNGUP_AND_CRASH("../game.c", LN4(895, 898, 985, 999, 999));
     }
 }
 
@@ -433,12 +455,12 @@ void GameState_Realloc(GameState* gameState, size_t size) {
     SystemArena_GetSizes(&systemMaxFree, &systemFree, &systemAlloc);
     if ((systemMaxFree - 0x10) < size) {
         PRINTF("%c", BEL);
-        PRINTF(VT_FGCOL(RED));
+        PRINTF_COLOR_RED();
 
         PRINTF(T("メモリが足りません。ハイラルサイズを可能な最大値に変更します\n",
                  "Not enough memory. Change Hyrule size to maximum possible value\n"));
         PRINTF("(hyral=%08x max=%08x free=%08x alloc=%08x)\n", size, systemMaxFree, systemFree, systemAlloc);
-        PRINTF(VT_RST);
+        PRINTF_RST();
         size = systemMaxFree - 0x10;
     }
 
@@ -456,15 +478,7 @@ void GameState_Realloc(GameState* gameState, size_t size) {
         SystemArena_Display();
 #endif
 
-#if OOT_VERSION < NTSC_1_1
-        HUNGUP_AND_CRASH("../game.c", 940);
-#elif OOT_VERSION < PAL_1_0
-        HUNGUP_AND_CRASH("../game.c", 943);
-#elif OOT_VERSION < GC_JP
-        HUNGUP_AND_CRASH("../game.c", 1030);
-#else
-        HUNGUP_AND_CRASH("../game.c", 1044);
-#endif
+        HUNGUP_AND_CRASH("../game.c", LN4(940, 943, 1030, 1044, 1044));
     }
 }
 
@@ -480,7 +494,7 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
     gameState->running = 1;
     startTime = osGetTime();
 
-    // Thse assignments must be written this way for matching and to avoid a warning due to casting a pointer to an
+    // These assignments must be written this way for matching and to avoid a warning due to casting a pointer to an
     // integer without a cast. This assigns init = NULL and size = 0.
     gameState->size = (u32)(gameState->init = NULL);
 
@@ -602,9 +616,9 @@ void* GameState_Alloc(GameState* gameState, size_t size, const char* file, int l
         }
     }
     if (ret != NULL) {
-        PRINTF(VT_FGCOL(GREEN));
+        PRINTF_COLOR_GREEN();
         PRINTF("game_alloc(%08x) %08x-%08x [%s:%d]\n", size, ret, (uintptr_t)ret + size, file, line);
-        PRINTF(VT_RST);
+        PRINTF_RST();
     }
     return ret;
 }

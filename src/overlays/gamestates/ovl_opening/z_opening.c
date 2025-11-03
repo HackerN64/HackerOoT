@@ -4,61 +4,25 @@
  * Description: Initializes the game into the title screen
  */
 
-#include "global.h"
+#include "gfx.h"
+#include "regs.h"
+#include "sys_matrix.h"
+#include "title_setup_state.h"
+#include "letterbox.h"
+#include "game.h"
+#include "play_state.h"
+#include "save.h"
+#include "sram.h"
+#include "view.h"
 
 void TitleSetup_SetupTitleScreen(TitleSetupState* this) {
-    gSaveContext.gameMode = GAMEMODE_NORMAL;
-
-    if (IS_MAP_SELECT_ENABLED && BOOT_TO_MAP_SELECT) {
-        this->state.running = false;
-        SET_NEXT_GAMESTATE(&this->state, MapSelect_Init, MapSelectState);
-        return;
-    }
-
-    if (BOOT_TO_FILE_SELECT) {
-        gSaveContext.gameMode = GAMEMODE_FILE_SELECT;
-        this->state.running = false;
-        SET_NEXT_GAMESTATE(&this->state, FileSelect_Init, FileSelectState);
-        return;
-    }
-
-    if (BOOT_TO_SCENE || BOOT_TO_SCENE_NEW_GAME_ONLY) {
-        u8 i;
-
-        if (BOOT_TO_SCENE_NEW_GAME_ONLY) {
-            Sram_InitNewSave();
-        } else {
-            Sram_InitDebugSave();
-        }
-
-        gSaveContext.save.linkAge = BOOT_AGE;
-        gSaveContext.save.entranceIndex = BOOT_ENTRANCE;
-        gSaveContext.save.cutsceneIndex = BOOT_CUTSCENE;
-        gSaveContext.nextDayTime = BOOT_TIME;
-        gSaveContext.respawnFlag = 0;
-        gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = ENTR_LOAD_OPENING;
-        gWeatherMode = WEATHER_MODE_CLEAR;
-        gSaveContext.magicFillTarget = gSaveContext.save.info.playerData.magic;
-        gSaveContext.magicCapacity = 0;
-        gSaveContext.save.info.playerData.magicLevel = gSaveContext.save.info.playerData.magic = 0;
-        gSaveContext.forceRisingButtonAlphas = false;
-
-        gSaveContext.nextHudVisibilityMode = gSaveContext.hudVisibilityMode = gSaveContext.hudVisibilityModeTimer =
-            HUD_VISIBILITY_NO_CHANGE;
-
-        for (i = 0; i < ARRAY_COUNT(gSaveContext.buttonStatus); i++) {
-            gSaveContext.buttonStatus[i] = BTN_ENABLED;
-        }
-    } else {
-        gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
-        gSaveContext.save.linkAge = LINK_AGE_ADULT;
-        Sram_InitDebugSave();
-        gSaveContext.save.cutsceneIndex = 0xFFF3;
-        gSaveContext.sceneLayer = 7;
-    }
-
-    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0);
+    gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
     this->state.running = false;
+    gSaveContext.save.linkAge = LINK_AGE_ADULT;
+    Sram_InitDebugSave();
+    gSaveContext.save.cutsceneIndex = CS_INDEX_3;
+    // assigning scene layer here is redundant, as Play_Init sets it right away
+    gSaveContext.sceneLayer = GET_CUTSCENE_LAYER(CS_INDEX_3);
     SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
 }
 
@@ -75,6 +39,9 @@ void TitleSetup_Main(GameState* thisx) {
 }
 
 void TitleSetup_Destroy(GameState* thisx) {
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Destroy();
+#endif
 }
 
 void TitleSetup_Init(GameState* thisx) {
@@ -82,6 +49,9 @@ void TitleSetup_Init(GameState* thisx) {
 
     R_UPDATE_RATE = 1;
     Matrix_Init(&this->state);
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Init();
+#endif
     View_Init(&this->view, this->state.gfxCtx);
     this->state.main = TitleSetup_Main;
     this->state.destroy = TitleSetup_Destroy;

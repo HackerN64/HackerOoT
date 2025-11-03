@@ -4,7 +4,9 @@ __pycache__/
 .DS_Store
 
 # IDE files
-.vscode/
+.vscode/*.*
+.vscode/**/.*
+!.vscode/c_cpp_properties.json
 .vs/
 .idea/
 .cache/
@@ -23,8 +25,8 @@ docs/doxygen/
 *.iso
 *.bin
 *.blend1
-F3DEX3/*.code
-F3DEX3/*.data
+F3DEX3/*/*.code
+F3DEX3/*/*.data
 wadextract/
 isoextract/
 
@@ -34,6 +36,9 @@ ctx.c
 tools/*dSYM/
 graphs/
 tools/Flips/**/CMakeLists.txt
+
+# Test Suite files
+testsuite*
 
 # Per-user configuration
 # If you want to use your own gitignore rules without modifying this file:

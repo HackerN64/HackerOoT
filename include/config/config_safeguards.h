@@ -13,21 +13,11 @@
 /*****************
  * config_debug.h
  */
-#if RELEASE_ROM
+#if !DEBUG_FEATURES
     #undef SKIP_N64_BOOT_LOGO
     #undef BOOT_TO_SCENE
     #undef BOOT_TO_SCENE_NEW_GAME_ONLY
     #undef BOOT_TO_FILE_SELECT
-    #undef DEBUG_FEATURES
-
-    #define SKIP_N64_BOOT_LOGO false
-    #define BOOT_TO_SCENE false
-    #define BOOT_TO_SCENE_NEW_GAME_ONLY false
-    #define BOOT_TO_FILE_SELECT false
-    #define DEBUG_FEATURES false
-#endif
-
-#if !DEBUG_FEATURES
     #undef SHOW_CS_INFOS
     #undef SHOW_INPUT_DISPLAY
     #undef SHOW_TIME_INFOS
@@ -51,6 +41,10 @@
     #undef ENABLE_HACKER_DEBUG
     #undef ENABLE_PROFILER
 
+    #define SKIP_N64_BOOT_LOGO false
+    #define BOOT_TO_SCENE false
+    #define BOOT_TO_SCENE_NEW_GAME_ONLY false
+    #define BOOT_TO_FILE_SELECT false
     #define SHOW_CS_INFOS false
     #define SHOW_INPUT_DISPLAY false
     #define SHOW_TIME_INFOS false
@@ -117,6 +111,11 @@
     #define ENABLE_DEBUG_HEAP true
 #endif
 
+#if BOOT_TO_DEBUG_OPENING && !ENABLE_DEBUG_BOOT
+    #undef ENABLE_DEBUG_BOOT
+    #define ENABLE_DEBUG_BOOT true
+#endif
+
 
 /*****************
  * config_game.h
@@ -132,6 +131,14 @@
     #define USE_WIDESCREEN (ENABLE_WIDESCREEN && gSaveContext.save.useWidescreen == true)
 #endif
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS && !ENABLE_NEW_LETTERBOX
+    #undef ENABLE_NEW_LETTERBOX
+    #define ENABLE_NEW_LETTERBOX true
+#endif
+
+/*****************
+ * config_graphics.h
+ */
 //! TODO: implement better Wii VC compatibility
 #ifdef CONSOLE_WIIVC
     #undef ENABLE_F3DEX3
@@ -146,60 +153,6 @@
     #define ENABLE_F3DEX3 false
 #endif
 
-
-/**
- * Default settings if not using HackerOoT mode
-*/
-#if !ENABLE_HACKEROOT
-    #undef SKIP_N64_BOOT_LOGO
-    #undef BOOT_TO_SCENE
-    #undef BOOT_TO_SCENE_NEW_GAME_ONLY
-    #undef BOOT_TO_FILE_SELECT
-    #undef DEBUG_FEATURES
-    #undef SHOW_CS_INFOS
-    #undef SHOW_INPUT_DISPLAY
-    #undef SHOW_TIME_INFOS
-    #undef INCLUDE_TEST_SCENES
-    #undef ENABLE_NO_CLIP
-    #undef ENABLE_CS_CONTROL
-    #undef ENABLE_FRAMERATE_OPTIONS
-    #undef ENABLE_MAP_SELECT
-    #undef ENABLE_INV_EDITOR
-    #undef ENABLE_EVENT_EDITOR
-    #undef ENABLE_REG_EDITOR
-    #undef ENABLE_CAMERA_DEBUGGER
-    #undef ENABLE_AUDIO_DEBUGGER
-    #undef ENABLE_ACTOR_DEBUGGER
-    #undef ENABLE_MSG_DEBUGGER
-    #undef ENABLE_DEBUG_SAVE
-    #undef MAP_SELECT_ON_FILE_1
-    #undef ENABLE_MOTION_BLUR_DEBUG
-
-    #define SKIP_N64_BOOT_LOGO true
-    #define BOOT_TO_SCENE false
-    #define BOOT_TO_SCENE_NEW_GAME_ONLY false
-    #define BOOT_TO_FILE_SELECT false
-    #define DEBUG_FEATURES false
-    #define SHOW_CS_INFOS false
-    #define SHOW_INPUT_DISPLAY false
-    #define SHOW_TIME_INFOS false
-    #define INCLUDE_TEST_SCENES true
-    #define ENABLE_NO_CLIP false
-    #define ENABLE_CS_CONTROL false
-    #define ENABLE_FRAMERATE_OPTIONS false
-    #define ENABLE_MAP_SELECT true
-    #define ENABLE_INV_EDITOR false
-    #define ENABLE_EVENT_EDITOR false
-    #define ENABLE_REG_EDITOR false
-    #define ENABLE_CAMERA_DEBUGGER true
-    #define ENABLE_AUDIO_DEBUGGER false
-    #define ENABLE_ACTOR_DEBUGGER false
-    #define ENABLE_MSG_DEBUGGER false
-    #define ENABLE_DEBUG_SAVE false
-    #define MAP_SELECT_ON_FILE_1 true
-    #define ENABLE_MOTION_BLUR_DEBUG false
-#endif
-
 #if ENABLE_PROFILER && !ENABLE_HACKER_DEBUG
 #error "ENABLE_PROFILER requires ENABLE_HACKER_DEBUG"
 #endif
@@ -207,7 +160,7 @@
 /**
  * Game
 */
-#define IS_MOTION_BLUR_ENABLED (ENABLE_HACKEROOT && ENABLE_MOTION_BLUR)
+#define IS_MOTION_BLUR_ENABLED (ENABLE_MOTION_BLUR)
 
 /**
  * Debug
@@ -223,9 +176,10 @@
 #define CAN_SHOW_TIME_INFOS (DEBUG_FEATURES && SHOW_TIME_INFOS)
 #define ARE_FRAMERATE_OPTIONS_ENABLED (DEBUG_FEATURES && ENABLE_FRAMERATE_OPTIONS)
 #define IS_MAP_SELECT_ENABLED (DEBUG_FEATURES && ENABLE_MAP_SELECT)
+#define IS_DEBUG_BOOT_ENABLED (DEBUG_FEATURES && ENABLE_DEBUG_BOOT)
 #define IS_DEBUG_SAVE_ENABLED (DEBUG_FEATURES && ENABLE_DEBUG_SAVE)
 #define CAN_INCLUDE_TEST_SCENES (DEBUG_ASSETS && INCLUDE_TEST_SCENES)
-#define CAN_INCLUDE_EXAMPLE_SCENE (DEBUG_ASSETS && INCLUDE_EXAMPLE_SCENE)
+#define CAN_INCLUDE_EXAMPLE_SCENE (DEBUG_FEATURES && INCLUDE_EXAMPLE_SCENE)
 
 // In-game editors
 #define IS_INV_EDITOR_ENABLED (DEBUG_FEATURES && ENABLE_INV_EDITOR)
@@ -251,6 +205,31 @@
 
 #ifndef COMPRESS_APLIB
 #define COMPRESS_APLIB false
+#endif
+
+#ifndef COMPRESS_GZIP
+#define COMPRESS_GZIP false
+#endif
+
+/**
+ * Memory
+*/
+#if IS_DEBUG_HEAP_ENABLED
+#undef PLAY_ALLOC_SIZE
+#undef OBJECT_BANK_SIZE
+#undef GI_ALLOC_SIZE
+#undef POLY_OPA_BUFFER_SIZE
+#undef POLY_XLU_BUFFER_SIZE
+#undef DEBUG_BUFFER_SIZE
+#undef SYS_CFB_END
+
+#define PLAY_ALLOC_SIZE 0x1D4790
+#define OBJECT_BANK_SIZE 0xF9000
+#define GI_ALLOC_SIZE 0x3008
+#define POLY_OPA_BUFFER_SIZE 0x17E0
+#define POLY_XLU_BUFFER_SIZE 0xA00
+#define DEBUG_BUFFER_SIZE 0x20
+#define SYS_CFB_END 0x8044BE80
 #endif
 
 #endif

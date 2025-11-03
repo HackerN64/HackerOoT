@@ -1,9 +1,22 @@
-#include "global.h"
+#include "array_count.h"
+#include "buffers.h"
+#include "build.h"
+#include "idle.h"
+#include "main.h"
+#include "printf.h"
+#include "segment_symbols.h"
 #include "stack.h"
+#include "stackcheck.h"
 #include "terminal.h"
+#include "translation.h"
 #include "versions.h"
+#include "vi_mode.h"
+#include "ultra64.h"
+#include "thread.h"
+#include "dma.h"
 
-#pragma increment_block_number "gc-eu:64 gc-eu-mq:64 gc-jp:64 gc-jp-ce:64 gc-jp-mq:64 gc-us:64 gc-us-mq:64 ntsc-1.2:64"
+#pragma increment_block_number "gc-eu:192 gc-eu-mq:192 gc-jp:192 gc-jp-ce:192 gc-jp-mq:192 gc-us:192 gc-us-mq:192" \
+                               "ntsc-1.0:192 ntsc-1.1:192 ntsc-1.2:192 pal-1.0:192 pal-1.1:192"
 
 OSThread sMainThread;
 #if OOT_VERSION < PAL_1_0
@@ -63,9 +76,7 @@ void Main_ThreadEntry(void* arg) {
 
 void Idle_ThreadEntry(void* arg) {
     PRINTF(T("アイドルスレッド(idleproc)実行開始\n", "Idle thread (idleproc) execution started\n"));
-    PRINTF(T("作製者    : %s\n", "Created by: %s\n"), gBuildCreator);
-    PRINTF("MAKEOPTION: %s\n", gBuildMakeOption);
-    PRINTF(VT_FGCOL(GREEN));
+    PRINTF_COLOR_GREEN();
     PRINTF(T("ＲＡＭサイズは %d キロバイトです(osMemSize/osGetMemSize)\n",
              "RAM size is %d kilobytes (osMemSize/osGetMemSize)\n"),
            (s32)osMemSize / 1024);
@@ -78,7 +89,7 @@ void Idle_ThreadEntry(void* arg) {
     PRINTF(T("ＹＩＥＬＤバッファのサイズは %d キロバイトです\n", "YIELD buffer size is %d kilobytes\n"), 3);
     PRINTF(T("オーディオヒープのサイズは %d キロバイトです\n", "Audio heap size is %d kilobytes\n"),
            ((intptr_t)&gAudioHeap[ARRAY_COUNT(gAudioHeap)] - (intptr_t)gAudioHeap) / 1024);
-    PRINTF(VT_RST);
+    PRINTF_RST();
 
     osCreateViManager(OS_PRIORITY_VIMGR);
 
@@ -141,7 +152,7 @@ void Idle_ThreadEntry(void* arg) {
     osViSetMode(&gViConfigMode);
     ViConfig_UpdateVi(true);
     osViBlack(true);
-    osViSwapBuffer((void*)0x803DA80); //! @bug Invalid vram address (probably intended to be 0x803DA800)
+    osViSwapBuffer((void*)(0x80400000 - SCREEN_WIDTH * SCREEN_HEIGHT * 2));
 #endif
 
     osCreatePiManager(OS_PRIORITY_PIMGR, &gPiMgrCmdQueue, sPiMgrCmdBuff, ARRAY_COUNT(sPiMgrCmdBuff));

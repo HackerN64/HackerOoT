@@ -1,0 +1,7 @@
+
+
+void osSyncPrintf() {
+}
+
+void rmonPrintf() {
+}
