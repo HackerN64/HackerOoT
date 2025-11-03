@@ -671,12 +671,14 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
                     // Show bullet bag instead of quiver if player has no quiver
                     //! @bug This assumes adult always has bullet bag
                     KaleidoScope_DrawQuadTextureRGBA32(
-                        play->state.gfxCtx, gItemIcons[sChildUpgradeItemBases[i] + CUR_UPG_VALUE(sChildUpgrades[i]) - 1],
-                        ITEM_ICON_WIDTH, ITEM_ICON_HEIGHT, 0);
+                        play->state.gfxCtx,
+                        gItemIcons[sChildUpgradeItemBases[i] + CUR_UPG_VALUE(sChildUpgrades[i]) - 1], ITEM_ICON_WIDTH,
+                        ITEM_ICON_HEIGHT, 0);
                 } else if (CUR_UPG_VALUE(sAdultUpgrades[i]) != 0) {
                     KaleidoScope_DrawQuadTextureRGBA32(
-                        play->state.gfxCtx, gItemIcons[sAdultUpgradeItemBases[i] + CUR_UPG_VALUE(sAdultUpgrades[i]) - 1],
-                        ITEM_ICON_WIDTH, ITEM_ICON_HEIGHT, 0);
+                        play->state.gfxCtx,
+                        gItemIcons[sAdultUpgradeItemBases[i] + CUR_UPG_VALUE(sAdultUpgrades[i]) - 1], ITEM_ICON_WIDTH,
+                        ITEM_ICON_HEIGHT, 0);
                 }
             }
         } else {

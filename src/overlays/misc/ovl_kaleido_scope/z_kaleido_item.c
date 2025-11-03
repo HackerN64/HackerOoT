@@ -422,8 +422,8 @@ void KaleidoScope_DrawItemSelect(PlayState* play) {
                 index = cursorSlot * 4; // required to match?
                 KaleidoScope_SetCursorPos(pauseCtx, index, pauseCtx->itemVtx);
 
-                if (!IS_INV_EDITOR_ACTIVE && (pauseCtx->debugState == PAUSE_DEBUG_STATE_CLOSED) && (pauseCtx->state == PAUSE_STATE_MAIN) &&
-                    (pauseCtx->mainState == PAUSE_MAIN_STATE_IDLE)) {
+                if (!IS_INV_EDITOR_ACTIVE && (pauseCtx->debugState == PAUSE_DEBUG_STATE_CLOSED) &&
+                    (pauseCtx->state == PAUSE_STATE_MAIN) && (pauseCtx->mainState == PAUSE_MAIN_STATE_IDLE)) {
                     if (CHECK_BTN_ANY(input->press.button, BTN_CLEFT | BTN_CDOWN | BTN_CRIGHT)) {
                         if (CHECK_AGE_REQ_SLOT(cursorSlot) && (cursorItem != ITEM_SOLD_OUT)) {
                             if (CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
