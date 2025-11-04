@@ -55,6 +55,8 @@ typedef struct InvEditorEquipment {
     u8 showMiscUpgrades;
     u8 upgradeSlots[8];
     u8 upgradeValues[8];
+    u8 bgsFlag;
+    u16 swordHealth;
 } InvEditorEquipment;
 
 typedef struct InvEditorMisc {
@@ -123,11 +125,11 @@ void InventoryEditor_Main(InventoryEditor* this);
 #define INVEDITOR_BG_YPOS 220
 
 #define INVEDITOR_TITLE_TIMER 70 // frames
-#define INVEDITOR_TITLE_ANIM_SPEED INVEDITOR_ANIM_BASE_SPEED / 8
+#define INVEDITOR_TITLE_ANIM_SPEED (INVEDITOR_ANIM_BASE_SPEED / 8)
 #define INVEDITOR_TITLE_YPOS_TARGET 2
 #define INVEDITOR_TITLE_YPOS 28
 
-#define INVEDITOR_ALPHA_TRANS_SPEED INVEDITOR_ANIM_BASE_SPEED * 2
+#define INVEDITOR_ALPHA_TRANS_SPEED (INVEDITOR_ANIM_BASE_SPEED * 2)
 
 // Items
 #define INVEDITOR_GET_BOTTLE_ITEM(invDebug)                                                   \

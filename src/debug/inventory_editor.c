@@ -2,10 +2,7 @@
 
 /**
  * TODO:
- * - bean bought flag
- * - @bug where pressing A when having broken knife or BGS does nothing
  * - code cleanup
- * - @bug when switching from info to hud edit
  * - @bug the magic bar doesn't update properly (in the misc screen and after closing it)
  * - improvement: add the possibility to remove the magic meter (draw "None"?)
  */
@@ -33,34 +30,9 @@ static u8 sSlotToItems[] = {
     ITEM_BOOMERANG,  ITEM_LENS_OF_TRUTH, ITEM_MAGIC_BEAN, ITEM_HAMMER,   ITEM_ARROW_LIGHT, ITEM_NAYRUS_LOVE,
 };
 
-static u8 sUpgradeTypes[] = { UPG_QUIVER,     UPG_BOMB_BAG,    UPG_STRENGTH,  UPG_SCALE,
-                              UPG_BULLET_BAG, UPG_DEKU_STICKS, UPG_DEKU_NUTS, UPG_WALLET };
-
-u8 InventoryEditor_GetItemFromSlot(InventoryEditor* this) {
-    if (IS_INV_EDITOR_ACTIVE && this->pauseCtx->pageIndex == PAUSE_ITEM) {
-        if (IS_IN_RANGE(this->common.selectedSlot, SLOT_BOTTLE_1, SLOT_BOTTLE_4)) {
-            return this->itemDebug.bottleItems[this->common.selectedSlot - SLOT_BOTTLE_1];
-        }
-
-        if (this->common.selectedSlot == SLOT_TRADE_CHILD) {
-            return this->itemDebug.childTradeItem;
-        }
-
-        if (this->common.selectedSlot == SLOT_TRADE_ADULT) {
-            return this->itemDebug.adultTradeItem;
-        }
-
-        if (this->common.selectedSlot == SLOT_HOOKSHOT) {
-            return this->itemDebug.hookshotType;
-        }
-
-        if (this->common.selectedSlot < ARRAY_COUNT(sSlotToItems)) {
-            return sSlotToItems[this->common.selectedSlot];
-        }
-    }
-
-    return ITEM_NONE;
-}
+static u8 sUpgradeTypes[] = {
+    UPG_QUIVER, UPG_BOMB_BAG, UPG_STRENGTH, UPG_SCALE, UPG_BULLET_BAG, UPG_DEKU_STICKS, UPG_DEKU_NUTS, UPG_WALLET,
+};
 
 void InventoryEditor_SetItemFromSlot(InventoryEditor* this) {
     if ((this->common.selectedSlot != SLOT_NONE) && (this->common.selectedItem != ITEM_NONE)) {
@@ -287,7 +259,7 @@ void InventoryEditor_UpdateQuestScreen(InventoryEditor* this) {
     if (this->common.selectedSlot < ARRAY_COUNTU(slotToItem)) {
         u8 item = slotToItem[this->common.selectedSlot];
 
-        if (CHECK_BTN_ALL(gDebug.input->press.button, BTN_A)) {
+        if (CHECK_BTN_ALL(gDebug.input->press.button, BTN_A) && item != ITEM_HEART_PIECE) {
             u8 index = 0;
 
             if (IS_IN_RANGE(item, ITEM_MEDALLION_FOREST, ITEM_MEDALLION_LIGHT)) {
@@ -356,16 +328,42 @@ void InventoryEditor_UpdateEquipmentScreen(InventoryEditor* this) {
 
     if (CHECK_BTN_ALL(gDebug.input->press.button, BTN_A)) {
         // equipment and upgrades are handled differently
-        if (!INVEDITOR_IS_UPGRADE(this->common) && (slotTo[this->common.selectedSlot] != ITEM_NONE)) {
+        if (!INVEDITOR_IS_UPGRADE(this->common) && slotTo[this->common.selectedSlot] != ITEM_NONE) {
             u8 value = slotTo[this->common.selectedSlot] - ITEM_SWORD_KOKIRI;
             u8 equip = value / 3;
+            u8 bgsEquipValue = EQUIP_INV_SWORD_BIGGORON;
 
             if (!CHECK_OWNED_EQUIP(equip, (value % 3))) {
                 // give equipment for selected slot
                 gSaveContext.save.info.inventory.equipment |= OWNED_EQUIP_FLAG(equip, (value % 3));
+
+                if (this->common.selectedSlot == SLOT_SWORD_BIGGORON) {
+                    gSaveContext.save.info.playerData.bgsFlag = this->equipDebug.bgsFlag;
+                    gSaveContext.save.info.playerData.swordHealth = this->equipDebug.swordHealth;
+
+                    if (!gSaveContext.save.info.playerData.bgsFlag &&
+                        gSaveContext.save.info.playerData.swordHealth == 0) {
+                        bgsEquipValue = EQUIP_INV_SWORD_BROKENGIANTKNIFE;
+                    }
+
+                    gSaveContext.save.info.inventory.equipment |= OWNED_EQUIP_FLAG(equip, bgsEquipValue);
+                }
             } else {
                 // delete equipment for selected slot
                 gSaveContext.save.info.inventory.equipment &= ~OWNED_EQUIP_FLAG(equip, (value % 3));
+
+                if (this->common.selectedSlot == SLOT_SWORD_BIGGORON) {
+                    this->equipDebug.bgsFlag = gSaveContext.save.info.playerData.bgsFlag;
+                    this->equipDebug.swordHealth = gSaveContext.save.info.playerData.swordHealth;
+
+                    if (gSaveContext.save.info.playerData.bgsFlag) {
+                        gSaveContext.save.info.playerData.bgsFlag = false;
+                    } else if (gSaveContext.save.info.playerData.swordHealth == 0) {
+                        bgsEquipValue = EQUIP_INV_SWORD_BROKENGIANTKNIFE;
+                    }
+
+                    gSaveContext.save.info.inventory.equipment &= ~OWNED_EQUIP_FLAG(equip, bgsEquipValue);
+                }
             }
         } else {
             u8 slotIndex = this->common.selectedSlot / 4;
@@ -483,6 +481,7 @@ void InventoryEditor_UpdateItemScreen(InventoryEditor* this) {
         u8 item = this->common.selectedItem;
         u8 slot = this->common.selectedSlot;
         u8 min = ITEM_NONE, max = ITEM_NONE;
+        s8* pAmmo;
 
         switch (this->common.selectedSlot) {
             case SLOT_DEKU_STICK:
@@ -492,6 +491,19 @@ void InventoryEditor_UpdateItemScreen(InventoryEditor* this) {
             case SLOT_SLINGSHOT:
             case SLOT_BOMBCHU:
             case SLOT_MAGIC_BEAN:
+                //! TODO: separate this? the game increases both at the same time though
+                if (this->common.selectedSlot == SLOT_MAGIC_BEAN) {
+                    BEANS_BOUGHT += this->common.changeBy;
+
+                    if (BEANS_BOUGHT > 99) {
+                        BEANS_BOUGHT = 0;
+                    }
+
+                    if (BEANS_BOUGHT < 0) {
+                        BEANS_BOUGHT = 99;
+                    }
+                }
+
                 AMMO(this->common.selectedItem) += this->common.changeBy;
 
                 if (AMMO(this->common.selectedItem) > 99) {
@@ -606,7 +618,7 @@ void InventoryEditor_DrawMiscScreen(InventoryEditor* this) {
     OPEN_DISPS(this->gfxCtx, __FILE__, __LINE__);
 
     // Cursor
-    if ((this->miscDebug.hudCursorPos == INVEDITOR_CURSOR_POS_MAGIC) &&
+    if (this->miscDebug.hudCursorPos == INVEDITOR_CURSOR_POS_MAGIC &&
         !gSaveContext.save.info.playerData.isDoubleMagicAcquired) {
         cursorPos[this->miscDebug.hudCursorPos][2] -= 48;
     }
@@ -767,14 +779,20 @@ void InventoryEditor_DrawInformationScreen(InventoryEditor* this) {
         }
         // clang-format on
     } else {
-        ctrlsToPrint = "";
+        ctrlsToPrint = "[Z/R] Change dungeon" INVEDITOR_PRINT_NEWLINE;
     }
 
     // draw build infos and controls for current inventory screen
-    Print_Screen(&gDebug.printer, 2, posY, COLOR_WHITE, ("Build Version: %s"), gBuildGitVersion);
+    Print_Screen(&gDebug.printer, 2, posY, COLOR_WHITE, "Build Version: %s", gBuildGitVersion);
 
     if (ctrlsToPrint != NULL) {
-        Print_Screen(&gDebug.printer, 2, (posY += 3), COLOR_WHITE, ctrlsToPrint);
+        if (this->miscDebug.showMiscScreen) {
+            posY += 14;
+        } else {
+            posY += 3;
+        }
+
+        Print_Screen(&gDebug.printer, 2, posY, COLOR_WHITE, ctrlsToPrint);
     }
 
     Print_Screen(&gDebug.printer, 2, 28, COLOR_WHITE, "[B]: Misc Debug");
@@ -812,6 +830,8 @@ void InventoryEditor_Init(InventoryEditor* this) {
 
         // Init equipment debug values
         this->equipDebug.showMiscUpgrades = false;
+        this->equipDebug.bgsFlag = gSaveContext.save.info.playerData.bgsFlag;
+        this->equipDebug.swordHealth = gSaveContext.save.info.playerData.swordHealth;
 
         for (i = 0; i < ARRAY_COUNTU(upgradeSlots); i++) {
             this->equipDebug.upgradeSlots[i] = upgradeSlots[i];
@@ -832,7 +852,17 @@ void InventoryEditor_Init(InventoryEditor* this) {
     }
 }
 
+enum {
+    TRANS_STATE_DONE,
+    TRANS_STATE_INFO_REQUESTED,
+    TRANS_STATE_INFO_SWITCHING,
+    TRANS_STATE_MISC_REQUESTED,
+    TRANS_STATE_MISC_SWITCHING,
+};
+
 void InventoryEditor_Update(InventoryEditor* this) {
+    static u8 sTransitionState = TRANS_STATE_DONE;
+
     this->common.changeBy = 0;
 
     if ((this->pauseCtx->pageIndex != PAUSE_MAP) && (this->pauseCtx->pageIndex != PAUSE_WORLD_MAP)) {
@@ -862,27 +892,59 @@ void InventoryEditor_Update(InventoryEditor* this) {
         }
     }
 
-    //! TODO: make it so you can switch between misc and info screens
-    //! currently there's an issue where the misc elements aren't showing properly
-
     // Toggle informations screen
-    if (!this->miscDebug.showMiscScreen && CHECK_BTN_ALL(gDebug.input->press.button, BTN_CDOWN)) {
-        this->showInfoScreen ^= 1;
+    if (CHECK_BTN_ALL(gDebug.input->press.button, BTN_CDOWN) && sTransitionState == TRANS_STATE_DONE) {
+        if (this->miscDebug.showMiscScreen) {
+            sTransitionState = TRANS_STATE_INFO_REQUESTED;
+        } else {
+            this->showInfoScreen ^= 1;
 
-        if (this->titleState == INVEDITOR_TITLE_STATE_MISCDBG) {
-            this->titleState = INVEDITOR_TITLE_STATE_NAME;
+            if (this->titleState == INVEDITOR_TITLE_STATE_MISCDBG) {
+                this->titleState = INVEDITOR_TITLE_STATE_NAME;
+            }
         }
     }
 
     // Toggle Misc Debug
-    if (!this->showInfoScreen && CHECK_BTN_ALL(gDebug.input->press.button, BTN_B)) {
-        this->miscDebug.showMiscScreen ^= 1;
-
-        if (this->miscDebug.showMiscScreen) {
-            this->titleState = INVEDITOR_TITLE_STATE_MISCDBG;
+    if (CHECK_BTN_ALL(gDebug.input->press.button, BTN_B) && sTransitionState == TRANS_STATE_DONE) {
+        if (this->showInfoScreen) {
+            sTransitionState = TRANS_STATE_MISC_REQUESTED;
         } else {
-            this->titleState = INVEDITOR_TITLE_STATE_NAME;
+            this->miscDebug.showMiscScreen ^= 1;
+
+            if (this->miscDebug.showMiscScreen) {
+                this->titleState = INVEDITOR_TITLE_STATE_MISCDBG;
+            } else {
+                this->titleState = INVEDITOR_TITLE_STATE_NAME;
+            }
         }
+    }
+
+    switch (sTransitionState) {
+        case TRANS_STATE_INFO_REQUESTED:
+            this->showInfoScreen = false;
+            this->miscDebug.showMiscScreen = false;
+            sTransitionState = TRANS_STATE_INFO_SWITCHING;
+            break;
+        case TRANS_STATE_INFO_SWITCHING:
+            if (!this->miscDebug.showMiscScreen && this->backgroundPosY == INVEDITOR_BG_YPOS) {
+                this->showInfoScreen = true;
+                sTransitionState = TRANS_STATE_DONE;
+            }
+            break;
+        case TRANS_STATE_MISC_REQUESTED:
+            this->showInfoScreen = false;
+            this->miscDebug.showMiscScreen = false;
+            sTransitionState = TRANS_STATE_MISC_SWITCHING;
+            break;
+        case TRANS_STATE_MISC_SWITCHING:
+            if (!this->showInfoScreen && this->backgroundPosY == INVEDITOR_BG_YPOS) {
+                this->miscDebug.showMiscScreen = true;
+                sTransitionState = TRANS_STATE_DONE;
+            }
+            break;
+        default:
+            break;
     }
 
     if (!this->showInfoScreen && this->miscDebug.showMiscScreen) {
@@ -930,7 +992,7 @@ void InventoryEditor_Update(InventoryEditor* this) {
 
 void InventoryEditor_Draw(InventoryEditor* this) {
     // draw background for the "debug mode" text
-    Color_RGBA8 rgba = { 0, 0, 0, 220 };
+    Color_RGBA8 rgba = { 0, 0, 0, 150 };
     InventoryEditor_DrawRectangle(this, 0, this->backgroundPosY, SCREEN_WIDTH, SCREEN_HEIGHT, rgba);
 
     // draw bottom screen text, will be on top if in info mode
@@ -949,7 +1011,7 @@ void InventoryEditor_Draw(InventoryEditor* this) {
     }
 
     // draw the informations on the panel
-    if ((this->showInfoScreen || this->miscDebug.showMiscScreen) && (this->titlePosY == INVEDITOR_TITLE_YPOS_TARGET)) {
+    if ((this->showInfoScreen || this->miscDebug.showMiscScreen) && this->titlePosY == INVEDITOR_TITLE_YPOS_TARGET) {
         InventoryEditor_DrawInformationScreen(this);
 
         if (this->miscDebug.showMiscScreen) {

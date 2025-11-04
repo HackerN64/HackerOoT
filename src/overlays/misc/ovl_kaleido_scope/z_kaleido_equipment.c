@@ -529,7 +529,7 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
         pauseCtx->cursorSlot[PAUSE_EQUIP] = cursorSlot;
         pauseCtx->cursorItem[PAUSE_EQUIP] = cursorItem;
 
-        // PRINTF("kscope->select_name[Display_Equipment] = %d\n", pauseCtx->cursorItem[PAUSE_EQUIP]);
+        PRINTF("kscope->select_name[Display_Equipment] = %d\n", pauseCtx->cursorItem[PAUSE_EQUIP]);
 
         // Handle age particularities
 
@@ -692,7 +692,6 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
         // EQUIP_QUAD_BOOTS_KOKIRI, EQUIP_QUAD_BOOTS_IRON, EQUIP_QUAD_BOOTS_HOVER
 
         for (k = 0, bit = rowStart, point = 4; k < 3; k++, point += 4, temp++, bit++) {
-
             if (((u32)i == EQUIP_TYPE_SWORD) && (k == EQUIP_INV_SWORD_BIGGORON) &&
                 gSaveContext.save.info.playerData.bgsFlag) {
                 KaleidoScope_DrawQuadTextureRGBA32(play->state.gfxCtx, gItemIconSwordBiggoronTex, ITEM_ICON_WIDTH,

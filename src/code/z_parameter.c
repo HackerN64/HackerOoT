@@ -3567,13 +3567,13 @@ void Interface_DrawSmallKeyCounter(PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx, __FILE__, __LINE__);
 
-    if (gSaveContext.save.info.inventory.dungeonKeys[gSaveContext.mapIndex] >= 0) {
+    if (gSaveContext.save.info.inventory.dungeonKeys[mapIndex] >= 0) {
         // Small Key Icon
         gDPPipeSync(OVERLAY_DISP++);
         gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 200, 230, 255, interfaceCtx->magicAlpha);
         gDPSetEnvColor(OVERLAY_DISP++, 0, 0, 20, 255);
-        OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, gSmallKeyCounterIconTex, 16, 16, WIDE_INCR(26, -7), 190,
-                                      WIDE_INCR(16, -4), 16, 1 << 10, 1 << 10);
+        OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, gSmallKeyCounterIconTex, 16, 16, WIDE_INCR(26, -7),
+                                      190 - smallKeyPosY, WIDE_INCR(16, -4), 16, 1 << 10, 1 << 10);
 
         // Small Key Counter
         gDPPipeSync(OVERLAY_DISP++);
@@ -3582,7 +3582,7 @@ void Interface_DrawSmallKeyCounter(PlayState* play) {
                           PRIMITIVE, 0);
 
         interfaceCtx->counterDigits[2] = 0;
-        interfaceCtx->counterDigits[3] = gSaveContext.save.info.inventory.dungeonKeys[gSaveContext.mapIndex];
+        interfaceCtx->counterDigits[3] = gSaveContext.save.info.inventory.dungeonKeys[mapIndex];
 
         while (interfaceCtx->counterDigits[3] >= 10) {
             interfaceCtx->counterDigits[2]++;
@@ -3594,12 +3594,12 @@ void Interface_DrawSmallKeyCounter(PlayState* play) {
         if (interfaceCtx->counterDigits[2] != 0) {
             OVERLAY_DISP =
                 Gfx_TextureI8(OVERLAY_DISP, ((u8*)gCounterDigit0Tex + (8 * 16 * interfaceCtx->counterDigits[2])), 8, 16,
-                              svar3, 190, 8, 16, 1 << 10, 1 << 10);
+                              svar3, 190 - smallKeyPosY, 8, 16, 1 << 10, 1 << 10);
             svar3 += 8;
         }
 
         OVERLAY_DISP = Gfx_TextureI8(OVERLAY_DISP, ((u8*)gCounterDigit0Tex + (8 * 16 * interfaceCtx->counterDigits[3])),
-                                     8, 16, svar3, 190, 8, 16, 1 << 10, 1 << 10);
+                                     8, 16, svar3, 190 - smallKeyPosY, 8, 16, 1 << 10, 1 << 10);
     }
 
     CLOSE_DISPS(play->state.gfxCtx, __FILE__, __LINE__);

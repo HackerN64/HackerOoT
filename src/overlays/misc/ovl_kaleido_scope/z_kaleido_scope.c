@@ -1106,7 +1106,8 @@ void KaleidoScope_SetupPageSwitch(PauseContext* pauseCtx, u8 pt) {
 }
 
 void KaleidoScope_HandlePageToggles(PauseContext* pauseCtx, Input* input) {
-    if ((pauseCtx->debugState == PAUSE_DEBUG_STATE_CLOSED) && CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
+    if (!IS_INV_EDITOR_ACTIVE && pauseCtx->debugState == PAUSE_DEBUG_STATE_CLOSED &&
+        CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
 #if IS_INV_EDITOR_ENABLED
         pauseCtx->debugState = PAUSE_DEBUG_STATE_INVENTORY_EDITOR_OPENING;
 #endif
@@ -2218,12 +2219,6 @@ void KaleidoScope_UpdateNamePanel(PlayState* play) {
         ((pauseCtx->pageIndex == PAUSE_MAP) && (pauseCtx->cursorSpecialPos != 0))) {
 
         pauseCtx->namedItem = pauseCtx->cursorItem[pauseCtx->pageIndex];
-
-#if IS_INV_EDITOR_ENABLED
-        u8 item = InventoryEditor_GetItemFromSlot(&gDebug.invDebug);
-        pauseCtx->namedItem = item != ITEM_NONE ? item : pauseCtx->namedItem;
-#endif
-
         texIndex = pauseCtx->namedItem;
 
         osCreateMesgQueue(&pauseCtx->loadQueue, &pauseCtx->loadMsg, 1);
@@ -3535,8 +3530,8 @@ void KaleidoScope_Draw(PlayState* play) {
     }
 
 #if IS_INV_EDITOR_ENABLED
-    if ((pauseCtx->debugState == PAUSE_DEBUG_STATE_INVENTORY_EDITOR_OPENING) ||
-        (pauseCtx->debugState == PAUSE_DEBUG_STATE_INVENTORY_EDITOR_OPEN)) {
+    if (!IS_INV_EDITOR_ACTIVE && (pauseCtx->debugState == PAUSE_DEBUG_STATE_INVENTORY_EDITOR_OPENING ||
+                                  pauseCtx->debugState == PAUSE_DEBUG_STATE_INVENTORY_EDITOR_OPEN)) {
         KaleidoScope_DrawInventoryEditor(play);
     }
 #endif
