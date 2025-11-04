@@ -16,17 +16,9 @@
 #ifndef GBI_F3DEX3_H
 #define GBI_F3DEX3_H
 
-/* Don't remove this block which defines F3DEX3 as F3DEX2. Other headers in your
+/* Don't remove this line which defines F3DEX3 as F3DEX2. Other headers in your
 romhack codebase will likely assume that if the microcode is not F3DEX2, it is
 F3DEX1 or older, thus breaking F3DEX3 compatibility even more. */
-#ifdef F3DEX_GBI_2
-#undef F3DEX_GBI_2
-#endif
-
-#ifdef F3DEX_GBI_PL
-#undef F3DEX_GBI_PL
-#endif
-
 #define F3DEX_GBI_2  1
 #define F3DEX_GBI_PL 1
 #define F3DEX_GBI_3  1
@@ -73,8 +65,8 @@ of warnings if you use -Wpedantic. */
  */
 /*#define G_SPECIAL_3       0xD3  no-op in F3DEX2 */
 /*#define G_SPECIAL_2       0xD4  no-op in F3DEX2 */
-/*#define G_SPECIAL_1       0xD5  triggered MVP recalculation in F3DEX2 for debug */
 #define G_FLUSH             0xD4
+/*#define G_SPECIAL_1       0xD5  triggered MVP recalculation in F3DEX2 for debug */
 #define G_MEMSET            0xD5
 #define G_DMA_IO            0xD6
 #define G_TEXTURE           0xD7
@@ -126,8 +118,9 @@ of warnings if you use -Wpedantic. */
 #define G_TRI1              0x05
 #define G_TRI2              0x06
 #define G_QUAD              0x07
-#define G_TRISTRIP          0x08 /* = G_LINE3D was a no-op in F3DEX2, has been removed */
-#define G_TRIFAN            0x09
+/*#define G_LINE3D          0x08  no-op in F3DEX2 */
+#define G_TRISNAKE          0x08  /* used to be G_TRISTRIP */
+/* no command for           0x09     used to be G_TRIFAN */
 #define G_LIGHTTORDP        0x0A
 #define G_RELSEGMENT        0x0B
 
@@ -159,8 +152,8 @@ of warnings if you use -Wpedantic. */
 #define G_ZBUFFER               0x00000001
 #define G_TEXTURE_ENABLE        0x00000000  /* actually 2, but controlled by SPTexture */
 #define G_SHADE                 0x00000004
-#define G_AMBOCCLUSION          0x00000040
-#define G_ATTROFFSET_ST_ENABLE  0x00000100
+#define G_ATTROFFSET_ST_ENABLE  0x00000080
+#define G_AMBOCCLUSION          0x00000100
 #define G_CULL_NEITHER          0x00000000
 #define G_CULL_FRONT            0x00000200
 #define G_CULL_BACK             0x00000400
@@ -176,7 +169,7 @@ of warnings if you use -Wpedantic. */
 #define G_TEXTURE_GEN_LINEAR    0x00080000
 #define G_LOD                   0x00100000  /* Ignored by all F3DEX* variants */
 #define G_SHADING_SMOOTH        0x00200000
-#define G_LIGHTING_POSITIONAL   0x00400000  /* Ignored by F3DEX3, assumed always on */
+#define G_LIGHTING_POSITIONAL   0x00400000  /* In F3DEX3, replaced by ENABLE_POINT_LIGHTS */
 #define G_CLIPPING              0x00800000  /* Ignored by all F3DEX* variants */
 
 /* See SPDisplayList / SPBranchList */
@@ -185,40 +178,51 @@ of warnings if you use -Wpedantic. */
 
 /* See SPMatrix */
 /**
- * @brief specifies whether the matrix operation will be performed on the projection or the model view matrix.
- *
+ * @brief Specifies whether the matrix operation will be performed on the
+ * model or the view*projection matrix.
  */
-#define G_MTX_MODELVIEW    0x00    /* matrix types */
+#define G_MTX_MODEL           0x00
 /**
- * @brief @copybrief G_MTX_MODELVIEW
- *
+ * @brief Equivalent to G_MTX_MODEL, for backwards compatibility. The view
+ * matrix used to be put in the same stack as the model matrix, whereas now it
+ * should be multiplied with the projection matrix. In SM64, this is called
+ * "mat stack fix"; in OoT, the vanilla game already does this.
  */
-#define G_MTX_PROJECTION   0x04
+#define G_MTX_MODELVIEW       G_MTX_MODEL
 /**
- * @brief concatenates the matrix (m) with the top of the matrix stack.
- *
+ * @brief @copybrief G_MTX_MODEL
  */
-#define G_MTX_MUL          0x00    /* concat or load */
+#define G_MTX_VIEWPROJECTION  0x04
 /**
- * @brief loads the matrix (m) onto the top of the matrix stack.
- *
+ * @brief Equivalent to G_MTX_VIEWPROJECTION, @see G_MTX_MODELVIEW.
  */
-#define G_MTX_LOAD         0x02
+#define G_MTX_PROJECTION      G_MTX_VIEWPROJECTION
 /**
- * @brief specifies do not push the matrix stack prior to matrix operations
- *
+ * @brief Multiplies the incoming matrix into the top of the matrix stack.
+ * @note The binary encoding of this bit is flipped in SPMatrix to save a RSP
+ * instruction. This is new in F3DEX3.
  */
-#define G_MTX_NOPUSH       0x00    /* push or not */
+#define G_MTX_MUL             0x00
 /**
- * @brief specifies push the matrix stack prior to matrix operations
- *
+ * @brief Replaces the top of the matrix stack with the incoming matrix.
+ * @note The binary encoding of this bit is flipped in SPMatrix to save a RSP
+ * instruction. This is new in F3DEX3.
  */
-#define G_MTX_PUSH         0x01
-
-/* See SPNormalsMode */
-#define G_NORMALS_MODE_FAST      0x00
-#define G_NORMALS_MODE_AUTO      0x01
-#define G_NORMALS_MODE_MANUAL    0x02
+#define G_MTX_LOAD            0x02
+/**
+ * @brief Do not push the top of the matrix stack to DRAM prior to matrix
+ * operations.
+ * @note The binary encoding of this bit is flipped in SPMatrix to save a RSP
+ * instruction. This is true in both F3DEX2 and F3DEX3.
+ */
+#define G_MTX_NOPUSH          0x00
+/**
+ * @brief Push the top of the matrix stack to DRAM prior to matrix operations.
+ * This is not supported for G_MTX_VIEWPROJECTION, only G_MTX_MODEL.
+ * @note The binary encoding of this bit is flipped in SPMatrix to save a RSP
+ * instruction. This is true in both F3DEX2 and F3DEX3.
+ */
+#define G_MTX_PUSH            0x01
 
 /* See SPAlphaCompareCull */
 #define G_ALPHA_COMPARE_CULL_DISABLE  0
@@ -230,15 +234,15 @@ of warnings if you use -Wpedantic. */
  * Each of these indexes an entry in a dmem table which points to an arbitrarily
  * sized block of dmem in which to store the result of a DMA.
  */
-#define G_MV_TEMPMTX0  0  /* for internal use by G_MTX multiply mode */
-#define G_MV_MMTX      2
-#define G_MV_TEMPMTX1  4  /* for internal use by G_MTX multiply mode */
-#define G_MV_VPMTX     6
+#define G_MV_MMTX      0
+#define G_MV_TEMPMTX0  2  /* for internal use by G_MTX multiply mode */
+#define G_MV_VPMTX     4
+#define G_MV_TEMPMTX1  6  /* for internal use by G_MTX multiply mode */
 #define G_MV_VIEWPORT  8
 #define G_MV_LIGHT     10
 /* G_MV_POINT is no longer supported because the internal vertex format is no
 longer a multiple of 8 (DMA word). This was not used in any command anyway. */
-/* G_MV_MATRIX is no longer supported because there is no MVP matrix in F3DEX3. */
+/* G_MV_MATRIX is no longer supported. */
 #define G_MV_PMTX G_MV_VPMTX /* backwards compatibility */
 
 /*
@@ -252,7 +256,7 @@ longer a multiple of 8 (DMA word). This was not used in any command anyway. */
 #define G_MW_SEGMENT        0x06
 #define G_MW_FOG            0x08
 #define G_MW_LIGHTCOL       0x0A
-/* G_MW_FORCEMTX is no longer supported because there is no MVP matrix in F3DEX3. */
+/* G_MW_FORCEMTX is no longer supported. */
 /* G_MW_PERSPNORM is removed; perspective norm is now set via G_MW_FX. */
 
 #define G_MW_HALFWORD_FLAG 0x8000 /* indicates store 2 bytes instead of 4 */
@@ -334,8 +338,7 @@ longer a multiple of 8 (DMA word). This was not used in any command anyway. */
 #define G_MWO_ATTR_OFFSET_S      0x10
 #define G_MWO_ATTR_OFFSET_T      0x12
 #define G_MWO_ALPHA_COMPARE_CULL 0x14
-#define G_MWO_NORMALS_MODE       0x16
-#define G_MWO_LAST_MAT_DL_ADDR   0x18
+#define G_MWO_LAST_MAT_DL_ADDR   0x16
 
 /*
  * RDP command argument defines
@@ -1217,9 +1220,9 @@ typedef union {
  */
 #define LIGHT_TYPE_DIR 0
 /**
- * Identifies the light as a point light, with x acting as the kc coefficient.
+ * Identifies the light as a point light, with the given kc coefficient (nonzero).
  */
-#define LIGHT_TYPE_POINT(x) x
+#define LIGHT_TYPE_POINT(kc) kc
 
 /**
  * Light structure.
@@ -1255,7 +1258,7 @@ typedef struct {
 } PointLight_t;
 
 /**
- * @copydetails PosLight_t
+ * @copydetails PointLight_t
  */
 typedef struct {
     unsigned char col[3];   /** ambient light color (rgb) */
@@ -2137,16 +2140,36 @@ _DW({                                                   \
 /**
  * @brief macro which inserts a matrix operation at the end display list.
  *
- * It inserts a matrix operation in the display list. The parameters allow you to select which matrix stack to use (projection or model view), where to load or concatenate, and whether or not to push the matrix stack. The following parameters are bit OR'ed together:
- * - @ref G_MTX_PROJECTION @ref G_MTX_MODELVIEW - @copybrief G_MTX_MODELVIEW
+ * It inserts a matrix operation in the display list. The parameters allow you
+ * to select which matrix stack to use (projection or model view), whether to
+ * load or multiply, and whether or not to push the matrix stack. The following
+ * parameters are bitwise OR'ed together:
+ * - @ref G_MTX_MODEL - @copybrief G_MTX_MODEL
+ * - @ref G_MTX_VIEWPROJECTION - @copybrief G_MTX_VIEWPROJECTION
  * - @ref G_MTX_MUL - @copybrief G_MTX_MUL
  * - @ref G_MTX_LOAD - @copybrief G_MTX_LOAD
  * - @ref G_MTX_NOPUSH - @copybrief G_MTX_NOPUSH
  * - @ref G_MTX_PUSH - @copybrief G_MTX_PUSH
- * # Matrix Format
- * The format of the fixed-point matrices may seem a little awkward to the application programmer because it is optimized for the RSP geometry engine. This unusual format is hidden in the graphics utility libraries and not usually exposed to the application programmer, but in some cases (static matrix declarations or direct element manipulation) it is necessary to understand the format.
  *
- * The integer and fractional components of the matrix elements are separated. The first 8 words (16 shorts) hold the 16-bit integer elements, the second 8 words (16 shorts) hold the 16-bit fractional elements. The fact that the Mtx type is declared as a long [4][4] array is slightly misleading. For example, to declare a static identity matrix, use code similar to this:
+ * The legacy parameters @ref G_MTX_MODELVIEW and @ref G_MTX_PROJECTION are also
+ * supported, but in F3DEX3 you should always multiply the view matrix with the
+ * projection matrix as G_MTX_VIEWPROJECTION, and only put model matrices in the
+ * G_MTX_MODEL stack.
+ *
+ * # Matrix Format
+ *
+ * The format of the fixed-point matrices may seem a little awkward to the
+ * application programmer because it is optimized for the RSP geometry engine.
+ * This unusual format is hidden in the graphics utility libraries and not
+ * usually exposed to the application programmer, but in some cases (static
+ * matrix declarations or direct element manipulation) it is necessary to
+ * understand the format.
+ *
+ * The integer and fractional components of the matrix elements are separated.
+ * The first 8 words (16 shorts) hold the 16-bit integer elements, the second
+ * 8 words (16 shorts) hold the 16-bit fractional elements. The fact that the
+ * Mtx type is declared as a long [4][4] array is slightly misleading. For
+ * example, to declare a static identity matrix, use code similar to this:
  * ```#include "gbi.h"
  * static Mtx ident =
  * {
@@ -2163,7 +2186,8 @@ _DW({                                                   \
  * 0x00000000, 0x00000000,
  * };
  * ```
- * To force the translation elements of a matrix to be (10.5, 20.5, 30.5), use code similar to this:
+ * To force the translation elements of a matrix to be (10.5, 20.5, 30.5), use
+ * code similar to this:
  * ```
  * #include "gbi.h"
  *
@@ -2177,70 +2201,113 @@ _DW({                                                   \
  * mat.m[3][3] =
  *    (0x8000 << 16) | (0);
  * ```
- * @note
- * Matrix concatenation in the RSP geometry engine is done using 32-bit integer arithmetic. A 32 x 32 bit multiply results in a 64-bit number. Only the middle 32 bits of this 64-bit result are kept for the new matrix. Therefore, when concatenating matrices, remember about the resulting fixed-point numerical error.
  *
- * For example, to retain maximum precision, the number ranges must be similar. Large-scale and translate parameters can decrease the transformation precision. Because rotation and projection matrices require quite a bit of fractional accuracy, these fractions may get tossed out if multiplied against large integer numbers.
+ * # Accuracy
  *
- * Each concatenation results in the rounding of the LSB of each matrix term. This means that each concatenation injects 1/2 LSB of error into the matrix. To keep full precision, concatenate matrices in floating-point on the processor and just load the result into the RSP.
+ * Matrix multiplication in the RSP geometry engine is done using 32-bit integer
+ * arithmetic, in s15.16 format (16 integer, 16 fractional bits, in other words
+ * representing -32768.0 to 32767.999985 with a resolution of about 0.000015).
+ * A 32 x 32 bit multiply results in a 64-bit number. Only the middle 32 bits of
+ * this 64-bit result are kept for the new matrix, to preserve the s15.16
+ * format.
+ *
+ * A typical game object's transformation will have a scale around the range of
+ * 1/100, a rotation which is always values -1.0 to 1.0, and a translation
+ * around the range of 1000. When producing a final transformation matrix, you
+ * will typically compose (multiply) one scale, multiple rotations (for limbs),
+ * and finally one translation. Each matrix multiply on the RSP will lose
+ * precision, especially if the scale has been applied before the rotations.
+ *
+ * Therefore, your game should usually maintain a matrix stack on the CPU in
+ * floating point, and once you have a final model matrix for each limb /
+ * object, convert it to fixed point and load it to the RSP. Occasional uses of
+ * G_MTX_MUL, such as multiplying view * projection or for HUD elements, are
+ * okay. Both SM64 and OoT already operate this way.
  *
  * # Performance
- * Each @ref G_MTX_MODELVIEW matrix operation has an implicit matrix multiplication even if you specify @ref G_MTX_LOAD. This is the combined model view (M) and projection (P) matrix that is necessary for the vertex transformation to use a single matrix during transformation.
  *
- * You can optimize this by concatenating modeling matrices on the CPU and then putting the viewing (V) and projection matrices on the projection stack. By doing this, you only incur the single MxVP matrix concatenation each time you load a modeling matrix. Furthermore, the application has more information on how to do a cheap hack for modeling matrix concatenation. For example, if you want to combine a single axis rotation with a translation, just place the coefficients in the correct entries of the resulting matrix.
+ * Your game generally should not use G_MTX_PUSH or SPPopMatrix*, even in a
+ * scene graph style engine like SM64.
  *
- * @param m is the pointer to the 4x4 fixed-point matrix (see note below about format)
- * @param p are the bit OR'd parameters to the matrix macro (@ref G_MTX_PROJECTION, @ref G_MTX_MODELVIEW, @ref G_MTX_MUL, @ref G_MTX_LOAD, @ref G_MTX_NOPUSH)
+ * If you have taken the advice above to just compute and upload final model
+ * matrices, there is no need to use push or pop--you'll always just do a single
+ * load before rendering any model. If you need to return to a previous
+ * transformation matrix, just upload that already-computed matrix again. Again,
+ * both SM64 and OoT already do this.
+ *
+ * In F3DEX3, the code for G_MTX_PUSH and SPPopMatrix* is moved to overlay 3,
+ * meaning these operations will be slower on average than in F3DEX2.
+ *
+ * @param m is the pointer to the 4x4 fixed-point matrix (see note above about
+ * format)
+ * @param p are the bit OR'd parameters to the matrix macro
+ * (@ref G_MTX_MODEL, @ref G_MTX_VIEWPROJECTION, @ref G_MTX_MUL,
+ * @ref G_MTX_LOAD, @ref G_MTX_NOPUSH, @ref G_MTX_PUSH)
+ *
+ * @note The binary encoding for this command inverts both G_MTX_PUSH and
+ * G_MTX_LOAD. F3DEX2 already inverted G_MTX_PUSH, but the inversion of
+ * G_MTX_LOAD is new in F3DEX3. No C source level changes are needed due to
+ * these inversions, it's just a binary encoding change.
+ *
+ * @note G_MTX_PUSH | G_MTX_VIEWPROJECTION is not supported; the behavior will
+ * be that G_MTX_PUSH is ignored in this case.
+ *
+ * @note Unlike the display list stack, which is kept in DMEM and is 18 deep,
+ * the matrix stack is kept in RDRAM and is of no specified size. It is of
+ * whatever size the developer chooses to allocate; there is no bounds checking.
  */
 #define gSPMatrix(pkt, m, p) \
-        gDma2p((pkt),G_MTX, (m), sizeof(Mtx), (p) ^ G_MTX_PUSH, 0)
+        gDma2p((pkt),G_MTX, (m), sizeof(Mtx), (p) ^ G_MTX_PUSH ^ G_MTX_LOAD, 0)
 /**
  * @brief macro which inserts a matrix operation in a static display list.
  *
  * @copydetails gSPMatrix
  */
 #define gsSPMatrix(m, p) \
-        gsDma2p(     G_MTX, (m), sizeof(Mtx), (p) ^ G_MTX_PUSH, 0)
+        gsDma2p(     G_MTX, (m), sizeof(Mtx), (p) ^ G_MTX_PUSH ^ G_MTX_LOAD, 0)
 
 /**
- * @brief macro which pops one of the matrix stacks at the end display list.
+ * @brief macro which pops multiple matrices from a matrix stack.
  *
- * It pops `num` of the matrix stacks. The model view stack can be up to 10 matrices deep. The projection stack is 1 matrix deep, so it cannot be popped.
+ * It pops `num` matrices from the stack.
  *
- * @note
- * If the stack is empty, the macro is ignored.
+ * @note If the number of matrices to pop is greater than the number of matrices
+ * currently on the stack, the stack ends up validly holding 0 matrices. This is
+ * a rare case of "exception" handling in the microcode. Perhaps SGI's intention
+ * was to allow for resetting the matrix stack by popping >= 10 matrices at
+ * once.
  *
- * @param n is the flag field that identifies which matrix stack to pop:
- * - @ref G_MTX_MODELVIEW pops the modeling/viewing matrix stack
- * - @ref G_MTX_PROJECTION pops the projection matrix stack (NOT IMPLEMENTED)
+ * @param mtx is the flag field that identifies which matrix stack to pop:
+ * - @ref G_MTX_MODEL pops from the model matrix stack
+ * - @ref G_MTX_VIEWPROJECTION pops from the view*projection matrix stack; this
+ *   is not supposed to be supported but actually kind of is. The model matrix
+ *   stack pointer is reduced by the number of matrices specified here, and then
+ *   the resulting matrix is loaded into the view*projection matrix.
  * @param num is the number of matrices to pop
  */
-#define gSPPopMatrixN(pkt, n, num) gDma2p((pkt), G_POPMTX, (num) * 64, 64, 2, 0)
+#define gSPPopMatrixN(pkt, mtx, num) \
+    gDma2p((pkt), G_POPMTX, (num) * 64, 64, (mtx) + G_MV_MMTX, 0)
 /**
- * @brief macro which pops one of the matrix stacks in a static display list.
+ * @brief macro which pops multiple matrices from a matrix stack.
  *
  * @copydetails gSPPopMatrixN
  */
-#define gsSPPopMatrixN(n, num)     gsDma2p(      G_POPMTX, (num) * 64, 64, 2, 0)
+#define gsSPPopMatrixN(mtx, num) \
+    gsDma2p(      G_POPMTX, (num) * 64, 64, (mtx) + G_MV_MMTX, 0)
 /**
- * @brief macro which pops one of the matrix stacks at the end display list.
+ * @brief macro which pops one matrix from a matrix stack in a static display list.
  *
- * It pops one of the matrix stacks. The model view stack can be up to 10 matrices deep. The projection stack is 1 matrix deep, so it cannot be popped.
+ * This is just SPPopMatrixN with num=1:
  *
- * @note
- * If the stack is empty, the macro is ignored.
- *
- * @param n is the flag field that identifies which matrix stack to pop:
- * - @ref G_MTX_MODELVIEW pops the modeling/viewing matrix stack
- * - @ref G_MTX_PROJECTION pops the projection matrix stack (NOT IMPLEMENTED)
+ * @copydetails gSPPopMatrixN
  */
-#define gSPPopMatrix(pkt, n)       gSPPopMatrixN((pkt), (n), 1)
+#define gSPPopMatrix(pkt, mtx)       gSPPopMatrixN((pkt), (mtx), 1)
 /**
- * @brief macro which pops one of the matrix stacks in a static display list.
+ * @brief macro which pops one matrix from a matrix stack in a static display list.
  *
  * @copydetails gSPPopMatrix
  */
-#define gsSPPopMatrix(n)           gsSPPopMatrixN(      (n), 1)
+#define gsSPPopMatrix(mtx)           gsSPPopMatrixN(      (mtx), 1)
 
 /**
  * @brief macro which loads an internal vertex buffer in the RSP with points that are used by @ref gSP1Triangle macros to generate polygons at the end display list.
@@ -2259,9 +2326,6 @@ _DW({                                                   \
  * ```c
  * gSPVertex(glistp++, v, 3, 2);
  * ```
- *
- * @note
- * Because the RSP geometry transformation engine uses a vertex list with triangle list architecture, it is quite powerful. A simple one-triangle macro retains least performance compared to @ref gSP2Triangles or the new 5 tris commands in EX3 (@ref gSPTriStrip, @ref gSPTriFan).
  *
  * @param v is the pointer to the vertex list (segment address)
  * @param n is the number of vertices
@@ -2613,61 +2677,197 @@ _DW({                                                                   \
     __gsSP1Triangle_w1f(v10, v11, v12, flag1)                       \
 }
 
-/*
- * 5 Triangles base commands
+/**
+ * Make the triangle snake turn right before drawing this triangle. In other
+ * words, build the new triangle off the newest and middle-age vertices of the
+ * last triangle.
+ * @see gSPTriSnake
  */
-#define _gSP5Triangles(pkt, cmd, v1, v2, v3, v4, v5, v6, v7) \
-_DW({                                                        \
-    Gfx *_g = (Gfx *)(pkt);                                  \
-    _g->words.w0 = (_SHIFTL(cmd,    24, 8) |                 \
-                    _SHIFTL((v1)*2, 16, 8) |                 \
-                    _SHIFTL((v2)*2,  8, 8) |                 \
-                    _SHIFTL((v3)*2,  0, 8));                 \
-    _g->words.w1 = (_SHIFTL((v4)*2, 24, 8) |                 \
-                    _SHIFTL((v5)*2, 16, 8) |                 \
-                    _SHIFTL((v6)*2,  8, 8) |                 \
-                    _SHIFTL((v7)*2,  0, 8));                 \
+#define G_SNAKE_RIGHT  0
+/**
+ * Make the triangle snake turn left before drawing this triangle. In other
+ * words, build the new triangle off the newest and oldest vertices of the last
+ * triangle.
+ * @see gSPTriSnake
+ */
+#define G_SNAKE_LEFT 1
+/**
+ * Logical-OR this into a triangle index to mark it as the last triangle of the
+ * snake. In other words, this gets OR'd into the last valid index, not the
+ * first invalid index.
+ *
+ * @note Due to tri indices being multiplied by 2 in the binary encoding, this
+ * is actually 0x80--the byte's sign bit--in the binary encoding.
+ *
+ * @see gSPTriSnake
+ */
+#define G_SNAKE_LAST  0x40
+
+#define _gSPTriSnakeW0(i1, i2, i3)        \
+    (_SHIFTL(G_TRISNAKE,         24, 8) | \
+     _SHIFTL((i2)*2,             16, 8) | \
+     _SHIFTL((i1)*2,              8, 8) | \
+     _SHIFTL((i3)*2|G_SNAKE_LEFT, 0, 8))
+#define _gSPTriSnakeW1(i4, i4d, i5, i5d, i6, i6d, i7, i7d) \
+    (_SHIFTL((i4)*2|(i4d),       24, 8) |                  \
+     _SHIFTL((i5)*2|(i5d),       16, 8) |                  \
+     _SHIFTL((i6)*2|(i6d),        8, 8) |                  \
+     _SHIFTL((i7)*2|(i7d),        0, 8))
+
+/**
+ * Triangle snake is F3DEX3's accelerated triangles command. It is a generalized
+ * form of a triangle strip or fan, which can represent any sequential chain of
+ * connected triangles by encoding which side of the current triangle the next
+ * triangle attaches to. This allows the chain of triangles to "snake" around
+ * and double back next to itself, unlike a triangle strip. For more information
+ * on the design, see Triangle Snake in the documentation.
+ *
+ * The drawing algorithm is:
+ * - Initialize 3 bytes of stored triangle indices, A-B-C, to i3-i1-i2, and draw
+ *   this triangle. (This initialization and draw is actually implemented by
+ *   storing i2-i1-i3 and then running the algorithm below with G_SNAKE_LEFT,
+ *   which ends up storing i2 to C and i3 to A, ultimately creating i3-i1-i2.)
+ * - Loop:
+ *     - If the index in A has G_SNAKE_LAST or'd into it, exit.
+ *     - Increment the input pointer, and read the next index and its direction
+ *       flag (currently i4 and i4d).
+ *     - If the direction flag is G_SNAKE_RIGHT, copy A to B; else
+ *       (G_SNAKE_LEFT), copy A to C.
+ *     - Store the new index (currently i4) to A.
+ *     - Draw the triangle A-B-C and repeat the loop.
+ *
+ * For example, after drawing the first triangle i3-i1-i2, if i4 is
+ * G_SNAKE_RIGHT, the snake turns right and draws i4-i3-i2:
+ *                     3 --<-- 4
+ *                    /'\    '/            (winding order and
+ *                   /   \   /            first vertex for flat
+ *                  /     \ /              shading are marked)
+ *                 1 -->-- 2
+ * Conversely, after the first triangle i3-i1-i2, if i4 is G_SNAKE_LEFT, the
+ * snake turns left and draws i4-i1-i3:
+ *             4 --<-- 3
+ *              \'    /'\
+ *               \   /   \
+ *                \ /     \
+ *                 1 -->-- 2
+ * If the snake turns in the same direction repeatedly, it will coil up, forming
+ * a triangle fan. If it slithers left and right alternately, this will form a
+ * triangle strip. Any combination of these is also possible. In particular, a
+ * useful shape is a triangle strip for a few tris, then a tri fan for a couple
+ * tris to "turn around", then another tri strip alongside the first, and so on.
+ * This shape can cover almost all tris of a typical surface with a single
+ * snake, except for tris which have two unconnected edges which can only be the
+ * first or last tris of the snake.
+ *
+ * Logical-OR G_SNAKE_LAST into the last valid index of the snake. This index
+ * still needs a valid G_SNAKE_LEFT or G_SNAKE_RIGHT for its direction. However,
+ * for all indices after this, you can fill the index and direction parameters
+ * with 0s.
+ *
+ * @see gSPContinueSnake to extend the snake to more than 5 triangles.
+ */
+#define gSPTriSnake(pkt, i1, i2, i3, i4, i4d, i5, i5d, i6, i6d, i7, i7d) \
+_DW({                                                                    \
+    Gfx *_g = (Gfx *)(pkt);                                              \
+    _g->words.w0 = _gSPTriSnakeW0(i1, i2, i3);                           \
+    _g->words.w1 = _gSPTriSnakeW1(i4, i4d, i5, i5d, i6, i6d, i7, i7d);   \
 })
-#define _gsSP5Triangles(cmd, v1, v2, v3, v4, v5, v6, v7)     \
-{                                                            \
-    (_SHIFTL(cmd,    24, 8) |                                \
-     _SHIFTL((v1)*2, 16, 8) |                                \
-     _SHIFTL((v2)*2,  8, 8) |                                \
-     _SHIFTL((v3)*2,  0, 8)),                                \
-    (_SHIFTL((v4)*2, 24, 8) |                                \
-     _SHIFTL((v5)*2, 16, 8) |                                \
-     _SHIFTL((v6)*2,  8, 8) |                                \
-     _SHIFTL((v7)*2,  0, 8))                                 \
+/**
+ * @copydetails gSPTriSnake
+ */
+#define gsSPTriSnake(i1, i2, i3, i4, i4d, i5, i5d, i6, i6d, i7, i7d) \
+{                                                                    \
+    _gSPTriSnakeW0(i1, i2, i3),                                      \
+    _gSPTriSnakeW1(i4, i4d, i5, i5d, i6, i6d, i7, i7d)               \
 }
+
+/**
+ * Continue a triangle snake for up to 8 more triangles. This is actually not
+ * a display list command--there's no command byte. The data is just the next
+ * 8 bytes of the display list data, still being processed by the previous
+ * gSPTriSnake. Note that the microcode implementation does correctly handle
+ * the case when the snake continues past the end of the current data in the
+ * input buffer (which is a copy in DMEM of a chunk of the display list); the
+ * input buffer is reloaded like it would be for more commands. So the snake can
+ * be an unlimited length by continuing to append gSPContinueSnake commands.
+ */
+#define gSPContinueSnake(pkt, i0, i0d, i1, i1d, i2, i2d, i3, i3d,      \
+                              i4, i4d, i5, i5d, i6, i6d, i7, i7d)      \
+_DW({                                                                  \
+    Gfx *_g = (Gfx *)(pkt);                                            \
+    _g->words.w0 = _gSPTriSnakeW1(i0, i0d, i1, i1d, i2, i2d, i3, i3d); \
+    _g->words.w1 = _gSPTriSnakeW1(i4, i4d, i5, i5d, i6, i6d, i7, i7d); \
+})
+/**
+ * @copydetails gSPContinueSnake
+ */
+#define gsSPContinueSnake(i0, i0d, i1, i1d, i2, i2d, i3, i3d, \
+                          i4, i4d, i5, i5d, i6, i6d, i7, i7d) \
+{                                                             \
+    _gSPTriSnakeW1(i0, i0d, i1, i1d, i2, i2d, i3, i3d),       \
+    _gSPTriSnakeW1(i4, i4d, i5, i5d, i6, i6d, i7, i7d)        \
+}
+
 /**
  * 5 Triangles in strip arrangement. Draws the following tris:
- * v1-v2-v3, v3-v2-v4, v3-v4-v5, v5-v4-v6, v5-v6-v7
- * If you want to draw fewer tris, set indices to -1 from the right.
- * e.g. to draw 4 tris, set v7 to -1; to draw 3 tris, set v6 to -1
- * Note that any set of 3 adjacent tris can be drawn with either SPTriStrip
- * or SPTriFan. For arbitrary sets of 4 adjacent tris, four out of five of them
- * can be drawn with one of SPTriStrip or SPTriFan. The 4-triangle formation
- * which can't be drawn with either command looks like the Triforce.
+ * v3-v1-v2, v4-v3-v2, v5-v3-v4, v6-v5-v4, v7-v5-v6
+ * To draw fewer than 5 tris, set indices to -1 from the right; for example to
+ * draw 4 tris, set v7 to -1, or to draw 3 tris set v6 to -1.
+ *
+ * @note The first index of each triangle drawn is different, so that in
+ * !G_SHADING_SMOOTH (flat shading) mode, the single color or single normal of
+ * each triangle can be set independently.
+ *
+ * @deprecated This used to be directly implemented in the microcode, but is
+ * now implemented as a special case of gSPTriSnake. The latter is more general
+ * and should be used directly.
+ *
+ * @note One of the two handednesses of a 4 tri strip cannot be drawn directly
+ * with gSPTriStrip, unless v1 and v2 are set to the same vertex to create a
+ * degenerate triangle, which costs a little performance. However, now this
+ * shape can be drawn with gSPTriSnake (directions left-right-left).
  */
-#define gSPTriStrip(pkt, v1, v2, v3, v4, v5, v6, v7) \
-    _gSP5Triangles(pkt, G_TRISTRIP, v1, v2, v3, v4, v5, v6, v7)
+#define gSPTriStrip(pkt, v1, v2, v3, v4, v5, v6, v7)              \
+    gSPTriSnake(pkt, v1, v2,                                      \
+        (v3) | (((v4) & 0x80) ? G_SNAKE_LAST : 0),                \
+        (v4) | (((v5) & 0x80) ? G_SNAKE_LAST : 0), G_SNAKE_RIGHT, \
+        (v5) | (((v6) & 0x80) ? G_SNAKE_LAST : 0), G_SNAKE_LEFT,  \
+        (v6) | (((v7) & 0x80) ? G_SNAKE_LAST : 0), G_SNAKE_RIGHT, \
+        (v7) | G_SNAKE_LAST, G_SNAKE_LEFT)
 /**
  * @copydetails gSPTriStrip
  */
-#define gsSPTriStrip(v1, v2, v3, v4, v5, v6, v7) \
-    _gsSP5Triangles(G_TRISTRIP, v1, v2, v3, v4, v5, v6, v7)
+#define gsSPTriStrip(v1, v2, v3, v4, v5, v6, v7)                  \
+    gsSPTriSnake(v1, v2,                                          \
+        (v3) | (((v4) & 0x80) ? G_SNAKE_LAST : 0),                \
+        (v4) | (((v5) & 0x80) ? G_SNAKE_LAST : 0), G_SNAKE_RIGHT, \
+        (v5) | (((v6) & 0x80) ? G_SNAKE_LAST : 0), G_SNAKE_LEFT,  \
+        (v6) | (((v7) & 0x80) ? G_SNAKE_LAST : 0), G_SNAKE_RIGHT, \
+        (v7) | G_SNAKE_LAST, G_SNAKE_LEFT)
 /**
  * 5 Triangles in fan arrangement. Draws the following tris:
- * v1-v2-v3, v1-v3-v4, v1-v4-v5, v1-v5-v6, v1-v6-v7
- * Otherwise works the same as SPTriStrip, see above.
+ * v3-v1-v2, v4-v1-v3, v5-v1-v4, v6-v1-v5, v7-v1-v6
+ * Otherwise works the same as @see gSPTriStrip.
+ *
+ * @deprecated Use gSPTriSnake directly.
  */
-#define gSPTriFan(pkt, v1, v2, v3, v4, v5, v6, v7) \
-    _gSP5Triangles(pkt, G_TRIFAN, v1, v2, v3, v4, v5, v6, v7)
+#define gSPTriFan(pkt, v1, v2, v3, v4, v5, v6, v7)               \
+    gSPTriSnake(pkt, v1, v2,                                     \
+        (v3) | (((v4) & 0x80) ? G_SNAKE_LAST : 0),               \
+        (v4) | (((v5) & 0x80) ? G_SNAKE_LAST : 0), G_SNAKE_LEFT, \
+        (v5) | (((v6) & 0x80) ? G_SNAKE_LAST : 0), G_SNAKE_LEFT, \
+        (v6) | (((v7) & 0x80) ? G_SNAKE_LAST : 0), G_SNAKE_LEFT, \
+        (v7) | G_SNAKE_LAST, G_SNAKE_LEFT)
 /**
  * @copydetails gSPTriFan
  */
-#define gsSPTriFan(v1, v2, v3, v4, v5, v6, v7) \
-    _gsSP5Triangles(G_TRIFAN, v1, v2, v3, v4, v5, v6, v7)
+#define gsSPTriFan(v1, v2, v3, v4, v5, v6, v7)                   \
+    gsSPTriSnake(v1, v2,                                         \
+        (v3) | (((v4) & 0x80) ? G_SNAKE_LAST : 0),               \
+        (v4) | (((v5) & 0x80) ? G_SNAKE_LAST : 0), G_SNAKE_LEFT, \
+        (v5) | (((v6) & 0x80) ? G_SNAKE_LAST : 0), G_SNAKE_LEFT, \
+        (v6) | (((v7) & 0x80) ? G_SNAKE_LAST : 0), G_SNAKE_LEFT, \
+        (v7) | G_SNAKE_LAST, G_SNAKE_LEFT)
 
 
 /*
@@ -2709,7 +2909,7 @@ other segments. */
 /**
  * @brief Load new MVP matrix directly.
  *
- * This is no longer supported as there is no MVP matrix in F3DEX3.
+ * This is no longer supported as it was not used in production games.
  * @deprecated
  */
 #define gSPForceMatrix(pkt, mptr) gSPNoOp(pkt)
@@ -2882,8 +3082,14 @@ _DW({                                         \
 
 
 /**
- * Alpha compare culling. Optimization for cel shading, could also be used for
- * other scenarios where lots of tris are being drawn with alpha compare.
+ * Alpha compare culling. This was originally created as an optimization for cel
+ * shading, but it can also be used for other scenarios. In particular, it can
+ * be used with fog to cull tris which are entirely in the fog. This could also
+ * be accomplished with far clipping, but far clipping is removed in F3DEX3.
+ * ```
+ * // Cull tris where all three vertex shade alpha are >= 0xFF
+ * gSPAlphaCompareCull(..., G_ALPHA_COMPARE_CULL_ABOVE, 0xFF);
+ * ```
  *
  * If mode == G_ALPHA_COMPARE_CULL_DISABLE, tris are drawn normally.
  *
@@ -2928,49 +3134,6 @@ _DW({                                         \
         (_SHIFTL((mode), 8, 8) | _SHIFTL((thresh), 0, 8)))
 
 /**
- * Normals mode: How to handle transformation of vertex normals from model to
- * world space for lighting.
- *
- * If mode = G_NORMALS_MODE_FAST, transforms normals from model space to world
- * space with the M matrix. This is correct if the object's transformation
- * matrix stack only included translations, rotations, and uniform scale (i.e.
- * same scale in X, Y, and Z); otherwise, if the transformation matrix has
- * nonuniform scale or shear, the lighting on the object will be somewhat
- * distorted.
- *
- * If mode = G_NORMALS_MODE_AUTO, transforms normals from model space to world
- * space with M inverse transpose, which renders lighting correctly for the
- * object regardless of its transformation matrix (nonuniform scale or shear is
- * okay). Whenever vertices are drawn with lighting enabled after M has been
- * changed, computes M inverse transpose from M. This requires swapping to
- * overlay 4 for M inverse transpose and then back to overlay 2 for lighting,
- * which produces roughly 3.5 us of extra DRAM traffic. This performance penalty
- * happens effectively once per matrix, which is once per normal object or
- * separated limb or about twice per flex skeleton limb. So in a scene with lots
- * of complex skeletons, this may have a noticeable performance impact.
- *
- * If mode = G_NORMALS_MODE_MANUAL, uses M inverse transpose for correct results
- * like G_NORMALS_MODE_AUTO, but it never internally computes M inverse
- * transpose. You have to upload M inverse transpose to the RSP using
- * SPMITMatrix every time you change the M matrix. The DRAM traffic for the
- * extra matrix uploads is much smaller than the overlay swaps, so if you can
- * efficiently compute M inverse transpose on the CPU, this may be faster than
- * G_NORMALS_MODE_AUTO.
- *
- * Recommended to leave this set to G_NORMALS_MODE_FAST generally, and only set
- * it to G_NORMALS_MODE_AUTO for specific objects at times when they actually
- * have a nonuniform scale. For example, G_NORMALS_MODE_FAST for Mario
- * generally, but G_NORMALS_MODE_AUTO temporarily while he is squashed.
- */
-#define gSPNormalsMode(pkt, mode) \
-    gMoveHalfwd(pkt, G_MW_FX, G_MWO_NORMALS_MODE, (mode) & 0xFF)
-/**
- * @copydetails gSPNormalsMode
- */
-#define gsSPNormalsMode(mode) \
-    gsMoveHalfwd(G_MW_FX, G_MWO_NORMALS_MODE, (mode) & 0xFF)
-
-/**
  * F3DEX3 has a basic auto-batched rendering system. At a high level, if a
  * material display list being run is the same as the last material, the texture
  * loads are automatically skipped the second time as they should already be in
@@ -3005,35 +3168,6 @@ _DW({                                         \
  */
 #define gsSPDontSkipTexLoadsAcross() \
     gsMoveWd(G_MW_FX, G_MWO_LAST_MAT_DL_ADDR, 0xFFFFFFFF)
-
-typedef union {
-    struct {
-        s16 intPart[3][4];  /** Fourth row containing translations is omitted. */
-        u16 fracPart[3][4]; /** Also the fourth column data is ignored, need not be 0. */
-    };
-    long long int force_structure_alignment;
-} MITMtx;
-
-/**
- * See SPNormalsMode. mtx is the address of a MITMtx (M inverse transpose).
- *
- * The matrix values must be scaled down so that the matrix norm is <= 1,
- * i.e. multiplying this matrix by any vector length <= 1 must produce a vector
- * with length <= 1. Normally, M scales things down substantially, so M inverse
- * transpose natively would scale them up substantially; you need to apply a
- * constant scale to counteract this. One easy way to do this is compute M
- * inverse transpose normally, then scale it so until the maximum absolute
- * value of any element is 0.5. Because of this scaling, you can also skip the
- * part of the inverse computation where you compute the determinant and divide
- * by it, cause you're going to rescale it arbitrarily anyway.
- */
-#define gSPMITMatrix(pkt, mit) \
-        gDma2p((pkt), G_MOVEMEM, (mit), sizeof(MITMtx), G_MV_MMTX, 0x80)
-/**
- * @copydetails gSPMITMatrix
- */
-#define gsSPMITMatrix(mtx) \
-        gsDma2p(      G_MOVEMEM, (mit), sizeof(MITMtx), G_MV_MMTX, 0x80)
 
 
 /**
@@ -3240,8 +3374,15 @@ _DW({                                               \
  * Lighting Commands
  */
 
+/**
+ * OR this flag into n in SPNumLights or SPSetLights* to indicate that one or
+ * more of the lights are point lights.
+ * Example: gSPSetLights(POLY_OPA_DISP++, numLights | ENABLE_POINT_LIGHTS, *lights);
+ */
+#define ENABLE_POINT_LIGHTS (0x8000 >> 4)
+
 #define NUML(n)    ((n) * 0x10)
-/*
+/**
  * F3DEX3 properly supports zero lights, so there is no need to use these macros
  * anymore.
  */
@@ -3258,7 +3399,7 @@ _DW({                                               \
 
 /**
  * Number of directional / point lights, in the range 0-9. There is also always
- * one ambient light not counted in this number.
+ * one ambient light not counted in this number. See also ENABLE_POINT_LIGHTS.
  */
 #define gSPNumLights(pkt, n)                            \
     gMoveWd(pkt, G_MW_NUMLIGHT, G_MWO_NUMLIGHT, NUML(n))
@@ -3268,7 +3409,7 @@ _DW({                                               \
 #define gsSPNumLights(n)                                \
     gsMoveWd(    G_MW_NUMLIGHT, G_MWO_NUMLIGHT, NUML(n))
 
-/* There is also no need to use these macros. */
+/** There is also no need to use these macros. */
 #define LIGHT_1     1
 #define LIGHT_2     2
 #define LIGHT_3     3
@@ -3352,7 +3493,8 @@ _DW({\
  * Set all your scene's lights (directional/point + ambient) with one memory
  * transaction.
  * n is the number of directional / point lights, from 0 to 9. There is also
- * always an ambient light.
+ * always an ambient light. If there are point lights, set ENABLE_POINT_LIGHTS
+ * in n via logical or (i.e. set n to (numLights | ENABLE_POINT_LIGHTS))
  * name should be the NAME of a Lights struct (NOT A POINTER)
  * filled in with all the lighting data. You can use the gdSPDef* macros to fill
  * in the struct or just do it manually. Example:
@@ -3367,7 +3509,8 @@ _DW({\
  * lights[1].l.dir = ...;
  * ...
  * lights[numLights].l.col = ambient_color();
- * gSPSetLights(POLY_OPA_DISP++, numLights, *lights); // <- NOTE DEREFERENCE
+ * gSPSetLights(POLY_OPA_DISP++, ENABLE_POINT_LIGHTS | numLights,
+ *     *lights); // <- NOTE DEREFERENCE
  *
  * If you're wondering why this macro takes a name / dereference instead of a
  * pointer, it's for backwards compatibility.
@@ -5457,4 +5600,4 @@ _DW({                                                   \
 #define gDPNoOpCloseDisp(pkt, file, line)   gDma1p(pkt, G_NOOP, file, line, 8)
 #define gDPNoOpTag3(pkt, type, data, n)     gDma1p(pkt, G_NOOP, data, n, type)
 
-#endif /* F3DEX3_H */
+#endif /* GBI_F3DEX3_H */

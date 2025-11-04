@@ -21,6 +21,8 @@
 #include "array_count.h"
 #include "gfx.h"
 
+#include "libc/math.h"
+
 #if ENABLE_CUTSCENE_IMPROVEMENTS
 
 CutsceneEntry sGlobalCutsceneList[] = {
