@@ -204,7 +204,9 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
     s16 cursorPoint;
 
     s16 alpha = pauseCtx->alpha;
-    if (IS_INV_EDITOR_ENABLED && (gDebug.invDebug.showInfoScreen || gDebug.invDebug.miscDebug.showMiscScreen)) {
+
+#if IS_INV_EDITOR_ENABLED
+    if ((gDebug.invDebug.showInfoScreen || gDebug.invDebug.miscDebug.showMiscScreen)) {
         alpha = gDebug.invDebug.elementsAlpha;
 
         if (alpha == 0) {
@@ -213,6 +215,7 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
     } else {
         alpha = gDebug.invDebug.elementsAlpha < 255 ? gDebug.invDebug.elementsAlpha : pauseCtx->alpha;
     }
+#endif
 
     OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_equipment.c", 219);
 

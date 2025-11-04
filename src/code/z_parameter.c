@@ -2999,18 +2999,24 @@ void Magic_DrawMeter(PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx, "../z_parameter.c", 2650);
 
-    if (gSaveContext.save.info.playerData.magicLevel != 0 ||
-        (gDebug.invDebug.miscDebug.showMiscScreen && gSaveContext.save.info.playerData.isMagicAcquired)) {
+    if (gSaveContext.save.info.playerData.magicLevel != 0
+#if IS_INV_EDITOR_ENABLED
+        || (gDebug.invDebug.miscDebug.showMiscScreen && gSaveContext.save.info.playerData.isMagicAcquired)
+#endif
+    ) {
+
         // NOLINTBEGIN
         if (gSaveContext.save.info.playerData.healthCapacity > 0xA0)
             magicMeterY = R_MAGIC_METER_Y_LOWER; // two rows of hearts
         else
             magicMeterY = R_MAGIC_METER_Y_HIGHER; // one row of hearts
-        // NOLINTEND
+                                                  // NOLINTEND
 
+#if IS_INV_EDITOR_ENABLED
         if (IS_INV_EDITOR_ACTIVE) {
             magicMeterY += gDebug.invDebug.miscDebug.hudTopPosY;
         }
+#endif
 
         Gfx_SetupDL_39Overlay(play->state.gfxCtx);
 
