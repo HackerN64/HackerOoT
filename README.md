@@ -26,7 +26,7 @@ It builds the following versions:
 | gc-jp-ce     | 03-10-08 21:53:00 | GameCube Japan (Collector's Edition Disc) | `0c13e0449a28ea5b925cdb8af8d29768` |
 | ique-cn      | 03-10-22 16:23:19 | iQue Player (Simplified Chinese)          | `0ab48b2d44a74b3bb2d384f6170c2742` |
 
-The default version is `hackeroot-mq`.
+The default version is `ntsc-1.2`.
 
 This project is using the following tools:
 - [F3DEX3](https://github.com/HackerN64/F3DEX3), *will make you want to finally ditch HLE*, by Sauraen

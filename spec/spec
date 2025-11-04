@@ -684,31 +684,30 @@ beginseg
 #if OOT_VERSION < NTSC_1_1 || !PLATFORM_N64
     pad_text
 #endif
-    include "$(BUILD_DIR)/src/audio/lib/data.o"
-    include "$(BUILD_DIR)/src/audio/lib/synthesis.o"
-    include "$(BUILD_DIR)/src/audio/lib/heap.o"
-    include "$(BUILD_DIR)/src/audio/lib/load.o"
-    include "$(BUILD_DIR)/src/audio/lib/thread.o"
-    include "$(BUILD_DIR)/src/audio/lib/dcache.o"
-    include "$(BUILD_DIR)/src/audio/lib/aisetnextbuf.o"
+    include "$(BUILD_DIR)/src/audio/internal/data.o"
+    include "$(BUILD_DIR)/src/audio/internal/synthesis.o"
+    include "$(BUILD_DIR)/src/audio/internal/heap.o"
+    include "$(BUILD_DIR)/src/audio/internal/load.o"
+    include "$(BUILD_DIR)/src/audio/internal/thread.o"
+    include "$(BUILD_DIR)/src/audio/internal/os.o"
 #if OOT_PAL_N64
     pad_text
     pad_text
     pad_text
 #endif
-    include "$(BUILD_DIR)/src/audio/lib/playback.o"
-    include "$(BUILD_DIR)/src/audio/lib/effects.o"
-    include "$(BUILD_DIR)/src/audio/lib/seqplayer.o"
-    include "$(BUILD_DIR)/src/audio/general.o"
+    include "$(BUILD_DIR)/src/audio/internal/playback.o"
+    include "$(BUILD_DIR)/src/audio/internal/effects.o"
+    include "$(BUILD_DIR)/src/audio/internal/seqplayer.o"
+    include "$(BUILD_DIR)/src/audio/game/general.o"
 #if !PLATFORM_N64 && !DEBUG_FEATURES
     pad_text
 #endif
-    include "$(BUILD_DIR)/src/audio/sfx_params.o"
-    include "$(BUILD_DIR)/src/audio/sfx.o"
-    include "$(BUILD_DIR)/src/audio/sequence.o"
-    include "$(BUILD_DIR)/src/audio/data.o"
-    include "$(BUILD_DIR)/src/audio/session_config.o"
-    include "$(BUILD_DIR)/src/audio/session_init.o"
+    include "$(BUILD_DIR)/src/audio/game/sfx_params.o"
+    include "$(BUILD_DIR)/src/audio/game/sfx.o"
+    include "$(BUILD_DIR)/src/audio/game/sequence.o"
+    include "$(BUILD_DIR)/src/audio/game/data.o"
+    include "$(BUILD_DIR)/src/audio/game/session_config.o"
+    include "$(BUILD_DIR)/src/audio/game/session_init.o"
 
     // libu64
 #if PLATFORM_N64
@@ -716,7 +715,7 @@ beginseg
     include "$(BUILD_DIR)/src/libu64/rcp_utils.o"
     include "$(BUILD_DIR)/src/libu64/loadfragment2_n64.o"
     include "$(BUILD_DIR)/src/libu64/pad.o"
-    include "$(BUILD_DIR)/src/libu64/system_heap.o"
+    include "$(BUILD_DIR)/src/libu64/runtime.o"
     include "$(BUILD_DIR)/src/libu64/padsetup.o"
 #elif PLATFORM_GC
     include "$(BUILD_DIR)/src/libu64/logseverity_gc.o"
@@ -728,11 +727,11 @@ beginseg
 #endif
     include "$(BUILD_DIR)/src/libu64/relocation_gc.o"
     include "$(BUILD_DIR)/src/libu64/load_gc.o"
-    include "$(BUILD_DIR)/src/libu64/system_heap.o"
+    include "$(BUILD_DIR)/src/libu64/runtime.o"
     include "$(BUILD_DIR)/src/libu64/pad.o"
     include "$(BUILD_DIR)/src/libu64/padsetup.o"
 #elif PLATFORM_IQUE
-    include "$(BUILD_DIR)/src/libu64/system_heap.o"
+    include "$(BUILD_DIR)/src/libu64/runtime.o"
     include "$(BUILD_DIR)/src/libu64/debug.o"
     include "$(BUILD_DIR)/src/libu64/gfxprint.o"
     include "$(BUILD_DIR)/src/libu64/logseverity_gc.o"
@@ -797,14 +796,14 @@ beginseg
     include "$(BUILD_DIR)/src/libc/memmove.o"
 #elif PLATFORM_GC
     include "$(BUILD_DIR)/src/libc/sqrt.o"
-    include "$(BUILD_DIR)/src/libc/absf.o"
+    include "$(BUILD_DIR)/src/libc/fabsf.o"
     include "$(BUILD_DIR)/src/libc/fmodf.o"
     include "$(BUILD_DIR)/src/libc/memset.o"
     include "$(BUILD_DIR)/src/libc/memmove.o"
 #elif PLATFORM_IQUE
     include "$(BUILD_DIR)/src/libc/fmodf.o"
     include "$(BUILD_DIR)/src/libc/memmove.o"
-    include "$(BUILD_DIR)/src/libc/absf.o"
+    include "$(BUILD_DIR)/src/libc/fabsf.o"
     include "$(BUILD_DIR)/src/libc/sqrt.o"
 #endif
 
@@ -877,6 +876,7 @@ beginseg
 #if ENABLE_PROFILER
     include "$(BUILD_DIR)/src/debug/profiler.o"
 #endif
+    include "$(BUILD_DIR)/src/debug/inventory_editor.o"
 endseg
 #endif
 
@@ -893,82 +893,82 @@ endseg
 beginseg
     name "F3DEX3_BrW_Text"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW.code.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_Data"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW.data.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_PA_Text"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PA.code.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_PA.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_PA_Data"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PA.data.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_PA.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_PB_Text"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PB.code.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_PB.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_PB_Data"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PB.data.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_PB.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_PC_Text"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PC.code.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_PC.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_PC_Data"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_PC.data.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_PC.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_Text"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC.code.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_NOC.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_Data"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC.data.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_NOC.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_PA_Text"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PA.code.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_NOC_PA.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_PA_Data"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PA.data.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_NOC_PA.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_PB_Text"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PB.code.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_NOC_PB.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_PB_Data"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PB.data.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_NOC_PB.data.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_PC_Text"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PC.code.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_NOC_PC.code.o"
 endseg
 beginseg
     name "F3DEX3_BrW_NOC_PC_Data"
     compress
-    include "$(BUILD_DIR)/F3DEX3/F3DEX3_BrW_NOC_PC.data.o"
+    include "$(BUILD_DIR)/$(F3DEX3_DIR)/F3DEX3_BrW_NOC_PC.data.o"
 endseg
 #endif
 
@@ -1842,7 +1842,8 @@ beginseg
     name "object_yukabyun"
     compress
     romalign 0x1000
-    include "$(BUILD_DIR)/assets/objects/object_yukabyun/object_yukabyun.o"
+    include "$(BUILD_DIR)/assets/objects/object_yukabyun/gFloorTileEnemyDL.o"
+    include "$(BUILD_DIR)/assets/objects/object_yukabyun/gFloorTileEnemyFragmentDL.o"
     number 6
 endseg
 
@@ -2058,7 +2059,7 @@ beginseg
     name "object_vase"
     compress
     romalign 0x1000
-    include "$(BUILD_DIR)/assets/objects/object_vase/object_vase.o"
+    include "$(BUILD_DIR)/assets/objects/object_vase/gUnusedVaseDL.o"
     number 6
 endseg
 
@@ -2994,7 +2995,15 @@ beginseg
     name "object_zo"
     compress
     romalign 0x1000
-    include "$(BUILD_DIR)/assets/objects/object_zo/object_zo.o"
+    include "$(BUILD_DIR)/assets/objects/object_zo/gZoraHandsOnHipsTappingFootAnim.o"
+    include "$(BUILD_DIR)/assets/objects/object_zo/gZoraOpenArmsAnim.o"
+    include "$(BUILD_DIR)/assets/objects/object_zo/gZoraThrowRupeesAnim.o"
+    include "$(BUILD_DIR)/assets/objects/object_zo/effect_bubbles.o"
+    include "$(BUILD_DIR)/assets/objects/object_zo/effect_splashes.o"
+    include "$(BUILD_DIR)/assets/objects/object_zo/gZoraSurfaceAnim.o"
+    include "$(BUILD_DIR)/assets/objects/object_zo/gZoraIdleAnim.o"
+    include "$(BUILD_DIR)/assets/objects/object_zo/gZoraSkel.o"
+    include "$(BUILD_DIR)/assets/objects/object_zo/effect_ripples.o"
     number 6
 endseg
 
@@ -3010,7 +3019,8 @@ beginseg
     name "object_umajump"
     compress
     romalign 0x1000
-    include "$(BUILD_DIR)/assets/objects/object_umajump/object_umajump.o"
+    include "$(BUILD_DIR)/assets/objects/object_umajump/gJumpableHorseFenceDL.o"
+    include "$(BUILD_DIR)/assets/objects/object_umajump/gJumpableHorseFenceCol.o"
     number 6
 endseg
 
@@ -3682,7 +3692,8 @@ beginseg
     name "object_zg"
     compress
     romalign 0x1000
-    include "$(BUILD_DIR)/assets/objects/object_zg/object_zg.o"
+    include "$(BUILD_DIR)/assets/objects/object_zg/gTowerCollapseBarsDL.o"
+    include "$(BUILD_DIR)/assets/objects/object_zg/gTowerCollapseBarsCol.o"
     number 6
 endseg
 
@@ -4010,7 +4021,15 @@ beginseg
     name "object_ganon_anime3"
     compress
     romalign 0x1000
-    include "$(BUILD_DIR)/assets/objects/object_ganon_anime3/object_ganon_anime3.o"
+    include "$(BUILD_DIR)/assets/objects/object_ganon_anime3/gGanondorfShowTriforceStartAnim.o"
+    include "$(BUILD_DIR)/assets/objects/object_ganon_anime3/gGanondorfBurstOutAnim.o"
+    include "$(BUILD_DIR)/assets/objects/object_ganon_anime3/gGanondorfTransformEndAnim.o"
+    include "$(BUILD_DIR)/assets/objects/object_ganon_anime3/gGanondorfFloatingHeavyBreathingAnim.o"
+    include "$(BUILD_DIR)/assets/objects/object_ganon_anime3/gGanondorfTransformStartAnim.o"
+    include "$(BUILD_DIR)/assets/objects/object_ganon_anime3/gGanondorfTransformLoopAnim.o"
+    include "$(BUILD_DIR)/assets/objects/object_ganon_anime3/gGanondorfShowTriforceLoopAnim.o"
+    include "$(BUILD_DIR)/assets/objects/object_ganon_anime3/gGanonUncurlAndFlailAnim.o"
+    include "$(BUILD_DIR)/assets/objects/object_ganon_anime3/gGanonRoarAnim.o"
     number 6
 endseg
 
@@ -4182,6 +4201,7 @@ beginseg
     number 6
 endseg
 
+#if !ENABLE_MM_TITLE_CARDS
 beginseg
     name "g_pn_01"
     compress
@@ -4580,6 +4600,7 @@ beginseg
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/place_title_cards/g_pn_57.o"
 endseg
+#endif
 
 beginseg
     name "z_select_static"
@@ -4610,6 +4631,9 @@ beginseg
     compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/parameter_static/parameter_static.o"
+#if ENABLE_MM_TITLE_CARDS
+    include "$(BUILD_DIR)/assets/textures/hud/hud.o"
+#endif
     number 2
 endseg
 
@@ -5104,4 +5128,8 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/example/example_room_0_model.o"
     number 3
 endseg
+#endif
+
+#if TESTSUITE_MODE
+#include "testsuite.inc"
 #endif

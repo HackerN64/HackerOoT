@@ -1,4 +1,3 @@
-#include "mbi.h"
 
 #ifndef ULTRA64_GBI_H
 #define ULTRA64_GBI_H
@@ -11,7 +10,13 @@
         #define NO_SYNCS_IN_TEXTURE_LOADS
     #endif
     #include "gbi.f3dex3.h"
+
+    // see `Error_please_update_viewport_Z_and_Y_see_GBI`
+    #undef G_MAXZ
+    #define G_MAXZ G_NEW_MAXZ
 #else
+#include "mbi.h"
+#include "ultratypes.h"
 
 #ifdef GBI_DOWHILE
 /* Private macro to wrap other macros in do {...} while (0) */

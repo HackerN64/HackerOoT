@@ -1,5 +1,7 @@
-#include "global.h"
+#include "gfx.h"
 #include "debug.h"
+#include "collision_check.h"
+#include "play_state.h"
 
 #if ENABLE_HACKER_DEBUG
 

@@ -2,7 +2,6 @@
 #define BUFFERS_H
 
 #include "gfx.h"
-#include "macros.h"
 #include "ultra64.h"
 #include "config.h"
 

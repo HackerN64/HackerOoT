@@ -1,5 +1,7 @@
-#include "global.h"
-#include "attributes.h"
+#include "is_debug.h"
+
+#include "ultra64.h"
+#include "versions.h"
 
 typedef struct ISVDbg {
     /* 0x00 */ u32 magic; // "IS64"
@@ -23,17 +25,6 @@ void isPrintfInit(void) {
     osEPiWriteIo(sISVHandle, (u32)&gISVDbgPrnAdrs->magic, ASCII_TO_U32('I', 'S', '6', '4'));
 }
 #endif
-
-void osSyncPrintfUnused(const char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-
-#if DEBUG_FEATURES
-    _Printf(is_proutSyncPrintf, NULL, fmt, args);
-#endif
-
-    va_end(args);
-}
 
 void osSyncPrintf(const char* fmt, ...) {
     va_list args;

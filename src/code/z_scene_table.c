@@ -12,11 +12,11 @@
 #include "sys_matrix.h"
 #include "versions.h"
 #include "z_lib.h"
-#include "z64frame_advance.h"
-#include "z64play.h"
-#include "z64player.h"
-#include "z64save.h"
 #include "animated_materials.h"
+#include "frame_advance.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
 
 #include "assets/scenes/indoors/miharigoya/miharigoya_scene.h"
 #include "assets/scenes/indoors/souko/souko_scene.h"
@@ -115,6 +115,31 @@ EntranceInfo gEntranceTable[] = {
 
 #undef DEFINE_ENTRANCE
 
+#if ENABLE_MM_TITLE_CARDS
+// Linker symbol declarations (used in the table below)
+#define DEFINE_SCENE(name, _1, _2, _3, _4, _5) DECLARE_ROM_SEGMENT(name)
+
+#include "tables/scene_table.h"
+
+#undef DEFINE_SCENE
+
+// Scene Table definition
+#define DEFINE_SCENE(name, _1, _2, drawConfig, unk_10, unk_12) \
+    { ROM_FILE(name), ROM_FILE_UNSET, unk_10, drawConfig, unk_12, 0 },
+
+// Handle `none` as a special case for scenes without a title card
+#define _noneSegmentRomStart NULL
+#define _noneSegmentRomEnd NULL
+
+SceneTableEntry gSceneTable[] = {
+#include "tables/scene_table.h"
+};
+
+#undef _noneSegmentRomStart
+#undef _noneSegmentRomEnd
+
+#undef DEFINE_SCENE
+#else
 // Linker symbol declarations (used in the table below)
 #define DEFINE_SCENE(name, title, _2, _3, _4, _5) \
     DECLARE_ROM_SEGMENT(name)                     \
@@ -140,6 +165,7 @@ SceneTableEntry gSceneTable[] = {
 #undef _noneSegmentRomEnd
 
 #undef DEFINE_SCENE
+#endif
 
 Gfx sDefaultDisplayList[] = {
     gsSPSegment(0x08, gEmptyDL),

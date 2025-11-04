@@ -1,29 +1,9 @@
 #include "libc64/math64.h"
-#include "z64math.h"
-#include "macros.h"
+#include "z_math.h"
 
 #if !PLATFORM_N64
 s32 gUseAtanContFrac;
 #endif
-
-/**
- * @param angle radians
- * @return tan(angle)
- */
-f32 Math_FTanF(f32 angle) {
-    f32 sin = sinf(angle);
-    f32 cos = cosf(angle);
-
-    return sin / cos;
-}
-
-f32 Math_FFloorF(f32 x) {
-    return floorf(x);
-}
-
-f32 Math_FCeilF(f32 x) {
-    return ceilf(x);
-}
 
 #if PLATFORM_N64
 f64 Math_FAbs(f64 x) {
@@ -34,18 +14,6 @@ f32 Math_FAbsF(f32 x) {
     return x < 0.0f ? -x : x;
 }
 #endif
-
-f32 Math_FRoundF(f32 x) {
-    return roundf(x);
-}
-
-f32 Math_FTruncF(f32 x) {
-    return truncf(x);
-}
-
-f32 Math_FNearbyIntF(f32 x) {
-    return nearbyintf(x);
-}
 
 #if !PLATFORM_N64
 /* Arctangent approximation using a Taylor series (one quadrant) */
@@ -239,11 +207,4 @@ f32 Math_FAtan2F(f32 y, f32 x) {
  */
 f32 Math_FAsinF(f32 x) {
     return Math_FAtan2F(x, sqrtf(1.0f - SQ(x)));
-}
-
-/**
- * @return arccos(x) in radians, in [0,pi] range
- */
-f32 Math_FAcosF(f32 x) {
-    return M_PI / 2 - Math_FAsinF(x);
 }

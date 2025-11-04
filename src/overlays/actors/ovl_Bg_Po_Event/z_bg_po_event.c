@@ -7,6 +7,7 @@
 #include "z_bg_po_event.h"
 
 #include "libc64/qrand.h"
+#include "array_count.h"
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "ichain.h"
@@ -15,10 +16,10 @@
 #include "sfx.h"
 #include "sys_matrix.h"
 #include "z_lib.h"
-#include "z64effect.h"
-#include "z64play.h"
-#include "z64player.h"
-#include "z64save.h"
+#include "effect.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
 
 #include "assets/objects/object_po_sisters/object_po_sisters.h"
 
@@ -55,12 +56,12 @@ ActorProfile Bg_Po_Event_Profile = {
     /**/ BgPoEvent_Draw,
 };
 
-static ColliderTrisElementInit sTrisElementsInit[2] = {
+static ColliderTrisElementInit sTrisElementsInit[] = {
     {
         {
             ELEM_MATERIAL_UNK4,
-            { 0x00000000, 0x00, 0x00 },
-            { 0x0001F820, 0x00, 0x00 },
+            { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+            { 0x0001F820, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_NONE,
             ACELEM_ON,
             OCELEM_NONE,
@@ -70,8 +71,8 @@ static ColliderTrisElementInit sTrisElementsInit[2] = {
     {
         {
             ELEM_MATERIAL_UNK4,
-            { 0x00000000, 0x00, 0x00 },
-            { 0x0001F820, 0x00, 0x00 },
+            { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+            { 0x0001F820, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_NONE,
             ACELEM_ON,
             OCELEM_NONE,
@@ -89,7 +90,7 @@ static ColliderTrisInit sTrisInit = {
         OC2_TYPE_2,
         COLSHAPE_TRIS,
     },
-    2,
+    ARRAY_COUNT(sTrisElementsInit),
     sTrisElementsInit,
 };
 
@@ -103,7 +104,7 @@ void BgPoEvent_InitPaintings(BgPoEvent* this, PlayState* play) {
     static s16 paintingPosX[] = { -1302, -866, 1421, 985 };
     static s16 paintingPosY[] = { 1107, 1091 };
     static s16 paintingPosZ[] = { -3384, -3252 };
-    ColliderTrisElementInit* item;
+    ColliderTrisElementInit* elementInit;
     Vec3f* vtxVec;
     s32 i1;
     s32 i2;
@@ -124,10 +125,10 @@ void BgPoEvent_InitPaintings(BgPoEvent* this, PlayState* play) {
         scaleY = 1.0f;
     }
     for (i1 = 0; i1 < sTrisInit.count; i1++) {
-        item = &sTrisInit.elements[i1];
+        elementInit = &sTrisInit.elements[i1];
         if (1) {} // This section looks like a macro of some sort.
         for (i2 = 0; i2 < 3; i2++) {
-            vtxVec = &item->dim.vtx[i2];
+            vtxVec = &elementInit->dim.vtx[i2];
             sp9C[i2].x = (vtxVec->x * coss) + (this->dyna.actor.home.pos.x + (sins * vtxVec->z));
             sp9C[i2].y = (vtxVec->y * scaleY) + this->dyna.actor.home.pos.y;
             sp9C[i2].z = this->dyna.actor.home.pos.z + (coss * vtxVec->z) - (vtxVec->x * sins);

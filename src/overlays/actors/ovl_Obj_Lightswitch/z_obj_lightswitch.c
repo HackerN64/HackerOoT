@@ -8,17 +8,20 @@
 #include "overlays/actors/ovl_Obj_Oshihiki/z_obj_oshihiki.h"
 
 #include "libc64/qrand.h"
+#include "array_count.h"
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "ichain.h"
 #include "one_point_cutscene.h"
+#include "printf.h"
 #include "segmented_address.h"
 #include "sfx.h"
 #include "sys_matrix.h"
 #include "terminal.h"
+#include "translation.h"
 #include "z_lib.h"
-#include "z64effect.h"
-#include "z64play.h"
+#include "effect.h"
+#include "play_state.h"
 
 #include "assets/objects/object_lightswitch/object_lightswitch.h"
 
@@ -64,8 +67,8 @@ static ColliderJntSphElementInit sColliderJntSphElementsInit[] = {
     {
         {
             ELEM_MATERIAL_UNK0,
-            { 0x00000000, 0x00, 0x00 },
-            { 0x00200000, 0x00, 0x00 },
+            { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+            { 0x00200000, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_NONE,
             ACELEM_ON,
             OCELEM_ON,
@@ -82,7 +85,7 @@ static ColliderJntSphInit sColliderJntSphInit = {
         OC2_TYPE_2,
         COLSHAPE_JNTSPH,
     },
-    1,
+    ARRAY_COUNT(sColliderJntSphElementsInit),
     sColliderJntSphElementsInit,
 };
 
@@ -202,8 +205,9 @@ void ObjLightswitch_Init(Actor* thisx, PlayState* play) {
                                this->actor.home.pos.y, this->actor.home.pos.z, 0, this->actor.home.rot.y, 0,
                                (0xFF << 8) | PUSHBLOCK_SMALL_START_ON) == NULL) {
             PRINTF_COLOR_ERROR();
-            // "Push-pull block occurrence failure"
-            PRINTF("押引ブロック発生失敗(%s %d)(arg_data 0x%04x)\n", "../z_obj_lightswitch.c", 452, this->actor.params);
+            PRINTF(T("押引ブロック発生失敗(%s %d)(arg_data 0x%04x)\n",
+                     "Push/pull block failed to spawn (%s %d)(arg_data 0x%04x)\n"),
+                   "../z_obj_lightswitch.c", 452, this->actor.params);
             PRINTF_RST();
             removeSelf = true;
         }
@@ -213,8 +217,7 @@ void ObjLightswitch_Init(Actor* thisx, PlayState* play) {
     if (removeSelf) {
         Actor_Kill(&this->actor);
     }
-    // "Light switch"
-    PRINTF("(光スイッチ)(arg_data 0x%04x)\n", this->actor.params);
+    PRINTF(T("(光スイッチ)(arg_data 0x%04x)\n", "(Light switch)(arg_data 0x%04x)\n"), this->actor.params);
 }
 
 void ObjLightswitch_Destroy(Actor* thisx, PlayState* play2) {

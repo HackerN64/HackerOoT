@@ -6,6 +6,7 @@
 
 #include "z_bg_hidan_rsekizou.h"
 
+#include "array_count.h"
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "ichain.h"
@@ -13,7 +14,7 @@
 #include "sfx.h"
 #include "sys_matrix.h"
 #include "z_lib.h"
-#include "z64play.h"
+#include "play_state.h"
 
 #include "assets/objects/object_hidan_objects/object_hidan_objects.h"
 
@@ -36,12 +37,12 @@ ActorProfile Bg_Hidan_Rsekizou_Profile = {
     /**/ BgHidanRsekizou_Draw,
 };
 
-static ColliderJntSphElementInit sJntSphElementsInit[6] = {
+static ColliderJntSphElementInit sJntSphElementsInit[] = {
     {
         {
             ELEM_MATERIAL_UNK0,
-            { 0x20000000, 0x01, 0x04 },
-            { 0x00000000, 0x00, 0x00 },
+            { 0x20000000, HIT_SPECIAL_EFFECT_FIRE, 0x04 },
+            { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NONE,
             ACELEM_NONE,
             OCELEM_NONE,
@@ -51,8 +52,8 @@ static ColliderJntSphElementInit sJntSphElementsInit[6] = {
     {
         {
             ELEM_MATERIAL_UNK0,
-            { 0x20000000, 0x01, 0x04 },
-            { 0x00000000, 0x00, 0x00 },
+            { 0x20000000, HIT_SPECIAL_EFFECT_FIRE, 0x04 },
+            { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NONE,
             ACELEM_NONE,
             OCELEM_NONE,
@@ -62,8 +63,8 @@ static ColliderJntSphElementInit sJntSphElementsInit[6] = {
     {
         {
             ELEM_MATERIAL_UNK0,
-            { 0x20000000, 0x01, 0x04 },
-            { 0x00000000, 0x00, 0x00 },
+            { 0x20000000, HIT_SPECIAL_EFFECT_FIRE, 0x04 },
+            { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NONE,
             ACELEM_NONE,
             OCELEM_NONE,
@@ -73,8 +74,8 @@ static ColliderJntSphElementInit sJntSphElementsInit[6] = {
     {
         {
             ELEM_MATERIAL_UNK0,
-            { 0x20000000, 0x01, 0x04 },
-            { 0x00000000, 0x00, 0x00 },
+            { 0x20000000, HIT_SPECIAL_EFFECT_FIRE, 0x04 },
+            { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NONE,
             ACELEM_NONE,
             OCELEM_NONE,
@@ -84,8 +85,8 @@ static ColliderJntSphElementInit sJntSphElementsInit[6] = {
     {
         {
             ELEM_MATERIAL_UNK0,
-            { 0x20000000, 0x01, 0x04 },
-            { 0x00000000, 0x00, 0x00 },
+            { 0x20000000, HIT_SPECIAL_EFFECT_FIRE, 0x04 },
+            { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NONE,
             ACELEM_NONE,
             OCELEM_NONE,
@@ -95,8 +96,8 @@ static ColliderJntSphElementInit sJntSphElementsInit[6] = {
     {
         {
             ELEM_MATERIAL_UNK0,
-            { 0x20000000, 0x01, 0x04 },
-            { 0x00000000, 0x00, 0x00 },
+            { 0x20000000, HIT_SPECIAL_EFFECT_FIRE, 0x04 },
+            { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NONE,
             ACELEM_NONE,
             OCELEM_NONE,
@@ -114,7 +115,7 @@ static ColliderJntSphInit sJntSphInit = {
         OC2_TYPE_2,
         COLSHAPE_JNTSPH,
     },
-    6,
+    ARRAY_COUNT(sJntSphElementsInit),
     sJntSphElementsInit,
 };
 
@@ -159,7 +160,7 @@ void BgHidanRsekizou_Destroy(Actor* thisx, PlayState* play) {
 void BgHidanRsekizou_Update(Actor* thisx, PlayState* play) {
     BgHidanRsekizou* this = (BgHidanRsekizou*)thisx;
     s32 i;
-    ColliderJntSphElement* sphere;
+    ColliderJntSphElement* element;
     s32 pad;
     f32 yawSine;
     f32 yawCosine;
@@ -179,12 +180,14 @@ void BgHidanRsekizou_Update(Actor* thisx, PlayState* play) {
     yawCosine = Math_CosS(this->dyna.actor.shape.rot.y);
 
     for (i = 0; i < ARRAY_COUNT(this->colliderElements); i++) {
-        sphere = &this->collider.elements[i];
-        sphere->dim.worldSphere.center.x = this->dyna.actor.home.pos.x + yawCosine * sphere->dim.modelSphere.center.x +
-                                           yawSine * sphere->dim.modelSphere.center.z;
-        sphere->dim.worldSphere.center.y = (s16)this->dyna.actor.home.pos.y + sphere->dim.modelSphere.center.y;
-        sphere->dim.worldSphere.center.z = (this->dyna.actor.home.pos.z - yawSine * sphere->dim.modelSphere.center.x) +
-                                           yawCosine * sphere->dim.modelSphere.center.z;
+        element = &this->collider.elements[i];
+        element->dim.worldSphere.center.x = this->dyna.actor.home.pos.x +
+                                            (yawCosine * element->dim.modelSphere.center.x) +
+                                            (yawSine * element->dim.modelSphere.center.z);
+        element->dim.worldSphere.center.y = (s16)this->dyna.actor.home.pos.y + element->dim.modelSphere.center.y;
+        element->dim.worldSphere.center.z = this->dyna.actor.home.pos.z -
+                                            (yawSine * element->dim.modelSphere.center.x) +
+                                            (yawCosine * element->dim.modelSphere.center.z);
     }
 
     CollisionCheck_SetAT(play, &play->colChkCtx, &this->collider.base);

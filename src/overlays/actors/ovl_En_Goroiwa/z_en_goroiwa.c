@@ -8,7 +8,9 @@
 #include "overlays/effects/ovl_Effect_Ss_Kakera/z_eff_ss_kakera.h"
 
 #include "libc64/qrand.h"
+#include "array_count.h"
 #include "ichain.h"
+#include "printf.h"
 #include "quake.h"
 #include "regs.h"
 #include "segmented_address.h"
@@ -16,10 +18,11 @@
 #include "sys_math3d.h"
 #include "sys_matrix.h"
 #include "terminal.h"
+#include "translation.h"
 #include "z_lib.h"
-#include "z64effect.h"
-#include "z64play.h"
-#include "z64player.h"
+#include "effect.h"
+#include "play_state.h"
+#include "player.h"
 
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/object_goroiwa/object_goroiwa.h"
@@ -72,8 +75,8 @@ static ColliderJntSphElementInit sJntSphElementsInit[] = {
     {
         {
             ELEM_MATERIAL_UNK0,
-            { 0x20000000, 0x00, 0x04 },
-            { 0x00000000, 0x00, 0x00 },
+            { 0x20000000, HIT_SPECIAL_EFFECT_NONE, 0x04 },
+            { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_ON,
@@ -91,7 +94,7 @@ static ColliderJntSphInit sJntSphInit = {
         OC2_TYPE_2,
         COLSHAPE_JNTSPH,
     },
-    1,
+    ARRAY_COUNT(sJntSphElementsInit),
     sJntSphElementsInit,
 };
 
@@ -267,8 +270,7 @@ s32 EnGoroiwa_GetAscendDirection(EnGoroiwa* this, PlayState* play) {
     if (nextPointPos->x == currentPointPos->x && nextPointPos->z == currentPointPos->z) {
 #if DEBUG_FEATURES
         if (nextPointPos->y == currentPointPos->y) {
-            // "Error: Invalid path data (points overlap)"
-            PRINTF("Error : レールデータ不正(点が重なっている)");
+            PRINTF(T("Error : レールデータ不正(点が重なっている)", "Error : Rail data is incorrect (dots overlap)"));
             PRINTF("(%s %d)(arg_data 0x%04x)\n", "../z_en_gr.c", 559, this->actor.params);
         }
 #endif
@@ -563,14 +565,15 @@ void EnGoroiwa_Init(Actor* thisx, PlayState* play) {
     EnGoroiwa_InitCollider(this, play);
     pathIdx = PARAMS_GET_U(this->actor.params, 0, 8);
     if (pathIdx == 0xFF) {
-        // "Error: Invalid arg_data"
-        PRINTF("Ｅｒｒｏｒ : arg_data が不正(%s %d)(arg_data 0x%04x)\n", "../z_en_gr.c", 1033, this->actor.params);
+        PRINTF(T("Ｅｒｒｏｒ : arg_data が不正(%s %d)(arg_data 0x%04x)\n",
+                 "Error : Invalid arg_data (%s %d)(arg_data 0x%04x)\n"),
+               "../z_en_gr.c", 1033, this->actor.params);
         Actor_Kill(&this->actor);
         return;
     }
     if (play->pathList[pathIdx].count < 2) {
-        // "Error: Invalid Path Data"
-        PRINTF("Ｅｒｒｏｒ : レールデータ が不正(%s %d)\n", "../z_en_gr.c", 1043);
+        PRINTF(T("Ｅｒｒｏｒ : レールデータ が不正(%s %d)\n", "Error : Rail data is invalid (%s %d)\n"), "../z_en_gr.c",
+               1043);
         Actor_Kill(&this->actor);
         return;
     }
@@ -584,9 +587,9 @@ void EnGoroiwa_Init(Actor* thisx, PlayState* play) {
     EnGoroiwa_InitRotation(this);
     EnGoroiwa_FaceNextWaypoint(this, play);
     EnGoroiwa_SetupRoll(this);
-    // "(Goroiwa)"
-    PRINTF("(ごろ岩)(arg 0x%04x)(rail %d)(end %d)(bgc %d)(hit %d)\n", this->actor.params,
-           PARAMS_GET_U(this->actor.params, 0, 8), PARAMS_GET_U(this->actor.params, 8, 2),
+    PRINTF(T("(ごろ岩)(arg 0x%04x)(rail %d)(end %d)(bgc %d)(hit %d)\n",
+             "(Goroiwa)(arg 0x%04x)(rail %d)(end %d)(bgc %d)(hit %d)\n"),
+           this->actor.params, PARAMS_GET_U(this->actor.params, 0, 8), PARAMS_GET_U(this->actor.params, 8, 2),
            PARAMS_GET_U(this->actor.params, 10, 1), this->actor.home.rot.z & 1);
 }
 
@@ -624,7 +627,7 @@ void EnGoroiwa_Roll(EnGoroiwa* this, PlayState* play) {
         }
         Actor_SetPlayerKnockbackLarge(play, &this->actor, 2.0f, this->actor.yawTowardsPlayer, 0.0f, 0);
         PRINTF_COLOR_CYAN();
-        PRINTF("Player ぶっ飛ばし\n"); // "Player knocked down"
+        PRINTF(T("Player ぶっ飛ばし\n", "Player knocked down\n"));
         PRINTF_RST();
         onHitSetupFuncs[PARAMS_GET_U(this->actor.params, 10, 1)](this);
         Player_PlaySfx(GET_PLAYER(play), NA_SE_PL_BODY_HIT);

@@ -6,12 +6,13 @@
 
 #include "z_bg_haka_sgami.h"
 
+#include "array_count.h"
 #include "ichain.h"
 #include "sfx.h"
 #include "z_lib.h"
-#include "z64effect.h"
-#include "z64play.h"
-#include "z64player.h"
+#include "effect.h"
+#include "play_state.h"
+#include "player.h"
 
 #include "assets/objects/object_haka_objects/object_haka_objects.h"
 #include "assets/objects/object_ice_objects/object_ice_objects.h"
@@ -46,12 +47,12 @@ ActorProfile Bg_Haka_Sgami_Profile = {
     /**/ NULL,
 };
 
-static ColliderTrisElementInit sTrisElementsInit[4] = {
+static ColliderTrisElementInit sTrisElementsInit[] = {
     {
         {
             ELEM_MATERIAL_UNK2,
-            { 0x20000000, 0x00, 0x04 },
-            { 0x00000000, 0x00, 0x00 },
+            { 0x20000000, HIT_SPECIAL_EFFECT_NONE, 0x04 },
+            { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_NONE,
@@ -61,8 +62,8 @@ static ColliderTrisElementInit sTrisElementsInit[4] = {
     {
         {
             ELEM_MATERIAL_UNK2,
-            { 0x20000000, 0x00, 0x04 },
-            { 0x00000000, 0x00, 0x00 },
+            { 0x20000000, HIT_SPECIAL_EFFECT_NONE, 0x04 },
+            { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_NONE,
@@ -72,8 +73,8 @@ static ColliderTrisElementInit sTrisElementsInit[4] = {
     {
         {
             ELEM_MATERIAL_UNK2,
-            { 0x20000000, 0x00, 0x04 },
-            { 0x00000000, 0x00, 0x00 },
+            { 0x20000000, HIT_SPECIAL_EFFECT_NONE, 0x04 },
+            { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_NONE,
@@ -83,8 +84,8 @@ static ColliderTrisElementInit sTrisElementsInit[4] = {
     {
         {
             ELEM_MATERIAL_UNK2,
-            { 0x20000000, 0x00, 0x04 },
-            { 0x00000000, 0x00, 0x00 },
+            { 0x20000000, HIT_SPECIAL_EFFECT_NONE, 0x04 },
+            { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_NONE,
@@ -102,7 +103,7 @@ static ColliderTrisInit sTrisInit = {
         OC2_TYPE_2,
         COLSHAPE_TRIS,
     },
-    4,
+    ARRAY_COUNT(sTrisElementsInit),
     sTrisElementsInit,
 };
 
@@ -117,8 +118,8 @@ static ColliderCylinderInit sCylinderInit = {
     },
     {
         ELEM_MATERIAL_UNK0,
-        { 0x00000000, 0x00, 0x00 },
-        { 0x00000000, 0x00, 0x00 },
+        { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+        { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
         ATELEM_NONE,
         ACELEM_NONE,
         OCELEM_ON,
@@ -142,7 +143,7 @@ void BgHakaSgami_Init(Actor* thisx, PlayState* play) {
     BgHakaSgami* this = (BgHakaSgami*)thisx;
     EffectBlureInit1 blureInit;
     s32 i;
-    ColliderTris* colliderScythe = &this->colliderScythe;
+    ColliderTris* scytheCollider = &this->scytheCollider;
 
     Actor_ProcessInitChain(thisx, sInitChain);
 
@@ -153,8 +154,8 @@ void BgHakaSgami_Init(Actor* thisx, PlayState* play) {
         thisx->flags |= ACTOR_FLAG_REACT_TO_LENS;
     }
 
-    Collider_InitTris(play, colliderScythe);
-    Collider_SetTris(play, colliderScythe, thisx, &sTrisInit, this->colliderScytheItems);
+    Collider_InitTris(play, scytheCollider);
+    Collider_SetTris(play, scytheCollider, thisx, &sTrisInit, this->scytheColliderElements);
     Collider_InitCylinder(play, &this->scytheCenterCollider);
     Collider_SetCylinder(play, &this->scytheCenterCollider, thisx, &sCylinderInit);
 
@@ -199,7 +200,7 @@ void BgHakaSgami_Destroy(Actor* thisx, PlayState* play) {
 
     Effect_Delete(play, this->blureEffectIndex[0]);
     Effect_Delete(play, this->blureEffectIndex[1]);
-    Collider_DestroyTris(play, &this->colliderScythe);
+    Collider_DestroyTris(play, &this->scytheCollider);
     Collider_DestroyCylinder(play, &this->scytheCenterCollider);
 }
 
@@ -256,14 +257,14 @@ void BgHakaSgami_Spin(BgHakaSgami* this, PlayState* play) {
                                   elementInit->dim.vtx[j].x * actorRotYSin;
         }
 
-        Collider_SetTrisVertices(&this->colliderScythe, i, &scytheVertices[0], &scytheVertices[1], &scytheVertices[2]);
+        Collider_SetTrisVertices(&this->scytheCollider, i, &scytheVertices[0], &scytheVertices[1], &scytheVertices[2]);
 
         for (j = 0; j < 3; j++) {
             scytheVertices[j].x = (2 * this->actor.world.pos.x) - scytheVertices[j].x;
             scytheVertices[j].z = (2 * this->actor.world.pos.z) - scytheVertices[j].z;
         }
 
-        Collider_SetTrisVertices(&this->colliderScythe, (i + 2) % 4, &scytheVertices[0], &scytheVertices[1],
+        Collider_SetTrisVertices(&this->scytheCollider, (i + 2) % 4, &scytheVertices[0], &scytheVertices[1],
                                  &scytheVertices[2]);
     }
 
@@ -288,7 +289,7 @@ void BgHakaSgami_Spin(BgHakaSgami* this, PlayState* play) {
         EffectBlure_AddVertex(Effect_GetByIndex(this->blureEffectIndex[1]), &scytheVertices[0], &scytheVertices[1]);
     }
 
-    CollisionCheck_SetAT(play, &play->colChkCtx, &this->colliderScythe.base);
+    CollisionCheck_SetAT(play, &play->colChkCtx, &this->scytheCollider.base);
     CollisionCheck_SetOC(play, &play->colChkCtx, &this->scytheCenterCollider.base);
     Actor_PlaySfx_Flagged(&this->actor, NA_SE_EV_ROLLCUTTER_MOTOR - SFX_FLAG);
 }
