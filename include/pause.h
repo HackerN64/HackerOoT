@@ -93,7 +93,7 @@ typedef enum PauseDebugState {
 
 #if IS_INV_EDITOR_ENABLED || IS_EVENT_EDITOR_ENABLED
     #define IS_PAUSED(pauseCtx) \
-        (((pauseCtx)->state != PAUSE_STATE_OFF) || ((pauseCtx)->debugState != PAUSE_DEBUG_STATE_CLOSED))
+        (((pauseCtx)->state != PAUSE_STATE_OFF) || (IS_INV_EDITOR_ACTIVE && (pauseCtx)->debugState != PAUSE_DEBUG_STATE_CLOSED))
 #else
     #define IS_PAUSED(pauseCtx) \
         ((pauseCtx)->state != PAUSE_STATE_OFF)

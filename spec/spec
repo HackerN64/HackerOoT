@@ -876,6 +876,7 @@ beginseg
 #if ENABLE_PROFILER
     include "$(BUILD_DIR)/src/debug/profiler.o"
 #endif
+    include "$(BUILD_DIR)/src/debug/inventory_editor.o"
 endseg
 #endif
 

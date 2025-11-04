@@ -10,6 +10,7 @@
 #include "play_state.h"
 #include "player.h"
 #include "save.h"
+#include "debug.h"
 
 #include "assets/textures/icon_item_static/icon_item_static.h"
 #include "assets/textures/parameter_static/parameter_static.h"
@@ -81,12 +82,21 @@ void KaleidoScope_DrawEquipmentImage(PlayState* play, void* source, u32 width, u
     s32 pad;
     s32 i;
 
+    s16 alpha = pauseCtx->alpha;
+#if IS_INV_EDITOR_ENABLED
+    if (gDebug.invDebug.showInfoScreen || gDebug.invDebug.miscDebug.showMiscScreen) {
+        alpha = gDebug.invDebug.elementsAlpha;
+    } else {
+        alpha = gDebug.invDebug.elementsAlpha < 255 ? gDebug.invDebug.elementsAlpha : pauseCtx->alpha;
+    }
+#endif
+
     OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_equipment.c", 68);
 
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetCombineMode(POLY_OPA_DISP++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
     gDPSetTextureFilter(POLY_OPA_DISP++, G_TF_POINT);
-    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, pauseCtx->alpha);
+    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, alpha);
 
     curTexture = source;
     remainingSize = width * height * G_IM_SIZ_16b_BYTES;
@@ -193,10 +203,24 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
     s16 oldCursorPoint;
     s16 cursorPoint;
 
+    s16 alpha = pauseCtx->alpha;
+
+#if IS_INV_EDITOR_ENABLED
+    if ((gDebug.invDebug.showInfoScreen || gDebug.invDebug.miscDebug.showMiscScreen)) {
+        alpha = gDebug.invDebug.elementsAlpha;
+
+        if (alpha == 0) {
+            return;
+        }
+    } else {
+        alpha = gDebug.invDebug.elementsAlpha < 255 ? gDebug.invDebug.elementsAlpha : pauseCtx->alpha;
+    }
+#endif
+
     OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_equipment.c", 219);
 
     gDPPipeSync(POLY_OPA_DISP++);
-    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, ZREG(39), ZREG(40), ZREG(41), pauseCtx->alpha);
+    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, ZREG(39), ZREG(40), ZREG(41), alpha);
     gDPSetEnvColor(POLY_OPA_DISP++, ZREG(43), ZREG(44), ZREG(45), 0);
 
     // Draw EQUIP_QUAD_SELECTED_SWORD, EQUIP_QUAD_SELECTED_SHIELD, EQUIP_QUAD_SELECTED_TUNIC, EQUIP_QUAD_SELECTED_BOOTS
@@ -239,17 +263,17 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
                         if (pauseCtx->cursorX[PAUSE_EQUIP] == EQUIP_CURSOR_X_UPG) {
                             if (pauseCtx->cursorY[PAUSE_EQUIP] == EQUIP_CURSOR_Y_BULLETBAG_QUIVER) {
                                 //! @bug Assumes adult always has bullet bag (as adult this should rely on `UPG_QUIVER`)
-                                if (CUR_UPG_VALUE(UPG_BULLET_BAG) != 0) {
+                                if (IS_INV_EDITOR_ACTIVE || CUR_UPG_VALUE(UPG_BULLET_BAG) != 0) {
                                     cursorMoveResult = 1;
                                 }
                             } else {
-                                if (CUR_UPG_VALUE(pauseCtx->cursorY[PAUSE_EQUIP]) != 0) {
+                                if (IS_INV_EDITOR_ACTIVE || CUR_UPG_VALUE(pauseCtx->cursorY[PAUSE_EQUIP]) != 0) {
                                     cursorMoveResult = 1;
                                 }
                             }
                         } else {
-                            if (gBitFlags[pauseCtx->cursorPoint[PAUSE_EQUIP] - 1] &
-                                gSaveContext.save.info.inventory.equipment) {
+                            if (IS_INV_EDITOR_ACTIVE || gBitFlags[pauseCtx->cursorPoint[PAUSE_EQUIP] - 1] &
+                                                            gSaveContext.save.info.inventory.equipment) {
                                 cursorMoveResult = 2;
                             }
                         }
@@ -281,12 +305,12 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
                         pauseCtx->cursorPoint[PAUSE_EQUIP] += 1;
 
                         if (pauseCtx->cursorX[PAUSE_EQUIP] == EQUIP_CURSOR_X_UPG) {
-                            if (CUR_UPG_VALUE(pauseCtx->cursorY[PAUSE_EQUIP]) != 0) {
+                            if (IS_INV_EDITOR_ACTIVE || CUR_UPG_VALUE(pauseCtx->cursorY[PAUSE_EQUIP]) != 0) {
                                 cursorMoveResult = 1;
                             }
                         } else {
-                            if (gBitFlags[pauseCtx->cursorPoint[PAUSE_EQUIP] - 1] &
-                                gSaveContext.save.info.inventory.equipment) {
+                            if (IS_INV_EDITOR_ACTIVE || gBitFlags[pauseCtx->cursorPoint[PAUSE_EQUIP] - 1] &
+                                                            gSaveContext.save.info.inventory.equipment) {
                                 cursorMoveResult = 2;
                             }
                         }
@@ -329,17 +353,17 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
 
                         if (pauseCtx->cursorX[PAUSE_EQUIP] == EQUIP_CURSOR_X_UPG) {
                             if (pauseCtx->cursorY[PAUSE_EQUIP] == EQUIP_CURSOR_Y_BULLETBAG_QUIVER) {
-                                if (CUR_UPG_VALUE(UPG_BULLET_BAG) != 0) {
+                                if (IS_INV_EDITOR_ACTIVE || CUR_UPG_VALUE(UPG_BULLET_BAG) != 0) {
                                     cursorMoveResult = 1;
                                 }
                             } else {
-                                if (CUR_UPG_VALUE(pauseCtx->cursorY[PAUSE_EQUIP]) != 0) {
+                                if (IS_INV_EDITOR_ACTIVE || CUR_UPG_VALUE(pauseCtx->cursorY[PAUSE_EQUIP]) != 0) {
                                     cursorMoveResult = 1;
                                 }
                             }
                         } else {
-                            if (gBitFlags[pauseCtx->cursorPoint[PAUSE_EQUIP] - 1] &
-                                gSaveContext.save.info.inventory.equipment) {
+                            if (IS_INV_EDITOR_ACTIVE || (gBitFlags[pauseCtx->cursorPoint[PAUSE_EQUIP] - 1] &
+                                                         gSaveContext.save.info.inventory.equipment)) {
                                 cursorMoveResult = 2;
                             }
                         }
@@ -354,12 +378,12 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
                         pauseCtx->cursorPoint[PAUSE_EQUIP] += 4;
 
                         if (pauseCtx->cursorX[PAUSE_EQUIP] == EQUIP_CURSOR_X_UPG) {
-                            if (CUR_UPG_VALUE(pauseCtx->cursorY[PAUSE_EQUIP]) != 0) {
+                            if (IS_INV_EDITOR_ACTIVE || CUR_UPG_VALUE(pauseCtx->cursorY[PAUSE_EQUIP]) != 0) {
                                 cursorMoveResult = 1;
                             }
                         } else {
-                            if (gBitFlags[pauseCtx->cursorPoint[PAUSE_EQUIP] - 1] &
-                                gSaveContext.save.info.inventory.equipment) {
+                            if (IS_INV_EDITOR_ACTIVE || (gBitFlags[pauseCtx->cursorPoint[PAUSE_EQUIP] - 1] &
+                                                         gSaveContext.save.info.inventory.equipment)) {
                                 cursorMoveResult = 2;
                             }
                         }
@@ -545,7 +569,8 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
 
         if ((pauseCtx->cursorSpecialPos == 0) && (cursorItem != PAUSE_ITEM_NONE) &&
             (pauseCtx->state == PAUSE_STATE_MAIN) && (pauseCtx->mainState == PAUSE_MAIN_STATE_IDLE) &&
-            CHECK_BTN_ALL(input->press.button, BTN_A) && (pauseCtx->cursorX[PAUSE_EQUIP] != EQUIP_CURSOR_X_UPG)) {
+            CHECK_BTN_ALL(input->press.button, BTN_A) && !IS_INV_EDITOR_ACTIVE &&
+            (pauseCtx->cursorX[PAUSE_EQUIP] != EQUIP_CURSOR_X_UPG)) {
 
             if (CHECK_AGE_REQ_EQUIP(pauseCtx->cursorY[PAUSE_EQUIP], pauseCtx->cursorX[PAUSE_EQUIP])) {
                 Inventory_ChangeEquipment(pauseCtx->cursorY[PAUSE_EQUIP], pauseCtx->cursorX[PAUSE_EQUIP]);
@@ -627,7 +652,7 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
     Gfx_SetupDL_42Opa(play->state.gfxCtx);
 
     gDPSetCombineMode(POLY_OPA_DISP++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
-    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, pauseCtx->alpha);
+    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, alpha);
 
     // for each row
     for (rowStart = 0, j = 0, temp = 0, i = 0; i < 4; i++, rowStart += 4, j += 4 * 4) {
@@ -636,25 +661,31 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
         // Draw upgrade `i`
         // EQUIP_QUAD_UPG_BULLETBAG_QUIVER, EQUIP_QUAD_UPG_BOMB_BAG, EQUIP_QUAD_UPG_STRENGTH, EQUIP_QUAD_UPG_SCALE
 
-        if (LINK_AGE_IN_YEARS == YEARS_CHILD) {
-            point = CUR_UPG_VALUE(sChildUpgrades[i]);
-            if (((u32)point != 0) && (CUR_UPG_VALUE(sChildUpgrades[i]) != 0)) {
-                KaleidoScope_DrawQuadTextureRGBA32(play->state.gfxCtx,
-                                                   gItemIcons[sChildUpgradeItemBases[i] + point - 1], ITEM_ICON_WIDTH,
-                                                   ITEM_ICON_HEIGHT, 0);
+        if (!IS_INV_EDITOR_ACTIVE) {
+            if (LINK_AGE_IN_YEARS == YEARS_CHILD) {
+                point = CUR_UPG_VALUE(sChildUpgrades[i]);
+                if (((u32)point != 0) && (CUR_UPG_VALUE(sChildUpgrades[i]) != 0)) {
+                    KaleidoScope_DrawQuadTextureRGBA32(play->state.gfxCtx,
+                                                       gItemIcons[sChildUpgradeItemBases[i] + point - 1],
+                                                       ITEM_ICON_WIDTH, ITEM_ICON_HEIGHT, 0);
+                }
+            } else {
+                if ((i == 0) && (CUR_UPG_VALUE(sAdultUpgrades[i]) == 0)) {
+                    // Show bullet bag instead of quiver if player has no quiver
+                    //! @bug This assumes adult always has bullet bag
+                    KaleidoScope_DrawQuadTextureRGBA32(
+                        play->state.gfxCtx,
+                        gItemIcons[sChildUpgradeItemBases[i] + CUR_UPG_VALUE(sChildUpgrades[i]) - 1], ITEM_ICON_WIDTH,
+                        ITEM_ICON_HEIGHT, 0);
+                } else if (CUR_UPG_VALUE(sAdultUpgrades[i]) != 0) {
+                    KaleidoScope_DrawQuadTextureRGBA32(
+                        play->state.gfxCtx,
+                        gItemIcons[sAdultUpgradeItemBases[i] + CUR_UPG_VALUE(sAdultUpgrades[i]) - 1], ITEM_ICON_WIDTH,
+                        ITEM_ICON_HEIGHT, 0);
+                }
             }
         } else {
-            if ((i == 0) && (CUR_UPG_VALUE(sAdultUpgrades[i]) == 0)) {
-                // Show bullet bag instead of quiver if player has no quiver
-                //! @bug This assumes adult always has bullet bag
-                KaleidoScope_DrawQuadTextureRGBA32(
-                    play->state.gfxCtx, gItemIcons[sChildUpgradeItemBases[i] + CUR_UPG_VALUE(sChildUpgrades[i]) - 1],
-                    ITEM_ICON_WIDTH, ITEM_ICON_HEIGHT, 0);
-            } else if (CUR_UPG_VALUE(sAdultUpgrades[i]) != 0) {
-                KaleidoScope_DrawQuadTextureRGBA32(
-                    play->state.gfxCtx, gItemIcons[sAdultUpgradeItemBases[i] + CUR_UPG_VALUE(sAdultUpgrades[i]) - 1],
-                    ITEM_ICON_WIDTH, ITEM_ICON_HEIGHT, 0);
-            }
+            InventoryEditor_DrawEquipmentUpgrades(&gDebug.invDebug, i, alpha);
         }
 
         // Draw owned equips of type `i`

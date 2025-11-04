@@ -8,6 +8,8 @@
 #include "audio.h"
 #include "play_state.h"
 #include "save.h"
+#include "gfx.h"
+#include "debug.h"
 
 /*
  * The following three arrays are effectively unused.
@@ -81,8 +83,9 @@ void KaleidoSetup_Update(PlayState* play) {
             if (IS_EVENT_EDITOR_ENABLED && BREG(0)) {
                 pauseCtx->debugState = PAUSE_DEBUG_STATE_FLAG_SET_OPEN;
             }
-        } else if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
+        } else if (CHECK_BTN_ALL(input->press.button, BTN_START) && !IS_INV_EDITOR_ACTIVE) {
             // The start button was pressed, pause
+            // doesn't run if the inventory editor is active
             gSaveContext.prevHudVisibilityMode = gSaveContext.hudVisibilityMode;
 
             R_PAUSE_BUTTON_LEFT_X = -175;

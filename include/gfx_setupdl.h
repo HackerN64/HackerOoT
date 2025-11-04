@@ -105,6 +105,11 @@ Gfx* Gfx_SetupDL_39(Gfx* gfx);
 void Gfx_SetupDL_39Opa(struct GraphicsContext* gfxCtx);
 void Gfx_SetupDL_39Overlay(struct GraphicsContext* gfxCtx);
 void Gfx_SetupDL_39Ptr(Gfx** gfxP);
+
+#if DEBUG_FEATURES
+void Gfx_SetupDL_39Debug(struct GraphicsContext* gfxCtx);
+#endif
+
 void Gfx_SetupDL_40Opa(struct GraphicsContext* gfxCtx);
 void Gfx_SetupDL_41Opa(struct GraphicsContext* gfxCtx);
 void Gfx_SetupDL_47Xlu(struct GraphicsContext* gfxCtx);
