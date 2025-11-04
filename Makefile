@@ -1,7 +1,7 @@
 MAKEFLAGS += --no-builtin-rules --no-print-directory
 
 # Ensure the build fails if a piped command fails
-SHELL = /bin/bash
+SHELL = /usr/bin/env bash
 .SHELLFLAGS = -o pipefail -c
 
 #### Build options ####
@@ -12,9 +12,6 @@ SHELL = /bin/bash
 # there to avoid modifying the Makefile directly.
 
 -include .make_options.mk
-
-# HackerOoT options
--include .make_hackeroot.mk
 
 COMPILER ?= gcc
 
@@ -33,17 +30,10 @@ COMPILER ?= gcc
 #   gc-eu          GameCube Europe/PAL
 #   gc-eu-mq       GameCube Europe/PAL Master Quest
 #   gc-jp-ce       GameCube Japan (Collector's Edition disc)
-#   hackeroot-mq   HackerOoT, based on gc-eu-mq-dbg (default)
-#
-# Note: choosing hackeroot-mq will enable HackerOoT features,
-#       if another version is chosen, this repo will be like
-#       zeldaret/main decomp but without the disassembly, decompilation
-#       and matching tools, including the IDO compiler
-VERSION ?= hackeroot-mq
+#   ique-cn        iQue Player (Simplified Chinese)
+VERSION ?= ntsc-1.2
 # Number of threads to extract and compress with.
 N_THREADS ?= $(shell nproc)
-# Check code syntax with host compiler.
-RUN_CC_CHECK ?= 1
 # If DEBUG_OBJECTS is 1, produce additional debugging files such as objdump output or raw binaries for assets
 DEBUG_OBJECTS ?= 0
 # Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
@@ -53,17 +43,12 @@ MIPS_BINUTILS_PREFIX ?= mips-linux-gnu-
 N64_EMULATOR ?=
 # Set to override game region in the ROM header (options: JP, US, EU). This can be used to build a fake US version
 # of the debug ROM for better emulator compatibility, or to build US versions of NTSC N64 ROMs.
-# REGION ?= US
+REGION ?= US
 # Set to enable debug features regardless of ROM version.
 # Note that by enabling debug features on non-debug ROM versions, some debug ROM specific assets will not be included.
 # This means the debug test scenes and some debug graphics in the elf_msg actors will not work as expected.
 # This may also be used to disable debug features on debug ROMs by setting DEBUG_FEATURES to 0
-# DEBUG_FEATURES ?= 1
-
-CFLAGS ?=
-CPPFLAGS ?=
-CFLAGS_IDO ?=
-CPP_DEFINES ?=
+DEBUG_FEATURES ?= 1
 
 # Version-specific settings
 REGIONAL_CHECKSUM := 0
@@ -176,7 +161,6 @@ else ifeq ($(VERSION),gc-jp-ce)
   BUILD_TIME := 21:53:00
   REVISION := 15
 else ifeq ($(VERSION),ique-cn)
-  COMPARE := 0
   REGION ?= US
   PLATFORM := IQUE
   DEBUG_FEATURES ?= 0
@@ -184,30 +168,17 @@ else ifeq ($(VERSION),ique-cn)
   BUILD_DATE := 03-10-22
   BUILD_TIME := 16:23:19
   REVISION := 0
-else ifeq ($(VERSION),hackeroot-mq)
-  REGION := NULL
-  PLATFORM := GC
-  DEBUG := 1
-  DEBUG_FEATURES ?= 1
-  BUILD_CREATOR := none
-  BUILD_DATE := none
-  BUILD_TIME := none
-ifeq ($(TARGET),iso)
-  REVISION := 0
-else ifeq ($(TARGET),wad)
-  REVISION := 0
-else
-  REVISION := 15
-endif
 else
 $(error Unsupported version $(VERSION))
 endif
 
-ifeq ($(VERSION),hackeroot-mq)
-  HACKEROOT := 1
-else
-  HACKEROOT := 0
-endif
+CFLAGS ?=
+CPPFLAGS ?=
+CFLAGS_IDO ?=
+CPP_DEFINES ?=
+
+# Add HackerOoT options
+-include .make_hackeroot.mk
 
 ifeq ($(COMPILER),gcc)
   CPP_DEFINES += -DCOMPILER_GCC -DNON_MATCHING -DAVOID_UB -std=gnu11
@@ -233,92 +204,35 @@ else ifeq ($(PLATFORM),GC)
   LIBULTRA_VERSION := L
   LIBULTRA_PATCH := 0
 else ifeq ($(PLATFORM),IQUE)
-  CPP_DEFINES += -DPLATFORM_N64=0 -DPLATFORM_GC=0 -DPLATFORM_IQUE=1 -DBBPLAYER
+  CPP_DEFINES += -DPLATFORM_N64=0 -DPLATFORM_GC=0 -DPLATFORM_IQUE=1
   LIBULTRA_VERSION := L
   LIBULTRA_PATCH := 0
 else
 $(error Unsupported platform $(PLATFORM))
 endif
 
-# Set PACKAGE_NAME define for printing commit name
-ifeq ($(origin PACKAGE_NAME), undefined)
-  PACKAGE_NAME := "$(shell git log -1 --pretty=%s | tr -d '()`"\n' | tr -d "'" | sed 's/\"/\\\"/g')"
-  ifeq ($(PACKAGE_NAME),"")
-    PACKAGE_NAME := "Unknown name"
-  endif
-endif
-
-# Set PACKAGE_COMMIT_AUTHOR for printing commit author
-ifeq ($(origin PACKAGE_COMMIT_AUTHOR), undefined)
-  PACKAGE_COMMIT_AUTHOR := "$(shell git log -1 --pretty=format:'%an' | tr -d '\n' | sed 's/\"/\\\"/g')"
-  ifeq ($(PACKAGE_COMMIT_AUTHOR),"")
-    PACKAGE_COMMIT_AUTHOR := "Unknown author"
-  endif
-endif
-
-# Set PACKAGE_AUTHOR define for printing author's git name
-ifeq ($(origin PACKAGE_AUTHOR), undefined)
-  PACKAGE_AUTHOR := "$(shell git config --get user.name | tr -d '\n' | sed 's/\"/\\\"/g')"
-  ifeq ($(PACKAGE_AUTHOR),"")
-    PACKAGE_AUTHOR := "Unknown author"
-  endif
-endif
-
-# Set PACKAGE_VERSION define for printing commit hash
-ifeq ($(origin PACKAGE_VERSION), undefined)
-  PACKAGE_VERSION := "$(shell git log -1 --pretty=%h | tr -d '\n' | sed 's/\"/\\\"/g')"
-  ifeq ($(PACKAGE_VERSION),"")
-    PACKAGE_VERSION := "Unknown version"
-  endif
-endif
-
 # Converts e.g. ntsc-1.0 to NTSC_1_0
-ifeq ($(VERSION),hackeroot-mq)
-CPP_DEFINES += -DOOT_VERSION=GC_EU_MQ_DBG -DOOT_REVISION=$(REVISION)
-else
 VERSION_MACRO := $(shell echo $(VERSION) | tr a-z-. A-Z__)
 CPP_DEFINES += -DOOT_VERSION=$(VERSION_MACRO) -DOOT_REVISION=$(REVISION)
-endif
 CPP_DEFINES += -DOOT_REGION=REGION_$(REGION)
-CPP_DEFINES += -DBUILD_CREATOR="\"$(BUILD_CREATOR)\"" -DBUILD_DATE="\"$(BUILD_DATE)\"" -DBUILD_TIME="\"$(BUILD_TIME)\""
 CPP_DEFINES += -DLIBULTRA_VERSION=LIBULTRA_VERSION_$(LIBULTRA_VERSION)
 CPP_DEFINES += -DLIBULTRA_PATCH=$(LIBULTRA_PATCH)
 ifeq ($(PLATFORM),IQUE)
   CPP_DEFINES += -DBBPLAYER
 endif
 
-ifeq ($(VERSION),hackeroot-mq)
-  CPP_DEFINES += -DENABLE_HACKEROOT=1
-  OPTFLAGS := -Os
+# Optimization flags
+OPTFLAGS := -Os
 
-  ifeq ($(RELEASE),1)
-    CPP_DEFINES += -DRELEASE_ROM=1 -DDEBUG_FEATURES=0 -DNDEBUG
-    CFLAGS_IDO += -DDEBUG_FEATURES=0
-  else
-    CPP_DEFINES += -DRELEASE_ROM=0 -DDEBUG_FEATURES=1
-  endif
+ifeq ($(DEBUG_FEATURES),1)
+  CPP_DEFINES += -DDEBUG_FEATURES=1
+  OPTFLAGS += -ggdb3
 else
-  ifeq ($(DEBUG_FEATURES),1)
-    CPP_DEFINES += -DDEBUG_FEATURES=1
-    OPTFLAGS := -O2
-  else
-    CPP_DEFINES += -DDEBUG_FEATURES=0 -DNDEBUG
-    OPTFLAGS := -O2 -g3
-  endif
-
-  CPP_DEFINES += -DENABLE_HACKEROOT=0
+  CPP_DEFINES += -DNDEBUG -DDEBUG_FEATURES=0
+  OPTFLAGS += -g3
 endif
 ASOPTFLAGS := -O1
 
-
-# Override optimization flags if using GDB
-ifeq ($(ARES_GDB),1)
-  OPTFLAGS := -Og -ggdb3
-endif
-
-# Define author and package version for every OoT version
-# Note: this won't be used if not using HackerOoT
-CPP_DEFINES += -DCOMPRESS_$(COMPRESSION_TYPE)=1 -DPACKAGE_VERSION='$(PACKAGE_VERSION)' -DPACKAGE_NAME='$(PACKAGE_NAME)' -DPACKAGE_COMMIT_AUTHOR='$(PACKAGE_COMMIT_AUTHOR)' -DPACKAGE_AUTHOR='$(PACKAGE_AUTHOR)'
 OPTFLAGS += -ffast-math -fno-unsafe-math-optimizations
 
 ifeq ($(OS),Windows_NT)
@@ -359,6 +273,9 @@ OBJDUMP := $(MIPS_BINUTILS_PREFIX)objdump
 NM      := $(MIPS_BINUTILS_PREFIX)nm
 STRIP   := $(MIPS_BINUTILS_PREFIX)strip
 
+# Command prefix to preprocess a file before running the compiler
+PREPROCESS :=
+
 # Command to patch certain object files after they are built
 POSTPROCESS_OBJ := @:
 
@@ -381,16 +298,14 @@ CPP        := gcc -E
 MKLDSCRIPT := tools/mkldscript
 MKDMADATA  := tools/mkdmadata
 ELF2ROM    := tools/elf2rom
-ZAPD       := tools/ZAPD/ZAPD.out
+BIN2C      := tools/bin2c
+N64TEXCONV := tools/assets/n64texconv/n64texconv
 FADO       := tools/fado/fado.elf
 PYTHON     ?= $(VENV)/bin/python3
-FLIPS      := tools/Flips/flips
-GZINJECT   := tools/gzinject/gzinject
-CC_IDO     := tools/ido_recomp/$(DETECTED_OS)/5.3/cc
 
-# Command to replace $(BUILD_DIR) in some files with the build path.
+# Command to replace $(BUILD_DIR) and $(F3DEX3_DIR) in some files with the build path.
 # We can't use the C preprocessor for this because it won't substitute inside string literals.
-BUILD_DIR_REPLACE := sed -e 's|$$(BUILD_DIR)|$(BUILD_DIR)|g'
+BUILD_DIR_REPLACE := sed -e 's|$$(BUILD_DIR)|$(BUILD_DIR)|g' | sed -e 's|$$(F3DEX3_DIR)|$(F3DEX3_DIR)|g'
 
 # Audio tools
 SAMPLECONV    := tools/audio/sampleconv/sampleconv
@@ -431,10 +346,10 @@ CPPFLAGS += -P -xc -fno-dollars-in-identifiers $(CPP_DEFINES)
 ASFLAGS += -march=vr4300 -32 -no-pad-sections -Iinclude -I$(EXTRACTED_DIR)
 
 ifeq ($(COMPILER),gcc)
-  CFLAGS += $(CPP_DEFINES) $(GBI_DEFINES) -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -mdivide-breaks -fno-PIC -fno-common -ffreestanding -funsigned-char -fbuiltin -fno-builtin-sinf -fno-builtin-cosf $(CHECK_WARNINGS)
-  CCASFLAGS += $(CPP_DEFINES) $(GBI_DEFINES) -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -fno-PIC -fno-common -Wa,-no-pad-sections
+  CFLAGS += $(CPP_DEFINES) $(GBI_DEFINES) -G 0 -nostdinc -MD -MP $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -mdivide-breaks -fno-PIC -fno-common -ffreestanding -funsigned-char -fbuiltin -fno-builtin-sinf -fno-builtin-cosf $(CHECK_WARNINGS)
+  CCASFLAGS += $(CPP_DEFINES) $(GBI_DEFINES) -G 0 -nostdinc -MD -MP $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -fno-PIC -fno-common -Wa,-no-pad-sections
   MIPS_VERSION := -mips3
-  RUN_CC_CHECK := 0
+  CC_CHECK = @:
 endif
 
 OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
@@ -442,28 +357,25 @@ OBJDUMP_FLAGS := -d -r -z -Mreg-names=32
 #### Files ####
 
 # ROM image
-ifeq ($(VERSION),hackeroot-mq)
-  ROM      := $(BUILD_DIR)/$(VERSION).z64
-else
-  ROM      := $(BUILD_DIR)/oot-$(VERSION).z64
-endif
+ROM      := $(BUILD_DIR)/hackeroot-$(VERSION).z64
 ROMC     := $(ROM:.z64=-compressed-$(COMPRESSION).z64)
-WAD      := $(ROM:.z64=.wad)
-ISO      := $(ROM:.z64=.iso)
-BPS      := $(ROM:.z64=.bps)
 ELF      := $(ROM:.z64=.elf)
 MAP      := $(ROM:.z64=.map)
 LDSCRIPT := $(ROM:.z64=.ld)
-DMA_CONFIG_FILE := dma_config.txt
 # description of ROM segments
-SPEC := spec
+SPEC := spec/spec
+SPEC_INCLUDES := $(wildcard spec/*.inc)
 
-# Baserom to use when creating BPS patches
-BASEROM_PATCH ?= baseroms/$(VERSION)/baserom.z64
+# HackerOoT files
+WAD      := $(ROM:.z64=.wad)
+ISO      := $(ROM:.z64=.iso)
+BPS      := $(ROM:.z64=.bps)
+UCODE_PATCHES := $(wildcard $(F3DEX3_DIR)/*.bps)
+UCODE_FILES   := $(foreach f,$(UCODE_PATCHES:.bps=),$f)
+UCODE_O_FILES := $(foreach f,$(UCODE_FILES),$(BUILD_DIR)/$f.o)
 
-ifeq ($(COMPILER),gcc)
 SRC_DIRS := $(shell find src -type d)
-endif
+UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
 
 ifneq ($(wildcard $(EXTRACTED_DIR)/assets/audio),)
   SAMPLE_EXTRACT_DIRS := $(shell find $(EXTRACTED_DIR)/assets/audio/samples -type d)
@@ -516,7 +428,7 @@ SOUNDFONT_EXTRACT_XMLS := $(foreach dir,$(SOUNDFONT_EXTRACT_DIRS),$(wildcard $(d
 SOUNDFONT_BUILD_XMLS   := $(foreach f,$(SOUNDFONT_XMLS),$(BUILD_DIR)/$f) $(foreach f,$(SOUNDFONT_EXTRACT_XMLS),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%))
 SOUNDFONT_O_FILES      := $(foreach f,$(SOUNDFONT_BUILD_XMLS),$(f:.xml=.o))
 SOUNDFONT_HEADERS      := $(foreach f,$(SOUNDFONT_BUILD_XMLS),$(f:.xml=.h))
-SOUNDFONT_DEP_FILES    := $(foreach f,$(SOUNDFONT_O_FILES),$(f:.o=.d))
+SOUNDFONT_DEP_FILES    := $(foreach f,$(SOUNDFONT_O_FILES),$(f:.o=.c.d))
 
 SEQUENCE_FILES         := $(foreach dir,$(SEQUENCE_DIRS),$(wildcard $(dir)/*.seq))
 SEQUENCE_EXTRACT_FILES := $(foreach dir,$(SEQUENCE_EXTRACT_DIRS),$(wildcard $(dir)/*.seq))
@@ -539,36 +451,22 @@ ASSET_BIN_DIRS := $(ASSET_BIN_DIRS_EXTRACTED) $(ASSET_BIN_DIRS_COMMITTED)
 ASSET_FILES_BIN_EXTRACTED := $(foreach dir,$(ASSET_BIN_DIRS_EXTRACTED),$(wildcard $(dir)/*.bin))
 ASSET_FILES_BIN_COMMITTED := $(foreach dir,$(ASSET_BIN_DIRS_COMMITTED),$(wildcard $(dir)/*.bin))
 ASSET_FILES_OUT := $(foreach f,$(ASSET_FILES_BIN_EXTRACTED:.bin=.bin.inc.c),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
-                   $(foreach f,$(ASSET_FILES_BIN_COMMITTED:.bin=.bin.inc.c),$(BUILD_DIR)/$f) \
-                   $(foreach f,$(wildcard assets/text/*.c),$(BUILD_DIR)/$(f:.c=.o))
+                   $(foreach f,$(ASSET_FILES_BIN_COMMITTED:.bin=.bin.inc.c),$(BUILD_DIR)/$f)
 
-UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
+# Find all .o files included in the spec
+SPEC_O_FILES := $(shell $(CPP) $(CPPFLAGS) -I. $(SPEC) | $(BUILD_DIR_REPLACE) | sed -n -E 's/^[ \t]*include[ \t]*"([a-zA-Z0-9/_.-]+\.o)"/\1/p')
 
-BASEROM_BIN_FILES := $(wildcard $(EXTRACTED_DIR)/baserom/*)
+# Split out reloc files
+O_FILES := $(filter-out %_reloc.o,$(SPEC_O_FILES))
+OVL_RELOC_FILES := $(filter %_reloc.o,$(SPEC_O_FILES))
 
-# source files
-ASSET_C_FILES_EXTRACTED := $(filter-out %.inc.c,$(foreach dir,$(ASSET_BIN_DIRS_EXTRACTED),$(wildcard $(dir)/*.c)))
-ASSET_C_FILES_COMMITTED := $(filter-out %.inc.c,$(foreach dir,$(ASSET_BIN_DIRS_COMMITTED),$(wildcard $(dir)/*.c)))
-SRC_C_FILES   := $(filter-out %.inc.c,$(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c)))
-S_FILES       := $(foreach dir,$(SRC_DIRS) $(UNDECOMPILED_DATA_DIRS),$(wildcard $(dir)/*.s))
-O_FILES       := $(foreach f,$(S_FILES:.s=.o),$(BUILD_DIR)/$f) \
-                 $(foreach f,$(SRC_C_FILES:.c=.o),$(BUILD_DIR)/$f) \
-                 $(foreach f,$(ASSET_C_FILES_EXTRACTED:.c=.o),$(f:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)) \
-                 $(foreach f,$(ASSET_C_FILES_COMMITTED:.c=.o),$(BUILD_DIR)/$f) \
-                 $(foreach f,$(BASEROM_BIN_FILES),$(BUILD_DIR)/baserom/$(notdir $f).o) \
-                 $(BUILD_DIR)/src/code/z_message_z_game_over.o \
-                 $(BUILD_DIR)/src/makerom/ipl3.o
-
-UCODE_PATCHES := $(wildcard F3DEX3/*.bps)
+UCODE_PATCHES := $(wildcard $(F3DEX3_DIR)/*.bps)
 UCODE_FILES   := $(foreach f,$(UCODE_PATCHES:.bps=),$f)
 UCODE_O_FILES := $(foreach f,$(UCODE_FILES),$(BUILD_DIR)/$f.o)
 
-OVL_RELOC_FILES := $(shell $(CPP) $(CPPFLAGS) $(SPEC) | $(BUILD_DIR_REPLACE) | grep -o '[^"]*_reloc.o' )
-
 # Automatic dependency files
 # (Only asm_processor dependencies and reloc dependencies are handled for now)
-DEP_FILES := $(O_FILES:.o=.asmproc.d) $(OVL_RELOC_FILES:.o=.d)
-
+DEP_FILES := $(O_FILES:.o=.d) $(O_FILES:.o=.asmproc.d) $(OVL_RELOC_FILES:.o=.d) $(BUILD_DIR)/spec.d
 
 TEXTURE_FILES_PNG_EXTRACTED := $(foreach dir,$(ASSET_BIN_DIRS_EXTRACTED),$(wildcard $(dir)/*.png))
 TEXTURE_FILES_PNG_COMMITTED := $(foreach dir,$(ASSET_BIN_DIRS_COMMITTED),$(wildcard $(dir)/*.png))
@@ -602,6 +500,9 @@ $(shell mkdir -p $(foreach dir, \
                     $(dir:$(EXTRACTED_DIR)/%=$(BUILD_DIR)/%)))
 endif
 
+$(BUILD_DIR)/src/boot/build.o: CPP_DEFINES += -DBUILD_CREATOR="\"$(BUILD_CREATOR)\"" -DBUILD_DATE="\"$(BUILD_DATE)\"" -DBUILD_TIME="\"$(BUILD_TIME)\""
+$(BUILD_DIR)/src/audio/internal/seqplayer.o: CPP_DEFINES += -DMML_VERSION=MML_VERSION_OOT
+
 ifeq ($(COMPILER),gcc)
 # Note that if adding additional assets directories for modding reasons these flags must also be used there
   $(BUILD_DIR)/assets/%.o: CFLAGS += -fno-zero-initialized-in-bss -fno-toplevel-reorder
@@ -609,12 +510,14 @@ ifeq ($(COMPILER),gcc)
   $(BUILD_DIR)/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
   $(BUILD_DIR)/src/overlays/%.o: CFLAGS += -fno-merge-constants -mno-explicit-relocs -mno-split-addresses
 
+## HackerOoT overrides ##
+
   $(BUILD_DIR)/src/overlays/actors/ovl_Item_Shield/%.o: OPTFLAGS := -O2
   $(BUILD_DIR)/src/overlays/actors/ovl_En_Part/%.o: OPTFLAGS := -O2
   $(BUILD_DIR)/src/overlays/actors/ovl_Item_B_Heart/%.o: OPTFLAGS := -O0
   $(BUILD_DIR)/src/overlays/actors/ovl_Bg_Mori_Hineri/%.o: OPTFLAGS := -O0
 
-# library overrides for Gamecube
+# library overrides
 ifeq ($(TARGET),iso)
   MIPS_VERSION_IDO := -mips2
   CFLAGS_IDO += -G 0 -non_shared -fullwarn -verbose -Xcpluscomm $(INC) -Wab,-r4300_mul -woff 516,609,649,838,712
@@ -643,6 +546,7 @@ ifeq ($(TARGET),iso)
   $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: CFLAGS := $(CFLAGS_IDO)
   $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: CC := $(CC_IDO)
 endif
+
 endif
 
 #### Main Targets ###
@@ -651,7 +555,6 @@ all: rom
 
 rom:
 	$(call print_no_args,Building the rom...)
-	$(V)python3 tools/mod_assets.py --oot-version $(VERSION)
 	$(V)$(MAKE) $(ROM)
 
 compress:
@@ -660,29 +563,6 @@ compress:
 	$(V)$(shell touch spec)
 	$(V)$(shell touch src/boot/z_std_dma.c)
 	$(V)$(MAKE) $(ROMC)
-	$(call print_no_args,Success!)
-
-wad:
-	$(call print_no_args,Patching WAD...)
-ifeq ("$(wildcard baseroms/$(VERSION)/common-key.bin)", "")
-	$(error Please provide the common-key.bin file.)
-endif
-	$(V)$(MAKE) compress TARGET=wad
-	$(V)$(GZINJECT) -a inject -r 1 -k baseroms/$(VERSION)/common-key.bin -w baseroms/$(VERSION)/basewad.wad -m $(ROMC) -o $(WAD) -t "HackerOoT" -i NHOE -p tools/gzinject/patches/NACE.gzi -p tools/gzinject/patches/gz_default_remap.gzi
-	$(V)$(RM) -r wadextract/
-	$(call print_no_args,Success!)
-
-iso:
-	$(V)$(MAKE) compress TARGET=iso
-	$(call print_no_args,Patching ISO...)
-	$(V)$(PYTHON) tools/gc_utility.py -v $(VERSION) -c $(COMPRESSION)
-	$(V)$(GZINJECT) -a extract -s baseroms/$(VERSION)/baseiso.iso
-	$(V)cp $(BUILD_DIR)/$(DMA_CONFIG_FILE) isoextract/zlj_f.tgc/$(DMA_CONFIG_FILE)
-	$(V)cp $(ROMC) isoextract/zlj_f.tgc/zlj_f.n64
-	$(V)$(RM) -r isoextract/S_*.tgc/ isoextract/zlj_f.tgc/*.thp
-	$(V)$(FLIPS) --apply tools/gamecube.bps isoextract/zlj_f.tgc/main.dol isoextract/zlj_f.tgc/main.dol
-	$(V)$(GZINJECT) -a pack -s $(ISO)
-	$(V)$(RM) -r isoextract/
 	$(call print_no_args,Success!)
 
 clean:
@@ -697,7 +577,7 @@ distclean:
 	$(V)$(RM) -r extracted/
 	$(V)$(RM) -r build/
 	$(V)$(MAKE) -C tools distclean
-	$(V)$(RM) -r F3DEX3/*.code F3DEX3/*.data
+	$(V)$(RM) -r F3DEX3/*/*.code F3DEX3/*/*.data
 	$(call print_no_args,Success!)
 
 venv:
@@ -716,10 +596,10 @@ setup: venv
 	$(V)$(PYTHON) tools/decompress_baserom.py $(VERSION)
 	$(call print_no_args,Decompressing baserom: Done!)
 	$(V)$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 $(EXTRACTED_DIR)/baserom -v $(VERSION)
+	$(V)$(PYTHON) -m tools.assets.extract $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR) -v $(VERSION) -j$(N_THREADS)
 	$(V)$(PYTHON) tools/extract_incbins.py $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR)/incbin -v $(VERSION)
 	$(V)$(PYTHON) tools/extract_text.py $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR)/text -v $(VERSION)
-	$(V)$(PYTHON) tools/extract_assets.py $(EXTRACTED_DIR)/baserom $(EXTRACTED_DIR)/assets -v $(VERSION) -j$(N_THREADS)
-	$(V)$(PYTHON) tools/extract_audio.py -o $(EXTRACTED_DIR) -v $(VERSION) --read-xml
+	$(V)$(PYTHON) tools/extract_audio.py -b $(EXTRACTED_DIR)/baserom -o $(EXTRACTED_DIR) -v $(VERSION) --read-xml
 	$(call print_no_args,Extracting files: Done!)
 
 run: rom
@@ -728,75 +608,73 @@ ifeq ($(N64_EMULATOR),)
 endif
 	$(N64_EMULATOR) $(ROM)
 
-patch:
-	$(call print_no_args,Creating BPS patch...)
-	$(V)$(FLIPS) --create --bps $(BASEROM_PATCH) $(ROM) $(BPS)
-	$(call print_no_args,Success!)
-
-create_f3dex3_patches: F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
-	$(call print_no_args,Creating F3DEX3 patches...)
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW.code F3DEX3/F3DEX3_BrW.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW.data F3DEX3/F3DEX3_BrW.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_PA.code F3DEX3/F3DEX3_BrW_PA.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_PA.data F3DEX3/F3DEX3_BrW_PA.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_PB.code F3DEX3/F3DEX3_BrW_PB.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_PB.data F3DEX3/F3DEX3_BrW_PB.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_PC.code F3DEX3/F3DEX3_BrW_PC.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_PC.data F3DEX3/F3DEX3_BrW_PC.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC.code F3DEX3/F3DEX3_BrW_NOC.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC.data F3DEX3/F3DEX3_BrW_NOC.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC_PA.code F3DEX3/F3DEX3_BrW_NOC_PA.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC_PA.data F3DEX3/F3DEX3_BrW_NOC_PA.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC_PB.code F3DEX3/F3DEX3_BrW_NOC_PB.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC_PB.data F3DEX3/F3DEX3_BrW_NOC_PB.data.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.code F3DEX3/F3DEX3_BrW_NOC_PC.code F3DEX3/F3DEX3_BrW_NOC_PC.code.bps
-	$(V)$(FLIPS) --create --bps F3DEX3/f3dzex2.data F3DEX3/F3DEX3_BrW_NOC_PC.data F3DEX3/F3DEX3_BrW_NOC_PC.data.bps
-	$(call print_no_args,Success!)
-
-verify:
-	$(V)$(MAKE) clean
-	$(V)$(MAKE) rom
-	@md5sum $(ROM)
-
-.PHONY: all rom compress clean assetclean distclean venv setup run wad iso patch create_f3dex3_patches verify
-
+.PHONY: all rom compress clean assetclean distclean venv setup run
 .DEFAULT_GOAL := rom
 
 #### Various Recipes ####
 
+ifeq ($(COMPRESSION),gzip)
+  COMPRESS_ARGS := --format gzip --pad-to 0x4000
+  CIC = 6102
+  USE_WRAPPER = 0
+else
+ifeq ($(COMPRESSION),yaz)
+  COMPRESS_ARGS := --format yaz0 --pad-to 0x800000 --fill-padding-bytes
+  CIC = 6105
+  USE_WRAPPER = 0
+else
+  USE_WRAPPER = 1
+endif
+endif
+
 $(ROM): $(ELF)
-	$(V)$(ELF2ROM) -cic 6105 $< $@
-	@$(PRINT) "${BLINK}Build succeeded.\n$(NO_COL)"
+	$(V)$(ELF2ROM) -cic $(CIC) $< $@
 	@$(PRINT) "==== Build Options ====$(NO_COL)\n"
 	@$(PRINT) "${GREEN}OoT Version: $(BLUE)$(VERSION)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Code Version: $(BLUE)$(PACKAGE_VERSION)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}Debug Build: $(BLUE)$(DEBUG_FEATURES)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}Opt. Flags: $(BLUE)$(OPTFLAGS)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}Rom Path: $(BLUE)$(ROM)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Build Author: $(BLUE)$(PACKAGE_AUTHOR)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Commit Author: $(BLUE)$(PACKAGE_COMMIT_AUTHOR)$(NO_COL)\n"
-
-ifeq ($(PLATFORM),IQUE)
-  COMPRESS_ARGS := --format gzip --pad-to 0x4000
-  CIC = 6102
-else
-  COMPRESS_ARGS := --format yaz0 --pad-to 0x800000 --fill-padding-bytes
-  CIC = 6105
+ifeq ($(TESTSUITE_MODE),1)
+	@$(PRINT) "${GREEN}Made with HackerTestSuite$(NO_COL)\n"
 endif
+	@$(PRINT) "${BLINK}Build succeeded.\n$(NO_COL)"
 
 $(ROMC): $(ROM) $(ELF) $(BUILD_DIR)/compress_ranges.txt
-ifeq ($(COMPRESSION),yaz)
+ifeq ($(USE_WRAPPER),0)
 	$(V)$(PYTHON) tools/compress.py --in $(ROM) --out $@ --dmadata-start `./tools/dmadata_start.sh $(NM) $(ELF)` --compress `cat $(BUILD_DIR)/compress_ranges.txt` --threads $(N_THREADS) $(COMPRESS_ARGS)
 else
 	$(V)$(PYTHON) tools/z64compress_wrapper.py --codec $(COMPRESSION) --cache $(BUILD_DIR)/cache --threads $(N_THREADS) $< $@ $(ELF) $(BUILD_DIR)/$(SPEC)
 endif
 	$(V)$(PYTHON) -m ipl3checksum sum --cic $(CIC) --update $@
 
+COM_PLUGIN := tools/com-plugin/common-plugin.so
+
+LDFLAGS := -T $(LDSCRIPT) -T $(BUILD_DIR)/linker_scripts/makerom.ld -T $(BUILD_DIR)/undefined_syms.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP)
+ifeq ($(PLATFORM),IQUE)
+  ifeq ($(NON_MATCHING),0)
+    LDFLAGS += -plugin $(COM_PLUGIN) -plugin-opt order=$(BASEROM_DIR)/bss-order.txt
+    $(ELF): $(BASEROM_DIR)/bss-order.txt
+  endif
+endif
+
 $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(UCODE_O_FILES) $(LDSCRIPT) $(BUILD_DIR)/linker_scripts/makerom.ld $(BUILD_DIR)/undefined_syms.txt \
         $(SAMPLEBANK_O_FILES) $(SOUNDFONT_O_FILES) $(SEQUENCE_O_FILES) \
         $(BUILD_DIR)/assets/audio/sequence_font_table.o $(BUILD_DIR)/assets/audio/audiobank_padding.o
 	$(call print_one_arg,Linking:,$@)
-	$(V)$(LD) -T $(LDSCRIPT) -T $(BUILD_DIR)/linker_scripts/makerom.ld -T $(BUILD_DIR)/undefined_syms.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP) -o $@
+	$(V)$(LD) $(LDFLAGS) -o $@
 
 $(BUILD_DIR)/linker_scripts/makerom.ld: linker_scripts/makerom.ld
 	$(V)$(CPP) -I include $(CPPFLAGS) $< > $@
+
+$(BUILD_DIR)/$(F3DEX3_DIR)/%.o: $(F3DEX3_DIR)/%
+	$(call print_two_args,Wrapping binary to ELF:,$<,$@)
+	$(V)mkdir -p $(BUILD_DIR)/$(F3DEX3_DIR)
+	$(V)$(OBJCOPY) -I binary -O elf32-big $< $@
+
+.PRECIOUS: $(UCODE_FILES)
 
 ## Order-only prerequisites
 # These ensure e.g. the O_FILES are built before the OVL_RELOC_FILES.
@@ -810,11 +688,11 @@ $(O_FILES): | asset_files
 
 .PHONY: o_files asset_files
 
-$(BUILD_DIR)/$(SPEC): $(SPEC)
+$(BUILD_DIR)/spec: $(SPEC) $(SPEC_INCLUDES)
 	$(call print_two_args,Preprocessing:,$<,$@)
-	$(V)$(CPP) $(CPPFLAGS) $< | $(BUILD_DIR_REPLACE) > $@
+	$(V)$(CPP) $(CPPFLAGS) -MD -MP -MF $@.d -MT $@ -I. $< | $(BUILD_DIR_REPLACE) > $@
 
-$(LDSCRIPT): $(BUILD_DIR)/$(SPEC)
+$(LDSCRIPT): $(BUILD_DIR)/spec
 	$(call print_two_args,Creating linker script:,$<,$@)
 	$(V)$(MKLDSCRIPT) $< $@
 
@@ -825,15 +703,10 @@ $(BUILD_DIR)/undefined_syms.txt: undefined_syms.txt
 $(BUILD_DIR)/baserom/%.o: $(EXTRACTED_DIR)/baserom/%
 	$(call print_two_args,Wrapping binary to ELF:,$<,$@)
 	$(V)$(OBJCOPY) -I binary -O elf32-big $< $@
-	
-$(BUILD_DIR)/F3DEX3/%.o: F3DEX3/%
-	$(call print_two_args,Wrapping binary to ELF:,$<,$@)
-	$(V)mkdir -p $(BUILD_DIR)/F3DEX3
-	$(V)$(OBJCOPY) -I binary -O elf32-big $< $@
 
 $(BUILD_DIR)/data/%.o: data/%.s
 	$(call print_two_args,Assembling:,$<,$@)
-	$(V)$(CPP) $(CPPFLAGS) -Iinclude $< | $(AS) $(ASFLAGS) -o $@
+	$(V)$(CPP) $(CPPFLAGS) -MD -MP -MF $(@:.o=.d) -MT $@ -Iinclude $< | $(AS) $(ASFLAGS) -o $@
 
 ifeq ($(PLATFORM),IQUE)
   NES_CHARMAP := assets/text/charmap.chn.txt
@@ -843,20 +716,19 @@ endif
 
 $(BUILD_DIR)/assets/text/%.enc.nes.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h $(NES_CHARMAP)
 	$(call print_two_args,Encoding:,$<,$@)
-	$(V)$(CPP) $(CPPFLAGS) $(INC) $< | $(PYTHON) tools/msgenc.py --encoding utf-8 --charmap $(NES_CHARMAP) - $@
+	$(V)$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) -MD -MP -MF $(@:.o=.d) -MT $@ $< | $(PYTHON) tools/msgenc.py --encoding utf-8 --charmap $(NES_CHARMAP) - $@
 
 $(BUILD_DIR)/assets/text/%.enc.jpn.h: assets/text/%.h $(EXTRACTED_DIR)/text/%.h assets/text/charmap.jpn.txt
 	$(call print_two_args,Encoding:,$<,$@)
-	$(V)$(CPP) $(CPPFLAGS) $(INC) $< | $(PYTHON) tools/msgenc.py --encoding SHIFT-JIS --wchar --charmap assets/text/charmap.jpn.txt - $@
+	$(V)$(CPP) $(CPPFLAGS) -I$(EXTRACTED_DIR) -MD -MP -MF $(@:.o=.d) -MT $@ $< | $(PYTHON) tools/msgenc.py --encoding SHIFT-JIS --wchar --charmap assets/text/charmap.jpn.txt - $@
 
-# Dependencies for files including message data headers
-# TODO remove when full header dependencies are used.
+# Dependencies for encoded message headers. These dependencies are not automatic as these headers are generated
+# as part of the build. A clean build must know to generate them before the relevant .d files are created.
 $(BUILD_DIR)/assets/text/jpn_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.jpn.h
 $(BUILD_DIR)/assets/text/nes_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.nes.h
 $(BUILD_DIR)/assets/text/ger_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.nes.h
 $(BUILD_DIR)/assets/text/fra_message_data_static.o: $(BUILD_DIR)/assets/text/message_data.enc.nes.h
 $(BUILD_DIR)/assets/text/staff_message_data_static.o: $(BUILD_DIR)/assets/text/message_data_staff.enc.nes.h
-$(BUILD_DIR)/src/code/z_message.o: assets/text/message_data.h assets/text/message_data_staff.h
 
 $(BUILD_DIR)/assets/text/%.o: assets/text/%.c
 	$(call print_two_args,Compiling:,$<,$@)
@@ -865,11 +737,13 @@ $(BUILD_DIR)/assets/text/%.o: assets/text/%.c
 
 $(BUILD_DIR)/assets/%.o: assets/%.c
 	$(call print,Compiling:,$<,$@)
+	$(V)$(CC_CHECK) $< -o $@
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)$(OBJCOPY_CMD)
 
 $(BUILD_DIR)/assets/%.o: $(EXTRACTED_DIR)/assets/%.c
 	$(call print_two_args,Compiling:,$<,$@)
+	$(V)$(CC_CHECK) $< -o $@
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)$(OBJCOPY_CMD)
 
@@ -891,81 +765,66 @@ $(BUILD_DIR)/src/%.o: src/%.s
 
 # Incremental link to move z_message and z_game_over data into rodata
 $(BUILD_DIR)/src/code/z_message_z_game_over.o: $(BUILD_DIR)/src/code/z_message.o $(BUILD_DIR)/src/code/z_game_over.o
-	$(V)$(LD) -r -T linker_scripts/data_with_rodata.ld -o $@ $^
+	$(V)$(LD) -r -G 0 -T linker_scripts/data_with_rodata.ld -o $@ $^
+	$(V)$(PYTHON) tools/patch_data_with_rodata_mdebug.py $@
 
-$(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt: $(BUILD_DIR)/$(SPEC)
+DEP_FILES += $(BUILD_DIR)/src/code/z_message.d $(BUILD_DIR)/src/code/z_game_over.d
+
+$(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt: $(BUILD_DIR)/spec
 	$(V)$(MKDMADATA) $< $(BUILD_DIR)/dmadata_table_spec.h $(BUILD_DIR)/compress_ranges.txt
 
 # Dependencies for files that may include the dmadata header automatically generated from the spec file
 $(BUILD_DIR)/src/boot/z_std_dma.o: $(BUILD_DIR)/dmadata_table_spec.h
 $(BUILD_DIR)/src/dmadata/dmadata.o: $(BUILD_DIR)/dmadata_table_spec.h
 
-# Dependencies for files including from include/tables/
-# TODO remove when full header dependencies are used.
-$(BUILD_DIR)/src/code/graph.o: include/tables/gamestate_table.h
-$(BUILD_DIR)/src/code/object_table.o: include/tables/object_table.h
-$(BUILD_DIR)/src/code/z_actor.o: include/tables/actor_table.h # so uses of ACTOR_ID_MAX update when the table length changes
-$(BUILD_DIR)/src/code/z_actor_dlftbls.o: include/tables/actor_table.h
-$(BUILD_DIR)/src/code/z_effect_soft_sprite_dlftbls.o: include/tables/effect_ss_table.h
-$(BUILD_DIR)/src/code/z_game_dlftbls.o: include/tables/gamestate_table.h
-$(BUILD_DIR)/src/code/z_scene_table.o: include/tables/scene_table.h include/tables/entrance_table.h
-$(BUILD_DIR)/src/audio/general.o: $(SEQUENCE_TABLE) include/tables/sfx/*.h
-$(BUILD_DIR)/src/audio/sfx_params.o: include/tables/sfx/*.h
-
 $(BUILD_DIR)/src/%.o: src/%.c
-ifneq ($(RUN_CC_CHECK),0)
-	$(V)$(CC_CHECK) $<
-endif
 	$(call print_two_args,Compiling:,$<,$@)
-	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
+	$(V)$(CC_CHECK) $< -o $@
+	$(V)$(PREPROCESS) $(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $@ $<
 	$(V)$(POSTPROCESS_OBJ) $@
 	$(V)$(OBJDUMP_CMD)
 
-$(BUILD_DIR)/src/audio/session_init.o: src/audio/session_init.c $(BUILD_DIR)/assets/audio/soundfont_sizes.h $(BUILD_DIR)/assets/audio/sequence_sizes.h
-ifneq ($(RUN_CC_CHECK),0)
-	$(V)$(CC_CHECK) $<
-endif
+$(BUILD_DIR)/src/audio/game/session_init.o: src/audio/game/session_init.c $(BUILD_DIR)/assets/audio/soundfont_sizes.h $(BUILD_DIR)/assets/audio/sequence_sizes.h
 	$(call print_two_args,Compiling:,$<,$@)
+	$(V)$(CC_CHECK) $< -o $@
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $(@:.o=.tmp) $<
 	$(V)$(LD) -r -T linker_scripts/data_with_rodata.ld -o $@ $(@:.o=.tmp)
-	$(V)$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
+	$(V)$(PYTHON) tools/patch_data_with_rodata_mdebug.py $@
+	$(V)$(OBJDUMP_CMD)
 
-$(BUILD_DIR)/src/overlays/%_reloc.o: $(BUILD_DIR)/$(SPEC)
+ifeq ($(PLATFORM),IQUE)
+ifneq ($(NON_MATCHING),1)
+$(BUILD_DIR)/src/overlays/misc/ovl_kaleido_scope/ovl_kaleido_scope_reloc.o: POSTPROCESS_OBJ := $(PYTHON) tools/patch_ique_kaleido_reloc.py
+endif
+endif
+
+$(BUILD_DIR)/src/overlays/%_reloc.o: $(BUILD_DIR)/spec
 	$(call print_two_args,Generating Relocation:,$<,$@)
 	$(V)$(FADO) $$(tools/reloc_prereq $< $(notdir $*)) -n $(notdir $*) -o $(@:.o=.s) -M $(@:.o=.d)
+	$(V)$(POSTPROCESS_OBJ) $(@:.o=.s)
 	$(V)$(AS) $(ASFLAGS) $(@:.o=.s) -o $@
 
-$(BUILD_DIR)/assets/%.inc.c: assets/%.png
-	$(V)$(ZAPD) btex -eh -tt $(subst .,,$(suffix $*)) -i $< -o $@
+# Assets from assets/
 
-$(BUILD_DIR)/assets/%.inc.c: $(EXTRACTED_DIR)/assets/%.png
-	$(V)$(ZAPD) btex -eh -tt $(subst .,,$(suffix $*)) -i $< -o $@
+$(BUILD_DIR)/assets/%.inc.c: assets/%.png
+	$(V)tools/assets/build_from_png/build_from_png $< $(dir $@) assets/$(dir $*) $(wildcard $(EXTRACTED_DIR)/assets/$(dir $*))
 
 $(BUILD_DIR)/assets/%.bin.inc.c: assets/%.bin
-	$(V)$(ZAPD) bblb -eh -i $< -o $@
-
-$(BUILD_DIR)/assets/%.bin.inc.c: $(EXTRACTED_DIR)/assets/%.bin
-	$(V)$(ZAPD) bblb -eh -i $< -o $@
+	$(V)$(BIN2C) -t 1 $< $@
 
 $(BUILD_DIR)/assets/%.jpg.inc.c: assets/%.jpg
-	$(V)$(ZAPD) bren -eh -i $< -o $@
+	$(V)$(N64TEXCONV) JFIF "" $< $@
+
+# Assets from extracted/
+
+$(BUILD_DIR)/assets/%.inc.c: $(EXTRACTED_DIR)/assets/%.png
+	$(V)tools/assets/build_from_png/build_from_png $< $(dir $@) $(wildcard assets/$(dir $*)) $(EXTRACTED_DIR)/assets/$(dir $*)
+
+$(BUILD_DIR)/assets/%.bin.inc.c: $(EXTRACTED_DIR)/assets/%.bin
+	$(V)$(BIN2C) -t 1 $< $@
 
 $(BUILD_DIR)/assets/%.jpg.inc.c: $(EXTRACTED_DIR)/assets/%.jpg
-	$(V)$(ZAPD) bren -eh -i $< -o $@
-
-F3DEX3/f3dzex2.code:
-	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCD0F0 --size 0x1630 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output $@
-
-F3DEX3/f3dzex2.data:
-	$(V)$(PYTHON) tools/data_extractor.py --start 0xBCE720 --size 0x420 --input $(BASEROM_DIR)/baserom-decompressed.z64 --output $@
-
-F3DEX3/F3DEX3%.code: F3DEX3/F3DEX3%.code.bps F3DEX3/f3dzex2.code
-	$(V)$(FLIPS) --apply F3DEX3/F3DEX3$*.code.bps F3DEX3/f3dzex2.code $@
-	
-F3DEX3/F3DEX3%.data: F3DEX3/F3DEX3%.data.bps F3DEX3/f3dzex2.data
-	$(V)$(FLIPS) --apply F3DEX3/F3DEX3$*.data.bps F3DEX3/f3dzex2.data $@
-
-.PRECIOUS: $(UCODE_FILES)
+	$(V)$(N64TEXCONV) JFIF "" $< $@
 
 # Audio
 
@@ -1038,11 +897,12 @@ $(BUILD_DIR)/assets/audio/soundfonts/%.xml: $(EXTRACTED_DIR)/assets/audio/soundf
 $(BUILD_DIR)/assets/audio/soundfonts/%.c $(BUILD_DIR)/assets/audio/soundfonts/%.h $(BUILD_DIR)/assets/audio/soundfonts/%.name: $(BUILD_DIR)/assets/audio/soundfonts/%.xml | $(SAMPLEBANK_BUILD_XMLS) $(AIFC_FILES)
 # This rule can be triggered for either the .c or .h file, so $@ may refer to either the .c or .h file. A simple
 # substitution $(@:.c=.h) will fail ~50% of the time with -j. Instead, don't assume anything about the suffix of $@.
-	$(V)$(SFC) $(SFCFLAGS) --makedepend $(basename $@).d $< $(basename $@).c $(basename $@).h $(basename $@).name
+	$(V)$(SFC) $(SFCFLAGS) --makedepend $(basename $@).c.d $< $(basename $@).c $(basename $@).h $(basename $@).name
 
 -include $(SOUNDFONT_DEP_FILES)
 
 $(BUILD_DIR)/assets/audio/soundfonts/%.o: $(BUILD_DIR)/assets/audio/soundfonts/%.c $(BUILD_DIR)/assets/audio/soundfonts/%.name
+	$(V)$(CPP) $(MIPS_BUILTIN_DEFS) $(CPPFLAGS) -x assembler-with-cpp $(INC) -I include/audio -MD -MP -MF $(@:.o=.d) -MT $@ $< -o /dev/null
 # compile c to unlinked object
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -I include/audio -o $(@:.o=.tmp) $<
 # partial link
@@ -1063,11 +923,11 @@ endif
 # then assemble the sequences...
 
 $(BUILD_DIR)/assets/audio/sequences/%.o: assets/audio/sequences/%.seq include/audio/aseq.h $(SEQUENCE_TABLE) | $(SOUNDFONT_HEADERS)
-	$(V)$(SEQ_CPP) $(SEQ_CPPFLAGS) $< -o $(@:.o=.s) -MMD -MT $@
+	$(V)$(SEQ_CPP) $(SEQ_CPPFLAGS) -MD -MP -MT $@ $< -o $(@:.o=.s)
 	$(V)$(AS) $(ASFLAGS) -I $(BUILD_DIR)/assets/audio/soundfonts -I include/audio -I $(dir $<) $(@:.o=.s) -o $@
 
 $(BUILD_DIR)/assets/audio/sequences/%.o: $(EXTRACTED_DIR)/assets/audio/sequences/%.seq include/audio/aseq.h $(SEQUENCE_TABLE) | $(SOUNDFONT_HEADERS)
-	$(V)$(SEQ_CPP) $(SEQ_CPPFLAGS) $< -o $(@:.o=.s) -MMD -MT $@
+	$(V)$(SEQ_CPP) $(SEQ_CPPFLAGS) -MD -MP -MT $@ $< -o $(@:.o=.s)
 	$(V)$(AS) $(ASFLAGS) -I $(BUILD_DIR)/assets/audio/soundfonts -I include/audio -I $(dir $<) $(@:.o=.s) -o $@
 ifeq ($(AUDIO_BUILD_DEBUG),1)
 	$(V)$(OBJCOPY) -O binary -j.data $@ $(@:.o=.aseq)
@@ -1101,11 +961,10 @@ $(BUILD_DIR)/src/audio/tables/sequence_table.o: src/audio/tables/sequence_table.
 $(BUILD_DIR)/src/audio/tables/sequence_table.o: CFLAGS += -I include/tables
 
 $(BUILD_DIR)/src/audio/tables/%.o: src/audio/tables/%.c
-ifneq ($(RUN_CC_CHECK),0)
-	$(V)$(CC_CHECK) $<
-endif
+	$(V)$(CC_CHECK) $< -o $@
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $(@:.o=.tmp) $<
 	$(V)$(LD) -r -T linker_scripts/data_with_rodata.ld $(@:.o=.tmp) -o $@
+	$(V)$(PYTHON) tools/patch_data_with_rodata_mdebug.py $@
 	@$(RM) $(@:.o=.tmp)
 
 $(BUILD_DIR)/assets/audio/sequence_font_table.o: $(BUILD_DIR)/assets/audio/sequence_font_table.s

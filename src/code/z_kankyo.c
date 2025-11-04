@@ -1,12 +1,36 @@
-#pragma increment_block_number "gc-eu:232 gc-eu-mq:232 gc-jp:212 gc-jp-ce:212 gc-jp-mq:212 gc-us:212 gc-us-mq:212" \
-                               "ntsc-1.0:224 ntsc-1.1:224 ntsc-1.2:224 pal-1.0:240 pal-1.1:240"
+#pragma increment_block_number "gc-eu:192 gc-eu-mq:192 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
+                               "ique-cn:128 ntsc-1.0:192 ntsc-1.1:192 ntsc-1.2:192 pal-1.0:192 pal-1.1:192"
 
-#include "global.h"
+#include "libc64/qrand.h"
+#include "libu64/gfxprint.h"
+#include "array_count.h"
+#include "buffers.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "gfxalloc.h"
 #include "ultra64.h"
+#include "printf.h"
+#include "regs.h"
+#include "rumble.h"
+#include "segment_symbols.h"
+#include "segmented_address.h"
+#include "seqcmd.h"
+#include "sequence.h"
+#include "sfx.h"
+#include "sys_math.h"
+#include "sys_math3d.h"
+#include "sys_matrix.h"
 #include "terminal.h"
+#include "translation.h"
 #include "versions.h"
-
-#include "z64frame_advance.h"
+#include "z_lib.h"
+#include "audio.h"
+#include "cutscene.h"
+#include "frame_advance.h"
+#include "environment.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
 
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/gameplay_field_keep/gameplay_field_keep.h"
@@ -214,8 +238,8 @@ s16 sLightningFlashAlpha;
 s16 sSunDepthTestX;
 s16 sSunDepthTestY;
 
-#pragma increment_block_number "gc-eu:240 gc-eu-mq:240 gc-jp:224 gc-jp-ce:224 gc-jp-mq:224 gc-us:224 gc-us-mq:224" \
-                               "ntsc-1.0:224 ntsc-1.1:224 ntsc-1.2:224 pal-1.0:240 pal-1.1:240"
+#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
+                               "ique-cn:128 ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
 
 LightNode* sNGameOverLightNode;
 LightInfo sNGameOverLightInfo;
@@ -883,9 +907,9 @@ void Environment_PrintDebugInfo(PlayState* play, Gfx** gfx) {
         GfxPrint_SetPos(&printer, 22, 6);
 
         if (!IS_DAY) {
-            GfxPrint_Printf(&printer, "%s", "YORU"); // "night"
+            GfxPrint_Printf(&printer, "%s", T("YORU", "NIGHT"));
         } else {
-            GfxPrint_Printf(&printer, "%s", "HIRU"); // "day"
+            GfxPrint_Printf(&printer, "%s", T("HIRU", "DAY"));
         }
 
         *gfx = GfxPrint_Close(&printer);
@@ -1412,7 +1436,7 @@ void Environment_DrawSunAndMoon(PlayState* play) {
                          G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_PRIM_A | G_RM_XLU_SURF2),
         gsDPLoadTextureBlock(gMoonTex, G_IM_FMT_IA, G_IM_SIZ_8b, 64, 64, 0, G_TX_NOMIRROR | G_TX_WRAP,
                              G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD),
-        gsSPVertex(gameplay_keepVtx_038F70, 4, 0),
+        gsSPVertex(&gMoonVtx[0], 4, 0),
         gsSP2Triangles(0, 1, 2, 0, 1, 3, 2, 0),
         gsSPEndDisplayList(),
     };
@@ -2617,7 +2641,7 @@ void Environment_StopStormNatureAmbience(PlayState* play) {
 
 void Environment_WarpSongLeave(PlayState* play) {
     gWeatherMode = WEATHER_MODE_CLEAR;
-    gSaveContext.save.cutsceneIndex = 0;
+    gSaveContext.save.cutsceneIndex = CS_INDEX_NONE;
     gSaveContext.respawnFlag = -3;
     play->nextEntranceIndex = gSaveContext.respawn[RESPAWN_MODE_RETURN].entranceIndex;
     play->transitionTrigger = TRANS_TRIGGER_START;

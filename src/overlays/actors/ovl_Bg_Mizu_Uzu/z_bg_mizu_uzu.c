@@ -5,6 +5,12 @@
  */
 
 #include "z_bg_mizu_uzu.h"
+
+#include "ichain.h"
+#include "sfx.h"
+#include "play_state.h"
+#include "player.h"
+
 #include "assets/objects/object_mizu_objects/object_mizu_objects.h"
 
 #define FLAGS 0

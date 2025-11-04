@@ -5,6 +5,17 @@
  */
 
 #include "z_bg_gnd_iceblock.h"
+
+#include "libc64/qrand.h"
+#include "libu64/debug.h"
+#include "ichain.h"
+#include "rand.h"
+#include "sfx.h"
+#include "z_lib.h"
+#include "effect.h"
+#include "play_state.h"
+#include "player.h"
+
 #include "assets/objects/object_demo_kekkai/object_demo_kekkai.h"
 
 #define FLAGS (ACTOR_FLAG_UPDATE_CULLING_DISABLED | ACTOR_FLAG_DRAW_CULLING_DISABLED)

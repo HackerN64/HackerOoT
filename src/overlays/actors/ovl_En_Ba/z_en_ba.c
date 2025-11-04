@@ -5,6 +5,21 @@
  */
 
 #include "z_en_ba.h"
+
+#include "array_count.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "rand.h"
+#include "segmented_address.h"
+#include "sfx.h"
+#include "sys_math.h"
+#include "sys_matrix.h"
+#include "z_lib.h"
+#include "effect.h"
+#include "play_state.h"
+#include "player.h"
+
 #include "assets/objects/object_bxa/object_bxa.h"
 
 #define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_HOSTILE | ACTOR_FLAG_UPDATE_CULLING_DISABLED)
@@ -37,12 +52,12 @@ ActorProfile En_Ba_Profile = {
 
 static Vec3f D_809B8080 = { 0.0f, 0.0f, 32.0f };
 
-static ColliderJntSphElementInit sJntSphElementInit[2] = {
+static ColliderJntSphElementInit sJntSphElementsInit[] = {
     {
         {
             ELEM_MATERIAL_UNK0,
-            { 0x00000000, 0x00, 0x00 },
-            { 0x00000010, 0x00, 0x00 },
+            { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+            { 0x00000010, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_NONE,
             ACELEM_ON,
             OCELEM_NONE,
@@ -52,8 +67,8 @@ static ColliderJntSphElementInit sJntSphElementInit[2] = {
     {
         {
             ELEM_MATERIAL_UNK0,
-            { 0x20000000, 0x00, 0x04 },
-            { 0x00000000, 0x00, 0x00 },
+            { 0x20000000, HIT_SPECIAL_EFFECT_NONE, 0x04 },
+            { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_NONE,
@@ -71,8 +86,8 @@ static ColliderJntSphInit sJntSphInit = {
         OC2_NONE,
         COLSHAPE_JNTSPH,
     },
-    2,
-    sJntSphElementInit,
+    ARRAY_COUNT(sJntSphElementsInit),
+    sJntSphElementsInit,
 };
 
 void EnBa_SetupAction(EnBa* this, EnBaActionFunc actionFunc) {
@@ -118,7 +133,7 @@ void EnBa_Init(Actor* thisx, PlayState* play) {
         this->actor.colChkInfo.health = 4;
         this->actor.colChkInfo.mass = MASS_HEAVY;
         Collider_InitJntSph(play, &this->collider);
-        Collider_SetJntSph(play, &this->collider, &this->actor, &sJntSphInit, this->colliderItems);
+        Collider_SetJntSph(play, &this->collider, &this->actor, &sJntSphInit, this->colliderElements);
     } else {
         Actor_SetScale(&this->actor, 0.021f);
         EnBa_SetupFallAsBlob(this);

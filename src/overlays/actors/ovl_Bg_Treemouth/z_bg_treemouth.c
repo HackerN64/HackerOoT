@@ -5,9 +5,21 @@
  */
 
 #include "z_bg_treemouth.h"
-#include "versions.h"
-#include "assets/objects/object_spot04_objects/object_spot04_objects.h"
 #include "overlays/effects/ovl_Effect_Ss_Hahen/z_eff_ss_hahen.h"
+
+#include "libc64/qrand.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "sfx.h"
+#include "sys_matrix.h"
+#include "versions.h"
+#include "effect.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
+
+#include "assets/objects/object_spot04_objects/object_spot04_objects.h"
 
 #define FLAGS (ACTOR_FLAG_UPDATE_CULLING_DISABLED | ACTOR_FLAG_DRAW_CULLING_DISABLED)
 
@@ -99,8 +111,7 @@ void func_808BC65C(BgTreemouth* this, PlayState* play) {
             if (cue->id == 2) {
                 BgTreemouth_SetupAction(this, func_808BC80C);
             } else if (cue->id == 3) {
-                Audio_PlaySfxGeneral(NA_SE_EV_WOODDOOR_OPEN, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                SFX_PLAY_CENTERED(NA_SE_EV_WOODDOOR_OPEN);
                 BgTreemouth_SetupAction(this, func_808BC6F8);
             }
         }
@@ -206,8 +217,7 @@ void func_808BCAF0(BgTreemouth* this, PlayState* play) {
             if (cue->id == 2) {
                 BgTreemouth_SetupAction(this, func_808BC80C);
             } else if (cue->id == 3) {
-                Audio_PlaySfxGeneral(NA_SE_EV_WOODDOOR_OPEN, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                SFX_PLAY_CENTERED(NA_SE_EV_WOODDOOR_OPEN);
                 BgTreemouth_SetupAction(this, func_808BC6F8);
             }
         }

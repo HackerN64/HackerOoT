@@ -539,6 +539,8 @@
 #define VI_PAL_CLOCK    49656530    /* Hz = 49.656530 MHz */
 #define VI_MPAL_CLOCK   48628316    /* Hz = 48.628316 MHz */
 
+// Custom PAL60 VI mode
+#define VI_CUSTOM_PAL60_LAN1 56
 
 /**
  * Audio Interface (AI) Registers

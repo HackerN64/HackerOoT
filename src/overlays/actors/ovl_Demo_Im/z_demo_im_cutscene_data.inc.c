@@ -1,5 +1,5 @@
-#include "z_demo_im.h"
-#include "z64cutscene_commands.h"
+#include "sequence.h"
+#include "cutscene_commands.h"
 
 // clang-format off
 static CutsceneData gShadowMedallionCs[] = {

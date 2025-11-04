@@ -1,4 +1,19 @@
 #include "z_en_du.h"
+
+#include "gfx.h"
+#include "one_point_cutscene.h"
+#include "segmented_address.h"
+#include "sequence.h"
+#include "sfx.h"
+#include "sys_matrix.h"
+#include "z_lib.h"
+#include "audio.h"
+#include "face_reaction.h"
+#include "ocarina.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
+
 #include "assets/objects/object_du/object_du.h"
 #include "assets/scenes/overworld/spot18/spot18_scene.h"
 
@@ -45,8 +60,8 @@ static ColliderCylinderInit sCylinderInit = {
     },
     {
         ELEM_MATERIAL_UNK0,
-        { 0x00000000, 0x00, 0x00 },
-        { 0x00000000, 0x00, 0x00 },
+        { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+        { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
         ATELEM_NONE,
         ACELEM_NONE,
         OCELEM_ON,
@@ -292,7 +307,7 @@ void EnDu_Init(Actor* thisx, PlayState* play) {
     this->actor.attentionRangeType = ATTENTION_RANGE_1;
     this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
 
-    if (gSaveContext.save.cutsceneIndex >= 0xFFF0) {
+    if (gSaveContext.save.cutsceneIndex >= CS_INDEX_0) {
         play->csCtx.script = SEGMENTED_TO_VIRTUAL(gGoronCityDaruniaDancingCs);
         gSaveContext.cutsceneTrigger = 1;
         EnDu_SetupAction(this, func_809FE890);
@@ -347,8 +362,7 @@ void func_809FE4A4(EnDu* this, PlayState* play) {
         EnDu_SetupAction(this, func_809FE890);
         play->msgCtx.ocarinaMode = OCARINA_MODE_04;
     } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_03) {
-        Audio_PlaySfxGeneral(NA_SE_SY_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        SFX_PLAY_CENTERED(NA_SE_SY_CORRECT_CHIME);
         play->csCtx.script = SEGMENTED_TO_VIRTUAL(gGoronCityDaruniaCorrectSongCs);
         gSaveContext.cutsceneTrigger = 1;
         this->unk_1E8 = 0;

@@ -1,6 +1,9 @@
 #ifndef ULTRA64_VIINT_H
 #define ULTRA64_VIINT_H
 
+#include "vi.h"
+#include "ultratypes.h"
+
 #define VI_STATE_MODE_SET           (1 << 0)
 #define VI_STATE_XSCALE_SET         (1 << 1)
 #define VI_STATE_YSCALE_FACTOR_SET  (1 << 2)
@@ -35,5 +38,16 @@
 #define ORIGIN(v) (v)
 #define VINTR(v) (v)
 #define HSTART(start, end) START(start, end)
+#define VSTART(start, end) START(start, end)
+
+#ifdef BBPLAYER
+#define VI_CTRL_PIXEL_ADV_DEFAULT VI_CTRL_PIXEL_ADV(1)
+#else
+#define VI_CTRL_PIXEL_ADV_DEFAULT VI_CTRL_PIXEL_ADV(3)
+#endif
+
+extern OSViContext* __osViCurr;
+extern OSViContext* __osViNext;
+extern u32 __additional_scanline;
 
 #endif

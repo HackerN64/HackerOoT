@@ -39,9 +39,20 @@
  *
  * @see irqmgr.c
  */
-#include "global.h"
+#include "libu64/debug.h"
+#include "libu64/rcp_utils.h"
+#include "array_count.h"
 #include "fault.h"
+#include "irqmgr.h"
+#include "main.h"
+#include "printf.h"
+#include "regs.h"
+#include "sched.h"
+#include "translation.h"
 #include "versions.h"
+#include "vi_mode.h"
+#include "debug/profiler_inline.h"
+#include "thread.h"
 
 #define RSP_DONE_MSG 667
 #define RDP_DONE_MSG 668
@@ -62,11 +73,11 @@ vs32 sSchedDebugPrintfEnabled = false;
     PRINTF
 #elif IDO_PRINTF_WORKAROUND
 #define SCHED_DEBUG_PRINTF(args) (void)0
-#elif defined(__GNUC__) && __GNUC__ < 3
-#define SCHED_DEBUG_PRINTF(format, args...) (void)0
 #else
 #define SCHED_DEBUG_PRINTF(format, ...) (void)0
 #endif
+
+void SysUcode_LoadNewUcodeIfChanged();
 
 /**
  * Set the current framebuffer to the swapbuffer pointed to by the provided cfb
@@ -715,6 +726,10 @@ void Sched_ThreadEntry(void* arg) {
 void Sched_Init(Scheduler* sc, void* stack, OSPri priority, u8 viModeType, UNK_TYPE arg4, IrqMgr* irqMgr) {
     bzero(sc, sizeof(Scheduler));
     sc->isFirstSwap = true;
+
+#if ENABLE_PROFILER
+    Profiler_Init();
+#endif
 
     // Create message queues for receiving interrupt events and tasks
     osCreateMesgQueue(&sc->interruptQueue, sc->interruptMsgBuf, ARRAY_COUNT(sc->interruptMsgBuf));

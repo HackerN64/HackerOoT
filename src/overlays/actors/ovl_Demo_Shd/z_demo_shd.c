@@ -6,6 +6,13 @@
 
 #include "z_demo_shd.h"
 
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "sequence.h"
+#include "sys_matrix.h"
+#include "audio.h"
+#include "play_state.h"
+
 #define FLAGS (ACTOR_FLAG_UPDATE_CULLING_DISABLED | ACTOR_FLAG_DRAW_CULLING_DISABLED)
 
 void DemoShd_Init(Actor* thisx, PlayState* play);

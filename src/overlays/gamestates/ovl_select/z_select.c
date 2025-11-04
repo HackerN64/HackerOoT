@@ -4,10 +4,45 @@
  * Description: Debug Scene Select Menu
  */
 #include "ultra64.h"
-#include "global.h"
-#include "terminal.h"
 #include "alloca.h"
 #include "z_select.h"
+#include "debug_opening_state.h"
+#include "console_logo_state.h"
+#include "seqcmd.h"
+#include "letterbox.h"
+#include "regs.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "controller.h"
+#include "libu64/gfxprint.h"
+#include "libc64/qrand.h"
+#include "printf.h"
+#include "array_count.h"
+#include "regs.h"
+#include "segment_symbols.h"
+#include "seqcmd.h"
+#include "sequence.h"
+#include "sfx.h"
+#include "terminal.h"
+#include "translation.h"
+#include "ultra64.h"
+#include "play_state.h"
+#include "save.h"
+#include "sram.h"
+
+#if PLATFORM_N64
+void func_80800AD0_unknown(MapSelectState* this, s32 arg1) {
+    if (D_80121212 != 0) {
+        n64dd_SetDiskVersion(1);
+    }
+}
+
+void func_80800B08_unknown(MapSelectState* this, s32 arg1) {
+    if (D_80121212 != 0) {
+        n64dd_SetDiskVersion(0);
+    }
+}
+#endif
 
 void MapSelect_Init(GameState* thisx) {
     MapSelectState* this = (MapSelectState*)thisx;
@@ -55,7 +90,7 @@ void MapSelect_Init(GameState* thisx) {
     R_UPDATE_RATE = 1;
 
     gSaveContext.save.linkAge = BOOT_AGE;
-    gSaveContext.save.cutsceneIndex = 0xFFEF;
+    gSaveContext.save.cutsceneIndex = NEXT_CS_INDEX_NONE;
 
     // turning the sfx volume back on
     SEQCMD_SET_SEQPLAYER_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 10);
@@ -119,7 +154,7 @@ void MapSelect_Destroy(GameState* thisx) {
 void MapSelect_UpdateMenu(MapSelectState* this) {
     Input* input = &this->state.input[0];
     s32 pad;
-    SceneSelectEntry* selectedScene;
+    MapSelectEntry* selectedScene;
     u16 sfx, sfxIndex;
 
     if (CHECK_BTN_ALL(input->press.button, BTN_CDOWN)) {
@@ -481,62 +516,62 @@ void MapSelect_PrintSceneLayerSetting(MapSelectState* this, GfxPrint* printer) {
         case 0:
             label = "Daytime";
             gSaveContext.save.dayTime = CLOCK_TIME(12, 0);
-            gSaveContext.save.cutsceneIndex = 0xFFEF;
+            gSaveContext.save.cutsceneIndex = NEXT_CS_INDEX_NONE;
             break;
         case 1:
             label = "Nighttime";
             gSaveContext.save.dayTime = CLOCK_TIME(0, 0);
             gSaveContext.save.nightFlag = 1;
-            gSaveContext.save.cutsceneIndex = 0xFFEF;
+            gSaveContext.save.cutsceneIndex = NEXT_CS_INDEX_NONE;
             break;
         case 2:
             label = "Cutscene 0";
             gSaveContext.save.dayTime = CLOCK_TIME(12, 0);
-            gSaveContext.save.cutsceneIndex = 0xFFF0;
+            gSaveContext.save.cutsceneIndex = CS_INDEX_0;
             break;
         case 3:
             label = "Cutscene 1";
-            gSaveContext.save.cutsceneIndex = 0xFFF1;
+            gSaveContext.save.cutsceneIndex = CS_INDEX_1;
             break;
         case 4:
             label = "Cutscene 2";
-            gSaveContext.save.cutsceneIndex = 0xFFF2;
+            gSaveContext.save.cutsceneIndex = CS_INDEX_2;
             break;
         case 5:
             label = "Cutscene 3";
-            gSaveContext.save.cutsceneIndex = 0xFFF3;
+            gSaveContext.save.cutsceneIndex = CS_INDEX_3;
             break;
         case 6:
             label = "Cutscene 4";
-            gSaveContext.save.cutsceneIndex = 0xFFF4;
+            gSaveContext.save.cutsceneIndex = CS_INDEX_4;
             break;
         case 7:
             label = "Cutscene 5";
-            gSaveContext.save.cutsceneIndex = 0xFFF5;
+            gSaveContext.save.cutsceneIndex = CS_INDEX_5;
             break;
         case 8:
             label = "Cutscene 6";
-            gSaveContext.save.cutsceneIndex = 0xFFF6;
+            gSaveContext.save.cutsceneIndex = CS_INDEX_6;
             break;
         case 9:
             label = "Cutscene 7";
-            gSaveContext.save.cutsceneIndex = 0xFFF7;
+            gSaveContext.save.cutsceneIndex = CS_INDEX_7;
             break;
         case 10:
             label = "Cutscene 8";
-            gSaveContext.save.cutsceneIndex = 0xFFF8;
+            gSaveContext.save.cutsceneIndex = CS_INDEX_8;
             break;
         case 11:
             label = "Cutscene 9";
-            gSaveContext.save.cutsceneIndex = 0xFFF9;
+            gSaveContext.save.cutsceneIndex = CS_INDEX_9;
             break;
         case 12:
             label = "Cutscene 10";
-            gSaveContext.save.cutsceneIndex = 0xFFFA;
+            gSaveContext.save.cutsceneIndex = CS_INDEX_A;
             break;
         default:
             label = "Unknown Layer";
-            gSaveContext.save.cutsceneIndex = 0xFFEF;
+            gSaveContext.save.cutsceneIndex = NEXT_CS_INDEX_NONE;
             break;
     };
 

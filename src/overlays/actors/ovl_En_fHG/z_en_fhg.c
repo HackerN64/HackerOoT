@@ -5,10 +5,27 @@
  */
 
 #include "z_en_fhg.h"
-#include "assets/objects/object_fhg/object_fhg.h"
 #include "overlays/actors/ovl_Door_Shutter/z_door_shutter.h"
 #include "overlays/actors/ovl_Boss_Ganondrof/z_boss_ganondrof.h"
 #include "overlays/actors/ovl_En_Fhg_Fire/z_en_fhg_fire.h"
+
+#include "libc64/qrand.h"
+#include "attributes.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "printf.h"
+#include "segmented_address.h"
+#include "seqcmd.h"
+#include "sequence.h"
+#include "sfx.h"
+#include "z_lib.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
+#include "skin.h"
+
+#include "assets/objects/object_fhg/object_fhg.h"
 
 #define FLAGS ACTOR_FLAG_UPDATE_CULLING_DISABLED
 

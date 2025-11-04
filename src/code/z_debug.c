@@ -1,5 +1,16 @@
-#include "global.h"
 #include "config.h"
+#include "libc64/malloc.h"
+#include "libu64/gfxprint.h"
+#include "libu64/pad.h"
+#include "array_count.h"
+#include "color.h"
+#include "controller.h"
+#include "gfx.h"
+#include "gfxalloc.h"
+#include "regs.h"
+#include "rumble.h"
+#include "ultra64.h"
+#include "z_debug.h"
 
 // ENABLE_CAMERA_DEBUGGER
 typedef struct DebugCamTextBufferEntry {
@@ -15,8 +26,8 @@ typedef struct InputCombo {
     /* 0x2 */ u16 press;
 } InputCombo; // size = 0x4
 
-#pragma increment_block_number "gc-eu:160 gc-eu-mq:160 gc-jp:160 gc-jp-ce:160 gc-jp-mq:160 gc-us:160 gc-us-mq:160" \
-                               "ntsc-1.0:160 ntsc-1.1:160 ntsc-1.2:160 pal-1.0:160 pal-1.1:160"
+#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0 ique-cn:0" \
+                               "ntsc-1.0:0 ntsc-1.1:0 ntsc-1.2:0 pal-1.0:0 pal-1.1:0"
 
 RegEditor* gRegEditor; // ``gRegEditor->data`` is used by non-debug features in normal gameplay
 
@@ -131,48 +142,48 @@ void DebugCamera_ScreenText(u8 x, u8 y, const char* text) {
 }
 
 void DebugCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text) {
-    if (IS_CAMERA_DEBUG_ENABLED) {
-        DebugCamTextBufferEntry* entry = &sDebugCamTextBuffer[sDebugCamTextEntryCount];
-        char* textDest;
-        s16 charCount;
+#if IS_CAMERA_DEBUG_ENABLED
+    DebugCamTextBufferEntry* entry = &sDebugCamTextBuffer[sDebugCamTextEntryCount];
+    char* textDest;
+    s16 charCount;
 
-        if (sDebugCamTextEntryCount < ARRAY_COUNT(sDebugCamTextBuffer)) {
-            entry->x = x;
-            entry->y = y;
-            entry->colorIndex = colorIndex;
+    if (sDebugCamTextEntryCount < ARRAY_COUNT(sDebugCamTextBuffer)) {
+        entry->x = x;
+        entry->y = y;
+        entry->colorIndex = colorIndex;
 
-            // Copy text into the entry, truncating if needed
-            charCount = 0;
-            textDest = entry->text;
+        // Copy text into the entry, truncating if needed
+        charCount = 0;
+        textDest = entry->text;
 
-            while ((*textDest++ = *text++) != '\0') {
-                if (charCount++ > (ARRAY_COUNT(entry->text) - 1)) {
-                    break;
-                }
+        while ((*textDest++ = *text++) != '\0') {
+            if (charCount++ > (ARRAY_COUNT(entry->text) - 1)) {
+                break;
             }
-
-            *textDest = '\0';
-
-            sDebugCamTextEntryCount++;
         }
+
+        *textDest = '\0';
+
+        sDebugCamTextEntryCount++;
     }
+#endif
 }
 
 void DebugCamera_DrawScreenText(GfxPrint* printer) {
-    if (IS_CAMERA_DEBUG_ENABLED) {
-        s32 i;
-        Color_RGBA8* color;
-        DebugCamTextBufferEntry* entry;
+#if IS_CAMERA_DEBUG_ENABLED
+    s32 i;
+    Color_RGBA8* color;
+    DebugCamTextBufferEntry* entry;
 
-        for (i = 0; i < sDebugCamTextEntryCount; i++) {
-            entry = &sDebugCamTextBuffer[i];
-            color = &sDebugCamTextColors[entry->colorIndex];
+    for (i = 0; i < sDebugCamTextEntryCount; i++) {
+        entry = &sDebugCamTextBuffer[i];
+        color = &sDebugCamTextColors[entry->colorIndex];
 
-            GfxPrint_SetColor(printer, color->r, color->g, color->b, color->a);
-            GfxPrint_SetPos(printer, entry->x, entry->y);
-            GfxPrint_Printf(printer, "%s", entry->text);
-        }
+        GfxPrint_SetColor(printer, color->r, color->g, color->b, color->a);
+        GfxPrint_SetPos(printer, entry->x, entry->y);
+        GfxPrint_Printf(printer, "%s", entry->text);
     }
+#endif
 }
 
 #if DEBUG_FEATURES

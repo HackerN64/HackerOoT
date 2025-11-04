@@ -1,9 +1,12 @@
 #ifndef HELPERS_H
 #define HELPERS_H
 
-#include "z64.h"
-#include "functions.h"
+#include "ultra64/ultratypes.h"
 #include "config.h"
+#include "game.h"
+#include "environment.h"
+#include "skybox.h"
+#include "view.h"
 
 void Helpers_LoadDefinedScene(GameState* gameState);
 void Helpers_LoadTitleScreen(GameState* gameState);

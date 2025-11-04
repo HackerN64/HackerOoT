@@ -5,9 +5,21 @@
  */
 
 #include "z_en_attack_niw.h"
-#include "versions.h"
-#include "assets/objects/object_niw/object_niw.h"
 #include "overlays/actors/ovl_En_Niw/z_en_niw.h"
+
+#include "libc64/qrand.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "rand.h"
+#include "sfx.h"
+#include "versions.h"
+#include "z_lib.h"
+#include "effect.h"
+#include "play_state.h"
+#include "player.h"
+
+#include "assets/objects/object_niw/object_niw.h"
 
 #define FLAGS ACTOR_FLAG_UPDATE_CULLING_DISABLED
 

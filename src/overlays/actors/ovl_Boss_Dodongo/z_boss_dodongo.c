@@ -1,6 +1,28 @@
 #include "z_boss_dodongo.h"
-#include "assets/objects/object_kingdodongo/object_kingdodongo.h"
 #include "overlays/actors/ovl_Door_Warp1/z_door_warp1.h"
+
+#include "libc64/math64.h"
+#include "libc64/qrand.h"
+#include "attributes.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "rand.h"
+#include "regs.h"
+#include "rumble.h"
+#include "segmented_address.h"
+#include "seqcmd.h"
+#include "sequence.h"
+#include "sfx.h"
+#include "sys_matrix.h"
+#include "tex_len.h"
+#include "z_lib.h"
+#include "effect.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
+
+#include "assets/objects/object_kingdodongo/object_kingdodongo.h"
 #include "assets/scenes/dungeons/ddan_boss/ddan_boss_room_1.h"
 
 #define FLAGS                                                                                 \
@@ -48,6 +70,18 @@ ActorProfile Boss_Dodongo_Profile = {
 };
 
 #include "z_boss_dodongo_data.inc.c"
+
+#define sLavaFloorLavaTex_WIDTH 64
+#define sLavaFloorLavaTex_HEIGHT 64
+static u64 sLavaFloorLavaTex[TEX_LEN(u64, sLavaFloorLavaTex_WIDTH, sLavaFloorLavaTex_HEIGHT, 16)] = {
+#include "assets/overlays/ovl_Boss_Dodongo/sLavaFloorLavaTex.rgba16.inc.c"
+};
+
+#define sLavaFloorRockTex_WIDTH 32
+#define sLavaFloorRockTex_HEIGHT 64
+static u64 sLavaFloorRockTex[TEX_LEN(u64, sLavaFloorRockTex_WIDTH, sLavaFloorRockTex_HEIGHT, 16)] = {
+#include "assets/overlays/ovl_Boss_Dodongo/sLavaFloorRockTex.rgba16.inc.c"
+};
 
 static InitChainEntry sInitChain[] = {
     ICHAIN_U8(attentionRangeType, ATTENTION_RANGE_5, ICHAIN_CONTINUE),
@@ -200,7 +234,7 @@ void BossDodongo_Init(Actor* thisx, PlayState* play) {
     this->unk_224 = 2.0f;
     this->unk_228 = 9200.0f;
     Collider_InitJntSph(play, &this->collider);
-    Collider_SetJntSph(play, &this->collider, &this->actor, &sJntSphInit, this->items);
+    Collider_SetJntSph(play, &this->collider, &this->actor, &sJntSphInit, this->colliderElements);
 
     if (Flags_GetClear(play, play->roomCtx.curRoom.num)) { // KD is dead
         u16* temp_s1_3 = SEGMENTED_TO_VIRTUAL(gDodongosCavernBossLavaFloorTex);

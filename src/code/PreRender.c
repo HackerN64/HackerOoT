@@ -5,8 +5,18 @@
  * buffer copies and coverage drawing. Also contains software implementations of the Video Interface anti-aliasing and
  * divot filters.
  */
-#include "global.h"
+#include "libu64/debug.h"
 #include "alloca.h"
+#include "sys_ucode.h"
+#include "color.h"
+#include "gfx.h"
+#include "prerender.h"
+#include "printf.h"
+#include "regs.h"
+#include "gfxalloc.h"
+#include "ultra64.h"
+#include "ultra64/gbi.h"
+#include "ultra64/gs2dex.h"
 
 void PreRender_SetValuesSave(PreRender* this, u32 width, u32 height, void* fbuf, void* zbuf, void* cvg) {
     this->widthSave = width;
@@ -828,7 +838,7 @@ void PreRender_ApplyFilters(PreRender* this) {
     }
 }
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
 void PreRender_MotionBlurImpl(PreRender* this, Gfx** gfxp, void* buf, void* bufSave, s32 envR, s32 envG, s32 envB,
                               s32 envA) {
     Gfx* gfx = *gfxp;

@@ -1,6 +1,15 @@
 #include "z_en_holl.h"
 #include "config.h"
 
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "sys_matrix.h"
+#include "z_lib.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
+
 #define FLAGS ACTOR_FLAG_UPDATE_CULLING_DISABLED
 
 /*
@@ -414,7 +423,13 @@ void EnHoll_Update(Actor* thisx, PlayState* play) {
 #endif
 }
 
-#include "assets/overlays/ovl_En_Holl/ovl_En_Holl.c"
+static Vtx sPlaneVtx[] = {
+#include "assets/overlays/ovl_En_Holl/sPlaneVtx.inc.c"
+};
+
+static Gfx sPlaneDL[5] = {
+#include "assets/overlays/ovl_En_Holl/sPlaneDL.inc.c"
+};
 
 void EnHoll_Draw(Actor* thisx, PlayState* play) {
     EnHoll* this = (EnHoll*)thisx;

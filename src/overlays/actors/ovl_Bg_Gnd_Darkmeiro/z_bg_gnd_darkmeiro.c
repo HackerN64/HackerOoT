@@ -5,6 +5,12 @@
  */
 
 #include "z_bg_gnd_darkmeiro.h"
+
+#include "gfx.h"
+#include "sfx.h"
+#include "z_lib.h"
+#include "play_state.h"
+
 #include "assets/objects/object_demo_kekkai/object_demo_kekkai.h"
 
 #define FLAGS (ACTOR_FLAG_UPDATE_CULLING_DISABLED | ACTOR_FLAG_DRAW_CULLING_DISABLED)
@@ -124,8 +130,7 @@ void BgGndDarkmeiro_UpdateBlockTimer(BgGndDarkmeiro* this, PlayState* play) {
         } else {
             this->actionFlags |= 4;
             this->timer1 = 304;
-            Audio_PlaySfxGeneral(NA_SE_EV_RED_EYE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+            SFX_PLAY_CENTERED(NA_SE_EV_RED_EYE);
         }
     }
 
@@ -140,8 +145,7 @@ void BgGndDarkmeiro_UpdateBlockTimer(BgGndDarkmeiro* this, PlayState* play) {
         } else {
             this->actionFlags |= 8;
             this->timer2 = 304;
-            Audio_PlaySfxGeneral(NA_SE_EV_RED_EYE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+            SFX_PLAY_CENTERED(NA_SE_EV_RED_EYE);
         }
     }
 

@@ -5,10 +5,28 @@
  */
 
 #include "z_bg_heavy_block.h"
-#include "global.h"
-#include "assets/objects/object_heavy_object/object_heavy_object.h"
+
+#include "libu64/debug.h"
+#include "array_count.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "one_point_cutscene.h"
+#include "printf.h"
 #include "quake.h"
+#include "rand.h"
+#include "rumble.h"
+#include "sfx.h"
+#include "sys_math.h"
+#include "sys_matrix.h"
 #include "terminal.h"
+#include "translation.h"
+#include "z_lib.h"
+#include "effect.h"
+#include "play_state.h"
+#include "player.h"
+
+#include "assets/objects/object_heavy_object/object_heavy_object.h"
 
 #define FLAGS 0
 
@@ -147,8 +165,7 @@ void BgHeavyBlock_Init(Actor* thisx, PlayState* play) {
             this->actionFunc = BgHeavyBlock_Wait;
             break;
     }
-    // "Largest Block Save Bit %x"
-    PRINTF(VT_FGCOL(CYAN) " 最大 ブロック セーブビット %x\n" VT_RST, thisx->params);
+    PRINTF(VT_FGCOL(CYAN) T(" 最大 ブロック セーブビット %x\n", " Largest Block Save Bit %x\n") VT_RST, thisx->params);
 }
 
 void BgHeavyBlock_Destroy(Actor* thisx, PlayState* play) {

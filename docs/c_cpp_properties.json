@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "oot-ntsc-1.2",
+            "name": "hackeroot-ntsc-1.2",
             "compilerArgs": [
                 "-m32"
             ],
@@ -19,6 +19,7 @@
                 "OOT_REGION=REGION_JP",
                 "PLATFORM_N64=1",
                 "PLATFORM_GC=0",
+                "PLATFORM_IQUE=0",
                 "DEBUG_FEATURES=0",
                 "NDEBUG",
                 "F3DEX_GBI_2"
@@ -26,7 +27,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-jp",
+            "name": "hackeroot-gc-jp",
             "compilerArgs": [
                 "-m32"
             ],
@@ -44,6 +45,7 @@
                 "OOT_REGION=REGION_JP",
                 "PLATFORM_N64=0",
                 "PLATFORM_GC=1",
+                "PLATFORM_IQUE=0",
                 "DEBUG_FEATURES=0",
                 "NDEBUG",
                 "F3DEX_GBI_2",
@@ -53,7 +55,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-jp-mq",
+            "name": "hackeroot-gc-jp-mq",
             "compilerArgs": [
                 "-m32"
             ],
@@ -71,6 +73,7 @@
                 "OOT_REGION=REGION_JP",
                 "PLATFORM_N64=0",
                 "PLATFORM_GC=1",
+                "PLATFORM_IQUE=0",
                 "DEBUG_FEATURES=0",
                 "NDEBUG",
                 "F3DEX_GBI_2",
@@ -80,7 +83,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-us",
+            "name": "hackeroot-gc-us",
             "compilerArgs": [
                 "-m32"
             ],
@@ -98,6 +101,7 @@
                 "OOT_REGION=REGION_US",
                 "PLATFORM_N64=0",
                 "PLATFORM_GC=1",
+                "PLATFORM_IQUE=0",
                 "DEBUG_FEATURES=0",
                 "NDEBUG",
                 "F3DEX_GBI_2",
@@ -107,7 +111,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-us-mq",
+            "name": "hackeroot-gc-us-mq",
             "compilerArgs": [
                 "-m32"
             ],
@@ -125,6 +129,7 @@
                 "OOT_REGION=REGION_US",
                 "PLATFORM_N64=0",
                 "PLATFORM_GC=1",
+                "PLATFORM_IQUE=0",
                 "DEBUG_FEATURES=0",
                 "NDEBUG",
                 "F3DEX_GBI_2",
@@ -134,7 +139,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-eu-mq-dbg",
+            "name": "hackeroot-gc-eu-mq-dbg",
             "compilerArgs": [
                 "-m32"
             ],
@@ -152,6 +157,7 @@
                 "OOT_REGION=REGION_EU",
                 "PLATFORM_N64=0",
                 "PLATFORM_GC=1",
+                "PLATFORM_IQUE=0",
                 "DEBUG_FEATURES=1",
                 "F3DEX_GBI_2",
                 "F3DEX_GBI_PL",
@@ -161,7 +167,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-eu",
+            "name": "hackeroot-gc-eu",
             "compilerArgs": [
                 "-m32"
             ],
@@ -179,6 +185,7 @@
                 "OOT_REGION=REGION_EU",
                 "PLATFORM_N64=0",
                 "PLATFORM_GC=1",
+                "PLATFORM_IQUE=0",
                 "DEBUG_FEATURES=0",
                 "NDEBUG",
                 "F3DEX_GBI_2",
@@ -188,7 +195,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-eu-mq",
+            "name": "hackeroot-gc-eu-mq",
             "compilerArgs": [
                 "-m32"
             ],
@@ -206,6 +213,7 @@
                 "OOT_REGION=REGION_EU",
                 "PLATFORM_N64=0",
                 "PLATFORM_GC=1",
+                "PLATFORM_IQUE=0",
                 "DEBUG_FEATURES=0",
                 "NDEBUG",
                 "F3DEX_GBI_2",
@@ -215,7 +223,7 @@
             "cStandard": "gnu89"
         },
         {
-            "name": "oot-gc-jp-ce",
+            "name": "hackeroot-gc-jp-ce",
             "compilerArgs": [
                 "-m32"
             ],
@@ -233,6 +241,7 @@
                 "OOT_REGION=REGION_JP",
                 "PLATFORM_N64=0",
                 "PLATFORM_GC=1",
+                "PLATFORM_IQUE=0",
                 "DEBUG_FEATURES=0",
                 "NDEBUG",
                 "F3DEX_GBI_2",
@@ -241,6 +250,35 @@
             ],
             "cStandard": "gnu89"
         },
+        {
+            "name": "hackeroot-ique-cn",
+            "compilerArgs": [
+                "-m32"
+            ],
+            "includePath": [
+                "include",
+                "include/libc",
+                "src",
+                "build/ique-cn",
+                ".",
+                "extracted/ique-cn"
+            ],
+            "defines": [
+                "_LANGUAGE_C",
+                "OOT_VERSION=IQUE_CN",
+                "OOT_REGION=REGION_US",
+                "PLATFORM_N64=0",
+                "PLATFORM_GC=0",
+                "PLATFORM_IQUE=1",
+                "BBPLAYER",
+                "DEBUG_FEATURES=0",
+                "NDEBUG",
+                "F3DEX_GBI_2",
+                "F3DEX_GBI_PL",
+                "GBI_DOWHILE"
+            ],
+            "cStandard": "gnu89"
+        }
     ],
     "version": 4
 }

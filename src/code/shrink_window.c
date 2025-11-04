@@ -1,4 +1,6 @@
-#include "global.h"
+#include "letterbox.h"
+#include "printf.h"
+#include "regs.h"
 
 #if ENABLE_NEW_LETTERBOX
 

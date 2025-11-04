@@ -1,5 +1,9 @@
-#include "global.h"
+#include "libu64/debug.h"
+#include "attributes.h"
+#include "printf.h"
+#include "stackcheck.h"
 #include "terminal.h"
+#include "translation.h"
 
 StackEntry* sStackInfoListStart = NULL;
 StackEntry* sStackInfoListEnd = NULL;
@@ -158,12 +162,12 @@ u32 StackCheck_GetState(StackEntry* entry) {
 
     if (free == 0) {
         ret = STACK_STATUS_OVERFLOW;
-        PRINTF(VT_FGCOL(RED));
+        PRINTF_COLOR_RED();
     } else if (free < (u32)entry->minSpace && entry->minSpace != -1) {
         ret = STACK_STATUS_WARNING;
-        PRINTF(VT_FGCOL(YELLOW));
+        PRINTF_COLOR_YELLOW();
     } else {
-        PRINTF(VT_FGCOL(GREEN));
+        PRINTF_COLOR_GREEN();
         ret = STACK_STATUS_OK;
     }
 
@@ -174,7 +178,7 @@ u32 StackCheck_GetState(StackEntry* entry) {
 
     PRINTF("head=%08x tail=%08x last=%08x used=%08x free=%08x [%s]\n", entry->head, entry->tail, last, used, free,
            entry->name != NULL ? entry->name : "(null)");
-    PRINTF(VT_RST);
+    PRINTF_RST();
 
 #if DEBUG_FEATURES
     if (ret != STACK_STATUS_OK) {
@@ -185,25 +189,20 @@ u32 StackCheck_GetState(StackEntry* entry) {
     return ret;
 }
 
-u32 StackCheck_CheckAll(void) {
-    u32 ret = 0;
-    StackEntry* iter = sStackInfoListStart;
-
-    while (iter) {
-        u32 state = StackCheck_GetState(iter);
-
-        if (state != STACK_STATUS_OK) {
-            ret = 1;
-        }
-        iter = iter->next;
-    }
-
-    return ret;
-}
-
 u32 StackCheck_Check(StackEntry* entry) {
     if (entry == NULL) {
-        return StackCheck_CheckAll();
+        u32 ret = 0;
+        StackEntry* iter = sStackInfoListStart;
+
+        while (iter) {
+            u32 state = StackCheck_GetState(iter);
+
+            if (state != STACK_STATUS_OK) {
+                ret = 1;
+            }
+            iter = iter->next;
+        }
+        return ret;
     } else {
         return StackCheck_GetState(entry);
     }

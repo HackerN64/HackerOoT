@@ -1,6 +1,30 @@
 #include "z_en_fr.h"
-#include "assets/objects/gameplay_field_keep/gameplay_field_keep.h"
+
+#include "array_count.h"
+#include "controller.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "one_point_cutscene.h"
+#include "printf.h"
+#include "rand.h"
+#include "regs.h"
+#include "segmented_address.h"
+#include "sfx.h"
+#include "sys_matrix.h"
 #include "terminal.h"
+#include "translation.h"
+#include "z_lib.h"
+#include "audio.h"
+#include "debug_display.h"
+#include "effect.h"
+#include "light.h"
+#include "ocarina.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
+
+#include "assets/objects/gameplay_field_keep/gameplay_field_keep.h"
 #include "assets/objects/object_fr/object_fr.h"
 
 #define FLAGS                                                                                  \
@@ -245,20 +269,19 @@ void EnFr_Init(Actor* thisx, PlayState* play) {
         this->actionFunc = EnFr_Idle;
     } else {
         if ((this->actor.params >= 6) || (this->actor.params < 0)) {
-            PRINTF(VT_COL(RED, WHITE));
-            // "The argument is wrong!!"
-            PRINTF("%s[%d] : 引数が間違っている！！(%d)\n", "../z_en_fr.c", 370, this->actor.params);
-            PRINTF(VT_RST);
+            PRINTF_COLOR_ERROR();
+            PRINTF(T("%s[%d] : 引数が間違っている！！(%d)\n", "%s[%d] : The argument is wrong!! (%d)\n"),
+                   "../z_en_fr.c", 370, this->actor.params);
+            PRINTF_RST();
             ASSERT(0, "0", "../z_en_fr.c", 372);
         }
 
         this->requiredObjectSlot = Object_GetSlot(&play->objectCtx, OBJECT_GAMEPLAY_FIELD_KEEP);
         if (this->requiredObjectSlot < 0) {
             Actor_Kill(&this->actor);
-            PRINTF(VT_COL(RED, WHITE));
-            // "There is no bank!!"
-            PRINTF("%s[%d] : バンクが無いよ！！\n", "../z_en_fr.c", 380);
-            PRINTF(VT_RST);
+            PRINTF_COLOR_ERROR();
+            PRINTF(T("%s[%d] : バンクが無いよ！！\n", "%s[%d] : There is no bank!!\n"), "../z_en_fr.c", 380);
+            PRINTF_RST();
             ASSERT(0, "0", "../z_en_fr.c", 382);
         }
     }
@@ -980,10 +1003,9 @@ void EnFr_Deactivate(EnFr* this, PlayState* play) {
         EnFr* frog = sEnFrPointers.frogs[frogIndex];
 
         if (frog == NULL) {
-            PRINTF(VT_COL(RED, WHITE));
-            // "There are no frogs!?"
-            PRINTF("%s[%d]カエルがいない！？\n", "../z_en_fr.c", 1604);
-            PRINTF(VT_RST);
+            PRINTF_COLOR_ERROR();
+            PRINTF(T("%s[%d]カエルがいない！？\n", "%s[%d] There are no frogs!?\n"), "../z_en_fr.c", 1604);
+            PRINTF_RST();
             return;
         } else if (frog->isDeactivating != true) {
             return;
@@ -994,10 +1016,9 @@ void EnFr_Deactivate(EnFr* this, PlayState* play) {
         EnFr* frog = sEnFrPointers.frogs[frogIndex];
 
         if (frog == NULL) {
-            PRINTF(VT_COL(RED, WHITE));
-            // "There are no frogs!?"
-            PRINTF("%s[%d]カエルがいない！？\n", "../z_en_fr.c", 1618);
-            PRINTF(VT_RST);
+            PRINTF_COLOR_ERROR();
+            PRINTF(T("%s[%d]カエルがいない！？\n", "%s[%d] There are no frogs!?\n"), "../z_en_fr.c", 1618);
+            PRINTF_RST();
             return;
         }
         frog->isDeactivating = false;

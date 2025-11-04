@@ -1,7 +1,7 @@
 MAKEFLAGS += --no-builtin-rules --no-print-directory
 
-CFLAGS := -Wall -Wextra -pedantic -std=c99 -g -O2
-PROGRAMS := elf2rom makeromfs mkdmadata mkldscript preprocess_pragmas reloc_prereq
+CFLAGS := -Wall -Wextra -pedantic -std=gnu99 -g -O2
+PROGRAMS := bin2c elf2rom makeromfs mkdmadata mkldscript preprocess_pragmas reloc_prereq
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
@@ -39,10 +39,14 @@ endif
 -include print_rules.mk
 
 all: $(PROGRAMS) $(IDO_RECOMP_5_3_DIR) $(IDO_RECOMP_7_1_DIR) $(EGCS_DIR)
-	$(call print_no_args,Building ZAPD...)
-	$(V)$(MAKE) -C ZAPD
 	$(call print_no_args,Building fado...)
 	$(V)$(MAKE) -C fado
+	$(call print_no_args,Building audio tools...)
+	$(V)$(MAKE) -C audio
+	$(call print_no_args,Building com-plugin...)
+	$(V)$(MAKE) -C com-plugin
+	$(call print_no_args,Building assets tools...)
+	$(V)$(MAKE) -C assets
 	$(call print_no_args,Building gzinject...)
 ifeq ($(wildcard ./gzinject/Makefile),)
 	$(V)cd ./gzinject && ./configure
@@ -52,28 +56,29 @@ endif
 	$(V)$(MAKE) -C z64compress
 	$(call print_no_args,Building Flips...)
 	$(V)$(MAKE) -C Flips TARGET=cli
-	$(call print_no_args,Building audio tools...)
-	$(V)$(MAKE) -C audio
 
 clean:
 	$(V)$(RM) $(PROGRAMS) $(addsuffix .exe,$(PROGRAMS))
 	$(V)$(RM) -r ido_recomp egcs
-	$(V)$(MAKE) -C ZAPD clean
 	$(V)$(MAKE) -C fado clean
+	$(V)$(MAKE) -C audio clean
+	$(V)$(MAKE) -C com-plugin clean
+	$(V)$(MAKE) -C assets clean
 ifneq ($(wildcard ./gzinject/Makefile),)
 	$(V)$(MAKE) -C gzinject distclean
 endif
 	$(V)$(MAKE) -C z64compress clean
 	$(V)$(MAKE) -C Flips clean
-	$(V)rm Flips/flips
-	$(V)$(MAKE) -C audio clean
+	$(V)rm -f Flips/flips
 
 distclean: clean
 	$(V)$(MAKE) -C audio distclean
+	$(V)$(MAKE) -C assets distclean
 
 .PHONY: all clean distclean
 
 elf2rom_SOURCES            := elf2rom.c elf32.c n64chksum.c util.c
+bin2c_SOURCES              := bin2c.c
 makeromfs_SOURCES          := makeromfs.c n64chksum.c util.c
 mkdmadata_SOURCES          := mkdmadata.c spec.c util.c
 mkldscript_SOURCES         := mkldscript.c spec.c util.c

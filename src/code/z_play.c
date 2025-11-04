@@ -1,22 +1,62 @@
-
-#include "global.h"
+#include "libc64/malloc.h"
+#include "libc64/qrand.h"
+#include "libu64/debug.h"
+#include "array_count.h"
+#include "buffers.h"
+#include "color.h"
+#include "controller.h"
 #include "fault.h"
-#include "quake.h"
-#include "terminal.h"
 #include "config.h"
-#include "versions.h"
+#include "file_select_state.h"
+#include "gfx.h"
+#include "gfxalloc.h"
+#include "kaleido_manager.h"
+#include "letterbox.h"
 #include "line_numbers.h"
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
-#include "z64frame_advance.h"
-#include "z64camera.h"
+#include "one_point_cutscene.h"
+#include "printf.h"
+#include "quake.h"
+#include "regs.h"
+#include "rumble.h"
+#include "segmented_address.h"
+#include "sequence.h"
+#include "sfx.h"
+#include "sys_math3d.h"
+#include "sys_matrix.h"
+#include "terminal.h"
+#include "title_setup_state.h"
+#include "transition_circle.h"
+#include "transition_fade.h"
+#include "transition_tile.h"
+#include "transition_triforce.h"
+#include "transition_wipe.h"
+#include "translation.h"
+#include "versions.h"
+#include "z_actor_dlftbls.h"
+#include "zelda_arena.h"
+#include "audio.h"
+#include "cutscene_flags.h"
+#include "debug_display.h"
+#include "effect.h"
+#include "frame_advance.h"
+#include "light.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
+#include "vis.h"
+#include "occlusionplanes.h"
+#include "libu64/gfxprint.h"
+#include "debug.h"
 
 #if CAN_INCLUDE_EXAMPLE_SCENE
 #include "assets/scenes/example/example_scene.h"
 #endif
 
-#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128"
+#pragma increment_block_number "gc-eu:224 gc-eu-mq:224 gc-jp:224 gc-jp-ce:224 gc-jp-mq:224 gc-us:224 gc-us-mq:224" \
+                               "ique-cn:224 ntsc-1.0:240 ntsc-1.1:240 ntsc-1.2:240 pal-1.0:240 pal-1.1:240"
 
 TransitionTile gTransitionTile;
 s32 gTransitionTileState;
@@ -77,11 +117,9 @@ void Play_SetViewpoint(PlayState* this, s16 viewpoint) {
 
     this->viewpoint = viewpoint;
 
-    if ((R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT) && (gSaveContext.save.cutsceneIndex < 0xFFF0)) {
+    if ((R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT) && (gSaveContext.save.cutsceneIndex < CS_INDEX_0)) {
         // Play a sfx when the player toggles the camera
-        Audio_PlaySfxGeneral((viewpoint == VIEWPOINT_LOCKED) ? NA_SE_SY_CAMERA_ZOOM_DOWN : NA_SE_SY_CAMERA_ZOOM_UP,
-                             &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultReverb);
+        SFX_PLAY_CENTERED((viewpoint == VIEWPOINT_LOCKED) ? NA_SE_SY_CAMERA_ZOOM_DOWN : NA_SE_SY_CAMERA_ZOOM_UP);
     }
 
     Play_RequestViewpointBgCam(this);
@@ -198,7 +236,7 @@ void Play_SetupTransition(PlayState* this, s32 transitionType) {
                 break;
 
             default:
-                HUNGUP_AND_CRASH("../z_play.c", LN5(2263, 2266, 2269, 2272, 2287, 2290, 2293));
+                HUNGUP_AND_CRASH("../z_play.c", LN5(2263, 2266, 2269, 2272, 2282, 2287, 2290, 2293));
                 break;
         }
     }
@@ -208,14 +246,18 @@ void func_800BC88C(PlayState* this) {
     this->transitionCtx.transitionType = -1;
 }
 
+/**
+ * Set the environment fog, from parameters controlled by the environment system.
+ * If a custom fog state is used at any point in drawing, the environment fog is expected to be restored afterwards.
+ */
 Gfx* Play_SetFog(PlayState* this, Gfx* gfx) {
     s32 fogA = 0;
     if (this->skyboxId != SKYBOX_NONE && this->lightCtx.fogNear < 980) {
         fogA = (255 * (1000 - this->lightCtx.fogNear) + 25) / 50;
         fogA = CLAMP(fogA, 0, 255);
     }
-    return Gfx_SetFog2(gfx, this->lightCtx.fogColor[0], this->lightCtx.fogColor[1], this->lightCtx.fogColor[2], fogA,
-                       this->lightCtx.fogNear, 1000);
+    return Gfx_SetFog(gfx, this->lightCtx.fogColor[0], this->lightCtx.fogColor[1], this->lightCtx.fogColor[2], fogA,
+                      this->lightCtx.fogNear, 1000);
 }
 
 void Play_Destroy(GameState* thisx) {
@@ -227,7 +269,7 @@ void Play_Destroy(GameState* thisx) {
     this->state.gfxCtx->callback = NULL;
     this->state.gfxCtx->callbackParam = NULL;
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     Play_DestroyMotionBlur();
 #endif
 
@@ -340,7 +382,7 @@ void Play_Init(GameState* thisx) {
     Camera_OverwriteStateFlags(&this->mainCamera, CAM_STATE_CHECK_BG_ALT | CAM_STATE_CHECK_WATER | CAM_STATE_CHECK_BG |
                                                       CAM_STATE_EXTERNAL_FINISHED | CAM_STATE_CAM_FUNC_FINISH |
                                                       CAM_STATE_LOCK_MODE | CAM_STATE_DISTORTION | CAM_STATE_PLAY_INIT);
-    Sram_Init(this, &this->sramCtx);
+    Sram_Init(&this->state, &this->sramCtx);
     Regs_InitData(this);
     Message_Init(this);
     GameOver_Init(this);
@@ -351,13 +393,13 @@ void Play_Init(GameState* thisx) {
     AnimTaskQueue_Reset(&this->animTaskQueue);
     Cutscene_InitContext(this, &this->csCtx);
 
-    if (gSaveContext.nextCutsceneIndex != 0xFFEF) {
+    if (gSaveContext.nextCutsceneIndex != NEXT_CS_INDEX_NONE) {
         gSaveContext.save.cutsceneIndex = gSaveContext.nextCutsceneIndex;
-        gSaveContext.nextCutsceneIndex = 0xFFEF;
+        gSaveContext.nextCutsceneIndex = NEXT_CS_INDEX_NONE;
     }
 
-    if (gSaveContext.save.cutsceneIndex == 0xFFFD) {
-        gSaveContext.save.cutsceneIndex = 0;
+    if (gSaveContext.save.cutsceneIndex == CS_INDEX_D) {
+        gSaveContext.save.cutsceneIndex = CS_INDEX_NONE;
     }
 
     if (gSaveContext.nextDayTime != NEXT_TIME_NONE) {
@@ -373,10 +415,10 @@ void Play_Init(GameState* thisx) {
 
     Cutscene_HandleConditionalTriggers(this);
 
-    if (gSaveContext.gameMode != GAMEMODE_NORMAL || gSaveContext.save.cutsceneIndex >= 0xFFF0) {
+    if (gSaveContext.gameMode != GAMEMODE_NORMAL || gSaveContext.save.cutsceneIndex >= CS_INDEX_0) {
         gSaveContext.nayrusLoveTimer = 0;
         Magic_Reset(this);
-        gSaveContext.sceneLayer = SCENE_LAYER_CUTSCENE_FIRST + (gSaveContext.save.cutsceneIndex & 0xF);
+        gSaveContext.sceneLayer = GET_CUTSCENE_LAYER(gSaveContext.save.cutsceneIndex);
     } else if (!LINK_IS_ADULT && IS_DAY) {
         gSaveContext.sceneLayer = SCENE_LAYER_CHILD_DAY;
     } else if (!LINK_IS_ADULT && !IS_DAY) {
@@ -426,7 +468,7 @@ void Play_Init(GameState* thisx) {
     KaleidoScopeCall_Init(this);
     Interface_Init(this);
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     Play_InitMotionBlur(this);
 #endif
 
@@ -512,20 +554,24 @@ void Play_Init(GameState* thisx) {
     Camera_InitDataUsingPlayer(&this->mainCamera, player);
     Camera_RequestMode(&this->mainCamera, CAM_MODE_NORMAL);
 
+    playerStartBgCamIndex = PLAYER_GET_START_BG_CAM_INDEX(&player->actor);
+
 #if ENABLE_CUTSCENE_IMPROVEMENTS
-    if ((player->actor.params & 0xFF) != 0xFF) {
-        Camera_ChangeActorCsCamIndex(&this->mainCamera, player->actor.params & 0xFF);
+    if (playerStartBgCamIndex != PLAYER_START_BG_CAM_DEFAULT) {
+        if (this->actorCsUsed) {
+            Camera_ChangeActorCsCamIndex(&this->mainCamera, playerStartBgCamIndex);
+        } else {
+            Camera_RequestBgCam(&this->mainCamera, playerStartBgCamIndex);
+        }
     }
 
     CutsceneManager_StoreCamera(&this->mainCamera);
-#endif
-
-    playerStartBgCamIndex = PLAYER_GET_START_BG_CAM_INDEX(&player->actor);
-
+#else
     if (playerStartBgCamIndex != PLAYER_START_BG_CAM_DEFAULT) {
         PRINTF("player has start camera ID (" VT_FGCOL(BLUE) "%d" VT_RST ")\n", playerStartBgCamIndex);
         Camera_RequestBgCam(&this->mainCamera, playerStartBgCamIndex);
     }
+#endif
 
     if (R_SCENE_CAM_TYPE == SCENE_CAM_TYPE_FIXED_TOGGLE_VIEWPOINT) {
         this->viewpoint = VIEWPOINT_PIVOT;
@@ -600,9 +646,9 @@ void Play_Update(PlayState* this) {
     }
 #endif
 
-    gSegments[4] = VIRTUAL_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.mainKeepSlot].segment);
-    gSegments[5] = VIRTUAL_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.subKeepSlot].segment);
-    gSegments[2] = VIRTUAL_TO_PHYSICAL(this->sceneSegment);
+    gSegments[4] = OS_K0_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.mainKeepSlot].segment);
+    gSegments[5] = OS_K0_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.subKeepSlot].segment);
+    gSegments[2] = OS_K0_TO_PHYSICAL(this->sceneSegment);
 
 #if ARE_FRAMERATE_OPTIONS_ENABLED
 #define FRAMEADVANCE_CAN_UPDATE FrameAdvance_Update(&this->frameAdvCtx, &input[FA_CONTROLLER_PORT])
@@ -645,7 +691,7 @@ void Play_Update(PlayState* this) {
 
                         Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_NOTHING);
 
-                        if (gSaveContext.save.cutsceneIndex >= 0xFFF0) {
+                        if (gSaveContext.save.cutsceneIndex >= CS_INDEX_0) {
                             sceneLayer = SCENE_LAYER_CUTSCENE_FIRST + (gSaveContext.save.cutsceneIndex & 0xF);
                         }
 
@@ -891,8 +937,7 @@ void Play_Update(PlayState* this) {
                     break;
 
                 case TRANS_MODE_SANDSTORM:
-                    Audio_PlaySfxGeneral(NA_SE_EV_SAND_STORM - SFX_FLAG, &gSfxDefaultPos, 4,
-                                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                    SFX_PLAY_CENTERED(NA_SE_EV_SAND_STORM - SFX_FLAG);
 
                     if (this->transitionTrigger == TRANS_TRIGGER_END) {
                         if (this->envCtx.sandstormPrimA < 110) {
@@ -917,8 +962,8 @@ void Play_Update(PlayState* this) {
                         this->envCtx.sandstormState = SANDSTORM_DISSIPATE;
                         this->envCtx.sandstormPrimA = 255;
                         this->envCtx.sandstormEnvA = 255;
-                        // "It's here!!!!!!!!!"
-                        LOG_STRING("来た!!!!!!!!!!!!!!!!!!!!!", "../z_play.c", 3471);
+                        LOG_STRING_T("来た!!!!!!!!!!!!!!!!!!!!!", "It's here!!!!!!!!!!!!!!!!!!!!!", "../z_play.c",
+                                     3471);
                         this->transitionMode = TRANS_MODE_SANDSTORM_END;
                     } else {
                         this->transitionMode = TRANS_MODE_SANDSTORM_INIT;
@@ -926,8 +971,7 @@ void Play_Update(PlayState* this) {
                     break;
 
                 case TRANS_MODE_SANDSTORM_END:
-                    Audio_PlaySfxGeneral(NA_SE_EV_SAND_STORM - SFX_FLAG, &gSfxDefaultPos, 4,
-                                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                    SFX_PLAY_CENTERED(NA_SE_EV_SAND_STORM - SFX_FLAG);
 
                     if (this->transitionTrigger == TRANS_TRIGGER_END) {
                         if (this->envCtx.sandstormPrimA <= 0) {
@@ -1061,8 +1105,7 @@ void Play_Update(PlayState* this) {
                         PRINTF(VT_FGCOL(CYAN) T("デモ中につき視点変更を禁止しております\n",
                                                 "Changing viewpoint is prohibited during the cutscene\n") VT_RST);
                     } else if (R_SCENE_CAM_TYPE == SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT) {
-                        Audio_PlaySfxGeneral(NA_SE_SY_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                        SFX_PLAY_CENTERED(NA_SE_SY_ERROR);
                     } else {
                         // C-Up toggle for houses, move between pivot camera and fixed camera
                         // Toggle viewpoint between VIEWPOINT_LOCKED and VIEWPOINT_PIVOT
@@ -1143,7 +1186,7 @@ skip:
     Environment_Update(this, &this->envCtx, &this->lightCtx, &this->pauseCtx, &this->msgCtx, &this->gameOverCtx,
                        this->state.gfxCtx);
 
-    if (ENABLE_MOTION_BLUR && ENABLE_MOTION_BLUR_DEBUG) {
+    if (IS_MOTION_BLUR_ENABLED && ENABLE_MOTION_BLUR_DEBUG) {
         // motion blur testing controls
         if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_DUP)) {
             R_MOTION_BLUR_ENABLED ^= 1;
@@ -1178,10 +1221,11 @@ skip:
             s16 csId = optCsId >= 0 ? optCsId : 0;
 
             // check if the cutscene is the next on the queue, if it is play it,
-            // otherwise add it to the queue when the button L is pressed
+            // otherwise add it to the queue when the D-Left is pressed while L and Z are held
             if (CutsceneManager_IsNext(csId)) {
                 CutsceneManager_Start(csId, &GET_PLAYER(this)->actor);
-            } else if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_L)) {
+            } else if (CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_L | BTN_Z) &&
+                       CHECK_BTN_ALL(this->state.input[0].press.button, BTN_DLEFT)) {
                 CutsceneManager_Queue(csId);
             }
         }
@@ -1210,7 +1254,7 @@ void Play_DrawOverlayElements(PlayState* this) {
     }
 }
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
 void PreRender_MotionBlurOpaque(PreRender* this, Gfx** gfxP);
 void PreRender_MotionBlur(PreRender* this, Gfx** gfxp, s32 alpha);
 
@@ -1288,25 +1332,25 @@ void Play_DestroyMotionBlur(void) {
 #endif
 
 void Play_SetMotionBlurAlpha(u32 alpha) {
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     R_MOTION_BLUR_ALPHA = alpha;
 #endif
 }
 
 void Play_EnableMotionBlur(u32 alpha) {
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     R_MOTION_BLUR_ALPHA = alpha;
     R_MOTION_BLUR_ENABLED = true;
 #endif
 }
 
 void Play_DisableMotionBlur(void) {
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     R_MOTION_BLUR_ENABLED = false;
 #endif
 }
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
 void Play_SetMotionBlurPriorityAlpha(u32 alpha) {
     R_MOTION_BLUR_PRIORITY_ALPHA = alpha;
 }
@@ -1328,9 +1372,9 @@ void Play_Draw(PlayState* this) {
 
     OPEN_DISPS(gfxCtx, "../z_play.c", 3907);
 
-    gSegments[4] = VIRTUAL_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.mainKeepSlot].segment);
-    gSegments[5] = VIRTUAL_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.subKeepSlot].segment);
-    gSegments[2] = VIRTUAL_TO_PHYSICAL(this->sceneSegment);
+    gSegments[4] = OS_K0_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.mainKeepSlot].segment);
+    gSegments[5] = OS_K0_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.subKeepSlot].segment);
+    gSegments[2] = OS_K0_TO_PHYSICAL(this->sceneSegment);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
     gSPSegment(POLY_XLU_DISP++, 0x00, NULL);
@@ -1460,7 +1504,7 @@ void Play_Draw(PlayState* this) {
             R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_OFF;
         }
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
         Play_DrawMotionBlur(this);
 #endif
 
@@ -1559,7 +1603,7 @@ void Play_Draw(PlayState* this) {
         }
 
         if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_ACTORS) {
-            func_800315AC(this, &this->actorCtx);
+            Actor_DrawAll(this, &this->actorCtx);
         }
 
         if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_LENS_FLARES) {
@@ -1634,7 +1678,7 @@ void Play_Draw(PlayState* this) {
     }
 
 Play_Draw_skip:
-    if (ENABLE_MOTION_BLUR && ENABLE_MOTION_BLUR_DEBUG) {
+    if (IS_MOTION_BLUR_ENABLED && ENABLE_MOTION_BLUR_DEBUG) {
         // motion blur testing display
         GfxPrint printer;
         Gfx* gfxRef;
@@ -1684,7 +1728,7 @@ void Play_Main(GameState* thisx) {
 
     D_8012D1F8 = &this->state.input[0];
 
-#ifndef NO_DEBUG_DISPLAY
+#if DEBUG_FEATURES && !NO_DEBUG_DISPLAY
     DebugDisplay_Init();
 #endif
 
@@ -1891,7 +1935,7 @@ void Play_SpawnScene(PlayState* this, s32 sceneId, s32 spawn) {
 
     ASSERT(this->sceneSegment != NULL, "this->sceneSegment != NULL", "../z_play.c", 4960);
 
-    gSegments[2] = VIRTUAL_TO_PHYSICAL(this->sceneSegment);
+    gSegments[2] = OS_K0_TO_PHYSICAL(this->sceneSegment);
 
     Play_InitScene(this, spawn);
 
@@ -1944,7 +1988,7 @@ s16 Play_CreateSubCamera(PlayState* this) {
     return camId;
 }
 
-s16 Play_GetActiveCamId(PlayState* this) {
+s32 Play_GetActiveCamId(PlayState* this) {
     return this->activeCamId;
 }
 

@@ -5,6 +5,12 @@
  */
 
 #include "z_bg_umajump.h"
+
+#include "ichain.h"
+#include "regs.h"
+#include "play_state.h"
+#include "save.h"
+
 #include "assets/objects/object_umajump/object_umajump.h"
 
 #define FLAGS 0

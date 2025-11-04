@@ -1,5 +1,10 @@
 #include "z_kaleido_scope.h"
 
+#include "libu64/pad.h"
+#include "regs.h"
+#include "sfx.h"
+#include "play_state.h"
+
 static s16 sKaleidoPromptCursorAlphaVals[] = { 100, 255 };
 
 void KaleidoScope_UpdatePrompt(PlayState* play) {
@@ -14,12 +19,10 @@ void KaleidoScope_UpdatePrompt(PlayState* play) {
         (pauseCtx->state == PAUSE_STATE_GAME_OVER_CONTINUE_PROMPT)) {
 
         if ((pauseCtx->promptChoice == 0) && (stickAdjX >= 30)) {
-            Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+            SFX_PLAY_CENTERED(NA_SE_SY_CURSOR);
             pauseCtx->promptChoice = 4;
         } else if ((pauseCtx->promptChoice != 0) && (stickAdjX <= -30)) {
-            Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+            SFX_PLAY_CENTERED(NA_SE_SY_CURSOR);
             pauseCtx->promptChoice = 0;
         }
 
