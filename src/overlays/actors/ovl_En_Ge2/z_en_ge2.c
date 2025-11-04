@@ -8,16 +8,18 @@
 
 #include "gfx.h"
 #include "gfx_setupdl.h"
+#include "printf.h"
 #include "segmented_address.h"
 #include "sfx.h"
 #include "sys_matrix.h"
 #include "terminal.h"
+#include "translation.h"
 #include "z_lib.h"
-#include "z64effect.h"
-#include "z64horse.h"
-#include "z64play.h"
-#include "z64player.h"
-#include "z64save.h"
+#include "effect.h"
+#include "horse.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
 
 #include "assets/objects/object_gla/object_gla.h"
 
@@ -91,8 +93,8 @@ static ColliderCylinderInit sCylinderInit = {
     },
     {
         ELEM_MATERIAL_UNK0,
-        { 0x00000000, 0x00, 0x00 },
-        { 0x000007A2, 0x00, 0x00 },
+        { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+        { 0x000007A2, HIT_BACKLASH_NONE, 0x00 },
         ATELEM_NONE,
         ACELEM_ON,
         OCELEM_ON,
@@ -584,14 +586,12 @@ void EnGe2_Update(Actor* thisx, PlayState* play) {
         this->actionFunc(this, play);
 
         if (Ge2_DetectPlayerInUpdate(play, this, &this->actor.focus.pos, this->actor.shape.rot.y, this->yDetectRange)) {
-            // "Discovered!"
-            PRINTF(VT_FGCOL(GREEN) "発見!!!!!!!!!!!!\n" VT_RST);
+            PRINTF(VT_FGCOL(GREEN) T("発見!!!!!!!!!!!!\n", "Discovered!!!!!!!!!!!!\n") VT_RST);
             EnGe2_SetupCapturePlayer(this, play);
         }
 
         if ((PARAMS_GET_S(this->actor.params, 0, 8) == GE2_TYPE_STATIONARY) && (this->actor.xzDistToPlayer < 100.0f)) {
-            // "Discovered!"
-            PRINTF(VT_FGCOL(GREEN) "発見!!!!!!!!!!!!\n" VT_RST);
+            PRINTF(VT_FGCOL(GREEN) T("発見!!!!!!!!!!!!\n", "Discovered!!!!!!!!!!!!\n") VT_RST);
             EnGe2_SetupCapturePlayer(this, play);
         }
     }

@@ -7,15 +7,18 @@
 #include "z_en_fish.h"
 
 #include "libc64/qrand.h"
+#include "array_count.h"
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "ichain.h"
+#include "printf.h"
 #include "sfx.h"
 #include "terminal.h"
+#include "translation.h"
 #include "z_lib.h"
-#include "z64item.h"
-#include "z64play.h"
-#include "z64player.h"
+#include "item.h"
+#include "play_state.h"
+#include "player.h"
 
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
@@ -48,12 +51,12 @@ static Actor* D_80A17010 = NULL;
 static f32 D_80A17014 = 0.0f;
 static f32 D_80A17018 = 0.0f;
 
-static ColliderJntSphElementInit sJntSphElementsInit[1] = {
+static ColliderJntSphElementInit sJntSphElementsInit[] = {
     {
         {
             ELEM_MATERIAL_UNK0,
-            { 0x00000000, 0x00, 0x00 },
-            { 0xFFCFFFFF, 0x00, 0x00 },
+            { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+            { 0xFFCFFFFF, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_NONE,
             ACELEM_NONE,
             OCELEM_ON,
@@ -71,7 +74,7 @@ static ColliderJntSphInit sJntSphInit = {
         OC2_TYPE_1,
         COLSHAPE_JNTSPH,
     },
-    1,
+    ARRAY_COUNT(sJntSphElementsInit),
     sJntSphElementsInit,
 };
 
@@ -395,8 +398,8 @@ void EnFish_Dropped_Fall(EnFish* this, PlayState* play) {
     } else if ((this->timer <= 0) && (this->actor.params == FISH_DROPPED) &&
                (this->actor.floorHeight < BGCHECK_Y_MIN + 10.0f)) {
         PRINTF_COLOR_WARNING();
-        // "BG missing? Running Actor_delete"
-        PRINTF("BG 抜け？ Actor_delete します(%s %d)\n", "../z_en_sakana.c", 822);
+        PRINTF(T("BG 抜け？ Actor_delete します(%s %d)\n", "BG missing? Running Actor_delete (%s %d)\n"),
+               "../z_en_sakana.c", 822);
         PRINTF_RST();
         Actor_Kill(&this->actor);
     }
@@ -638,9 +641,9 @@ void EnFish_UpdateCutscene(EnFish* this, PlayState* play) {
     if (play) {}
 
     if (cue == NULL) {
-        // "Warning : DEMO ended without dousa (action) 3 termination being called"
-        PRINTF("Warning : dousa 3 消滅 が呼ばれずにデモが終了した(%s %d)(arg_data 0x%04x)\n", "../z_en_sakana.c", 1169,
-               this->actor.params);
+        PRINTF(T("Warning : dousa 3 消滅 が呼ばれずにデモが終了した(%s %d)(arg_data 0x%04x)\n",
+                 "Warning : Demo ended without action 3 being called (%s %d)(arg_data 0x%04x)\n"),
+               "../z_en_sakana.c", 1169, this->actor.params);
         EnFish_ClearCutsceneData(this);
         Actor_Kill(&this->actor);
         return;
@@ -657,14 +660,13 @@ void EnFish_UpdateCutscene(EnFish* this, PlayState* play) {
             EnFish_Cutscene_WiggleFlyingThroughAir(this, play);
             break;
         case 3:
-            // "DEMO fish termination"
-            PRINTF("デモ魚消滅\n");
+            PRINTF(T("デモ魚消滅\n", "Demo fish disappearance\n"));
             EnFish_ClearCutsceneData(this);
             Actor_Kill(&this->actor);
             return;
         default:
-            // "Improper DEMO action"
-            PRINTF("不正なデモ動作(%s %d)(arg_data 0x%04x)\n", "../z_en_sakana.c", 1200, this->actor.params);
+            PRINTF(T("不正なデモ動作(%s %d)(arg_data 0x%04x)\n", "Incorrect demo behavior (%s %d)(arg_data 0x%04x)\n"),
+                   "../z_en_sakana.c", 1200, this->actor.params);
             break;
     }
 

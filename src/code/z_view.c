@@ -1,14 +1,19 @@
+#include "view.h"
+
 #include "libc64/malloc.h"
 #include "libu64/debug.h"
+#include "avoid_ub.h"
 #include "gfx.h"
 #include "letterbox.h"
 #include "main.h"
+#include "printf.h"
 #include "regs.h"
 #include "sys_matrix.h"
 #include "terminal.h"
-#include "z64view.h"
+#include "view.h"
 #include "widescreen.h"
-#include "variables.h"
+#include "idle.h"
+#include "translation.h"
 
 vu32 sLogOnNextViewInit = true;
 
@@ -33,7 +38,12 @@ void View_ViewportToVp(Vp* dest, Viewport* src) {
     s32 height = src->bottomY - src->topY;
 
     dest->vp.vscale[0] = width * 2;
+#if ENABLE_F3DEX3
+    // see `Error_please_update_viewport_Z_and_Y_see_GBI`
+    dest->vp.vscale[1] = -(height * 2);
+#else
     dest->vp.vscale[1] = height * 2;
+#endif
     dest->vp.vscale[2] = G_MAXZ / 2;
     dest->vp.vscale[3] = 0;
     dest->vp.vtrans[0] = ((src->leftX * 2) + width) * 2;

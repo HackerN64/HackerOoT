@@ -5,13 +5,15 @@
 #include "controller.h"
 #include "gfx.h"
 #include "gfx_setupdl.h"
+#include "language_array.h"
 #include "letterbox.h"
-#include "macros.h"
 #include "main.h"
 #include "map_select_state.h"
+#include "memory_utils.h"
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
+#include "printf.h"
 #include "regs.h"
 #include "rumble.h"
 #include "segment_symbols.h"
@@ -20,19 +22,18 @@
 #include "sfx.h"
 #include "sys_matrix.h"
 #include "terminal.h"
+#include "translation.h"
 #include "versions.h"
 #include "z_lib.h"
-#include "z64audio.h"
-#include "z64environment.h"
-#include "z64play.h"
-#include "z64save.h"
-#include "z64skybox.h"
-#include "z64sram.h"
-#include "z64ss_sram.h"
-#include "z64view.h"
 #include "widescreen.h"
-
-#include "global.h"
+#include "audio.h"
+#include "environment.h"
+#include "play_state.h"
+#include "save.h"
+#include "skybox.h"
+#include "sram.h"
+#include "ss_sram.h"
+#include "view.h"
 
 #if OOT_PAL_N64
 #include "assets/objects/object_mag/object_mag.h"
@@ -155,10 +156,8 @@ void FileSelect_UpdateInitialLanguageMenu(FileSelectState* this) {
 
     if (CHECK_BTN_ALL(input->press.button, BTN_A) || CHECK_BTN_ALL(input->press.button, BTN_B) ||
         CHECK_BTN_ALL(input->press.button, BTN_START)) {
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        SFX_PLAY_CENTERED(NA_SE_SY_FSEL_DECIDE_L);
+        SFX_PLAY_CENTERED(NA_SE_SY_FSEL_DECIDE_L);
         sramCtx->readBuff[2] = gSaveContext.language;
         Sram_WriteSramHeader(sramCtx);
         this->configMode++;
@@ -166,15 +165,13 @@ void FileSelect_UpdateInitialLanguageMenu(FileSelectState* this) {
     }
 
     if (sInitialLanguageStickAdjX < -30) {
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        SFX_PLAY_CENTERED(NA_SE_SY_FSEL_CURSOR);
         gSaveContext.language--;
         if (gSaveContext.language >= LANGUAGE_MAX) {
             gSaveContext.language = LANGUAGE_MAX - 1;
         }
     } else if (sInitialLanguageStickAdjX > 30) {
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        SFX_PLAY_CENTERED(NA_SE_SY_FSEL_CURSOR);
         gSaveContext.language++;
         if (gSaveContext.language >= LANGUAGE_MAX) {
             gSaveContext.language = 0;
@@ -366,7 +363,7 @@ void FileSelect_InitModeUpdate(GameState* thisx) {
         this->nextTitleLabel = FS_TITLE_OPEN_FILE;
         PRINTF("Ｓｒａｍ Ｓｔａｒｔ─Ｌｏａｄ  》》》》》  ");
         Sram_VerifyAndLoadAllSaves(this, sramCtx);
-        PRINTF("終了！！！\n");
+        PRINTF(T("終了！！！\n", "End!!!\n"));
     }
 #else
     if (this->configMode == CM_FADE_IN_START) {
@@ -530,8 +527,7 @@ void FileSelect_UpdateMainMenu(GameState* thisx) {
                    GET_NEWF(sramCtx, this->buttonIndex, 5));
 
             if (!SLOT_OCCUPIED(sramCtx, this->buttonIndex)) {
-                Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                SFX_PLAY_CENTERED(NA_SE_SY_FSEL_DECIDE_L);
                 this->configMode = CM_ROTATE_TO_NAME_ENTRY;
                 this->kbdButton = FS_KBD_BTN_NONE;
 
@@ -553,16 +549,14 @@ void FileSelect_UpdateMainMenu(GameState* thisx) {
                 this->nameEntryBoxAlpha = 0;
                 MemCpy(&this->fileNames[this->buttonIndex][0], &emptyName, sizeof(emptyName));
             } else if (this->n64ddFlags[this->buttonIndex] == this->n64ddFlag) {
-                Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                SFX_PLAY_CENTERED(NA_SE_SY_FSEL_DECIDE_L);
                 this->actionTimer = 8;
                 this->selectMode = SM_FADE_MAIN_TO_SELECT;
                 this->selectedFileIndex = this->buttonIndex;
                 this->menuMode = FS_MENU_MODE_SELECT;
                 this->nextTitleLabel = FS_TITLE_OPEN_FILE;
             } else if (!this->n64ddFlags[this->buttonIndex]) {
-                Audio_PlaySfxGeneral(NA_SE_SY_FSEL_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                SFX_PLAY_CENTERED(NA_SE_SY_FSEL_ERROR);
             } else {
 #if PLATFORM_N64
                 if (D_80121212 != 0) {
@@ -574,8 +568,7 @@ void FileSelect_UpdateMainMenu(GameState* thisx) {
             }
         } else {
             if (this->warningLabel == FS_WARNING_NONE) {
-                Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                SFX_PLAY_CENTERED(NA_SE_SY_FSEL_DECIDE_L);
                 this->prevConfigMode = this->configMode;
 
                 if (this->buttonIndex == FS_BTN_MAIN_COPY) {
@@ -596,14 +589,12 @@ void FileSelect_UpdateMainMenu(GameState* thisx) {
 
                 this->actionTimer = 8;
             } else {
-                Audio_PlaySfxGeneral(NA_SE_SY_FSEL_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                SFX_PLAY_CENTERED(NA_SE_SY_FSEL_ERROR);
             }
         }
     } else {
         if (ABS(this->stickAdjY) > 30) {
-            Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+            SFX_PLAY_CENTERED(NA_SE_SY_FSEL_CURSOR);
 
             if (this->stickAdjY > 30) {
                 this->buttonIndex--;
@@ -1768,22 +1759,18 @@ void FileSelect_ConfirmFile(GameState* thisx) {
     if (CHECK_BTN_ALL(input->press.button, BTN_START) || (CHECK_BTN_ALL(input->press.button, BTN_A))) {
         if (this->confirmButtonIndex == FS_BTN_CONFIRM_YES) {
             Rumble_Request(300.0f, 180, 20, 100);
-            Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+            SFX_PLAY_CENTERED(NA_SE_SY_FSEL_DECIDE_L);
             this->selectMode = SM_FADE_OUT;
             func_800F6964(0xF);
         } else {
-            Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CLOSE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+            SFX_PLAY_CENTERED(NA_SE_SY_FSEL_CLOSE);
             this->selectMode++;
         }
     } else if (CHECK_BTN_ALL(input->press.button, BTN_B)) {
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CLOSE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        SFX_PLAY_CENTERED(NA_SE_SY_FSEL_CLOSE);
         this->selectMode++;
     } else if (ABS(this->stickAdjY) >= 30) {
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        SFX_PLAY_CENTERED(NA_SE_SY_FSEL_CURSOR);
         this->confirmButtonIndex ^= 1;
     }
 }
@@ -1888,8 +1875,7 @@ void FileSelect_LoadGame(GameState* thisx) {
 
 #if MAP_SELECT_ON_FILE_1
     if (this->buttonIndex == FS_BTN_SELECT_FILE_1) {
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        SFX_PLAY_CENTERED(NA_SE_SY_FSEL_DECIDE_L);
         gSaveContext.fileNum = this->buttonIndex;
         Sram_OpenSave(&this->sramCtx);
         SET_NEXT_GAMESTATE(&this->state, MapSelect_Init, MapSelectState);
@@ -1897,8 +1883,7 @@ void FileSelect_LoadGame(GameState* thisx) {
     } else
 #endif
     {
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        SFX_PLAY_CENTERED(NA_SE_SY_FSEL_DECIDE_L);
         gSaveContext.fileNum = this->buttonIndex;
         Sram_OpenSave(&this->sramCtx);
         gSaveContext.gameMode = GAMEMODE_NORMAL;
@@ -1926,7 +1911,7 @@ void FileSelect_LoadGame(GameState* thisx) {
     gSaveContext.forcedSeqId = NA_BGM_GENERAL_SFX;
     gSaveContext.skyboxTime = CLOCK_TIME(0, 0);
     gSaveContext.nextTransitionType = TRANS_NEXT_TYPE_DEFAULT;
-    gSaveContext.nextCutsceneIndex = 0xFFEF;
+    gSaveContext.nextCutsceneIndex = NEXT_CS_INDEX_NONE;
     gSaveContext.cutsceneTrigger = 0;
     gSaveContext.chamberCutsceneNum = CHAMBER_CS_FOREST;
     gSaveContext.nextDayTime = NEXT_TIME_NONE;
@@ -1961,7 +1946,16 @@ void FileSelect_LoadGame(GameState* thisx) {
         swordEquipValue =
             (gEquipMasks[EQUIP_TYPE_SWORD] & gSaveContext.save.info.equips.equipment) >> (EQUIP_TYPE_SWORD * 4);
         gSaveContext.save.info.equips.equipment &= gEquipNegMasks[EQUIP_TYPE_SWORD];
+#ifndef AVOID_UB
+        //! @bug swordEquipValue can be 0 (EQUIP_VALUE_SWORD_NONE) here (typically, when first starting the game).
+        //! This leads to reading gBitFlags[-1] (out of bounds).
+        // gBitFlags[-1] turns out to be 0 in matching versions so this is inconsequential.
         gSaveContext.save.info.inventory.equipment ^= OWNED_EQUIP_FLAG(EQUIP_TYPE_SWORD, swordEquipValue - 1);
+#else
+        if (swordEquipValue != EQUIP_VALUE_SWORD_NONE) {
+            gSaveContext.save.info.inventory.equipment ^= OWNED_EQUIP_FLAG(EQUIP_TYPE_SWORD, swordEquipValue - 1);
+        }
+#endif
     }
 
 #if PLATFORM_N64

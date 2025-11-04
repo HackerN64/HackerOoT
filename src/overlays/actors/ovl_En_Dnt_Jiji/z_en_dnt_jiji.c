@@ -12,6 +12,7 @@
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "one_point_cutscene.h"
+#include "printf.h"
 #include "rand.h"
 #include "regs.h"
 #include "segmented_address.h"
@@ -20,11 +21,12 @@
 #include "sfx.h"
 #include "sys_matrix.h"
 #include "terminal.h"
+#include "translation.h"
 #include "z_lib.h"
-#include "z64effect.h"
-#include "z64play.h"
-#include "z64player.h"
-#include "z64save.h"
+#include "effect.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
 
 #include "assets/objects/object_dns/object_dns.h"
 
@@ -80,8 +82,8 @@ static ColliderCylinderInit sCylinderInit = {
     },
     {
         ELEM_MATERIAL_UNK0,
-        { 0x00000000, 0x00, 0x00 },
-        { 0x00000000, 0x00, 0x00 },
+        { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+        { 0x00000000, HIT_BACKLASH_NONE, 0x00 },
         ATELEM_NONE,
         ACELEM_NONE,
         OCELEM_ON,
@@ -98,8 +100,9 @@ void EnDntJiji_Init(Actor* thisx, PlayState* play) {
     Collider_SetCylinder(play, &this->collider, &this->actor, &sCylinderInit);
     this->stage = (EnDntDemo*)this->actor.parent;
     PRINTF("\n\n");
-    // "Deku Scrub mask show elder"
-    PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ デグナッツお面品評会長老 ☆☆☆☆☆ %x\n" VT_RST, this->stage);
+    PRINTF(VT_FGCOL(YELLOW) T("☆☆☆☆☆ デグナッツお面品評会長老 ☆☆☆☆☆ %x\n",
+                              "☆☆☆☆☆ Deku Scrub mask competition elder ☆☆☆☆☆ %x\n") VT_RST,
+           this->stage);
     this->actor.flags &= ~ACTOR_FLAG_ATTENTION_ENABLED;
     this->actor.colChkInfo.mass = MASS_IMMOVABLE;
     this->actor.attentionRangeType = ATTENTION_RANGE_6;
@@ -291,24 +294,22 @@ void EnDntJiji_GivePrize(EnDntJiji* this, PlayState* play) {
     SkelAnime_Update(&this->skelAnime);
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_DONE) && Message_ShouldAdvance(play)) {
         if ((this->getItemId == GI_DEKU_NUT_UPGRADE_30) || (this->getItemId == GI_DEKU_NUT_UPGRADE_40)) {
-            // "nut"
-            PRINTF("実 \n");
-            PRINTF("実 \n");
-            PRINTF("実 \n");
-            PRINTF("実 \n");
-            PRINTF("実 \n");
-            PRINTF("実 \n");
-            PRINTF("実 \n");
-            PRINTF("実 \n");
+            PRINTF(T("実 \n", "nut \n"));
+            PRINTF(T("実 \n", "nut \n"));
+            PRINTF(T("実 \n", "nut \n"));
+            PRINTF(T("実 \n", "nut \n"));
+            PRINTF(T("実 \n", "nut \n"));
+            PRINTF(T("実 \n", "nut \n"));
+            PRINTF(T("実 \n", "nut \n"));
+            PRINTF(T("実 \n", "nut \n"));
             SET_ITEMGETINF(ITEMGETINF_FOREST_STAGE_NUT_UPGRADE);
         } else {
-            // "stick"
-            PRINTF("棒 \n");
-            PRINTF("棒 \n");
-            PRINTF("棒 \n");
-            PRINTF("棒 \n");
-            PRINTF("棒 \n");
-            PRINTF("棒 \n");
+            PRINTF(T("棒 \n", "stick \n"));
+            PRINTF(T("棒 \n", "stick \n"));
+            PRINTF(T("棒 \n", "stick \n"));
+            PRINTF(T("棒 \n", "stick \n"));
+            PRINTF(T("棒 \n", "stick \n"));
+            PRINTF(T("棒 \n", "stick \n"));
             SET_ITEMGETINF(ITEMGETINF_FOREST_STAGE_STICK_UPGRADE);
         }
         this->actor.textId = 0;
@@ -391,10 +392,8 @@ void EnDntJiji_Update(Actor* thisx, PlayState* play) {
 
     Actor_SetScale(&this->actor, 0.015f);
     this->unkTimer++;
-
     if (IS_ACTOR_DEBUG_ENABLED && BREG(0)) {
-        // "time"
-        PRINTF(VT_FGCOL(YELLOW) "☆☆☆☆☆ 時間 ☆☆☆☆☆ %d\n" VT_RST, this->timer);
+        PRINTF(VT_FGCOL(YELLOW) T("☆☆☆☆☆ 時間 ☆☆☆☆☆ %d\n", "☆☆☆☆☆ time ☆☆☆☆☆ %d\n") VT_RST, this->timer);
     }
 
     if ((this->timer > 1) && (this->timer != 0)) {

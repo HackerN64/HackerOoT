@@ -9,11 +9,13 @@
 
 #include "libc64/qrand.h"
 #include "ichain.h"
+#include "printf.h"
 #include "sfx.h"
+#include "translation.h"
 #include "z_en_item00.h"
 #include "z_lib.h"
-#include "z64effect.h"
-#include "z64play.h"
+#include "effect.h"
+#include "play_state.h"
 
 #include "assets/objects/object_kibako2/object_kibako2.h"
 
@@ -49,8 +51,8 @@ static ColliderCylinderInit sCylinderInit = {
     },
     {
         ELEM_MATERIAL_UNK0,
-        { 0x00000000, 0x00, 0x00 },
-        { 0x40000040, 0x00, 0x00 },
+        { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+        { 0x40000040, HIT_BACKLASH_NONE, 0x00 },
         ATELEM_NONE,
         ACELEM_ON,
         OCELEM_NONE,
@@ -139,9 +141,8 @@ void ObjKibako2_Init(Actor* thisx, PlayState* play) {
     this->actionFunc = ObjKibako2_Idle;
     this->dyna.actor.home.rot.z = this->dyna.actor.world.rot.z = this->dyna.actor.shape.rot.z =
         this->dyna.actor.world.rot.x = this->dyna.actor.shape.rot.x = 0;
-    // "Wooden box (stationary)"
-    PRINTF("木箱(据置)(arg %04xH)(item %04xH %d)\n", this->dyna.actor.params, this->collectibleFlag,
-           this->dyna.actor.home.rot.x);
+    PRINTF(T("木箱(据置)(arg %04xH)(item %04xH %d)\n", "Wooden box (stationary)(arg %04xH)(item %04xH %d)\n"),
+           this->dyna.actor.params, this->collectibleFlag, this->dyna.actor.home.rot.x);
 }
 
 void ObjKibako2_Destroy(Actor* thisx, PlayState* play) {

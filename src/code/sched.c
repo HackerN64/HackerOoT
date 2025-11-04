@@ -40,16 +40,19 @@
  * @see irqmgr.c
  */
 #include "libu64/debug.h"
+#include "libu64/rcp_utils.h"
+#include "array_count.h"
 #include "fault.h"
 #include "irqmgr.h"
 #include "main.h"
+#include "printf.h"
 #include "regs.h"
 #include "sched.h"
+#include "translation.h"
 #include "versions.h"
-#include "z64thread.h"
-
-#include "macros.h"
-#include "global.h"
+#include "vi_mode.h"
+#include "debug/profiler_inline.h"
+#include "thread.h"
 
 #define RSP_DONE_MSG 667
 #define RDP_DONE_MSG 668
@@ -723,6 +726,10 @@ void Sched_ThreadEntry(void* arg) {
 void Sched_Init(Scheduler* sc, void* stack, OSPri priority, u8 viModeType, UNK_TYPE arg4, IrqMgr* irqMgr) {
     bzero(sc, sizeof(Scheduler));
     sc->isFirstSwap = true;
+
+#if ENABLE_PROFILER
+    Profiler_Init();
+#endif
 
     // Create message queues for receiving interrupt events and tasks
     osCreateMesgQueue(&sc->interruptQueue, sc->interruptMsgBuf, ARRAY_COUNT(sc->interruptMsgBuf));

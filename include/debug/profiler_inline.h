@@ -2,7 +2,7 @@
 #define PROFILER_INLINE_H
 
 #include "profiler.h"
-#include "variables.h"
+#include "f3dex3.h"
 #include "buffers.h"
 
 extern void Profiler_RecordEventWithTime(u8 type, OSTime time);

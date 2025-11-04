@@ -1,9 +1,13 @@
-#include "global.h"
 #include "string.h"
-#include "z64olib.h"
+#include "olib.h"
 #include "config.h"
-#include "z64save.h"
+#include "save.h"
 #include "libc64/math64.h"
+#include "cutscene.h"
+#include "camera.h"
+#include "actor.h"
+#include "player.h"
+#include "play_state.h"
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS
 

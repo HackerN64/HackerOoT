@@ -15,12 +15,16 @@
 #include "regs.h"
 #include "controller.h"
 #include "gfxalloc.h"
-#include "z64save.h"
+#include "save.h"
 #include "sfx.h"
-#include "debug.h"
-#include "variables.h"
 #include "gfx.h"
+#include "debug.h"
 #include "letterbox.h"
+#include "build.h"
+#include "array_count.h"
+
+#define STRINGIFY(s) #s
+#define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)
 
 #define DEBUG_OPENING_SKYBOX_ID SKYBOX_NORMAL_SKY
 static f32 sSkyboxAngle = 0.0f;

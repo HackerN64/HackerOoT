@@ -9,17 +9,19 @@
 #include "overlays/actors/ovl_En_Elf/z_en_elf.h"
 
 #include "one_point_cutscene.h"
+#include "printf.h"
 #include "segmented_address.h"
 #include "sfx.h"
 #include "sys_math3d.h"
 #include "terminal.h"
+#include "translation.h"
 #include "z_en_item00.h"
 #include "z_lib.h"
-#include "z64environment.h"
-#include "z64ocarina.h"
-#include "z64play.h"
-#include "z64player.h"
-#include "z64save.h"
+#include "environment.h"
+#include "ocarina.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
 
 #include "assets/scenes/overworld/spot06/spot06_scene.h"
 
@@ -63,8 +65,8 @@ static ColliderCylinderInit sCylinderInit = {
     },
     {
         ELEM_MATERIAL_UNK0,
-        { 0x00000000, 0x00, 0x00 },
-        { 0x00000020, 0x00, 0x00 },
+        { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+        { 0x00000020, HIT_BACKLASH_NONE, 0x00 },
         ATELEM_NONE,
         ACELEM_ON,
         OCELEM_ON,
@@ -76,8 +78,8 @@ void ShotSun_Init(Actor* thisx, PlayState* play) {
     ShotSun* this = (ShotSun*)thisx;
     s32 params;
 
-    // "Ocarina secret occurrence"
-    PRINTF("%d ---- オカリナの秘密発生!!!!!!!!!!!!!\n", this->actor.params);
+    PRINTF(T("%d ---- オカリナの秘密発生!!!!!!!!!!!!!\n", "%d ---- Ocarina secret spawn!!!!!!!!!!!!!\n"),
+           this->actor.params);
     params = PARAMS_GET_U(this->actor.params, 0, 8);
     if (params == 0x40 || params == 0x41) {
         this->fairySpawnerState = SPAWNER_OUT_OF_RANGE;

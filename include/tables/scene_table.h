@@ -130,3 +130,7 @@
 /* 0x6C */ DEFINE_SCENE(example_scene, none, SCENE_EXAMPLE, SDC_HAUNTED_WASTELAND, 0, 0)
 #endif
 #endif
+
+#if TESTSUITE_MODE
+#include "testsuite/scene_table.h"
+#endif

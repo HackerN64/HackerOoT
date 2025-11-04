@@ -21,23 +21,33 @@
 #include "libc64/sleep.h"
 #include "libc64/sprintf.h"
 #include "libu64/debug.h"
+#include "array_count.h"
 #include "attributes.h"
+#include "carthandle.h"
 #include "fault.h"
 #include "compression.h"
+#include "idle.h"
+#if PLATFORM_IQUE
+#include "inflate.h"
+#endif
 #include "line_numbers.h"
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
+#include "printf.h"
 #include "segment_symbols.h"
 #include "stack.h"
 #include "stackcheck.h"
 #include "terminal.h"
-#include "z64thread.h"
+#include "translation.h"
+#if !PLATFORM_IQUE
+#include "yaz0.h"
+#endif
+#include "dma.h"
+#include "thread.h"
 
-#include "global.h"
-
-#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
-                               "ntsc-1.2:12 pal-1.0:10 pal-1.1:10"
+#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0 ntsc-1.2:82" \
+                               "pal-1.0:80 pal-1.1:80"
 
 StackEntry sDmaMgrStackInfo;
 OSMesgQueue sDmaMgrMsgQueue;
@@ -445,7 +455,6 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
                 // Reduce the thread priority and decompress the file, the decompression routine handles the DMA
                 // in chunks. Restores the thread priority when done.
                 osSetThreadPri(NULL, THREAD_PRI_DMAMGR_LOW);
-
 #if COMPRESS_YAZ
                 Yaz0_Decompress(romStart, ram, romSize);
 #elif COMPRESS_LZO
@@ -516,7 +525,7 @@ void DmaMgr_ThreadEntry(void* arg) {
         }
 
         if (0) {
-            PRINTF(T("ＤＭＡ登録受付", "DMA registration acceptance") " dmap=%08x\n", req);
+            PRINTF(T("ＤＭＡ登録受付 dmap=%08x\n", "DMA registration acceptance dmap=%08x\n"), req);
         }
 
         // Process the DMA request

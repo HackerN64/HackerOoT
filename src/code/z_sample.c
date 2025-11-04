@@ -4,8 +4,8 @@
 #include "regs.h"
 #include "sample_state.h"
 #include "segment_symbols.h"
-#include "z64dma.h"
-#include "z64play.h"
+#include "dma.h"
+#include "play_state.h"
 
 void Sample_HandleStateChange(SampleState* this) {
     if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_START)) {
@@ -36,7 +36,7 @@ void Sample_Draw(SampleState* this) {
         gSPMatrix(POLY_OPA_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     }
 
-    POLY_OPA_DISP = Gfx_SetFog2(POLY_OPA_DISP, 255, 255, 255, 0, 0, 0);
+    POLY_OPA_DISP = Gfx_SetFog(POLY_OPA_DISP, 255, 255, 255, 0, 0, 0);
     Gfx_SetupDL_25Opa(gfxCtx);
 
     gDPSetCycleType(POLY_OPA_DISP++, G_CYC_1CYCLE);

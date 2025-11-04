@@ -3,10 +3,12 @@
 
 #include "gfx.h"
 #include "gfx_setupdl.h"
+#include "printf.h"
 #include "sfx.h"
-#include "z64curve.h"
-#include "z64play.h"
-#include "z64save.h"
+#include "translation.h"
+#include "curve.h"
+#include "play_state.h"
+#include "save.h"
 
 #include "assets/objects/object_box/object_box.h"
 
@@ -57,8 +59,7 @@ void DemoTreLgt_Init(Actor* thisx, PlayState* play) {
     DemoTreLgt* this = (DemoTreLgt*)thisx;
 
     if (!SkelCurve_Init(play, &this->skelCurve, &gTreasureChestCurveSkel, sAnimations[0])) {
-        // "Demo_Tre_Lgt_Actor_ct (); Construct failed"
-        PRINTF("Demo_Tre_Lgt_Actor_ct();コンストラクト失敗\n");
+        PRINTF(T("Demo_Tre_Lgt_Actor_ct();コンストラクト失敗\n", "Demo_Tre_Lgt_Actor_ct(); Construct failed\n"));
     }
 
     ASSERT(true, "1", "../z_demo_tre_lgt.c", UNK_LINE);
@@ -127,8 +128,7 @@ void func_80993848(DemoTreLgt* this, PlayState* play) {
     }
     if ((currentFrame > 30.0f) && !(this->status & 1)) {
         this->status |= 1;
-        Audio_PlaySfxGeneral(NA_SE_EV_TRE_BOX_FLASH, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        SFX_PLAY_AT_POS(&this->actor.projectedPos, NA_SE_EV_TRE_BOX_FLASH);
     }
     if (SkelCurve_Update(play, &this->skelCurve)) {
         Actor_Kill(&this->actor);

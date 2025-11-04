@@ -1,8 +1,14 @@
-#include "global.h"
-#include "compression.h"
+#include "yaz0.h"
 
-#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0 ntsc-1.2:128" \
-                               "pal-1.1:128"
+#include "compression.h"
+#include "alignment.h"
+#include "ultra64.h"
+#include "dma.h"
+
+#if COMPRESS_YAZ
+
+#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
+                               "ntsc-1.2:128 pal-1.1:128"
 
 ALIGNED(16) u8 sYaz0DataBuffer[0x400];
 u8* sYaz0DataBufferEnd;
@@ -111,3 +117,5 @@ void Yaz0_Decompress(uintptr_t romStart, u8* dst, size_t size) {
     sYaz0DataBufferEnd = sYaz0DataBuffer + sizeof(sYaz0DataBuffer);
     Yaz0_DecompressImpl(Yaz0_FirstDMA(), dst);
 }
+
+#endif

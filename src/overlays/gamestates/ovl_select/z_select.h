@@ -2,17 +2,27 @@
 #define Z_SELECT_H
 
 #include "config.h"
+#include "versions.h"
+
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
 #include "seqcmd.h"
 #include "sequence.h"
 #include "terminal.h"
-#include "z64save.h"
-#include "z64sram.h"
+#include "save.h"
+#include "sram.h"
 #include "map_select_state.h"
 
-#include "global.h"
+#include "color.h"
+#include "scene.h"
+#include "play_state.h"
+#include "sfx.h"
+
+#if PLATFORM_N64
+void func_80800AD0_unknown(MapSelectState* this, s32 arg1);
+void func_80800B08_unknown(MapSelectState* this, s32 arg1);
+#endif
 
 static const char* sAgeLabels[] = {
     "Adult",
@@ -57,6 +67,9 @@ static const Color_RGBA8 sColors[] = {
 };
 
 static MapSelectEntry sScenes[] = {
+#if TESTSUITE_MODE
+#include "testsuite/map_select.h"
+#endif
 #if IS_DEBUG_BOOT_ENABLED
     { "Boot Menu", (void*)MapSelect_LoadDebugOpening, 0 },
 #endif

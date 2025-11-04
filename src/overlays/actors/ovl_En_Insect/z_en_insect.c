@@ -8,17 +8,20 @@
 #include "overlays/actors/ovl_Obj_Makekinsuta/z_obj_makekinsuta.h"
 
 #include "libc64/qrand.h"
+#include "array_count.h"
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "ichain.h"
+#include "printf.h"
 #include "sfx.h"
 #include "sys_math3d.h"
 #include "terminal.h"
+#include "translation.h"
 #include "z_lib.h"
-#include "z64effect.h"
-#include "z64play.h"
-#include "z64player.h"
-#include "z64save.h"
+#include "effect.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
 
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
@@ -68,12 +71,12 @@ ActorProfile En_Insect_Profile = {
     /**/ EnInsect_Draw,
 };
 
-static ColliderJntSphElementInit sColliderElementsInit[1] = {
+static ColliderJntSphElementInit sColliderElementsInit[] = {
     {
         {
             ELEM_MATERIAL_UNK0,
-            { 0x00000000, 0x00, 0x00 },
-            { 0xFFCFFFFF, 0x00, 0x00 },
+            { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+            { 0xFFCFFFFF, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_NONE,
             ACELEM_NONE,
             OCELEM_ON,
@@ -82,7 +85,7 @@ static ColliderJntSphElementInit sColliderElementsInit[1] = {
     },
 };
 
-static ColliderJntSphInit sColliderInit = {
+static ColliderJntSphInit sColliderJntSphInit = {
     {
         COL_MATERIAL_NONE,
         AT_NONE,
@@ -91,7 +94,7 @@ static ColliderJntSphInit sColliderInit = {
         OC2_TYPE_1,
         COLSHAPE_JNTSPH,
     },
-    1,
+    ARRAY_COUNT(sColliderElementsInit),
     sColliderElementsInit,
 };
 
@@ -205,7 +208,7 @@ void EnInsect_Init(Actor* thisx, PlayState* play2) {
 
     SkelAnime_Init(play, &this->skelAnime, &gBugSkel, &gBugCrawlAnim, this->jointTable, this->morphTable, 24);
     Collider_InitJntSph(play, &this->collider);
-    Collider_SetJntSph(play, &this->collider, &this->actor, &sColliderInit, this->colliderElements);
+    Collider_SetJntSph(play, &this->collider, &this->actor, &sColliderJntSphInit, this->colliderElements);
 
     this->actor.colChkInfo.mass = 30;
 
@@ -592,8 +595,8 @@ void EnInsect_Dropped(EnInsect* this, PlayState* play) {
     } else {
         if (this->insectFlags & INSECT_FLAG_FOUND_SOIL) {
             PRINTF_COLOR_WARNING();
-            // "warning: target Actor is NULL"
-            PRINTF("warning:目標 Actor が NULL (%s %d)\n", "../z_en_mushi.c", 1046);
+            PRINTF(T("warning:目標 Actor が NULL (%s %d)\n", "warning: target Actor is NULL (%s %d)\n"),
+                   "../z_en_mushi.c", 1046);
             PRINTF_RST();
         }
         distanceSq = 40.0f;
@@ -720,8 +723,8 @@ void EnInsect_Dropped(EnInsect* this, PlayState* play) {
                (this->insectFlags & INSECT_FLAG_0) && this->lifeTimer <= 0 && this->actionTimer <= 0 &&
                this->actor.floorHeight < BGCHECK_Y_MIN + 10.0f) {
         PRINTF_COLOR_WARNING();
-        // "BG missing? To do Actor_delete"
-        PRINTF("BG 抜け？ Actor_delete します(%s %d)\n", "../z_en_mushi.c", 1197);
+        PRINTF(T("BG 抜け？ Actor_delete します(%s %d)\n", "BG missing? To do Actor_delete (%s %d)\n"),
+               "../z_en_mushi.c", 1197);
         PRINTF_RST();
         Actor_Kill(&this->actor);
     }

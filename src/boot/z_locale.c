@@ -1,14 +1,15 @@
 #include "libu64/debug.h"
 #include "alignment.h"
+#include "carthandle.h"
 #include "line_numbers.h"
 #include "padmgr.h"
+#include "printf.h"
 #include "region.h"
 #include "terminal.h"
+#include "translation.h"
 #include "versions.h"
+#include "vi_mode.h"
 #include "z_locale.h"
-
-#include "macros.h"
-#include "global.h"
 
 s32 gCurrentRegion = 0;
 
@@ -39,18 +40,20 @@ void Locale_Init(void) {
 
     osEPiReadIo(gCartHandle, 0x38, &sCartInfo.mediaFormat);
     osEPiReadIo(gCartHandle, 0x3C, &sCartInfo.regionInfo);
+
+    countryCode = sCartInfo.countryCode;
 #endif
 
-    if (sCartInfo.countryCode == '\0') {
+    if (countryCode == '\0') {
         // Fix-up for region free header
 
         switch (osTvType) {
             case OS_TV_NTSC:
             case OS_TV_MPAL:
-                sCartInfo.countryCode = 'E';
+                countryCode = 'E';
                 break;
             case OS_TV_PAL:
-                sCartInfo.countryCode = 'P';
+                countryCode = 'P';
                 break;
             default:
                 PRINTF("z_locale_init: Bad TV Type? (%u)\n", osTvType);
@@ -59,7 +62,7 @@ void Locale_Init(void) {
         }
     }
 
-    switch (sCartInfo.countryCode) {
+    switch (countryCode) {
 #if !PLATFORM_IQUE
         case 'J': // "NTSC-J (Japan)"
             gCurrentRegion = REGION_JP;
@@ -88,37 +91,5 @@ void Locale_Init(void) {
 #endif
 }
 
-void Locale_ResetRegion(void) {
-    gCurrentRegion = REGION_NULL;
-}
-
 #if DEBUG_FEATURES
-u32 func_80001F48(void) {
-    if (gCurrentRegion == OOT_REGION) {
-        return 0;
-    }
-
-    if (gPadMgr.validCtrlrsMask & 4) {
-        return 0;
-    }
-
-    return 1;
-}
-
-u32 func_80001F8C(void) {
-    if (gCurrentRegion == OOT_REGION) {
-        return 0;
-    }
-
-    if (gPadMgr.validCtrlrsMask & 4) {
-        return 1;
-    }
-
-    return 0;
-}
-
-// This function appears to be unused?
-u32 Locale_IsRegionNative(void) {
-    return gCurrentRegion == OOT_REGION;
-}
 #endif

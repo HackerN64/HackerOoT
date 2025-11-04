@@ -3,8 +3,10 @@
 
 #include "ultra64.h"
 #include "versions.h"
-#include "z64math.h"
-#include "libc/assert.h"
+#include "z_math.h"
+#include "assert.h"
+
+#define MAX_CHANNELS_PER_BANK 3
 
 typedef enum SfxBankType {
     /* 0 */ BANK_PLAYER,
@@ -155,6 +157,14 @@ typedef struct SfxParams {
 #define SFX_DIST_SCALING 10.0f
 #endif
 
+#define SFX_PLAY_CENTERED(sfxId)                                                                              \
+    Audio_PlaySfxGeneral(sfxId, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, \
+                         &gSfxDefaultReverb);
+
+#define SFX_PLAY_AT_POS(projectedPos, sfxId)                                                               \
+    Audio_PlaySfxGeneral(sfxId, projectedPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, \
+                         &gSfxDefaultReverb);
+
 void Audio_SetSfxBanksMute(u16 muteMask);
 void Audio_QueueSeqCmdMute(u8 channelIndex);
 void Audio_ClearBGMMute(u8 channelIndex);
@@ -177,5 +187,37 @@ void Audio_ResetSfx(void);
 extern Vec3f gSfxDefaultPos;
 extern f32 gSfxDefaultFreqAndVolScale;
 extern s8 gSfxDefaultReverb;
+
+extern SfxParams* gSfxParams[7];
+extern char D_80133390[];
+extern char D_80133398[];
+extern u8 gSfxRequestWriteIndex;
+extern u8 gSfxRequestReadIndex;
+extern SfxBankEntry* gSfxBanks[7];
+extern u8 gSfxBankSizes[];
+extern u8 gSfxChannelLayout;
+extern u16 D_801333D0;
+extern Vec3f gSfxDefaultPos;
+extern f32 gSfxDefaultFreqAndVolScale;
+extern s8 gSfxDefaultReverb;
+
+#if IS_AUDIO_DEBUG_ENABLED
+extern u8 D_801333F0;
+extern u8 gAudioSfxSwapOff;
+extern u8 D_801333F8;
+#endif
+
+extern SfxBankEntry D_8016BAD0[9];
+extern SfxBankEntry D_8016BC80[12];
+extern SfxBankEntry D_8016BEC0[22];
+extern SfxBankEntry D_8016C2E0[20];
+extern SfxBankEntry D_8016C6A0[8];
+extern SfxBankEntry D_8016C820[3];
+extern SfxBankEntry D_8016C8B0[5];
+extern ActiveSfx gActiveSfx[7][MAX_CHANNELS_PER_BANK]; // total size = 0xA8
+extern u8 gSfxBankMuted[];
+extern u16 gAudioSfxSwapSource[10];
+extern u16 gAudioSfxSwapTarget[10];
+extern u8 gAudioSfxSwapMode[10];
 
 #endif

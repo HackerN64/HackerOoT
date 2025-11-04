@@ -1,16 +1,22 @@
+#include "array_count.h"
 #include "buffers.h"
+#include "build.h"
+#include "idle.h"
 #include "main.h"
+#include "printf.h"
 #include "segment_symbols.h"
 #include "stack.h"
 #include "stackcheck.h"
 #include "terminal.h"
+#include "translation.h"
 #include "versions.h"
-#include "z64thread.h"
+#include "vi_mode.h"
+#include "ultra64.h"
+#include "thread.h"
+#include "dma.h"
 
-#include "global.h"
-
-#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
-                               "ntsc-1.0:138 ntsc-1.1:138 ntsc-1.2:138 pal-1.0:136 pal-1.1:136"
+#pragma increment_block_number "gc-eu:192 gc-eu-mq:192 gc-jp:192 gc-jp-ce:192 gc-jp-mq:192 gc-us:192 gc-us-mq:192" \
+                               "ntsc-1.0:192 ntsc-1.1:192 ntsc-1.2:192 pal-1.0:192 pal-1.1:192"
 
 OSThread sMainThread;
 #if OOT_VERSION < PAL_1_0
@@ -154,7 +160,7 @@ void Idle_ThreadEntry(void* arg) {
     osViSetMode(&gViConfigMode);
     ViConfig_UpdateVi(true);
     osViBlack(true);
-    osViSwapBuffer((void*)0x803DA80); //! @bug Invalid vram address (probably intended to be 0x803DA800)
+    osViSwapBuffer((void*)(0x80400000 - SCREEN_WIDTH * SCREEN_HEIGHT * 2));
 #endif
 
     osCreatePiManager(OS_PRIORITY_PIMGR, &gPiMgrCmdQueue, sPiMgrCmdBuff, ARRAY_COUNT(sPiMgrCmdBuff));
