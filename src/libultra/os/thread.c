@@ -1,11 +1,11 @@
 #include "ultra64.h"
 #include "attributes.h"
 
-NO_REORDER __OSThreadTail __osThreadTail = { NULL, OS_PRIORITY_THREADTAIL };
-NO_REORDER OSThread* __osRunQueue = (OSThread*)&__osThreadTail;
-NO_REORDER OSThread* __osActiveQueue = (OSThread*)&__osThreadTail;
-NO_REORDER OSThread* __osRunningThread = NULL;
-NO_REORDER OSThread* __osFaultedThread = NULL;
+SECTION_DATA NO_REORDER __OSThreadTail __osThreadTail = { NULL, OS_PRIORITY_THREADTAIL };
+SECTION_DATA NO_REORDER OSThread* __osRunQueue = (OSThread*)&__osThreadTail;
+SECTION_DATA NO_REORDER OSThread* __osActiveQueue = (OSThread*)&__osThreadTail;
+SECTION_DATA NO_REORDER OSThread* __osRunningThread = NULL;
+SECTION_DATA NO_REORDER OSThread* __osFaultedThread = NULL;
 
 void __osDequeueThread(register OSThread** queue, register OSThread* thread) {
     register OSThread* pred = (OSThread*)queue;

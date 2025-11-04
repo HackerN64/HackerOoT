@@ -28,7 +28,9 @@ void AudioMgr_NotifyTaskDone(AudioMgr* audioMgr) {
 void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
     AudioTask* rspTask;
 
-    // Delay the audio update by 3ms so that gfx has time to get going before it has to yield
+    // Delay the audio update by 3ms so that gfx has time to get going before it has to yield.
+    // On the N64 Emulator for the GameCube and the Wii it causes severe audio lag.
+#ifndef TARGET_GC
     OSTimer timer;
     OSMesgQueue mq;
     OSMesg mbuf;
@@ -36,6 +38,7 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
     osSetTimer(&timer, OS_USEC_TO_CYCLES(3000), 0, &mq, NULL);
     osRecvMesg(&mq, NULL, OS_MESG_BLOCK);
     osStopTimer(&timer);
+#endif
 
     if (R_AUDIOMGR_DEBUG_LEVEL > AUDIOMGR_DEBUG_LEVEL_NONE) {
         // Inhibit audio rsp task processing
