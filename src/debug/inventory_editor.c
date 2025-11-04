@@ -576,9 +576,11 @@ void InventoryEditor_UpdateItemScreen(InventoryEditor* this) {
             case SLOT_HOOKSHOT:
                 min = ITEM_HOOKSHOT;
                 max = ITEM_LONGSHOT;
+                break;
             case SLOT_OCARINA:
                 min = ITEM_OCARINA_FAIRY;
                 max = ITEM_OCARINA_OF_TIME;
+                break;
             default:
                 break;
         }
