@@ -40,6 +40,7 @@
     #undef ENABLE_MOTION_BLUR_DEBUG
     #undef ENABLE_HACKER_DEBUG
     #undef ENABLE_PROFILER
+    #undef ENABLE_UNF
 
     #define SKIP_N64_BOOT_LOGO false
     #define BOOT_TO_SCENE false
@@ -67,6 +68,7 @@
     #define ENABLE_MOTION_BLUR_DEBUG false
     #define ENABLE_HACKER_DEBUG false
     #define ENABLE_PROFILER false
+    #define ENABLE_UNF false
 
     #ifndef NDEBUG
         #define NDEBUG
