@@ -4200,6 +4200,7 @@ beginseg
     number 6
 endseg
 
+#if !ENABLE_MM_TITLE_CARDS
 beginseg
     name "g_pn_01"
     compress
@@ -4598,6 +4599,7 @@ beginseg
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/place_title_cards/g_pn_57.o"
 endseg
+#endif
 
 beginseg
     name "z_select_static"
