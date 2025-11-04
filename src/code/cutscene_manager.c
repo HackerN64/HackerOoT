@@ -186,7 +186,7 @@ s16 CutsceneManager_MarkNextCutscenes(void) {
     s32 j;
     s32 count = 0;
     s16 csIdMax = CS_ID_NONE;
-    s16 priorityMax = SDC_MAX; // lower number means higher priority
+    s16 priorityMax = SHT_MAX; // lower number means higher priority
     s16 csId;
     s16 priority;
 
@@ -540,12 +540,14 @@ s16 CutsceneManager_FindEntranceCsId(void) {
     s32 csId;
 
     for (csId = 0; csId < sSceneCutsceneCount; csId++) {
-        //! FAKE:
-        if ((sSceneCutsceneList[csId].scriptIndex != CS_SCRIPT_ID_NONE) &&
-            (sSceneCutsceneList[csId].scriptIndex < (play = sCutsceneMgr.play)->csCtx.scriptListCount) &&
-            (sCutsceneMgr.play->spawn ==
-             sCutsceneMgr.play->csCtx.scriptList[sSceneCutsceneList[csId].scriptIndex].spawn)) {
-            return csId;
+        if (sSceneCutsceneList[csId].scriptIndex != CS_SCRIPT_ID_NONE) {
+            PlayState* play = sCutsceneMgr.play;
+
+            if ((sSceneCutsceneList[csId].scriptIndex < play->csCtx.scriptListCount) &&
+                (sCutsceneMgr.play->spawn ==
+                 sCutsceneMgr.play->csCtx.scriptList[sSceneCutsceneList[csId].scriptIndex].spawn)) {
+                return csId;
+            }
         }
     }
 
