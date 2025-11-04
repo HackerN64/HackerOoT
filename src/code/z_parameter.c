@@ -3023,7 +3023,7 @@ void Magic_DrawMeter(PlayState* play) {
         gDPSetPrimColor(OVERLAY_DISP++, 0, 0, sMagicBorderR, sMagicBorderG, sMagicBorderB, interfaceCtx->magicAlpha);
         gDPSetEnvColor(OVERLAY_DISP++, 100, 50, 50, 255);
 
-        // TODO: find something better
+        //! TODO: find something better
         {
             OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, gMagicMeterEndTex, 8, 16, WIDE_INCR(R_MAGIC_METER_X, -4),
                                           magicMeterY, WIDE_INCR(8, -2), 16, 1 << 10, 1 << 10);
@@ -3055,7 +3055,7 @@ void Magic_DrawMeter(PlayState* play) {
                                  G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
                                  G_TX_NOLOD, G_TX_NOLOD);
 
-            // TODO: find something better
+            //! TODO: find something better
             {
                 s16 posX = WIDE_MULT(WIDE_INCR(R_MAGIC_FILL_X, 1), WIDE_GET_RATIO);
                 s16 posRx =
@@ -3070,7 +3070,7 @@ void Magic_DrawMeter(PlayState* play) {
             gDPSetPrimColor(OVERLAY_DISP++, 0, 0, R_MAGIC_FILL_COLOR(0), R_MAGIC_FILL_COLOR(1), R_MAGIC_FILL_COLOR(2),
                             interfaceCtx->magicAlpha);
 
-            // TODO: find something better
+            //! TODO: find something better
             {
                 s16 posX = WIDE_MULT(WIDE_INCR(R_MAGIC_FILL_X, 1), WIDE_GET_RATIO);
                 s16 posRx = WIDE_MULT(WIDE_INCR((R_MAGIC_FILL_X + gSaveContext.magicTarget), 1), WIDE_GET_RATIO);
@@ -3087,7 +3087,7 @@ void Magic_DrawMeter(PlayState* play) {
                                  G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
                                  G_TX_NOLOD, G_TX_NOLOD);
 
-            // TODO: find something better
+            //! TODO: find something better
             {
                 s16 posX = WIDE_MULT(WIDE_INCR(R_MAGIC_FILL_X, 1), WIDE_GET_RATIO);
                 s16 posRx =
@@ -3222,7 +3222,7 @@ void Interface_DrawItemButtons(PlayState* play) {
                                 (R_START_BTN_Y + 22) << 2, G_TX_RENDERTILE, 0, 0, (s32)(1.4277344 * (1 << 10)),
                                 (s32)(1.4277344 * (1 << 10)));
 #elif OOT_NTSC
-            // TODO: widescreen stuff for NTSC
+            //! TODO: widescreen stuff for NTSC
             gSPTextureRectangle(OVERLAY_DISP++, 132 << 2, 17 << 2, (132 + 22) << 2, (17 + 22) << 2, G_TX_RENDERTILE, 0,
                                 0, (s32)(1.4277344 * (1 << 10)), (s32)(1.4277344 * (1 << 10)));
 #else
@@ -3764,7 +3764,7 @@ void Interface_Draw(PlayState* play) {
         }
 #endif
 
-        Minimap_Draw(play); // TODO: fix the arrows
+        Minimap_Draw(play); //! TODO: fix the arrows
 
         if ((R_PAUSE_BG_PRERENDER_STATE != PAUSE_BG_PRERENDER_PROCESS) &&
             (R_PAUSE_BG_PRERENDER_STATE != PAUSE_BG_PRERENDER_READY)) {
@@ -4726,9 +4726,11 @@ void Interface_Update(PlayState* play) {
     WREG(7) = interfaceCtx->unk_1F4;
 
     // Update Magic
-    if (!IS_PAUSED(&play->pauseCtx) && (msgCtx->msgMode == MSGMODE_NONE) &&
-        (play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
-        (play->transitionMode == TRANS_MODE_OFF) && ((play->csCtx.state == CS_STATE_IDLE) || !Player_InCsMode(play))) {
+    if ((!IS_PAUSED(&play->pauseCtx) && (msgCtx->msgMode == MSGMODE_NONE) &&
+         (play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
+         (play->transitionMode == TRANS_MODE_OFF) &&
+         ((play->csCtx.state == CS_STATE_IDLE) || !Player_InCsMode(play))) ||
+        IS_INV_EDITOR_ACTIVE) {
 
         if (gSaveContext.save.info.playerData.isMagicAcquired && (gSaveContext.save.info.playerData.magicLevel == 0)) {
             gSaveContext.save.info.playerData.magicLevel = gSaveContext.save.info.playerData.isDoubleMagicAcquired + 1;

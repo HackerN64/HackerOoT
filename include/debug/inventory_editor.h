@@ -4,6 +4,20 @@
 #include "config.h"
 #include "pause.h"
 
+typedef enum InvEditorMagicState {
+    INVEDITOR_MAGIC_STATE_NONE,
+    INVEDITOR_MAGIC_STATE_NORMAL,
+    INVEDITOR_MAGIC_STATE_DOUBLE,
+} InvEditorMagicState;
+
+typedef enum InvEditorInfosMiscTransState {
+    INVEDITOR_TRANS_STATE_DONE,
+    INVEDITOR_TRANS_STATE_INFO_REQUESTED,
+    INVEDITOR_TRANS_STATE_INFO_SWITCHING,
+    INVEDITOR_TRANS_STATE_MISC_REQUESTED,
+    INVEDITOR_TRANS_STATE_MISC_SWITCHING,
+} InvEditorInfosMiscTransState;
+
 typedef enum InvEditorCursorPos {
     INVEDITOR_CURSOR_POS_MIN = -1,
     INVEDITOR_CURSOR_POS_HEARTS,
@@ -48,6 +62,7 @@ typedef struct InvEditorItems {
     u8 childTradeItem;
     u8 adultTradeItem;
     u8 hookshotType;
+    u8 ocarinaType;
     u8 bottleItems[4];
 } InvEditorItems;
 
@@ -93,6 +108,7 @@ typedef struct InventoryEditor {
 Gfx* Gfx_TextureIA8(Gfx* displayListHead, void* texture, s16 textureWidth, s16 textureHeight, s16 rectLeft, s16 rectTop,
                     s16 rectWidth, s16 rectHeight, u16 dsdx, u16 dtdy);
 
+u8 InventoryEditor_GetUpgradeType(u16 slotIndex);
 void InventoryEditor_SetItemFromSlot(InventoryEditor* this);
 void InventoryEditor_SetHUDAlpha(InventoryEditor* this);
 void InventoryEditor_UpdateMiscScreen(InventoryEditor* this);
@@ -112,8 +128,10 @@ bool InventoryEditor_Destroy(InventoryEditor* this);
 void InventoryEditor_Main(InventoryEditor* this);
 
 #define IS_IN_RANGE(val, min, max) ((val >= min) && (val <= max))
-#define TIMER_DECR(val, target, changeBy) (((val - changeBy) < target) ? target : (val > target) ? (val - changeBy) : val)
-#define TIMER_INCR(val, target, changeBy) (((val + changeBy) > target) ? target : (val < target) ? (val + changeBy) : val)
+#define TIMER_DECR(val, target, changeBy) \
+    (((val - changeBy) < target) ? target : (val > target) ? (val - changeBy) : val)
+#define TIMER_INCR(val, target, changeBy) \
+    (((val + changeBy) > target) ? target : (val < target) ? (val + changeBy) : val)
 
 // General
 #define INVEDITOR_PRINT_NEWLINE "\n  "
@@ -145,11 +163,15 @@ void InventoryEditor_Main(InventoryEditor* this);
 #define INVEDITOR_GET_HOOKSHOT(invDebug) \
     (((invDebug)->common.selectedSlot == SLOT_HOOKSHOT) ? (invDebug)->itemDebug.hookshotType : ITEM_NONE)
 
+#define INVEDITOR_GET_OCARINA(invDebug) \
+    (((invDebug)->common.selectedSlot == SLOT_OCARINA) ? (invDebug)->itemDebug.ocarinaType : ITEM_NONE)
+
 #define INVEDITOR_GET_VARIABLE_ITEM(invDebug)                                                             \
     ((INVEDITOR_GET_BOTTLE_ITEM(invDebug) != ITEM_NONE)        ? INVEDITOR_GET_BOTTLE_ITEM(invDebug)      \
      : (INVEDITOR_GET_CHILD_TRADE_ITEM(invDebug) != ITEM_NONE) ? INVEDITOR_GET_CHILD_TRADE_ITEM(invDebug) \
      : (INVEDITOR_GET_ADULT_TRADE_ITEM(invDebug) != ITEM_NONE) ? INVEDITOR_GET_ADULT_TRADE_ITEM(invDebug) \
      : (INVEDITOR_GET_HOOKSHOT(invDebug) != ITEM_NONE)         ? INVEDITOR_GET_HOOKSHOT(invDebug)         \
+     : (INVEDITOR_GET_OCARINA(invDebug) != ITEM_NONE)          ? INVEDITOR_GET_OCARINA(invDebug)          \
                                                                : ITEM_NONE)
 
 #define INVEDITOR_UPDATE_ITEM(invDbgCommon, min, max)                                                   \
