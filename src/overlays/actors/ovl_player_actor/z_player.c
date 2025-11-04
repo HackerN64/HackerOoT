@@ -3598,7 +3598,7 @@ void Player_UseItem(PlayState* play, Player* this, s32 item) {
                 // Handle "cutscene items"
                 if (!Player_CheckHostileLockOn(this) ||
                     ((itemAction >= PLAYER_IA_BOTTLE_POTION_RED) && (itemAction <= PLAYER_IA_BOTTLE_FAIRY))) {
-#if ENABLE_MM_TITLE_CARDS
+#if !ENABLE_MM_TITLE_CARDS
                     TitleCard_Clear(play, &play->actorCtx.titleCtx);
 #endif
                     this->unk_6AD = 4;
