@@ -79,7 +79,7 @@ Input* D_8012D1F8 = NULL;
 #if ENABLE_MM_TITLE_CARDS
 // default title card info to use if there's no entry in the scene
 static TitleCardInfo sDefaultTitleCard = {
-    .textId = 0x8000,
+    .textId = 0x9000,
     .rgba = { 140, 40, 160, 255 },
     .nextHudVisibility = HUD_VISIBILITY_NOTHING,
     .duration = 30,
@@ -1916,7 +1916,6 @@ void Play_SpawnScene(PlayState* this, s32 sceneId, s32 spawn) {
     PRINTF("\nSCENE SIZE %fK\n", (scene->sceneFile.vromEnd - scene->sceneFile.vromStart) / 1024.0f);
 
 #if ENABLE_MM_TITLE_CARDS
-    sDefaultTitleCard.textId = 0x8000 | this->sceneId;
     this->msgCtx.titleCardInfo = &sDefaultTitleCard;
 #endif
 

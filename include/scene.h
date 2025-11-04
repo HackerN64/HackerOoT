@@ -9,6 +9,7 @@
 #include "z_math.h"
 #include "path.h"
 #include "config.h"
+#include "color.h"
 
 #include "command_macros_base.h"
 
