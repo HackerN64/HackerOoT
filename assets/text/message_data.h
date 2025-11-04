@@ -1,4 +1,29 @@
 #include "text/message_data.h"
+#include "config.h"
+
+#if ENABLE_MM_TITLE_CARDS
+
+DEFINE_MESSAGE(0x8000, TEXTBOX_TYPE_BLACK, TEXTBOX_POS_VARIABLE,
+MSG(/* MISSING */)
+,
+MSG("Example Scene")
+,
+MSG(/* MISSING */)
+,
+MSG(/* MISSING */)
+)
+
+DEFINE_MESSAGE(0x9000, TEXTBOX_TYPE_BLACK, TEXTBOX_POS_VARIABLE,
+MSG(/* MISSING */)
+,
+MSG("Undefined Scene")
+,
+MSG(/* MISSING */)
+,
+MSG(/* MISSING */)
+)
+
+#endif
 
 /*
  * The following two messages should be kept last and in this order.
