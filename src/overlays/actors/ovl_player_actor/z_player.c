@@ -3598,7 +3598,9 @@ void Player_UseItem(PlayState* play, Player* this, s32 item) {
                 // Handle "cutscene items"
                 if (!Player_CheckHostileLockOn(this) ||
                     ((itemAction >= PLAYER_IA_BOTTLE_POTION_RED) && (itemAction <= PLAYER_IA_BOTTLE_FAIRY))) {
+#if !ENABLE_MM_TITLE_CARDS
                     TitleCard_Clear(play, &play->actorCtx.titleCtx);
+#endif
                     this->unk_6AD = 4;
                     this->itemAction = itemAction;
                 }
@@ -10813,8 +10815,10 @@ void Player_Init(Actor* thisx, PlayState* play2) {
                 ((play->sceneId != SCENE_BOMBCHU_SHOP) || GET_EVENTCHKINF(EVENTCHKINF_25))
 #endif
             ) {
+#if !ENABLE_MM_TITLE_CARDS
                 TitleCard_InitPlaceName(play, &play->actorCtx.titleCtx, this->giObjectSegment, 160, 120,
                                         PLACE_NAME_TEX_WIDTH, PLACE_NAME_TEX_HEIGHT, 20);
+#endif
             }
         }
 
@@ -12361,8 +12365,8 @@ void Player_Draw(Actor* thisx, PlayState* play2) {
 
         if (this->invincibilityTimer > 0) {
             this->damageFlickerAnimCounter += CLAMP(50 - this->invincibilityTimer, 8, 40);
-            POLY_OPA_DISP = Gfx_SetFog2(POLY_OPA_DISP, 255, 0, 0, 0, 0,
-                                        4000 - (s32)(Math_CosS(this->damageFlickerAnimCounter * 256) * 2000.0f));
+            POLY_OPA_DISP = Gfx_SetFog(POLY_OPA_DISP, 255, 0, 0, 0, 0,
+                                       4000 - (s32)(Math_CosS(this->damageFlickerAnimCounter * 256) * 2000.0f));
         }
 
         func_8002EBCC(&this->actor, play, 0);

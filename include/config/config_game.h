@@ -86,4 +86,15 @@
  */
 #define ENABLE_CUTSCENE_IMPROVEMENTS true
 
+/**
+ * Enable MM Title Cards
+ */
+#define ENABLE_MM_TITLE_CARDS true
+#define TC_TEXT_POS_X 25
+#define TC_TEXT_POS_Y 67
+#define TC_GRADIENT_WIDTH 60
+#define TC_GRADIENT_HEIGHT 28
+#define TC_ALPHA_FADE_OUT_INCR 40
+#define TC_ALPHA_FADE_IN_INCR 30
+
 #endif

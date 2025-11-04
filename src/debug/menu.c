@@ -1,3 +1,4 @@
+#include "gfx.h"
 #include "debug.h"
 #include "controller.h"
 #include "save.h"

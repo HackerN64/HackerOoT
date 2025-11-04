@@ -1,5 +1,8 @@
 #### Compiling ####
 
+TESTSUITE_MODE ?= 0
+CPP_DEFINES += -DTESTSUITE_MODE=$(TESTSUITE_MODE)
+
 # Returns the path to the command $(1) if exists. Otherwise returns an empty string.
 find-command = $(shell which $(1) 2>/dev/null)
 

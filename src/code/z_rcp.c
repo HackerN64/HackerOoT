@@ -926,15 +926,6 @@ Gfx* Gfx_SetFogWithSync(Gfx* gfx, s32 r, s32 g, s32 b, s32 a, s32 near, s32 far)
     return gfx;
 }
 
-/**
- * Wrapper for Gfx_SetFog
- *
- * @see Gfx_SetFog
- */
-Gfx* Gfx_SetFog2(Gfx* gfx, s32 r, s32 g, s32 b, s32 a, s32 near, s32 far) {
-    return Gfx_SetFog(gfx, r, g, b, a, near, far);
-}
-
 Gfx* Gfx_SetupDLImpl(Gfx* gfx, u32 i) {
     s32 dListIndex = 6 * i;
 
@@ -1232,6 +1223,16 @@ void Gfx_SetupDL_39Overlay(GraphicsContext* gfxCtx) {
 
     CLOSE_DISPS(gfxCtx, "../z_rcp.c", 1811);
 }
+
+#if DEBUG_FEATURES
+void Gfx_SetupDL_39Debug(GraphicsContext* gfxCtx) {
+    OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
+
+    DEBUG_DISP = Gfx_SetupDL_39(DEBUG_DISP);
+
+    CLOSE_DISPS(gfxCtx, __FILE__, __LINE__);
+}
+#endif
 
 void Gfx_SetupDL_39Ptr(Gfx** gfxP) {
     Gfx* gfx = *gfxP;

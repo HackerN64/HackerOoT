@@ -794,7 +794,7 @@ void KaleidoScope_DrawInventoryEditor(PlayState* play) {
     if (pauseCtx->debugState == PAUSE_DEBUG_STATE_INVENTORY_EDITOR_OPENING) {
         pauseCtx->debugState = PAUSE_DEBUG_STATE_INVENTORY_EDITOR_OPEN;
     } else if ((pauseCtx->debugState == PAUSE_DEBUG_STATE_INVENTORY_EDITOR_OPEN) &&
-               CHECK_BTN_ALL(input->press.button, BTN_L)) {
+               CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
         pauseCtx->debugState = PAUSE_DEBUG_STATE_CLOSED;
     }
 

@@ -1,5 +1,4 @@
-void osSyncPrintfUnused() {
-}
+
 
 void osSyncPrintf() {
 }

@@ -17,6 +17,7 @@
 #include "play_state.h"
 #include "player.h"
 #include "save.h"
+#include "debug.h"
 
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/textures/parameter_static/parameter_static.h"

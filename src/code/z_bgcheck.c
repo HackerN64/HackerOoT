@@ -13,6 +13,8 @@
 #include "play_state.h"
 #include "player.h"
 #include "skin_matrix.h"
+#include "gfx.h"
+#include "debug.h"
 
 #pragma increment_block_number "ntsc-1.0:136 ntsc-1.1:136 ntsc-1.2:136"
 

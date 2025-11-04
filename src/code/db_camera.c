@@ -16,7 +16,7 @@
 #include "camera.h"
 #include "cutscene.h"
 #include "cutscene_spline.h"
-#include "debug.h"
+#include "z_debug.h"
 #include "debug_display.h"
 #include "olib.h"
 #include "play_state.h"

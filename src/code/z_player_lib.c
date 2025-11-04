@@ -2063,7 +2063,7 @@ void Player_DrawPauseImpl(PlayState* play, void* gameplayKeep, void* linkObject,
 
     func_80093C80(play);
 
-    POLY_OPA_DISP = Gfx_SetFog2(POLY_OPA_DISP++, 0, 0, 0, 0, 997, 1000);
+    POLY_OPA_DISP = Gfx_SetFog(POLY_OPA_DISP++, 0, 0, 0, 0, 997, 1000);
 
     func_8002EABC(pos, &play->view.eye, &lightDir, play->state.gfxCtx);
 

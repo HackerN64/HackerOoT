@@ -9,6 +9,8 @@
 #include "terminal.h"
 #include "translation.h"
 #include "play_state.h"
+#include "gfx.h"
+#include "debug.h"
 
 void (*sKaleidoScopeUpdateFunc)(PlayState* play);
 void (*sKaleidoScopeDrawFunc)(PlayState* play);

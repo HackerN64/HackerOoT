@@ -876,6 +876,7 @@ beginseg
 #if ENABLE_PROFILER
     include "$(BUILD_DIR)/src/debug/profiler.o"
 #endif
+    include "$(BUILD_DIR)/src/debug/inventory_editor.o"
 endseg
 #endif
 
@@ -4200,6 +4201,7 @@ beginseg
     number 6
 endseg
 
+#if !ENABLE_MM_TITLE_CARDS
 beginseg
     name "g_pn_01"
     compress
@@ -4598,6 +4600,7 @@ beginseg
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/place_title_cards/g_pn_57.o"
 endseg
+#endif
 
 beginseg
     name "z_select_static"
@@ -4628,6 +4631,9 @@ beginseg
     compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/parameter_static/parameter_static.o"
+#if ENABLE_MM_TITLE_CARDS
+    include "$(BUILD_DIR)/assets/textures/hud/hud.o"
+#endif
     number 2
 endseg
 
@@ -5122,4 +5128,8 @@ beginseg
     include "$(BUILD_DIR)/assets/scenes/example/example_room_0_model.o"
     number 3
 endseg
+#endif
+
+#if TESTSUITE_MODE
+#include "testsuite.inc"
 #endif
