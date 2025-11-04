@@ -1,4 +1,4 @@
-#include "global.h"
+#include "ultra64.h"
 #include "ultra64/internal.h"
 
 char* strpbrk(const char* string1, const char* string2) {

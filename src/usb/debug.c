@@ -19,7 +19,6 @@ https://github.com/buu342/N64-UNFLoader
 #include "libc/stdlib.h"
 #include "libc/string.h"
 #include "libc64/sprintf.h"
-#include "variables.h"
 
 extern char* strtok(char* string1, const char* string2);
 extern void strcpy(char* dest, char* srce);

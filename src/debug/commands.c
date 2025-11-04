@@ -1,5 +1,5 @@
 #include "ultra64.h"
-#include "macros.h"
+#include "array_count.h"
 #include "usb/debug.h"
 #include "config.h"
 
