@@ -3,8 +3,8 @@
 #include "occlusionplanes.h"
 #include "gfx.h"
 #include "sys_math3d.h"
-#include "z64play.h"
-#include "z64skin_matrix.h"
+#include "play_state.h"
+#include "skin_matrix.h"
 
 #if ENABLE_F3DEX3
 

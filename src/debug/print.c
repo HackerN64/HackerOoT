@@ -1,7 +1,7 @@
 #include "config.h"
+#include "gfx.h"
 #include "debug.h"
 #include "controller.h"
-#include "gfx.h"
 #include "gfxalloc.h"
 #include "printf.h"
 

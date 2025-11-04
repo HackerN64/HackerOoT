@@ -2,10 +2,10 @@
 #define DEBUG_OPENING_H
 
 #include "config.h"
-#include "z64game.h"
-#include "z64view.h"
-#include "z64skybox.h"
-#include "z64environment.h"
+#include "game.h"
+#include "view.h"
+#include "skybox.h"
+#include "environment.h"
 #include "color.h"
 
 #if IS_DEBUG_BOOT_ENABLED

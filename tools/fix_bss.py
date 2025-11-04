@@ -205,9 +205,9 @@ def get_file_pointers_worker(file: mapfile_parser.mapfile.File) -> list[Pointer]
 # Compare pointers between the baserom and the current build, returning a dictionary from
 # C files to a list of pointers into their BSS sections
 def compare_pointers(version: str) -> dict[Path, BssSection]:
-    mapfile_path = Path(f"build/{version}/oot-{version}.map")
+    mapfile_path = Path(f"build/{version}/hackeroot-{version}.map")
     base_path = Path(f"baseroms/{version}/baserom-decompressed.z64")
-    build_path = Path(f"build/{version}/oot-{version}.z64")
+    build_path = Path(f"build/{version}/hackeroot-{version}.z64")
     if not mapfile_path.exists():
         raise FixBssException(f"Could not open {mapfile_path}")
     if not base_path.exists():

@@ -51,8 +51,8 @@
 #include "translation.h"
 #include "versions.h"
 #include "vi_mode.h"
-#include "z64thread.h"
 #include "debug/profiler_inline.h"
+#include "thread.h"
 
 #define RSP_DONE_MSG 667
 #define RDP_DONE_MSG 668

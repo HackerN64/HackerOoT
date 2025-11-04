@@ -25,17 +25,17 @@
 #include "versions.h"
 #include "vi_mode.h"
 #include "zelda_arena.h"
-#include "z64debug.h"
-#include "z64dma.h"
-#include "z64game.h"
-#include "z64play.h"
-#include "z64vis.h"
+#include "z_debug.h"
+#include "dma.h"
+#include "game.h"
+#include "play_state.h"
+#include "vis.h"
 #include "rainbow.h"
 #include "debug/profiler_inline.h"
 #include "idle.h"
 #include "debug.h"
 
-#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128"
+#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0"
 
 VisCvg sVisCvg;
 VisZBuf sVisZBuf;

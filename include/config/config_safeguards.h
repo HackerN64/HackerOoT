@@ -40,6 +40,7 @@
     #undef ENABLE_MOTION_BLUR_DEBUG
     #undef ENABLE_HACKER_DEBUG
     #undef ENABLE_PROFILER
+    #undef ENABLE_UNF
 
     #define SKIP_N64_BOOT_LOGO false
     #define BOOT_TO_SCENE false
@@ -67,6 +68,7 @@
     #define ENABLE_MOTION_BLUR_DEBUG false
     #define ENABLE_HACKER_DEBUG false
     #define ENABLE_PROFILER false
+    #define ENABLE_UNF false
 
     #ifndef NDEBUG
         #define NDEBUG
@@ -204,6 +206,27 @@
 
 #ifndef COMPRESS_GZIP
 #define COMPRESS_GZIP false
+#endif
+
+/**
+ * Memory
+*/
+#if IS_DEBUG_HEAP_ENABLED
+#undef PLAY_ALLOC_SIZE
+#undef OBJECT_BANK_SIZE
+#undef GI_ALLOC_SIZE
+#undef POLY_OPA_BUFFER_SIZE
+#undef POLY_XLU_BUFFER_SIZE
+#undef DEBUG_BUFFER_SIZE
+#undef SYS_CFB_END
+
+#define PLAY_ALLOC_SIZE 0x1D4790
+#define OBJECT_BANK_SIZE 0xF9000
+#define GI_ALLOC_SIZE 0x3008
+#define POLY_OPA_BUFFER_SIZE 0x17E0
+#define POLY_XLU_BUFFER_SIZE 0xA00
+#define DEBUG_BUFFER_SIZE 0x20
+#define SYS_CFB_END 0x8044BE80
 #endif
 
 #endif

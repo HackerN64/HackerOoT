@@ -5,9 +5,11 @@
 #endif
 #include "printf.h"
 #include "regs.h"
-#include "z64audio.h"
-#include "z64play.h"
-#include "z64save.h"
+#include "audio.h"
+#include "play_state.h"
+#include "save.h"
+#include "gfx.h"
+#include "debug.h"
 
 /*
  * The following three arrays are effectively unused.
@@ -72,21 +74,22 @@ void KaleidoSetup_Update(PlayState* play) {
 
     if (!IS_PAUSED(pauseCtx) && play->gameOverCtx.state == GAMEOVER_INACTIVE &&
         play->transitionTrigger == TRANS_TRIGGER_OFF && play->transitionMode == TRANS_MODE_OFF &&
-        gSaveContext.save.cutsceneIndex < 0xFFF0 && gSaveContext.nextCutsceneIndex < 0xFFF0 && !Play_InCsMode(play) &&
-        play->shootingGalleryStatus <= 1 && gSaveContext.magicState != MAGIC_STATE_STEP_CAPACITY &&
-        gSaveContext.magicState != MAGIC_STATE_FILL &&
+        gSaveContext.save.cutsceneIndex < CS_INDEX_0 && gSaveContext.nextCutsceneIndex < CS_INDEX_0 &&
+        !Play_InCsMode(play) && play->shootingGalleryStatus <= 1 &&
+        gSaveContext.magicState != MAGIC_STATE_STEP_CAPACITY && gSaveContext.magicState != MAGIC_STATE_FILL &&
         (play->sceneId != SCENE_BOMBCHU_BOWLING_ALLEY || !Flags_GetSwitch(play, 0x38))) {
 
         if (CHECK_BTN_ALL(input->cur.button, BTN_L) && CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
             if (IS_EVENT_EDITOR_ENABLED && BREG(0)) {
                 pauseCtx->debugState = PAUSE_DEBUG_STATE_FLAG_SET_OPEN;
             }
-        } else if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
+        } else if (CHECK_BTN_ALL(input->press.button, BTN_START) && !IS_INV_EDITOR_ACTIVE) {
             // The start button was pressed, pause
+            // doesn't run if the inventory editor is active
             gSaveContext.prevHudVisibilityMode = gSaveContext.hudVisibilityMode;
 
-            WREG(16) = -175;
-            WREG(17) = 155;
+            R_PAUSE_BUTTON_LEFT_X = -175;
+            R_PAUSE_BUTTON_RIGHT_X = 155;
 
             pauseCtx->pageSwitchTimer = 0;
 

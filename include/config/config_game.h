@@ -66,7 +66,7 @@
 */
 #define ENABLE_VINE_CLIMB_FIX true
 
-// Make `Camera_KeepOn4`'s `case 9`, mimic how getting an item looks in Majora's Mask (Perspective from above)
+// Make `Camera_KeepOn4`'s `case CAM_ITEM_TYPE_9`, mimic how getting an item looks in Majora's Mask (Perspective from above)
 #define MM_GETITEM_CAM false
 
 /**
@@ -85,5 +85,16 @@
  * This includes actor cutscenes
  */
 #define ENABLE_CUTSCENE_IMPROVEMENTS true
+
+/**
+ * Enable MM Title Cards
+ */
+#define ENABLE_MM_TITLE_CARDS true
+#define TC_TEXT_POS_X 25
+#define TC_TEXT_POS_Y 67
+#define TC_GRADIENT_WIDTH 60
+#define TC_GRADIENT_HEIGHT 28
+#define TC_ALPHA_FADE_OUT_INCR 40
+#define TC_ALPHA_FADE_IN_INCR 30
 
 #endif

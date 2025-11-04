@@ -1,5 +1,8 @@
 #### Compiling ####
 
+TESTSUITE_MODE ?= 0
+CPP_DEFINES += -DTESTSUITE_MODE=$(TESTSUITE_MODE)
+
 # Returns the path to the command $(1) if exists. Otherwise returns an empty string.
 find-command = $(shell which $(1) 2>/dev/null)
 
@@ -131,7 +134,7 @@ patch:
 # Create F3DEX3 bps patches
 # Steps:
 #		- run Flips and create the patches
-create_f3dex3_patches: F3DEX3/f3dzex2.code F3DEX3/f3dzex2.data
+create_f3dex3_patches: $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/f3dzex2.data
 	$(call print_no_args,Creating F3DEX3 patches...)
 	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/F3DEX3_BrW.code $(F3DEX3_DIR)/F3DEX3_BrW.code.bps
 	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.data $(F3DEX3_DIR)/F3DEX3_BrW.data $(F3DEX3_DIR)/F3DEX3_BrW.data.bps
@@ -190,3 +193,15 @@ endif
 # same as above and start listening to the IS-Viewer
 sc64v: sc64
 	$(SC64_DEPLOYER) debug --isv 0x03FF0000
+
+### UNFLoader Settings ###
+
+# TODO: download this automatically
+UNFLOADER ?= UNFLoader
+
+# upload the build
+unf: rom
+ifeq ($(UNFLOADER),)
+	$(error sc64deployer path not set. Set UNFLOADER in the Makefile or define it as an environment variable)
+endif
+	$(UNFLOADER) -r $(ROM) -d

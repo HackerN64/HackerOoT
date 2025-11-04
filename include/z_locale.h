@@ -6,6 +6,5 @@
 extern s32 gCurrentRegion;
 
 void Locale_Init(void);
-void Locale_ResetRegion(void);
 
 #endif

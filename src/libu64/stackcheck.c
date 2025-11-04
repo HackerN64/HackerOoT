@@ -189,25 +189,20 @@ u32 StackCheck_GetState(StackEntry* entry) {
     return ret;
 }
 
-u32 StackCheck_CheckAll(void) {
-    u32 ret = 0;
-    StackEntry* iter = sStackInfoListStart;
-
-    while (iter) {
-        u32 state = StackCheck_GetState(iter);
-
-        if (state != STACK_STATUS_OK) {
-            ret = 1;
-        }
-        iter = iter->next;
-    }
-
-    return ret;
-}
-
 u32 StackCheck_Check(StackEntry* entry) {
     if (entry == NULL) {
-        return StackCheck_CheckAll();
+        u32 ret = 0;
+        StackEntry* iter = sStackInfoListStart;
+
+        while (iter) {
+            u32 state = StackCheck_GetState(iter);
+
+            if (state != STACK_STATUS_OK) {
+                ret = 1;
+            }
+            iter = iter->next;
+        }
+        return ret;
     } else {
         return StackCheck_GetState(entry);
     }

@@ -3,19 +3,23 @@
 
 #include "ultra64.h"
 #include "config.h"
-#include "z64scene.h"
-#include "z64cutscene.h"
-#include "z64room.h"
-#include "z64player.h"
-#include "z64camera.h"
-#include "z64object.h"
-#include "z64ocarina.h"
+#include "scene.h"
+#include "cutscene.h"
+#include "room.h"
+#include "player.h"
+#include "camera.h"
+#include "object.h"
+#include "ocarina.h"
 #include "sfx.h"
 #include "sequence.h"
 #include "animated_materials.h"
 #include "array_count.h"
+#include "save.h"
 
 extern SceneCmd example_scene_header00[];
+#if ENABLE_MM_TITLE_CARDS
+extern TitleCardInfo titleCardInfo;
+#endif
 extern SceneCmd* example_scene_alternateHeaders[];
 extern RomFile example_scene_roomList[];
 extern u8 _example_room_0SegmentRomStart[];

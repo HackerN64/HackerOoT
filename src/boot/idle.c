@@ -11,9 +11,9 @@
 #include "translation.h"
 #include "versions.h"
 #include "vi_mode.h"
-#include "z64thread.h"
 #include "ultra64.h"
-#include "z64dma.h"
+#include "thread.h"
+#include "dma.h"
 
 #pragma increment_block_number "gc-eu:192 gc-eu-mq:192 gc-jp:192 gc-jp-ce:192 gc-jp-mq:192 gc-us:192 gc-us-mq:192" \
                                "ntsc-1.0:192 ntsc-1.1:192 ntsc-1.2:192 pal-1.0:192 pal-1.1:192"
@@ -67,6 +67,14 @@ void Main_ThreadEntry(void* arg) {
     DMA_REQUEST_SYNC(_debugSegmentStart, (uintptr_t)_debugSegmentRomStart, _debugSegmentRomEnd - _debugSegmentRomStart,
                      __BASE_FILE__, __LINE__);
     bzero(_debugSegmentBssStart, _debugSegmentBssEnd - _debugSegmentBssStart);
+    PRINTF("[HackerOoT:Info]: Completed!\n");
+#endif
+
+#if ENABLE_UNF
+    PRINTF("[HackerOoT:Info]: Loading 'usb' segment...\n");
+    DMA_REQUEST_SYNC(_usbSegmentStart, (uintptr_t)_usbSegmentRomStart, _usbSegmentRomEnd - _usbSegmentRomStart,
+                     __BASE_FILE__, __LINE__);
+    bzero(_usbSegmentBssStart, _usbSegmentBssEnd - _usbSegmentBssStart);
     PRINTF("[HackerOoT:Info]: Completed!\n");
 #endif
 

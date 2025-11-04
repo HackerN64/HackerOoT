@@ -97,7 +97,7 @@ Make sure your path to the project is not too long, otherwise this process may e
 make
 ```
 
-If all goes well, a new ROM should be built at `build/ntsc-1.2/oot-ntsc-1.2.z64`.
+If all goes well, a new ROM should be built at `build/ntsc-1.2/hackeroot-ntsc-1.2.z64`.
 
 **NOTE:** to speed up the build, you can either:
 

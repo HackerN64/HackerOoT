@@ -40,8 +40,8 @@ extern struct IrqMgr gIrqMgr;
 #include "cic6105.h"
 #include "n64dd.h"
 #endif
-#include "z64debug.h"
-#include "z64thread.h"
+#include "z_debug.h"
+#include "thread.h"
 #include "rainbow.h"
 #include "debug.h"
 

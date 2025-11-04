@@ -84,4 +84,10 @@
  */
 #define ENABLE_DEBUG_BOOT true
 
+/**
+ * Enable UNFLoader support
+ * This is required to use the command system.
+ */
+#define ENABLE_UNF true
+
 #endif
