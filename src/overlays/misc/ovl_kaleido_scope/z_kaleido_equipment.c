@@ -83,13 +83,13 @@ void KaleidoScope_DrawEquipmentImage(PlayState* play, void* source, u32 width, u
     s32 i;
 
     s16 alpha = pauseCtx->alpha;
-    if (IS_INV_EDITOR_ENABLED) {
-        if (gDebug.invDebug.showInfoScreen || gDebug.invDebug.miscDebug.showMiscScreen) {
-            alpha = gDebug.invDebug.elementsAlpha;
-        } else {
-            alpha = gDebug.invDebug.elementsAlpha < 255 ? gDebug.invDebug.elementsAlpha : pauseCtx->alpha;
-        }
+#if IS_INV_EDITOR_ENABLED
+    if (gDebug.invDebug.showInfoScreen || gDebug.invDebug.miscDebug.showMiscScreen) {
+        alpha = gDebug.invDebug.elementsAlpha;
+    } else {
+        alpha = gDebug.invDebug.elementsAlpha < 255 ? gDebug.invDebug.elementsAlpha : pauseCtx->alpha;
     }
+#endif
 
     OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_equipment.c", 68);
 
@@ -495,7 +495,7 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
                 } else {
                     cursorItem = ITEM_QUIVER_30 + sUpgradeItemOffsets[pauseCtx->cursorY[PAUSE_EQUIP]] +
                                  CUR_UPG_VALUE(pauseCtx->cursorY[PAUSE_EQUIP]) - 1;
-                    // PRINTF("H_arrowcase_1 + non_equip_item_table = %d\n", cursorItem);
+                    PRINTF("H_arrowcase_1 + non_equip_item_table = %d\n", cursorItem);
                 }
             } else {
                 if ((pauseCtx->cursorY[PAUSE_EQUIP] == EQUIP_CURSOR_Y_BULLETBAG_QUIVER) &&
@@ -511,7 +511,7 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
             }
         } else {
             cursorItem = ITEM_SWORD_KOKIRI + sEquipmentItemOffsets[pauseCtx->cursorPoint[PAUSE_EQUIP]];
-            // PRINTF("ccc=%d\n", cursorItem);
+            PRINTF("ccc=%d\n", cursorItem);
 
             if (pauseCtx->cursorSpecialPos == 0) {
                 pauseCtx->cursorColorSet = 8;
@@ -695,6 +695,7 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
         // EQUIP_QUAD_BOOTS_KOKIRI, EQUIP_QUAD_BOOTS_IRON, EQUIP_QUAD_BOOTS_HOVER
 
         for (k = 0, bit = rowStart, point = 4; k < 3; k++, point += 4, temp++, bit++) {
+
             if (((u32)i == EQUIP_TYPE_SWORD) && (k == EQUIP_INV_SWORD_BIGGORON) &&
                 gSaveContext.save.info.playerData.bgsFlag) {
                 KaleidoScope_DrawQuadTextureRGBA32(play->state.gfxCtx, gItemIconSwordBiggoronTex, ITEM_ICON_WIDTH,

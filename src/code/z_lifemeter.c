@@ -330,9 +330,12 @@ void Health_DrawMeter(PlayState* play) {
     s32 ddHeartCountMinusOne = gSaveContext.save.info.inventory.defenseHearts - 1;
 
     u8 posY = 0;
+
+#if IS_INV_EDITOR_ENABLED
     if (IS_INV_EDITOR_ACTIVE) {
         posY = gDebug.invDebug.miscDebug.hudTopPosY;
     }
+#endif
 
     OPEN_DISPS(gfxCtx, "../z_lifemeter.c", 353);
 

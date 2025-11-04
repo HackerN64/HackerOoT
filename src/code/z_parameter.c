@@ -3559,6 +3559,7 @@ void Interface_DrawSmallKeyCounter(PlayState* play) {
     s16 smallKeyPosY = 0;
     u16 mapIndex = gSaveContext.mapIndex;
 
+#if IS_INV_EDITOR_ENABLED
     if (IS_INV_EDITOR_ACTIVE) {
         smallKeyPosY = gDebug.invDebug.miscDebug.hudBottomPosY;
 
@@ -3570,7 +3571,7 @@ void Interface_DrawSmallKeyCounter(PlayState* play) {
             mapIndex = gDebug.invDebug.miscDebug.mapIndex;
         }
     }
-
+#endif
     OPEN_DISPS(play->state.gfxCtx, __FILE__, __LINE__);
 
     if (gSaveContext.save.info.inventory.dungeonKeys[mapIndex] >= 0) {
@@ -3649,17 +3650,14 @@ void Interface_Draw(PlayState* play) {
     s16 timerId;
 
     s16 rupeePosY = 0;
+#if IS_INV_EDITOR_ENABLED
     if (IS_INV_EDITOR_ACTIVE) {
-        // if ((gDebug.invDebug.showInfoScreen && gDebug.invDebug.elementsAlpha == 0) ||
-        //     (!gDebug.invDebug.miscDebug.showMiscScreen && gDebug.invDebug.miscElementsAlpha == 0)) {
-        //     return;
-        // }
-
         rupeePosY = gDebug.invDebug.miscDebug.hudBottomPosY;
         if (rupeePosY > 0) {
             rupeePosY += gDebug.invDebug.miscDebug.invertVal;
         }
     }
+#endif
 
     OPEN_DISPS(play->state.gfxCtx, "../z_parameter.c", 3405);
 
@@ -3760,9 +3758,11 @@ void Interface_Draw(PlayState* play) {
 
         Magic_DrawMeter(play);
 
-        if (IS_INV_EDITOR_ENABLED && gDebug.invDebug.miscDebug.showMiscScreen && gDebug.invDebug.elementsAlpha == 0) {
+#if IS_INV_EDITOR_ENABLED
+        if (gDebug.invDebug.miscDebug.showMiscScreen && gDebug.invDebug.elementsAlpha == 0) {
             return;
         }
+#endif
 
         Minimap_Draw(play); // TODO: fix the arrows
 

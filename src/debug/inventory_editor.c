@@ -2,9 +2,9 @@
 
 /**
  * TODO:
- * - code cleanup
  * - @bug the magic bar doesn't update properly (in the misc screen and after closing it)
  * - improvement: add the possibility to remove the magic meter (draw "None"?)
+ * - digit issue with the misc upgrades on the equipment screen (scales)
  */
 
 #include "gfx.h"

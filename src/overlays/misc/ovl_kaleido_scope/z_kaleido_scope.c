@@ -1965,9 +1965,11 @@ void KaleidoScope_DrawUIOverlay(PlayState* play) {
                 u8 alpha = 255;
                 u8 colorIsGrey = pauseCtx->nameColorSet == 1 && !IS_INV_EDITOR_ACTIVE;
 
+#if IS_INV_EDITOR_ENABLED
                 if (IS_INV_EDITOR_ACTIVE) {
                     alpha = gDebug.invDebug.elementsAlpha;
                 }
+#endif
 
                 if (colorIsGrey) {
                     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 70, 70, 70, alpha);
@@ -2121,9 +2123,11 @@ void KaleidoScope_DrawUIOverlay(PlayState* play) {
                 {
                     u8 alpha = 255;
 
+#if IS_INV_EDITOR_ENABLED
                     if (IS_INV_EDITOR_ACTIVE) {
                         alpha = gDebug.invDebug.elementsAlpha;
                     }
+#endif
 
                     gDPPipeSync(POLY_OPA_DISP++);
                     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, alpha);
@@ -4824,7 +4828,8 @@ void KaleidoScope_Update(PlayState* play) {
             break;
     }
 
-    if (IS_INV_EDITOR_ENABLED && pauseCtx->state != PAUSE_STATE_SAVE_PROMPT && !IS_PAUSE_STATE_GAMEOVER(pauseCtx)) {
+#if IS_INV_EDITOR_ENABLED
+    if (pauseCtx->state != PAUSE_STATE_SAVE_PROMPT && !IS_PAUSE_STATE_GAMEOVER(pauseCtx)) {
         if (!IS_INV_EDITOR_ACTIVE && CHECK_BTN_ALL(play->state.input[0].press.button, BTN_L) &&
             (pauseCtx->debugState == PAUSE_DEBUG_STATE_CLOSED)) {
             gDebug.invDebug.state = INVEDITOR_STATE_INIT;
@@ -4834,4 +4839,5 @@ void KaleidoScope_Update(PlayState* play) {
             InventoryEditor_Main(&gDebug.invDebug);
         }
     }
+#endif
 }

@@ -93,7 +93,6 @@ typedef struct InventoryEditor {
 Gfx* Gfx_TextureIA8(Gfx* displayListHead, void* texture, s16 textureWidth, s16 textureHeight, s16 rectLeft, s16 rectTop,
                     s16 rectWidth, s16 rectHeight, u16 dsdx, u16 dtdy);
 
-u8 InventoryEditor_GetItemFromSlot(InventoryEditor* this);
 void InventoryEditor_SetItemFromSlot(InventoryEditor* this);
 void InventoryEditor_SetHUDAlpha(InventoryEditor* this);
 void InventoryEditor_UpdateMiscScreen(InventoryEditor* this);

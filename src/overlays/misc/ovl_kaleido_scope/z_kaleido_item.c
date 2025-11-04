@@ -63,17 +63,17 @@ void KaleidoScope_DrawAmmoCount(PauseContext* pauseCtx, GraphicsContext* gfxCtx,
     s16 ammoTens;
 
     s16 alpha = pauseCtx->alpha;
-    if (IS_INV_EDITOR_ENABLED) {
-        if (gDebug.invDebug.showInfoScreen || gDebug.invDebug.miscDebug.showMiscScreen) {
-            alpha = gDebug.invDebug.elementsAlpha;
+#if IS_INV_EDITOR_ENABLED
+    if (gDebug.invDebug.showInfoScreen || gDebug.invDebug.miscDebug.showMiscScreen) {
+        alpha = gDebug.invDebug.elementsAlpha;
 
-            if (alpha == 0) {
-                return;
-            }
-        } else {
-            alpha = gDebug.invDebug.elementsAlpha < 255 ? gDebug.invDebug.elementsAlpha : pauseCtx->alpha;
+        if (alpha == 0) {
+            return;
         }
+    } else {
+        alpha = gDebug.invDebug.elementsAlpha < 255 ? gDebug.invDebug.elementsAlpha : pauseCtx->alpha;
     }
+#endif
 
     OPEN_DISPS(gfxCtx, "../z_kaleido_item.c", 69);
 
@@ -159,17 +159,17 @@ void KaleidoScope_DrawItemSelect(PlayState* play) {
     s16 cursorMoveResult;
 
     s16 alpha = pauseCtx->alpha;
-    if (IS_INV_EDITOR_ENABLED) {
-        if (gDebug.invDebug.showInfoScreen || gDebug.invDebug.miscDebug.showMiscScreen) {
-            alpha = gDebug.invDebug.elementsAlpha;
+#if IS_INV_EDITOR_ENABLED
+    if (gDebug.invDebug.showInfoScreen || gDebug.invDebug.miscDebug.showMiscScreen) {
+        alpha = gDebug.invDebug.elementsAlpha;
 
-            if (alpha == 0) {
-                return;
-            }
-        } else {
-            alpha = gDebug.invDebug.elementsAlpha < 255 ? gDebug.invDebug.elementsAlpha : pauseCtx->alpha;
+        if (alpha == 0) {
+            return;
         }
+    } else {
+        alpha = gDebug.invDebug.elementsAlpha < 255 ? gDebug.invDebug.elementsAlpha : pauseCtx->alpha;
     }
+#endif
 
     OPEN_DISPS(play->state.gfxCtx, "../z_kaleido_item.c", 234);
 
