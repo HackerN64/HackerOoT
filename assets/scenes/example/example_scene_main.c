@@ -26,8 +26,26 @@ SceneCmd example_scene_header00[] = {
     SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
     SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(2, debug1_scene_header00_ActorCutsceneCameraInfo),
 #endif
+#if ENABLE_MM_TITLE_CARDS
+    SCENE_CMD_TITLE_CARD(&titleCardInfo),
+#endif
     SCENE_CMD_END(),
 };
+
+#if ENABLE_MM_TITLE_CARDS
+TitleCardInfo titleCardInfo = {
+    .textId = 0x8000,
+    .rgba = { 160, 160, 160, 255 },
+    .nextHudVisibility = HUD_VISIBILITY_NOTHING,
+    .duration = 30,
+    .textDelayTimer = 0,
+    .textPos = { TC_TEXT_POS_X, TC_TEXT_POS_Y },
+    .gradientWidth = TC_GRADIENT_WIDTH,
+    .gradientHeight = TC_GRADIENT_HEIGHT,
+    .alphaFadeOutIncr = TC_ALPHA_FADE_OUT_INCR,
+    .alphaFadeInIncr = TC_ALPHA_FADE_IN_INCR,
+};
+#endif
 
 SceneCmd* example_scene_alternateHeaders[] = {
     example_scene_header01,
@@ -253,6 +271,9 @@ SceneCmd example_scene_header01[] = {
     SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
     SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(2, debug1_scene_header00_ActorCutsceneCameraInfo),
 #endif
+#if ENABLE_MM_TITLE_CARDS
+    SCENE_CMD_TITLE_CARD(&titleCardInfo),
+#endif
     SCENE_CMD_END(),
 };
 
@@ -398,6 +419,9 @@ SceneCmd example_scene_header02[] = {
     SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
     SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(2, debug1_scene_header00_ActorCutsceneCameraInfo),
 #endif
+#if ENABLE_MM_TITLE_CARDS
+    SCENE_CMD_TITLE_CARD(&titleCardInfo),
+#endif
     SCENE_CMD_END(),
 };
 
@@ -542,6 +566,9 @@ SceneCmd example_scene_header03[] = {
 #if ENABLE_CUTSCENE_IMPROVEMENTS
     SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
     SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(2, debug1_scene_header00_ActorCutsceneCameraInfo),
+#endif
+#if ENABLE_MM_TITLE_CARDS
+    SCENE_CMD_TITLE_CARD(&titleCardInfo),
 #endif
     SCENE_CMD_END(),
 };

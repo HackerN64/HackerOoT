@@ -115,6 +115,31 @@ EntranceInfo gEntranceTable[] = {
 
 #undef DEFINE_ENTRANCE
 
+#if ENABLE_MM_TITLE_CARDS
+// Linker symbol declarations (used in the table below)
+#define DEFINE_SCENE(name, _1, _2, _3, _4, _5) DECLARE_ROM_SEGMENT(name)
+
+#include "tables/scene_table.h"
+
+#undef DEFINE_SCENE
+
+// Scene Table definition
+#define DEFINE_SCENE(name, _1, _2, drawConfig, unk_10, unk_12) \
+    { ROM_FILE(name), ROM_FILE_UNSET, unk_10, drawConfig, unk_12, 0 },
+
+// Handle `none` as a special case for scenes without a title card
+#define _noneSegmentRomStart NULL
+#define _noneSegmentRomEnd NULL
+
+SceneTableEntry gSceneTable[] = {
+#include "tables/scene_table.h"
+};
+
+#undef _noneSegmentRomStart
+#undef _noneSegmentRomEnd
+
+#undef DEFINE_SCENE
+#else
 // Linker symbol declarations (used in the table below)
 #define DEFINE_SCENE(name, title, _2, _3, _4, _5) \
     DECLARE_ROM_SEGMENT(name)                     \
@@ -140,6 +165,7 @@ SceneTableEntry gSceneTable[] = {
 #undef _noneSegmentRomEnd
 
 #undef DEFINE_SCENE
+#endif
 
 Gfx sDefaultDisplayList[] = {
     gsSPSegment(0x08, gEmptyDL),
