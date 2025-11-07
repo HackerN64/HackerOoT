@@ -428,6 +428,10 @@ void Attention_Draw(Attention* attention, PlayState* play) {
 
         Actor_ProjectPos(play, &attention->reticlePos, &projectedPos, &invW);
 
+        if (USE_WIDESCREEN) {
+            projectedPos.x /= (0.75f);
+        }
+
         projectedPos.x = ((SCREEN_WIDTH / 2) * (projectedPos.x * invW)) * projectdPosScale;
         projectedPos.x = CLAMP(projectedPos.x, -SCREEN_WIDTH, SCREEN_WIDTH);
 
