@@ -12,7 +12,7 @@
  * Note: you can define this with `CPP_DEFINES=-DENABLE_F3DEX3=0 make -j$(nproc)`
 */
 #ifndef ENABLE_F3DEX3
-#define ENABLE_F3DEX3 true
+#define ENABLE_F3DEX3 false
 #endif
 // Remove usually-unnecessary syncs from texture loading commands. Only matters
 // for vanilla display lists--new ones exported from fast64 already have the
@@ -30,6 +30,9 @@
 
 // Enable or disable Link's LOD model (the low poly model)
 #define ENABLE_LINK_LOD false
+
+// Use the Majora's Mask Model for Bottles
+#define MM_BOTTLE_MODEL true
 
 // Disables AA (Improves console performance but causes visible seams between unconnected geometry).
 // #define DISABLE_AA false
@@ -56,7 +59,7 @@
  * Use the button combo Z + R + D-Pad Up to toggle
  * Note: pre-rendered scenes with the fixed camera mode won't re-scale properly
 */
-#define ENABLE_WIDESCREEN false
+#define ENABLE_WIDESCREEN true
 
 // Force widescreen mode regardless of SaveContext
 #define FORCE_WIDESCREEN false

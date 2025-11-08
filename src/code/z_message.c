@@ -363,9 +363,6 @@ void Message_DisplaySceneTitleCard(PlayState* play) {
         msgCtx->textDelayTimer = info->textDelayTimer;
         msgCtx->textboxColorAlphaCurrent = msgCtx->textboxColorAlphaTarget = msgCtx->textColorAlpha = 0;
         msgCtx->stateTimer = info->duration;
-
-        titleCardPrevHudVisibility = gSaveContext.hudVisibilityMode;
-        Interface_ChangeHudVisibilityMode(info->nextHudVisibility);
     }
 }
 #endif
@@ -4560,6 +4557,11 @@ void Message_Update(PlayState* play) {
                         msgCtx->textboxColorAlphaCurrent = 255;
                         msgCtx->msgMode = MSGMODE_SCENE_TITLE_CARD_FADE_IN_TEXT;
                     }
+
+                    if (msgCtx->titleCardInfo->nextHudVisibility != gSaveContext.hudVisibilityMode) {
+                        titleCardPrevHudVisibility = gSaveContext.hudVisibilityMode;
+                        Interface_ChangeHudVisibilityMode(msgCtx->titleCardInfo->nextHudVisibility);
+                    }
                 }
                 break;
             case MSGMODE_SCENE_TITLE_CARD_FADE_IN_TEXT:
@@ -4597,7 +4599,10 @@ void Message_Update(PlayState* play) {
                         msgCtx->msgLength = 0;
                         msgCtx->msgMode = MSGMODE_NONE;
                         msgCtx->stateTimer = 0;
-                        Interface_ChangeHudVisibilityMode(titleCardPrevHudVisibility);
+
+                        if (titleCardPrevHudVisibility!= gSaveContext.hudVisibilityMode) {
+                            Interface_ChangeHudVisibilityMode(titleCardPrevHudVisibility);
+                        }
                     }
                 }
                 break;
