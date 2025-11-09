@@ -4600,7 +4600,7 @@ void Message_Update(PlayState* play) {
                         msgCtx->msgMode = MSGMODE_NONE;
                         msgCtx->stateTimer = 0;
 
-                        if (titleCardPrevHudVisibility!= gSaveContext.hudVisibilityMode) {
+                        if (titleCardPrevHudVisibility != gSaveContext.hudVisibilityMode) {
                             Interface_ChangeHudVisibilityMode(titleCardPrevHudVisibility);
                         }
                     }
