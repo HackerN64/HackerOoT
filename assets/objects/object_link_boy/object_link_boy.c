@@ -894,11 +894,10 @@ Gfx gLinkAdultRightHandHoldingBowFirstPersonDL[158] = {
 Gfx gLinkAdultRightHandHoldingHookshotFarDL[196] = {
 #include "assets/objects/object_link_boy/gLinkAdultRightHandHoldingHookshotFarDL.inc.c"
 };
+
 #if MM_BOTTLE_MODEL
 Gfx gLinkAdultBottleDL[] = {
-    gsSPDisplayList(gBottleContentsDL),
-    gsSPDisplayList(gBottleGlassDL),
-    gsSPEndDisplayList(),
+#include "assets/objects/gameplay_keep/gLinkMMBottleDL.inc.c"
 };
 #else
 Gfx gLinkAdultBottleDL[35] = {
@@ -1319,7 +1318,3 @@ void* gLinkAdultLimbs[] = {
 FlexSkeletonHeader gLinkAdultSkel = {
 #include "assets/objects/object_link_boy/gLinkAdultSkel.inc.c"
 };
-
-#if MM_BOTTLE_MODEL
-#include "assets/objects/object_link_boy/bottle.c"
-#endif

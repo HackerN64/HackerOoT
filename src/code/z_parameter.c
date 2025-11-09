@@ -2923,7 +2923,7 @@ void Magic_Update(PlayState* play) {
 
         case MAGIC_STATE_CONSUME_LENS:
             // Slowly consume magic while lens is on
-            if (!IS_PAUSED(&play->pauseCtx) && (msgCtx->msgMode == MSGMODE_NONE) &&
+            if (!IS_PAUSED(&play->pauseCtx) && CHECK_MSGMODE_FOR_ITEM_RESTRICTIONS(msgCtx) &&
                 (play->gameOverCtx.state == GAMEOVER_INACTIVE) && (play->transitionTrigger == TRANS_TRIGGER_OFF) &&
                 (play->transitionMode == TRANS_MODE_OFF) && !Play_InCsMode(play)) {
                 if ((gSaveContext.save.info.playerData.magic == 0) ||
@@ -4049,7 +4049,7 @@ void Interface_Draw(PlayState* play) {
         }
 
         if (!IS_PAUSED(&play->pauseCtx) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
-            (msgCtx->msgMode == MSGMODE_NONE) && !(player->stateFlags2 & PLAYER_STATE2_24) &&
+            CHECK_MSGMODE_FOR_ITEM_RESTRICTIONS(msgCtx) && !(player->stateFlags2 & PLAYER_STATE2_24) &&
             (play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->transitionMode == TRANS_MODE_OFF) &&
             !Play_InCsMode(play) && (gSaveContext.minigameState != 1) && (play->shootingGalleryStatus <= 1) &&
             !((play->sceneId == SCENE_BOMBCHU_BOWLING_ALLEY) && Flags_GetSwitch(play, 0x38))) {
@@ -4734,7 +4734,7 @@ void Interface_Update(PlayState* play) {
     WREG(7) = interfaceCtx->unk_1F4;
 
     // Update Magic
-    if ((!IS_PAUSED(&play->pauseCtx) && (msgCtx->msgMode == MSGMODE_NONE) &&
+    if ((!IS_PAUSED(&play->pauseCtx) && CHECK_MSGMODE_FOR_ITEM_RESTRICTIONS(msgCtx) &&
          (play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->gameOverCtx.state == GAMEOVER_INACTIVE) &&
          (play->transitionMode == TRANS_MODE_OFF) &&
          ((play->csCtx.state == CS_STATE_IDLE) || !Player_InCsMode(play))) ||

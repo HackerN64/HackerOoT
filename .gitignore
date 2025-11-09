@@ -28,6 +28,7 @@ docs/doxygen/
 *.png~
 *.dol
 *.Identifier
+*.dol
 F3DEX3/*/*.code
 F3DEX3/*/*.data
 wadextract/

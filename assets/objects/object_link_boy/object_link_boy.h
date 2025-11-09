@@ -83,10 +83,6 @@ extern Gfx gLinkAdultBowStringDL[12];
 extern Gfx gLinkAdultHookshotTipDL[22];
 extern Gfx gLinkAdultBrokenGiantsKnifeBladeDL[28];
 extern Gfx gLinkAdultHookshotReticleDL[13];
-#if MM_BOTTLE_MODEL
-extern Gfx gBottleContentsDL[];
-extern Gfx gBottleGlassDL[];
-#endif
 
 extern Gfx gLinkAdultWaistFarDL[78];
 
