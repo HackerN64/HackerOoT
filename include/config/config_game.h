@@ -29,7 +29,7 @@
 // Enables the beep sound at low health (vanilla behavior)
 #define ENABLE_LOW_HEALTH_BEEP true
 
-// Clamps the jumping velocity (vanilla behavior)
+// Clamps the jumping velocity (setting to false uncaps the jump speed like in MM)
 #define CLAMPED_JUMP_VELOCITY true
 
 // Make the Bunny Hood Mask behave like in Majora's Mask where it increases Link's speed when equipped.

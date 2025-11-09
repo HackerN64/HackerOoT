@@ -984,6 +984,14 @@ void Interface_UpdateHudAlphas(PlayState* play, s16 dimmingAlpha) {
     }
 }
 
+#if ENABLE_MM_TITLE_CARDS
+#define CHECK_MSGMODE_FOR_ITEM_RESTRICTIONS(msgCtx)                                                        \
+    (msgCtx->msgMode == MSGMODE_NONE || (msgCtx->msgMode >= MSGMODE_SCENE_TITLE_CARD_FADE_IN_BACKGROUND && \
+                                         msgCtx->msgMode <= MSGMODE_SCENE_TITLE_CARD_FADE_OUT_BACKGROUND))
+#else
+#define CHECK_MSGMODE_FOR_ITEM_RESTRICTIONS(msgCtx) (msgCtx->msgMode == MSGMODE_NONE)
+#endif
+
 void func_80083108(PlayState* play) {
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
     Player* player = GET_PLAYER(play);
@@ -1089,7 +1097,7 @@ void func_80083108(PlayState* play) {
                     gSaveContext.buttonStatus[3] = BTN_DISABLED;
                 Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_ALL);
             }
-        } else if (msgCtx->msgMode == MSGMODE_NONE) {
+        } else if (CHECK_MSGMODE_FOR_ITEM_RESTRICTIONS(msgCtx)) {
             if ((Player_GetEnvironmentalHazard(play) >= PLAYER_ENV_HAZARD_UNDERWATER_FLOOR) &&
                 (Player_GetEnvironmentalHazard(play) <= PLAYER_ENV_HAZARD_UNDERWATER_FREE)) {
                 if (gSaveContext.buttonStatus[0] != BTN_DISABLED) {
@@ -4495,7 +4503,7 @@ void Interface_Update(PlayState* play) {
     if (!IS_PAUSED(&play->pauseCtx)) {
         if ((gSaveContext.minigameState == 1) || !IS_CUTSCENE_LAYER ||
             ((play->sceneId == SCENE_LON_LON_RANCH) && (gSaveContext.sceneLayer == 4))) {
-            if ((msgCtx->msgMode == MSGMODE_NONE) ||
+            if (CHECK_MSGMODE_FOR_ITEM_RESTRICTIONS(msgCtx) ||
                 ((msgCtx->msgMode != MSGMODE_NONE) && (play->sceneId == SCENE_BOMBCHU_BOWLING_ALLEY))) {
                 if (play->gameOverCtx.state == GAMEOVER_INACTIVE) {
                     func_80083108(play);
