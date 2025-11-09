@@ -31,7 +31,7 @@
 
 /**** [INPUT DISPLAY] ****/
 // ``CAN_SHOW_INPUT_DISPLAY``
-#define SHOW_INPUT_DISPLAY true
+#define SHOW_INPUT_DISPLAY false
 
 /**** [CUTSCENE FEATURES] ****/
 // ``CAN_SHOW_CS_INFOS``
