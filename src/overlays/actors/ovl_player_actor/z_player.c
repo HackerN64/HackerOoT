@@ -7337,8 +7337,7 @@ void func_8083E4C4(PlayState* play, Player* this, GetItemEntry* giEntry) {
 s32 Player_ActionHandler_2(Player* this, PlayState* play) {
     Actor* interactedActor;
 
-    if (DEBUG_iREG_67 ||
-        (((interactedActor = this->interactRangeActor) != NULL) && TITLECARD_CLEAR(play))) {
+    if (DEBUG_iREG_67 || (((interactedActor = this->interactRangeActor) != NULL) && TITLECARD_CLEAR(play))) {
         if (DEBUG_iREG_67 || (this->getItemId > GI_NONE)) {
             if (DEBUG_iREG_67) {
                 this->getItemId = iREG(68);
