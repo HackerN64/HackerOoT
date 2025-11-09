@@ -1,3 +1,1 @@
-    gsSPDisplayList(gBottleContentsDL),
-    gsSPDisplayList(gBottleGlassDL),
-    gsSPEndDisplayList(),
+gsSPDisplayList(gBottleContentsDL), gsSPDisplayList(gBottleGlassDL), gsSPEndDisplayList(), ;

@@ -3956,7 +3956,8 @@ Gfx gCuttableShrubTipDL[18] = {
 #include "assets/objects/gameplay_keep/gCuttableShrubTipDL.inc.c"
 };
 
-u64 gCuttableShrubLeafTFragmentTex[TEX_LEN(u64, gCuttableShrubLeafTFragmentTex_WIDTH, gCuttableShrubLeafTFragmentTex_HEIGHT, 16)] = {
+u64 gCuttableShrubLeafTFragmentTex[TEX_LEN(u64, gCuttableShrubLeafTFragmentTex_WIDTH,
+                                           gCuttableShrubLeafTFragmentTex_HEIGHT, 16)] = {
 #include "assets/objects/gameplay_keep/gCuttableShrubLeafTFragmentTex.rgba16.inc.c"
 };
 
@@ -4492,7 +4493,8 @@ u64 gUnusedGrassBladesTex[TEX_LEN(u64, gUnusedGrassBladesTex_WIDTH, gUnusedGrass
 #include "assets/objects/gameplay_keep/gUnusedGrassBladesTex.rgba16.inc.c"
 };
 
-u64 gUnusedStoneHookshotTargetTex[TEX_LEN(u64, gUnusedStoneHookshotTargetTex_WIDTH, gUnusedStoneHookshotTargetTex_HEIGHT, 16)] = {
+u64 gUnusedStoneHookshotTargetTex[TEX_LEN(u64, gUnusedStoneHookshotTargetTex_WIDTH,
+                                          gUnusedStoneHookshotTargetTex_HEIGHT, 16)] = {
 #include "assets/objects/gameplay_keep/gUnusedStoneHookshotTargetTex.rgba16.inc.c"
 };
 
