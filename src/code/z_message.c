@@ -363,10 +363,13 @@ void Message_DisplaySceneTitleCard(PlayState* play) {
         msgCtx->textDelayTimer = info->textDelayTimer;
         msgCtx->textboxColorAlphaCurrent = msgCtx->textboxColorAlphaTarget = msgCtx->textColorAlpha = 0;
         msgCtx->stateTimer = info->duration;
-
-        titleCardPrevHudVisibility = gSaveContext.hudVisibilityMode;
-        Interface_ChangeHudVisibilityMode(info->nextHudVisibility);
     }
+}
+
+s32 Message_TitleCardClear(PlayState* play) {
+    play->msgCtx.stateTimer = 0;
+    play->msgCtx.msgMode = MSGMODE_SCENE_TITLE_CARD_FADE_OUT_TEXT;
+    return true;
 }
 #endif
 
@@ -1509,11 +1512,9 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
 
 #if ENABLE_MM_TITLE_CARDS
     if (msgCtx->msgMode >= MSGMODE_SCENE_TITLE_CARD_FADE_IN_BACKGROUND &&
-        msgCtx->msgMode <= MSGMODE_SCENE_TITLE_CARD_FADE_OUT_BACKGROUND) {
-        if (msgCtx->titleCardInfo != NULL) {
-            msgCtx->textPosX = msgCtx->titleCardInfo->textPos.x;
-            msgCtx->textPosY = msgCtx->titleCardInfo->textPos.y;
-        }
+        msgCtx->msgMode <= MSGMODE_SCENE_TITLE_CARD_FADE_OUT_BACKGROUND && msgCtx->titleCardInfo != NULL) {
+        msgCtx->textPosX = msgCtx->titleCardInfo->textPos.x;
+        msgCtx->textPosY = msgCtx->titleCardInfo->textPos.y;
     } else
 #endif
     {
@@ -2648,9 +2649,9 @@ void Message_OpenText(PlayState* play, u16 textId) {
     Font* font = &msgCtx->font;
     s16 textBoxType;
 
-    // clang-format off
-    if (msgCtx->msgMode == MSGMODE_NONE) { gSaveContext.prevHudVisibilityMode = gSaveContext.hudVisibilityMode; }
-    // clang-format on
+    if (msgCtx->msgMode == MSGMODE_NONE) {
+        gSaveContext.prevHudVisibilityMode = gSaveContext.hudVisibilityMode;
+    }
 
     if (R_SCENE_CAM_TYPE == SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT) {
         Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_A_HEARTS_MAGIC_FORCE);
@@ -4560,6 +4561,10 @@ void Message_Update(PlayState* play) {
                         msgCtx->textboxColorAlphaCurrent = 255;
                         msgCtx->msgMode = MSGMODE_SCENE_TITLE_CARD_FADE_IN_TEXT;
                     }
+
+                    if (gSaveContext.save.cutsceneIndex == CS_INDEX_NONE) {
+                        Interface_ChangeHudVisibilityMode(msgCtx->titleCardInfo->nextHudVisibility);
+                    }
                 }
                 break;
             case MSGMODE_SCENE_TITLE_CARD_FADE_IN_TEXT:
@@ -4594,10 +4599,14 @@ void Message_Update(PlayState* play) {
 
                     if (msgCtx->textboxColorAlphaCurrent <= 0) {
                         msgCtx->textboxColorAlphaCurrent = 0;
+                        msgCtx->textColorAlpha = 255;
                         msgCtx->msgLength = 0;
                         msgCtx->msgMode = MSGMODE_NONE;
                         msgCtx->stateTimer = 0;
-                        Interface_ChangeHudVisibilityMode(titleCardPrevHudVisibility);
+
+                        if (gSaveContext.save.cutsceneIndex == CS_INDEX_NONE) {
+                            Interface_ChangeHudVisibilityMode(titleCardPrevHudVisibility);
+                        }
                     }
                 }
                 break;

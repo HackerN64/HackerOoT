@@ -341,6 +341,8 @@ void Play_Init(GameState* thisx) {
     gDebug.invDebug.elementsAlpha = 255;
 #endif
 
+    gSaveContext.showTitleCard = true;
+
     if (gSaveContext.save.entranceIndex == ENTR_LOAD_OPENING) {
         gSaveContext.save.entranceIndex = 0;
         this->state.running = false;

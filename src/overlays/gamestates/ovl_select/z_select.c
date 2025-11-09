@@ -29,6 +29,7 @@
 #include "play_state.h"
 #include "save.h"
 #include "sram.h"
+#include "helpers.h"
 
 #if PLATFORM_N64
 void func_80800AD0_unknown(MapSelectState* this, s32 arg1) {
@@ -414,8 +415,7 @@ void MapSelect_DrawLoadingScreen(MapSelectState* this) {
 }
 
 void MapSelect_LoadTitle(MapSelectState* this) {
-    this->state.running = false;
-    SET_NEXT_GAMESTATE(&this->state, ConsoleLogo_Init, ConsoleLogoState);
+    Helpers_LoadTitleScreen(&this->state);
 }
 
 void MapSelect_LoadDebugOpening(MapSelectState* this) {
