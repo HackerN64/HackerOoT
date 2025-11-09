@@ -88,7 +88,7 @@
 /**
  * Enable Cutscene Improvements (from Majora's Mask)
  *
- * This includes actor cutscenes 
+ * This includes actor cutscenes
  * (will cause softlocks!)
  */
 #define ENABLE_CUTSCENE_IMPROVEMENTS false

@@ -895,7 +895,7 @@ Gfx gLinkAdultRightHandHoldingHookshotFarDL[196] = {
 #include "assets/objects/object_link_boy/gLinkAdultRightHandHoldingHookshotFarDL.inc.c"
 };
 #if MM_BOTTLE_MODEL
-Gfx gLinkAdultBottleDL[] = { 
+Gfx gLinkAdultBottleDL[] = {
     gsSPDisplayList(gBottleContentsDL),
     gsSPDisplayList(gBottleGlassDL),
     gsSPEndDisplayList(),
