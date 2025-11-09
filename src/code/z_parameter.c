@@ -985,9 +985,9 @@ void Interface_UpdateHudAlphas(PlayState* play, s16 dimmingAlpha) {
 }
 
 #if ENABLE_MM_TITLE_CARDS
-#define CHECK_MSGMODE_FOR_ITEM_RESTRICTIONS(msgCtx)                                               \
+#define CHECK_MSGMODE_FOR_ITEM_RESTRICTIONS(msgCtx)                                                        \
     (msgCtx->msgMode == MSGMODE_NONE || (msgCtx->msgMode >= MSGMODE_SCENE_TITLE_CARD_FADE_IN_BACKGROUND && \
-                                 msgCtx->msgMode <= MSGMODE_SCENE_TITLE_CARD_FADE_OUT_BACKGROUND))
+                                         msgCtx->msgMode <= MSGMODE_SCENE_TITLE_CARD_FADE_OUT_BACKGROUND))
 #else
 #define CHECK_MSGMODE_FOR_ITEM_RESTRICTIONS(msgCtx) (msgCtx->msgMode == MSGMODE_NONE)
 #endif
