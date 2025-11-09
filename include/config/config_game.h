@@ -88,8 +88,9 @@
 
 /**
  * Enable MM Title Cards
+ * Note: there's known issues that needs to be addressed (HUD, item restrictions and title card appearing when it shouldn't)
  */
-#define ENABLE_MM_TITLE_CARDS true
+#define ENABLE_MM_TITLE_CARDS false
 #define TC_TEXT_POS_X 25
 #define TC_TEXT_POS_Y 67
 #define TC_GRADIENT_WIDTH 60
