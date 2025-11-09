@@ -365,6 +365,12 @@ void Message_DisplaySceneTitleCard(PlayState* play) {
         msgCtx->stateTimer = info->duration;
     }
 }
+
+s32 Message_TitleCardClear(PlayState* play) {
+    play->msgCtx.stateTimer = 0;
+    play->msgCtx.msgMode = MSGMODE_SCENE_TITLE_CARD_FADE_OUT_TEXT;
+    return true;
+}
 #endif
 
 void Message_ResetOcarinaNoteState(void) {
