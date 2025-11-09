@@ -26,7 +26,7 @@ docs/doxygen/
 *.bin
 *.blend1
 *.dol
-*.identifier
+*.Identifier
 F3DEX3/*/*.code
 F3DEX3/*/*.data
 wadextract/
