@@ -75,8 +75,7 @@ typedef struct GetItemEntry {
 #define CHEST_ANIM_SHORT 0
 #define CHEST_ANIM_LONG 1
 
-#define GET_ITEM_NONE \
-    { ITEM_NONE, 0, 0, 0, OBJECT_INVALID }
+#define GET_ITEM_NONE { ITEM_NONE, 0, 0, 0, OBJECT_INVALID }
 
 typedef struct ExplosiveInfo {
     /* 0x00 */ u8 itemId;
@@ -115,10 +114,10 @@ typedef enum AnimSfxType {
 
 #define ANIMSFX_SHIFT_TYPE(type) ((type) << 11)
 
-#define ANIMSFX_DATA(type, frame) ((ANIMSFX_SHIFT_TYPE(type) | ((frame)&0x7FF)))
+#define ANIMSFX_DATA(type, frame) ((ANIMSFX_SHIFT_TYPE(type) | ((frame) & 0x7FF)))
 
-#define ANIMSFX_GET_TYPE(data) ((data)&0x7800)
-#define ANIMSFX_GET_FRAME(data) ((data)&0x7FF)
+#define ANIMSFX_GET_TYPE(data) ((data) & 0x7800)
+#define ANIMSFX_GET_FRAME(data) ((data) & 0x7FF)
 
 typedef struct AnimSfxEntry {
     /* 0x00 */ u16 sfxId;
@@ -10801,6 +10800,9 @@ void Player_Init(Actor* thisx, PlayState* play2) {
         }
     }
 
+#if !ENABLE_MM_TITLE_CARDS
+    // Note: MM title cards are handled in `Cutscene_HandleEntranceTriggers` (`z_demo.c`)
+
     if ((respawnFlag == 0) || (respawnFlag < -1)) {
         titleFileSize = scene->titleFile.vromEnd - scene->titleFile.vromStart;
 
@@ -10815,15 +10817,14 @@ void Player_Init(Actor* thisx, PlayState* play2) {
                 ((play->sceneId != SCENE_BOMBCHU_SHOP) || GET_EVENTCHKINF(EVENTCHKINF_25))
 #endif
             ) {
-#if !ENABLE_MM_TITLE_CARDS
                 TitleCard_InitPlaceName(play, &play->actorCtx.titleCtx, this->giObjectSegment, 160, 120,
                                         PLACE_NAME_TEX_WIDTH, PLACE_NAME_TEX_HEIGHT, 20);
-#endif
             }
         }
 
         gSaveContext.showTitleCard = true;
     }
+#endif
 
     if (func_80845C68(play, (respawnFlag == 2) ? 1 : 0) == 0) {
         gSaveContext.respawn[RESPAWN_MODE_DOWN].playerParams =
