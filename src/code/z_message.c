@@ -4562,8 +4562,7 @@ void Message_Update(PlayState* play) {
                         msgCtx->msgMode = MSGMODE_SCENE_TITLE_CARD_FADE_IN_TEXT;
                     }
 
-                    if (msgCtx->titleCardInfo->nextHudVisibility != gSaveContext.hudVisibilityMode) {
-                        titleCardPrevHudVisibility = gSaveContext.hudVisibilityMode;
+                    if (gSaveContext.save.cutsceneIndex == CS_INDEX_NONE) {
                         Interface_ChangeHudVisibilityMode(msgCtx->titleCardInfo->nextHudVisibility);
                     }
                 }
@@ -4605,7 +4604,7 @@ void Message_Update(PlayState* play) {
                         msgCtx->msgMode = MSGMODE_NONE;
                         msgCtx->stateTimer = 0;
 
-                        if (titleCardPrevHudVisibility != gSaveContext.hudVisibilityMode) {
+                        if (gSaveContext.save.cutsceneIndex == CS_INDEX_NONE) {
                             Interface_ChangeHudVisibilityMode(titleCardPrevHudVisibility);
                         }
                     }
