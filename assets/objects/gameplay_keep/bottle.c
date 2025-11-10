@@ -1,4 +1,5 @@
 #include "ultra64.h"
+#include "gfx.h"
 
 u64 gBottleContentsTex[] = {
 #include "assets/objects/gameplay_keep/bottle_contents.i8.inc.c"
