@@ -12,6 +12,9 @@
 // Add a fix for the Stale Reference Manipulation glitch (OoT's Pandora's Box)
 #define FIX_SRM true
 
+// Delay the audio update by 3ms (causes the audio to go out intermittently)
+#define AUDIO_DELAY false
+
 /**
  * Enable mempak-related code
  */
@@ -25,6 +28,9 @@
 
 // Enables the beep sound at low health (vanilla behavior)
 #define ENABLE_LOW_HEALTH_BEEP true
+
+// Clamps the jumping velocity (setting to false uncaps the jump speed like in MM)
+#define CLAMPED_JUMP_VELOCITY true
 
 // Make the Bunny Hood Mask behave like in Majora's Mask where it increases Link's speed when equipped.
 #define MM_BUNNY_HOOD false
@@ -83,8 +89,9 @@
  * Enable Cutscene Improvements (from Majora's Mask)
  *
  * This includes actor cutscenes
+ * (will cause softlocks!)
  */
-#define ENABLE_CUTSCENE_IMPROVEMENTS true
+#define ENABLE_CUTSCENE_IMPROVEMENTS false
 
 /**
  * Enable MM Title Cards

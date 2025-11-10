@@ -37,7 +37,7 @@
 // ``CAN_SHOW_CS_INFOS``
 #define SHOW_CS_INFOS false
 // ``IS_CS_CONTROL_ENABLED``
-#define ENABLE_CS_CONTROL false
+#define ENABLE_CS_CONTROL true
 
 // Allow skip on the title screen (if using ``ENABLE_CS_CONTROL``)
 // ``CS_CAN_SKIP_TITLE_SCREEN``
