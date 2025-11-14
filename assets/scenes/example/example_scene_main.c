@@ -16,8 +16,8 @@ SceneCmd example_scene_header00[] = {
     SCENE_CMD_SKYBOX_SETTINGS(0x01, 0x00, LIGHT_MODE_TIME),
     SCENE_CMD_ENV_LIGHT_SETTINGS(4, example_scene_header00_lightSettings),
     SCENE_CMD_TRANSITION_ACTOR_LIST(1, example_scene_header00_transitionActors),
-    SCENE_CMD_ENTRANCE_LIST(example_scene_header00_entranceList),
-    SCENE_CMD_SPAWN_LIST(7, example_scene_header00_playerEntryList),
+    SCENE_CMD_SPAWN_LIST(example_scene_header00_entranceList),
+    SCENE_CMD_PLAYER_ENTRY_LIST(7, example_scene_header00_playerEntryList),
     SCENE_CMD_CUTSCENE_DATA(gExampleCS),
 #if ENABLE_ANIMATED_MATERIALS
     SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
@@ -262,8 +262,8 @@ SceneCmd example_scene_header01[] = {
     SCENE_CMD_SKYBOX_SETTINGS(0x01, 0x00, LIGHT_MODE_TIME),
     SCENE_CMD_ENV_LIGHT_SETTINGS(4, example_scene_header01_lightSettings),
     SCENE_CMD_TRANSITION_ACTOR_LIST(1, example_scene_header01_transitionActors),
-    SCENE_CMD_ENTRANCE_LIST(example_scene_header01_entranceList),
-    SCENE_CMD_SPAWN_LIST(7, example_scene_header01_playerEntryList),
+    SCENE_CMD_SPAWN_LIST(example_scene_header01_entranceList),
+    SCENE_CMD_PLAYER_ENTRY_LIST(7, example_scene_header01_playerEntryList),
 #if ENABLE_ANIMATED_MATERIALS
     SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
 #endif
@@ -410,8 +410,8 @@ SceneCmd example_scene_header02[] = {
     SCENE_CMD_SKYBOX_SETTINGS(0x01, 0x00, LIGHT_MODE_TIME),
     SCENE_CMD_ENV_LIGHT_SETTINGS(4, example_scene_header02_lightSettings),
     SCENE_CMD_TRANSITION_ACTOR_LIST(1, example_scene_header02_transitionActors),
-    SCENE_CMD_ENTRANCE_LIST(example_scene_header02_entranceList),
-    SCENE_CMD_SPAWN_LIST(7, example_scene_header02_playerEntryList),
+    SCENE_CMD_SPAWN_LIST(example_scene_header02_entranceList),
+    SCENE_CMD_PLAYER_ENTRY_LIST(7, example_scene_header02_playerEntryList),
 #if ENABLE_ANIMATED_MATERIALS
     SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
 #endif
@@ -558,8 +558,8 @@ SceneCmd example_scene_header03[] = {
     SCENE_CMD_SKYBOX_SETTINGS(0x01, 0x00, LIGHT_MODE_TIME),
     SCENE_CMD_ENV_LIGHT_SETTINGS(4, example_scene_header03_lightSettings),
     SCENE_CMD_TRANSITION_ACTOR_LIST(1, example_scene_header03_transitionActors),
-    SCENE_CMD_ENTRANCE_LIST(example_scene_header03_entranceList),
-    SCENE_CMD_SPAWN_LIST(7, example_scene_header03_playerEntryList),
+    SCENE_CMD_SPAWN_LIST(example_scene_header03_entranceList),
+    SCENE_CMD_PLAYER_ENTRY_LIST(7, example_scene_header03_playerEntryList),
 #if ENABLE_ANIMATED_MATERIALS
     SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
 #endif
