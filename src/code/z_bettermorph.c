@@ -1,5 +1,4 @@
-
-// See https://github.com/sauraen/OoTAnimInterp/tree/master for more general information about OoT's math conventions
+// See https://github.com/sauraen/OoTAnimInterp for more general information about OoT's math conventions
 // and the design of this patch. Algorithms are modified from:
 // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 // http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
