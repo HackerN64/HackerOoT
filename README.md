@@ -95,3 +95,5 @@ List of every HackerOoT contributors, from most recent to oldest contribution:
 - ariahiro64
 - ghost
 - krm01
+- Sauraen
+
