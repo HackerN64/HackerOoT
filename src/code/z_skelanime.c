@@ -16,10 +16,6 @@
 #include "sys_math.h"
 #include "config.h"
 
-#if IMPROVED_ANIMATION_MORPHING
-#include "z_bettermorph.c"
-#endif
-
 #define ANIM_INTERP 1
 
 s32 LinkAnimation_Loop(PlayState* play, SkelAnime* skelAnime);
@@ -779,10 +775,11 @@ s16 Animation_GetLastFrameLegacy(LegacyAnimationHeader* animation) {
     return animHeader->frameCount - 1;
 }
 
+#if !IMPROVED_ANIMATION_MORPHING
 /**
  * Linearly interpolates the start and target frame tables with the given weight, putting the result in dst
  */
-void SkelAnime_InterpFrameTableImpl(s32 limbCount, Vec3s* dst, Vec3s* start, Vec3s* target, f32 weight) {
+void SkelAnime_InterpFrameTable(s32 limbCount, Vec3s* dst, Vec3s* start, Vec3s* target, f32 weight) {
     s32 i;
     s16 diff;
     s16 base;
@@ -807,14 +804,7 @@ void SkelAnime_InterpFrameTableImpl(s32 limbCount, Vec3s* dst, Vec3s* start, Vec
         }
     }
 }
-
-void SkelAnime_InterpFrameTable(s32 limbCount, Vec3s* dst, Vec3s* start, Vec3s* target, f32 weight) {
-#if IMPROVED_ANIMATION_MORPHING
-    SkelAnime_BetterInterpFrameTable(limbCount, dst, start, target, weight);
-#else
-    SkelAnime_InterpFrameTableImpl(limbCount, dst, start, target, weight);
 #endif
-}
 
 static u32 sDisabledTransformTaskGroups = 0;
 static u32 sCurAnimTaskGroup;

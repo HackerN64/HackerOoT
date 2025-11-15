@@ -598,6 +598,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_scene.o"
     include "$(BUILD_DIR)/src/code/object_table.o"
     include "$(BUILD_DIR)/src/code/z_scene_table.o"
+#if IMPROVED_ANIMATION_MORPHING
+    include "$(BUILD_DIR)/src/code/z_bettermorph.o"
+#endif
     include "$(BUILD_DIR)/src/code/z_skelanime.o"
     include "$(BUILD_DIR)/src/code/z_skin.o"
     include "$(BUILD_DIR)/src/code/z_skin_awb.o"
