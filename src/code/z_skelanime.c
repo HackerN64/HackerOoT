@@ -13,6 +13,8 @@
 #include "animation.h"
 #include "animation_legacy.h"
 #include "play_state.h"
+#include "sys_math.h"
+#include "config.h"
 
 #define ANIM_INTERP 1
 
@@ -773,6 +775,7 @@ s16 Animation_GetLastFrameLegacy(LegacyAnimationHeader* animation) {
     return animHeader->frameCount - 1;
 }
 
+#if !IMPROVED_ANIMATION_MORPHING
 /**
  * Linearly interpolates the start and target frame tables with the given weight, putting the result in dst
  */
@@ -801,6 +804,7 @@ void SkelAnime_InterpFrameTable(s32 limbCount, Vec3s* dst, Vec3s* start, Vec3s* 
         }
     }
 }
+#endif
 
 static u32 sDisabledTransformTaskGroups = 0;
 static u32 sCurAnimTaskGroup;
