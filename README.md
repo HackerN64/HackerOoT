@@ -83,6 +83,7 @@ List of every HackerOoT contributors, from most recent to oldest contribution:
 
 - hiisuya
 - Zeldaboy14
+- Sauraen
 - Reonu
 - Thar0
 - recardo-7

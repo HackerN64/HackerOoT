@@ -5,6 +5,7 @@
 #include "ultra64.h"
 #include "dma.h"
 #include "z_math.h"
+#include "config.h"
 
 struct PlayState;
 struct Actor;
@@ -233,7 +234,12 @@ void SkelAnime_CopyFrameTable(SkelAnime* skelAnime, Vec3s* dst, Vec3s* src);
 void SkelAnime_CopyFrameTableTrue(SkelAnime* skelAnime, Vec3s* dst, Vec3s* src, u8* copyFlag);
 void SkelAnime_CopyFrameTableFalse(SkelAnime* skelAnime, Vec3s* dst, Vec3s* src, u8* copyFlag);
 
+#if IMPROVED_ANIMATION_MORPHING
+void SkelAnime_BetterInterpFrameTable(s32 limbCount, Vec3s* dst, Vec3s* start, Vec3s* target, f32 weight);
+#define SkelAnime_InterpFrameTable SkelAnime_BetterInterpFrameTable
+#else
 void SkelAnime_InterpFrameTable(s32 limbCount, Vec3s* dst, Vec3s* start, Vec3s* target, f32 weight);
+#endif
 
 void SkelAnime_UpdateTranslation(SkelAnime* skelAnime, Vec3f* diff, s16 angle);
 
