@@ -1,8 +1,17 @@
-// See https://github.com/sauraen/OoTAnimInterp for more general information about OoT's math conventions
-// and the design of this patch. Algorithms are modified from:
-// https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
-// http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
-// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/Quaternions.pdf
+/**
+ * @file z_bettermorph.c
+ *
+ * This file contains an implementation of a more accurate animation interpolation routine. This avoids common
+ * issues encountered when linearly interpolating Euler angles during animations, instead using quaternions to
+ * perform spherical interpolation.
+ *
+ * See https://github.com/sauraen/OoTAnimInterp for the original implementation, particularly the README for more
+ * general information about OoT's math conventions and the design of this routine.
+ * Algorithms are modified from:
+ *  - https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+ *  - http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
+ *  - http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/Quaternions.pdf
+ */
 
 #include "config.h"
 #include "ultra64.h"
