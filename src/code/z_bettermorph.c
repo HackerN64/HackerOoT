@@ -1,18 +1,9 @@
-/*
-    Copyright (C) 2021 Sauraen
-    You may redistribute, create derivative works of, and otherwise copy this
-    software, subject to the following conditions:
-    - If the software or modified versions of it are distributed in source form,
-    it must retain this copyright notice and list of conditions
-    - Sauraen must be credited (e.g. in the Special Thanks) of any project using
-    this software or modified versions of it
 
-    See https://github.com/sauraen/OoTAnimInterp/tree/master for more general information about OoT's math conventions
-    and the design of this patch. Algorithms are modified from:
-    https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
-    http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
-    http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/Quaternions.pdf
-*/
+// See https://github.com/sauraen/OoTAnimInterp/tree/master for more general information about OoT's math conventions
+// and the design of this patch. Algorithms are modified from:
+// https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+// http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
+// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/Quaternions.pdf
 
 #include "config.h"
 #include "ultra64.h"

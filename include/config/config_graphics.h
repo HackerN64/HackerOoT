@@ -55,7 +55,7 @@
 #define ENABLE_MOTION_BLUR true
 
 /*
- * Improved animation morphing by Sauraen (see copyright notice in z_bettermorph.c)
+ * Improved animation morphing (more info in z_bettermorph.c)
  * Uses a more expensive but substantially better morphing algorithm.
  * Useful to avoid custom skeletons with complex animations "flipping out" when animations are morphed.
 */
