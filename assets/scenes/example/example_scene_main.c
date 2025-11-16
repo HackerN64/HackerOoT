@@ -222,9 +222,9 @@ AnimatedMatColorParams debug1_scene_header00_AnimatedMaterialColorParams_02 = {
 };
 
 AnimatedMaterial debug1_scene_header00_AnimatedMaterial[] = {
-    { 1 /* 8 */, 1, debug1_scene_header00_AnimatedMaterialTexScrollParams_00 },
-    { 2 /* 9 */, 1, debug1_scene_header00_AnimatedMaterialTexScrollParams_01 },
-    { -3 /* 10 */, 4, &debug1_scene_header00_AnimatedMaterialColorParams_02 }
+    { MATERIAL_SEGMENT_NUM(0x08), ANIM_MAT_TYPE_TWO_TEX_SCROLL, debug1_scene_header00_AnimatedMaterialTexScrollParams_00 },
+    { MATERIAL_SEGMENT_NUM(0x09), ANIM_MAT_TYPE_TWO_TEX_SCROLL, debug1_scene_header00_AnimatedMaterialTexScrollParams_01 },
+    { LAST_MATERIAL_SEGMENT_NUM(0x0A), ANIM_MAT_TYPE_COLOR_NON_LINEAR_INTERP, &debug1_scene_header00_AnimatedMaterialColorParams_02 }
 };
 #endif
 

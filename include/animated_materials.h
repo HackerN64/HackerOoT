@@ -6,6 +6,9 @@
 
 #if ENABLE_ANIMATED_MATERIALS
 
+#define MATERIAL_SEGMENT_NUM(n) (n)
+#define LAST_MATERIAL_SEGMENT_NUM(n) -MATERIAL_SEGMENT_NUM(n)
+
 typedef enum AnimatedMatType {
     /* 0 */ ANIM_MAT_TYPE_TEX_SCROLL,
     /* 1 */ ANIM_MAT_TYPE_TWO_TEX_SCROLL,
@@ -58,31 +61,31 @@ typedef struct {
     /* 0x4 */ void* params;
 } AnimatedMaterial; // size = 0x8
 
-struct PlayState;
+struct GameState;
 
-Gfx* AnimatedMat_TexScroll(struct PlayState* play, AnimatedMatTexScrollParams* params);
-void AnimatedMat_DrawTexScroll(struct PlayState* play, s32 segment, void* params);
-Gfx* AnimatedMat_TwoLayerTexScroll(struct PlayState* play, AnimatedMatTexScrollParams* params);
-void AnimatedMat_DrawTwoTexScroll(struct PlayState* play, s32 segment, void* params);
-void AnimatedMat_SetColor(struct PlayState* play, s32 segment, F3DPrimColor* primColorResult, F3DEnvColor* envColor);
-void AnimatedMat_DrawColor(struct PlayState* play, s32 segment, void* params);
+Gfx* AnimatedMat_TexScroll(struct GameState* gameState, AnimatedMatTexScrollParams* params);
+void AnimatedMat_DrawTexScroll(struct GameState* gameState, s32 segment, void* params);
+Gfx* AnimatedMat_TwoLayerTexScroll(struct GameState* gameState, AnimatedMatTexScrollParams* params);
+void AnimatedMat_DrawTwoTexScroll(struct GameState* gameState, s32 segment, void* params);
+void AnimatedMat_SetColor(struct GameState* gameState, s32 segment, F3DPrimColor* primColorResult, F3DEnvColor* envColor);
+void AnimatedMat_DrawColor(struct GameState* gameState, s32 segment, void* params);
 s32 AnimatedMat_Lerp(s32 min, s32 max, f32 norm);
-void AnimatedMat_DrawColorLerp(struct PlayState* play, s32 segment, void* params);
-void AnimatedMat_DrawColorNonLinearInterp(struct PlayState* play, s32 segment, void* params);
-void AnimatedMat_DrawTexCycle(struct PlayState* play, s32 segment, void* params);
-void AnimatedMat_DrawMain(struct PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step, u32 flags);
-void AnimatedMat_Draw(struct PlayState* play, AnimatedMaterial* matAnim);
-void AnimatedMat_DrawOpa(struct PlayState* play, AnimatedMaterial* matAnim);
-void AnimatedMat_DrawXlu(struct PlayState* play, AnimatedMaterial* matAnim);
-void AnimatedMat_DrawAlpha(struct PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio);
-void AnimatedMat_DrawAlphaOpa(struct PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio);
-void AnimatedMat_DrawAlphaXlu(struct PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio);
-void AnimatedMat_DrawStep(struct PlayState* play, AnimatedMaterial* matAnim, u32 step);
-void AnimatedMat_DrawStepOpa(struct PlayState* play, AnimatedMaterial* matAnim, u32 step);
-void AnimatedMat_DrawStepXlu(struct PlayState* play, AnimatedMaterial* matAnim, u32 step);
-void AnimatedMat_DrawAlphaStep(struct PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step);
-void AnimatedMat_DrawAlphaStepOpa(struct PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step);
-void AnimatedMat_DrawAlphaStepXlu(struct PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step);
+void AnimatedMat_DrawColorLerp(struct GameState* gameState, s32 segment, void* params);
+void AnimatedMat_DrawColorNonLinearInterp(struct GameState* gameState, s32 segment, void* params);
+void AnimatedMat_DrawTexCycle(struct GameState* gameState, s32 segment, void* params);
+void AnimatedMat_DrawMain(struct GameState* gameState, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step, u32 flags);
+void AnimatedMat_Draw(struct GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim);
+void AnimatedMat_DrawOpa(struct GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim);
+void AnimatedMat_DrawXlu(struct GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim);
+void AnimatedMat_DrawAlpha(struct GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim, f32 alphaRatio);
+void AnimatedMat_DrawAlphaOpa(struct GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim, f32 alphaRatio);
+void AnimatedMat_DrawAlphaXlu(struct GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim, f32 alphaRatio);
+void AnimatedMat_DrawStep(struct GameState* gameState, AnimatedMaterial* matAnim, u32 step);
+void AnimatedMat_DrawStepOpa(struct GameState* gameState, AnimatedMaterial* matAnim, u32 step);
+void AnimatedMat_DrawStepXlu(struct GameState* gameState, AnimatedMaterial* matAnim, u32 step);
+void AnimatedMat_DrawAlphaStep(struct GameState* gameState, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step);
+void AnimatedMat_DrawAlphaStepOpa(struct GameState* gameState, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step);
+void AnimatedMat_DrawAlphaStepXlu(struct GameState* gameState, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step);
 
 #endif
 

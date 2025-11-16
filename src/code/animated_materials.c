@@ -14,8 +14,8 @@ static f32 sMatAnimAlphaRatio;
 /**
  * Returns a pointer to a single layer texture scroll displaylist.
  */
-Gfx* AnimatedMat_TexScroll(PlayState* play, AnimatedMatTexScrollParams* params) {
-    return Gfx_TexScroll(play->state.gfxCtx, params->xStep * sMatAnimStep, -(params->yStep * sMatAnimStep),
+Gfx* AnimatedMat_TexScroll(GameState* gameState, AnimatedMatTexScrollParams* params) {
+    return Gfx_TexScroll(gameState->gfxCtx, params->xStep * sMatAnimStep, -(params->yStep * sMatAnimStep),
                          params->width, params->height);
 }
 
@@ -23,11 +23,11 @@ Gfx* AnimatedMat_TexScroll(PlayState* play, AnimatedMatTexScrollParams* params) 
  * Animated Material Type 0:
  * Scrolls a single layer texture using the provided `AnimatedMatTexScrollParams`.
  */
-void AnimatedMat_DrawTexScroll(PlayState* play, s32 segment, void* params) {
+void AnimatedMat_DrawTexScroll(GameState* gameState, s32 segment, void* params) {
     AnimatedMatTexScrollParams* texScrollParams = (AnimatedMatTexScrollParams*)params;
-    Gfx* texScrollDList = AnimatedMat_TexScroll(play, texScrollParams);
+    Gfx* texScrollDList = AnimatedMat_TexScroll(gameState, texScrollParams);
 
-    OPEN_DISPS(play->state.gfxCtx);
+    OPEN_DISPS(gameState->gfxCtx);
 
     if (sMatAnimFlags & 1) {
         gSPSegment(POLY_OPA_DISP++, segment, texScrollDList);
@@ -37,14 +37,14 @@ void AnimatedMat_DrawTexScroll(PlayState* play, s32 segment, void* params) {
         gSPSegment(POLY_XLU_DISP++, segment, texScrollDList);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx);
+    CLOSE_DISPS(gameState->gfxCtx);
 }
 
 /**
  * Returns a pointer to a two layer texture scroll displaylist.
  */
-Gfx* AnimatedMat_TwoLayerTexScroll(PlayState* play, AnimatedMatTexScrollParams* params) {
-    return Gfx_TwoTexScroll(play->state.gfxCtx, 0, params[0].xStep * sMatAnimStep, -(params[0].yStep * sMatAnimStep),
+Gfx* AnimatedMat_TwoLayerTexScroll(GameState* gameState, AnimatedMatTexScrollParams* params) {
+    return Gfx_TwoTexScroll(gameState->gfxCtx, 0, params[0].xStep * sMatAnimStep, -(params[0].yStep * sMatAnimStep),
                             params[0].width, params[0].height, 1, params[1].xStep * sMatAnimStep,
                             -(params[1].yStep * sMatAnimStep), params[1].width, params[1].height);
 }
@@ -53,11 +53,11 @@ Gfx* AnimatedMat_TwoLayerTexScroll(PlayState* play, AnimatedMatTexScrollParams* 
  * Animated Material Type 1:
  * Scrolls a two layer texture using the provided `AnimatedMatTexScrollParams`.
  */
-void AnimatedMat_DrawTwoTexScroll(PlayState* play, s32 segment, void* params) {
+void AnimatedMat_DrawTwoTexScroll(GameState* gameState, s32 segment, void* params) {
     AnimatedMatTexScrollParams* texScrollParams = (AnimatedMatTexScrollParams*)params;
-    Gfx* texScrollDList = AnimatedMat_TwoLayerTexScroll(play, texScrollParams);
+    Gfx* texScrollDList = AnimatedMat_TwoLayerTexScroll(gameState, texScrollParams);
 
-    OPEN_DISPS(play->state.gfxCtx);
+    OPEN_DISPS(gameState->gfxCtx);
 
     if (sMatAnimFlags & 1) {
         gSPSegment(POLY_OPA_DISP++, segment, texScrollDList);
@@ -67,16 +67,16 @@ void AnimatedMat_DrawTwoTexScroll(PlayState* play, s32 segment, void* params) {
         gSPSegment(POLY_XLU_DISP++, segment, texScrollDList);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx);
+    CLOSE_DISPS(gameState->gfxCtx);
 }
 
 /**
  * Generates a displaylist that sets the prim and env color, and stores it in the provided segment ID.
  */
-void AnimatedMat_SetColor(PlayState* play, s32 segment, F3DPrimColor* primColorResult, F3DEnvColor* envColor) {
-    Gfx* gfx = GRAPH_ALLOC(play->state.gfxCtx, 3 * sizeof(Gfx));
+void AnimatedMat_SetColor(GameState* gameState, s32 segment, F3DPrimColor* primColorResult, F3DEnvColor* envColor) {
+    Gfx* gfx = GRAPH_ALLOC(gameState->gfxCtx, 3 * sizeof(Gfx));
 
-    OPEN_DISPS(play->state.gfxCtx);
+    OPEN_DISPS(gameState->gfxCtx);
 
     // clang-format off
     if (sMatAnimFlags & 1) { gSPSegment(POLY_OPA_DISP++, segment, gfx); }
@@ -92,14 +92,14 @@ void AnimatedMat_SetColor(PlayState* play, s32 segment, F3DPrimColor* primColorR
 
     gSPEndDisplayList(gfx++);
 
-    CLOSE_DISPS(play->state.gfxCtx);
+    CLOSE_DISPS(gameState->gfxCtx);
 }
 
 /**
  * Animated Material Type 2:
  * Color key frame animation without linear interpolation.
  */
-void AnimatedMat_DrawColor(PlayState* play, s32 segment, void* params) {
+void AnimatedMat_DrawColor(GameState* gameState, s32 segment, void* params) {
     AnimatedMatColorParams* colorAnimParams = (AnimatedMatColorParams*)params;
     F3DPrimColor* primColor = SEGMENTED_TO_VIRTUAL(colorAnimParams->primColors);
     F3DEnvColor* envColor;
@@ -110,7 +110,7 @@ void AnimatedMat_DrawColor(PlayState* play, s32 segment, void* params) {
                    ? (F3DEnvColor*)SEGMENTED_TO_VIRTUAL(colorAnimParams->envColors) + curFrame
                    : NULL;
 
-    AnimatedMat_SetColor(play, segment, primColor, envColor);
+    AnimatedMat_SetColor(gameState, segment, primColor, envColor);
 }
 
 /**
@@ -124,7 +124,7 @@ s32 AnimatedMat_Lerp(s32 min, s32 max, f32 norm) {
  * Animated Material Type 3:
  * Color key frame animation with linear interpolation.
  */
-void AnimatedMat_DrawColorLerp(PlayState* play, s32 segment, void* params) {
+void AnimatedMat_DrawColorLerp(GameState* gameState, s32 segment, void* params) {
     AnimatedMatColorParams* colorAnimParams = (AnimatedMatColorParams*)params;
     F3DPrimColor* primColorMax = SEGMENTED_TO_VIRTUAL(colorAnimParams->primColors);
     F3DEnvColor* envColorMax;
@@ -176,14 +176,14 @@ void AnimatedMat_DrawColorLerp(PlayState* play, s32 segment, void* params) {
         envColorMax = NULL;
     }
 
-    AnimatedMat_SetColor(play, segment, &primColorResult, (envColorMax != NULL) ? &envColorResult : NULL);
+    AnimatedMat_SetColor(gameState, segment, &primColorResult, (envColorMax != NULL) ? &envColorResult : NULL);
 }
 
 /**
  * Animated Material Type 4:
  * Color key frame animation with non-linear interpolation.
  */
-void AnimatedMat_DrawColorNonLinearInterp(PlayState* play, s32 segment, void* params) {
+void AnimatedMat_DrawColorNonLinearInterp(GameState* gameState, s32 segment, void* params) {
     AnimatedMatColorParams* colorAnimParams = (AnimatedMatColorParams*)params;
     F3DPrimColor* primColorCur = SEGMENTED_TO_VIRTUAL(colorAnimParams->primColors);
     F3DEnvColor* envColorCur = SEGMENTED_TO_VIRTUAL(colorAnimParams->envColors);
@@ -261,21 +261,21 @@ void AnimatedMat_DrawColorNonLinearInterp(PlayState* play, s32 segment, void* pa
         envColorCur = NULL;
     }
 
-    AnimatedMat_SetColor(play, segment, &primColorResult, (envColorCur != NULL) ? &envColorResult : NULL);
+    AnimatedMat_SetColor(gameState, segment, &primColorResult, (envColorCur != NULL) ? &envColorResult : NULL);
 }
 
 /**
  * Animated Material Type 5:
  * Cycles between a list of textures (imagine like a GIF)
  */
-void AnimatedMat_DrawTexCycle(PlayState* play, s32 segment, void* params) {
+void AnimatedMat_DrawTexCycle(GameState* gameState, s32 segment, void* params) {
     AnimatedMatTexCycleParams* texAnimParams = params;
     TexturePtr* texList = SEGMENTED_TO_VIRTUAL(texAnimParams->textureList);
     u8* texId = SEGMENTED_TO_VIRTUAL(texAnimParams->textureIndexList);
     s32 curFrame = sMatAnimStep % texAnimParams->keyFrameLength;
     TexturePtr tex = SEGMENTED_TO_VIRTUAL(texList[texId[curFrame]]);
 
-    OPEN_DISPS(play->state.gfxCtx);
+    OPEN_DISPS(gameState->gfxCtx);
 
     if (sMatAnimFlags & 1) {
         gSPSegment(POLY_OPA_DISP++, segment, tex);
@@ -285,15 +285,15 @@ void AnimatedMat_DrawTexCycle(PlayState* play, s32 segment, void* params) {
         gSPSegment(POLY_XLU_DISP++, segment, tex);
     }
 
-    CLOSE_DISPS(play->state.gfxCtx);
+    CLOSE_DISPS(gameState->gfxCtx);
 }
 
 /**
  * This is the main function that handles the animated material system.
  * There are six different animated material types, which should be set in the provided `AnimatedMaterial`.
  */
-void AnimatedMat_DrawMain(PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step, u32 flags) {
-    static void (*sMatAnimDrawHandlers[ANIM_MAT_TYPE_MAX])(PlayState*, s32 segment, void* params) = {
+void AnimatedMat_DrawMain(GameState* gameState, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step, u32 flags) {
+    static void (*sMatAnimDrawHandlers[ANIM_MAT_TYPE_MAX])(GameState*, s32 segment, void* params) = {
         AnimatedMat_DrawTexScroll,            // ANIM_MAT_TYPE_TEX_SCROLL
         AnimatedMat_DrawTwoTexScroll,         // ANIM_MAT_TYPE_TWO_TEX_SCROLL
         AnimatedMat_DrawColor,                // ANIM_MAT_TYPE_COLOR
@@ -311,8 +311,8 @@ void AnimatedMat_DrawMain(PlayState* play, AnimatedMaterial* matAnim, f32 alphaR
     if ((matAnim != NULL) && (matAnim->segment != 0)) {
         do {
             segment = matAnim->segment;
-            segmentAbs = ABS(segment) + 7;
-            sMatAnimDrawHandlers[matAnim->type](play, segmentAbs, SEGMENTED_TO_VIRTUAL(matAnim->params));
+            segmentAbs = ABS(segment);
+            sMatAnimDrawHandlers[matAnim->type](gameState, segmentAbs, SEGMENTED_TO_VIRTUAL(matAnim->params));
             matAnim++;
         } while (segment >= 0);
     }
@@ -321,85 +321,85 @@ void AnimatedMat_DrawMain(PlayState* play, AnimatedMaterial* matAnim, f32 alphaR
 /**
  * Draws an animated material to both OPA and XLU buffers.
  */
-void AnimatedMat_Draw(PlayState* play, AnimatedMaterial* matAnim) {
-    AnimatedMat_DrawMain(play, matAnim, 1, play->gameplayFrames, 3);
+void AnimatedMat_Draw(GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim) {
+    AnimatedMat_DrawMain(gameState, matAnim, 1, gameplayFrames, 3);
 }
 
 /**
  * Draws an animated material to only the OPA buffer.
  */
-void AnimatedMat_DrawOpa(PlayState* play, AnimatedMaterial* matAnim) {
-    AnimatedMat_DrawMain(play, matAnim, 1, play->gameplayFrames, 1);
+void AnimatedMat_DrawOpa(GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim) {
+    AnimatedMat_DrawMain(gameState, matAnim, 1, gameplayFrames, 1);
 }
 
 /**
  * Draws an animated material to only the XLU buffer.
  */
-void AnimatedMat_DrawXlu(PlayState* play, AnimatedMaterial* matAnim) {
-    AnimatedMat_DrawMain(play, matAnim, 1, play->gameplayFrames, 2);
+void AnimatedMat_DrawXlu(GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim) {
+    AnimatedMat_DrawMain(gameState, matAnim, 1, gameplayFrames, 2);
 }
 
 /**
  * Draws an animated material with an alpha ratio (0.0 - 1.0) both OPA and XLU buffers.
  */
-void AnimatedMat_DrawAlpha(PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio) {
-    AnimatedMat_DrawMain(play, matAnim, alphaRatio, play->gameplayFrames, 3);
+void AnimatedMat_DrawAlpha(GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim, f32 alphaRatio) {
+    AnimatedMat_DrawMain(gameState, matAnim, alphaRatio, gameplayFrames, 3);
 }
 
 /**
  * Draws an animated material with an alpha ratio (0.0 - 1.0) to only the OPA buffer.
  */
-void AnimatedMat_DrawAlphaOpa(PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio) {
-    AnimatedMat_DrawMain(play, matAnim, alphaRatio, play->gameplayFrames, 1);
+void AnimatedMat_DrawAlphaOpa(GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim, f32 alphaRatio) {
+    AnimatedMat_DrawMain(gameState, matAnim, alphaRatio, gameplayFrames, 1);
 }
 
 /**
  * Draws an animated material with an alpha ratio (0.0 - 1.0) to only the XLU buffer.
  */
-void AnimatedMat_DrawAlphaXlu(PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio) {
-    AnimatedMat_DrawMain(play, matAnim, alphaRatio, play->gameplayFrames, 2);
+void AnimatedMat_DrawAlphaXlu(GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim, f32 alphaRatio) {
+    AnimatedMat_DrawMain(gameState, matAnim, alphaRatio, gameplayFrames, 2);
 }
 
 /**
  * Draws an animated material with a step to both the OPA and XLU buffers.
  */
-void AnimatedMat_DrawStep(PlayState* play, AnimatedMaterial* matAnim, u32 step) {
-    AnimatedMat_DrawMain(play, matAnim, 1, step, 3);
+void AnimatedMat_DrawStep(GameState* gameState, AnimatedMaterial* matAnim, u32 step) {
+    AnimatedMat_DrawMain(gameState, matAnim, 1, step, 3);
 }
 
 /**
  * Draws an animated material with a step to only the OPA buffer.
  */
-void AnimatedMat_DrawStepOpa(PlayState* play, AnimatedMaterial* matAnim, u32 step) {
-    AnimatedMat_DrawMain(play, matAnim, 1, step, 1);
+void AnimatedMat_DrawStepOpa(GameState* gameState, AnimatedMaterial* matAnim, u32 step) {
+    AnimatedMat_DrawMain(gameState, matAnim, 1, step, 1);
 }
 
 /**
  * Draws an animated material with a step to only the XLU buffer.
  */
-void AnimatedMat_DrawStepXlu(PlayState* play, AnimatedMaterial* matAnim, u32 step) {
-    AnimatedMat_DrawMain(play, matAnim, 1, step, 2);
+void AnimatedMat_DrawStepXlu(GameState* gameState, AnimatedMaterial* matAnim, u32 step) {
+    AnimatedMat_DrawMain(gameState, matAnim, 1, step, 2);
 }
 
 /**
  * Draws an animated material with an alpha ratio (0.0 - 1.0) and a step to both the OPA and XLU buffers.
  */
-void AnimatedMat_DrawAlphaStep(PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step) {
-    AnimatedMat_DrawMain(play, matAnim, alphaRatio, step, 3);
+void AnimatedMat_DrawAlphaStep(GameState* gameState, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step) {
+    AnimatedMat_DrawMain(gameState, matAnim, alphaRatio, step, 3);
 }
 
 /**
  * Draws an animated material with an alpha ratio (0.0 - 1.0) and a step to only the OPA buffer.
  */
-void AnimatedMat_DrawAlphaStepOpa(PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step) {
-    AnimatedMat_DrawMain(play, matAnim, alphaRatio, step, 1);
+void AnimatedMat_DrawAlphaStepOpa(GameState* gameState, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step) {
+    AnimatedMat_DrawMain(gameState, matAnim, alphaRatio, step, 1);
 }
 
 /**
  * Draws an animated material with an alpha ratio (0.0 - 1.0) and a step to only the XLU buffer.
  */
-void AnimatedMat_DrawAlphaStepXlu(PlayState* play, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step) {
-    AnimatedMat_DrawMain(play, matAnim, alphaRatio, step, 2);
+void AnimatedMat_DrawAlphaStepXlu(GameState* gameState, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step) {
+    AnimatedMat_DrawMain(gameState, matAnim, alphaRatio, step, 2);
 }
 
 #endif

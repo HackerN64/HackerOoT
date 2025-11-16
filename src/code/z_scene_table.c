@@ -1754,7 +1754,7 @@ void Scene_DrawConfigBesitu(PlayState* play) {
  * Allows the usage of the animated material system in scenes.
  */
 void Scene_DrawConfigMatAnim(PlayState* play) {
-    AnimatedMat_Draw(play, play->sceneMaterialAnims);
+    AnimatedMat_Draw(&play->state, play->gameplayFrames, play->sceneMaterialAnims);
 }
 
 /**
@@ -1762,7 +1762,7 @@ void Scene_DrawConfigMatAnim(PlayState* play) {
  * rather than always animating like `Scene_DrawConfigMatAnim`.
  */
 void Scene_DrawConfigMatAnimManualStep(PlayState* play) {
-    AnimatedMat_DrawStep(play, play->sceneMaterialAnims, play->roomCtx.drawParams[0]);
+    AnimatedMat_DrawStep(&play->state, play->sceneMaterialAnims, play->roomCtx.drawParams[0]);
 }
 #endif
 
