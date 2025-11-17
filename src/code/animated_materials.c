@@ -4,12 +4,17 @@
 #include "gfx.h"
 #include "segmented_address.h"
 #include "play_state.h"
+#include "printf.h"
+#include "gfx_setupdl.h"
+#include "save.h"
+#include "actor.h"
 
 #if ENABLE_ANIMATED_MATERIALS
 
 static s32 sMatAnimStep;
 static u32 sMatAnimFlags;
 static f32 sMatAnimAlphaRatio;
+static s32 sSavedMatAnimStep;
 
 /**
  * Returns a pointer to a single layer texture scroll displaylist.
@@ -288,21 +293,249 @@ void AnimatedMat_DrawTexCycle(GameState* gameState, s32 segment, void* params) {
     CLOSE_DISPS(gameState->gfxCtx);
 }
 
+void AnimatedMat_DrawColorCycle(GameState* gameState, s32 segment, void* params) {
+    static u8 sCycleTimer = 0;
+    static u16 sCurKeyframe = 0;
+    AnimatedMatColorParams* colorAnimParams = (AnimatedMatColorParams*)params;
+    F3DPrimColor* primColors = SEGMENTED_TO_VIRTUAL(colorAnimParams->primColors);
+    F3DEnvColor* envColor = NULL;
+    u16* keyFrames = SEGMENTED_TO_VIRTUAL(colorAnimParams->keyFrames);
+
+    // reset values if we reach the end
+    if (sCurKeyframe >= colorAnimParams->keyFrameLength) {
+        sCurKeyframe = 0;
+        sCycleTimer = 0;
+    }
+
+    // draw the color
+    if (colorAnimParams->envColors != NULL) {
+        envColor = SEGMENTED_TO_VIRTUAL(colorAnimParams->envColors) + sCurKeyframe;
+    }
+
+    AnimatedMat_SetColor(gameState, segment, &primColors[sCurKeyframe], envColor);
+
+    // finally, increase the timer until we reach the target then go to the next keyframe and reset the timer
+    if (sCycleTimer < keyFrames[sCurKeyframe]) {
+        sCycleTimer++;
+    } else {
+        sCurKeyframe++;
+        sCycleTimer = 0;
+    }
+}
+
+void AnimatedMat_DrawTexTimedCycle(GameState* gameState, s32 segment, void* params) {
+    static u8 sCycleTimer = 0;
+    static u16 sCurKeyframe = 0;
+    AnimatedMatTexTimedCycleParams* animParams = params;
+    AnimatedMatTexTimedCycleKeyframe* keyframeList;
+    u16 targetTime;
+    TexturePtr texture;
+
+    keyframeList = SEGMENTED_TO_VIRTUAL(animParams->keyframeList);
+
+    if (sCurKeyframe >= animParams->keyframeLength) {
+        sCurKeyframe = 0;
+        sCycleTimer = 0;
+    }
+
+    OPEN_DISPS(gameState->gfxCtx);
+
+    texture = SEGMENTED_TO_VIRTUAL(keyframeList[sCurKeyframe].texture);
+
+    if (sMatAnimFlags & 1) {
+        gSPSegment(POLY_OPA_DISP++, segment, texture);
+    }
+
+    if (sMatAnimFlags & 2) {
+        gSPSegment(POLY_XLU_DISP++, segment, texture);
+    }
+
+    CLOSE_DISPS(gameState->gfxCtx);
+
+    if (sCycleTimer < keyframeList[sCurKeyframe].displayTime) {
+        sCycleTimer++;
+    } else {
+        sCurKeyframe++;
+        sCycleTimer = 0;
+    }
+}
+
+static Gfx sDefaultDisplayList[] = {
+    gsSPSegment(0x08, gEmptyDL),
+    gsSPSegment(0x09, gEmptyDL),
+    gsSPSegment(0x0A, gEmptyDL),
+    gsSPSegment(0x0B, gEmptyDL),
+    gsSPSegment(0x0C, gEmptyDL),
+    gsSPSegment(0x0D, gEmptyDL),
+    gsDPPipeSync(),
+    gsDPSetPrimColor(0, 0, 128, 128, 128, 128),
+    gsDPSetEnvColor(128, 128, 128, 128),
+    gsSPEndDisplayList(),
+};
+
+#define STRINGIFY(s) #s
+#define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)
+
+#define log(...) PRINTF("Line " EXPAND_AND_STRINGIFY(__LINE__) " - " __VA_ARGS__);
+
+// probably dumb
+#define AnimatedMat_ProcessEventCondition(condType, a, b) \
+    {                                                     \
+        switch ((condType)) {                             \
+            case MAT_EVENT_COND_EQUAL:                    \
+                return (b) == (a);                        \
+            case MAT_EVENT_COND_DIFF:                     \
+                return (b) != (a);                        \
+            case MAT_EVENT_COND_LESS:                     \
+                return (b) < (a);                         \
+            case MAT_EVENT_COND_SUPERIOR:                 \
+                return (b) > (a);                         \
+            case MAT_EVENT_COND_LESS_T:                   \
+                return (b) <= (a);                        \
+            case MAT_EVENT_COND_SUPERIOR_T:               \
+                return (b) >= (a);                        \
+            default:                                      \
+                break;                                    \
+        }                                                 \
+    }
+
+// most likely unnecessary but to make sure it's fine
+u8 AnimatedMat_ProcessEventConditionU(u8 condType, u32 a, u32 b) {
+    log("condType: %d, a: %d, b: %d\n", condType, a, b);
+    AnimatedMat_ProcessEventCondition(condType, a, b);
+    return true;
+}
+
+u8 AnimatedMat_ProcessEventConditionS(u8 condType, s32 a, s32 b) {
+    log("condType: %d, a: %d, b: %d\n", condType, a, b);
+    AnimatedMat_ProcessEventCondition(condType, a, b);
+    return true;
+}
+
+void AnimatedMat_ProcessFlagEvents(GameState* gameState, MaterialEventFlag* event, u8* pabFlags) {
+    PlayState* play = (PlayState*)gameState;
+    u8 allowDraw = true;
+
+    log("gamemode: %d\n", gSaveContext.gameMode);
+    // make sure this is the play state
+    if (gSaveContext.gameMode == GAMEMODE_NORMAL) {
+        log("event->type: %d, flag: 0x%02X\n", event->type, event->flag);
+        switch (event->type) {
+            case MAT_EVENT_FLAG_TYPE_SWITCH_FLAG:
+                allowDraw = Flags_GetSwitch(play, event->flag) != 0;
+                break;
+            case MAT_EVENT_FLAG_TYPE_EVENTCHKINF_FLAG:
+                allowDraw = Flags_GetEventChkInf(event->flag) != 0;
+                break;
+            case MAT_EVENT_FLAG_TYPE_INF_FLAG:
+                allowDraw = Flags_GetInfTable(event->flag) != 0;
+                break;
+            case MAT_EVENT_FLAG_TYPE_COLLECTIBLE_FLAG:
+                allowDraw = Flags_GetCollectible(play, event->flag) != 0;
+                break;
+            case MAT_EVENT_FLAG_TYPE_TREASURE_FLAG:
+                allowDraw = Flags_GetTreasure(play, event->flag) != 0;
+                break;
+            case MAT_EVENT_FLAG_TYPE_TEMPCLEAR_FLAG:
+                allowDraw = Flags_GetTempClear(play, event->flag) != 0;
+                break;
+            case MAT_EVENT_FLAG_TYPE_CLEAR_FLAG:
+                allowDraw = Flags_GetClear(play, event->flag) != 0;
+                break;
+            default:
+                break;
+        }
+    }
+
+    pabFlags[event->type] = allowDraw;
+}
+
+void AnimatedMat_ProcessGameEvents(GameState* gameState, MaterialEventGame* event, u8* pabGame) {
+    u8 allowDraw = true;
+
+    log("event->type: %d\n", event->type);
+    switch (event->type) {
+        case MAT_EVENT_GAME_TYPE_AGE:
+            log("target age: %d, current age: %d\n", event->age, gSaveContext.save.linkAge);
+            allowDraw = AnimatedMat_ProcessEventConditionS(event->condType, event->age, gSaveContext.save.linkAge);
+            break;
+        case MAT_EVENT_GAME_TYPE_HEALTH:
+            allowDraw = AnimatedMat_ProcessEventConditionS(event->condType, event->health,
+                                                           gSaveContext.save.info.playerData.health);
+            break;
+        case MAT_EVENT_GAME_TYPE_RUPEES:
+            allowDraw = AnimatedMat_ProcessEventConditionS(event->condType, event->rupees,
+                                                           gSaveContext.save.info.playerData.rupees);
+            break;
+        case MAT_EVENT_GAME_TYPE_INVENTORY:
+            break;
+        default:
+            break;
+    }
+
+    pabGame[event->type] = allowDraw;
+}
+
+// returns true when it should draw, otherwise returns false
+u8 AnimatedMat_ProcessEvents(GameState* gameState, AnimatedMaterial* matAnim) {
+    static u8 abFlags[MAT_EVENT_FLAG_TYPE_MAX] = { true };
+    static u8 abGame[MAT_EVENT_GAME_TYPE_MAX] = { true };
+    AnimatedMatEvent* matEvent;
+    MaterialEvent* eventList;
+    s32 i;
+
+    if (matAnim->matEvent == NULL) {
+        log("aborted due to lack of events\n");
+        return true;
+    }
+
+    matEvent = SEGMENTED_TO_VIRTUAL(matAnim->matEvent);
+    eventList = SEGMENTED_TO_VIRTUAL(matEvent->eventList);
+
+    memset(abFlags, true, sizeof(abFlags));
+    memset(abGame, true, sizeof(abGame));
+
+    log("length: %d\n", matEvent->length);
+    for (i = 0; i < matEvent->length; i++) {
+        MaterialEvent* curEvent = &eventList[i];
+
+        log("event type: %d\n", curEvent->type);
+
+        switch (curEvent->type) {
+            case MAT_EVENT_TYPE_FLAG:
+                AnimatedMat_ProcessFlagEvents(gameState, &curEvent->event.flag, abFlags);
+                break;
+            case MAT_EVENT_TYPE_GAME:
+                AnimatedMat_ProcessGameEvents(gameState, &curEvent->event.game, abGame);
+                break;
+            default:
+                break;
+        }
+    }
+
+    for (i = 0; i < MAT_EVENT_FLAG_TYPE_MAX; i++) {
+        if (!abFlags[i]) {
+            return false;
+        }
+    }
+
+    for (i = 0; i < MAT_EVENT_GAME_TYPE_MAX; i++) {
+        if (!abGame[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 /**
  * This is the main function that handles the animated material system.
  * There are six different animated material types, which should be set in the provided `AnimatedMaterial`.
  */
 void AnimatedMat_DrawMain(GameState* gameState, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step, u32 flags) {
-    static void (*sMatAnimDrawHandlers[ANIM_MAT_TYPE_MAX])(GameState*, s32 segment, void* params) = {
-        AnimatedMat_DrawTexScroll,            // ANIM_MAT_TYPE_TEX_SCROLL
-        AnimatedMat_DrawTwoTexScroll,         // ANIM_MAT_TYPE_TWO_TEX_SCROLL
-        AnimatedMat_DrawColor,                // ANIM_MAT_TYPE_COLOR
-        AnimatedMat_DrawColorLerp,            // ANIM_MAT_TYPE_COLOR_LERP
-        AnimatedMat_DrawColorNonLinearInterp, // ANIM_MAT_TYPE_COLOR_NON_LINEAR_INTERP
-        AnimatedMat_DrawTexCycle,             // ANIM_MAT_TYPE_TEX_CYCLE
-    };
     s32 segmentAbs;
     s32 segment;
+    u8 drawDefaultDL = false;
 
     sMatAnimAlphaRatio = alphaRatio;
     sMatAnimStep = step;
@@ -310,9 +543,61 @@ void AnimatedMat_DrawMain(GameState* gameState, AnimatedMaterial* matAnim, f32 a
 
     if ((matAnim != NULL) && (matAnim->segment != 0)) {
         do {
+            void* params = SEGMENTED_TO_VIRTUAL(matAnim->params);
             segment = matAnim->segment;
             segmentAbs = ABS(segment);
-            sMatAnimDrawHandlers[matAnim->type](gameState, segmentAbs, SEGMENTED_TO_VIRTUAL(matAnim->params));
+            drawDefaultDL = false;
+
+            if (AnimatedMat_ProcessEvents(gameState, matAnim)) {
+                switch (matAnim->type) {
+                    case ANIM_MAT_TYPE_TEX_SCROLL:
+                        AnimatedMat_DrawTexScroll(gameState, segmentAbs, params);
+                        break;
+                    case ANIM_MAT_TYPE_TWO_TEX_SCROLL:
+                        AnimatedMat_DrawTwoTexScroll(gameState, segmentAbs, params);
+                        break;
+                    case ANIM_MAT_TYPE_COLOR:
+                        AnimatedMat_DrawColor(gameState, segmentAbs, params);
+                        break;
+                    case ANIM_MAT_TYPE_COLOR_LERP:
+                        AnimatedMat_DrawColorLerp(gameState, segmentAbs, params);
+                        break;
+                    case ANIM_MAT_TYPE_COLOR_NON_LINEAR_INTERP:
+                        AnimatedMat_DrawColorNonLinearInterp(gameState, segmentAbs, params);
+                        break;
+                    case ANIM_MAT_TYPE_TEX_CYCLE:
+                        AnimatedMat_DrawTexCycle(gameState, segmentAbs, params);
+                        break;
+                    case ANIM_MAT_TYPE_COLOR_CYCLE:
+                        AnimatedMat_DrawColorCycle(gameState, segmentAbs, params);
+                        break;
+                    case ANIM_MAT_TYPE_TEX_TIMED_CYCLE:
+                        AnimatedMat_DrawTexTimedCycle(gameState, segmentAbs, params);
+                        break;
+                    default:
+                        drawDefaultDL = true;
+                        break;
+                }
+            } else {
+                drawDefaultDL = true;
+            }
+
+            if (drawDefaultDL) {
+                OPEN_DISPS(gameState->gfxCtx);
+
+                gSPSegment(POLY_OPA_DISP++, segmentAbs, gEmptyDL);
+                gDPPipeSync(POLY_OPA_DISP++);
+                gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 128, 128, 128, 128);
+                gDPSetEnvColor(POLY_OPA_DISP++, 128, 128, 128, 128);
+
+                gSPSegment(POLY_XLU_DISP++, segmentAbs, gEmptyDL);
+                gDPPipeSync(POLY_XLU_DISP++);
+                gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 128, 128, 128, 128);
+                gDPSetEnvColor(POLY_XLU_DISP++, 128, 128, 128, 128);
+
+                CLOSE_DISPS(gameState->gfxCtx);
+            }
+
             matAnim++;
         } while (segment >= 0);
     }

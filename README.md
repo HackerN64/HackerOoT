@@ -90,9 +90,11 @@ List of every HackerOoT contributors, from most recent to oldest contribution:
 - HailToDodongo
 - CrashOverride95
 - Trueffell
-- Yanis42
+- Yanis002
 - kurethedead
 - zelllll
 - ariahiro64
 - ghost
 - krm01
+
+New Animated Materials types based on [z64rom](https://github.com/z64dev/z64rom/blob/main/project/src/lib_user/library/SceneRender.c). Special thanks to Nokaubure, rankaisija, z64me and the other contributors from that project.
