@@ -29,6 +29,7 @@ typedef enum AnimatedMatType {
 // event system (flag, player state, ...)
 
 typedef enum MaterialEventCondition {
+    MAT_EVENT_COND_NONE,
     MAT_EVENT_COND_EQUAL,      // a == b
     MAT_EVENT_COND_DIFF,       // a != b
     MAT_EVENT_COND_LESS,       // a < b
@@ -64,14 +65,54 @@ typedef enum MaterialEventGameType {
     MAT_EVENT_GAME_TYPE_MAX,
 } MaterialEventGameType;
 
+typedef enum MaterialEventInvType {
+    MAT_EVENT_INV_TYPE_ITEMS,
+    MAT_EVENT_INV_TYPE_EQUIPMENT,
+    MAT_EVENT_INV_TYPE_QUEST,
+    MAT_EVENT_INV_TYPE_DUNGEON_ITEMS,
+    MAT_EVENT_INV_TYPE_DUNGEON_KEYS,
+    MAT_EVENT_INV_TYPE_GS_TOKENS,
+    MAT_EVENT_INV_TYPE_MAX,
+} MaterialEventInvType;
+
 typedef union MaterialEventGame {
     struct {
         u8 type;     // see MaterialEventGameType
         u8 condType; // see MaterialEventCondition
         union {
+            // MAT_EVENT_GAME_TYPE_AGE
             s8 age;
+
+            // MAT_EVENT_GAME_TYPE_HEALTH
             s16 health;
+
+            // MAT_EVENT_GAME_TYPE_RUPEES
             s16 rupees;
+
+            // MAT_EVENT_GAME_TYPE_INVENTORY
+            struct {
+                u8 type; // see MaterialEventInvType
+                union {
+                    u8 itemId;
+                    u8 upgradeType;
+                    u8 unused;
+                    u8 sceneId;
+                    u8 questItem;
+                };
+                union {
+                    // MAT_EVENT_INV_TYPE_ITEMS and MAT_EVENT_INV_TYPE_DUNGEON_KEYS
+                    s8 amount; // MAT_EVENT_INV_TYPE_ITEMS: -1 means no ammo check
+
+                    // MAT_EVENT_INV_TYPE_EQUIPMENT
+                    u8 swordHealth; // -1 means no sword health check
+                    u8 upgradeValue;
+
+                    // MAT_EVENT_INV_TYPE_DUNGEON_ITEMS
+
+                    // MAT_EVENT_INV_TYPE_GS_TOKENS
+                    s16 gsTokens;
+                };
+            } inventory;
         };
     };
     s32 _words[2];
@@ -198,12 +239,14 @@ void AnimatedMat_DrawAlphaStepXlu(struct GameState* gameState, AnimatedMaterial*
 
 // useful macros to declare an event entry
 
+// generic flag macro
 #define EVENT_FLAG(type, flag)            \
     {                                     \
         MAT_EVENT_TYPE_FLAG,              \
         { CMD_W((type)), CMD_W((flag)) }, \
     }
 
+// specific flag macros
 #define EVENT_SWITCH_FLAG(flag) EVENT_FLAG(MAT_EVENT_FLAG_TYPE_SWITCH_FLAG, (flag))
 #define EVENT_EVENTCHKINF_FLAG(flag) EVENT_FLAG(MAT_EVENT_FLAG_TYPE_EVENTCHKINF_FLAG, (flag))
 #define EVENT_INF_FLAG(flag) EVENT_FLAG(MAT_EVENT_FLAG_TYPE_INF_FLAG, (flag))
@@ -212,22 +255,74 @@ void AnimatedMat_DrawAlphaStepXlu(struct GameState* gameState, AnimatedMaterial*
 #define EVENT_TEMPCLEAR_FLAG(flag) EVENT_FLAG(MAT_EVENT_FLAG_TYPE_TEMPCLEAR_FLAG, (flag))
 #define EVENT_CLEAR_FLAG(flag) EVENT_FLAG(MAT_EVENT_FLAG_TYPE_CLEAR_FLAG, (flag))
 
+// age macro
 #define EVENT_GAME_AGE(condType, age)                                          \
     {                                                                          \
         MAT_EVENT_TYPE_GAME,                                                   \
         { CMD_BBBB(MAT_EVENT_GAME_TYPE_AGE, (condType), (age), 0), CMD_W(0) }, \
     }
 
+// health macro
 #define EVENT_GAME_HEALTH(condType, amount)                                      \
     {                                                                            \
         MAT_EVENT_TYPE_GAME,                                                     \
         { CMD_BBH(MAT_EVENT_GAME_TYPE_HEALTH, (condType), (amount)), CMD_W(0) }, \
     }
 
+// rupees macro
 #define EVENT_GAME_RUPEES(condType, amount)                                      \
     {                                                                            \
         MAT_EVENT_TYPE_GAME,                                                     \
         { CMD_BBH(MAT_EVENT_GAME_TYPE_RUPEES, (condType), (amount)), CMD_W(0) }, \
+    }
+
+// generic item macro
+#define EVENT_GAME_ITEM_BASE(condType, itemId, amount)                                             \
+    {                                                                                              \
+        MAT_EVENT_TYPE_GAME,                                                                       \
+        { CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, (condType), MAT_EVENT_INV_TYPE_ITEMS, (itemId)), \
+          CMD_BBBB((amount), 0, 0, 0) },                                                           \
+    }
+
+// item macro (either the player has the item or not)
+#define EVENT_GAME_ITEM(itemId) EVENT_GAME_ITEM_BASE(MAT_EVENT_COND_NONE, itemId, -1)
+
+// ammo macro (same as above but also check the amount)
+#define EVENT_GAME_ITEM_AMMO(condType, itemId, amount) EVENT_GAME_ITEM_BASE(condType, itemId, amount)
+
+// generic equipment macro
+#define EVENT_GAME_EQUIPMENT_BASE(condType, itemIdOrUpgradeType, healthOrUpgrade)                                   \
+    {                                                                                                               \
+        MAT_EVENT_TYPE_GAME,                                                                                        \
+        { CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, (condType), MAT_EVENT_INV_TYPE_EQUIPMENT, (itemIdOrUpgradeType)), \
+          CMD_BBBB((healthOrUpgrade), 0, 0, 0) },                                                                   \
+    }
+
+// equipment macro (either the player has the equipment or not)
+#define EVENT_GAME_EQUIPMENT(itemId) EVENT_GAME_EQUIPMENT_BASE(MAT_EVENT_COND_NONE, itemId, -1)
+
+// biggoron sword macro (same as above but also check the sword's health)
+#define EVENT_GAME_EQUIPMENT_BGS(condType, swordHealth) \
+    EVENT_GAME_EQUIPMENT_BASE(condType, ITEM_SWORD_BIGGORON, swordHealth)
+
+// upgrade macro
+#define EVENT_GAME_EQUIPMENT_UPG(condType, upgradeType, upgradeValue) \
+    EVENT_GAME_EQUIPMENT_BASE(condType, upgradeType, upgradeValue)
+
+// quest items
+#define EVENT_GAME_QUEST_ITEM(questItem)                                                                       \
+    {                                                                                                          \
+        MAT_EVENT_TYPE_GAME,                                                                                   \
+        { CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, MAT_EVENT_COND_NONE, MAT_EVENT_INV_TYPE_QUEST, (questItem)), \
+          CMD_W(0) },                                                                                          \
+    }
+
+// skulltula tokens
+#define EVENT_GAME_GS_TOKEN(condType, gsTokens)                                                 \
+    {                                                                                           \
+        MAT_EVENT_TYPE_GAME,                                                                    \
+        { CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, (condType), MAT_EVENT_INV_TYPE_GS_TOKENS, 0), \
+          CMD_HBB((gsTokens), 0, 0) },                                                          \
     }
 
 #endif

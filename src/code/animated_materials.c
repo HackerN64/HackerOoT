@@ -8,6 +8,7 @@
 #include "gfx_setupdl.h"
 #include "save.h"
 #include "actor.h"
+#include "array_count.h"
 
 #if ENABLE_ANIMATED_MATERIALS
 
@@ -360,55 +361,42 @@ void AnimatedMat_DrawTexTimedCycle(GameState* gameState, s32 segment, void* para
     }
 }
 
-static Gfx sDefaultDisplayList[] = {
-    gsSPSegment(0x08, gEmptyDL),
-    gsSPSegment(0x09, gEmptyDL),
-    gsSPSegment(0x0A, gEmptyDL),
-    gsSPSegment(0x0B, gEmptyDL),
-    gsSPSegment(0x0C, gEmptyDL),
-    gsSPSegment(0x0D, gEmptyDL),
-    gsDPPipeSync(),
-    gsDPSetPrimColor(0, 0, 128, 128, 128, 128),
-    gsDPSetEnvColor(128, 128, 128, 128),
-    gsSPEndDisplayList(),
-};
-
 #define STRINGIFY(s) #s
 #define EXPAND_AND_STRINGIFY(s) STRINGIFY(s)
 
 #define log(...) PRINTF("Line " EXPAND_AND_STRINGIFY(__LINE__) " - " __VA_ARGS__);
 
 // probably dumb
-#define AnimatedMat_ProcessEventCondition(condType, a, b) \
-    {                                                     \
-        switch ((condType)) {                             \
-            case MAT_EVENT_COND_EQUAL:                    \
-                return (b) == (a);                        \
-            case MAT_EVENT_COND_DIFF:                     \
-                return (b) != (a);                        \
-            case MAT_EVENT_COND_LESS:                     \
-                return (b) < (a);                         \
-            case MAT_EVENT_COND_SUPERIOR:                 \
-                return (b) > (a);                         \
-            case MAT_EVENT_COND_LESS_T:                   \
-                return (b) <= (a);                        \
-            case MAT_EVENT_COND_SUPERIOR_T:               \
-                return (b) >= (a);                        \
-            default:                                      \
-                break;                                    \
-        }                                                 \
+#define AnimatedMat_ProcessEventConditionImpl(condType, a, b) \
+    {                                                         \
+        switch ((condType)) {                                 \
+            case MAT_EVENT_COND_EQUAL:                        \
+                return (b) == (a);                            \
+            case MAT_EVENT_COND_DIFF:                         \
+                return (b) != (a);                            \
+            case MAT_EVENT_COND_LESS:                         \
+                return (b) < (a);                             \
+            case MAT_EVENT_COND_SUPERIOR:                     \
+                return (b) > (a);                             \
+            case MAT_EVENT_COND_LESS_T:                       \
+                return (b) <= (a);                            \
+            case MAT_EVENT_COND_SUPERIOR_T:                   \
+                return (b) >= (a);                            \
+            default:                                          \
+                break;                                        \
+        }                                                     \
     }
 
 // most likely unnecessary but to make sure it's fine
 u8 AnimatedMat_ProcessEventConditionU(u8 condType, u32 a, u32 b) {
     log("condType: %d, a: %d, b: %d\n", condType, a, b);
-    AnimatedMat_ProcessEventCondition(condType, a, b);
+    AnimatedMat_ProcessEventConditionImpl(condType, a, b);
     return true;
 }
 
 u8 AnimatedMat_ProcessEventConditionS(u8 condType, s32 a, s32 b) {
     log("condType: %d, a: %d, b: %d\n", condType, a, b);
-    AnimatedMat_ProcessEventCondition(condType, a, b);
+    AnimatedMat_ProcessEventConditionImpl(condType, a, b);
     return true;
 }
 
@@ -416,10 +404,8 @@ void AnimatedMat_ProcessFlagEvents(GameState* gameState, MaterialEventFlag* even
     PlayState* play = (PlayState*)gameState;
     u8 allowDraw = true;
 
-    log("gamemode: %d\n", gSaveContext.gameMode);
     // make sure this is the play state
     if (gSaveContext.gameMode == GAMEMODE_NORMAL) {
-        log("event->type: %d, flag: 0x%02X\n", event->type, event->flag);
         switch (event->type) {
             case MAT_EVENT_FLAG_TYPE_SWITCH_FLAG:
                 allowDraw = Flags_GetSwitch(play, event->flag) != 0;
@@ -456,7 +442,6 @@ void AnimatedMat_ProcessGameEvents(GameState* gameState, MaterialEventGame* even
     log("event->type: %d\n", event->type);
     switch (event->type) {
         case MAT_EVENT_GAME_TYPE_AGE:
-            log("target age: %d, current age: %d\n", event->age, gSaveContext.save.linkAge);
             allowDraw = AnimatedMat_ProcessEventConditionS(event->condType, event->age, gSaveContext.save.linkAge);
             break;
         case MAT_EVENT_GAME_TYPE_HEALTH:
@@ -468,6 +453,66 @@ void AnimatedMat_ProcessGameEvents(GameState* gameState, MaterialEventGame* even
                                                            gSaveContext.save.info.playerData.rupees);
             break;
         case MAT_EVENT_GAME_TYPE_INVENTORY:
+            if (event->inventory.itemId == ITEM_NONE) {
+                break;
+            }
+
+            switch (event->inventory.type) {
+                case MAT_EVENT_INV_TYPE_ITEMS:
+                    allowDraw = gSaveContext.save.info.inventory.items[event->inventory.itemId] != ITEM_NONE;
+
+                    if (event->inventory.amount >= 0) {
+                        allowDraw =
+                            allowDraw && AnimatedMat_ProcessEventConditionS(event->condType, event->inventory.amount,
+                                                                            AMMO(event->inventory.itemId));
+                    }
+                    break;
+                case MAT_EVENT_INV_TYPE_EQUIPMENT:
+                    // swords, shields, tunics and boots
+                    if (event->inventory.itemId >= ITEM_SWORD_KOKIRI && event->inventory.itemId <= ITEM_BOOTS_HOVER) {
+                        u8 value = event->inventory.itemId - ITEM_SWORD_KOKIRI;
+                        allowDraw = CHECK_OWNED_EQUIP(value / 3, value % 3);
+
+                        if (event->inventory.itemId == ITEM_SWORD_BIGGORON && event->inventory.swordHealth != (u8)-1) {
+                            allowDraw = allowDraw && AnimatedMat_ProcessEventConditionU(
+                                                         event->condType, event->inventory.swordHealth,
+                                                         gSaveContext.save.info.playerData.swordHealth);
+                        }
+
+                        break;
+                    }
+
+                    // upgrades
+                    if (event->inventory.upgradeType < UPG_MAX) {
+                        allowDraw = AnimatedMat_ProcessEventConditionU(event->condType, event->inventory.upgradeValue,
+                                                                       CUR_UPG_VALUE(event->inventory.upgradeType));
+                        break;
+                    }
+                    break;
+                case MAT_EVENT_INV_TYPE_QUEST:
+                    allowDraw = CHECK_QUEST_ITEM(event->inventory.questItem);
+                    break;
+                //! TODO: improve how dungeon items are handled in the game
+                // case MAT_EVENT_INV_TYPE_DUNGEON_ITEMS:
+                //     break;
+                // case MAT_EVENT_INV_TYPE_DUNGEON_KEYS:
+                //     if (event->inventory.sceneId < ARRAY_COUNT(gSaveContext.save.info.inventory.dungeonKeys)) {
+                //         allowDraw = AnimatedMat_ProcessEventConditionS(event->condType, event->inventory.amount,
+                //         gSaveContext.save.info.inventory.dungeonKeys[event->inventory.sceneId]);
+                //     }
+                //     break;
+                case MAT_EVENT_INV_TYPE_GS_TOKENS:
+                    if (!CHECK_QUEST_ITEM(QUEST_SKULL_TOKEN)) {
+                        allowDraw = false;
+                        break;
+                    }
+
+                    allowDraw = AnimatedMat_ProcessEventConditionS(event->condType, event->inventory.gsTokens,
+                                                                   gSaveContext.save.info.inventory.gsTokens);
+                    break;
+                default:
+                    break;
+            }
             break;
         default:
             break;
@@ -485,7 +530,6 @@ u8 AnimatedMat_ProcessEvents(GameState* gameState, AnimatedMaterial* matAnim) {
     s32 i;
 
     if (matAnim->matEvent == NULL) {
-        log("aborted due to lack of events\n");
         return true;
     }
 
@@ -495,11 +539,8 @@ u8 AnimatedMat_ProcessEvents(GameState* gameState, AnimatedMaterial* matAnim) {
     memset(abFlags, true, sizeof(abFlags));
     memset(abGame, true, sizeof(abGame));
 
-    log("length: %d\n", matEvent->length);
     for (i = 0; i < matEvent->length; i++) {
         MaterialEvent* curEvent = &eventList[i];
-
-        log("event type: %d\n", curEvent->type);
 
         switch (curEvent->type) {
             case MAT_EVENT_TYPE_FLAG:
