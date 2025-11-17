@@ -4,7 +4,6 @@
 #include "ultra64.h"
 #include "config.h"
 #include "command_macros_base.h"
-#include "event_manager.h"
 
 #if ENABLE_ANIMATED_MATERIALS
 
@@ -73,14 +72,15 @@ typedef struct AnimatedMatTexTimedCycleParams {
     AnimatedMatTexTimedCycleKeyframe* keyframeList; // array of keyframes
 } AnimatedMatTexTimedCycleParams;
 
+struct GameState;
+struct EventScriptEntry;
+
 typedef struct AnimatedMaterial {
     /* 0x00 */ s8 segment;
     /* 0x02 */ AnimatedMatType type;
     /* 0x04 */ void* params;
-    /* 0x08 */ EventScriptEntry* eventEntry; // optional
+    /* 0x08 */ struct EventScriptEntry* eventEntry; // optional
 } AnimatedMaterial;
-
-struct GameState;
 
 Gfx* AnimatedMat_TexScroll(struct GameState* gameState, AnimatedMatTexScrollParams* params);
 void AnimatedMat_DrawTexScroll(struct GameState* gameState, s32 segment, void* params);

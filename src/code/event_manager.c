@@ -1,13 +1,7 @@
-// #include "animated_materials.h"
-// #include "helpers.h"
-// #include "config.h"
-// #include "gfx.h"
 #include "segmented_address.h"
 #include "play_state.h"
 #include "printf.h"
-// #include "gfx_setupdl.h"
 #include "save.h"
-// #include "actor.h"
 #include "array_count.h"
 #include "event_manager.h"
 

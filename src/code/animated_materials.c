@@ -3,6 +3,7 @@
 #include "config.h"
 #include "gfx.h"
 #include "segmented_address.h"
+#include "event_manager.h"
 
 #if ENABLE_ANIMATED_MATERIALS
 
