@@ -49,22 +49,6 @@ typedef enum MaterialEventFlagType {
     MAT_EVENT_FLAG_TYPE_MAX,
 } MaterialEventFlagType;
 
-typedef union MaterialEventFlag {
-    struct {
-        u32 type; // see MaterialEventFlagType
-        u32 flag;
-    };
-    s32 _words[2];
-} MaterialEventFlag; // size = 0x20
-
-typedef enum MaterialEventGameType {
-    MAT_EVENT_GAME_TYPE_AGE,
-    MAT_EVENT_GAME_TYPE_HEALTH,
-    MAT_EVENT_GAME_TYPE_RUPEES,
-    MAT_EVENT_GAME_TYPE_INVENTORY,
-    MAT_EVENT_GAME_TYPE_MAX,
-} MaterialEventGameType;
-
 typedef enum MaterialEventInvType {
     MAT_EVENT_INV_TYPE_ITEMS,
     MAT_EVENT_INV_TYPE_EQUIPMENT,
@@ -74,6 +58,44 @@ typedef enum MaterialEventInvType {
     MAT_EVENT_INV_TYPE_GS_TOKENS,
     MAT_EVENT_INV_TYPE_MAX,
 } MaterialEventInvType;
+
+typedef enum MaterialEventGameType {
+    MAT_EVENT_GAME_TYPE_AGE,
+    MAT_EVENT_GAME_TYPE_HEALTH,
+    MAT_EVENT_GAME_TYPE_RUPEES,
+    MAT_EVENT_GAME_TYPE_INVENTORY,
+    MAT_EVENT_GAME_TYPE_MAX,
+} MaterialEventGameType;
+
+typedef enum MaterialEventTimeType {
+    MAT_EVENT_TIME_TYPE_DEFAULT,
+    MAT_EVENT_TIME_TYPE_RANGE,
+    MAT_EVENT_TIME_TYPE_DAY,
+    MAT_EVENT_TIME_TYPE_NIGHT,
+    MAT_EVENT_TIME_TYPE_MAX,
+} MaterialEventTimeType;
+
+typedef enum MaterialEventFreezeType {
+    MAT_EVENT_FREEZE_TYPE_NONE,       // no special behavior
+    MAT_EVENT_FREEZE_TYPE_EVENT,      // freeze the step value when the events are completed
+    MAT_EVENT_FREEZE_TYPE_EVENT_LAST, // same as above but let the animation go to its last keyframe
+} MaterialEventFreezeType;
+
+typedef enum MaterialEventType {
+    MAT_EVENT_TYPE_NONE = -1,
+    MAT_EVENT_TYPE_FLAG,
+    MAT_EVENT_TYPE_GAME,
+    MAT_EVENT_TYPE_TIME,
+    MAT_EVENT_TYPE_MAX,
+} MaterialEventType;
+
+typedef union MaterialEventFlag {
+    struct {
+        u32 type; // see MaterialEventFlagType
+        u32 flag;
+    };
+    s32 _words[2];
+} MaterialEventFlag;
 
 typedef union MaterialEventGame {
     struct {
@@ -116,33 +138,35 @@ typedef union MaterialEventGame {
         };
     };
     s32 _words[2];
-} MaterialEventGame; // size = 0x20
+} MaterialEventGame;
 
-typedef enum MaterialEventType {
-    MAT_EVENT_TYPE_NONE,
-    MAT_EVENT_TYPE_FLAG,
-    MAT_EVENT_TYPE_GAME,
-    MAT_EVENT_TYPE_MAX,
-} MaterialEventType;
+typedef union MaterialEventTime {
+    struct {
+        u8 type;
+        u8 isClock; // set to true to check for a specific time range
+        union {
+            u8 isRange;
+            u8 nightFlag; // 0 for day, 1 for night
+        };
+        struct {
+            u8 condType;
+            u8 hour;
+            u8 minute;
+        } clocks[2];
+    };
+    s32 _words[3];
+} MaterialEventTime;
 
-typedef enum MaterialEventFreezeType {
-    MAT_EVENT_FREEZE_TYPE_NONE,       // no special behavior
-    MAT_EVENT_FREEZE_TYPE_EVENT,      // freeze the step value when the events are completed
-    MAT_EVENT_FREEZE_TYPE_EVENT_LAST, // same as above but let the animation go to its last keyframe
-} MaterialEventFreezeType;
-
-typedef struct MaterialEvent {
-    u8 type; // see MaterialEventType
-    union {
-        MaterialEventFlag flag;
-        MaterialEventGame game;
-    } event;
-} MaterialEvent;
+typedef union MaterialEventData {
+    s32 i;
+    f32 f;
+    s16 s[2];
+    s8 b[4];
+} MaterialEventData;
 
 typedef struct AnimatedMatEvent {
-    u8 freezeType;            // see MaterialEventFreezeType
-    u16 length;               // length of eventList
-    MaterialEvent* eventList; // list of events to process, must be the same size as keyframeList
+    u8 freezeType;    // see MaterialEventFreezeType
+    void* eventsData; // list of events to process, must be the same size as keyframeList
 } AnimatedMatEvent;
 
 typedef struct {
@@ -239,12 +263,10 @@ void AnimatedMat_DrawAlphaStepXlu(struct GameState* gameState, AnimatedMaterial*
 
 // useful macros to declare an event entry
 
+#define EVENT_END() MAT_EVENT_TYPE_NONE
+
 // generic flag macro
-#define EVENT_FLAG(type, flag)            \
-    {                                     \
-        MAT_EVENT_TYPE_FLAG,              \
-        { CMD_W((type)), CMD_W((flag)) }, \
-    }
+#define EVENT_FLAG(type, flag) MAT_EVENT_TYPE_FLAG, CMD_W((type)), CMD_W((flag))
 
 // specific flag macros
 #define EVENT_SWITCH_FLAG(flag) EVENT_FLAG(MAT_EVENT_FLAG_TYPE_SWITCH_FLAG, (flag))
@@ -256,33 +278,21 @@ void AnimatedMat_DrawAlphaStepXlu(struct GameState* gameState, AnimatedMaterial*
 #define EVENT_CLEAR_FLAG(flag) EVENT_FLAG(MAT_EVENT_FLAG_TYPE_CLEAR_FLAG, (flag))
 
 // age macro
-#define EVENT_GAME_AGE(condType, age)                                          \
-    {                                                                          \
-        MAT_EVENT_TYPE_GAME,                                                   \
-        { CMD_BBBB(MAT_EVENT_GAME_TYPE_AGE, (condType), (age), 0), CMD_W(0) }, \
-    }
+#define EVENT_GAME_AGE(condType, age) \
+    MAT_EVENT_TYPE_GAME, CMD_BBBB(MAT_EVENT_GAME_TYPE_AGE, (condType), (age), 0), CMD_W(0)
 
 // health macro
-#define EVENT_GAME_HEALTH(condType, amount)                                      \
-    {                                                                            \
-        MAT_EVENT_TYPE_GAME,                                                     \
-        { CMD_BBH(MAT_EVENT_GAME_TYPE_HEALTH, (condType), (amount)), CMD_W(0) }, \
-    }
+#define EVENT_GAME_HEALTH(condType, amount) \
+    MAT_EVENT_TYPE_GAME, CMD_BBH(MAT_EVENT_GAME_TYPE_HEALTH, (condType), (amount)), CMD_W(0)
 
 // rupees macro
-#define EVENT_GAME_RUPEES(condType, amount)                                      \
-    {                                                                            \
-        MAT_EVENT_TYPE_GAME,                                                     \
-        { CMD_BBH(MAT_EVENT_GAME_TYPE_RUPEES, (condType), (amount)), CMD_W(0) }, \
-    }
+#define EVENT_GAME_RUPEES(condType, amount) \
+    MAT_EVENT_TYPE_GAME, CMD_BBH(MAT_EVENT_GAME_TYPE_RUPEES, (condType), (amount)), CMD_W(0)
 
 // generic item macro
-#define EVENT_GAME_ITEM_BASE(condType, itemId, amount)                                             \
-    {                                                                                              \
-        MAT_EVENT_TYPE_GAME,                                                                       \
-        { CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, (condType), MAT_EVENT_INV_TYPE_ITEMS, (itemId)), \
-          CMD_BBBB((amount), 0, 0, 0) },                                                           \
-    }
+#define EVENT_GAME_ITEM_BASE(condType, itemId, amount)                                                            \
+    MAT_EVENT_TYPE_GAME, CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, (condType), MAT_EVENT_INV_TYPE_ITEMS, (itemId)), \
+        CMD_BBH((amount), 0, 0)
 
 // item macro (either the player has the item or not)
 #define EVENT_GAME_ITEM(itemId) EVENT_GAME_ITEM_BASE(MAT_EVENT_COND_NONE, itemId, -1)
@@ -291,12 +301,10 @@ void AnimatedMat_DrawAlphaStepXlu(struct GameState* gameState, AnimatedMaterial*
 #define EVENT_GAME_ITEM_AMMO(condType, itemId, amount) EVENT_GAME_ITEM_BASE(condType, itemId, amount)
 
 // generic equipment macro
-#define EVENT_GAME_EQUIPMENT_BASE(condType, itemIdOrUpgradeType, healthOrUpgrade)                                   \
-    {                                                                                                               \
-        MAT_EVENT_TYPE_GAME,                                                                                        \
-        { CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, (condType), MAT_EVENT_INV_TYPE_EQUIPMENT, (itemIdOrUpgradeType)), \
-          CMD_BBBB((healthOrUpgrade), 0, 0, 0) },                                                                   \
-    }
+#define EVENT_GAME_EQUIPMENT_BASE(condType, itemIdOrUpgradeType, healthOrUpgrade)                                 \
+    MAT_EVENT_TYPE_GAME,                                                                                          \
+        CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, (condType), MAT_EVENT_INV_TYPE_EQUIPMENT, (itemIdOrUpgradeType)), \
+        CMD_BBH((healthOrUpgrade), 0, 0)
 
 // equipment macro (either the player has the equipment or not)
 #define EVENT_GAME_EQUIPMENT(itemId) EVENT_GAME_EQUIPMENT_BASE(MAT_EVENT_COND_NONE, itemId, -1)
@@ -310,20 +318,33 @@ void AnimatedMat_DrawAlphaStepXlu(struct GameState* gameState, AnimatedMaterial*
     EVENT_GAME_EQUIPMENT_BASE(condType, upgradeType, upgradeValue)
 
 // quest items
-#define EVENT_GAME_QUEST_ITEM(questItem)                                                                       \
-    {                                                                                                          \
-        MAT_EVENT_TYPE_GAME,                                                                                   \
-        { CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, MAT_EVENT_COND_NONE, MAT_EVENT_INV_TYPE_QUEST, (questItem)), \
-          CMD_W(0) },                                                                                          \
-    }
+#define EVENT_GAME_QUEST_ITEM(questItem) \
+    MAT_EVENT_TYPE_GAME,                 \
+        CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, MAT_EVENT_COND_NONE, MAT_EVENT_INV_TYPE_QUEST, (questItem)), CMD_W(0)
 
 // skulltula tokens
-#define EVENT_GAME_GS_TOKEN(condType, gsTokens)                                                 \
-    {                                                                                           \
-        MAT_EVENT_TYPE_GAME,                                                                    \
-        { CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, (condType), MAT_EVENT_INV_TYPE_GS_TOKENS, 0), \
-          CMD_HBB((gsTokens), 0, 0) },                                                          \
-    }
+#define EVENT_GAME_GS_TOKEN(condType, gsTokens)                                                                \
+    MAT_EVENT_TYPE_GAME, CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, (condType), MAT_EVENT_INV_TYPE_GS_TOKENS, 0), \
+        CMD_HH((gsTokens), 0)
+
+// time
+#define EVENT_GAME_TIME(type, isClock, isRangeOrNightFlag, condType1, hour1, minute1, condType2, hour2, minute2) \
+    MAT_EVENT_TYPE_TIME, CMD_BBBB((type), (isClock), (isRangeOrNightFlag), (condType1)),                         \
+        CMD_BBBB((hour1), (minute1), (condType2), (hour2)), CMD_BBH((minute2), 0, 0)
+
+// fixed time of day
+#define EVENT_GAME_TIME_DEFAULT(condType, hour, minute) \
+    EVENT_GAME_TIME(MAT_EVENT_TIME_TYPE_DEFAULT, true, false, condType, hour, minute, 0, 0, 0)
+
+// clock range (if between time 1 and time 2)
+#define EVENT_GAME_TIME_RANGE(condType1, hour1, minute1, condType2, hour2, minute2) \
+    EVENT_GAME_TIME(MAT_EVENT_TIME_TYPE_RANGE, true, true, condType1, hour1, minute1, condType2, hour2, minute2)
+
+// daytime
+#define EVENT_GAME_TIME_DAY() EVENT_GAME_TIME(MAT_EVENT_TIME_TYPE_DAY, false, 0, 0, 0, 0, 0, 0, 0)
+
+// nighttime
+#define EVENT_GAME_TIME_NIGHT() EVENT_GAME_TIME(MAT_EVENT_TIME_TYPE_NIGHT, false, 1, 0, 0, 0, 0, 0, 0)
 
 #endif
 

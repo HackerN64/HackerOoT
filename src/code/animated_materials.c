@@ -521,12 +521,47 @@ void AnimatedMat_ProcessGameEvents(GameState* gameState, MaterialEventGame* even
     pabGame[event->type] = allowDraw;
 }
 
+void AnimatedMat_ProcessTimeEvents(GameState* gameState, MaterialEventTime* event, u8* pabTime) {
+    u8 allowDraw = true;
+
+    if (event->isClock) {
+        allowDraw = AnimatedMat_ProcessEventConditionU(event->clocks[0].condType,
+                                                       CLOCK_TIME(event->clocks[0].hour, event->clocks[0].minute),
+                                                       gSaveContext.save.dayTime);
+
+        if (event->isRange) {
+            allowDraw = allowDraw &&
+                        AnimatedMat_ProcessEventConditionU(event->clocks[1].condType,
+                                                           CLOCK_TIME(event->clocks[1].hour, event->clocks[1].minute),
+                                                           gSaveContext.save.dayTime);
+        }
+    } else {
+        allowDraw = event->nightFlag == gSaveContext.save.nightFlag;
+    }
+
+    pabTime[event->type] = allowDraw;
+}
+
+u8 AnimatedMat_EventValidate(u8* pabType, u8 length) {
+    u8 i;
+
+    for (i = 0; i < length; i++) {
+        if (!pabType[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 // returns true when it should draw, otherwise returns false
 u8 AnimatedMat_ProcessEvents(GameState* gameState, AnimatedMaterial* matAnim) {
-    static u8 abFlags[MAT_EVENT_FLAG_TYPE_MAX] = { true };
-    static u8 abGame[MAT_EVENT_GAME_TYPE_MAX] = { true };
+    static u8 abFlags[MAT_EVENT_FLAG_TYPE_MAX];
+    static u8 abGame[MAT_EVENT_GAME_TYPE_MAX];
+    static u8 abTime[MAT_EVENT_TIME_TYPE_MAX];
     AnimatedMatEvent* matEvent;
-    MaterialEvent* eventList;
+    u8* eventsData;
+    s32 eventType;
     s32 i;
 
     if (matAnim->matEvent == NULL) {
@@ -534,36 +569,47 @@ u8 AnimatedMat_ProcessEvents(GameState* gameState, AnimatedMaterial* matAnim) {
     }
 
     matEvent = SEGMENTED_TO_VIRTUAL(matAnim->matEvent);
-    eventList = SEGMENTED_TO_VIRTUAL(matEvent->eventList);
+    eventsData = SEGMENTED_TO_VIRTUAL(matEvent->eventsData);
 
     memset(abFlags, true, sizeof(abFlags));
     memset(abGame, true, sizeof(abGame));
+    memset(abTime, true, sizeof(abTime));
 
-    for (i = 0; i < matEvent->length; i++) {
-        MaterialEvent* curEvent = &eventList[i];
+    do {
+        memcpy(&eventType, eventsData, sizeof(eventType));
+        eventsData += sizeof(eventType);
 
-        switch (curEvent->type) {
+        switch (eventType) {
+            case MAT_EVENT_TYPE_NONE:
+                break;
             case MAT_EVENT_TYPE_FLAG:
-                AnimatedMat_ProcessFlagEvents(gameState, &curEvent->event.flag, abFlags);
+                AnimatedMat_ProcessFlagEvents(gameState, (void*)eventsData, abFlags);
+                eventsData += sizeof(MaterialEventFlag);
                 break;
             case MAT_EVENT_TYPE_GAME:
-                AnimatedMat_ProcessGameEvents(gameState, &curEvent->event.game, abGame);
+                AnimatedMat_ProcessGameEvents(gameState, (void*)eventsData, abGame);
+                eventsData += sizeof(MaterialEventGame);
+                break;
+            case MAT_EVENT_TYPE_TIME:
+                AnimatedMat_ProcessTimeEvents(gameState, (void*)eventsData, abTime);
+                eventsData += sizeof(MaterialEventTime);
                 break;
             default:
+                eventType = MAT_EVENT_TYPE_NONE;
                 break;
         }
+    } while (eventType != MAT_EVENT_TYPE_NONE);
+
+    if (!AnimatedMat_EventValidate(abFlags, ARRAY_COUNT(abFlags))) {
+        return false;
     }
 
-    for (i = 0; i < MAT_EVENT_FLAG_TYPE_MAX; i++) {
-        if (!abFlags[i]) {
-            return false;
-        }
+    if (!AnimatedMat_EventValidate(abGame, ARRAY_COUNT(abGame))) {
+        return false;
     }
 
-    for (i = 0; i < MAT_EVENT_GAME_TYPE_MAX; i++) {
-        if (!abGame[i]) {
-            return false;
-        }
+    if (!AnimatedMat_EventValidate(abTime, ARRAY_COUNT(abTime))) {
+        return false;
     }
 
     return true;
