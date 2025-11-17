@@ -835,6 +835,7 @@ beginseg
 
     include "$(BUILD_DIR)/src/code/rainbow.o"
     include "$(BUILD_DIR)/src/code/helpers.o"
+    include "$(BUILD_DIR)/src/code/event_manager.o"
 #if ENABLE_ANIMATED_MATERIALS
     include "$(BUILD_DIR)/src/code/animated_materials.o"
 #endif
