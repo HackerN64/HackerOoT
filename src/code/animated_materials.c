@@ -389,13 +389,11 @@ void AnimatedMat_DrawTexTimedCycle(GameState* gameState, s32 segment, void* para
 
 // most likely unnecessary but to make sure it's fine
 u8 AnimatedMat_ProcessEventConditionU(u8 condType, u32 a, u32 b) {
-    log("condType: %d, a: %d, b: %d\n", condType, a, b);
     AnimatedMat_ProcessEventConditionImpl(condType, a, b);
     return true;
 }
 
 u8 AnimatedMat_ProcessEventConditionS(u8 condType, s32 a, s32 b) {
-    log("condType: %d, a: %d, b: %d\n", condType, a, b);
     AnimatedMat_ProcessEventConditionImpl(condType, a, b);
     return true;
 }
@@ -438,8 +436,8 @@ void AnimatedMat_ProcessFlagEvents(GameState* gameState, MaterialEventFlag* even
 
 void AnimatedMat_ProcessGameEvents(GameState* gameState, MaterialEventGame* event, u8* pabGame) {
     u8 allowDraw = true;
+    u8 value;
 
-    log("event->type: %d\n", event->type);
     switch (event->type) {
         case MAT_EVENT_GAME_TYPE_AGE:
             allowDraw = AnimatedMat_ProcessEventConditionS(event->condType, event->age, gSaveContext.save.linkAge);
@@ -459,7 +457,8 @@ void AnimatedMat_ProcessGameEvents(GameState* gameState, MaterialEventGame* even
 
             switch (event->inventory.type) {
                 case MAT_EVENT_INV_TYPE_ITEMS:
-                    allowDraw = gSaveContext.save.info.inventory.items[event->inventory.itemId] != ITEM_NONE;
+                    value = gSaveContext.save.info.inventory.items[event->inventory.itemId];
+                    allowDraw = event->inventory.obtained ? value != ITEM_NONE : value == ITEM_NONE;
 
                     if (event->inventory.amount >= 0) {
                         allowDraw =
@@ -470,8 +469,9 @@ void AnimatedMat_ProcessGameEvents(GameState* gameState, MaterialEventGame* even
                 case MAT_EVENT_INV_TYPE_EQUIPMENT:
                     // swords, shields, tunics and boots
                     if (event->inventory.itemId >= ITEM_SWORD_KOKIRI && event->inventory.itemId <= ITEM_BOOTS_HOVER) {
-                        u8 value = event->inventory.itemId - ITEM_SWORD_KOKIRI;
-                        allowDraw = CHECK_OWNED_EQUIP(value / 3, value % 3);
+                        u8 itemId = event->inventory.itemId - ITEM_SWORD_KOKIRI;
+                        value = CHECK_OWNED_EQUIP(itemId / 3, itemId % 3);
+                        allowDraw = event->inventory.obtained ? value : !value;
 
                         if (event->inventory.itemId == ITEM_SWORD_BIGGORON && event->inventory.swordHealth != (u8)-1) {
                             allowDraw = allowDraw && AnimatedMat_ProcessEventConditionU(
@@ -490,7 +490,8 @@ void AnimatedMat_ProcessGameEvents(GameState* gameState, MaterialEventGame* even
                     }
                     break;
                 case MAT_EVENT_INV_TYPE_QUEST:
-                    allowDraw = CHECK_QUEST_ITEM(event->inventory.questItem);
+                    value = CHECK_QUEST_ITEM(event->inventory.questItem);
+                    allowDraw = event->inventory.obtained ? value : !value;
                     break;
                 //! TODO: improve how dungeon items are handled in the game
                 // case MAT_EVENT_INV_TYPE_DUNGEON_ITEMS:

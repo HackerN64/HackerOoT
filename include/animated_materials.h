@@ -123,11 +123,16 @@ typedef union MaterialEventGame {
                 };
                 union {
                     // MAT_EVENT_INV_TYPE_ITEMS and MAT_EVENT_INV_TYPE_DUNGEON_KEYS
-                    s8 amount; // MAT_EVENT_INV_TYPE_ITEMS: -1 means no ammo check
+                    struct {
+                        u8 obtained;
+                        union {
+                            s8 amount; // MAT_EVENT_INV_TYPE_ITEMS: -1 means no ammo check
 
-                    // MAT_EVENT_INV_TYPE_EQUIPMENT
-                    u8 swordHealth; // -1 means no sword health check
-                    u8 upgradeValue;
+                            // MAT_EVENT_INV_TYPE_EQUIPMENT
+                            u8 swordHealth; // -1 means no sword health check
+                            u8 upgradeValue;
+                        };
+                    };
 
                     // MAT_EVENT_INV_TYPE_DUNGEON_ITEMS
 
@@ -290,37 +295,38 @@ void AnimatedMat_DrawAlphaStepXlu(struct GameState* gameState, AnimatedMaterial*
     MAT_EVENT_TYPE_GAME, CMD_BBH(MAT_EVENT_GAME_TYPE_RUPEES, (condType), (amount)), CMD_W(0)
 
 // generic item macro
-#define EVENT_GAME_ITEM_BASE(condType, itemId, amount)                                                            \
+#define EVENT_GAME_ITEM_BASE(condType, itemId, obtained, amount)                                                  \
     MAT_EVENT_TYPE_GAME, CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, (condType), MAT_EVENT_INV_TYPE_ITEMS, (itemId)), \
-        CMD_BBH((amount), 0, 0)
+        CMD_BBH((obtained), (amount), 0)
 
 // item macro (either the player has the item or not)
-#define EVENT_GAME_ITEM(itemId) EVENT_GAME_ITEM_BASE(MAT_EVENT_COND_NONE, itemId, -1)
+#define EVENT_GAME_ITEM(itemId, obtained) EVENT_GAME_ITEM_BASE(MAT_EVENT_COND_NONE, itemId, obtained, -1)
 
 // ammo macro (same as above but also check the amount)
-#define EVENT_GAME_ITEM_AMMO(condType, itemId, amount) EVENT_GAME_ITEM_BASE(condType, itemId, amount)
+#define EVENT_GAME_ITEM_AMMO(condType, itemId, amount) EVENT_GAME_ITEM_BASE(condType, itemId, true, amount)
 
 // generic equipment macro
-#define EVENT_GAME_EQUIPMENT_BASE(condType, itemIdOrUpgradeType, healthOrUpgrade)                                 \
+#define EVENT_GAME_EQUIPMENT_BASE(condType, itemIdOrUpgradeType, obtained, healthOrUpgrade)                       \
     MAT_EVENT_TYPE_GAME,                                                                                          \
         CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, (condType), MAT_EVENT_INV_TYPE_EQUIPMENT, (itemIdOrUpgradeType)), \
-        CMD_BBH((healthOrUpgrade), 0, 0)
+        CMD_BBH((obtained), (healthOrUpgrade), 0)
 
 // equipment macro (either the player has the equipment or not)
-#define EVENT_GAME_EQUIPMENT(itemId) EVENT_GAME_EQUIPMENT_BASE(MAT_EVENT_COND_NONE, itemId, -1)
+#define EVENT_GAME_EQUIPMENT(itemId, obtained) EVENT_GAME_EQUIPMENT_BASE(MAT_EVENT_COND_NONE, itemId, obtained, -1)
 
 // biggoron sword macro (same as above but also check the sword's health)
 #define EVENT_GAME_EQUIPMENT_BGS(condType, swordHealth) \
-    EVENT_GAME_EQUIPMENT_BASE(condType, ITEM_SWORD_BIGGORON, swordHealth)
+    EVENT_GAME_EQUIPMENT_BASE(condType, ITEM_SWORD_BIGGORON, true, swordHealth)
 
 // upgrade macro
 #define EVENT_GAME_EQUIPMENT_UPG(condType, upgradeType, upgradeValue) \
-    EVENT_GAME_EQUIPMENT_BASE(condType, upgradeType, upgradeValue)
+    EVENT_GAME_EQUIPMENT_BASE(condType, upgradeType, true, upgradeValue)
 
 // quest items
-#define EVENT_GAME_QUEST_ITEM(questItem) \
-    MAT_EVENT_TYPE_GAME,                 \
-        CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, MAT_EVENT_COND_NONE, MAT_EVENT_INV_TYPE_QUEST, (questItem)), CMD_W(0)
+#define EVENT_GAME_QUEST_ITEM(questItem, obtained)                                                           \
+    MAT_EVENT_TYPE_GAME,                                                                                     \
+        CMD_BBBB(MAT_EVENT_GAME_TYPE_INVENTORY, MAT_EVENT_COND_NONE, MAT_EVENT_INV_TYPE_QUEST, (questItem)), \
+        CMD_BBH((obtained), 0, 0)
 
 // skulltula tokens
 #define EVENT_GAME_GS_TOKEN(condType, gsTokens)                                                                \
