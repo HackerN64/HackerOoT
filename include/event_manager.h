@@ -157,6 +157,7 @@ typedef struct EventScriptEntry {
 
 struct GameState;
 
+u8 EventManager_GetFreezeType(void);
 u8 EventManager_ProcessScript(struct GameState* gameState, EventScriptEntry* eventEntry);
 
 // useful macros to declare an event entry

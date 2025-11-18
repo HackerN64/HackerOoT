@@ -4,6 +4,7 @@
 #include "gfx.h"
 #include "segmented_address.h"
 #include "event_manager.h"
+#include "printf.h"
 
 #if ENABLE_ANIMATED_MATERIALS
 
@@ -364,6 +365,7 @@ void AnimatedMat_DrawMain(GameState* gameState, AnimatedMaterial* matAnim, f32 a
     s32 segmentAbs;
     s32 segment;
     u8 drawDefaultDL = false;
+    u8 drawDefaultTex = false;
 
     sMatAnimAlphaRatio = alphaRatio;
     sMatAnimStep = step;
@@ -375,6 +377,7 @@ void AnimatedMat_DrawMain(GameState* gameState, AnimatedMaterial* matAnim, f32 a
             segment = matAnim->segment;
             segmentAbs = ABS(segment);
             drawDefaultDL = false;
+            drawDefaultTex = false;
 
             if (EventManager_ProcessScript(gameState, matAnim->eventEntry)) {
                 switch (matAnim->type) {
@@ -407,24 +410,45 @@ void AnimatedMat_DrawMain(GameState* gameState, AnimatedMaterial* matAnim, f32 a
                         break;
                 }
             } else {
-                drawDefaultDL = true;
+                switch (matAnim->type) {
+                    case ANIM_MAT_TYPE_TEX_CYCLE:
+                    case ANIM_MAT_TYPE_TEX_TIMED_CYCLE:
+                        drawDefaultTex = true;
+                        break;
+                    default:
+                        drawDefaultDL = true;
+                        break;
+                }
             }
 
+            OPEN_DISPS(gameState->gfxCtx);
             if (drawDefaultDL) {
-                OPEN_DISPS(gameState->gfxCtx);
+                if (sMatAnimFlags & 1) {
+                    gSPSegment(POLY_OPA_DISP++, segmentAbs, gEmptyDL);
+                    gDPPipeSync(POLY_OPA_DISP++);
+                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 128, 128, 128, 128);
+                    gDPSetEnvColor(POLY_OPA_DISP++, 128, 128, 128, 128);
+                }
 
-                gSPSegment(POLY_OPA_DISP++, segmentAbs, gEmptyDL);
-                gDPPipeSync(POLY_OPA_DISP++);
-                gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 128, 128, 128, 128);
-                gDPSetEnvColor(POLY_OPA_DISP++, 128, 128, 128, 128);
+                if (sMatAnimFlags & 2) {
+                    gSPSegment(POLY_XLU_DISP++, segmentAbs, gEmptyDL);
+                    gDPPipeSync(POLY_XLU_DISP++);
+                    gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 128, 128, 128, 128);
+                    gDPSetEnvColor(POLY_XLU_DISP++, 128, 128, 128, 128);
+                }
 
-                gSPSegment(POLY_XLU_DISP++, segmentAbs, gEmptyDL);
-                gDPPipeSync(POLY_XLU_DISP++);
-                gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 128, 128, 128, 128);
-                gDPSetEnvColor(POLY_XLU_DISP++, 128, 128, 128, 128);
-
-                CLOSE_DISPS(gameState->gfxCtx);
             }
+
+            if (drawDefaultTex && matAnim->defaultTex != NULL) {
+                if (sMatAnimFlags & 1) {
+                    gSPSegment(POLY_OPA_DISP++, segmentAbs, SEGMENTED_TO_VIRTUAL(matAnim->defaultTex));
+                }
+
+                if (sMatAnimFlags & 2) {
+                    gSPSegment(POLY_XLU_DISP++, segmentAbs, SEGMENTED_TO_VIRTUAL(matAnim->defaultTex));
+                }
+            }
+            CLOSE_DISPS(gameState->gfxCtx);
 
             matAnim++;
         } while (segment >= 0);

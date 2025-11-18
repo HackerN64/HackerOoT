@@ -80,6 +80,7 @@ typedef struct AnimatedMaterial {
     /* 0x02 */ AnimatedMatType type;
     /* 0x04 */ void* params;
     /* 0x08 */ struct EventScriptEntry* eventEntry; // optional
+    /* 0x0C */ TexturePtr defaultTex; // optional, default texture to use (used if the event manager returns false)
 } AnimatedMaterial;
 
 Gfx* AnimatedMat_TexScroll(struct GameState* gameState, AnimatedMatTexScrollParams* params);
