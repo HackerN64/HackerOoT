@@ -23,6 +23,7 @@ typedef enum AnimatedMatType {
     // custom types
     /*  */ ANIM_MAT_TYPE_COLOR_CYCLE, // like ANIM_MAT_TYPE_COLOR except it takes a keyframe array to set draw durations
     /*  */ ANIM_MAT_TYPE_TEX_TIMED_CYCLE,
+    /*  */ ANIM_MAT_TYPE_MULTITEXTURE,
     /*  */ ANIM_MAT_TYPE_MAX
 } AnimatedMatType;
 
@@ -72,6 +73,18 @@ typedef struct AnimatedMatTexTimedCycleParams {
     AnimatedMatTexTimedCycleKeyframe* keyframeList; // array of keyframes
 } AnimatedMatTexTimedCycleParams;
 
+typedef struct AnimatedMatMultitextureParams {
+    TexturePtr texture1; // the segment number for the texture reference is set by `AnimatedMaterial.segment`
+    TexturePtr texture2;
+    u8 segment2;      // segment number of the texture reference for texture2
+    u8 segmentDL;     // segment number of the display list
+    s16 minPrimAlpha; // minimum opacity of both textures
+    s16 maxPrimAlpha; // maximum opacity of both textures
+    s16 minEnvAlpha;  // minimum opacity of texture2
+    s16 maxEnvAlpha;  // maximum opacity of texture2
+    s8 speed;         // transition/blending speed
+} AnimatedMatMultitextureParams;
+
 struct GameState;
 struct EventScriptEntry;
 
@@ -84,19 +97,19 @@ typedef struct AnimatedMaterial {
 } AnimatedMaterial;
 
 Gfx* AnimatedMat_TexScroll(struct GameState* gameState, AnimatedMatTexScrollParams* params);
-void AnimatedMat_DrawTexScroll(struct GameState* gameState, s32 segment, void* params);
+void AnimatedMat_DrawTexScroll(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
 Gfx* AnimatedMat_TwoLayerTexScroll(struct GameState* gameState, AnimatedMatTexScrollParams* params);
-void AnimatedMat_DrawTwoTexScroll(struct GameState* gameState, s32 segment, void* params);
+void AnimatedMat_DrawTwoTexScroll(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
 void AnimatedMat_SetColor(struct GameState* gameState, s32 segment, F3DPrimColor* primColorResult,
                           F3DEnvColor* envColor);
-void AnimatedMat_DrawColor(struct GameState* gameState, s32 segment, void* params);
+void AnimatedMat_DrawColor(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
 s32 AnimatedMat_Lerp(s32 min, s32 max, f32 norm);
-void AnimatedMat_DrawColorLerp(struct GameState* gameState, s32 segment, void* params);
-void AnimatedMat_DrawColorNonLinearInterp(struct GameState* gameState, s32 segment, void* params);
-void AnimatedMat_DrawTexCycle(struct GameState* gameState, s32 segment, void* params);
-void AnimatedMat_DrawTexTimedCycle(struct GameState* gameState, s32 segment, void* params);
-void AnimatedMat_DrawColorCycle(struct GameState* gameState, s32 segment, void* params);
-void AnimatedMat_DrawTexTimedCycle(struct GameState* gameState, s32 segment, void* params);
+void AnimatedMat_DrawColorLerp(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
+void AnimatedMat_DrawColorNonLinearInterp(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
+void AnimatedMat_DrawTexCycle(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
+void AnimatedMat_DrawTexTimedCycle(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
+void AnimatedMat_DrawColorCycle(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
+void AnimatedMat_DrawTexTimedCycle(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
 
 void AnimatedMat_DrawMain(struct GameState* gameState, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step, u32 flags);
 void AnimatedMat_Draw(struct GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim);

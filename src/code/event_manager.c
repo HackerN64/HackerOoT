@@ -223,18 +223,12 @@ u8 EventManager_ProcessScript(GameState* gameState, EventScriptEntry* eventEntry
     static u8 abFlag[EVENT_FLAG_TYPE_MAX];
     static u8 abGame[EVENT_GAME_TYPE_MAX];
     static u8 abTime[EVENT_TIME_TYPE_MAX];
-    EventScriptEntry* entry;
     u8* script;
     s32 eventType;
     s32 i;
 
-    if (eventEntry == NULL) {
-        return true;
-    }
-
-    entry = SEGMENTED_TO_VIRTUAL(eventEntry);
-    script = SEGMENTED_TO_VIRTUAL(entry->script);
-    sFreezeType = entry->freezeType;
+    script = SEGMENTED_TO_VIRTUAL(eventEntry->script);
+    sFreezeType = eventEntry->freezeType;
 
     memset(abFlag, true, sizeof(abFlag));
     memset(abGame, true, sizeof(abGame));
