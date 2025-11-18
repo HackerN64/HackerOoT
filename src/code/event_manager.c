@@ -102,6 +102,10 @@ static void EventManager_ProcessGame(GameState* gameState, EventGame* event, u8*
             allowDraw =
                 EventManager_SignedCondition(event->condType, event->rupees, gSaveContext.save.info.playerData.rupees);
             break;
+        case EVENT_GAME_TYPE_MAGIC:
+            allowDraw =
+                EventManager_SignedCondition(event->condType, event->magic, gSaveContext.save.info.playerData.magic);
+            break;
         case EVENT_GAME_TYPE_INVENTORY:
             if (event->inventory.itemId == ITEM_NONE) {
                 break;

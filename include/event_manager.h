@@ -40,6 +40,7 @@ typedef enum EventGameType {
     EVENT_GAME_TYPE_AGE,
     EVENT_GAME_TYPE_HEALTH,
     EVENT_GAME_TYPE_RUPEES,
+    EVENT_GAME_TYPE_MAGIC,
     EVENT_GAME_TYPE_INVENTORY,
     EVENT_GAME_TYPE_MAX,
 } EventGameType;
@@ -94,6 +95,9 @@ typedef union EventGame {
 
             // EVENT_GAME_TYPE_RUPEES
             s16 rupees;
+
+            // EVENT_GAME_TYPE_MAGIC
+            s8 magic;
 
             // EVENT_GAME_TYPE_INVENTORY
             struct {
@@ -173,10 +177,16 @@ u8 EventManager_ProcessScript(struct GameState* gameState, EventScriptEntry* eve
 #define EVENT_AGE(condType, age) EVENT_TYPE_GAME, CMD_BBBB(EVENT_GAME_TYPE_AGE, (condType), (age), 0), CMD_W(0)
 
 // health macro
-#define EVENT_HEALTH(condType, amount) EVENT_TYPE_GAME, CMD_BBH(EVENT_GAME_TYPE_HEALTH, (condType), (amount)), CMD_W(0)
+#define EVENT_HEALTH(condType, amount) \
+    EVENT_TYPE_GAME, CMD_BBBB(EVENT_GAME_TYPE_HEALTH, (condType), 0, (amount)), CMD_W(0)
 
 // rupees macro
-#define EVENT_RUPEES(condType, amount) EVENT_TYPE_GAME, CMD_BBH(EVENT_GAME_TYPE_RUPEES, (condType), (amount)), CMD_W(0)
+#define EVENT_RUPEES(condType, amount) \
+    EVENT_TYPE_GAME, CMD_BBBB(EVENT_GAME_TYPE_RUPEES, (condType), 0, (amount)), CMD_W(0)
+
+// magic macro
+#define EVENT_MAGIC(condType, amount) \
+    EVENT_TYPE_GAME, CMD_BBBB(EVENT_GAME_TYPE_MAGIC, (condType), 0, (amount)), CMD_W(0)
 
 // generic item macro
 #define EVENT_ITEM_BASE(condType, itemId, obtained, amount)                                           \
