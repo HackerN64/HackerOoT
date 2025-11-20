@@ -54,9 +54,9 @@ typedef enum EventTimeType {
 } EventTimeType;
 
 typedef enum EventFreezeType {
-    EVENT_FREEZE_TYPE_NONE,       // no special behavior
-    EVENT_FREEZE_TYPE_EVENT,      // freeze the step value when the events are completed
-    EVENT_FREEZE_TYPE_EVENT_LAST, // same as above but let the animation go to its last keyframe
+    EVENT_FREEZE_TYPE_NONE,           // no special behavior
+    EVENT_FREEZE_TYPE_COMPLETED,      // freeze the step value when the events are completed
+    EVENT_FREEZE_TYPE_COMPLETED_LAST, // same as above but let the animation go to its last keyframe
 } EventFreezeType;
 
 typedef enum EventType {
