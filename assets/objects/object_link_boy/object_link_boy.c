@@ -1,6 +1,6 @@
 #include "object_link_boy.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
-#include "assets/objects/gameplay_keep/gameplay_hacker_keep.h"
+#include "assets/objects/gameplay_hacker_keep/gameplay_hacker_keep.h"
 
 #include "array_count.h"
 #include "gfx.h"
@@ -898,7 +898,7 @@ Gfx gLinkAdultRightHandHoldingHookshotFarDL[196] = {
 
 #if MM_BOTTLE_MODEL
 Gfx gLinkAdultBottleDL[] = {
-#include "assets/objects/gameplay_keep/gLinkMMBottleDL.inc.c"
+#include "assets/objects/gameplay_hacker_keep/gLinkMMBottleDL.inc.c"
 };
 #else
 Gfx gLinkAdultBottleDL[35] = {

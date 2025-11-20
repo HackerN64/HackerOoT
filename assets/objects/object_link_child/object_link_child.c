@@ -1,6 +1,6 @@
 #include "object_link_child.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
-#include "assets/objects/gameplay_keep/gameplay_hacker_keep.h"
+#include "assets/objects/gameplay_hacker_keep/gameplay_hacker_keep.h"
 
 #include "array_count.h"
 #include "gfx.h"
@@ -569,7 +569,7 @@ Gfx gLinkChildRightArmStretchedSlingshotDL[134] = {
 
 #if MM_BOTTLE_MODEL
 Gfx gLinkChildBottleDL[] = {
-#include "assets/objects/gameplay_keep/gLinkMMBottleDL.inc.c"
+#include "assets/objects/gameplay_hacker_keep/gLinkMMBottleDL.inc.c"
 };
 #else
 Gfx gLinkChildBottleDL[33] = {
