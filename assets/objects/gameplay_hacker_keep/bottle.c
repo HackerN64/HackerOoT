@@ -2,11 +2,11 @@
 #include "gfx.h"
 
 u64 gBottleContentsTex[] = {
-#include "assets/objects/gameplay_keep/bottle_contents.i8.inc.c"
+#include "assets/objects/gameplay_hacker_keep/bottle_contents.i8.inc.c"
 };
 
 u64 gBottleGlassNewTex[] = {
-#include "assets/objects/gameplay_keep/bottle_glass.i8.inc.c"
+#include "assets/objects/gameplay_hacker_keep/bottle_glass.i8.inc.c"
 };
 
 Vtx gameplay_keepVtx_000080[] = {

@@ -1148,7 +1148,7 @@ beginseg
     compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/objects/gameplay_keep/gameplay_keep.o"
-    include "$(BUILD_DIR)/assets/objects/gameplay_keep/gameplay_hacker_keep.o"
+    include "$(BUILD_DIR)/assets/objects/gameplay_hacker_keep/gameplay_hacker_keep.o"
     number 4
 endseg
 
