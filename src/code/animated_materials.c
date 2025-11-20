@@ -594,8 +594,6 @@ void AnimatedMat_DrawMultiTexture(GameState* gameState, s32 segment, void* param
 }
 
 void AnimatedMat_DrawEvent(GameState* gameState, s32 segment, UNUSED void* params, u8 allowDraw) {
-    //! TODO: not sure if this works properly
-
     Matrix_Push();
 
     OPEN_DISPS(gameState->gfxCtx);
@@ -606,7 +604,11 @@ void AnimatedMat_DrawEvent(GameState* gameState, s32 segment, UNUSED void* param
         Matrix_Scale(0.0f, 0.0f, 0.0f, MTXMODE_NEW);
     }
 
-    gSPSegment(POLY_OPA_DISP++, segment, MATRIX_FINALIZE(gameState->gfxCtx));
+    Gfx* displayListHead = GRAPH_ALLOC(gameState->gfxCtx, 3 * sizeof(Gfx));
+    gSPSegment(POLY_OPA_DISP++, segment, displayListHead);
+    gDPPipeSync(displayListHead++);
+    MATRIX_FINALIZE_AND_LOAD(displayListHead++, gameState->gfxCtx);
+    gSPEndDisplayList(displayListHead++);
 
     CLOSE_DISPS(gameState->gfxCtx);
 
