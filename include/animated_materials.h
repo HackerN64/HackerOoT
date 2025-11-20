@@ -4,8 +4,18 @@
 #include "ultra64.h"
 #include "config.h"
 #include "command_macros_base.h"
+#include "color.h"
+#include "bgcheck.h"
 
 #if ENABLE_ANIMATED_MATERIALS
+
+/*
+ * 0000 0000 0000 1111: type (see AnimatedMatCameraType)
+ * 0000 0000 0001 0000: execute on event
+ */
+#define MATERIAL_CAM_TYPE(params) ((params) & 0x0F)
+#define MATERIAL_CAM_ON_EVENT(params) (((params) >> 4) & 1)
+#define MATERIAL_CAM_PARAMS(type, onEvent) ((((onEvent) & 1) << 4) | ((type) & 0x0F))
 
 #define MATERIAL_SEGMENT_NUM(n) (n)
 #define LAST_MATERIAL_SEGMENT_NUM(n) -MATERIAL_SEGMENT_NUM(n)
@@ -23,9 +33,19 @@ typedef enum AnimatedMatType {
     // custom types
     /*  */ ANIM_MAT_TYPE_COLOR_CYCLE, // like ANIM_MAT_TYPE_COLOR except it takes a keyframe array to set draw durations
     /*  */ ANIM_MAT_TYPE_TEX_TIMED_CYCLE,
+    /*  */ ANIM_MAT_TYPE_TEXTURE,
     /*  */ ANIM_MAT_TYPE_MULTITEXTURE,
+    /*  */ ANIM_MAT_TYPE_EVENT,
+    /*  */ ANIM_MAT_TYPE_SURFACE_SWAP,
     /*  */ ANIM_MAT_TYPE_MAX
 } AnimatedMatType;
+
+typedef enum AnimatedMatCameraType {
+    ANIM_MAT_CAMERA_TYPE_NONE = -1,
+    ANIM_MAT_CAMERA_TYPE_SHAKE,      // collapse-like screen
+    ANIM_MAT_CAMERA_TYPE_DISTORTION, // jabu-like screen
+    ANIM_MAT_CAMERA_TYPE_MAX,
+} AnimatedMatCameraType;
 
 typedef struct {
     /* 0x00 */ u8 r;
@@ -73,7 +93,11 @@ typedef struct AnimatedMatTexTimedCycleParams {
     AnimatedMatTexTimedCycleKeyframe* keyframeList; // array of keyframes
 } AnimatedMatTexTimedCycleParams;
 
-typedef struct AnimatedMatMultitextureParams {
+typedef struct AnimatedMatTextureParams {
+    TexturePtr textures[2];
+} AnimatedMatTextureParams;
+
+typedef struct AnimatedMatMultiTextureParams {
     TexturePtr texture1; // the segment number for the texture reference is set by `AnimatedMaterial.segment`
     TexturePtr texture2;
     u8 segment2;      // segment number of the texture reference for texture2
@@ -83,7 +107,17 @@ typedef struct AnimatedMatMultitextureParams {
     s16 minEnvAlpha;  // minimum opacity of texture2
     s16 maxEnvAlpha;  // maximum opacity of texture2
     s8 speed;         // transition/blending speed
-} AnimatedMatMultitextureParams;
+} AnimatedMatMultiTextureParams;
+
+// note: the new settings will apply to all tris from the list!
+typedef struct AnimatedMatSurfaceSwapParams {
+    AnimatedMatMultiTextureParams* textureParams; // required for a texture blend transition
+    u16 type;                                     // surface type index to change
+    SurfaceType surface;                          // the new surface settings
+    u16 flags_vIA;                                // new poly flags to apply
+    u16 flags_vIB;                                // new poly flags to apply
+    u16 triIndices[];                             // index list of the triangles to edit, -1 means the list is over
+} AnimatedMatSurfaceSwapParams;
 
 struct GameState;
 struct EventScriptEntry;
@@ -93,9 +127,11 @@ typedef struct AnimatedMaterial {
     /* 0x02 */ AnimatedMatType type;
     /* 0x04 */ void* params;
     /* 0x08 */ struct EventScriptEntry* eventEntry; // optional
-    /* 0x0C */ TexturePtr defaultTex; // optional, default texture to use (used if the event manager returns false)
+    /* 0x0C */ u16 camParams;
 } AnimatedMaterial;
 
+void AnimatedMat_DrawDefaultDL(struct GameState* gameState, u8 segment, u8 envAlpha);
+void AnimatedMat_SetTexture(struct GameState* gameState, u8 segment, TexturePtr texture);
 Gfx* AnimatedMat_TexScroll(struct GameState* gameState, AnimatedMatTexScrollParams* params);
 void AnimatedMat_DrawTexScroll(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
 Gfx* AnimatedMat_TwoLayerTexScroll(struct GameState* gameState, AnimatedMatTexScrollParams* params);
@@ -107,9 +143,18 @@ s32 AnimatedMat_Lerp(s32 min, s32 max, f32 norm);
 void AnimatedMat_DrawColorLerp(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
 void AnimatedMat_DrawColorNonLinearInterp(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
 void AnimatedMat_DrawTexCycle(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
-void AnimatedMat_DrawTexTimedCycle(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
 void AnimatedMat_DrawColorCycle(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
 void AnimatedMat_DrawTexTimedCycle(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
+void AnimatedMat_DrawTexture(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
+void AnimatedMat_DrawMultiTexture(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
+void AnimatedMat_DrawEvent(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
+void AnimatedMat_InitSurfaceSwap(struct GameState* gameState, void* params);
+void AnimatedMat_SetSurfaceType(struct GameState* gameState, AnimatedMatSurfaceSwapParams* animParams, s32 index,
+                                u16 type, u8 allowDraw);
+void AnimatedMat_SetCollisionPolyFlags(struct GameState* gameState, AnimatedMatSurfaceSwapParams* animParams, s32 index,
+                                       u8 allowDraw);
+void AnimatedMat_DrawSurfaceSwap(struct GameState* gameState, s32 segment, void* params, u8 allowDraw);
+void AnimatedMat_ScreenDistortion(PlayState* play);
 
 void AnimatedMat_DrawMain(struct GameState* gameState, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step, u32 flags);
 void AnimatedMat_Draw(struct GameState* gameState, u32 gameplayFrames, AnimatedMaterial* matAnim);

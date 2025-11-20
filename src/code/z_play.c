@@ -50,6 +50,7 @@
 #include "occlusionplanes.h"
 #include "libu64/gfxprint.h"
 #include "debug.h"
+#include "animated_materials.h"
 
 #if CAN_INCLUDE_EXAMPLE_SCENE
 #include "assets/scenes/example/example_scene.h"
@@ -1897,6 +1898,24 @@ void Play_InitScene(PlayState* this, s32 spawn) {
     gSaveContext.worldMapArea = WORLD_MAP_AREA_HYRULE_FIELD;
     Scene_ExecuteCommands(this, this->sceneSegment);
     Play_InitEnvironment(this, this->skyboxId);
+
+#if ENABLE_ANIMATED_MATERIALS
+    AnimatedMaterial* matAnim = this->sceneMaterialAnims;
+
+    if (matAnim != NULL && matAnim->segment != 0) {
+        s32 segment;
+
+        do {
+            segment = matAnim->segment;
+
+            if (matAnim->type == ANIM_MAT_TYPE_SURFACE_SWAP) {
+                AnimatedMat_InitSurfaceSwap(&this->state, SEGMENTED_TO_VIRTUAL(matAnim->params));
+            }
+
+            matAnim++;
+        } while (segment >= 0);
+    }
+#endif
 }
 
 void Play_SpawnScene(PlayState* this, s32 sceneId, s32 spawn) {

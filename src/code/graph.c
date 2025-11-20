@@ -72,6 +72,8 @@ UCodeInfo D_8012D248[3] = {
     { UCODE_TYPE_S2DEX, gspS2DEX2d_fifoTextStart },
 };
 
+Gfx* gPrevTaskWorkBuffer = NULL;
+
 void Graph_FaultClient(void) {
     void* nextFb = osViGetNextFramebuffer();
     void* newFb = (SysCfb_GetFbPtr(0) != nextFb) ? SysCfb_GetFbPtr(0) : SysCfb_GetFbPtr(1);
@@ -210,7 +212,6 @@ void Graph_Destroy(GraphicsContext* gfxCtx) {
 
 void Graph_TaskSet00(GraphicsContext* gfxCtx) {
 #if DEBUG_FEATURES
-    static Gfx* sPrevTaskWorkBuffer = NULL;
 #endif
     OSTask_t* task = &gfxCtx->task.list.t;
     OSScTask* scTask = &gfxCtx->task;
@@ -236,11 +237,11 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
             LogUtils_LogHexDump(gGfxSPTaskYieldBuffer, sizeof(gGfxSPTaskYieldBuffer));
 
             SREG(6) = -1;
-            if (sPrevTaskWorkBuffer != NULL) {
+            if (gPrevTaskWorkBuffer != NULL) {
                 R_HREG_MODE = HREG_MODE_UCODE_DISAS;
                 R_UCODE_DISAS_TOGGLE = 1;
                 R_UCODE_DISAS_LOG_LEVEL = 2;
-                Graph_DisassembleUCode(sPrevTaskWorkBuffer);
+                Graph_DisassembleUCode(gPrevTaskWorkBuffer);
             }
 #endif
 
@@ -250,7 +251,7 @@ void Graph_TaskSet00(GraphicsContext* gfxCtx) {
         osRecvMesg(&gfxCtx->queue, &msg, OS_MESG_NOBLOCK);
 
 #if DEBUG_FEATURES
-        sPrevTaskWorkBuffer = gfxCtx->workBuffer;
+        gPrevTaskWorkBuffer = gfxCtx->workBuffer;
 #endif
     }
 
