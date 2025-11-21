@@ -20,7 +20,7 @@ SceneCmd example_scene_header00[] = {
     SCENE_CMD_PLAYER_ENTRY_LIST(7, example_scene_header00_playerEntryList),
     SCENE_CMD_CUTSCENE_DATA(gExampleCS),
 #if ENABLE_ANIMATED_MATERIALS
-    SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
+    SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial, MATERIAL_CAM_PARAMS(ANIM_MAT_CAMERA_TYPE_NONE, false)),
 #endif
 #if ENABLE_CUTSCENE_IMPROVEMENTS
     SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
@@ -265,7 +265,7 @@ SceneCmd example_scene_header01[] = {
     SCENE_CMD_SPAWN_LIST(example_scene_header01_entranceList),
     SCENE_CMD_PLAYER_ENTRY_LIST(7, example_scene_header01_playerEntryList),
 #if ENABLE_ANIMATED_MATERIALS
-    SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
+    SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial, MATERIAL_CAM_PARAMS(ANIM_MAT_CAMERA_TYPE_NONE, false)),
 #endif
 #if ENABLE_CUTSCENE_IMPROVEMENTS
     SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
@@ -413,7 +413,7 @@ SceneCmd example_scene_header02[] = {
     SCENE_CMD_SPAWN_LIST(example_scene_header02_entranceList),
     SCENE_CMD_PLAYER_ENTRY_LIST(7, example_scene_header02_playerEntryList),
 #if ENABLE_ANIMATED_MATERIALS
-    SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
+    SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial, MATERIAL_CAM_PARAMS(ANIM_MAT_CAMERA_TYPE_NONE, false)),
 #endif
 #if ENABLE_CUTSCENE_IMPROVEMENTS
     SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),
@@ -561,7 +561,7 @@ SceneCmd example_scene_header03[] = {
     SCENE_CMD_SPAWN_LIST(example_scene_header03_entranceList),
     SCENE_CMD_PLAYER_ENTRY_LIST(7, example_scene_header03_playerEntryList),
 #if ENABLE_ANIMATED_MATERIALS
-    SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial),
+    SCENE_CMD_ANIMATED_MATERIAL_LIST(debug1_scene_header00_AnimatedMaterial, MATERIAL_CAM_PARAMS(ANIM_MAT_CAMERA_TYPE_NONE, false)),
 #endif
 #if ENABLE_CUTSCENE_IMPROVEMENTS
     SCENE_CMD_ACTOR_CUTSCENE_LIST(2, debug1_scene_header00_ActorCutsceneList),

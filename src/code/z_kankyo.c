@@ -469,9 +469,6 @@ void Environment_Init(PlayState* play2, EnvironmentContext* envCtx, s32 unused) 
         sLightningBolts[i].state = LIGHTNING_BOLT_INACTIVE;
     }
 
-    play->roomCtx.drawParams[0] = 0;
-    play->roomCtx.drawParams[1] = 0;
-
     for (i = 0; i < ARRAY_COUNT(play->csCtx.actorCues); i++) {
         play->csCtx.actorCues[i] = NULL;
     }
@@ -1009,21 +1006,20 @@ void Environment_Update(PlayState* play, EnvironmentContext* envCtx, LightContex
         }
 
 #if CAN_SHOW_TIME_INFOS
-        if (R_ENABLE_ARENA_DBG != 0 || CREG(2) != 0) {
-            Gfx* displayList;
-            Gfx* prevDisplayList;
+        Gfx* displayList;
+        Gfx* prevDisplayList;
 
-            OPEN_DISPS(play->state.gfxCtx, "../z_kankyo.c", 1682);
+        OPEN_DISPS(play->state.gfxCtx, "../z_kankyo.c", 1682);
 
-            prevDisplayList = POLY_OPA_DISP;
-            displayList = Gfx_Open(POLY_OPA_DISP);
-            gSPDisplayList(OVERLAY_DISP++, displayList);
-            Environment_PrintDebugInfo(play, &displayList);
-            gSPEndDisplayList(displayList++);
-            Gfx_Close(prevDisplayList, displayList);
-            POLY_OPA_DISP = displayList;
-            CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 1690);
-        }
+        prevDisplayList = POLY_OPA_DISP;
+        displayList = Gfx_Open(POLY_OPA_DISP);
+        gSPDisplayList(OVERLAY_DISP++, displayList);
+        Environment_PrintDebugInfo(play, &displayList);
+        gSPEndDisplayList(displayList++);
+        Gfx_Close(prevDisplayList, displayList);
+        POLY_OPA_DISP = displayList;
+
+        CLOSE_DISPS(play->state.gfxCtx, "../z_kankyo.c", 1690);
 #endif
 
         if ((envCtx->lightSettingOverride != LIGHT_SETTING_OVERRIDE_NONE) &&
