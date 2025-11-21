@@ -1904,16 +1904,24 @@ void Play_InitScene(PlayState* this, s32 spawn) {
 
     if (matAnim != NULL && matAnim->segment != 0) {
         s32 segment;
+        s32 i = 0;
+        u8 numTypes[ANIM_MAT_TYPE_MAX];
+
+        memset(numTypes, 0, sizeof(numTypes));
 
         do {
             segment = matAnim->segment;
+            numTypes[matAnim->type]++;
 
             if (matAnim->type == ANIM_MAT_TYPE_SURFACE_SWAP) {
                 AnimatedMat_InitSurfaceSwap(&this->state, SEGMENTED_TO_VIRTUAL(matAnim->params));
             }
 
             matAnim++;
+            i++;
         } while (segment >= 0);
+
+        AnimatedMat_Init(&this->state, i, numTypes);
     }
 #endif
 }
