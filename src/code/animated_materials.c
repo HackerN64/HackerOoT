@@ -39,7 +39,7 @@ static s16 sTriCount = 0;
 // doing it this way to save space, holds runtime informations for each running type
 typedef struct AnimatedMatContext {
     u8 prevAllowDraw;
-    u8 freezeType;
+    u8 actionType;
 
     union {
         struct {
@@ -69,17 +69,6 @@ void AnimatedMat_Init(GameState* gameState, u8 arrayCount, u8* typesArray) {
     memset(sCtxList, 0, sizeof(AnimatedMatContext) * sArrayCount);
 }
 
-void AnimatedMat_DrawDefaultDL(GameState* gameState, Gfx** ppDisplayList, u8 envAlpha) {
-    OPEN_DISPS(gameState->gfxCtx);
-
-    gSPDisplayList((*ppDisplayList)++, gEmptyDL);
-    gDPPipeSync((*ppDisplayList)++);
-    gDPSetPrimColor((*ppDisplayList)++, 0, 0, 255, 255, 255, 255);
-    gDPSetEnvColor((*ppDisplayList)++, 128, 128, 128, envAlpha);
-
-    CLOSE_DISPS(gameState->gfxCtx);
-}
-
 void AnimatedMat_SetSegment(GameState* gameState, u8 segment, void* data) {
     OPEN_DISPS(gameState->gfxCtx);
 
@@ -102,6 +91,46 @@ void AnimatedMat_SetDisplayList(GameState* gameState, Gfx** ppDisplayList, u8 se
     CLOSE_DISPS(gameState->gfxCtx);
 }
 
+void AnimatedMat_SetDefaultDL(GameState* gameState, Gfx** ppDisplayList, u8 envAlpha) {
+    OPEN_DISPS(gameState->gfxCtx);
+
+    gSPDisplayList((*ppDisplayList)++, gEmptyDL);
+    gDPPipeSync((*ppDisplayList)++);
+    gDPSetPrimColor((*ppDisplayList)++, 0, 0, 255, 255, 255, 255);
+    gDPSetEnvColor((*ppDisplayList)++, 128, 128, 128, envAlpha);
+
+    CLOSE_DISPS(gameState->gfxCtx);
+}
+
+void AnimatedMat_UpdateStep(AnimatedMatContext* curCtx) {
+    if (curCtx->step == sPrevMatAnimStep) {
+        curCtx->step = sMatAnimStep;
+    } else if (curCtx->step != sMatAnimStep) {
+        curCtx->step++;
+    }
+}
+
+// returning false means the caller will return early
+u8 AnimatedMat_ProcessFreeze(AnimatedMatContext* curCtx, u8 allowDraw) {
+    if (curCtx->actionType == EVENT_ACTION_TYPE_INVERTED || curCtx->actionType == EVENT_ACTION_TYPE_INVERTED_KEEP) {
+        if (curCtx->actionType == EVENT_ACTION_TYPE_INVERTED && allowDraw) {
+            return false;
+        }
+
+        if (!allowDraw) {
+            AnimatedMat_UpdateStep(curCtx);
+        }
+    } else {
+        if (!allowDraw) {
+            return false;
+        }
+
+        AnimatedMat_UpdateStep(curCtx);
+    }
+
+    return true;
+}
+
 /**
  * Returns a pointer to a single layer texture scroll displaylist.
  */
@@ -118,22 +147,8 @@ void AnimatedMat_DrawTexScroll(GameState* gameState, AnimatedMatContext* curCtx,
                                void* params, u8 allowDraw) {
     AnimatedMatTexScrollParams* texScrollParams = (AnimatedMatTexScrollParams*)params;
 
-    if (curCtx->freezeType == EVENT_FREEZE_TYPE_COMPLETED) {
-        if (allowDraw) {
-            return;
-        }
-
-        if (curCtx->step == sPrevMatAnimStep) {
-            curCtx->step = sMatAnimStep;
-        } else if (curCtx->step != sMatAnimStep) {
-            curCtx->step++;
-        }
-    } else {
-        if (!allowDraw) {
-            return;
-        }
-
-        curCtx->step = sMatAnimStep;
+    if (!AnimatedMat_ProcessFreeze(curCtx, allowDraw)) {
+        return;
     }
 
     AnimatedMat_SetDisplayList(gameState, ppDisplayList, segment,
@@ -164,22 +179,8 @@ void AnimatedMat_DrawTwoTexScroll(GameState* gameState, AnimatedMatContext* curC
                                   void* params, u8 allowDraw, u8 oscillating) {
     AnimatedMatTexScrollParams* texScrollParams = (AnimatedMatTexScrollParams*)params;
 
-    if (curCtx->freezeType == EVENT_FREEZE_TYPE_COMPLETED) {
-        if (allowDraw) {
-            return;
-        }
-
-        if (curCtx->step == sPrevMatAnimStep) {
-            curCtx->step = sMatAnimStep;
-        } else if (curCtx->step != sMatAnimStep) {
-            curCtx->step++;
-        }
-    } else {
-        if (!allowDraw) {
-            return;
-        }
-
-        curCtx->step = sMatAnimStep;
+    if (!AnimatedMat_ProcessFreeze(curCtx, allowDraw)) {
+        return;
     }
 
     AnimatedMat_SetDisplayList(gameState, ppDisplayList, segment,
@@ -220,22 +221,8 @@ void AnimatedMat_DrawColor(GameState* gameState, AnimatedMatContext* curCtx, Gfx
     F3DEnvColor* envColor;
     s32 curFrame;
 
-    if (curCtx->freezeType == EVENT_FREEZE_TYPE_COMPLETED) {
-        if (allowDraw) {
-            return;
-        }
-
-        if (curCtx->step == sPrevMatAnimStep) {
-            curCtx->step = sMatAnimStep;
-        } else if (curCtx->step != sMatAnimStep) {
-            curCtx->step++;
-        }
-    } else {
-        if (!allowDraw) {
-            return;
-        }
-
-        curCtx->step = sMatAnimStep;
+    if (!AnimatedMat_ProcessFreeze(curCtx, allowDraw)) {
+        return;
     }
 
     curFrame = curCtx->step % colorAnimParams->keyFrameLength;
@@ -276,22 +263,8 @@ void AnimatedMat_DrawColorLerp(GameState* gameState, AnimatedMatContext* curCtx,
     F3DEnvColor envColorResult;
     s32 i;
 
-    if (curCtx->freezeType == EVENT_FREEZE_TYPE_COMPLETED) {
-        if (allowDraw) {
-            return;
-        }
-
-        if (curCtx->step == sPrevMatAnimStep) {
-            curCtx->step = sMatAnimStep;
-        } else if (curCtx->step != sMatAnimStep) {
-            curCtx->step++;
-        }
-    } else {
-        if (!allowDraw) {
-            return;
-        }
-
-        curCtx->step = sMatAnimStep;
+    if (!AnimatedMat_ProcessFreeze(curCtx, allowDraw)) {
+        return;
     }
 
     curFrame = curCtx->step % colorAnimParams->keyFrameLength;
@@ -371,22 +344,8 @@ void AnimatedMat_DrawColorNonLinearInterp(GameState* gameState, AnimatedMatConte
     f32* fxEnvAPtr = fxEnvA;
     s32 i;
 
-    if (curCtx->freezeType == EVENT_FREEZE_TYPE_COMPLETED) {
-        if (allowDraw) {
-            return;
-        }
-
-        if (curCtx->step == sPrevMatAnimStep) {
-            curCtx->step = sMatAnimStep;
-        } else if (curCtx->step != sMatAnimStep) {
-            curCtx->step++;
-        }
-    } else {
-        if (!allowDraw) {
-            return;
-        }
-
-        curCtx->step = sMatAnimStep;
+    if (!AnimatedMat_ProcessFreeze(curCtx, allowDraw)) {
+        return;
     }
 
     curFrame = curCtx->step % colorAnimParams->keyFrameLength;
@@ -471,7 +430,7 @@ void AnimatedMat_DrawColorCycle(GameState* gameState, AnimatedMatContext* curCtx
     u16* keyFrames = SEGMENTED_TO_VIRTUAL(colorAnimParams->keyFrames);
 
     if (!allowDraw) {
-        AnimatedMat_DrawDefaultDL(gameState, ppDisplayList, 128);
+        AnimatedMat_SetDefaultDL(gameState, ppDisplayList, 128);
         return;
     }
 
@@ -781,9 +740,6 @@ void AnimatedMat_DrawMain(GameState* gameState, AnimatedMaterial* matAnim, f32 a
         do {
             void* params = SEGMENTED_TO_VIRTUAL(matAnim->params);
             u8 allowDraw = true;
-            u16 camParams = matAnim->camParams;
-            s16 camType = MATERIAL_CAM_TYPE(camParams);
-            u8 onEvent = MATERIAL_CAM_ON_EVENT(camParams);
             AnimatedMatContext* curCtx = &sCtxList[i];
 
             OPEN_DISPS(gameState->gfxCtx);
@@ -799,27 +755,32 @@ void AnimatedMat_DrawMain(GameState* gameState, AnimatedMaterial* matAnim, f32 a
             AnimatedMat_SetSegment(gameState, segmentAbs, displayListHead);
             gDPPipeSync(pDisplayList++);
 
-            curCtx->freezeType = EVENT_FREEZE_TYPE_NONE;
+            curCtx->actionType = EVENT_ACTION_TYPE_NONE;
             if (matAnim->eventEntry != NULL) {
                 allowDraw = EventManager_ProcessScript(gameState, SEGMENTED_TO_VIRTUAL(matAnim->eventEntry));
-                curCtx->freezeType = EventManager_GetFreezeType();
+                curCtx->actionType = EventManager_GetFreezeType();
             }
 
             // process camera/screen effects
-            if (!onEvent || allowDraw) {
-                if (gSaveContext.gameMode == GAMEMODE_NORMAL && camType != ANIM_MAT_CAMERA_TYPE_NONE) {
-                    PlayState* play = (PlayState*)gameState;
+            if (gSaveContext.gameMode == GAMEMODE_NORMAL) {
+                PlayState* play = (PlayState*)gameState;
+                u16 camParams = play->sceneMaterialAnimCamParams;
+                s16 camType = MATERIAL_CAM_TYPE(camParams);
+                u8 onEvent = MATERIAL_CAM_ON_EVENT(camParams);
 
-                    switch (camType) {
-                        case ANIM_MAT_CAMERA_TYPE_SHAKE:
-                            func_8009BEEC(play);
-                            break;
-                        case ANIM_MAT_CAMERA_TYPE_DISTORTION: {
-                            AnimatedMat_ScreenDistortion(play);
-                            break;
+                if (!onEvent || allowDraw) {
+                    if (camType != ANIM_MAT_CAMERA_TYPE_NONE) {
+
+                        switch (camType) {
+                            case ANIM_MAT_CAMERA_TYPE_SHAKE:
+                                func_8009BEEC(play);
+                                break;
+                            case ANIM_MAT_CAMERA_TYPE_DISTORTION:
+                                AnimatedMat_ScreenDistortion(play);
+                                break;
+                            default:
+                                break;
                         }
-                        default:
-                            break;
                     }
                 }
             }
@@ -867,7 +828,7 @@ void AnimatedMat_DrawMain(GameState* gameState, AnimatedMaterial* matAnim, f32 a
                     AnimatedMat_DrawSurfaceSwap(gameState, curCtx, segmentAbs, params, allowDraw);
                     break;
                 default:
-                    AnimatedMat_DrawDefaultDL(gameState, &pDisplayList, 128);
+                    AnimatedMat_SetDefaultDL(gameState, &pDisplayList, 128);
                     break;
             }
 

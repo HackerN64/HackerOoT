@@ -127,7 +127,6 @@ typedef struct AnimatedMaterial {
     /* 0x02 */ AnimatedMatType type;
     /* 0x04 */ void* params;
     /* 0x08 */ struct EventScriptEntry* eventEntry; // optional
-    /* 0x0C */ u16 camParams;
 } AnimatedMaterial;
 
 void AnimatedMat_InitSurfaceSwap(struct GameState* gameState, void* params);

@@ -16,7 +16,7 @@ static void EventManager_ProcessGame(GameState* gameState, EventGame* event, u8*
 static void EventManager_ProcessTime(GameState* gameState, EventTime* event, u8* pabTime);
 static u8 EventManager_Validate(u8* pabType, u8 length);
 
-static u8 sFreezeType = EVENT_FREEZE_TYPE_NONE;
+static u8 sEventActionType = EVENT_ACTION_TYPE_NONE;
 
 // probably dumb
 #define EventManager_ConditionImpl(condType, a, b) \
@@ -215,7 +215,7 @@ static u8 EventManager_Validate(u8* pabType, u8 length) {
 }
 
 u8 EventManager_GetFreezeType(void) {
-    return sFreezeType;
+    return sEventActionType;
 }
 
 // returns true when it should draw, otherwise returns false
@@ -228,7 +228,7 @@ u8 EventManager_ProcessScript(GameState* gameState, EventScriptEntry* eventEntry
     s32 i;
 
     script = SEGMENTED_TO_VIRTUAL(eventEntry->script);
-    sFreezeType = eventEntry->freezeType;
+    sEventActionType = eventEntry->actionType;
 
     memset(abFlag, true, sizeof(abFlag));
     memset(abGame, true, sizeof(abGame));

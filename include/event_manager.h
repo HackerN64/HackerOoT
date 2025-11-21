@@ -53,11 +53,13 @@ typedef enum EventTimeType {
     EVENT_TIME_TYPE_MAX,
 } EventTimeType;
 
-typedef enum EventFreezeType {
-    EVENT_FREEZE_TYPE_NONE,           // no special behavior
-    EVENT_FREEZE_TYPE_COMPLETED,      // freeze the step value when the events are completed
-    EVENT_FREEZE_TYPE_COMPLETED_LAST, // same as above but let the animation go to its last keyframe
-} EventFreezeType;
+// only used by the system using this
+//! TODO: add a type that can let a draw to complete its loop before freezing
+typedef enum EventActionType {
+    EVENT_ACTION_TYPE_NONE, // no special behavior
+    EVENT_ACTION_TYPE_INVERTED, // inverts the event behavior
+    EVENT_ACTION_TYPE_INVERTED_KEEP, // same as above but allows to continue to draw the last state
+} EventActionType;
 
 typedef enum EventType {
     EVENT_TYPE_NONE = -1,
@@ -152,7 +154,7 @@ typedef union EventTime {
 
 typedef struct EventScriptEntry {
     EventData* script; // list of events to process, must be the same size as keyframeList
-    u8 freezeType;     // see EventFreezeType
+    u8 actionType;     // see EventActionType
 } EventScriptEntry;
 
 struct GameState;
