@@ -14,6 +14,8 @@
     // see `Error_please_update_viewport_Z_and_Y_see_GBI`
     #undef G_MAXZ
     #define G_MAXZ G_NEW_MAXZ
+
+    #define G_LIGHT_IS_POSLIGHT(lptr) ((lptr)->l.type != 0)
 #else
 #include "mbi.h"
 #include "ultratypes.h"
@@ -24,6 +26,17 @@
 #else
 #define _DW(macro) { macro } (void)0
 #endif
+
+/* F3DEX3 compatibility */
+#define G_MAX_LIGHTS 7
+#define gsSPBranchListHint(    dl, count)   gsSPBranchList(    dl)
+#define gSPBranchListHint(pkt, dl, count)   gSPBranchList(pkt, dl)
+#define gsSPDisplayListHint(    dl, count)  gsSPDisplayList(    dl)
+#define gSPDisplayListHint(pkt, dl, count)  gSPDisplayList(pkt, dl)
+
+/* F3DEX2 Positional Lights */
+#define F3DEX_GBI_PL
+#define G_LIGHT_IS_POSLIGHT(lptr) ((lptr)->l.pad1 != 0)
 
 /* To enable Fast3DEX grucode support, define F3DEX_GBI. */
 
@@ -1338,6 +1351,7 @@ typedef struct PointLight_t {
     unsigned char kl;       /* linear attenuation */
     short         pos[3];   /* world-space position of light */
     unsigned char kq;       /* quadratic attenuation */
+    unsigned char size;     /* For specular only; reasonable values are 1-4 */
 } PointLight_t;
 #endif
 

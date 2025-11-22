@@ -44,4 +44,17 @@ __attribute__((noreturn)) void __assert(const char* assertion, const char* file,
 # define static_assert(cond, msg) typedef char GLUE2(static_assertion_failed, __LINE__)[(cond) ? 1 : -1]
 #endif
 
+// assertf, print a message before abort
+#if IS_DEBUG
+# define assertf(cond, fmt, ...)                    \
+    do {                                            \
+        if (!(cond)) {                              \
+            PRINTF(fmt, __VA_ARGS__);               \
+            __assert(#cond, __FILE__, __LINE__);    \
+        }                                           \
+    } while (0)
+#else
+# define assertf(cond, fmt, ...) ((void)0)
+#endif
+
 #endif

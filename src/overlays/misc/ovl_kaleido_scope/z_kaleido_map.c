@@ -11,6 +11,7 @@
 #include "versions.h"
 #include "play_state.h"
 #include "save.h"
+#include "light.h"
 
 #include "assets/textures/icon_item_24_static/icon_item_24_static.h"
 #if OOT_NTSC
@@ -698,6 +699,8 @@ void KaleidoScope_DrawWorldMap(PlayState* play, GraphicsContext* gfxCtx) {
         gSPLoadUcode(gfx++, SysUcode_GetUCode(), SysUcode_GetUCodeData());
 
         POLY_OPA_DISP = gfx;
+
+        Lights_ResetDrawState();
     }
 
     if (HREG(15) == 2) {
