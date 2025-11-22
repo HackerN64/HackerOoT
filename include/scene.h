@@ -240,6 +240,7 @@ typedef struct {
     /* 0x0 */ u8  code;
     /* 0x1 */ u8  data1;
     /* 0x4 */ void* segment;
+    u16 camParams;
 } SCmdTextureAnimations; // size = 0x8
 #endif
 
@@ -603,8 +604,8 @@ typedef enum SceneCommandTypeID {
 #endif
 
 #if ENABLE_ANIMATED_MATERIALS
-#define SCENE_CMD_ANIMATED_MATERIAL_LIST(matAnimList) \
-    { SCENE_CMD_ID_ANIMATED_MATERIAL_LIST, 0, CMD_PTR(matAnimList) }
+#define SCENE_CMD_ANIMATED_MATERIAL_LIST(matAnimList, camParams) \
+    { SCENE_CMD_ID_ANIMATED_MATERIAL_LIST, 0, CMD_PTR(matAnimList), CMD_W(camParams) }
 #endif
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS

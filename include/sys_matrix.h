@@ -64,8 +64,8 @@ Mtx* Matrix_Finalize(struct GraphicsContext* gfxCtx);
 
 #endif
 
-#define MATRIX_FINALIZE_AND_LOAD(pkt, gfxCtx, file, line) \
-    gSPMatrix(pkt, MATRIX_FINALIZE(gfxCtx, file, line), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW)
+#define MATRIX_FINALIZE_AND_LOAD(pkt, gfxCtx, ...) \
+    gSPMatrix(pkt, MATRIX_FINALIZE(gfxCtx, __FILE__, __LINE__), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW)
 
 /* Vector operations */
 
