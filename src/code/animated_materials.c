@@ -610,7 +610,7 @@ void AnimatedMat_InitSurfaceSwap(GameState* gameState, void* params) {
         sBackupList = GAME_STATE_ALLOC(gameState, sizeof(CollisionPolyBackup));
         ASSERT(sBackupList != NULL, "sBackupList is NULL...", __FILE__, __LINE__);
 
-        curSurface = &play->colCtx.colHeader->surfaceTypeList[animParams->type];
+        curSurface = &play->colCtx.colHeader->surfaceTypeList[animParams->surfaceType];
         sBackupList[0].surfaceType.data[0] = curSurface->data[0];
         sBackupList[0].surfaceType.data[1] = curSurface->data[1];
     } else {
@@ -680,7 +680,7 @@ void AnimatedMat_DrawSurfaceSwap(GameState* gameState, AnimatedMatContext* curCt
 
         if (curCtx->prevAllowDraw != allowDraw) {
             if (sTriCount == 0) {
-                AnimatedMat_SetSurfaceType(gameState, animParams, 0, animParams->type, allowDraw);
+                AnimatedMat_SetSurfaceType(gameState, animParams, 0, animParams->surfaceType, allowDraw);
             } else {
                 for (i = 0; i < sTriCount; i++) {
                     curPoly = &play->colCtx.colHeader->polyList[animParams->triIndices[i]];

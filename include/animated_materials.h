@@ -36,7 +36,7 @@ typedef enum AnimatedMatType {
     /* 11 */ ANIM_MAT_TYPE_EVENT,
     /* 12 */ ANIM_MAT_TYPE_SURFACE_SWAP,
     /* 13 */ ANIM_MAT_TYPE_OSCILLATING_TWO_TEX,
-    /*  */ ANIM_MAT_TYPE_MAX
+    /* 14 */ ANIM_MAT_TYPE_MAX
 } AnimatedMatType;
 
 typedef enum AnimatedMatCameraType {
@@ -101,20 +101,20 @@ typedef struct AnimatedMatMultiTextureParams {
     s16 maxPrimAlpha;    // maximum opacity of both textures
     s16 minEnvAlpha;     // minimum opacity of texture2
     s16 maxEnvAlpha;     // maximum opacity of texture2
-    s8 speed;            // transition/blending speed
+    u8 speed;            // transition/blending speed
     TexturePtr texture1; // optional, texture reference (can be NULL)
     TexturePtr texture2; // optional, texture reference (can be NULL)
-    s8 segment1;         // optional, segment number of the texture reference for texture1
-    s8 segment2;         // optional, segment number of the texture reference for texture2
+    u8 segment1;         // optional, segment number of the texture reference for texture1
+    u8 segment2;         // optional, segment number of the texture reference for texture2
 } AnimatedMatMultiTextureParams;
 
 // note: the new settings will apply to all tris from the list!
 typedef struct AnimatedMatSurfaceSwapParams {
-    AnimatedMatMultiTextureParams* textureParams; // required for a texture blend transition
-    u16 type;                                     // surface type index to change
     SurfaceType surface;                          // the new surface settings
+    s16 surfaceType;                              // surface type index to change
     u16 flags_vIA;                                // new poly flags to apply
     u16 flags_vIB;                                // new poly flags to apply
+    AnimatedMatMultiTextureParams* textureParams; // required for a texture blend transition
     u16 triIndices[];                             // index list of the triangles to edit, -1 means the list is over
 } AnimatedMatSurfaceSwapParams;
 
