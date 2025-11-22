@@ -137,7 +137,7 @@ typedef union EventGame {
 
 typedef union EventTime {
     struct {
-        u8 type;
+        u8 type; // see EventTimeType
         u8 isClock; // set to true to check for a specific time range
         union {
             u8 isRange;
