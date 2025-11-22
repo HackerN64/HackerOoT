@@ -5,6 +5,15 @@
  */
 
 #include "z_eff_ss_dead_db.h"
+
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "segmented_address.h"
+#include "sfx.h"
+#include "effect.h"
+#include "play_state.h"
+#include "skin_matrix.h"
+
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
 #define rScale regs[0]
@@ -24,7 +33,7 @@ u32 EffectSsDeadDb_Init(PlayState* play, u32 index, EffectSs* this, void* initPa
 void EffectSsDeadDb_Draw(PlayState* play, u32 index, EffectSs* this);
 void EffectSsDeadDb_Update(PlayState* play, u32 index, EffectSs* this);
 
-EffectSsInit Effect_Ss_Dead_Db_InitVars = {
+EffectSsProfile Effect_Ss_Dead_Db_Profile = {
     EFFECT_SS_DEAD_DB,
     EffectSsDeadDb_Init,
 };
@@ -134,7 +143,6 @@ void EffectSsDeadDb_Update(PlayState* play, u32 index, EffectSs* this) {
 
     if (this->rPlaySfx && (this->rTextIdx == 1)) {
         SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &this->pos, &this->vec, &w);
-        Audio_PlaySfxGeneral(NA_SE_EN_EXTINCT, &this->vec, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultReverb);
+        SFX_PLAY_AT_POS(&this->vec, NA_SE_EN_EXTINCT);
     }
 }

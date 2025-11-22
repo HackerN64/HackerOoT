@@ -9,8 +9,11 @@
  * F3DEX3 options
  * This only works on real console or LLE emulators like ares or ParaLLEl. It
  * will not work on legacy HLE emulators such as Project64.
+ * Note: you can define this with `CPP_DEFINES=-DENABLE_F3DEX3=0 make -j$(nproc)`
 */
+#ifndef ENABLE_F3DEX3
 #define ENABLE_F3DEX3 true
+#endif
 // Remove usually-unnecessary syncs from texture loading commands. Only matters
 // for vanilla display lists--new ones exported from fast64 already have the
 // syncs removed. This is buggy (graphical issues / crashes) as some vanilla DLs
@@ -18,6 +21,8 @@
 // have already had the missing syncs manually added, but some have not been
 // fixed yet.
 #define ENABLE_F3DEX3_NOSYNCS false
+// Visualize occlusion planes with some dots at the corners and text.
+#define DEBUG_OCCLUSION_PLANES false
 
 /**
  * Other graphical settings
@@ -25,6 +30,9 @@
 
 // Enable or disable Link's LOD model (the low poly model)
 #define ENABLE_LINK_LOD false
+
+// Use the Majora's Mask Model for Bottles
+#define MM_BOTTLE_MODEL true
 
 // Disables AA (Improves console performance but causes visible seams between unconnected geometry).
 // #define DISABLE_AA false
@@ -46,12 +54,19 @@
 */
 #define ENABLE_MOTION_BLUR true
 
+/*
+ * Improved animation morphing (more info in z_bettermorph.c)
+ * Uses a more expensive but substantially better morphing algorithm.
+ * Useful to avoid custom skeletons with complex animations "flipping out" when animations are morphed.
+*/
+#define IMPROVED_ANIMATION_MORPHING true
+
 /**
  * Widescreen mode
  * Use the button combo Z + R + D-Pad Up to toggle
  * Note: pre-rendered scenes with the fixed camera mode won't re-scale properly
 */
-#define ENABLE_WIDESCREEN false
+#define ENABLE_WIDESCREEN true
 
 // Force widescreen mode regardless of SaveContext
 #define FORCE_WIDESCREEN false

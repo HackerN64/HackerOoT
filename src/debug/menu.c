@@ -1,5 +1,15 @@
-#include "global.h"
+#include "gfx.h"
 #include "debug.h"
+#include "controller.h"
+#include "save.h"
+#include "play_state.h"
+#include "occlusionplanes.h"
+#include "libc64/sprintf.h"
+#include "f3dex3.h"
+#include "printf.h"
+#include "array_count.h"
+
+#if ENABLE_HACKER_DEBUG
 
 u8 ColliderView_Draw(void* unused);
 
@@ -81,11 +91,6 @@ void Menu_Update(Menu* this) {
                 }
                 if (pressDRight && gF3DEX3OccMode < F3DEX3_OCC_MODE_COUNT - 1) {
                     gF3DEX3OccMode++;
-                }
-                if (gF3DEX3OccMode == F3DEX3_OCC_MODE_ALWAYS) {
-                    gF3DEX3NOCVersion = 0;
-                } else if (gF3DEX3OccMode == F3DEX3_OCC_MODE_NEVER) {
-                    gF3DEX3NOCVersion = 1;
                 }
             }
 #endif
@@ -226,3 +231,5 @@ void Menu_Draw(Menu* this) {
         Menu_DrawElem(sMenuElements[MENU_HITVIEW]);
     }
 }
+
+#endif

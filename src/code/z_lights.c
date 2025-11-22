@@ -1,4 +1,15 @@
-#include "global.h"
+#include "avoid_ub.h"
+#include "buffers.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "sys_matrix.h"
+#include "light.h"
+#include "array_count.h"
+#include "play_state.h"
+#include "attributes.h"
+#include "printf.h"
+#include "z_lib.h"
+
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
 // #define LIGHTS_DEBUG
@@ -289,7 +300,7 @@ LightNode* LightContext_InsertLight(PlayState* play, LightContext* lightCtx,
     }
 
     // Record file and line information for debug
-#if IS_DEBUG
+#if DEBUG_FEATURES
     light->file = file;
     light->line = line;
 #endif
@@ -527,6 +538,8 @@ static void Lights_BindPoint(Lights* restrict lights, LightParams* restrict para
     light->p.pos[2] = params->point.z;
 
 #if ENABLE_F3DEX3
+    // Set point lights flag
+    lights->numLightsEX3 |= ENABLE_POINT_LIGHTS;
     // Set specular size
     light->p.size = params->point.specularSize;
 #endif
@@ -735,7 +748,7 @@ Lights* Lights_BindAndDraw(PlayState* play, Vec3f* objPos, s32 realPointLights) 
 #ifdef LIGHTS_DEBUG
             PRINTF("Lights skipped (identical structure submitted)\n");
 #endif
-#if IS_DEBUG
+#if DEBUG_FEATURES
             gDPNoOpString(POLY_OPA_DISP++, "Lights skipped (identical structure submitted)", 0);
             gDPNoOpString(POLY_XLU_DISP++, "Lights skipped (identical structure submitted)", 0);
 #endif
@@ -754,8 +767,8 @@ Lights* Lights_BindAndDraw(PlayState* play, Vec3f* objPos, s32 realPointLights) 
 
 #if ENABLE_F3DEX3
     // F3DEX3: Use the provided macro to set the number of lights and transfer all lights in one DMA
-    gSPSetLights(POLY_OPA_DISP++, lights->numLights, lights->l);
-    gSPSetLights(POLY_XLU_DISP++, lights->numLights, lights->l);
+    gSPSetLights(POLY_OPA_DISP++, lights->numLightsEX3, lights->l);
+    gSPSetLights(POLY_XLU_DISP++, lights->numLightsEX3, lights->l);
 #else
     // F3DEX2: Supply each light separately
 
@@ -809,7 +822,7 @@ static s32 Lights_PopOne(Gfx** gfxP) {
     gfx--;
     u32 gW0 = gfx->words.w0;
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     if (GBI_IS_NOOP(gW0)) {
         // gsDPNoOpCloseDisp
         // ignore
@@ -835,7 +848,7 @@ static s32 Lights_PopOne(Gfx** gfxP) {
         didPop = true;
     }
 
-#if !IS_DEBUG
+#if !DEBUG_FEATURES
     // Allow the no-ops to be replaced with new commands
     *gfxP = gfx;
 #endif
@@ -983,7 +996,7 @@ void Lights_DrawGlow(PlayState* play) {
 
         Matrix_Translate(params->x, params->y, params->z, MTXMODE_NEW);
         Matrix_Scale(scale, scale, scale, MTXMODE_APPLY);
-        gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx);
         gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, params->color[0], params->color[1], params->color[2], 50);
         gSPDisplayListHint(POLY_XLU_DISP++, gGlowCircleDL, 4);
     }

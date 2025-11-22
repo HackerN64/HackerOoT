@@ -6,6 +6,18 @@
 
 #include "z_obj_comb.h"
 #include "overlays/effects/ovl_Effect_Ss_Kakera/z_eff_ss_kakera.h"
+
+#include "libc64/qrand.h"
+#include "array_count.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "sys_matrix.h"
+#include "z_en_item00.h"
+#include "z_lib.h"
+#include "effect.h"
+#include "play_state.h"
+
 #include "assets/objects/gameplay_field_keep/gameplay_field_keep.h"
 
 #define FLAGS 0
@@ -20,7 +32,7 @@ void ObjComb_ChooseItemDrop(ObjComb* this, PlayState* play);
 void ObjComb_SetupWait(ObjComb* this);
 void ObjComb_Wait(ObjComb* this, PlayState* play);
 
-ActorInit Obj_Comb_InitVars = {
+ActorProfile Obj_Comb_Profile = {
     /**/ ACTOR_OBJ_COMB,
     /**/ ACTORCAT_PROP,
     /**/ FLAGS,
@@ -32,12 +44,12 @@ ActorInit Obj_Comb_InitVars = {
     /**/ ObjComb_Draw,
 };
 
-static ColliderJntSphElementInit sJntSphElementsInit[1] = {
+static ColliderJntSphElementInit sJntSphElementsInit[] = {
     {
         {
-            ELEMTYPE_UNK0,
-            { 0x00000000, 0x00, 0x00 },
-            { 0x4001FFFE, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK0,
+            { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+            { 0x4001FFFE, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_NONE,
             ACELEM_ON,
             OCELEM_ON,
@@ -48,22 +60,22 @@ static ColliderJntSphElementInit sJntSphElementsInit[1] = {
 
 static ColliderJntSphInit sJntSphInit = {
     {
-        COLTYPE_NONE,
+        COL_MATERIAL_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_PLAYER,
         OC2_TYPE_2,
         COLSHAPE_JNTSPH,
     },
-    1,
+    ARRAY_COUNT(sJntSphElementsInit),
     sJntSphElementsInit,
 };
 
 static InitChainEntry sInitChain[] = {
     ICHAIN_VEC3F_DIV1000(scale, 100, ICHAIN_CONTINUE),
-    ICHAIN_F32(uncullZoneForward, 1100, ICHAIN_CONTINUE),
-    ICHAIN_F32(uncullZoneScale, 100, ICHAIN_CONTINUE),
-    ICHAIN_F32(uncullZoneDownward, 900, ICHAIN_STOP),
+    ICHAIN_F32(cullingVolumeDistance, 1100, ICHAIN_CONTINUE),
+    ICHAIN_F32(cullingVolumeScale, 100, ICHAIN_CONTINUE),
+    ICHAIN_F32(cullingVolumeDownward, 900, ICHAIN_STOP),
 };
 
 void ObjComb_Break(ObjComb* this, PlayState* play) {
@@ -128,14 +140,14 @@ void ObjComb_Break(ObjComb* this, PlayState* play) {
 }
 
 void ObjComb_ChooseItemDrop(ObjComb* this, PlayState* play) {
-    s16 params = this->actor.params & 0x1F;
+    s16 params = PARAMS_GET_U(this->actor.params, 0, 5);
 
     if ((params > 0) || (params < ITEM00_MAX)) { // conditional always true. May have been intended to be &&
         if (params == ITEM00_HEART_PIECE) {
-            if (Flags_GetCollectible(play, (this->actor.params >> 8) & 0x3F)) {
+            if (Flags_GetCollectible(play, PARAMS_GET_U(this->actor.params, 8, 6))) {
                 params = -1;
             } else {
-                params = (params | (((this->actor.params >> 8) & 0x3F) << 8));
+                params = (params | (PARAMS_GET_U(this->actor.params, 8, 6) << 8));
             }
         } else if (Rand_ZeroOne() < 0.5f) {
             params = -1;
@@ -151,7 +163,7 @@ void ObjComb_Init(Actor* thisx, PlayState* play) {
 
     Actor_ProcessInitChain(&this->actor, sInitChain);
     Collider_InitJntSph(play, &this->collider);
-    Collider_SetJntSph(play, &this->collider, &this->actor, &sJntSphInit, this->colliderItems);
+    Collider_SetJntSph(play, &this->collider, &this->actor, &sJntSphInit, this->colliderElements);
     ObjComb_SetupWait(this);
 }
 
@@ -216,8 +228,7 @@ void ObjComb_Draw(Actor* thisx, PlayState* play) {
     Matrix_Translate(0, -(this->actor.scale.y * 118.0f), 0, MTXMODE_APPLY);
     Matrix_Scale(this->actor.scale.x, this->actor.scale.y, this->actor.scale.z, MTXMODE_APPLY);
 
-    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_obj_comb.c", 394),
-              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_obj_comb.c", 394);
 
     gSPDisplayList(POLY_OPA_DISP++, gFieldBeehiveDL);
 

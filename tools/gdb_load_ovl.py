@@ -48,7 +48,7 @@ def AddOverlaySymbols(overlay_table, index):
 
     # get full object-file path that contains the first symbol
     target_filename = gdb.lookup_symbol(target_func_name)[0].symtab.filename
-    obj_name = "build/hackeroot-mq/" + target_filename[:-1] + "o"
+    obj_name = "build/ntsc-1.2/" + target_filename[:-1] + "o"
 
     pattern = r'[^/]*$'
     matches = re.findall(pattern, obj_name)

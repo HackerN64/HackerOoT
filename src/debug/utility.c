@@ -1,5 +1,10 @@
+#include "gfx.h"
+#include "debug.h"
 #include "config.h"
-#include "global.h"
+#include "controller.h"
+#include "math.h"
+
+#if ENABLE_HACKER_DEBUG
 
 /**
  * Static variables that sets the rectangle's position when using the configurator
@@ -135,3 +140,5 @@ void Debug_ConfigureNewRectangle(Input* controller) {
     Print_Screen(&gDebug.printer, 3, 2, COLOR_RED, "rectLeft: x = %d, y = %d", sRectLeft.x, sRectLeft.y);
     Print_Screen(&gDebug.printer, 3, 3, COLOR_RED, "rectRight: x = %d, y = %d", sRectRight.x, sRectRight.y);
 }
+
+#endif

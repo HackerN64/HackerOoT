@@ -12,6 +12,9 @@
 // Add a fix for the Stale Reference Manipulation glitch (OoT's Pandora's Box)
 #define FIX_SRM true
 
+// Delay the audio update by 3ms (causes the audio to go out intermittently)
+#define AUDIO_DELAY false
+
 /**
  * Enable mempak-related code
  */
@@ -25,6 +28,9 @@
 
 // Enables the beep sound at low health (vanilla behavior)
 #define ENABLE_LOW_HEALTH_BEEP true
+
+// Clamps the jumping velocity (setting to false uncaps the jump speed like in MM)
+#define CLAMPED_JUMP_VELOCITY true
 
 // Make the Bunny Hood Mask behave like in Majora's Mask where it increases Link's speed when equipped.
 #define MM_BUNNY_HOOD false
@@ -65,5 +71,38 @@
  * Fix climbing on vine edges
 */
 #define ENABLE_VINE_CLIMB_FIX true
+
+// Make `Camera_KeepOn4`'s `case CAM_ITEM_TYPE_9`, mimic how getting an item looks in Majora's Mask (Perspective from above)
+#define MM_GETITEM_CAM false
+
+/**
+ * Enable Animated Materials (from Majora's Mask)
+ */
+#define ENABLE_ANIMATED_MATERIALS true
+
+/**
+ * Enable New Letterbox (from Majora's Mask)
+ */
+#define ENABLE_NEW_LETTERBOX true
+
+/**
+ * Enable Cutscene Improvements (from Majora's Mask)
+ *
+ * This includes actor cutscenes
+ * (will cause softlocks!)
+ */
+#define ENABLE_CUTSCENE_IMPROVEMENTS false
+
+/**
+ * Enable MM Title Cards
+ * Note: there's known issues that needs to be addressed (HUD, item restrictions and title card appearing when it shouldn't)
+ */
+#define ENABLE_MM_TITLE_CARDS false
+#define TC_TEXT_POS_X 25
+#define TC_TEXT_POS_Y 67
+#define TC_GRADIENT_WIDTH 60
+#define TC_GRADIENT_HEIGHT 28
+#define TC_ALPHA_FADE_OUT_INCR 40
+#define TC_ALPHA_FADE_IN_INCR 30
 
 #endif

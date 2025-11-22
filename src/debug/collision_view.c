@@ -1,5 +1,11 @@
-#include "global.h"
+#include "gfx.h"
 #include "debug.h"
+#include "fault.h"
+#include "camera.h"
+#include "play_state.h"
+#include "sys_matrix.h"
+
+#if ENABLE_HACKER_DEBUG
 
 static Gfx sPolyBuffer[MENU_BUFFER_SIZE];
 
@@ -143,7 +149,7 @@ u8 CollisionView_Draw(void* unused) {
 
     gSPDisplayList(pGfx++, sPolyGfxInit_Collision);
     gSPSetGeometryMode(pGfx++, G_CULL_BACK);
-    gSPMatrix(pGfx++, &gMtxClear, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPMatrix(pGfx++, &gIdentityMtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     CollisionView_DrawStatic(gDebug.play, &pGfx, &dGfx, gDebug.play->colCtx.colHeader);
     Print_Screen(&gDebug.printer, 1, 1, COLOR_WHITE, "%3.2f%c", 100 - ((f32)(dGfx - pGfx) / MENU_BUFFER_SIZE) * 100,
@@ -156,3 +162,5 @@ u8 CollisionView_Draw(void* unused) {
 
     return true;
 }
+
+#endif
