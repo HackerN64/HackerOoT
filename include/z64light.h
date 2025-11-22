@@ -40,9 +40,8 @@ typedef struct {
 } LightInfo; // size = 0x12
 
 typedef struct Lights {
-    u8 numLights;
-    f32 distances[G_MAX_LIGHTS];
     Lightsn l;
+    u8 numLights;
 } Lights;
 
 typedef struct LightNode {
@@ -72,7 +71,7 @@ typedef enum {
     /* 0x02 */ LIGHT_POINT_GLOW
 } LightType;
 
-typedef void (*LightsBindFunc)(Lights* lights, LightParams* params, Vec3f* objPos);
+typedef void (*LightsBindFunc)(Lights* lights, LightParams* params, f32* distances, Vec3f* objPos);
 
 // Helper for defining functions that have extra file/line args in debug vs non-debug
 #if IS_DEBUG

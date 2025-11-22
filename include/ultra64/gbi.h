@@ -11,8 +11,7 @@
         #define NO_SYNCS_IN_TEXTURE_LOADS
     #endif
     #include "gbi.f3dex3.h"
-    #define G_MAX_LIGHTS 9
-    #define G_LIGHT_IS_POSLIGHT(lptr) ((lptr)->l.type != 0)
+    #define G_LIGHT_IS_POINTLIGHT(lptr) ((lptr)->l.type != 0)
 #else
 /* F3DEX3 compatibility */
 #define G_MAX_LIGHTS 7
@@ -21,9 +20,11 @@
 #define gsSPDisplayListHint(    dl, count)  gsSPDisplayList(    dl)
 #define gSPDisplayListHint(pkt, dl, count)  gSPDisplayList(pkt, dl)
 
-/* F3DEX2 Positional Lights */
+/* F3DEX2 Point Lights */
+#ifndef F3DEX_GBI_PL
 #define F3DEX_GBI_PL
-#define G_LIGHT_IS_POSLIGHT(lptr) ((lptr)->l.pad1 != 0)
+#endif
+#define G_LIGHT_IS_POINTLIGHT(lptr) ((lptr)->l.pad1 != 0)
 
 /* To enable Fast3DEX grucode support, define F3DEX_GBI. */
 
@@ -1343,9 +1344,8 @@ typedef struct {
     unsigned char kc;       /* point light enable flag (> 0) & constant attenuation Kc */
     unsigned char colc[3];  /* copy of point light color (rgb) */
     unsigned char kl;       /* linear attenuation Kl */
-    short pos[3];           /* light position x, y, z in world space */
+    short         pos[3];   /* light position x, y, z in world space */
     unsigned char kq;       /* quadratic attenuation Kq */
-    unsigned char size;     /* For specular only; reasonable values are 1-4 */
 } PosLight_t;
 #endif
 
@@ -2938,9 +2938,6 @@ _DW({                                               \
 # define gsSPLight(l, n)                                                    \
      gsDma1p(       G_MOVEMEM, (l), sizeof(Light), ((n) - 1) * 2 + G_MV_L0)
 #endif  /* F3DEX_GBI_2 */
-
-// F3DEX3 compatibility
-#define gSPAmbient gSPLight
 
 /*
  * gSPLightColor changes color of light without recalculating light direction

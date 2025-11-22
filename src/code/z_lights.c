@@ -7,21 +7,12 @@
 #error A microcode that supports point lighting is required
 #endif
 
-// Toggleable static for debugging, recommended for release is to use static
-#ifndef STATIC
-#if IS_DEBUG
-#define STATIC
-#else
-#define STATIC static
-#endif
-#endif
-
 // Maximum number of lights that can be registered with the system, the 7 (+1 ambient) closest lights to an object's
 // position are then selected from these registered lights to be used in drawing that object.
 // Note this is fixed to 32 unless the occupiedBitSet also changes size.
 #define LIGHTS_BUFFER_SIZE 32
 
-STATIC struct {
+static struct {
     u32 occupiedBitSet;
     LightNode lights[LIGHTS_BUFFER_SIZE];
     Lights* lastLights;
@@ -34,7 +25,7 @@ STATIC struct {
 //
 
 #if ENABLE_F3DEX3
-STATIC u8 F32_To_E3M5(f32 f) {
+static u8 F32_To_E3M5(f32 f) {
     // Float to int bits
     u32 bits = *(u32*)&f;
 
@@ -99,7 +90,7 @@ void Lights_PointGlowSetInfo(LightInfo* info, s16 x, s16 y, s16 z, u8 r, u8 g, u
  * POINT_LIGHT_R0 (called r0 in some calculations below) is used to normalize a light radius r when converting it to
  * attenuation coefficients to send to the microcode.
  *
- * The RSP accepts 3 attenuation coefficients controlling a point light:
+ * The microcode accepts 3 attenuation coefficients controlling a point light:
  *  - The quadratic attenuation kq
  *  - The quadratic attenuation kl
  *  - The quadratic attenuation kc
@@ -113,9 +104,9 @@ void Lights_PointGlowSetInfo(LightInfo* info, s16 x, s16 y, s16 z, u8 r, u8 g, u
  * In this implementation we let kc = 8 always, this is the smallest allowed value as overflows will occur for kc < 8
  * where the ucode would compute a reciprocal > 1.0.
  *
- * We let kl = (r0/r) and kq = SQ(r0/r) where r is the light radius parameter that various functions accept.
+ * We let kl = (r0/r) and kq = SQ(r0/r) where r is the light radius parameter that vanilla lighting functions accept.
  *
- * If we let POINT_LIGHT_R0=3000, the attenuation I(d) will have the characteristics
+ * If we let POINT_LIGHT_R0=3000, the attenuation I(d) will have the characteristics (in the range 180 < r < 2400)
  *      I(r/4) ~ 0.5I
  *      I(r/2) ~ 0.2I
  *      I(r)   ~ 0.06I
@@ -249,7 +240,7 @@ void LightContext_DestroyList(PlayState* play, LightContext* lightCtx) {
  * LightNode could've just been in for example an actor struct rather than in a dedicated buffer for all of them, but
  * it's too large a change currently to completely redo this.
  */
-STATIC LightNode* Lights_FindBufSlot(void) {
+static LightNode* Lights_FindBufSlot(void) {
     static_assert(LIGHTS_BUFFER_SIZE == 32, "Bitset handling assumes the light buffer is 32 entries large.");
 
     u32 bitset = sLightsBuffer.occupiedBitSet;
@@ -415,10 +406,10 @@ void LightContext_RemoveLightList(PlayState* play, LightContext* lightCtx, Light
 //  Light Binding
 //
 
-STATIC Light* Lights_FindSlot(Lights* lights, f32 objDist) {
+static Light* Lights_FindSlot(Lights* restrict lights, f32* restrict distances, f32 objDist) {
     if (lights->numLights < G_MAX_LIGHTS) {
         // There's still a free slot, add it unconditionally.
-        lights->distances[lights->numLights] = objDist;
+        distances[lights->numLights] = objDist;
         return &lights->l.l[lights->numLights++];
     }
 
@@ -426,9 +417,9 @@ STATIC Light* Lights_FindSlot(Lights* lights, f32 objDist) {
     f32 farthestDist = objDist;
     s32 farthestI = -1;
     for (s32 i = 0; i < G_MAX_LIGHTS; i++) {
-        if (farthestDist < lights->distances[i]) {
+        if (farthestDist < distances[i]) {
             // Largest distance found in the list so far, note it down
-            farthestDist = lights->distances[i];
+            farthestDist = distances[i];
             farthestI = i;
         }
     }
@@ -438,12 +429,13 @@ STATIC Light* Lights_FindSlot(Lights* lights, f32 objDist) {
     }
 
     // Replace the farthest light with the new light
-    lights->distances[farthestI] = farthestDist;
+    distances[farthestI] = farthestDist;
     return &lights->l.l[farthestI];
 }
 
 #if !ENABLE_F3DEX3
-STATIC void Lights_BindPointWithReference(Lights* restrict lights, LightParams* restrict params, Vec3f* objPos) {
+static void Lights_BindPointWithReference(Lights* restrict lights, LightParams* restrict params,
+                                          f32* restrict distances, Vec3f* objPos) {
     if (params->point.kc == 0) {
         return;
     }
@@ -466,7 +458,7 @@ STATIC void Lights_BindPointWithReference(Lights* restrict lights, LightParams* 
 
     // Try to add this light to the group
 
-    Light* light = Lights_FindSlot(lights, sqrtf(refDistSQ));
+    Light* light = Lights_FindSlot(lights, distances, sqrtf(refDistSQ));
     if (light == NULL) {
         // Fail, quit early.
         return;
@@ -501,7 +493,8 @@ STATIC void Lights_BindPointWithReference(Lights* restrict lights, LightParams* 
 #define Lights_BindPointWithReference Lights_BindPoint
 #endif
 
-STATIC void Lights_BindPoint(Lights* restrict lights, LightParams* restrict params, Vec3f* objPos) {
+static void Lights_BindPoint(Lights* restrict lights, LightParams* restrict params, f32* restrict distances,
+                             Vec3f* objPos) {
     if (params->point.kc == 0) {
         return;
     }
@@ -517,7 +510,7 @@ STATIC void Lights_BindPoint(Lights* restrict lights, LightParams* restrict para
 
     // Try to add this light to the group
 
-    Light* light = Lights_FindSlot(lights, Math_Vec3f_DistXYZ(objPos, &posF));
+    Light* light = Lights_FindSlot(lights, distances, Math_Vec3f_DistXYZ(objPos, &posF));
     if (light == NULL) {
         // Fail, quit early.
         return;
@@ -550,7 +543,8 @@ STATIC void Lights_BindPoint(Lights* restrict lights, LightParams* restrict para
 #endif
 }
 
-STATIC void Lights_BindDirectional(Lights* restrict lights, LightParams* restrict params, UNUSED Vec3f* objPos) {
+static void Lights_BindDirectional(Lights* restrict lights, LightParams* restrict params, f32* restrict distances,
+                                   UNUSED Vec3f* objPos) {
     // objPos is ignored for directional lights
 
     // Ignore (0,0,0)-colored lights
@@ -561,7 +555,7 @@ STATIC void Lights_BindDirectional(Lights* restrict lights, LightParams* restric
     // Treat directional lights as being as close as possible to the camera eye so they are always considered
     // (except in the case where there are too many directional lights, in which case it's going to depend on
     // insertion order)
-    Light* light = Lights_FindSlot(lights, 0.0f);
+    Light* light = Lights_FindSlot(lights, distances, 0.0f);
     if (light == NULL) {
         return;
     }
@@ -592,7 +586,8 @@ STATIC void Lights_BindDirectional(Lights* restrict lights, LightParams* restric
 #endif
 }
 
-STATIC void Lights_BindDummy(UNUSED Lights* lights, UNUSED LightParams* params, UNUSED Vec3f* objPos) {
+static void Lights_BindDummy(UNUSED Lights* restrict lights, UNUSED LightParams* restrict params,
+                             UNUSED f32* restrict distances, UNUSED Vec3f* objPos) {
     // Empty
 }
 
@@ -688,18 +683,17 @@ Lights* Lights_BindAndDraw(PlayState* play, Vec3f* objPos, s32 realPointLights) 
 
     // Allocate lights group, deallocates by next frame
     Lights* lights = GRAPH_ALLOC(play->state.gfxCtx, sizeof(Lights));
-    // Zero the Lightsn substruct so we can memcmp it safely
-    bzero(&lights->l, sizeof(lights->l));
+    // Zero the Lights structure so we can memcmp it safely
+    bzero(lights, sizeof(*lights));
 
-    // Initialize the number of lights in the group to 0
-    lights->numLights = 0;
-    // Note that we do not initialize the lights->distances array here, as by the time anything is read from that array
+    // Note that we do not initialize the distances array here, as by the time anything is read from this array
     // all of the array elements will have been set
+    f32 distances[G_MAX_LIGHTS];
 
     // Populate this lights group
     FOR_EACH_LIGHTNODE(lightNode, play->lightCtx.listHead) {
         LightInfo* info = lightNode->info;
-        bindFuncs[info->type](lights, &info->params, objPos);
+        bindFuncs[info->type](lights, &info->params, distances, objPos);
     }
 
     // Better not have gone over the ucode limitation
@@ -788,7 +782,7 @@ skip:
     return lights;
 }
 
-STATIC s32 Lights_PopOne(Gfx** gfxP) {
+static s32 Lights_PopOne(Gfx** gfxP) {
 #define GBI_IS_NOOP(gW0) (((gW0) >> 24) == G_NOOP)
 #if ENABLE_F3DEX3
     // F3DEX3 lights assignments look like (from most to least recently appended)
@@ -881,7 +875,7 @@ void Lights_Pop(PlayState* play) {
  * For point lights, this is computed as the direction between the light and the specified object position.
  */
 void Lights_GetDirection(Light* light, Vec3f* objPos, s8* lightDir) {
-    if (G_LIGHT_IS_POSLIGHT(light)) {
+    if (G_LIGHT_IS_POINTLIGHT(light)) {
         // Point light, compute the direction to the object
         Vec3f diff = {
             light->p.pos[0] - objPos->x,
