@@ -191,7 +191,7 @@ void Lights_PointSetPosition(LightInfo* info, s16 x, s16 y, s16 z) {
 }
 
 void Lights_PointSetAttenuation(LightInfo* info, u8 kc, u8 kl, u8 kq) {
-    info->params.point.kc = kc;
+    info->params.point.kc = CLAMP_MIN(kc, 8);
     info->params.point.kl = kl;
     info->params.point.kq = kq;
 }
