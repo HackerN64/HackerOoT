@@ -12,11 +12,14 @@
 
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
-// #define LIGHTS_DEBUG
-
-#if !(ENABLE_F3DEX3 || defined(F3DEX_GBI_PL))
-#error A microcode that supports point lighting is required
+#ifdef F3DEX_GBI_PL
+#define UCODE_HAS_REAL_POINT_LIGHTS true
+#else
+#define UCODE_HAS_REAL_POINT_LIGHTS ENABLE_F3DEX3
 #endif
+
+// Enable this for lighting debugging
+// #define LIGHTS_DEBUG
 
 // Maximum number of lights that can be registered with the system, the 7 (+1 ambient) closest lights to an object's
 // position are then selected from these registered lights to be used in drawing that object.
@@ -504,6 +507,7 @@ static void Lights_BindPointWithReference(Lights* restrict lights, LightParams* 
 #define Lights_BindPointWithReference Lights_BindPoint
 #endif
 
+#if UCODE_HAS_REAL_POINT_LIGHTS
 static void Lights_BindPoint(Lights* restrict lights, LightParams* restrict params, f32* restrict distances,
                              Vec3f* objPos) {
     if (params->point.kc == 0) {
@@ -555,6 +559,9 @@ static void Lights_BindPoint(Lights* restrict lights, LightParams* restrict para
            light->p.kc, light->p.kl, light->p.kq);
 #endif
 }
+#else
+#define Lights_BindPoint Lights_BindPointWithReference
+#endif
 
 static void Lights_BindDirectional(Lights* restrict lights, LightParams* restrict params, f32* restrict distances,
                                    UNUSED Vec3f* objPos) {
@@ -665,6 +672,9 @@ Lights* Lights_BindAndDraw(PlayState* play, Vec3f* objPos, s32 realPointLights) 
         Lights_BindDirectional,
         Lights_BindDummy,
     };
+
+    // In the case that F3DEX2 without point lighting is used, make sure real points lights were not requested.
+    assert(UCODE_HAS_REAL_POINT_LIGHTS || !realPointLights);
 
     // Select bind functions
     const LightsBindFunc* bindFuncs;
@@ -888,6 +898,7 @@ void Lights_Pop(PlayState* play) {
  * For point lights, this is computed as the direction between the light and the specified object position.
  */
 void Lights_GetDirection(Light* light, Vec3f* objPos, s8* lightDir) {
+#if UCODE_HAS_REAL_POINT_LIGHTS
     if (G_LIGHT_IS_POINTLIGHT(light)) {
         // Point light, compute the direction to the object
         Vec3f diff = {
@@ -906,6 +917,12 @@ void Lights_GetDirection(Light* light, Vec3f* objPos, s8* lightDir) {
         lightDir[1] = light->l.dir[1];
         lightDir[2] = light->l.dir[2];
     }
+#else
+    // Always a directional light
+    lightDir[0] = light->l.dir[0];
+    lightDir[1] = light->l.dir[1];
+    lightDir[2] = light->l.dir[2];
+#endif
 }
 
 //
