@@ -26,13 +26,13 @@ static u8 sEventActionType = EVENT_ACTION_TYPE_NONE;
                 return (b) == (a);                 \
             case EVENT_COND_DIFF:                  \
                 return (b) != (a);                 \
-            case EVENT_COND_LESS:                  \
+            case EVENT_COND_INFERIOR:              \
                 return (b) < (a);                  \
             case EVENT_COND_SUPERIOR:              \
                 return (b) > (a);                  \
-            case EVENT_COND_LESS_T:                \
+            case EVENT_COND_INFERIOR_EQ:           \
                 return (b) <= (a);                 \
-            case EVENT_COND_SUPERIOR_T:            \
+            case EVENT_COND_SUPERIOR_EQ:           \
                 return (b) >= (a);                 \
             default:                               \
                 break;                             \

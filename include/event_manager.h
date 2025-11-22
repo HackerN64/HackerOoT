@@ -7,12 +7,12 @@
 
 typedef enum EventCondition {
     EVENT_COND_NONE,
-    EVENT_COND_EQUAL,      // b == a
-    EVENT_COND_DIFF,       // b != a
-    EVENT_COND_LESS,       // b < a
-    EVENT_COND_SUPERIOR,   // b > a
-    EVENT_COND_LESS_T,     // b <= a
-    EVENT_COND_SUPERIOR_T, // b >= a
+    EVENT_COND_EQUAL,       // b == a
+    EVENT_COND_DIFF,        // b != a
+    EVENT_COND_INFERIOR,    // b < a
+    EVENT_COND_SUPERIOR,    // b > a
+    EVENT_COND_INFERIOR_EQ, // b <= a
+    EVENT_COND_SUPERIOR_EQ, // b >= a
 } EventCondition;
 
 typedef enum EventFlagType {
@@ -56,13 +56,13 @@ typedef enum EventTimeType {
 // only used by the system using this
 //! TODO: add a type that can let a draw to complete its loop before freezing
 typedef enum EventActionType {
-    EVENT_ACTION_TYPE_NONE, // no special behavior
-    EVENT_ACTION_TYPE_INVERTED, // inverts the event behavior
+    EVENT_ACTION_TYPE_NONE,          // no special behavior
+    EVENT_ACTION_TYPE_INVERTED,      // inverts the event behavior
     EVENT_ACTION_TYPE_INVERTED_KEEP, // same as above but allows to continue to draw the last state
 } EventActionType;
 
 typedef enum EventType {
-    EVENT_TYPE_NONE = -1,
+    EVENT_TYPE_NONE,
     EVENT_TYPE_FLAG,
     EVENT_TYPE_GAME,
     EVENT_TYPE_TIME,
@@ -137,7 +137,7 @@ typedef union EventGame {
 
 typedef union EventTime {
     struct {
-        u8 type; // see EventTimeType
+        u8 type;    // see EventTimeType
         u8 isClock; // set to true to check for a specific time range
         union {
             u8 isRange;
