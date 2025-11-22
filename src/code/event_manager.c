@@ -94,7 +94,7 @@ static void EventManager_ProcessGame(GameState* gameState, EventGame* event, u8*
 
     switch (event->type) {
         case EVENT_GAME_TYPE_AGE:
-            allowDraw = EventManager_SignedCondition(event->condType, event->age, gSaveContext.save.linkAge);
+            allowDraw = event->age == gSaveContext.save.linkAge;
             break;
         case EVENT_GAME_TYPE_HEALTH:
             allowDraw =

@@ -177,7 +177,7 @@ u8 EventManager_ProcessScript(struct GameState* gameState, EventScriptEntry* eve
 #define EVENT_CLEAR_FLAG(flag) EVENT_FLAG(EVENT_FLAG_TYPE_CLEAR_FLAG, (flag))
 
 // age macro
-#define EVENT_AGE(condType, age) EVENT_TYPE_GAME, CMD_BBBB(EVENT_GAME_TYPE_AGE, (condType), (age), 0), CMD_W(0)
+#define EVENT_AGE(age) EVENT_TYPE_GAME, CMD_BBBB(EVENT_GAME_TYPE_AGE, 0, (age), 0), CMD_W(0)
 
 // health macro
 #define EVENT_HEALTH(condType, amount) \
