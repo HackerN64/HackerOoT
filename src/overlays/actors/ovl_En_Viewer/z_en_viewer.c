@@ -7,6 +7,24 @@
 #include "z_en_viewer.h"
 #include "overlays/actors/ovl_Boss_Ganon/z_boss_ganon.h"
 #include "overlays/actors/ovl_En_Ganon_Mant/z_en_ganon_mant.h"
+
+#include "libc64/qrand.h"
+#include "array_count.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "ichain.h"
+#include "regs.h"
+#include "segmented_address.h"
+#include "seqcmd.h"
+#include "sequence.h"
+#include "sfx.h"
+#include "sys_matrix.h"
+#include "z_lib.h"
+#include "audio.h"
+#include "play_state.h"
+#include "save.h"
+#include "skin.h"
+
 #include "assets/objects/object_zl4/object_zl4.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/object_horse_zelda/object_horse_zelda.h"
@@ -16,7 +34,9 @@
 #include "assets/objects/object_ganon/object_ganon.h"
 #include "assets/objects/object_opening_demo1/object_opening_demo1.h"
 
-#define FLAGS ACTOR_FLAG_4
+#pragma increment_block_number "ntsc-1.0:128"
+
+#define FLAGS ACTOR_FLAG_UPDATE_CULLING_DISABLED
 
 void EnViewer_Init(Actor* thisx, PlayState* play);
 void EnViewer_Destroy(Actor* thisx, PlayState* play);
@@ -31,7 +51,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play);
 
 static u8 sHorseSfxPlayed = false;
 
-ActorInit En_Viewer_InitVars = {
+ActorProfile En_Viewer_Profile = {
     /**/ ACTOR_EN_VIEWER,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,
@@ -44,7 +64,7 @@ ActorInit En_Viewer_InitVars = {
 };
 
 static InitChainEntry sInitChain[] = {
-    ICHAIN_F32(uncullZoneScale, 300, ICHAIN_STOP),
+    ICHAIN_F32(cullingVolumeScale, 300, ICHAIN_STOP),
 };
 
 static EnViewerInitData sInitData[] = {
@@ -95,7 +115,7 @@ void EnViewer_Init(Actor* thisx, PlayState* play) {
     Actor_ProcessInitChain(&this->actor, sInitChain);
     EnViewer_SetupAction(this, EnViewer_InitImpl);
     sHorseSfxPlayed = false;
-    type = this->actor.params >> 8;
+    type = PARAMS_GET_NOMASK(this->actor.params, 8);
     this->unused = 0;
     this->state = 0;
     this->isVisible = false;
@@ -114,7 +134,7 @@ void EnViewer_Destroy(Actor* thisx, PlayState* play) {
 
 void EnViewer_InitAnimGanondorfOrZelda(EnViewer* this, PlayState* play, void* skeletonHeaderSeg,
                                        AnimationHeader* anim) {
-    s16 type = this->actor.params >> 8;
+    s16 type = PARAMS_GET_NOMASK(this->actor.params, 8);
 
     if (type == ENVIEWER_TYPE_2_ZELDA || type == ENVIEWER_TYPE_3_GANONDORF || type == ENVIEWER_TYPE_5_GANONDORF ||
         type == ENVIEWER_TYPE_7_GANONDORF || type == ENVIEWER_TYPE_8_GANONDORF || type == ENVIEWER_TYPE_9_GANONDORF) {
@@ -123,7 +143,7 @@ void EnViewer_InitAnimGanondorfOrZelda(EnViewer* this, PlayState* play, void* sk
         SkelAnime_Init(play, &this->skin.skelAnime, skeletonHeaderSeg, NULL, NULL, NULL, 0);
     }
 
-    gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[this->animObjectSlot].segment);
+    gSegments[6] = OS_K0_TO_PHYSICAL(play->objectCtx.slots[this->animObjectSlot].segment);
     if (type == ENVIEWER_TYPE_3_GANONDORF || type == ENVIEWER_TYPE_7_GANONDORF || type == ENVIEWER_TYPE_8_GANONDORF ||
         type == ENVIEWER_TYPE_9_GANONDORF) {
         Animation_PlayLoopSetSpeed(&this->skin.skelAnime, anim, 1.0f);
@@ -134,7 +154,7 @@ void EnViewer_InitAnimGanondorfOrZelda(EnViewer* this, PlayState* play, void* sk
 
 void EnViewer_InitAnimImpa(EnViewer* this, PlayState* play, void* skeletonHeaderSeg, AnimationHeader* anim) {
     SkelAnime_InitFlex(play, &this->skin.skelAnime, skeletonHeaderSeg, NULL, NULL, NULL, 0);
-    gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[this->animObjectSlot].segment);
+    gSegments[6] = OS_K0_TO_PHYSICAL(play->objectCtx.slots[this->animObjectSlot].segment);
     Animation_PlayLoopSetSpeed(&this->skin.skelAnime, anim, 3.0f);
 }
 
@@ -142,7 +162,7 @@ void EnViewer_InitAnimHorse(EnViewer* this, PlayState* play, void* skeletonHeade
     u8 type;
 
     Skin_Init(play, &this->skin, skeletonHeaderSeg, anim);
-    type = this->actor.params >> 8;
+    type = PARAMS_GET_NOMASK(this->actor.params, 8);
     if (!(type == ENVIEWER_TYPE_3_GANONDORF || type == ENVIEWER_TYPE_4_HORSE_GANONDORF ||
           type == ENVIEWER_TYPE_7_GANONDORF || type == ENVIEWER_TYPE_8_GANONDORF ||
           type == ENVIEWER_TYPE_9_GANONDORF)) {
@@ -166,7 +186,7 @@ static ActorShadowFunc sShadowDrawFuncs[] = {
 };
 
 void EnViewer_InitImpl(EnViewer* this, PlayState* play) {
-    EnViewerInitData* initData = &sInitData[this->actor.params >> 8];
+    EnViewerInitData* initData = &sInitData[PARAMS_GET_NOMASK(this->actor.params, 8)];
     s32 skelObjectSlot = Object_GetSlot(&play->objectCtx, initData->skeletonObject);
 
     ASSERT(skelObjectSlot >= 0, "bank_ID >= 0", "../z_en_viewer.c", 576);
@@ -176,7 +196,7 @@ void EnViewer_InitImpl(EnViewer* this, PlayState* play) {
 
     if (!Object_IsLoaded(&play->objectCtx, skelObjectSlot) ||
         !Object_IsLoaded(&play->objectCtx, this->animObjectSlot)) {
-        this->actor.flags &= ~ACTOR_FLAG_6;
+        this->actor.flags &= ~ACTOR_FLAG_INSIDE_CULLING_VOLUME;
         return;
     }
 
@@ -194,7 +214,7 @@ void EnViewer_InitImpl(EnViewer* this, PlayState* play) {
 static s16 sTimer = 0;
 
 void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
-    u8 type = this->actor.params >> 8;
+    u8 type = PARAMS_GET_NOMASK(this->actor.params, 8);
     u16 csCurFrame;
     s32 animationEnded;
 
@@ -209,9 +229,9 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
         }
     } else if (type == ENVIEWER_TYPE_7_GANONDORF) {
         Actor_SetScale(&this->actor, 0.3f);
-        this->actor.uncullZoneForward = 10000.0f;
-        this->actor.uncullZoneScale = 10000.0f;
-        this->actor.uncullZoneDownward = 10000.0f;
+        this->actor.cullingVolumeDistance = 10000.0f;
+        this->actor.cullingVolumeScale = 10000.0f;
+        this->actor.cullingVolumeDownward = 10000.0f;
     } else if (type == ENVIEWER_TYPE_3_GANONDORF) {
         if (gSaveContext.sceneLayer == 4) {
             switch (play->csCtx.curFrame) {
@@ -226,8 +246,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
                 case 380:
                 case 409:
                 case 438:
-                    Audio_PlaySfxGeneral(NA_SE_SY_DEMO_CUT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                    SFX_PLAY_CENTERED(NA_SE_SY_DEMO_CUT);
                     break;
             }
         }
@@ -244,8 +263,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
             SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_FANFARE, 0, 0, NA_BGM_OPENING_GANON);
         }
         if (play->csCtx.curFrame == 960) {
-            Audio_PlaySfxGeneral(NA_SE_EV_HORSE_GROAN, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
-                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+            SFX_PLAY_AT_POS(&this->actor.projectedPos, NA_SE_EV_HORSE_GROAN);
         }
     } else if (type == ENVIEWER_TYPE_6_HORSE_GANONDORF) {
         if (gSaveContext.sceneLayer == 5 || gSaveContext.sceneLayer == 10) {
@@ -436,8 +454,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
             case 0:
                 if ((play->csCtx.state != CS_STATE_IDLE) && (play->csCtx.actorCues[1] != NULL) &&
                     (play->csCtx.actorCues[1]->id == 7)) {
-                    Audio_PlaySfxGeneral(NA_SE_EN_GANON_LAUGH, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                    SFX_PLAY_CENTERED(NA_SE_EN_GANON_LAUGH);
                     Animation_MorphToPlayOnce(&this->skin.skelAnime, &gYoungGanondorfLaughStartAnim, -5.0f);
                     this->state++;
                 }
@@ -487,7 +504,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
 void EnViewer_Update(Actor* thisx, PlayState* play) {
     EnViewer* this = (EnViewer*)thisx;
 
-    gSegments[6] = VIRTUAL_TO_PHYSICAL(play->objectCtx.slots[this->animObjectSlot].segment);
+    gSegments[6] = OS_K0_TO_PHYSICAL(play->objectCtx.slots[this->animObjectSlot].segment);
     this->actionFunc(this, play);
 }
 
@@ -513,8 +530,7 @@ void EnViewer_Ganondorf9PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList
     if (limbIndex == GANONDORF_LIMB_JEWEL) {
         OPEN_DISPS(play->state.gfxCtx, "../z_en_viewer.c", 1365);
         Gfx_SetupDL_25Xlu(play->state.gfxCtx);
-        gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_viewer.c", 1370),
-                  G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_en_viewer.c", 1370);
         gSPDisplayList(POLY_XLU_DISP++, SEGMENTED_TO_VIRTUAL(gGanondorfEyesDL));
         CLOSE_DISPS(play->state.gfxCtx, "../z_en_viewer.c", 1372);
     }
@@ -534,7 +550,7 @@ void EnViewer_DrawGanondorf(EnViewer* this, PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_viewer.c", 1405);
 
-    type = this->actor.params >> 8;
+    type = PARAMS_GET_NOMASK(this->actor.params, 8);
 
     if (type == ENVIEWER_TYPE_3_GANONDORF || type == ENVIEWER_TYPE_5_GANONDORF || type == ENVIEWER_TYPE_7_GANONDORF ||
         type == ENVIEWER_TYPE_8_GANONDORF) {
@@ -704,7 +720,7 @@ void EnViewer_Draw(Actor* thisx, PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_viewer.c", 1760);
     if (this->isVisible) {
-        type = this->actor.params >> 8;
+        type = PARAMS_GET_NOMASK(this->actor.params, 8);
         if (type <= ENVIEWER_TYPE_2_ZELDA) { // zelda's horse, impa and zelda
             if (play->csCtx.state != CS_STATE_IDLE && play->csCtx.actorCues[0] != NULL) {
                 Gfx_SetupDL_25Opa(play->state.gfxCtx);
@@ -723,7 +739,7 @@ void EnViewer_UpdatePosition(EnViewer* this, PlayState* play) {
     Vec3f startPos;
     Vec3f endPos;
     f32 lerpFactor;
-    s16 type = this->actor.params >> 8;
+    s16 type = PARAMS_GET_NOMASK(this->actor.params, 8);
 
     if (type <= ENVIEWER_TYPE_2_ZELDA) { // zelda's horse, impa and zelda
         if (play->csCtx.state != CS_STATE_IDLE && play->csCtx.actorCues[0] != NULL &&
@@ -731,8 +747,7 @@ void EnViewer_UpdatePosition(EnViewer* this, PlayState* play) {
             if (type == ENVIEWER_TYPE_0_HORSE_ZELDA) {
                 if (!sHorseSfxPlayed) {
                     sHorseSfxPlayed = true;
-                    Audio_PlaySfxGeneral(NA_SE_EV_HORSE_NEIGH, &this->actor.projectedPos, 4,
-                                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                    SFX_PLAY_AT_POS(&this->actor.projectedPos, NA_SE_EV_HORSE_NEIGH);
                 }
                 Actor_PlaySfx(&this->actor, NA_SE_EV_HORSE_RUN_LEVEL - SFX_FLAG);
             }
@@ -781,8 +796,7 @@ void EnViewer_UpdatePosition(EnViewer* this, PlayState* play) {
             }
         }
         if (type == ENVIEWER_TYPE_5_GANONDORF) {
-            Audio_PlaySfxGeneral(NA_SE_EV_BURNING - SFX_FLAG, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+            SFX_PLAY_CENTERED(NA_SE_EV_BURNING - SFX_FLAG);
             EnViewer_DrawFireEffects(this, play);
         }
     }
@@ -859,8 +873,7 @@ void EnViewer_DrawFireEffects(EnViewer* this2, PlayState* play) {
                                     (10 * i - 20 * play->state.frames) % 512, 32, 128));
         gDPSetPrimColor(POLY_XLU_DISP++, 0x80, 0x80, 255, 255, 170, 255);
         gDPSetEnvColor(POLY_XLU_DISP++, 255, 50, 00, 255);
-        gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_en_viewer.c", 2027),
-                  G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_en_viewer.c", 2027);
         gSPMatrix(POLY_XLU_DISP++, &D_01000000, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, gEffFire1DL);
     }
@@ -872,7 +885,7 @@ void EnViewer_UpdateGanondorfCape(PlayState* play, EnViewer* this) {
     Vec3f forearmModelOffset;
     Vec3f forearmWorldOffset;
 
-    if ((this->actor.params >> 8) != ENVIEWER_TYPE_5_GANONDORF) {
+    if (PARAMS_GET_NOMASK(this->actor.params, 8) != ENVIEWER_TYPE_5_GANONDORF) {
         return;
     }
 

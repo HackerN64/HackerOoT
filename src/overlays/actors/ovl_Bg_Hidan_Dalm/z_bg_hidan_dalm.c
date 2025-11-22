@@ -5,6 +5,17 @@
  */
 
 #include "z_bg_hidan_dalm.h"
+
+#include "libc64/qrand.h"
+#include "array_count.h"
+#include "ichain.h"
+#include "sfx.h"
+#include "sys_matrix.h"
+#include "z_lib.h"
+#include "effect.h"
+#include "play_state.h"
+#include "player.h"
+
 #include "assets/objects/object_hidan_objects/object_hidan_objects.h"
 
 #define FLAGS 0
@@ -17,7 +28,7 @@ void BgHidanDalm_Draw(Actor* thisx, PlayState* play);
 void BgHidanDalm_Wait(BgHidanDalm* this, PlayState* play);
 void BgHidanDalm_Shrink(BgHidanDalm* this, PlayState* play);
 
-ActorInit Bg_Hidan_Dalm_InitVars = {
+ActorProfile Bg_Hidan_Dalm_Profile = {
     /**/ ACTOR_BG_HIDAN_DALM,
     /**/ ACTORCAT_BG,
     /**/ FLAGS,
@@ -29,12 +40,12 @@ ActorInit Bg_Hidan_Dalm_InitVars = {
     /**/ BgHidanDalm_Draw,
 };
 
-static ColliderTrisElementInit sTrisElementInit[4] = {
+static ColliderTrisElementInit sTrisElementInit[] = {
     {
         {
-            ELEMTYPE_UNK0,
-            { 0x00000000, 0x00, 0x00 },
-            { 0x00000040, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK0,
+            { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+            { 0x00000040, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_NONE,
             ACELEM_ON | ACELEM_NO_AT_INFO | ACELEM_NO_DAMAGE | ACELEM_NO_SWORD_SFX | ACELEM_NO_HITMARK,
             OCELEM_NONE,
@@ -43,9 +54,9 @@ static ColliderTrisElementInit sTrisElementInit[4] = {
     },
     {
         {
-            ELEMTYPE_UNK0,
-            { 0x00000000, 0x00, 0x00 },
-            { 0x00000040, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK0,
+            { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+            { 0x00000040, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_NONE,
             ACELEM_ON | ACELEM_NO_AT_INFO | ACELEM_NO_DAMAGE | ACELEM_NO_SWORD_SFX | ACELEM_NO_HITMARK,
             OCELEM_NONE,
@@ -54,9 +65,9 @@ static ColliderTrisElementInit sTrisElementInit[4] = {
     },
     {
         {
-            ELEMTYPE_UNK0,
-            { 0x00000000, 0x00, 0x00 },
-            { 0x00000040, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK0,
+            { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+            { 0x00000040, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_NONE,
             ACELEM_ON | ACELEM_NO_AT_INFO | ACELEM_NO_DAMAGE | ACELEM_NO_SWORD_SFX | ACELEM_NO_HITMARK,
             OCELEM_NONE,
@@ -65,9 +76,9 @@ static ColliderTrisElementInit sTrisElementInit[4] = {
     },
     {
         {
-            ELEMTYPE_UNK0,
-            { 0x00000000, 0x00, 0x00 },
-            { 0x00000040, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK0,
+            { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+            { 0x00000040, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_NONE,
             ACELEM_ON | ACELEM_NO_AT_INFO | ACELEM_NO_DAMAGE | ACELEM_NO_SWORD_SFX | ACELEM_NO_HITMARK,
             OCELEM_NONE,
@@ -78,14 +89,14 @@ static ColliderTrisElementInit sTrisElementInit[4] = {
 
 static ColliderTrisInit sTrisInit = {
     {
-        COLTYPE_NONE,
+        COL_MATERIAL_NONE,
         AT_NONE,
         AC_ON | AC_TYPE_PLAYER,
         OC1_NONE,
         OC2_TYPE_2,
         COLSHAPE_TRIS,
     },
-    4,
+    ARRAY_COUNT(sTrisElementInit),
     sTrisElementInit,
 };
 
@@ -104,9 +115,9 @@ void BgHidanDalm_Init(Actor* thisx, PlayState* play) {
     CollisionHeader_GetVirtual(&gFireTempleHammerableTotemCol, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
     Collider_InitTris(play, &this->collider);
-    Collider_SetTris(play, &this->collider, thisx, &sTrisInit, this->colliderItems);
+    Collider_SetTris(play, &this->collider, thisx, &sTrisInit, this->colliderElements);
 
-    this->switchFlag = (thisx->params >> 8) & 0xFF;
+    this->switchFlag = PARAMS_GET_U(thisx->params, 8, 8);
     thisx->params &= 0xFF;
     if (Flags_GetSwitch(play, this->switchFlag)) {
         Actor_Kill(thisx);
@@ -139,7 +150,7 @@ void BgHidanDalm_Wait(BgHidanDalm* this, PlayState* play) {
         this->dyna.actor.world.pos.z += 32.5f * Math_CosS(this->dyna.actor.world.rot.y);
 
         Player_SetCsActionWithHaltedActors(play, &this->dyna.actor, PLAYER_CSACTION_8);
-        this->dyna.actor.flags |= ACTOR_FLAG_4;
+        this->dyna.actor.flags |= ACTOR_FLAG_UPDATE_CULLING_DISABLED;
         this->actionFunc = BgHidanDalm_Shrink;
         this->dyna.actor.bgCheckFlags &= ~BGCHECKFLAG_GROUND_TOUCH;
         this->dyna.actor.bgCheckFlags &= ~BGCHECKFLAG_WALL;

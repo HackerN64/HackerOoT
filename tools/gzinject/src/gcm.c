@@ -9,6 +9,8 @@
 #include "doltool.h"
 #include "gcm.h"
 
+#define PATH_MAX 4096
+
 uint32_t GCM_HEADER_SIZE = 0x2440;
 uint32_t TGC_HEADER_SIZE = 0x8000;
 
@@ -33,6 +35,17 @@ typedef struct {
 
 static int is_tgc(const char *name) {
     return strlen(name) > 4 && strcmp(name + strlen(name) - 4, ".tgc") == 0;
+}
+
+static int is_dir(const char *dirname, const char *filename) {
+    char path[PATH_MAX];
+    snprintf(path, sizeof(path), "%s%s", dirname, filename);
+    struct stat s;
+    if (stat(path, &s) != 0) {
+        fprintf(stderr,"Could not stat %s\n", path);
+        return 0;
+    }
+    return S_ISDIR(s.st_mode);
 }
 
 static void fst_init(fst_t *fst) {
@@ -82,7 +95,7 @@ static int fst_add_dir(fst_t *fst, const char* parent, const char *name, int par
         fst->string_table_size += strlen(name) + 1;
     }
 
-    char dirname[256];
+    char dirname[PATH_MAX];
     if (strlen(parent) == 0 && strlen(name) == 0) {
         strcpy(dirname, "");
         dir = opendir(".");
@@ -103,7 +116,7 @@ static int fst_add_dir(fst_t *fst, const char* parent, const char *name, int par
             continue;
         }
 
-        if (dirent->d_type == DT_DIR && !is_tgc(dirent->d_name)) {
+        if (is_dir(dirname, dirent->d_name) && !is_tgc(dirent->d_name)) {
             if (!fst_add_dir(fst, dirname, dirent->d_name, i)) {
                 closedir(dir);
                 return 0;
@@ -133,7 +146,7 @@ static size_t align(size_t offset, size_t alignment) {
 static int pack_gcm(FILE *f, const char *dirname, bool is_tgc, uint32_t start_offset, uint32_t *end_offset);
 
 static int pack_file(FILE *f, const char *dirname, const char *name, uint32_t start_offset, uint32_t *end_offset) {
-    char filename[256];
+    char filename[PATH_MAX];
     snprintf(filename, sizeof(filename), "%s%s", dirname, name);
     if (verbose) {
         printf("Packing %s.\n", filename);
@@ -174,7 +187,7 @@ static int pack_files(FILE *f, fst_t *fst, const char *dirname, int start, int e
         start_offset = align(start_offset, 0x8000);
 
         if (entry->is_dir) {
-            char subdirname[256];
+            char subdirname[PATH_MAX];
             snprintf(subdirname, sizeof(subdirname), "%s%s/", dirname, name);
             if (!pack_files(f, fst, subdirname, i + 1, entry->next_offset, file_base_offset, start_offset, end_offset)) {
                 return 0;
@@ -183,7 +196,7 @@ static int pack_files(FILE *f, fst_t *fst, const char *dirname, int start, int e
             i = entry->next_offset - 1;
             start_offset = *end_offset;
         } else if (is_tgc(name)) {
-            char subdirname[256];
+            char subdirname[PATH_MAX];
             snprintf(subdirname, sizeof(subdirname), "%s%s/", dirname, name);
             if (!pack_gcm(f, subdirname, true, start_offset, end_offset)) {
                 return 0;
@@ -206,10 +219,10 @@ static int pack_files(FILE *f, fst_t *fst, const char *dirname, int start, int e
 }
 
 static int pack_gcm(FILE *f, const char *dirname, bool is_tgc, uint32_t start_offset, uint32_t *end_offset) {
-    char path[256];
+    char path[PATH_MAX];
     uint8_t *gcm_header = malloc(GCM_HEADER_SIZE);
     if(!gcm_header){
-        fprintf(stderr,"Could not allocate %ld bytes for gcm header\n",GCM_HEADER_SIZE);
+        fprintf(stderr,"Could not allocate %d bytes for gcm header\n",GCM_HEADER_SIZE);
         return 0;
     }
 
@@ -265,7 +278,7 @@ static int pack_gcm(FILE *f, const char *dirname, bool is_tgc, uint32_t start_of
     if (is_tgc) {
         uint8_t *tgc_header = malloc(TGC_HEADER_SIZE);
         if(!tgc_header){
-            fprintf(stderr,"Could not allocate %ld bytes for tgc header\n",TGC_HEADER_SIZE);
+            fprintf(stderr,"Could not allocate %d bytes for tgc header\n",TGC_HEADER_SIZE);
             free(gcm_header);
             fst_destroy(&fst);
             return 0;
@@ -329,9 +342,17 @@ static int pack_gcm(FILE *f, const char *dirname, bool is_tgc, uint32_t start_of
         fwrite(buffer, 1, sizeof(buffer), f);
     }
     fwrite(fst.string_table, 1, fst.string_table_size, f);
+    fst_destroy(&fst);
+
+    // Pad with zeroes if necessary
+    uint32_t prev_file_offset = file_offset;
+    file_offset = align(file_offset, 0x8000);
+    if (file_offset != prev_file_offset) {
+        fseek(f, file_offset - 1, SEEK_SET);
+        fputc(0, f);
+    }
 
     *end_offset = file_offset;
-    fst_destroy(&fst);
     return 1;
 }
 
@@ -369,7 +390,7 @@ int create_gcm_archive(const char *dir, const char *output) {
 }
 
 static int extract_file(FILE *f, const char *dirname, const char *name, uint32_t offset, size_t size) {
-    char filename[256];
+    char filename[PATH_MAX];
     snprintf(filename, sizeof(filename), "%s%s", dirname, name);
 
     if (verbose) {
@@ -425,7 +446,7 @@ static int extract_gcm_files(FILE *f, const char *dirname, uint8_t *fst, const c
             uint32_t size = be32(entry + 8);
 
             if (is_tgc(name)) {
-                char subdirname[256];
+                char subdirname[PATH_MAX];
                 snprintf(subdirname, sizeof(subdirname), "%s%s/", dirname, name);
                 if (!create_directory(subdirname)) {
                     return 0;
@@ -441,7 +462,7 @@ static int extract_gcm_files(FILE *f, const char *dirname, uint8_t *fst, const c
             }
         } else if (entry[0] == 1) { // directory
             uint32_t next_offset = be32(entry + 8);
-            char subdirname[256];
+            char subdirname[PATH_MAX];
             snprintf(subdirname, sizeof(subdirname), "%s%s/", dirname, name);
             if (!create_directory(subdirname)) {
                 return 0;
@@ -468,7 +489,7 @@ static int extract_gcm(FILE *f, const char *dirname, uint32_t gcm_offset, uint32
     uint32_t apploader_header_size = 0x20;
     uint8_t *apploader_header = malloc(apploader_header_size);
     if(!apploader_header){
-        fprintf(stderr,"Could not allocate %ld bytes for apploader header\n",apploader_header_size);
+        fprintf(stderr,"Could not allocate %d bytes for apploader header\n",apploader_header_size);
         return 0;
     }
 
@@ -490,7 +511,7 @@ static int extract_gcm(FILE *f, const char *dirname, uint32_t gcm_offset, uint32
     uint32_t dol_header_size = sizeof(dol_hdr_t);
     uint8_t *dol_header = malloc(dol_header_size);
     if(!dol_header){
-        fprintf(stderr,"Could not allocate %ld bytes for dol header\n",dol_header_size);
+        fprintf(stderr,"Could not allocate %d bytes for dol header\n",dol_header_size);
         return 0;
     }
 
@@ -513,7 +534,7 @@ static int extract_gcm(FILE *f, const char *dirname, uint32_t gcm_offset, uint32
 
     uint8_t *fst = malloc(fst_size);
     if(!fst){
-        fprintf(stderr,"Could not allocate %ld bytes for fst\n",fst_size);
+        fprintf(stderr,"Could not allocate %d bytes for fst\n",fst_size);
         return 0;
     }
 
@@ -540,7 +561,7 @@ static int extract_tgc(FILE *f, const char *dirname, uint32_t tgc_offset) {
     uint32_t tgc_header_size = 0x38;
     uint8_t *tgc_header = malloc(tgc_header_size);
     if(!tgc_header){
-        fprintf(stderr,"Could not allocate %ld bytes for tgc header\n",tgc_header_size);
+        fprintf(stderr,"Could not allocate %d bytes for tgc header\n",tgc_header_size);
         return 0;
     }
 
@@ -589,7 +610,7 @@ int extract_gcm_archive(const char *input, const char *outdir) {
 
     uint8_t *data = (uint8_t*)malloc(GCM_HEADER_SIZE);
     if(!data){
-        fprintf(stderr,"Could not allocate %ld bytes for iso header\n",GCM_HEADER_SIZE);
+        fprintf(stderr,"Could not allocate %d bytes for iso header\n",GCM_HEADER_SIZE);
         fclose(isofile);
         return 0;
     }

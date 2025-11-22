@@ -2,21 +2,27 @@
 #define Z_SELECT_H
 
 #include "config.h"
+#include "versions.h"
 
-void MapSelect_Init(GameState* thisx);
-void MapSelect_Main(GameState* thisx);
-void MapSelect_Draw(MapSelectState* this);
-void MapSelect_Destroy(GameState* thisx);
-void MapSelect_UpdateMenu(MapSelectState* this);
-void MapSelect_DrawMenu(MapSelectState* this);
-void MapSelect_DrawLoadingScreen(MapSelectState* this);
-void MapSelect_LoadTitle(MapSelectState* this);
-void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex);
-void MapSelect_PrintMenu(MapSelectState* this, GfxPrint* printer);
-void MapSelect_PrintLoadingMessage(MapSelectState* this, GfxPrint* printer, u8 yPos);
-void MapSelect_PrintAgeSetting(MapSelectState* this, GfxPrint* printer, s32 age);
-void MapSelect_PrintSceneLayerSetting(MapSelectState* this, GfxPrint* printer);
-void MapSelect_PrintControls(MapSelectState* this, GfxPrint* printer);
+#if PLATFORM_N64
+#include "n64dd.h"
+#endif
+#include "seqcmd.h"
+#include "sequence.h"
+#include "terminal.h"
+#include "save.h"
+#include "sram.h"
+#include "map_select_state.h"
+
+#include "color.h"
+#include "scene.h"
+#include "play_state.h"
+#include "sfx.h"
+
+#if PLATFORM_N64
+void func_80800AD0_unknown(MapSelectState* this, s32 arg1);
+void func_80800B08_unknown(MapSelectState* this, s32 arg1);
+#endif
 
 static const char* sAgeLabels[] = {
     "Adult",
@@ -60,9 +66,15 @@ static const Color_RGBA8 sColors[] = {
     { 255, 255, 255, 255 }, // White
 };
 
-static SceneSelectEntry sScenes[] = {
+static MapSelectEntry sScenes[] = {
+#if TESTSUITE_MODE
+#include "testsuite/map_select.h"
+#endif
+#if IS_DEBUG_BOOT_ENABLED
+    { "Boot Menu", (void*)MapSelect_LoadDebugOpening, 0 },
+#endif
     { "Title Screen", (void*)MapSelect_LoadTitle, 0 },
-#if INCLUDE_EXAMPLE_SCENE
+#if CAN_INCLUDE_EXAMPLE_SCENE
     { "Example", MapSelect_LoadGame, ENTR_EXAMPLE_0 },
 #endif
     { "Hyrule Field", MapSelect_LoadGame, ENTR_HYRULE_FIELD_0 },
@@ -191,6 +203,10 @@ static SceneSelectEntry sScenes[] = {
     { "Shooting Gallery Duplicate", MapSelect_LoadGame, ENTR_TEST_SHOOTING_GALLERY_0 },
     { "Depth Test", MapSelect_LoadGame, ENTR_DEPTH_TEST_0 },
     { "Hyrule Garden Game (Broken)", MapSelect_LoadGame, ENTR_HAIRAL_NIWA2_0 },
+#endif
+#if PLATFORM_N64
+    { "64DD TEST  n64dd_SetDiskVersion(1)", (void*)func_80800AD0_unknown, 0 },
+    { "64DD TEST2 n64dd_SetDiskVersion(0)", (void*)func_80800B08_unknown, 0 },
 #endif
 };
 

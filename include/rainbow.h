@@ -39,4 +39,6 @@ void Rainbow_Update(Rainbow* this);
 
 void osSyncPrintf(const char* fmt, ...);
 
+extern Rainbow gRainbow;
+
 #endif

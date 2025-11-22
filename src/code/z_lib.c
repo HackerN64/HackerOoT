@@ -1,4 +1,11 @@
-#include "global.h"
+#include "ultra64.h"
+#include "z_lib.h"
+#include "ichain.h"
+#include "printf.h"
+#include "regs.h"
+#include "sys_math.h"
+#include "rand.h"
+#include "sfx.h"
 
 /**
  * memset: sets `len` bytes to `val` starting at address `dest`.
@@ -9,7 +16,7 @@
  * - the arguments are in a different order,
  * - `val` is a `u8` instead of the standard `s32`.
  *
- * @see There are two other memsets in this codebase, __osMemset(), MemSet()
+ * @see There are two other memsets in this codebase, memset(), MemSet()
  *
  * @param dest address to start at
  * @param len number of bytes to write
@@ -334,7 +341,7 @@ void (*sInitChainHandlers[])(u8* ptr, InitChainEntry* ichain) = {
     IChain_Apply_Vec3f, IChain_Apply_Vec3fdiv1000, IChain_Apply_Vec3s,
 };
 
-void Actor_ProcessInitChain(Actor* actor, InitChainEntry* ichain) {
+void Actor_ProcessInitChain(struct Actor* actor, InitChainEntry* ichain) {
     do {
         sInitChainHandlers[ichain->type]((u8*)actor, ichain);
     } while ((ichain++)->cont);
@@ -601,22 +608,46 @@ void Color_RGBA8_Copy(Color_RGBA8* dst, Color_RGBA8* src) {
  * Play a sound effect at the center of the screen.
  */
 void Sfx_PlaySfxCentered(u16 sfxId) {
-    Audio_PlaySfxGeneral(sfxId, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
-                         &gSfxDefaultReverb);
+    SFX_PLAY_CENTERED(sfxId);
 }
 
 /**
  * Play a sound effect at the center of the screen. Identical to `Sfx_PlaySfxCentered`.
  */
 void Sfx_PlaySfxCentered2(u16 sfxId) {
-    Audio_PlaySfxGeneral(sfxId, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
-                         &gSfxDefaultReverb);
+    SFX_PLAY_CENTERED(sfxId);
 }
 
 /**
  * Play a sound effect at the requested position.
  */
 void Sfx_PlaySfxAtPos(Vec3f* projectedPos, u16 sfxId) {
-    Audio_PlaySfxGeneral(sfxId, projectedPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
-                         &gSfxDefaultReverb);
+    SFX_PLAY_AT_POS(projectedPos, sfxId);
+}
+
+s32 Math_StepToIImpl(s32 start, s32 target, s32 step) {
+    s32 ret;
+
+    if (target >= start) {
+        ret = start + step;
+        if (target >= ret) {
+            return ret;
+        }
+    } else {
+        ret = start - step;
+        if (ret >= target) {
+            return ret;
+        }
+    }
+    return target;
+}
+
+void Math_StepToIGet(s32* pValue, s32 target, s32 step) {
+    *pValue = Math_StepToIImpl(*pValue, target, step);
+}
+
+s32 Math_StepToI(s32* pValue, s32 target, s32 step) {
+    Math_StepToIGet(pValue, target, step);
+
+    return target == *pValue;
 }

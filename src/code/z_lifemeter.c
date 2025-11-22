@@ -1,4 +1,15 @@
-#include "global.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "sfx.h"
+#include "sys_matrix.h"
+#include "z_lib.h"
+#include "widescreen.h"
+#include "lifemeter.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
+#include "debug.h"
+
 #include "assets/textures/parameter_static/parameter_static.h"
 
 static s16 sHeartsPrimColors[3][3] = {
@@ -318,6 +329,14 @@ void Health_DrawMeter(PlayState* play) {
     u8* curBgImgLoaded = NULL;
     s32 ddHeartCountMinusOne = gSaveContext.save.info.inventory.defenseHearts - 1;
 
+    u8 posY = 0;
+
+#if IS_INV_EDITOR_ENABLED
+    if (IS_INV_EDITOR_ACTIVE) {
+        posY = gDebug.invDebug.miscDebug.hudTopPosY;
+    }
+#endif
+
     OPEN_DISPS(gfxCtx, "../z_lifemeter.c", 353);
 
     if (!(gSaveContext.save.info.playerData.health % 0x10)) {
@@ -445,7 +464,7 @@ void Health_DrawMeter(PlayState* play) {
                 }
             }
 
-            heartCenterY = 26.0f + offsetY;
+            heartCenterY = 26.0f + offsetY + posY;
             heartCenterX = 30.0f + offsetX;
             heartTexCoordPerPixel = 1.0f;
             heartTexCoordPerPixel /= 0.68f;
@@ -479,8 +498,8 @@ void Health_DrawMeter(PlayState* play) {
                 f32 wideOffsetX = USE_WIDESCREEN ? (offsetX - (30.f * WIDE_GET_16_9)) : offsetX;
                 Matrix_SetTranslateScaleMtx2(
                     matrix, 1.0f - (0.32f * beatingHeartPulsingSize), 1.0f - (0.32f * beatingHeartPulsingSize),
-                    1.0f - (0.32f * beatingHeartPulsingSize), -129.7f + wideOffsetX, 94.f - offsetY, 0.0f);
-                gSPMatrix(OVERLAY_DISP++, matrix, G_MTX_MODELVIEW | G_MTX_LOAD);
+                    1.0f - (0.32f * beatingHeartPulsingSize), -130.0f + wideOffsetX, 94.5f - offsetY - posY, 0.0f);
+                gSPMatrix(OVERLAY_DISP++, matrix, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 gSPVertex(OVERLAY_DISP++, beatingHeartVtx, 4, 0);
                 gSP1Quadrangle(OVERLAY_DISP++, 0, 2, 3, 1, 0);
             }

@@ -6,7 +6,17 @@
 
 #include "z_oceff_storm.h"
 
-#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_25)
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "sys_matrix.h"
+#include "tex_len.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
+
+#include "assets/objects/gameplay_keep/gameplay_keep.h"
+
+#define FLAGS (ACTOR_FLAG_UPDATE_CULLING_DISABLED | ACTOR_FLAG_DRAW_CULLING_DISABLED | ACTOR_FLAG_UPDATE_DURING_OCARINA)
 
 void OceffStorm_Init(Actor* thisx, PlayState* play);
 void OceffStorm_Destroy(Actor* thisx, PlayState* play);
@@ -18,7 +28,7 @@ void OceffStorm_Draw2(Actor* thisx, PlayState* play);
 void OceffStorm_DefaultAction(OceffStorm* this, PlayState* play);
 void OceffStorm_UnkAction(OceffStorm* this, PlayState* play);
 
-ActorInit Oceff_Storm_InitVars = {
+ActorProfile Oceff_Storm_Profile = {
     /**/ ACTOR_OCEFF_STORM,
     /**/ ACTORCAT_ITEMACTION,
     /**/ FLAGS,
@@ -120,7 +130,27 @@ void OceffStorm_Update(Actor* thisx, PlayState* play) {
     this->actionFunc(this, play);
 }
 
-#include "assets/overlays/ovl_Oceff_Storm/ovl_Oceff_Storm.c"
+#define sTex_WIDTH 64
+#define sTex_HEIGHT 64
+static u64 sTex[TEX_LEN(u64, sTex_WIDTH, sTex_HEIGHT, 8)] = {
+#include "assets/overlays/ovl_Oceff_Storm/sTex.i8.inc.c"
+};
+
+static Gfx sMaterialDL[21] = {
+#include "assets/overlays/ovl_Oceff_Storm/sMaterialDL.inc.c"
+};
+
+static Vtx sCylinderVtx[] = {
+#include "assets/overlays/ovl_Oceff_Storm/sCylinderVtx.inc.c"
+};
+
+static Gfx sCylinderMaterialDL[21] = {
+#include "assets/overlays/ovl_Oceff_Storm/sCylinderMaterialDL.inc.c"
+};
+
+static Gfx sCylinderModelDL[18] = {
+#include "assets/overlays/ovl_Oceff_Storm/sCylinderModelDL.inc.c"
+};
 
 void OceffStorm_Draw2(Actor* thisx, PlayState* play) {
     u32 scroll = play->state.frames & 0xFFF;
@@ -162,8 +192,7 @@ void OceffStorm_Draw(Actor* thisx, PlayState* play) {
     vtxPtr[0].v.cn[3] = vtxPtr[6].v.cn[3] = vtxPtr[16].v.cn[3] = vtxPtr[25].v.cn[3] = this->vtxAlpha >> 1;
     vtxPtr[10].v.cn[3] = vtxPtr[22].v.cn[3] = this->vtxAlpha;
 
-    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_oceff_storm.c", 498),
-              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_oceff_storm.c", 498);
 
     gSPDisplayList(POLY_XLU_DISP++, sCylinderMaterialDL);
     gSPDisplayList(POLY_XLU_DISP++, Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, scroll * 4, (0 - scroll) * 8,

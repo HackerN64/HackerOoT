@@ -1,5 +1,5 @@
 #include "rainbow.h"
-#include "macros.h"
+#include "printf.h"
 
 /**
  * How to use:

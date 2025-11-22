@@ -1,4 +1,8 @@
-#include "global.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "sys_matrix.h"
+#include "light.h"
+#include "skybox.h"
 
 Mtx* sSkyboxDrawMatrix;
 

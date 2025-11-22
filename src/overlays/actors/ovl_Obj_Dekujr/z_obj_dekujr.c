@@ -5,9 +5,17 @@
  */
 
 #include "z_obj_dekujr.h"
+
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "sfx.h"
+#include "sys_matrix.h"
+#include "play_state.h"
+#include "save.h"
+
 #include "assets/objects/object_dekujr/object_dekujr.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3)
+#define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY)
 
 void ObjDekujr_Init(Actor* thisx, PlayState* play);
 void ObjDekujr_Destroy(Actor* thisx, PlayState* play);
@@ -16,7 +24,7 @@ void ObjDekujr_Draw(Actor* thisx, PlayState* play);
 
 void ObjDekujr_ComeUp(ObjDekujr* this, PlayState* play);
 
-ActorInit Obj_Dekujr_InitVars = {
+ActorProfile Obj_Dekujr_Profile = {
     /**/ ACTOR_OBJ_DEKUJR,
     /**/ ACTORCAT_NPC,
     /**/ FLAGS,
@@ -31,12 +39,19 @@ ActorInit Obj_Dekujr_InitVars = {
 static ColliderCylinderInitToActor sCylinderInit = {
     {
         NULL,
-        0x00,
-        0x00,
-        0x39,
+        AT_NONE,
+        AC_NONE,
+        OC1_ON | OC1_TYPE_ALL,
         COLSHAPE_CYLINDER,
     },
-    { 0x02, { 0x00000000, 0x00, 0x00 }, { 0xFFCFFFFF, 0x00, 0x00 }, 0x00, 0x00, 0x01 },
+    {
+        ELEM_MATERIAL_UNK2,
+        { 0x00000000, HIT_SPECIAL_EFFECT_NONE, 0x00 },
+        { 0xFFCFFFFF, HIT_BACKLASH_NONE, 0x00 },
+        ATELEM_NONE,
+        ACELEM_NONE,
+        OCELEM_ON,
+    },
     { 60, 80, 0, { 0, 0, 0 } },
 };
 
@@ -44,7 +59,7 @@ void ObjDekujr_Init(Actor* thisx, PlayState* play) {
     ObjDekujr* this = (ObjDekujr*)thisx;
     s32 pad;
 
-    if (gSaveContext.save.cutsceneIndex < 0xFFF0) {
+    if (gSaveContext.save.cutsceneIndex < CS_INDEX_0) {
         if (!LINK_IS_ADULT) {
             Actor_Kill(thisx);
             return;
@@ -140,7 +155,7 @@ void ObjDekujr_Update(Actor* thisx, PlayState* play) {
 
     Collider_UpdateCylinder(&this->actor, &this->collider);
     CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
-    if ((gSaveContext.save.cutsceneIndex >= 0xFFF0) && (this->unk_19B == 0)) {
+    if ((gSaveContext.save.cutsceneIndex >= CS_INDEX_0) && (this->unk_19B == 0)) {
         this->unk_19C = 0;
         this->unk_19B = 1;
     }
@@ -163,16 +178,14 @@ void ObjDekujr_Draw(Actor* thisx, PlayState* play) {
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
-    gSPMatrix(POLY_OPA_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_obj_dekujr.c", 379),
-              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    MATRIX_FINALIZE_AND_LOAD(POLY_OPA_DISP++, play->state.gfxCtx, "../z_obj_dekujr.c", 379);
     gSPDisplayList(POLY_OPA_DISP++, object_dekujr_DL_0030D0);
 
     frameCount = play->state.frames;
     gSPSegment(POLY_XLU_DISP++, 0x08,
                Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, frameCount % 128, 0, 32, 32, 1, frameCount % 128,
                                 0, 32, 32));
-    gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx, "../z_obj_dekujr.c", 399),
-              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, "../z_obj_dekujr.c", 399);
     gSPDisplayList(POLY_XLU_DISP++, object_dekujr_DL_0032D8);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_obj_dekujr.c", 409);

@@ -1,4 +1,14 @@
-#include "global.h"
+#include "avoid_ub.h"
+#include "buffers.h"
+#include "gfx.h"
+#include "gfx_setupdl.h"
+#include "sys_matrix.h"
+#include "light.h"
+#include "play_state.h"
+#include "attributes.h"
+#include "z_lib.h"
+#include "array_count.h"
+
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
 // #define LIGHTS_DEBUG
@@ -989,7 +999,7 @@ void Lights_DrawGlow(PlayState* play) {
 
         Matrix_Translate(params->x, params->y, params->z, MTXMODE_NEW);
         Matrix_Scale(scale, scale, scale, MTXMODE_APPLY);
-        gSPMatrix(POLY_XLU_DISP++, MATRIX_NEW(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        MATRIX_FINALIZE_AND_LOAD(POLY_XLU_DISP++, play->state.gfxCtx, __FILE__, __LINE__);
         gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, params->color[0], params->color[1], params->color[2], 50);
         gSPDisplayListHint(POLY_XLU_DISP++, gGlowCircleDL, 4);
     }

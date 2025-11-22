@@ -1,35 +1,102 @@
-#include "global.h"
-#include "quake.h"
-#include "terminal.h"
+#include "libc64/malloc.h"
+#include "libc64/qrand.h"
+#include "libu64/debug.h"
+#include "array_count.h"
+#include "buffers.h"
+#include "color.h"
+#include "controller.h"
+#include "fault.h"
 #include "config.h"
+#include "file_select_state.h"
+#include "gfx.h"
+#include "gfxalloc.h"
+#include "kaleido_manager.h"
+#include "letterbox.h"
+#include "line_numbers.h"
+#if PLATFORM_N64
+#include "n64dd.h"
+#endif
+#include "one_point_cutscene.h"
+#include "printf.h"
+#include "quake.h"
+#include "regs.h"
+#include "rumble.h"
+#include "segmented_address.h"
+#include "sequence.h"
+#include "sfx.h"
+#include "sys_math3d.h"
+#include "sys_matrix.h"
+#include "terminal.h"
+#include "title_setup_state.h"
+#include "transition_circle.h"
+#include "transition_fade.h"
+#include "transition_tile.h"
+#include "transition_triforce.h"
+#include "transition_wipe.h"
+#include "translation.h"
+#include "versions.h"
+#include "z_actor_dlftbls.h"
+#include "zelda_arena.h"
+#include "audio.h"
+#include "cutscene_flags.h"
+#include "debug_display.h"
+#include "effect.h"
+#include "frame_advance.h"
+#include "light.h"
+#include "play_state.h"
+#include "player.h"
+#include "save.h"
+#include "vis.h"
+#include "occlusionplanes.h"
+#include "libu64/gfxprint.h"
+#include "debug.h"
 
-#if INCLUDE_EXAMPLE_SCENE
+#if CAN_INCLUDE_EXAMPLE_SCENE
 #include "assets/scenes/example/example_scene.h"
 #endif
 
-#if IS_DEBUG
-void* gDebugCutsceneScript = NULL;
-UNK_TYPE D_8012D1F4 = 0; // unused
-#endif
-
-Input* D_8012D1F8 = NULL;
+#pragma increment_block_number "gc-eu:224 gc-eu-mq:224 gc-jp:224 gc-jp-ce:224 gc-jp-mq:224 gc-us:224 gc-us-mq:224" \
+                               "ique-cn:224 ntsc-1.0:240 ntsc-1.1:240 ntsc-1.2:240 pal-1.0:240 pal-1.1:240"
 
 TransitionTile gTransitionTile;
 s32 gTransitionTileState;
 VisMono gPlayVisMono;
 Color_RGBA8_u32 gVisMonoColor;
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
 FaultClient D_801614B8;
 #endif
 
 s16 sTransitionFillTimer;
 
+#if DEBUG_FEATURES
+void* gDebugCutsceneScript = NULL;
+UNK_TYPE D_8012D1F4 = 0; // unused
+#endif
+
+Input* D_8012D1F8 = NULL;
+
+#if ENABLE_MM_TITLE_CARDS
+// default title card info to use if there's no entry in the scene
+static TitleCardInfo sDefaultTitleCard = {
+    .textId = 0x9000,
+    .rgba = { 140, 40, 160, 255 },
+    .nextHudVisibility = HUD_VISIBILITY_NOTHING,
+    .duration = 30,
+    .textDelayTimer = 0,
+    .textPos = { TC_TEXT_POS_X, TC_TEXT_POS_Y },
+    .gradientWidth = TC_GRADIENT_WIDTH,
+    .gradientHeight = TC_GRADIENT_HEIGHT,
+    .alphaFadeOutIncr = TC_ALPHA_FADE_OUT_INCR,
+    .alphaFadeInIncr = TC_ALPHA_FADE_IN_INCR,
+};
+#endif
+
 void Play_SpawnScene(PlayState* this, s32 sceneId, s32 spawn);
 
 // This macro prints the number "1" with a file and line number if R_ENABLE_PLAY_LOGS is enabled.
 // For example, it can be used to trace the play state execution at a high level.
-#if IS_DEBUG
+#if DEBUG_FEATURES
 #define PLAY_LOG(line)                            \
     do {                                          \
         if (R_ENABLE_PLAY_LOGS) {                 \
@@ -50,11 +117,9 @@ void Play_SetViewpoint(PlayState* this, s16 viewpoint) {
 
     this->viewpoint = viewpoint;
 
-    if ((R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT) && (gSaveContext.save.cutsceneIndex < 0xFFF0)) {
+    if ((R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT) && (gSaveContext.save.cutsceneIndex < CS_INDEX_0)) {
         // Play a sfx when the player toggles the camera
-        Audio_PlaySfxGeneral((viewpoint == VIEWPOINT_LOCKED) ? NA_SE_SY_CAMERA_ZOOM_DOWN : NA_SE_SY_CAMERA_ZOOM_UP,
-                             &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultReverb);
+        SFX_PLAY_CENTERED((viewpoint == VIEWPOINT_LOCKED) ? NA_SE_SY_CAMERA_ZOOM_DOWN : NA_SE_SY_CAMERA_ZOOM_UP);
     }
 
     Play_RequestViewpointBgCam(this);
@@ -171,7 +236,7 @@ void Play_SetupTransition(PlayState* this, s32 transitionType) {
                 break;
 
             default:
-                HUNGUP_AND_CRASH("../z_play.c", 2290);
+                HUNGUP_AND_CRASH("../z_play.c", LN5(2263, 2266, 2269, 2272, 2282, 2287, 2290, 2293));
                 break;
         }
     }
@@ -181,14 +246,18 @@ void func_800BC88C(PlayState* this) {
     this->transitionCtx.transitionType = -1;
 }
 
+/**
+ * Set the environment fog, from parameters controlled by the environment system.
+ * If a custom fog state is used at any point in drawing, the environment fog is expected to be restored afterwards.
+ */
 Gfx* Play_SetFog(PlayState* this, Gfx* gfx) {
     s32 fogA = 0;
     if (this->skyboxId != SKYBOX_NONE && this->lightCtx.fogNear < 980) {
         fogA = (255 * (1000 - this->lightCtx.fogNear) + 25) / 50;
         fogA = CLAMP(fogA, 0, 255);
     }
-    return Gfx_SetFog2(gfx, this->lightCtx.fogColor[0], this->lightCtx.fogColor[1], this->lightCtx.fogColor[2], fogA,
-                       this->lightCtx.fogNear, 1000);
+    return Gfx_SetFog(gfx, this->lightCtx.fogColor[0], this->lightCtx.fogColor[1], this->lightCtx.fogColor[2], fogA,
+                      this->lightCtx.fogNear, 1000);
 }
 
 void Play_Destroy(GameState* thisx) {
@@ -200,7 +269,7 @@ void Play_Destroy(GameState* thisx) {
     this->state.gfxCtx->callback = NULL;
     this->state.gfxCtx->callbackParam = NULL;
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     Play_DestroyMotionBlur();
 #endif
 
@@ -224,6 +293,9 @@ void Play_Destroy(GameState* thisx) {
     }
 
     Letterbox_Destroy();
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Destroy();
+#endif
     TransitionFade_Destroy(&this->transitionFadeFlash);
     VisMono_Destroy(&gPlayVisMono);
 
@@ -238,7 +310,13 @@ void Play_Destroy(GameState* thisx) {
     KaleidoManager_Destroy();
     ZeldaArena_Cleanup();
 
-#if IS_DEBUG
+#if PLATFORM_N64
+    if ((B_80121220 != NULL) && (B_80121220->unk_14 != NULL)) {
+        B_80121220->unk_14(this);
+    }
+#endif
+
+#if DEBUG_FEATURES
     Fault_RemoveClient(&D_801614B8);
 #endif
 }
@@ -257,7 +335,13 @@ void Play_Init(GameState* thisx) {
 
 #if ENABLE_HACKER_DEBUG
     gDebug.play = this;
+    gDebug.invDebug.state = INVEDITOR_STATE_OFF;
+    gDebug.invDebug.gfxCtx = this->state.gfxCtx;
+    gDebug.invDebug.pauseCtx = &this->pauseCtx;
+    gDebug.invDebug.elementsAlpha = 255;
 #endif
+
+    gSaveContext.showTitleCard = true;
 
     if (gSaveContext.save.entranceIndex == ENTR_LOAD_OPENING) {
         gSaveContext.save.entranceIndex = 0;
@@ -266,8 +350,22 @@ void Play_Init(GameState* thisx) {
         return;
     }
 
+#if PLATFORM_GC && DEBUG_FEATURES
+    SystemArena_Display();
+#endif
+
     GameState_Realloc(&this->state, IS_DEBUG_HEAP_ENABLED ? 0x1D4790 : PLAY_ALLOC_SIZE);
+
+#if PLATFORM_N64
+    if ((B_80121220 != NULL) && (B_80121220->unk_10 != NULL)) {
+        B_80121220->unk_10(this);
+    }
+#endif
+
     KaleidoManager_Init(this);
+#if ENABLE_NEW_LETTERBOX
+    ShrinkWindow_Init();
+#endif
     View_Init(&this->view, gfxCtx);
     Audio_SetExtraFilter(0);
     Quake_Init();
@@ -290,7 +388,7 @@ void Play_Init(GameState* thisx) {
     Camera_OverwriteStateFlags(&this->mainCamera, CAM_STATE_CHECK_BG_ALT | CAM_STATE_CHECK_WATER | CAM_STATE_CHECK_BG |
                                                       CAM_STATE_EXTERNAL_FINISHED | CAM_STATE_CAM_FUNC_FINISH |
                                                       CAM_STATE_LOCK_MODE | CAM_STATE_DISTORTION | CAM_STATE_PLAY_INIT);
-    Sram_Init(this, &this->sramCtx);
+    Sram_Init(&this->state, &this->sramCtx);
     Regs_InitData(this);
     Message_Init(this);
     GameOver_Init(this);
@@ -298,16 +396,16 @@ void Play_Init(GameState* thisx) {
     Effect_InitContext(this);
     EffectSs_InitInfo(this, 0x55);
     CollisionCheck_InitContext(this, &this->colChkCtx);
-    AnimationContext_Reset(&this->animationCtx);
+    AnimTaskQueue_Reset(&this->animTaskQueue);
     Cutscene_InitContext(this, &this->csCtx);
 
-    if (gSaveContext.nextCutsceneIndex != 0xFFEF) {
+    if (gSaveContext.nextCutsceneIndex != NEXT_CS_INDEX_NONE) {
         gSaveContext.save.cutsceneIndex = gSaveContext.nextCutsceneIndex;
-        gSaveContext.nextCutsceneIndex = 0xFFEF;
+        gSaveContext.nextCutsceneIndex = NEXT_CS_INDEX_NONE;
     }
 
-    if (gSaveContext.save.cutsceneIndex == 0xFFFD) {
-        gSaveContext.save.cutsceneIndex = 0;
+    if (gSaveContext.save.cutsceneIndex == CS_INDEX_D) {
+        gSaveContext.save.cutsceneIndex = CS_INDEX_NONE;
     }
 
     if (gSaveContext.nextDayTime != NEXT_TIME_NONE) {
@@ -323,10 +421,10 @@ void Play_Init(GameState* thisx) {
 
     Cutscene_HandleConditionalTriggers(this);
 
-    if (gSaveContext.gameMode != GAMEMODE_NORMAL || gSaveContext.save.cutsceneIndex >= 0xFFF0) {
+    if (gSaveContext.gameMode != GAMEMODE_NORMAL || gSaveContext.save.cutsceneIndex >= CS_INDEX_0) {
         gSaveContext.nayrusLoveTimer = 0;
         Magic_Reset(this);
-        gSaveContext.sceneLayer = SCENE_LAYER_CUTSCENE_FIRST + (gSaveContext.save.cutsceneIndex & 0xF);
+        gSaveContext.sceneLayer = GET_CUTSCENE_LAYER(gSaveContext.save.cutsceneIndex);
     } else if (!LINK_IS_ADULT && IS_DAY) {
         gSaveContext.sceneLayer = SCENE_LAYER_CHILD_DAY;
     } else if (!LINK_IS_ADULT && !IS_DAY) {
@@ -353,17 +451,30 @@ void Play_Init(GameState* thisx) {
         gSaveContext.sceneLayer = GET_EVENTCHKINF(EVENTCHKINF_48) ? 3 : 2;
     }
 
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    // initialize default values to avoid issues
+    CutsceneManager_Init(this, NULL, 0);
+#endif
+
     Play_SpawnScene(
         this, gEntranceTable[((void)0, gSaveContext.save.entranceIndex) + ((void)0, gSaveContext.sceneLayer)].sceneId,
         gEntranceTable[((void)0, gSaveContext.save.entranceIndex) + ((void)0, gSaveContext.sceneLayer)].spawn);
 
     PRINTF("\nSCENE_NO=%d COUNTER=%d\n", ((void)0, gSaveContext.save.entranceIndex), gSaveContext.sceneLayer);
 
+#if PLATFORM_N64
+    if ((B_80121220 != NULL && B_80121220->unk_54 != NULL && B_80121220->unk_54(this))) {
+    } else {
+        Cutscene_HandleEntranceTriggers(this);
+    }
+#else
     Cutscene_HandleEntranceTriggers(this);
+#endif
+
     KaleidoScopeCall_Init(this);
     Interface_Init(this);
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     Play_InitMotionBlur(this);
 #endif
 
@@ -431,16 +542,17 @@ void Play_Init(GameState* thisx) {
     zAlloc = (uintptr_t)GAME_STATE_ALLOC(&this->state, zAllocSize, "../z_play.c", 2918);
     zAllocAligned = (zAlloc + 8) & ~0xF;
     ZeldaArena_Init((void*)zAllocAligned, zAllocSize - (zAllocAligned - zAlloc));
-    // "Zelda Heap"
-    PRINTF("ゼルダヒープ %08x-%08x\n", zAllocAligned, (u8*)zAllocAligned + zAllocSize - (s32)(zAllocAligned - zAlloc));
+    PRINTF(T("ゼルダヒープ %08x-%08x\n", "Zelda Heap %08x-%08x\n"), zAllocAligned,
+           (u8*)zAllocAligned + zAllocSize - (s32)(zAllocAligned - zAlloc));
 
-#if IS_DEBUG
+#if PLATFORM_GC && DEBUG_FEATURES
     Fault_AddClient(&D_801614B8, ZeldaArena_Display, NULL, NULL);
 #endif
 
     Actor_InitContext(this, &this->actorCtx, this->playerEntry);
 
-    while (!func_800973FC(this, &this->roomCtx)) {
+    // Busyloop until the room loads
+    while (!Room_ProcessRoomRequest(this, &this->roomCtx)) {
         ; // Empty Loop
     }
 
@@ -448,11 +560,24 @@ void Play_Init(GameState* thisx) {
     Camera_InitDataUsingPlayer(&this->mainCamera, player);
     Camera_RequestMode(&this->mainCamera, CAM_MODE_NORMAL);
 
-    playerStartBgCamIndex = player->actor.params & 0xFF;
-    if (playerStartBgCamIndex != 0xFF) {
+    playerStartBgCamIndex = PLAYER_GET_START_BG_CAM_INDEX(&player->actor);
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    if (playerStartBgCamIndex != PLAYER_START_BG_CAM_DEFAULT) {
+        if (this->actorCsUsed) {
+            Camera_ChangeActorCsCamIndex(&this->mainCamera, playerStartBgCamIndex);
+        } else {
+            Camera_RequestBgCam(&this->mainCamera, playerStartBgCamIndex);
+        }
+    }
+
+    CutsceneManager_StoreCamera(&this->mainCamera);
+#else
+    if (playerStartBgCamIndex != PLAYER_START_BG_CAM_DEFAULT) {
         PRINTF("player has start camera ID (" VT_FGCOL(BLUE) "%d" VT_RST ")\n", playerStartBgCamIndex);
         Camera_RequestBgCam(&this->mainCamera, playerStartBgCamIndex);
     }
+#endif
 
     if (R_SCENE_CAM_TYPE == SCENE_CAM_TYPE_FIXED_TOGGLE_VIEWPOINT) {
         this->viewpoint = VIEWPOINT_PIVOT;
@@ -464,13 +589,14 @@ void Play_Init(GameState* thisx) {
 
     Interface_SetSceneRestrictions(this);
     Environment_PlaySceneSequence(this);
-    gSaveContext.seqId = this->sequenceCtx.seqId;
-    gSaveContext.natureAmbienceId = this->sequenceCtx.natureAmbienceId;
-    func_8002DF18(this, GET_PLAYER(this));
-    AnimationContext_Update(this, &this->animationCtx);
+    gSaveContext.seqId = this->sceneSequences.seqId;
+    gSaveContext.natureAmbienceId = this->sceneSequences.natureAmbienceId;
+    Actor_InitPlayerHorse(this, GET_PLAYER(this));
+    AnimTaskQueue_Update(this, &this->animTaskQueue);
     gSaveContext.respawnFlag = 0;
 
-    if (IS_DEBUG && R_USE_DEBUG_CUTSCENE) {
+#if DEBUG_FEATURES
+    if (R_USE_DEBUG_CUTSCENE) {
         static u64 sDebugCutsceneScriptBuf[0xA00];
 
         gDebugCutsceneScript = sDebugCutsceneScriptBuf;
@@ -480,6 +606,10 @@ void Play_Init(GameState* thisx) {
         // Presumably the ROM was larger at a previous point in development when this debug feature was used.
         DmaMgr_DmaRomToRam(0x03FEB000, gDebugCutsceneScript, sizeof(sDebugCutsceneScriptBuf));
     }
+#endif
+
+    //! TODO: investigate issue with this variable set to a random value
+    this->gameplayFrames = 0;
 }
 
 void Play_Update(PlayState* this) {
@@ -487,10 +617,12 @@ void Play_Update(PlayState* this) {
     s32 isPaused = IS_PAUSED(&this->pauseCtx);
     s32 pad1;
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
     if ((SREG(1) < 0) || (DREG(0) != 0)) {
         SREG(1) = 0;
+#if PLATFORM_GC
         ZeldaArena_Display();
+#endif
     }
 
     if ((R_HREG_MODE == HREG_MODE_PRINT_OBJECT_TABLE) && (R_PRINT_OBJECT_TABLE_TRIGGER < 0)) {
@@ -520,9 +652,9 @@ void Play_Update(PlayState* this) {
     }
 #endif
 
-    gSegments[4] = VIRTUAL_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.mainKeepSlot].segment);
-    gSegments[5] = VIRTUAL_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.subKeepSlot].segment);
-    gSegments[2] = VIRTUAL_TO_PHYSICAL(this->sceneSegment);
+    gSegments[4] = OS_K0_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.mainKeepSlot].segment);
+    gSegments[5] = OS_K0_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.subKeepSlot].segment);
+    gSegments[2] = OS_K0_TO_PHYSICAL(this->sceneSegment);
 
 #if ARE_FRAMERATE_OPTIONS_ENABLED
 #define FRAMEADVANCE_CAN_UPDATE FrameAdvance_Update(&this->frameAdvCtx, &input[FA_CONTROLLER_PORT])
@@ -539,7 +671,7 @@ void Play_Update(PlayState* this) {
             switch (gTransitionTileState) {
                 case TRANS_TILE_PROCESS:
                     if (TransitionTile_Init(&gTransitionTile, 10, 7) == NULL) {
-                        PRINTF("fbdemo_init呼出し失敗！\n"); // "fbdemo_init call failed!"
+                        PRINTF(T("fbdemo_init呼出し失敗！\n", "fbdemo_init call failed!\n"));
                         gTransitionTileState = TRANS_TILE_OFF;
                     } else {
                         gTransitionTile.zBuffer = (u16*)gZBuffer;
@@ -565,18 +697,16 @@ void Play_Update(PlayState* this) {
 
                         Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_NOTHING);
 
-                        if (gSaveContext.save.cutsceneIndex >= 0xFFF0) {
+                        if (gSaveContext.save.cutsceneIndex >= CS_INDEX_0) {
                             sceneLayer = SCENE_LAYER_CUTSCENE_FIRST + (gSaveContext.save.cutsceneIndex & 0xF);
                         }
 
                         // fade out bgm if "continue bgm" flag is not set
                         if (!(gEntranceTable[this->nextEntranceIndex + sceneLayer].field &
                               ENTRANCE_INFO_CONTINUE_BGM_FLAG)) {
-                            // "Sound initialized. 111"
-                            PRINTF("\n\n\nサウンドイニシャル来ました。111");
+                            PRINTF(T("\n\n\nサウンドイニシャル来ました。111", "\n\n\nSound initialized. 111"));
                             if ((this->transitionType < TRANS_TYPE_MAX) && !Environment_IsForcedSequenceDisabled()) {
-                                // "Sound initialized. 222"
-                                PRINTF("\n\n\nサウンドイニシャル来ました。222");
+                                PRINTF(T("\n\n\nサウンドイニシャル来ました。222", "\n\n\nSound initialized. 222"));
                                 func_800F6964(0x14);
                                 gSaveContext.seqId = (u8)NA_BGM_DISABLED;
                                 gSaveContext.natureAmbienceId = NATURE_ID_DISABLED;
@@ -584,7 +714,7 @@ void Play_Update(PlayState* this) {
                         }
                     }
 
-#if IS_DEBUG
+#if DEBUG_FEATURES
                     if (!R_TRANS_DBG_ENABLED) {
                         Play_SetupTransition(this, this->transitionType);
                     } else {
@@ -813,8 +943,7 @@ void Play_Update(PlayState* this) {
                     break;
 
                 case TRANS_MODE_SANDSTORM:
-                    Audio_PlaySfxGeneral(NA_SE_EV_SAND_STORM - SFX_FLAG, &gSfxDefaultPos, 4,
-                                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                    SFX_PLAY_CENTERED(NA_SE_EV_SAND_STORM - SFX_FLAG);
 
                     if (this->transitionTrigger == TRANS_TRIGGER_END) {
                         if (this->envCtx.sandstormPrimA < 110) {
@@ -839,8 +968,8 @@ void Play_Update(PlayState* this) {
                         this->envCtx.sandstormState = SANDSTORM_DISSIPATE;
                         this->envCtx.sandstormPrimA = 255;
                         this->envCtx.sandstormEnvA = 255;
-                        // "It's here!!!!!!!!!"
-                        LOG_STRING("来た!!!!!!!!!!!!!!!!!!!!!", "../z_play.c", 3471);
+                        LOG_STRING_T("来た!!!!!!!!!!!!!!!!!!!!!", "It's here!!!!!!!!!!!!!!!!!!!!!", "../z_play.c",
+                                     3471);
                         this->transitionMode = TRANS_MODE_SANDSTORM_END;
                     } else {
                         this->transitionMode = TRANS_MODE_SANDSTORM_INIT;
@@ -848,8 +977,7 @@ void Play_Update(PlayState* this) {
                     break;
 
                 case TRANS_MODE_SANDSTORM_END:
-                    Audio_PlaySfxGeneral(NA_SE_EV_SAND_STORM - SFX_FLAG, &gSfxDefaultPos, 4,
-                                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                    SFX_PLAY_CENTERED(NA_SE_EV_SAND_STORM - SFX_FLAG);
 
                     if (this->transitionTrigger == TRANS_TRIGGER_END) {
                         if (this->envCtx.sandstormPrimA <= 0) {
@@ -900,9 +1028,9 @@ void Play_Update(PlayState* this) {
             isPaused = IS_PAUSED(&this->pauseCtx);
 
             PLAY_LOG(3555);
-            AnimationContext_Reset(&this->animationCtx);
+            AnimTaskQueue_Reset(&this->animTaskQueue);
 
-            if (!IS_DEBUG) {}
+            if (!DEBUG_FEATURES) {}
 
             PLAY_LOG(3561);
             Object_UpdateEntries(&this->objectCtx);
@@ -928,7 +1056,7 @@ void Play_Update(PlayState* this) {
                     }
                 } else {
                     PLAY_LOG(3606);
-                    func_800973FC(this, &this->roomCtx);
+                    Room_ProcessRoomRequest(this, &this->roomCtx);
 
                     PLAY_LOG(3612);
                     CollisionCheck_AT(this, &this->colChkCtx);
@@ -977,14 +1105,13 @@ void Play_Update(PlayState* this) {
             if (this->viewpoint != VIEWPOINT_NONE) {
                 if (CHECK_BTN_ALL(input[0].press.button, BTN_CUP)) {
                     if (IS_PAUSED(&this->pauseCtx)) {
-                        // "Changing viewpoint is prohibited due to the kaleidoscope"
-                        PRINTF(VT_FGCOL(CYAN) "カレイドスコープ中につき視点変更を禁止しております\n" VT_RST);
+                        PRINTF(VT_FGCOL(CYAN) T("カレイドスコープ中につき視点変更を禁止しております\n",
+                                                "Changing viewpoint is prohibited due to the kaleidoscope\n") VT_RST);
                     } else if (Player_InCsMode(this)) {
-                        // "Changing viewpoint is prohibited during the cutscene"
-                        PRINTF(VT_FGCOL(CYAN) "デモ中につき視点変更を禁止しております\n" VT_RST);
+                        PRINTF(VT_FGCOL(CYAN) T("デモ中につき視点変更を禁止しております\n",
+                                                "Changing viewpoint is prohibited during the cutscene\n") VT_RST);
                     } else if (R_SCENE_CAM_TYPE == SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT) {
-                        Audio_PlaySfxGeneral(NA_SE_SY_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                        SFX_PLAY_CENTERED(NA_SE_SY_ERROR);
                     } else {
                         // C-Up toggle for houses, move between pivot camera and fixed camera
                         // Toggle viewpoint between VIEWPOINT_LOCKED and VIEWPOINT_PIVOT
@@ -1017,13 +1144,17 @@ void Play_Update(PlayState* this) {
             Interface_Update(this);
 
             PLAY_LOG(3765);
-            AnimationContext_Update(this, &this->animationCtx);
+            AnimTaskQueue_Update(this, &this->animTaskQueue);
 
             PLAY_LOG(3771);
             SfxSource_UpdateAll(this);
 
             PLAY_LOG(3777);
             Letterbox_Update(R_UPDATE_RATE);
+
+#if ENABLE_NEW_LETTERBOX
+            ShrinkWindow_Update(R_UPDATE_RATE);
+#endif
 
             PLAY_LOG(3783);
             TransitionFade_Update(&this->transitionFadeFlash, R_UPDATE_RATE);
@@ -1037,6 +1168,7 @@ void Play_Update(PlayState* this) {
 skip:
     PLAY_LOG(3801);
 
+    //! @bug If frame advancing or during tile transitions, isPaused will be used uninitialized.
     if (!isPaused || IS_DEBUG_CAM_ENABLED) {
         s32 i;
 
@@ -1060,7 +1192,7 @@ skip:
     Environment_Update(this, &this->envCtx, &this->lightCtx, &this->pauseCtx, &this->msgCtx, &this->gameOverCtx,
                        this->state.gfxCtx);
 
-    if (ENABLE_MOTION_BLUR && ENABLE_MOTION_BLUR_DEBUG) {
+    if (IS_MOTION_BLUR_ENABLED && ENABLE_MOTION_BLUR_DEBUG) {
         // motion blur testing controls
         if (CHECK_BTN_ALL(this->state.input[0].press.button, BTN_DUP)) {
             R_MOTION_BLUR_ENABLED ^= 1;
@@ -1080,16 +1212,39 @@ skip:
         }
     }
 
-#if INCLUDE_EXAMPLE_SCENE
-    if (this->sceneId == SCENE_EXAMPLE && CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_L | BTN_R) &&
-        CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A) && !Play_InCsMode(this)) {
-        Cutscene_SetScript(this, gExampleCS);
-        gSaveContext.cutsceneTrigger = 1;
+#if CAN_INCLUDE_EXAMPLE_SCENE
+    if (this->sceneId == SCENE_EXAMPLE) {
+        if (CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_Z | BTN_R) &&
+            CHECK_BTN_ALL(this->state.input[0].press.button, BTN_A) && !Play_InCsMode(this)) {
+            Cutscene_SetScript(this, gExampleCS);
+            gSaveContext.cutsceneTrigger = 1;
+        }
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+        if (!Play_InCsMode(this)) {
+            // get the additional cutscene id and use it if the value is not -1
+            s16 optCsId = CutsceneManager_GetAdditionalCsId(0);
+            s16 csId = optCsId >= 0 ? optCsId : 0;
+
+            // check if the cutscene is the next on the queue, if it is play it,
+            // otherwise add it to the queue when the D-Left is pressed while L and Z are held
+            if (CutsceneManager_IsNext(csId)) {
+                CutsceneManager_Start(csId, &GET_PLAYER(this)->actor);
+            } else if (CHECK_BTN_ALL(this->state.input[0].cur.button, BTN_L | BTN_Z) &&
+                       CHECK_BTN_ALL(this->state.input[0].press.button, BTN_DLEFT)) {
+                CutsceneManager_Queue(csId);
+            }
+        }
+#endif
     }
 #endif
 }
 
 void Play_DrawOverlayElements(PlayState* this) {
+#if PLATFORM_N64
+    s32 pad;
+#endif
+
     if (IS_PAUSED(&this->pauseCtx)) {
         KaleidoScopeCall_Draw(this);
     }
@@ -1105,7 +1260,7 @@ void Play_DrawOverlayElements(PlayState* this) {
     }
 }
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
 void PreRender_MotionBlurOpaque(PreRender* this, Gfx** gfxP);
 void PreRender_MotionBlur(PreRender* this, Gfx** gfxp, s32 alpha);
 
@@ -1183,25 +1338,25 @@ void Play_DestroyMotionBlur(void) {
 #endif
 
 void Play_SetMotionBlurAlpha(u32 alpha) {
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     R_MOTION_BLUR_ALPHA = alpha;
 #endif
 }
 
 void Play_EnableMotionBlur(u32 alpha) {
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     R_MOTION_BLUR_ALPHA = alpha;
     R_MOTION_BLUR_ENABLED = true;
 #endif
 }
 
 void Play_DisableMotionBlur(void) {
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
     R_MOTION_BLUR_ENABLED = false;
 #endif
 }
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
 void Play_SetMotionBlurPriorityAlpha(u32 alpha) {
     R_MOTION_BLUR_PRIORITY_ALPHA = alpha;
 }
@@ -1223,9 +1378,9 @@ void Play_Draw(PlayState* this) {
 
     OPEN_DISPS(gfxCtx, "../z_play.c", 3907);
 
-    gSegments[4] = VIRTUAL_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.mainKeepSlot].segment);
-    gSegments[5] = VIRTUAL_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.subKeepSlot].segment);
-    gSegments[2] = VIRTUAL_TO_PHYSICAL(this->sceneSegment);
+    gSegments[4] = OS_K0_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.mainKeepSlot].segment);
+    gSegments[5] = OS_K0_TO_PHYSICAL(this->objectCtx.slots[this->objectCtx.subKeepSlot].segment);
+    gSegments[2] = OS_K0_TO_PHYSICAL(this->sceneSegment);
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
     gSPSegment(POLY_XLU_DISP++, 0x00, NULL);
@@ -1262,9 +1417,17 @@ void Play_Draw(PlayState* this) {
         Gfx_SetupFrame(gfxCtx, clearFB, clearR, clearG, clearB);
     }
 
+#if ENABLE_F3DEX3
+    OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_START);
+#endif
+
     Lights_ResetDrawState();
 
-    if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_DRAW) {
+    if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_DRAW) {
+#if ENABLE_NEW_LETTERBOX
+        ShrinkWindow_Draw(gfxCtx);
+#endif
+
         POLY_OPA_DISP = Play_SetFog(this, POLY_OPA_DISP);
         POLY_XLU_DISP = Play_SetFog(this, POLY_XLU_DISP);
 
@@ -1287,7 +1450,7 @@ void Play_Draw(PlayState* this) {
 
         gSPSegment(POLY_OPA_DISP++, 0x01, this->billboardMtx);
 
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_COVER_ELEMENTS) {
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_COVER_ELEMENTS) {
             Gfx* gfxP;
             Gfx* sp1CC = POLY_OPA_DISP;
 
@@ -1309,7 +1472,12 @@ void Play_Draw(PlayState* this) {
 
             TransitionFade_Draw(&this->transitionFadeFlash, &gfxP);
 
-            if (gVisMonoColor.a > 0) {
+#if PLATFORM_N64
+            if (gVisMonoColor.a != 0)
+#else
+            if (gVisMonoColor.a > 0)
+#endif
+            {
                 gPlayVisMono.vis.primColor.rgba = gVisMonoColor.rgba;
                 VisMono_Draw(&gPlayVisMono, &gfxP);
             }
@@ -1344,7 +1512,7 @@ void Play_Draw(PlayState* this) {
             R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_OFF;
         }
 
-#if ENABLE_MOTION_BLUR
+#if IS_MOTION_BLUR_ENABLED
         Play_DrawMotionBlur(this);
 #endif
 
@@ -1357,8 +1525,8 @@ void Play_Draw(PlayState* this) {
             goto Play_Draw_DrawOverlayElements;
         }
 
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
-            if (this->skyboxId != SKYBOX_NONE && (this->skyboxId != SKYBOX_UNSET_1D) && !this->envCtx.skyboxDisabled) {
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
+            if (this->skyboxId && (this->skyboxId != SKYBOX_UNSET_1D) && !this->envCtx.skyboxDisabled) {
                 if ((this->skyboxId == SKYBOX_NORMAL_SKY) || (this->skyboxId == SKYBOX_CUTSCENE_MAP)) {
                     Environment_UpdateSkybox(this->skyboxId, &this->envCtx, &this->skyboxCtx);
                     Skybox_Draw(&this->skyboxCtx, gfxCtx, &this->lightCtx, this->skyboxId, this->envCtx.skyboxBlend,
@@ -1370,13 +1538,15 @@ void Play_Draw(PlayState* this) {
             }
         }
 
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SUN_AND_MOON)) {
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) ||
+            (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SUN_AND_MOON)) {
             if (!this->envCtx.sunMoonDisabled) {
                 Environment_DrawSunAndMoon(this);
             }
         }
 
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SKYBOX_FILTERS)) {
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) ||
+            (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_SKYBOX_FILTERS)) {
             Environment_DrawSkyboxFilters(this);
         }
 
@@ -1389,20 +1559,24 @@ void Play_Draw(PlayState* this) {
         // the RDP wait for new work to be available.
         Gfx_ClearZBuffer(gfxCtx);
 
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTNING)) {
+#if ENABLE_F3DEX3
+        OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_POST_SKY);
+#endif
+
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTNING)) {
             Environment_UpdateLightningStrike(this);
             Environment_DrawLightning(this, 0);
         }
 
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTS)) {
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ENV_FLAGS & PLAY_ENV_DRAW_LIGHTS)) {
             Lights_BindAndDraw(this, NULL, this->roomCtx.curRoom.usePointLights);
         }
 
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ROOM_FLAGS != 0)) {
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ROOM_FLAGS != 0)) {
             if (VREG(94) == 0) {
                 s32 roomDrawFlags;
 
-                if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY)) {
+                if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY)) {
                     roomDrawFlags = ROOM_DRAW_OPA | ROOM_DRAW_XLU;
                 } else {
                     roomDrawFlags = R_PLAY_DRAW_ROOM_FLAGS;
@@ -1429,7 +1603,7 @@ void Play_Draw(PlayState* this) {
             }
         }
 
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
             if ((this->skyboxCtx.drawType != SKYBOX_DRAW_128) &&
                 (GET_ACTIVE_CAM(this)->setting != CAM_SET_PREREND_FIXED)) {
                 Vec3f quakeOffset;
@@ -1446,15 +1620,15 @@ void Play_Draw(PlayState* this) {
             Environment_DrawRain(this, &this->view, gfxCtx);
         }
 
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ROOM_FLAGS != 0)) {
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || (R_PLAY_DRAW_ROOM_FLAGS != 0)) {
             Environment_FillScreen(gfxCtx, 0, 0, 0, this->bgCoverAlpha, FILL_SCREEN_OPA);
         }
 
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_ACTORS) {
-            func_800315AC(this, &this->actorCtx);
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_ACTORS) {
+            Actor_DrawAll(this, &this->actorCtx);
         }
 
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_LENS_FLARES) {
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_LENS_FLARES) {
             if (!this->envCtx.sunMoonDisabled) {
                 sp21C.x = this->view.eye.x + this->envCtx.sunPos.x;
                 sp21C.y = this->view.eye.y + this->envCtx.sunPos.y;
@@ -1464,7 +1638,7 @@ void Play_Draw(PlayState* this) {
             Environment_DrawCustomLensFlare(this);
         }
 
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SCREEN_FILLS) {
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SCREEN_FILLS) {
             if (MREG(64) != 0) {
                 Environment_FillScreen(gfxCtx, MREG(65), MREG(66), MREG(67), MREG(68),
                                        FILL_SCREEN_OPA | FILL_SCREEN_XLU);
@@ -1481,13 +1655,13 @@ void Play_Draw(PlayState* this) {
             }
         }
 
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SANDSTORM) {
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SANDSTORM) {
             if (this->envCtx.sandstormState != SANDSTORM_OFF) {
                 Environment_DrawSandstorm(this, this->envCtx.sandstormState);
             }
         }
 
-#if IS_DEBUG && !NO_DEBUG_DISPLAY
+#if DEBUG_FEATURES && !NO_DEBUG_DISPLAY
         if ((R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_DEBUG_OBJECTS) {
             DebugDisplay_DrawObjects(this);
         }
@@ -1516,13 +1690,17 @@ void Play_Draw(PlayState* this) {
         }
 
     Play_Draw_DrawOverlayElements:
-        if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_OVERLAY_ELEMENTS) {
+#if ENABLE_F3DEX3
+        OcclusionPlane_Draw_Phase(this, OCCLUSION_PLANE_PHASE_POST_3D);
+#endif
+
+        if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_OVERLAY_ELEMENTS) {
             Play_DrawOverlayElements(this);
         }
     }
 
 Play_Draw_skip:
-    if (ENABLE_MOTION_BLUR && ENABLE_MOTION_BLUR_DEBUG) {
+    if (IS_MOTION_BLUR_ENABLED && ENABLE_MOTION_BLUR_DEBUG) {
         // motion blur testing display
         GfxPrint printer;
         Gfx* gfxRef;
@@ -1558,6 +1736,9 @@ Play_Draw_skip:
             Skybox_UpdateMatrix(&this->skyboxCtx, this->view.eye.x, this->view.eye.y, this->view.eye.z);
         }
     }
+#if ENABLE_F3DEX3
+    OcclusionPlane_Draw_PostCamUpdate(this);
+#endif
 
     Camera_Finish(GET_ACTIVE_CAM(this));
 
@@ -1569,13 +1750,13 @@ void Play_Main(GameState* thisx) {
 
     D_8012D1F8 = &this->state.input[0];
 
-#ifndef NO_DEBUG_DISPLAY
+#if DEBUG_FEATURES && !NO_DEBUG_DISPLAY
     DebugDisplay_Init();
 #endif
 
     PLAY_LOG(4556);
 
-    if (IS_DEBUG && (R_HREG_MODE == HREG_MODE_PLAY) && (R_PLAY_INIT != HREG_MODE_PLAY)) {
+    if (DEBUG_FEATURES && (R_HREG_MODE == HREG_MODE_PLAY) && (R_PLAY_INIT != HREG_MODE_PLAY)) {
         R_PLAY_RUN_UPDATE = true;
         R_PLAY_RUN_DRAW = true;
         R_PLAY_DRAW_SKYBOX = true;
@@ -1593,7 +1774,7 @@ void Play_Main(GameState* thisx) {
         R_PLAY_INIT = HREG_MODE_PLAY;
     }
 
-    if (!IS_DEBUG || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_UPDATE) {
+    if (!DEBUG_FEATURES || (R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_RUN_UPDATE) {
         Play_Update(this);
     }
 
@@ -1602,6 +1783,11 @@ void Play_Main(GameState* thisx) {
     Play_Draw(this);
 
     PLAY_LOG(4587);
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    CutsceneManager_Update();
+    CutsceneManager_ClearWaiting();
+#endif
 }
 
 // original name: "Game_play_demo_mode_check"
@@ -1681,6 +1867,19 @@ void* Play_LoadFile(PlayState* this, RomFile* file) {
     return allocp;
 }
 
+#if PLATFORM_N64
+void* Play_LoadFileFromDiskDrive(PlayState* this, RomFile* file) {
+    u32 size;
+    void* allocp;
+
+    size = file->vromEnd - file->vromStart;
+    allocp = GAME_STATE_ALLOC(&this->state, size, "../z_play.c", UNK_LINE);
+    func_801C7C1C(allocp, file->vromStart, size);
+
+    return allocp;
+}
+#endif
+
 void Play_InitEnvironment(PlayState* this, s16 skyboxId) {
     Skybox_Init(&this->state, &this->skyboxCtx, skyboxId);
     Environment_Init(this, &this->envCtx, 0);
@@ -1696,38 +1895,78 @@ void Play_InitScene(PlayState* this, s32 spawn) {
     this->naviQuestHints = NULL;
     this->pathList = NULL;
 
+#if ENABLE_ANIMATED_MATERIALS
+    this->sceneMaterialAnims = NULL;
+#endif
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+    this->actorCsCamList = NULL;
+#endif
+
     this->numActorEntries = 0;
 
     Object_InitContext(this, &this->objectCtx);
     LightContext_Init(this, &this->lightCtx);
-    TransitionActor_InitContext(&this->state, &this->transiActorCtx);
-    func_80096FD4(this, &this->roomCtx.curRoom);
+    Scene_ResetTransitionActorList(&this->state, &this->transitionActors);
+    Room_Init(this, &this->roomCtx.curRoom);
     R_SCENE_CAM_TYPE = SCENE_CAM_TYPE_DEFAULT;
-    gSaveContext.worldMapArea = 0;
+    gSaveContext.worldMapArea = WORLD_MAP_AREA_HYRULE_FIELD;
     Scene_ExecuteCommands(this, this->sceneSegment);
     Play_InitEnvironment(this, this->skyboxId);
 }
 
 void Play_SpawnScene(PlayState* this, s32 sceneId, s32 spawn) {
-    SceneTableEntry* scene = &gSceneTable[sceneId];
-    u32 size;
+    SceneTableEntry* scene;
+    UNUSED_NDEBUG u32 size;
 
+#if PLATFORM_N64
+    if ((B_80121220 != NULL) && (B_80121220->unk_48 != NULL)) {
+        scene = B_80121220->unk_48(sceneId, gSceneTable);
+    } else {
+        scene = &gSceneTable[sceneId];
+        scene->unk_13 = 0;
+    }
+#else
+    scene = &gSceneTable[sceneId];
     scene->unk_13 = 0;
+#endif
+
     this->loadedScene = scene;
     this->sceneId = sceneId;
     this->sceneDrawConfig = scene->drawConfig;
 
     PRINTF("\nSCENE SIZE %fK\n", (scene->sceneFile.vromEnd - scene->sceneFile.vromStart) / 1024.0f);
 
+#if ENABLE_MM_TITLE_CARDS
+    this->msgCtx.titleCardInfo = &sDefaultTitleCard;
+#endif
+
+#if PLATFORM_N64
+    if ((B_80121220 != NULL) && (scene->unk_12 > 0)) {
+        this->sceneSegment = Play_LoadFileFromDiskDrive(this, &scene->sceneFile);
+        scene->unk_13 = 1;
+    } else {
+        this->sceneSegment = Play_LoadFile(this, &scene->sceneFile);
+        scene->unk_13 = 0;
+    }
+#else
     this->sceneSegment = Play_LoadFile(this, &scene->sceneFile);
     scene->unk_13 = 0;
+#endif
+
     ASSERT(this->sceneSegment != NULL, "this->sceneSegment != NULL", "../z_play.c", 4960);
 
-    gSegments[2] = VIRTUAL_TO_PHYSICAL(this->sceneSegment);
+    gSegments[2] = OS_K0_TO_PHYSICAL(this->sceneSegment);
 
     Play_InitScene(this, spawn);
 
-    size = func_80096FE8(this, &this->roomCtx);
+#if PLATFORM_N64
+    if ((B_80121220 != NULL) && (B_80121220->unk_0C != NULL)) {
+        B_80121220->unk_0C(this);
+    }
+#endif
+
+    size = Room_SetupFirstRoom(this, &this->roomCtx);
 
     PRINTF("ROOM SIZE=%fK\n", size / 1024.0f);
 }
@@ -1770,7 +2009,7 @@ s16 Play_CreateSubCamera(PlayState* this) {
     return camId;
 }
 
-s16 Play_GetActiveCamId(PlayState* this) {
+s32 Play_GetActiveCamId(PlayState* this) {
     return this->activeCamId;
 }
 
@@ -2022,11 +2261,14 @@ void Play_LoadToLastEntrance(PlayState* this) {
         (this->sceneId == SCENE_INSIDE_GANONS_CASTLE_COLLAPSE) || (this->sceneId == SCENE_GANON_BOSS)) {
         this->nextEntranceIndex = ENTR_GANONS_TOWER_COLLAPSE_EXTERIOR_0;
         Item_Give(this, ITEM_SWORD_MASTER);
+#if OOT_VERSION >= PAL_1_1
     } else if ((gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_11) ||
                (gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_12) ||
                (gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_13) ||
                (gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_15)) {
+        // Avoid re-triggering the hop over Lon Lon fence cutscenes
         this->nextEntranceIndex = ENTR_HYRULE_FIELD_6;
+#endif
     } else {
         this->nextEntranceIndex = gSaveContext.save.entranceIndex;
     }
@@ -2035,7 +2277,7 @@ void Play_LoadToLastEntrance(PlayState* this) {
 }
 
 void Play_TriggerRespawn(PlayState* this) {
-    Play_SetupRespawnPoint(this, RESPAWN_MODE_DOWN, 0xDFF);
+    Play_SetupRespawnPoint(this, RESPAWN_MODE_DOWN, PLAYER_PARAMS(PLAYER_START_MODE_IDLE, PLAYER_START_BG_CAM_DEFAULT));
     Play_LoadToLastEntrance(this);
 }
 
@@ -2059,7 +2301,7 @@ s32 func_800C0D34(PlayState* this, Actor* actor, s16* yaw) {
         return 0;
     }
 
-    transitionActor = &this->transiActorCtx.list[GET_TRANSITION_ACTOR_INDEX(actor)];
+    transitionActor = &this->transitionActors.list[GET_TRANSITION_ACTOR_INDEX(actor)];
     frontRoom = transitionActor->sides[0].room;
 
     if (frontRoom == transitionActor->sides[1].room) {
@@ -2092,3 +2334,17 @@ s32 func_800C0DB4(PlayState* this, Vec3f* pos) {
         return false;
     }
 }
+
+#if ENABLE_CUTSCENE_IMPROVEMENTS
+u16 Play_GetActorCsCamSetting(PlayState* this, s32 csCamDataIndex) {
+    ActorCsCamInfo* actorCsCamList = &this->actorCsCamList[csCamDataIndex];
+
+    return actorCsCamList->setting;
+}
+
+Vec3s* Play_GetActorCsCamFuncData(PlayState* this, s32 csCamDataIndex) {
+    ActorCsCamInfo* actorCsCamList = &this->actorCsCamList[csCamDataIndex];
+
+    return SEGMENTED_TO_VIRTUAL(actorCsCamList->actorCsCamFuncData);
+}
+#endif

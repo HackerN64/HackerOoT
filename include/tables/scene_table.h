@@ -123,6 +123,14 @@
 /* 0x6D */ DEFINE_SCENE(testroom_scene, none, SCENE_TESTROOM, SDC_DEFAULT, 0, 0)
 #endif
 
-#if INCLUDE_EXAMPLE_SCENE
+#if CAN_INCLUDE_EXAMPLE_SCENE
+#if ENABLE_ANIMATED_MATERIALS
+/* 0x6C */ DEFINE_SCENE(example_scene, none, SCENE_EXAMPLE, SDC_MAT_ANIM, 0, 0)
+#else
 /* 0x6C */ DEFINE_SCENE(example_scene, none, SCENE_EXAMPLE, SDC_HAUNTED_WASTELAND, 0, 0)
+#endif
+#endif
+
+#if TESTSUITE_MODE
+#include "testsuite/scene_table.h"
 #endif

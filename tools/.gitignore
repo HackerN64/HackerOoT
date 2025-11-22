@@ -1,9 +1,11 @@
 # Output files
 *.exe
+bin2c
 elf2rom
 makeromfs
 mkdmadata
 mkldscript
+preprocess_pragmas
 reloc_prereq
 vtxdis
 yaz0
@@ -12,4 +14,5 @@ gzinject/obj/*
 z64compress/z64compress
 z64compress/o/*
 
-graphovl/
+ido_recomp/
+egcs/

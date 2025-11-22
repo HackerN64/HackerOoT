@@ -1,11 +1,11 @@
-#include "global.h"
+#include "collision_check.h"
 
-static ColliderJntSphElementInit sJntSphElementsInit[9] = {
+static ColliderJntSphElementInit sJntSphElementsInit[] = {
     {
         {
-            ELEMTYPE_UNK3,
-            { 0xFFCFFFFF, 0x00, 0x20 },
-            { 0xFFCDFFFE, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK3,
+            { 0xFFCFFFFF, HIT_SPECIAL_EFFECT_NONE, 0x20 },
+            { 0xFFCDFFFE, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_NONE,
             ACELEM_ON | ACELEM_HOOKABLE,
             OCELEM_ON,
@@ -14,9 +14,9 @@ static ColliderJntSphElementInit sJntSphElementsInit[9] = {
     },
     {
         {
-            ELEMTYPE_UNK2,
-            { 0xFFCFFFFF, 0x00, 0x20 },
-            { 0xFFCDFFFE, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK2,
+            { 0xFFCFFFFF, HIT_SPECIAL_EFFECT_NONE, 0x20 },
+            { 0xFFCDFFFE, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_ON,
@@ -25,9 +25,9 @@ static ColliderJntSphElementInit sJntSphElementsInit[9] = {
     },
     {
         {
-            ELEMTYPE_UNK2,
-            { 0xFFCFFFFF, 0x00, 0x20 },
-            { 0xFFCDFFFE, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK2,
+            { 0xFFCFFFFF, HIT_SPECIAL_EFFECT_NONE, 0x20 },
+            { 0xFFCDFFFE, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_ON,
@@ -36,9 +36,9 @@ static ColliderJntSphElementInit sJntSphElementsInit[9] = {
     },
     {
         {
-            ELEMTYPE_UNK2,
-            { 0xFFCFFFFF, 0x00, 0x20 },
-            { 0xFFCDFFFE, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK2,
+            { 0xFFCFFFFF, HIT_SPECIAL_EFFECT_NONE, 0x20 },
+            { 0xFFCDFFFE, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_ON,
@@ -47,9 +47,9 @@ static ColliderJntSphElementInit sJntSphElementsInit[9] = {
     },
     {
         {
-            ELEMTYPE_UNK2,
-            { 0xFFCFFFFF, 0x00, 0x20 },
-            { 0xFFCDFFFE, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK2,
+            { 0xFFCFFFFF, HIT_SPECIAL_EFFECT_NONE, 0x20 },
+            { 0xFFCDFFFE, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_ON,
@@ -58,9 +58,9 @@ static ColliderJntSphElementInit sJntSphElementsInit[9] = {
     },
     {
         {
-            ELEMTYPE_UNK2,
-            { 0xFFCFFFFF, 0x00, 0x20 },
-            { 0xFFCDFFFE, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK2,
+            { 0xFFCFFFFF, HIT_SPECIAL_EFFECT_NONE, 0x20 },
+            { 0xFFCDFFFE, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_ON,
@@ -69,9 +69,9 @@ static ColliderJntSphElementInit sJntSphElementsInit[9] = {
     },
     {
         {
-            ELEMTYPE_UNK2,
-            { 0xFFCFFFFF, 0x00, 0x20 },
-            { 0xFFCDFFFE, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK2,
+            { 0xFFCFFFFF, HIT_SPECIAL_EFFECT_NONE, 0x20 },
+            { 0xFFCDFFFE, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_ON,
@@ -80,9 +80,9 @@ static ColliderJntSphElementInit sJntSphElementsInit[9] = {
     },
     {
         {
-            ELEMTYPE_UNK2,
-            { 0xFFCFFFFF, 0x00, 0x20 },
-            { 0xFFCDFFFE, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK2,
+            { 0xFFCFFFFF, HIT_SPECIAL_EFFECT_NONE, 0x20 },
+            { 0xFFCDFFFE, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_ON,
@@ -91,9 +91,9 @@ static ColliderJntSphElementInit sJntSphElementsInit[9] = {
     },
     {
         {
-            ELEMTYPE_UNK2,
-            { 0xFFCFFFFF, 0x00, 0x20 },
-            { 0xFFCDFFFE, 0x00, 0x00 },
+            ELEM_MATERIAL_UNK2,
+            { 0xFFCFFFFF, HIT_SPECIAL_EFFECT_NONE, 0x20 },
+            { 0xFFCDFFFE, HIT_BACKLASH_NONE, 0x00 },
             ATELEM_ON | ATELEM_SFX_NORMAL,
             ACELEM_NONE,
             OCELEM_ON,
@@ -104,13 +104,13 @@ static ColliderJntSphElementInit sJntSphElementsInit[9] = {
 
 static ColliderJntSphInit sJntSphInit = {
     {
-        COLTYPE_METAL,
+        COL_MATERIAL_METAL,
         AT_ON | AT_TYPE_ENEMY,
         AC_ON | AC_TYPE_PLAYER,
         OC1_ON | OC1_TYPE_PLAYER,
         OC2_TYPE_1,
         COLSHAPE_JNTSPH,
     },
-    9,
+    ARRAY_COUNT(sJntSphElementsInit),
     sJntSphElementsInit,
 };

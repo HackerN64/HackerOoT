@@ -1,6 +1,8 @@
 #ifndef ASSERT_H
 #define ASSERT_H
 
+#include "config.h"
+
 #if !defined(__GNUC__) && !defined(__attribute__)
 #define __attribute__(x)
 #endif
@@ -29,7 +31,7 @@ __attribute__((noreturn)) void __assert(const char* assertion, const char* file,
 
 // Static/compile-time assertions
 
-#if defined(__GNUC__) || (__STDC_VERSION__ >= 201112L)
+#if !defined(__sgi) && (__GNUC__ >= 5 || __STDC_VERSION__ >= 201112L)
 # define static_assert(cond, msg) _Static_assert(cond, msg)
 #else
 # ifndef GLUE
@@ -40,6 +42,19 @@ __attribute__((noreturn)) void __assert(const char* assertion, const char* file,
 # endif
 
 # define static_assert(cond, msg) typedef char GLUE2(static_assertion_failed, __LINE__)[(cond) ? 1 : -1]
+#endif
+
+// assertf, print a message before abort
+#if IS_DEBUG
+# define assertf(cond, fmt, ...)                    \
+    do {                                            \
+        if (!(cond)) {                              \
+            PRINTF(fmt, __VA_ARGS__);               \
+            __assert(#cond, __FILE__, __LINE__);    \
+        }                                           \
+    } while (0)
+#else
+# define assertf(cond, fmt, ...) ((void)0)
 #endif
 
 #endif
