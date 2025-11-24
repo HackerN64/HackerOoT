@@ -443,7 +443,7 @@ static Light* Lights_FindSlot(Lights* restrict lights, f32* restrict distances, 
     }
 
     // Replace the farthest light with the new light
-    distances[farthestI] = farthestDist;
+    distances[farthestI] = objDist;
     return &lights->l.l[farthestI];
 }
 
