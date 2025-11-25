@@ -168,57 +168,149 @@ typedef struct AnimatedMatContext {
     AnimatedMatState* stateList;
 } AnimatedMatContext;
 
-void AnimatedMat_InitSurfaceSwap(struct GameState* gameState, AnimatedMatPolyContext* polyCtx, void* params);
-void AnimatedMat_Init(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, AnimatedMaterial* matAnim);
+void AnimatedMat_InitSurfaceSwap(struct GameState* gameState, AnimatedMatPolyContext* animMatPolyCtx, void* params);
+void AnimatedMat_Init(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                      AnimatedMatPolyContext* animMatPolyCtx, AnimatedMaterial* matAnim);
 
-void AnimatedMat_DrawMain(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step, u32 flags);
+void AnimatedMat_DrawMain(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                          AnimatedMatPolyContext* animMatPolyCtx, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step,
+                          u32 flags);
 
-void AnimatedMat_Draw(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, u32 gameplayFrames, AnimatedMaterial* matAnim);
-void AnimatedMat_DrawOpa(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, u32 gameplayFrames, AnimatedMaterial* matAnim);
-void AnimatedMat_DrawXlu(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, u32 gameplayFrames, AnimatedMaterial* matAnim);
-void AnimatedMat_DrawAlpha(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, u32 gameplayFrames, AnimatedMaterial* matAnim, f32 alphaRatio);
-void AnimatedMat_DrawAlphaOpa(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, u32 gameplayFrames, AnimatedMaterial* matAnim, f32 alphaRatio);
-void AnimatedMat_DrawAlphaXlu(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, u32 gameplayFrames, AnimatedMaterial* matAnim, f32 alphaRatio);
-void AnimatedMat_DrawStep(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, AnimatedMaterial* matAnim, u32 step);
-void AnimatedMat_DrawStepOpa(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, AnimatedMaterial* matAnim, u32 step);
-void AnimatedMat_DrawStepXlu(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, AnimatedMaterial* matAnim, u32 step);
-void AnimatedMat_DrawAlphaStep(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step);
-void AnimatedMat_DrawAlphaStepOpa(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step);
-void AnimatedMat_DrawAlphaStepXlu(struct GameState* gameState, AnimatedMatContext* animMatCtx, AnimatedMatPolyContext* polyCtx, AnimatedMaterial* matAnim, f32 alphaRatio, u32 step);
-
-#define ActorAnimatedMat_Destroy(this) { \
-    if (this->actor.animMatCtx.stateList != NULL) { \
-        SYSTEM_ARENA_FREE(this->actor.animMatCtx.stateList); \
-    } \
-}
+void AnimatedMat_Draw(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                      AnimatedMatPolyContext* animMatPolyCtx, u32 gameplayFrames, AnimatedMaterial* matAnim);
+void AnimatedMat_DrawOpa(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                         AnimatedMatPolyContext* animMatPolyCtx, u32 gameplayFrames, AnimatedMaterial* matAnim);
+void AnimatedMat_DrawXlu(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                         AnimatedMatPolyContext* animMatPolyCtx, u32 gameplayFrames, AnimatedMaterial* matAnim);
+void AnimatedMat_DrawAlpha(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                           AnimatedMatPolyContext* animMatPolyCtx, u32 gameplayFrames, AnimatedMaterial* matAnim,
+                           f32 alphaRatio);
+void AnimatedMat_DrawAlphaOpa(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                              AnimatedMatPolyContext* animMatPolyCtx, u32 gameplayFrames, AnimatedMaterial* matAnim,
+                              f32 alphaRatio);
+void AnimatedMat_DrawAlphaXlu(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                              AnimatedMatPolyContext* animMatPolyCtx, u32 gameplayFrames, AnimatedMaterial* matAnim,
+                              f32 alphaRatio);
+void AnimatedMat_DrawStep(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                          AnimatedMatPolyContext* animMatPolyCtx, AnimatedMaterial* matAnim, u32 step);
+void AnimatedMat_DrawStepOpa(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                             AnimatedMatPolyContext* animMatPolyCtx, AnimatedMaterial* matAnim, u32 step);
+void AnimatedMat_DrawStepXlu(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                             AnimatedMatPolyContext* animMatPolyCtx, AnimatedMaterial* matAnim, u32 step);
+void AnimatedMat_DrawAlphaStep(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                               AnimatedMatPolyContext* animMatPolyCtx, AnimatedMaterial* matAnim, f32 alphaRatio,
+                               u32 step);
+void AnimatedMat_DrawAlphaStepOpa(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                                  AnimatedMatPolyContext* animMatPolyCtx, AnimatedMaterial* matAnim, f32 alphaRatio,
+                                  u32 step);
+void AnimatedMat_DrawAlphaStepXlu(struct GameState* gameState, AnimatedMatContext* animMatCtx,
+                                  AnimatedMatPolyContext* animMatPolyCtx, AnimatedMaterial* matAnim, f32 alphaRatio,
+                                  u32 step);
 
 // macros for convenience
 #define ActorAnimatedMat_Init(this, play, ptr) AnimatedMat_Init(&(play)->state, &(this)->actor.animMatCtx, NULL, (ptr))
-#define ActorAnimatedMat_Draw(this, play, ptr) AnimatedMat_Draw(&(play)->state, &(this)->actor.animMatCtx, NULL, (play)->gameplayFrames, (ptr))
-#define ActorAnimatedMat_DrawOpa(this, play, ptr) AnimatedMat_DrawOpa(&(play)->state, &(this)->actor.animMatCtx, NULL, (play)->gameplayFrames, (ptr))
-#define ActorAnimatedMat_DrawXlu(this, play, ptr) AnimatedMat_DrawXlu(&(play)->state, &(this)->actor.animMatCtx, NULL, (play)->gameplayFrames, (ptr))
-#define ActorAnimatedMat_DrawAlpha(this, play, ptr) AnimatedMat_DrawAlpha(&(play)->state, &(this)->actor.animMatCtx, NULL, (play)->gameplayFrames, (ptr))
-#define ActorAnimatedMat_DrawAlphaOpa(this, play, ptr) AnimatedMat_DrawAlphaOpa(&(play)->state, &(this)->actor.animMatCtx, NULL, (play)->gameplayFrames, (ptr))
-#define ActorAnimatedMat_DrawAlphaXlu(this, play, ptr) AnimatedMat_DrawAlphaXlu(&(play)->state, &(this)->actor.animMatCtx, NULL, (play)->gameplayFrames, (ptr))
-#define ActorAnimatedMat_DrawStep(this, play, ptr, step) AnimatedMat_DrawStep(&(play)->state, &(this)->actor.animMatCtx, NULL, (ptr), (step))
-#define ActorAnimatedMat_DrawStepOpa(this, play, ptr, step) AnimatedMat_DrawStepOpa(&(play)->state, &(this)->actor.animMatCtx, NULL, (ptr), (step))
-#define ActorAnimatedMat_DrawStepXlu(this, play, ptr, step) AnimatedMat_DrawStepXlu(&(play)->state, &(this)->actor.animMatCtx, NULL, (ptr), (step))
-#define ActorAnimatedMat_DrawAlphaStep(this, play, ptr, alphaRatio, step) AnimatedMat_DrawAlphaStep(&(play)->state, &(this)->actor.animMatCtx, NULL, (ptr), (alphaRatio), (step))
-#define ActorAnimatedMat_DrawAlphaStepOpa(this, play, ptr, alphaRatio, step) AnimatedMat_DrawAlphaStepOpa(&(play)->state, &(this)->actor.animMatCtx, NULL, (ptr), (alphaRatio), (step))
-#define ActorAnimatedMat_DrawAlphaStepXlu(this, play, ptr, alphaRatio, step) AnimatedMat_DrawAlphaStepXlu(&(play)->state, &(this)->actor.animMatCtx, NULL, (ptr), (alphaRatio), (step))
-#define DynaActorAnimatedMat_Init(this, play, ptr) AnimatedMat_Init(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.polyCtx, (ptr))
-#define DynaActorAnimatedMat_Draw(this, play, ptr) AnimatedMat_Draw(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.polyCtx, (play)->gameplayFrames, (ptr))
-#define DynaActorAnimatedMat_DrawOpa(this, play, ptr) AnimatedMat_DrawOpa(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.polyCtx, (play)->gameplayFrames, (ptr))
-#define DynaActorAnimatedMat_DrawXlu(this, play, ptr) AnimatedMat_DrawXlu(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.polyCtx, (play)->gameplayFrames, (ptr))
-#define DynaActorAnimatedMat_DrawAlpha(this, play, ptr) AnimatedMat_DrawAlpha(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.polyCtx, (play)->gameplayFrames, (ptr))
-#define DynaActorAnimatedMat_DrawAlphaOpa(this, play, ptr) AnimatedMat_DrawAlphaOpa(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.polyCtx, (play)->gameplayFrames, (ptr))
-#define DynaActorAnimatedMat_DrawAlphaXlu(this, play, ptr) AnimatedMat_DrawAlphaXlu(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.polyCtx, (play)->gameplayFrames, (ptr))
-#define DynaActorAnimatedMat_DrawStep(this, play, ptr, step) AnimatedMat_DrawStep(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.polyCtx, (ptr), (step))
-#define DynaActorAnimatedMat_DrawStepOpa(this, play, ptr, step) AnimatedMat_DrawStepOpa(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.polyCtx, (ptr), (step))
-#define DynaActorAnimatedMat_DrawStepXlu(this, play, ptr, step) AnimatedMat_DrawStepXlu(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.polyCtx, (ptr), (step))
-#define DynaActorAnimatedMat_DrawAlphaStep(this, play, ptr, alphaRatio, step) AnimatedMat_DrawAlphaStep(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.polyCtx, (ptr), (alphaRatio), (step))
-#define DynaActorAnimatedMat_DrawAlphaStepOpa(this, play, ptr, alphaRatio, step) AnimatedMat_DrawAlphaStepOpa(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.polyCtx, (ptr), (alphaRatio), (step))
-#define DynaActorAnimatedMat_DrawAlphaStepXlu(this, play, ptr, alphaRatio, step) AnimatedMat_DrawAlphaStepXlu(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.polyCtx, (ptr), (alphaRatio), (step))
+
+#define ActorAnimatedMat_Draw(this, play, ptr) \
+    AnimatedMat_Draw(&(play)->state, &(this)->actor.animMatCtx, NULL, (play)->gameplayFrames, (ptr))
+
+#define ActorAnimatedMat_DrawOpa(this, play, ptr) \
+    AnimatedMat_DrawOpa(&(play)->state, &(this)->actor.animMatCtx, NULL, (play)->gameplayFrames, (ptr))
+
+#define ActorAnimatedMat_DrawXlu(this, play, ptr) \
+    AnimatedMat_DrawXlu(&(play)->state, &(this)->actor.animMatCtx, NULL, (play)->gameplayFrames, (ptr))
+
+#define ActorAnimatedMat_DrawAlpha(this, play, ptr) \
+    AnimatedMat_DrawAlpha(&(play)->state, &(this)->actor.animMatCtx, NULL, (play)->gameplayFrames, (ptr))
+
+#define ActorAnimatedMat_DrawAlphaOpa(this, play, ptr) \
+    AnimatedMat_DrawAlphaOpa(&(play)->state, &(this)->actor.animMatCtx, NULL, (play)->gameplayFrames, (ptr))
+
+#define ActorAnimatedMat_DrawAlphaXlu(this, play, ptr) \
+    AnimatedMat_DrawAlphaXlu(&(play)->state, &(this)->actor.animMatCtx, NULL, (play)->gameplayFrames, (ptr))
+
+#define ActorAnimatedMat_DrawStep(this, play, ptr, step) \
+    AnimatedMat_DrawStep(&(play)->state, &(this)->actor.animMatCtx, NULL, (ptr), (step))
+
+#define ActorAnimatedMat_DrawStepOpa(this, play, ptr, step) \
+    AnimatedMat_DrawStepOpa(&(play)->state, &(this)->actor.animMatCtx, NULL, (ptr), (step))
+
+#define ActorAnimatedMat_DrawStepXlu(this, play, ptr, step) \
+    AnimatedMat_DrawStepXlu(&(play)->state, &(this)->actor.animMatCtx, NULL, (ptr), (step))
+
+#define ActorAnimatedMat_DrawAlphaStep(this, play, ptr, alphaRatio, step) \
+    AnimatedMat_DrawAlphaStep(&(play)->state, &(this)->actor.animMatCtx, NULL, (ptr), (alphaRatio), (step))
+
+#define ActorAnimatedMat_DrawAlphaStepOpa(this, play, ptr, alphaRatio, step) \
+    AnimatedMat_DrawAlphaStepOpa(&(play)->state, &(this)->actor.animMatCtx, NULL, (ptr), (alphaRatio), (step))
+
+#define ActorAnimatedMat_DrawAlphaStepXlu(this, play, ptr, alphaRatio, step) \
+    AnimatedMat_DrawAlphaStepXlu(&(play)->state, &(this)->actor.animMatCtx, NULL, (ptr), (alphaRatio), (step))
+
+#define ActorAnimatedMat_Destroy(this)                           \
+    {                                                            \
+        if (this->actor.animMatCtx.stateList != NULL) {          \
+            SYSTEM_ARENA_FREE(this->actor.animMatCtx.stateList); \
+        }                                                        \
+    }
+
+#define DynaActorAnimatedMat_Init(this, play, ptr) \
+    AnimatedMat_Init(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.animMatPolyCtx, (ptr))
+
+#define DynaActorAnimatedMat_Draw(this, play, ptr)                                                                    \
+    AnimatedMat_Draw(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.animMatPolyCtx, (play)->gameplayFrames, \
+                     (ptr))
+
+#define DynaActorAnimatedMat_DrawOpa(this, play, ptr)                                            \
+    AnimatedMat_DrawOpa(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.animMatPolyCtx, \
+                        (play)->gameplayFrames, (ptr))
+
+#define DynaActorAnimatedMat_DrawXlu(this, play, ptr)                                            \
+    AnimatedMat_DrawXlu(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.animMatPolyCtx, \
+                        (play)->gameplayFrames, (ptr))
+
+#define DynaActorAnimatedMat_DrawAlpha(this, play, ptr)                                            \
+    AnimatedMat_DrawAlpha(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.animMatPolyCtx, \
+                          (play)->gameplayFrames, (ptr))
+
+#define DynaActorAnimatedMat_DrawAlphaOpa(this, play, ptr)                                            \
+    AnimatedMat_DrawAlphaOpa(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.animMatPolyCtx, \
+                             (play)->gameplayFrames, (ptr))
+
+#define DynaActorAnimatedMat_DrawAlphaXlu(this, play, ptr)                                            \
+    AnimatedMat_DrawAlphaXlu(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.animMatPolyCtx, \
+                             (play)->gameplayFrames, (ptr))
+
+#define DynaActorAnimatedMat_DrawStep(this, play, ptr, step) \
+    AnimatedMat_DrawStep(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.animMatPolyCtx, (ptr), (step))
+
+#define DynaActorAnimatedMat_DrawStepOpa(this, play, ptr, step) \
+    AnimatedMat_DrawStepOpa(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.animMatPolyCtx, (ptr), (step))
+
+#define DynaActorAnimatedMat_DrawStepXlu(this, play, ptr, step) \
+    AnimatedMat_DrawStepXlu(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.animMatPolyCtx, (ptr), (step))
+
+#define DynaActorAnimatedMat_DrawAlphaStep(this, play, ptr, alphaRatio, step)                                 \
+    AnimatedMat_DrawAlphaStep(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.animMatPolyCtx, (ptr), \
+                              (alphaRatio), (step))
+
+#define DynaActorAnimatedMat_DrawAlphaStepOpa(this, play, ptr, alphaRatio, step)                                 \
+    AnimatedMat_DrawAlphaStepOpa(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.animMatPolyCtx, (ptr), \
+                                 (alphaRatio), (step))
+
+#define DynaActorAnimatedMat_DrawAlphaStepXlu(this, play, ptr, alphaRatio, step)                                 \
+    AnimatedMat_DrawAlphaStepXlu(&(play)->state, &(this)->actor.animMatCtx, &(this)->dyna.animMatPolyCtx, (ptr), \
+                                 (alphaRatio), (step))
+
+#define DynaActorAnimatedMat_Destroy(this)                               \
+    {                                                                    \
+        if (this->dyna.actor.animMatCtx.stateList != NULL) {             \
+            SYSTEM_ARENA_FREE(this->dyna.actor.animMatCtx.stateList);    \
+        }                                                                \
+                                                                         \
+        if (this->dyna.animMatPolyCtx.polyBackupList != NULL) {          \
+            SYSTEM_ARENA_FREE(this->dyna.animMatPolyCtx.polyBackupList); \
+        }                                                                \
+    }
 
 #endif
 

@@ -270,9 +270,15 @@ void Play_Destroy(GameState* thisx) {
     this->state.gfxCtx->callback = NULL;
     this->state.gfxCtx->callbackParam = NULL;
 
+#if ENABLE_ANIMATED_MATERIALS
     if (this->sceneAnimMatCtx.stateList != NULL) {
         SYSTEM_ARENA_FREE(this->sceneAnimMatCtx.stateList);
     }
+
+    if (this->sceneAnimMatPolyCtx.polyBackupList != NULL) {
+        SYSTEM_ARENA_FREE(this->sceneAnimMatPolyCtx.polyBackupList);
+    }
+#endif
 
 #if IS_MOTION_BLUR_ENABLED
     Play_DestroyMotionBlur();

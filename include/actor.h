@@ -286,7 +286,7 @@ typedef struct DynaPolyActor {
     /* 0x160 */ u8 interactFlags;
     /* 0x162 */ s16 unk_162;
 #if ENABLE_ANIMATED_MATERIALS
-    AnimatedMatPolyContext polyCtx;
+    AnimatedMatPolyContext animMatPolyCtx;
 #endif
 } DynaPolyActor; // size = 0x164
 
