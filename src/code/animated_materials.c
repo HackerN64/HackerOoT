@@ -693,6 +693,19 @@ void AnimatedMat_DrawSurfaceSwap(GameState* gameState, AnimatedMatState* matStat
     }
 }
 
+void AnimatedMat_DrawEventColor(GameState* gameState, AnimatedMatState* matState, Gfx** ppDisplayList, s32 segment,
+                                void* params, u8 allowDraw) {
+    AnimatedMatColorSwitchParams* animParams = params;
+    F3DPrimColor* primColor = &animParams->primColors[allowDraw == true];
+    F3DEnvColor* envColor = NULL;
+
+    if (animParams->useEnvColor[allowDraw == true]) {
+        envColor = &animParams->envColors[allowDraw == true];
+    }
+
+    AnimatedMat_SetColor(gameState, ppDisplayList, segment, primColor, envColor);
+}
+
 void AnimatedMat_ScreenDistortion(PlayState* play) {
     static s16 D_8012A39C = 538;
     static s16 D_8012A3A0 = 4272;
@@ -821,6 +834,9 @@ void AnimatedMat_DrawMain(GameState* gameState, AnimatedMatContext* animMatCtx, 
                     break;
                 case ANIM_MAT_TYPE_SURFACE_SWAP:
                     AnimatedMat_DrawSurfaceSwap(gameState, matState, animMatPolyCtx, segmentAbs, params, allowDraw);
+                    break;
+                case ANIM_MAT_TYPE_COLOR_SWITCH:
+                    AnimatedMat_DrawEventColor(gameState, matState, &pDisplayList, segmentAbs, params, allowDraw);
                     break;
                 default:
                     AnimatedMat_SetDefaultDL(gameState, &pDisplayList, 128);

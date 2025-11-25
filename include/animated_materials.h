@@ -37,7 +37,8 @@ typedef enum AnimatedMatType {
     /* 11 */ ANIM_MAT_TYPE_EVENT,
     /* 12 */ ANIM_MAT_TYPE_SURFACE_SWAP,
     /* 13 */ ANIM_MAT_TYPE_OSCILLATING_TWO_TEX,
-    /* 14 */ ANIM_MAT_TYPE_MAX
+    /* 14 */ ANIM_MAT_TYPE_COLOR_SWITCH, // like TYPE_TEXTURE except it's for colors
+    /* 15 */ ANIM_MAT_TYPE_MAX
 } AnimatedMatType;
 
 typedef enum AnimatedMatCameraType {
@@ -96,6 +97,12 @@ typedef struct AnimatedMatTexTimedCycleParams {
 typedef struct AnimatedMatTextureParams {
     TexturePtr textures[2];
 } AnimatedMatTextureParams;
+
+typedef struct AnimatedMatColorSwitchParams {
+    F3DPrimColor primColors[2];
+    F3DEnvColor envColors[2];
+    u8 useEnvColor[2];
+} AnimatedMatColorSwitchParams;
 
 typedef struct AnimatedMatMultiTextureParams {
     s16 minPrimAlpha;    // minimum opacity of both textures
