@@ -1893,6 +1893,8 @@ void Play_InitScene(PlayState* this, s32 spawn) {
 #if ENABLE_ANIMATED_MATERIALS
     this->sceneMaterialAnims = NULL;
     this->sceneMaterialAnimCamParams = MATERIAL_CAM_PARAMS(ANIM_MAT_CAMERA_TYPE_NONE, false);
+    this->sceneAnimMatCtx.stateList = NULL;
+    this->sceneAnimMatPolyCtx.polyBackupList = NULL;
 #endif
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS
