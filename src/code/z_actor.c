@@ -983,6 +983,12 @@ void Actor_Destroy(Actor* actor, PlayState* play) {
         PRINTF(T("Ａｃｔｏｒクラス デストラクトがありません [%s]\n", "No Actor class destruct [%s]\n") ACTOR_RST, name);
 #endif
     }
+
+#if ENABLE_ANIMATED_MATERIALS
+    if (actor->animMatCtx.stateList != NULL) {
+        SYSTEM_ARENA_FREE(actor->animMatCtx.stateList);
+    }
+#endif
 }
 
 /**

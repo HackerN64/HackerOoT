@@ -236,9 +236,9 @@ typedef struct SCmdOccPlaneCandList {
 #endif
 
 #if ENABLE_ANIMATED_MATERIALS
-typedef struct {
+typedef struct SCmdTextureAnimations {
     /* 0x0 */ u8  code;
-    /* 0x1 */ u8  data1;
+    /* 0x2 */ u8 camParams;
     /* 0x4 */ void* segment;
 } SCmdTextureAnimations; // size = 0x8
 #endif
@@ -603,8 +603,8 @@ typedef enum SceneCommandTypeID {
 #endif
 
 #if ENABLE_ANIMATED_MATERIALS
-#define SCENE_CMD_ANIMATED_MATERIAL_LIST(matAnimList) \
-    { SCENE_CMD_ID_ANIMATED_MATERIAL_LIST, 0, CMD_PTR(matAnimList) }
+#define SCENE_CMD_ANIMATED_MATERIAL_LIST(matAnimList, camParams) \
+    { SCENE_CMD_ID_ANIMATED_MATERIAL_LIST, camParams, CMD_PTR(matAnimList) }
 #endif
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS

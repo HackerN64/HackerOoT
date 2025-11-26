@@ -133,6 +133,7 @@ void Graph_ThreadEntry(void*);
 
 extern u64 gMojiFontTLUTs[4][4]; // original name: "moji_tlut"
 extern u64 gMojiFontTex[]; // original name: "font_ff"
+extern Gfx* gPrevTaskWorkBuffer;
 
 /**
  * `x` vertex x

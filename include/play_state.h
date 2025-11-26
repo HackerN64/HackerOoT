@@ -129,6 +129,9 @@ typedef struct PlayState {
     /* 0x1242C */ SceneTableEntry* loadedScene;
 #if ENABLE_ANIMATED_MATERIALS
     AnimatedMaterial* sceneMaterialAnims;
+    AnimatedMatContext sceneAnimMatCtx;
+    AnimatedMatPolyContext sceneAnimMatPolyCtx;
+    u16 sceneMaterialAnimCamParams;
 #endif
 #if ENABLE_CUTSCENE_IMPROVEMENTS
     ActorCsCamInfo* actorCsCamList;

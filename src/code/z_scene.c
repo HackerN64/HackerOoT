@@ -526,6 +526,7 @@ void Scene_SetTransitionForNextEntrance(PlayState* play) {
 #if ENABLE_ANIMATED_MATERIALS
 void Scene_CommandAnimatedMaterials(PlayState* play, SceneCmd* cmd) {
     play->sceneMaterialAnims = SEGMENTED_TO_VIRTUAL(cmd->textureAnimations.segment);
+    play->sceneMaterialAnimCamParams = cmd->textureAnimations.camParams;
 }
 #endif
 
