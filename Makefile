@@ -6,6 +6,11 @@ SHELL = /usr/bin/env bash
 
 #### Build options ####
 
+# Build options can be changed by modifying them below, or by appending 'SETTING=value' to all 'make' commands
+# (e.g. 'make setup VERSION=ntsc-1.0' and 'make VERSION=ntsc-1.0' to build the NTSC 1.0 version).
+# Alternatively, you can create a file called .make_options.mk (gitignored by default) and add 'SETTING=value'
+# there to avoid modifying the Makefile directly.
+
 -include .make_options.mk
 
 COMPILER ?= gcc
