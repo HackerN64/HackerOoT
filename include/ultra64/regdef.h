@@ -70,8 +70,12 @@
 #define fa1f    $f15
 #define fa2     $f16
 #define fa2f    $f17
+#define ft4     $f16
+#define ft4f    $f17
 #define fa3     $f18
 #define fa3f    $f19
+#define ft5     $f16
+#define ft5f    $f17
 #define fs0     $f20
 #define fs0f    $f21
 #define fs1     $f22
