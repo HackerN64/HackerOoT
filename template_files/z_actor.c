@@ -6,6 +6,9 @@
 
 #include "{actorFileName}.h"
 
+#include "play_state.h"
+{includeObject}
+
 #define FLAGS (0)
 
 void {actorSpec}_Init(Actor* thisx, PlayState* play);

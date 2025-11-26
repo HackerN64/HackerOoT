@@ -122,7 +122,7 @@ def addToSpec(actorSpec, actorFileName, objectSpec, actorFileLine):
     # read tables and get actor located specifically before the most recently added one
     # use that to determine where in the spec file to write
     filePathActor = Path(path.curdir, "include/tables/actor_table.h")
-    filePathSpec = Path(path.curdir, "spec")
+    filePathSpec = Path(path.curdir, "spec/spec")
 
     useNewBuild = False
 
@@ -188,6 +188,8 @@ def completeFiles(actorSpec, actorDefine, actorFileName, objectSpec, objectDefin
         dataC = dataC.replace("{objectDefine}", objectDefine if createObject else "OBJECT_GAMEPLAY_KEEP") 
         dataC = dataC.replace("{actorVar}", "ActorProfile" if useActorProfile else "ActorInit")
         dataC = dataC.replace("{actorInitVar}", "Profile" if useActorProfile else "InitVars")
+        dataC = dataC.replace("{includeObject}", f'\n#include "assets/objects/{objectSpec}/{objectSpec}.h"' if createObject else "")
+        dataC = dataC.replace("{actorFunc}", "" if useActorProfile else "(ActorFunc)")
     
     with open(f"{filePathActor}/{actorFileName}.c", 'w') as file: 
         file.write(dataC) 
@@ -209,6 +211,7 @@ def completeFiles(actorSpec, actorDefine, actorFileName, objectSpec, objectDefin
         with open(f"{filePathObject}/{objectSpec}.c", 'r') as file:
             dataC = file.read()
             dataC = dataC.replace("{objectSpec}", objectSpec) 
+            dataC = dataC.replace("{actorSpec}", actorSpec)
         
         with open(f"{filePathObject}/{objectSpec}.c", 'w') as file: 
             file.write(dataC) 
@@ -217,6 +220,7 @@ def completeFiles(actorSpec, actorDefine, actorFileName, objectSpec, objectDefin
             dataH = file.read()
             dataH = dataH.replace("{objectSpec}", objectSpec) 
             dataH = dataH.replace("{objectSpecCap}", objectSpec.upper())  
+            dataH = dataH.replace("{actorSpec}", actorSpec)
         
         with open(f"{filePathObject}/{objectSpec}.h", 'w') as file: 
             file.write(dataH) 
@@ -235,8 +239,8 @@ def main():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-n", "--name", required = True, help = "Name of actor. Use alphanumeric and/or _ as valid characters", default = "")
-    parser.add_argument("-no", "--noobject", required = False, help = "Optional. Use if you do not want to create an object for this actor", action='store_false')
+    parser.add_argument("-name", required = True, help = "Name of actor. Use alphanumeric and/or _ as valid characters", default = "")
+    parser.add_argument("--noobject", required = False, help = "Optional. Use if you do not want to create an object for this actor", action='store_false')
     args = parser.parse_args()
 
     if not os.path.exists(Path(path.curdir, "src") or not os.path.exists(Path(path.curdir, "spec"))):
@@ -254,7 +258,9 @@ if __name__ == "__main__":
     if not os.path.exists(Path(path.curdir, "assets/objects")) and createObject:
         os.makedirs(Path(path.curdir, "assets/objects"))
 
-    if isInFile('ActorProfile', "include/z64actor.h"):
+    if os.path.exists(Path(path.curdir, "include/actor_profile.h")):
+        useActorProfile = True
+    elif isInFile('ActorProfile', "include/z64actor.h"):
         useActorProfile = True
         
     if re.match(r'^[A-Za-z0-9_-]+$', args.name):
