@@ -1,6 +1,3 @@
-#ifdef __GNUC__
-.set gp=64
-#endif
 #include "ultra64/asm.h"
 #include "ultra64/regdef.h"
 #include "ultra64/R4300.h"
@@ -98,7 +95,9 @@ LEAF(__osException)
     /* Load scratch space for thread saving */
     la      k0, __osThreadSave
     /* Save at */
+.set push; .set gp=64
     sd      AT, THREAD_AT(k0)
+.set pop
 .set at
     /* Save sr */
     MFC0(   k1, C0_SR)
@@ -107,9 +106,11 @@ LEAF(__osException)
     and     k1, k1, ~(SR_IE | SR_EXL)
     MTC0(   k1, C0_SR)
     /* Save some temp registers for use in the following */
+.set push; .set gp=64
     sd      t0, THREAD_T0(k0)
     sd      t1, THREAD_T1(k0)
     sd      t2, THREAD_T2(k0)
+.set pop
     /* Mark FPU as unused */
     sw      zero, THREAD_FP(k0)
     /* Left over from misplaced ifdef, immediately overwritten on next instruction */
@@ -119,6 +120,7 @@ savecontext:
     /* Save the previously running thread's context to be restored when it resumes */
     move    t0, k0
     lw      k0, __osRunningThread
+.set push; .set gp=64
     ld      t1, THREAD_AT(t0)
     sd      t1, THREAD_AT(k0)
     ld      t1, THREAD_SR(t0)
@@ -129,7 +131,9 @@ savecontext:
     sd      t1, THREAD_T1(k0)
     ld      t1, THREAD_T2(t0)
     sd      t1, THREAD_T2(k0)
+.set pop
 .set reorder
+.set push; .set gp=64
     sd      $2, THREAD_V0(k0)
     sd      $3, THREAD_V1(k0)
     sd      $4, THREAD_A0(k0)
@@ -159,6 +163,7 @@ savecontext:
     sd      t0, THREAD_LO(k0)
     mfhi    t0
     sd      t0, THREAD_HI(k0)
+.set pop
     lw      k1, THREAD_SR(k0)
     andi    t1, k1, SR_IMASK
     beqz    t1, savercp
@@ -220,6 +225,24 @@ endrcp:
     sdc1    $f26, THREAD_FP26(k0)
     sdc1    $f28, THREAD_FP28(k0)
     sdc1    $f30, THREAD_FP30(k0)
+#if defined(_MIPS_SIM) && _MIPS_SIM == _ABIN32
+    sdc1    $f1, THREAD_FP1(k0)
+    sdc1    $f3, THREAD_FP3(k0)
+    sdc1    $f5, THREAD_FP5(k0)
+    sdc1    $f7, THREAD_FP7(k0)
+    sdc1    $f9, THREAD_FP9(k0)
+    sdc1    $f11, THREAD_FP11(k0)
+    sdc1    $f13, THREAD_FP13(k0)
+    sdc1    $f15, THREAD_FP15(k0)
+    sdc1    $f17, THREAD_FP17(k0)
+    sdc1    $f19, THREAD_FP19(k0)
+    sdc1    $f21, THREAD_FP21(k0)
+    sdc1    $f23, THREAD_FP23(k0)
+    sdc1    $f25, THREAD_FP25(k0)
+    sdc1    $f27, THREAD_FP27(k0)
+    sdc1    $f29, THREAD_FP29(k0)
+    sdc1    $f31, THREAD_FP31(k0)
+#endif
 
 handle_interrupt:
 #if ENABLE_PROFILER
@@ -769,6 +792,7 @@ LEAF(__osEnqueueAndYield)
     ori     t0, t0, SR_EXL
     sw      t0, THREAD_SR(a1)
     /* Save callee-saved registers */
+.set push; .set gp=64
     sd      s0, THREAD_S0(a1)
     sd      s1, THREAD_S1(a1)
     sd      s2, THREAD_S2(a1)
@@ -777,10 +801,11 @@ LEAF(__osEnqueueAndYield)
     sd      s5, THREAD_S5(a1)
     sd      s6, THREAD_S6(a1)
     sd      s7, THREAD_S7(a1)
-    sd      gp, THREAD_GP(a1)
+    sd      GP, THREAD_GP(a1)
     sd      sp, THREAD_SP(a1)
     sd      fp, THREAD_S8(a1)
     sd      ra, THREAD_RA(a1)
+.set pop
     sw      ra, THREAD_PC(a1)
     /* Save FPU callee-saved registers if the current thread has used the FPU */
     lw      k1, THREAD_FP(a1)
@@ -899,12 +924,16 @@ get_time_no_interrupts: /* osGetTime, but without the interrupts */
     lw      t2, %lo(__osBaseCounter)(t2)
     subu    t2, t1, t2 /* base = count - __osBaseCounter */
     lui     t3, %hi(__osCurrentTime)
+.set push; .set gp=64
     ld      t3, %lo(__osCurrentTime)(t3)
+.set pop
     addu    t1, t2, t3 /* time = base + t */
 record:
     sll     a2, a1, 3 /* numEvents * 8 for eventTimes */
     addu    a2, a2, t0 /* activeProfilerState->eventTimes[e] */
+.set push; .set gp=64
     sd      t1, (0)(a2)
+.set pop
     addu    a3, a1, t0 /* activeProfilerState->{null}[e] */
     sb      a0, (8*PROFILER_EVENT_COUNT)(a3) /* eventTypes */
     addiu   a1, a1, 1 /* numEvents++ */
@@ -948,6 +977,7 @@ LEAF(__osDispatchThread)
     MTC0(   k1, C0_SR)
     /* Restore GPRs */
 .set noat
+.set push; .set gp=64
     ld      AT, THREAD_AT(k0)
     ld      v0, THREAD_V0(k0)
     ld      v1, THREAD_V1(k0)
@@ -973,13 +1003,14 @@ LEAF(__osDispatchThread)
     ld      s7, THREAD_S7(k0)
     ld      t8, THREAD_T8(k0)
     ld      t9, THREAD_T9(k0)
-    ld      gp, THREAD_GP(k0)
+    ld      GP, THREAD_GP(k0)
     ld      sp, THREAD_SP(k0)
     ld      fp, THREAD_S8(k0)
     ld      ra, THREAD_RA(k0)
     ld      k1, THREAD_LO(k0)
     mtlo    k1
     ld      k1, THREAD_HI(k0)
+.set pop
     mthi    k1
     /* Move thread pc to EPC so that eret will return execution to where the thread left off */
     lw      k1, THREAD_PC(k0)
@@ -1008,6 +1039,24 @@ LEAF(__osDispatchThread)
     ldc1    $f26, THREAD_FP26(k0)
     ldc1    $f28, THREAD_FP28(k0)
     ldc1    $f30, THREAD_FP30(k0)
+#if defined(_MIPS_SIM) && _MIPS_SIM == _ABIN32
+    ldc1    $f1, THREAD_FP1(k0)
+    ldc1    $f3, THREAD_FP3(k0)
+    ldc1    $f5, THREAD_FP5(k0)
+    ldc1    $f7, THREAD_FP7(k0)
+    ldc1    $f9, THREAD_FP9(k0)
+    ldc1    $f11, THREAD_FP11(k0)
+    ldc1    $f13, THREAD_FP13(k0)
+    ldc1    $f15, THREAD_FP15(k0)
+    ldc1    $f17, THREAD_FP17(k0)
+    ldc1    $f19, THREAD_FP19(k0)
+    ldc1    $f21, THREAD_FP21(k0)
+    ldc1    $f23, THREAD_FP23(k0)
+    ldc1    $f25, THREAD_FP25(k0)
+    ldc1    $f27, THREAD_FP27(k0)
+    ldc1    $f29, THREAD_FP29(k0)
+    ldc1    $f31, THREAD_FP31(k0)
+#endif
 1:
     /* Restore RCP interrupt mask, masking out any RCP interrupts that */
     /* are not also enabled in the global interrupt mask */

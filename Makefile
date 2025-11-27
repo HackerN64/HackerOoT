@@ -49,6 +49,9 @@ REGION ?= US
 # This means the debug test scenes and some debug graphics in the elf_msg actors will not work as expected.
 # This may also be used to disable debug features on debug ROMs by setting DEBUG_FEATURES to 0
 DEBUG_FEATURES ?= 1
+# MIPS ABI, can be one of "32", "n32" or "eabi"
+# Note n32 and/or eabi may break some old emulators or emulator versions
+ABI := 32
 
 # Version-specific settings
 REGIONAL_CHECKSUM := 0
@@ -266,12 +269,12 @@ EGCS_PREFIX := tools/egcs/$(DETECTED_OS)/
 EGCS_CC := $(EGCS_PREFIX)gcc -B $(EGCS_PREFIX)
 EGCS_CCAS := $(EGCS_CC) -x assembler-with-cpp
 
-AS      := $(MIPS_BINUTILS_PREFIX)as
-LD      := $(MIPS_BINUTILS_PREFIX)ld
-OBJCOPY := $(MIPS_BINUTILS_PREFIX)objcopy
-OBJDUMP := $(MIPS_BINUTILS_PREFIX)objdump
-NM      := $(MIPS_BINUTILS_PREFIX)nm
-STRIP   := $(MIPS_BINUTILS_PREFIX)strip
+AS       := $(MIPS_BINUTILS_PREFIX)as
+LD       := $(MIPS_BINUTILS_PREFIX)ld
+OBJCOPY  := $(MIPS_BINUTILS_PREFIX)objcopy
+OBJDUMP  := $(MIPS_BINUTILS_PREFIX)objdump
+NM       := $(MIPS_BINUTILS_PREFIX)nm
+STRIP    := $(MIPS_BINUTILS_PREFIX)strip
 
 # Command prefix to preprocess a file before running the compiler
 PREPROCESS :=
@@ -342,12 +345,24 @@ ifeq ($(DEBUG_FEATURES),1)
   GBI_DEFINES += -DGBI_DEBUG
 endif
 
+ABI_FLAGS :=
+
+# Select ld output format based on toolchain default and any additional ABI-specific flags
+ifeq ($(ABI),n32)
+  LD_OUTPUT_FORMAT := $(shell $(LD) --print-output-format | sed -E 's/elf(32|64)-(n)?(trad)?(big|little)mips/elf\1-n\3\4mips/')
+else
+  ifeq ($(ABI),eabi)
+    ABI_FLAGS += -mgp32 -mfp32
+  endif
+  LD_OUTPUT_FORMAT := $(shell $(LD) --print-output-format | sed -E 's/elf(32|64)-(n)?(trad)?(big|little)mips/elf\1-\3\4mips/')
+endif
+ 
 CPPFLAGS += -P -xc -fno-dollars-in-identifiers $(CPP_DEFINES)
-ASFLAGS += -march=vr4300 -32 -no-pad-sections -Iinclude -I$(EXTRACTED_DIR)
+ASFLAGS += -march=vr4300 -mabi=$(ABI) $(ABI_FLAGS) -no-pad-sections -Iinclude -I$(EXTRACTED_DIR)
 
 ifeq ($(COMPILER),gcc)
-  CFLAGS += $(CPP_DEFINES) $(GBI_DEFINES) -G 0 -nostdinc -MD -MP $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -mdivide-breaks -fno-PIC -fno-common -ffreestanding -funsigned-char -fbuiltin -fno-builtin-sinf -fno-builtin-cosf $(CHECK_WARNINGS)
-  CCASFLAGS += $(CPP_DEFINES) $(GBI_DEFINES) -G 0 -nostdinc -MD -MP $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -fno-PIC -fno-common -Wa,-no-pad-sections
+  CFLAGS += $(CPP_DEFINES) $(GBI_DEFINES) -G 0 -nostdinc -MD -MP $(INC) -march=vr4300 -mfix4300 -mabi=$(ABI) $(ABI_FLAGS) -mno-abicalls -mdivide-breaks -fno-PIC -fno-common -ffreestanding -funsigned-char -fbuiltin -fno-builtin-sinf -fno-builtin-cosf $(CHECK_WARNINGS)
+  CCASFLAGS += $(CPP_DEFINES) $(GBI_DEFINES) -G 0 -nostdinc -MD -MP $(INC) -march=vr4300 -mfix4300 -mabi=$(ABI) $(ABI_FLAGS) -mno-abicalls -fno-PIC -fno-common -Wa,-no-pad-sections
   MIPS_VERSION := -mips3
   CC_CHECK = @:
 endif
@@ -631,6 +646,8 @@ $(ROM): $(ELF)
 	$(V)$(ELF2ROM) -cic $(CIC) $< $@
 	@$(PRINT) "==== Build Options ====$(NO_COL)\n"
 	@$(PRINT) "${GREEN}OoT Version: $(BLUE)$(VERSION)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}MIPS Toolchain: $(BLUE)$(MIPS_BINUTILS_PREFIX)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}MIPS ABI: $(BLUE)$(ABI)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Code Version: $(BLUE)$(PACKAGE_VERSION)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Debug Build: $(BLUE)$(DEBUG_FEATURES)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Opt. Flags: $(BLUE)$(OPTFLAGS)$(NO_COL)\n"
@@ -652,7 +669,7 @@ endif
 
 COM_PLUGIN := tools/com-plugin/common-plugin.so
 
-LDFLAGS := -T $(LDSCRIPT) -T $(BUILD_DIR)/linker_scripts/makerom.ld -T $(BUILD_DIR)/undefined_syms.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP)
+LDFLAGS := --oformat $(LD_OUTPUT_FORMAT) -T $(LDSCRIPT) -T $(BUILD_DIR)/linker_scripts/makerom.ld -T $(BUILD_DIR)/undefined_syms.txt --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP)
 ifeq ($(PLATFORM),IQUE)
   ifeq ($(NON_MATCHING),0)
     LDFLAGS += -plugin $(COM_PLUGIN) -plugin-opt order=$(BASEROM_DIR)/bss-order.txt
@@ -765,7 +782,7 @@ $(BUILD_DIR)/src/%.o: src/%.s
 
 # Incremental link to move z_message and z_game_over data into rodata
 $(BUILD_DIR)/src/code/z_message_z_game_over.o: $(BUILD_DIR)/src/code/z_message.o $(BUILD_DIR)/src/code/z_game_over.o
-	$(V)$(LD) -r -G 0 -T linker_scripts/data_with_rodata.ld -o $@ $^
+	$(V)$(LD) -r -G 0 --oformat $(LD_OUTPUT_FORMAT) -T linker_scripts/data_with_rodata.ld -o $@ $^
 	$(V)$(PYTHON) tools/patch_data_with_rodata_mdebug.py $@
 
 DEP_FILES += $(BUILD_DIR)/src/code/z_message.d $(BUILD_DIR)/src/code/z_game_over.d
@@ -788,7 +805,7 @@ $(BUILD_DIR)/src/audio/game/session_init.o: src/audio/game/session_init.c $(BUIL
 	$(call print_two_args,Compiling:,$<,$@)
 	$(V)$(CC_CHECK) $< -o $@
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $(@:.o=.tmp) $<
-	$(V)$(LD) -r -T linker_scripts/data_with_rodata.ld -o $@ $(@:.o=.tmp)
+	$(V)$(LD) -r --oformat $(LD_OUTPUT_FORMAT) -T linker_scripts/data_with_rodata.ld -o $@ $(@:.o=.tmp)
 	$(V)$(PYTHON) tools/patch_data_with_rodata_mdebug.py $@
 	$(V)$(OBJDUMP_CMD)
 
@@ -906,7 +923,7 @@ $(BUILD_DIR)/assets/audio/soundfonts/%.o: $(BUILD_DIR)/assets/audio/soundfonts/%
 # compile c to unlinked object
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -I include/audio -o $(@:.o=.tmp) $<
 # partial link
-	$(V)$(LD) -r -T linker_scripts/soundfont.ld $(@:.o=.tmp) -o $(@:.o=.tmp2)
+	$(V)$(LD) -r --oformat $(LD_OUTPUT_FORMAT) -T linker_scripts/soundfont.ld $(@:.o=.tmp) -o $(@:.o=.tmp2)
 # patch defined symbols to be ABS symbols so that they remain file-relative offsets forever
 	$(V)$(SFPATCH) $(@:.o=.tmp2) $(@:.o=.tmp2)
 # write start and size symbols afterwards, filename != symbolic name so source symbolic name from the .name file written by sfc
@@ -963,7 +980,7 @@ $(BUILD_DIR)/src/audio/tables/sequence_table.o: CFLAGS += -I include/tables
 $(BUILD_DIR)/src/audio/tables/%.o: src/audio/tables/%.c
 	$(V)$(CC_CHECK) $< -o $@
 	$(V)$(CC) -c $(CFLAGS) $(MIPS_VERSION) $(OPTFLAGS) -o $(@:.o=.tmp) $<
-	$(V)$(LD) -r -T linker_scripts/data_with_rodata.ld $(@:.o=.tmp) -o $@
+	$(V)$(LD) -r --oformat $(LD_OUTPUT_FORMAT) -T linker_scripts/data_with_rodata.ld $(@:.o=.tmp) -o $@
 	$(V)$(PYTHON) tools/patch_data_with_rodata_mdebug.py $@
 	@$(RM) $(@:.o=.tmp)
 

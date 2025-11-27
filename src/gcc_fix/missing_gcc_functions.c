@@ -163,6 +163,16 @@ int __ucmpdi2(unsigned long long a, unsigned long long b) {
 
 // Compute division and modulo of 64-bit signed and unsigned integers
 
+// eabi requires the following functions, but also needs to allocate stack
+#if !defined(_MIPS_SIM)
+#define STACK_ALLOC "addiu $sp, $sp, -0x10"
+#define STACK_DEALLOC "addiu $sp, $sp,  0x10"
+#else
+#define STACK_ALLOC ""
+#define STACK_DEALLOC ""
+#endif
+
+#if !defined(_MIPS_SIM) || _MIPS_SIM == _ABIO32
 __asm__("                                   \n\
     .set push                               \n\
     .set noreorder                          \n\
@@ -172,6 +182,7 @@ __asm__("                                   \n\
 __umoddi3:                                  \n\
   .type __umoddi3, @function                \n\
   .ent __umoddi3                            \n\
+    " STACK_ALLOC "                         \n\
     sw      $a0, 0x0($sp)                   \n\
     sw      $a1, 0x4($sp)                   \n\
     sw      $a2, 0x8($sp)                   \n\
@@ -181,6 +192,7 @@ __umoddi3:                                  \n\
     dremu   $v0, $t6, $t7                   \n\
     dsll32  $v1, $v0, 0                     \n\
     dsra32  $v1, $v1, 0                     \n\
+    " STACK_DEALLOC "                       \n\
     jr      $ra                             \n\
      dsra32 $v0, $v0, 0                     \n\
   .end __umoddi3                            \n\
@@ -190,6 +202,7 @@ __umoddi3:                                  \n\
 __udivdi3:                                  \n\
   .type __udivdi3, @function                \n\
   .ent __udivdi3                            \n\
+    " STACK_ALLOC "                         \n\
     sw      $a0, 0x0($sp)                   \n\
     sw      $a1, 0x4($sp)                   \n\
     sw      $a2, 0x8($sp)                   \n\
@@ -199,6 +212,7 @@ __udivdi3:                                  \n\
     ddivu   $v0, $t6, $t7                   \n\
     dsll32  $v1, $v0, 0                     \n\
     dsra32  $v1, $v1, 0                     \n\
+    " STACK_DEALLOC "                       \n\
     jr      $ra                             \n\
      dsra32 $v0, $v0, 0                     \n\
   .end __udivdi3                            \n\
@@ -208,6 +222,7 @@ __udivdi3:                                  \n\
 __moddi3:                                   \n\
   .type __moddi3, @function                 \n\
   .ent __moddi3                             \n\
+    " STACK_ALLOC "                         \n\
     sw      $a0, 0x0($sp)                   \n\
     sw      $a1, 0x4($sp)                   \n\
     sw      $a2, 0x8($sp)                   \n\
@@ -217,6 +232,7 @@ __moddi3:                                   \n\
     drem    $v0, $t6, $t7                   \n\
     dsll32  $v1, $v0, 0                     \n\
     dsra32  $v1, $v1, 0                     \n\
+    " STACK_DEALLOC "                       \n\
     jr      $ra                             \n\
      dsra32 $v0, $v0, 0                     \n\
   .end __moddi3                             \n\
@@ -226,6 +242,7 @@ __moddi3:                                   \n\
 __divdi3:                                   \n\
   .type __divdi3, @function                 \n\
   .ent __divdi3                             \n\
+    " STACK_ALLOC "                         \n\
     sw    $a0, 0x0($sp)                     \n\
     sw    $a1, 0x4($sp)                     \n\
     sw    $a2, 0x8($sp)                     \n\
@@ -235,6 +252,7 @@ __divdi3:                                   \n\
     ddiv  $v0, $t6, $t7                     \n\
     dsll32 $v1, $v0, 0                      \n\
     dsra32 $v1, $v1, 0                      \n\
+    " STACK_DEALLOC "                       \n\
     jr    $ra                               \n\
      dsra32 $v0, $v0, 0                     \n\
   .end __divdi3                             \n\
@@ -242,3 +260,4 @@ __divdi3:                                   \n\
                                             \n\
     .set pop                                \n\
                                             \n");
+#endif

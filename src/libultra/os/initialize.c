@@ -59,8 +59,15 @@ void OSINITIALIZE_FUNC(void) {
 #endif
 
     __osFinalrom = true;
+
+#if defined(_MIPS_SIM) && (_MIPS_SIM == _ABIN32) // N32 sets FR
+    __osSetSR(__osGetSR() | SR_CU1 | SR_FR);
+#else // O32 and EABI don't set FR
     __osSetSR(__osGetSR() | SR_CU1);
+#endif
+
     __osSetFpcCsr(FPCSR_FS | FPCSR_EV | FPCSR_RM_RN);
+
 #if LIBULTRA_VERSION >= LIBULTRA_VERSION_K
     __osSetWatchLo(0x04900000);
 #endif

@@ -1,19 +1,33 @@
 #include "ultra64/asm.h"
 #include "ultra64/regdef.h"
 
+#ifdef _MIPS_SIM
+#define IS_O32 (_MIPS_SIM == _ABIO32)
+#else
+#define IS_O32 false
+#endif
+
 .text
 .align 5
 
 LEAF(guTranslate)
     li.s    ft0, 65536.0
 
+#if IS_O32
     mtc1    a1, ft1
     mul.s   ft2, ft1, ft0
+#else
+    mul.s   ft2, fa0, ft0
+#endif
     trunc.w.s ft3, ft2
     mfc1    t1, ft3
 
+#if IS_O32
     mtc1    a2, ft1
     mul.s   ft2, ft1, ft0
+#else
+    mul.s   ft2, fa1, ft0
+#endif
     trunc.w.s ft3, ft2
     mfc1    t3, ft3
 
@@ -29,8 +43,12 @@ LEAF(guTranslate)
     or      t0, t0, t2
     sw      t0, 0x38(a0)
 
+#if IS_O32
     mtc1    a3, ft1
     mul.s   ft2, ft1, ft0
+#else
+    mul.s   ft2, fa2, ft0
+#endif
     trunc.w.s ft3, ft2
     mfc1    t1, ft3
 
