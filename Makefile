@@ -50,7 +50,8 @@ REGION ?= US
 # This may also be used to disable debug features on debug ROMs by setting DEBUG_FEATURES to 0
 DEBUG_FEATURES ?= 1
 # MIPS ABI, can be one of "32", "n32" or "eabi"
-ABI := eabi
+# Note n32 and/or eabi may break some old emulators or emulator versions
+ABI := 32
 
 # Version-specific settings
 REGIONAL_CHECKSUM := 0
