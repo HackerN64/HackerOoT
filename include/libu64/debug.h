@@ -46,5 +46,6 @@ void LogUtils_LogThreadId(const char* name, int line);
 #endif
 
 void LogUtils_HungupThread(const char* name, int line);
+void LogUtils_ResetHungup(void);
 
 #endif
