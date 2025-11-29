@@ -7,6 +7,7 @@
 
 struct Input;
 struct PlayState;
+struct LightNode;
 
 // Room shapes
 
@@ -142,6 +143,9 @@ typedef struct Room {
     /* 0x08 */ RoomShape* roomShape; // original name: "ground_shape"
     /* 0x0C */ void* segment;
     /* 0x10 */ char unk_10[0x4];
+               u8 usePointLights;
+               struct LightNode* lightList;
+               u32 numLights;
 } Room; // size = 0x14
 
 typedef struct RoomContext {

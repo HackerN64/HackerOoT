@@ -436,6 +436,7 @@ void Room_DrawImageSingle(PlayState* play, Room* room, u32 flags) {
             POLY_OPA_DISP = gfx;
 
             gSPLoadUcode(POLY_OPA_DISP++, SysUcode_GetUCode(), SysUcode_GetUCodeData());
+            Lights_ResetDrawState();
         }
     }
 
@@ -545,6 +546,7 @@ void Room_DrawImageMulti(PlayState* play, Room* room, u32 flags) {
             POLY_OPA_DISP = gfx;
 
             gSPLoadUcode(POLY_OPA_DISP++, SysUcode_GetUCode(), SysUcode_GetUCodeData());
+            Lights_ResetDrawState();
         }
     }
 
@@ -579,6 +581,11 @@ void Room_Init(PlayState* play, Room* room) {
 
     room->num = -1;
     room->segment = NULL;
+
+    room->lightList = NULL;
+    room->numLights = 0;
+    room->usePointLights = false;
+
 #if ENABLE_F3DEX3
     room->occPlaneCount = 0;
 #endif
@@ -759,6 +766,10 @@ void Room_FinishRoomChange(PlayState* play, RoomContext* roomCtx) {
     // Delete the previous room
     roomCtx->prevRoom.num = -1;
     roomCtx->prevRoom.segment = NULL;
+
+    LightContext_RemoveLightList(play, &play->lightCtx, roomCtx->prevRoom.lightList, roomCtx->prevRoom.numLights);
+    roomCtx->prevRoom.lightList = NULL;
+    roomCtx->prevRoom.numLights = 0;
 
     func_80031B14(play, &play->actorCtx);
     Actor_SpawnTransitionActors(play, &play->actorCtx);
