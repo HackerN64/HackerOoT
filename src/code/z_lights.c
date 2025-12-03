@@ -344,16 +344,16 @@ void LightContext_RemoveLight(PlayState* play, LightContext* lightCtx, LightNode
     // Unlink
     LightNode* prev = light->prev;
     LightNode* next = light->next;
-    if (light->prev != NULL) {
-        light->prev->next = next;
-        light->prev = NULL;
+    if (prev != NULL) {
+        prev->next = next;
     } else {
         lightCtx->listHead = next;
     }
-    if (light->next != NULL) {
-        light->next->prev = prev;
-        light->next = NULL;
+    if (next != NULL) {
+        next->prev = prev;
     }
+    light->prev = NULL;
+    light->next = NULL;
 
     // Unbind light info
     light->info = NULL;
