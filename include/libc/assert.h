@@ -35,7 +35,7 @@ __attribute__((noreturn)) void __assert(const char* assertion, const char* file,
 # define assertf(cond, fmt, ...)                    \
     do {                                            \
         if (!(cond)) {                              \
-            PRINTF(fmt, __VA_ARGS__);               \
+            PRINTF(fmt, ##__VA_ARGS__);             \
             __assert(#cond, __FILE__, __LINE__);    \
         }                                           \
     } while (0)

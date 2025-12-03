@@ -41,16 +41,16 @@ static struct {
 #if ENABLE_F3DEX3
 static u8 F32_To_E3M5(f32 f) {
     // Float to int bits
-    u32 bits = *(u32*)&f;
+    fu bits = { .f = f };
 
     // Saturate negative inputs to 0
-    if (bits & 0x80000000) {
+    if (bits.i & 0x80000000) {
         return 0;
     }
 
     // Obtain 32-bit exponent and mantissa
-    signed exp = ((bits >> 23) & 0b11111111) - 127;
-    unsigned mantissa = bits & 0b11111111111111111111111;
+    signed exp = ((bits.i >> 23) & 0b11111111) - 127;
+    unsigned mantissa = bits.i & 0b11111111111111111111111;
 
     // Check exponent bounds
     if (exp < -3) {
@@ -265,17 +265,13 @@ static LightNode* Lights_FindBufSlot(void) {
         return NULL;
     }
 
-    // Compare the lower 16-bits of the complement against 0.
-    // If the lower 16-bits of the complement is exactly 0, it means the lower 16-bits of the bitset must be 0xFFFF.
-    // 0xFFFF indicates the bitset is half-full, skip the lower half
-    u32 i = ((u16)nbitset == 0) << 4;
-    // If the lower 16 bits are full, start at position 16 (1 << 4 = 16, 0 << 4 = 0)
-    bitset >>= i;
-    // Find the first zero
-    while (bitset & 1) {
-        bitset >>= 1;
-        i++;
-    }
+    // Count trailing ones to find an empty slot.
+    // This uses a floating-point trick to extract the trailing zeros
+    // from the complement of the set. The lowest set bit is isolated
+    // and converted to float, then the float is (bitwise) converted
+    // back to int and its exponent read out to determine the bit position.
+    fu f = { .f = nbitset & -nbitset };
+    u32 i = (f.i >> 23) - 0x7F;
 
     // Get the light, should be free
     LightNode* light = &sLightsBuffer.lights[i];
@@ -309,13 +305,15 @@ LightNode* LightContext_InsertLight(PlayState* play, LightContext* lightCtx,
 #endif
 
     // Bind light info
+    assertf(info != NULL, "LightInfo passed to LightContext_InsertLight must not be NULL\n");
     light->info = info;
 
     // Link
+    LightNode* head = lightCtx->listHead;
     light->prev = NULL;
-    light->next = lightCtx->listHead;
-    if (lightCtx->listHead != NULL) {
-        lightCtx->listHead->prev = light;
+    light->next = head;
+    if (head != NULL) {
+        head->prev = light;
     }
     lightCtx->listHead = light;
 
@@ -344,14 +342,16 @@ void LightContext_RemoveLight(PlayState* play, LightContext* lightCtx, LightNode
             i, light, light->info, sLightsBuffer.occupiedBitSet, light->file, light->line);
 
     // Unlink
+    LightNode* prev = light->prev;
+    LightNode* next = light->next;
     if (light->prev != NULL) {
-        light->prev->next = light->next;
+        light->prev->next = next;
         light->prev = NULL;
     } else {
-        lightCtx->listHead = light->next;
+        lightCtx->listHead = next;
     }
     if (light->next != NULL) {
-        light->next->prev = light->prev;
+        light->next->prev = prev;
         light->next = NULL;
     }
 
