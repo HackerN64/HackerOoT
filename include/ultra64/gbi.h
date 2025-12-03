@@ -14,6 +14,8 @@
     // see `Error_please_update_viewport_Z_and_Y_see_GBI`
     #undef G_MAXZ
     #define G_MAXZ G_NEW_MAXZ
+
+    #define G_LIGHT_IS_POINTLIGHT(lptr) ((lptr)->l.type != 0)
 #else
 #include "mbi.h"
 #include "ultratypes.h"
@@ -24,6 +26,16 @@
 #else
 #define _DW(macro) { macro } (void)0
 #endif
+
+/* F3DEX3 compatibility */
+#define G_MAX_LIGHTS 7
+#define gsSPBranchListHint(    dl, count)   gsSPBranchList(    dl)
+#define gSPBranchListHint(pkt, dl, count)   gSPBranchList(pkt, dl)
+#define gsSPDisplayListHint(    dl, count)  gsSPDisplayList(    dl)
+#define gSPDisplayListHint(pkt, dl, count)  gSPDisplayList(pkt, dl)
+
+/* F3DEX2 Point Lights */
+#define G_LIGHT_IS_POINTLIGHT(lptr) ((lptr)->l.pad1 != 0)
 
 /* To enable Fast3DEX grucode support, define F3DEX_GBI. */
 
@@ -2928,9 +2940,6 @@ _DW({                                               \
 # define gsSPLight(l, n)                                                    \
      gsDma1p(       G_MOVEMEM, (l), sizeof(Light), ((n) - 1) * 2 + G_MV_L0)
 #endif  /* F3DEX_GBI_2 */
-
-// F3DEX3 compatibility
-#define gSPAmbient gSPLight
 
 /*
  * gSPLightColor changes color of light without recalculating light direction
