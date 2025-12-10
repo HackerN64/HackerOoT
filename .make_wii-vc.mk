@@ -57,12 +57,10 @@ TARGET ?=
 
 ifeq ($(COMPILER),gcc)
 ifneq ($(TARGET),)
-CFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls -fno-toplevel-reorder
-CPPFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls -fno-toplevel-reorder
-
-# Disables `.set gp=64` in exceptasm.s and the 3ms audio delay in `audio_thread_manager.c`
-CFLAGS += -DTARGET_GC
-CCASFLAGS += -DTARGET_GC
+# TARGET_GC disables `.set gp=64` in exceptasm.s and the 3ms audio delay in `audio_thread_manager.c`
+# TODO: implement better Wii VC compatibility for F3DEX3
+CFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls -fno-toplevel-reorder -DTARGET_GC
+CPPFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls -fno-toplevel-reorder -DTARGET_GC
 
 $(BUILD_DIR)/src/audio/lib/seqplayer.o: OPTFLAGS := -O1
 endif

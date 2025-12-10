@@ -382,6 +382,7 @@ BPS      := $(ROM:.z64=.bps)
 UCODE_PATCHES := $(wildcard $(F3DEX3_DIR)/*.bps)
 UCODE_FILES   := $(foreach f,$(UCODE_PATCHES:.bps=),$f)
 UCODE_O_FILES := $(foreach f,$(UCODE_FILES),$(BUILD_DIR)/$f.o)
+-include .make_wii-vc.mk
 
 SRC_DIRS := $(shell find src -type d)
 UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
@@ -519,8 +520,6 @@ ifeq ($(COMPILER),gcc)
   $(BUILD_DIR)/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
   $(BUILD_DIR)/src/overlays/%.o: CFLAGS += -fno-merge-constants -mno-explicit-relocs -mno-split-addresses
 endif
-
--include .make_wii-vc.mk
 
 #### Main Targets ###
 
