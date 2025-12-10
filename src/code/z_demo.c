@@ -1,5 +1,6 @@
 #pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
                                "ique-cn:128 ntsc-1.0:0 ntsc-1.1:0 ntsc-1.2:0 pal-1.0:0 pal-1.1:0"
+#include "padmgr.h"
 #include "config.h"
 #include "libu64/gfxprint.h"
 #include "array_count.h"
@@ -2488,14 +2489,20 @@ void Cutscene_HandleEntranceTriggers(PlayState* play) {
             Cutscene_SetScript(play, entranceCutscene->script);
             gSaveContext.cutsceneTrigger = 2;
             gSaveContext.showTitleCard = false;
-            break;
+            return;
         }
     }
 
 #if ENABLE_MM_TITLE_CARDS
-    if (gSaveContext.showTitleCard) {
-        Message_DisplaySceneTitleCard(play);
-        gSaveContext.showTitleCard = false;
+    if (gSaveContext.respawnFlag == 0 || gSaveContext.respawnFlag == -2) {
+        u16 flags =
+            gEntranceTable[((void)0, gSaveContext.save.entranceIndex) + ((void)0, gSaveContext.sceneLayer)].field;
+
+        if (!IS_CUTSCENE_LAYER && (flags & ENTRANCE_INFO_DISPLAY_TITLE_CARD_FLAG) && gSaveContext.showTitleCard) {
+            Message_DisplaySceneTitleCard(play);
+        }
+
+        gSaveContext.showTitleCard = true;
     }
 #endif
 }

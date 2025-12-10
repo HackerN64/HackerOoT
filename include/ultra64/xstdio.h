@@ -4,7 +4,8 @@
 #include "stdarg.h"
 
 // IDO doesn't support long double types, improve portability for compilers supporting them
-#ifdef __sgi
+// Also make N32/N64 ABIs use double, TODO support long double in these ABIs (128-bit float)
+#if defined(__sgi) || (defined(_MIPS_SIM) && _MIPS_SIM != _ABIO32)
 #define LONG_DOUBLE_TYPE double
 #else
 #define LONG_DOUBLE_TYPE long double

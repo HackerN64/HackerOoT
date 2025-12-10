@@ -526,6 +526,7 @@ void Scene_SetTransitionForNextEntrance(PlayState* play) {
 #if ENABLE_ANIMATED_MATERIALS
 void Scene_CommandAnimatedMaterials(PlayState* play, SceneCmd* cmd) {
     play->sceneMaterialAnims = SEGMENTED_TO_VIRTUAL(cmd->textureAnimations.segment);
+    play->sceneMaterialAnimCamParams = cmd->textureAnimations.camParams;
 }
 #endif
 
@@ -546,13 +547,13 @@ void Scene_CommandTitleCard(PlayState* play, SceneCmd* cmd) {
 #endif
 
 SceneCmdHandlerFunc sSceneCmdHandlers[SCENE_CMD_ID_MAX] = {
-    Scene_CommandPlayerEntryList,          // SCENE_CMD_ID_SPAWN_LIST
+    Scene_CommandPlayerEntryList,          // SCENE_CMD_ID_PLAYER_ENTRY_LIST
     Scene_CommandActorEntryList,           // SCENE_CMD_ID_ACTOR_LIST
     Scene_CommandUnused2,                  // SCENE_CMD_ID_UNUSED_2
     Scene_CommandCollisionHeader,          // SCENE_CMD_ID_COLLISION_HEADER
     Scene_CommandRoomList,                 // SCENE_CMD_ID_ROOM_LIST
     Scene_CommandWindSettings,             // SCENE_CMD_ID_WIND_SETTINGS
-    Scene_CommandSpawnList,                // SCENE_CMD_ID_ENTRANCE_LIST
+    Scene_CommandSpawnList,                // SCENE_CMD_ID_SPAWN_LIST
     Scene_CommandSpecialFiles,             // SCENE_CMD_ID_SPECIAL_FILES
     Scene_CommandRoomBehavior,             // SCENE_CMD_ID_ROOM_BEHAVIOR
     Scene_CommandUndefined9,               // SCENE_CMD_ID_UNDEFINED_9

@@ -9,11 +9,12 @@
 #include "z_lib.h"
 
 void Helpers_LoadDefinedScene(GameState* gameState) {
-    if (gSaveContext.fileNum == 0xff) {
+    if (gSaveContext.fileNum == 0xFF) {
         Sram_InitDebugSave();
     } else {
         Sram_InitNewSave();
     }
+
     // Set age, time and entrance
     gSaveContext.save.linkAge = BOOT_AGE;
     gSaveContext.save.dayTime = BOOT_TIME;
@@ -29,6 +30,7 @@ void Helpers_LoadDefinedScene(GameState* gameState) {
     gSaveContext.save.info.playerData.magicLevel = 0;
 
     gSaveContext.seqId = (u8)NA_BGM_DISABLED;
+    gSaveContext.showTitleCard = true;
 
     // Load Play state
     gSaveContext.gameMode = GAMEMODE_NORMAL;

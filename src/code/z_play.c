@@ -50,6 +50,7 @@
 #include "occlusionplanes.h"
 #include "libu64/gfxprint.h"
 #include "debug.h"
+#include "animated_materials.h"
 
 #if CAN_INCLUDE_EXAMPLE_SCENE
 #include "assets/scenes/example/example_scene.h"
@@ -269,6 +270,16 @@ void Play_Destroy(GameState* thisx) {
     this->state.gfxCtx->callback = NULL;
     this->state.gfxCtx->callbackParam = NULL;
 
+#if ENABLE_ANIMATED_MATERIALS
+    if (this->sceneAnimMatCtx.stateList != NULL) {
+        SYSTEM_ARENA_FREE(this->sceneAnimMatCtx.stateList);
+    }
+
+    if (this->sceneAnimMatPolyCtx.polyBackupList != NULL) {
+        SYSTEM_ARENA_FREE(this->sceneAnimMatPolyCtx.polyBackupList);
+    }
+#endif
+
 #if IS_MOTION_BLUR_ENABLED
     Play_DestroyMotionBlur();
 #endif
@@ -340,6 +351,8 @@ void Play_Init(GameState* thisx) {
     gDebug.invDebug.pauseCtx = &this->pauseCtx;
     gDebug.invDebug.elementsAlpha = 255;
 #endif
+
+    gSaveContext.showTitleCard = true;
 
     if (gSaveContext.save.entranceIndex == ENTR_LOAD_OPENING) {
         gSaveContext.save.entranceIndex = 0;
@@ -1879,6 +1892,9 @@ void Play_InitScene(PlayState* this, s32 spawn) {
 
 #if ENABLE_ANIMATED_MATERIALS
     this->sceneMaterialAnims = NULL;
+    this->sceneMaterialAnimCamParams = MATERIAL_CAM_PARAMS(ANIM_MAT_CAMERA_TYPE_NONE, false);
+    this->sceneAnimMatCtx.stateList = NULL;
+    this->sceneAnimMatPolyCtx.polyBackupList = NULL;
 #endif
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS
@@ -1895,6 +1911,10 @@ void Play_InitScene(PlayState* this, s32 spawn) {
     gSaveContext.worldMapArea = WORLD_MAP_AREA_HYRULE_FIELD;
     Scene_ExecuteCommands(this, this->sceneSegment);
     Play_InitEnvironment(this, this->skyboxId);
+
+#if ENABLE_ANIMATED_MATERIALS
+    AnimatedMat_Init(&this->state, &this->sceneAnimMatCtx, &this->sceneAnimMatPolyCtx, this->sceneMaterialAnims);
+#endif
 }
 
 void Play_SpawnScene(PlayState* this, s32 sceneId, s32 spawn) {

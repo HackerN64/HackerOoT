@@ -142,48 +142,48 @@ void DebugCamera_ScreenText(u8 x, u8 y, const char* text) {
 }
 
 void DebugCamera_ScreenTextColored(u8 x, u8 y, u8 colorIndex, const char* text) {
-#if IS_CAMERA_DEBUG_ENABLED
-    DebugCamTextBufferEntry* entry = &sDebugCamTextBuffer[sDebugCamTextEntryCount];
-    char* textDest;
-    s16 charCount;
+    if (IS_CAMERA_DEBUG_ENABLED) {
+        DebugCamTextBufferEntry* entry = &sDebugCamTextBuffer[sDebugCamTextEntryCount];
+        char* textDest;
+        s16 charCount;
 
-    if (sDebugCamTextEntryCount < ARRAY_COUNT(sDebugCamTextBuffer)) {
-        entry->x = x;
-        entry->y = y;
-        entry->colorIndex = colorIndex;
+        if (sDebugCamTextEntryCount < ARRAY_COUNT(sDebugCamTextBuffer)) {
+            entry->x = x;
+            entry->y = y;
+            entry->colorIndex = colorIndex;
 
-        // Copy text into the entry, truncating if needed
-        charCount = 0;
-        textDest = entry->text;
+            // Copy text into the entry, truncating if needed
+            charCount = 0;
+            textDest = entry->text;
 
-        while ((*textDest++ = *text++) != '\0') {
-            if (charCount++ > (ARRAY_COUNT(entry->text) - 1)) {
-                break;
+            while ((*textDest++ = *text++) != '\0') {
+                if (charCount++ > (ARRAY_COUNT(entry->text) - 1)) {
+                    break;
+                }
             }
+
+            *textDest = '\0';
+
+            sDebugCamTextEntryCount++;
         }
-
-        *textDest = '\0';
-
-        sDebugCamTextEntryCount++;
     }
-#endif
 }
 
 void DebugCamera_DrawScreenText(GfxPrint* printer) {
-#if IS_CAMERA_DEBUG_ENABLED
-    s32 i;
-    Color_RGBA8* color;
-    DebugCamTextBufferEntry* entry;
+    if (IS_CAMERA_DEBUG_ENABLED) {
+        s32 i;
+        Color_RGBA8* color;
+        DebugCamTextBufferEntry* entry;
 
-    for (i = 0; i < sDebugCamTextEntryCount; i++) {
-        entry = &sDebugCamTextBuffer[i];
-        color = &sDebugCamTextColors[entry->colorIndex];
+        for (i = 0; i < sDebugCamTextEntryCount; i++) {
+            entry = &sDebugCamTextBuffer[i];
+            color = &sDebugCamTextColors[entry->colorIndex];
 
-        GfxPrint_SetColor(printer, color->r, color->g, color->b, color->a);
-        GfxPrint_SetPos(printer, entry->x, entry->y);
-        GfxPrint_Printf(printer, "%s", entry->text);
+            GfxPrint_SetColor(printer, color->r, color->g, color->b, color->a);
+            GfxPrint_SetPos(printer, entry->x, entry->y);
+            GfxPrint_Printf(printer, "%s", entry->text);
+        }
     }
-#endif
 }
 
 #if DEBUG_FEATURES

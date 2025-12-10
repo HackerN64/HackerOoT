@@ -6,6 +6,7 @@
 #include "animation.h"
 #include "z_math.h"
 #include "collision_check.h"
+#include "animated_materials.h"
 
 #define ACTOR_NUMBER_MAX 200
 
@@ -247,8 +248,8 @@ typedef struct Actor {
     /* 0x130 */ ActorFunc update; // Update Routine. Called by `Actor_UpdateAll`
     /* 0x134 */ ActorFunc draw; // Draw Routine. Called by `Actor_Draw`
     /* 0x138 */ struct ActorOverlay* overlayEntry; // Pointer to the overlay table entry for this actor
-#if DEBUG_FEATURES
-    /* 0x13C */ char dbgPad[0x10];
+#if ENABLE_ANIMATED_MATERIALS
+    /* 0x13C */ AnimatedMatContext animMatCtx;
 #endif
 } Actor; // size = 0x14C
 
@@ -284,6 +285,9 @@ typedef struct DynaPolyActor {
     /* 0x15C */ u32 transformFlags;
     /* 0x160 */ u8 interactFlags;
     /* 0x162 */ s16 unk_162;
+#if ENABLE_ANIMATED_MATERIALS
+    AnimatedMatPolyContext animMatPolyCtx;
+#endif
 } DynaPolyActor; // size = 0x164
 
 typedef struct BodyBreak {

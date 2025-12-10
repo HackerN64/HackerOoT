@@ -598,6 +598,9 @@ beginseg
     include "$(BUILD_DIR)/src/code/z_scene.o"
     include "$(BUILD_DIR)/src/code/object_table.o"
     include "$(BUILD_DIR)/src/code/z_scene_table.o"
+#if IMPROVED_ANIMATION_MORPHING
+    include "$(BUILD_DIR)/src/code/z_bettermorph.o"
+#endif
     include "$(BUILD_DIR)/src/code/z_skelanime.o"
     include "$(BUILD_DIR)/src/code/z_skin.o"
     include "$(BUILD_DIR)/src/code/z_skin_awb.o"
@@ -832,6 +835,7 @@ beginseg
 
     include "$(BUILD_DIR)/src/code/rainbow.o"
     include "$(BUILD_DIR)/src/code/helpers.o"
+    include "$(BUILD_DIR)/src/code/event_manager.o"
 #if ENABLE_ANIMATED_MATERIALS
     include "$(BUILD_DIR)/src/code/animated_materials.o"
 #endif
@@ -1145,6 +1149,7 @@ beginseg
     compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/objects/gameplay_keep/gameplay_keep.o"
+    include "$(BUILD_DIR)/assets/objects/gameplay_hacker_keep/gameplay_hacker_keep.o"
     number 4
 endseg
 

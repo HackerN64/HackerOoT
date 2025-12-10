@@ -428,6 +428,10 @@ void Attention_Draw(Attention* attention, PlayState* play) {
 
         Actor_ProjectPos(play, &attention->reticlePos, &projectedPos, &invW);
 
+        if (USE_WIDESCREEN) {
+            projectedPos.x /= (0.75f);
+        }
+
         projectedPos.x = ((SCREEN_WIDTH / 2) * (projectedPos.x * invW)) * projectdPosScale;
         projectedPos.x = CLAMP(projectedPos.x, -SCREEN_WIDTH, SCREEN_WIDTH);
 
@@ -979,6 +983,12 @@ void Actor_Destroy(Actor* actor, PlayState* play) {
         PRINTF(T("Ａｃｔｏｒクラス デストラクトがありません [%s]\n", "No Actor class destruct [%s]\n") ACTOR_RST, name);
 #endif
     }
+
+#if ENABLE_ANIMATED_MATERIALS
+    if (actor->animMatCtx.stateList != NULL) {
+        SYSTEM_ARENA_FREE(actor->animMatCtx.stateList);
+    }
+#endif
 }
 
 /**

@@ -157,6 +157,8 @@ typedef struct struct_80854B18 {
     };
 } struct_80854B18; // size = 0x08
 
+extern s32 Message_TitleCardClear(PlayState* play);
+
 void Player_InitItemAction(PlayState* play, Player* this, s8 itemAction);
 
 void Player_InitDefaultIA(PlayState* play, Player* this);
@@ -3529,6 +3531,12 @@ void Player_DestroyHookshot(Player* this) {
     }
 }
 
+#if ENABLE_MM_TITLE_CARDS
+#define TITLECARD_CLEAR(play) Message_TitleCardClear((play))
+#else
+#define TITLECARD_CLEAR(play) TitleCard_Clear((play), &(play)->actorCtx.titleCtx)
+#endif
+
 void Player_UseItem(PlayState* play, Player* this, s32 item) {
     s8 itemAction;
     s32 temp;
@@ -3598,9 +3606,7 @@ void Player_UseItem(PlayState* play, Player* this, s32 item) {
                 // Handle "cutscene items"
                 if (!Player_CheckHostileLockOn(this) ||
                     ((itemAction >= PLAYER_IA_BOTTLE_POTION_RED) && (itemAction <= PLAYER_IA_BOTTLE_FAIRY))) {
-#if !ENABLE_MM_TITLE_CARDS
-                    TitleCard_Clear(play, &play->actorCtx.titleCtx);
-#endif
+                    TITLECARD_CLEAR(play);
                     this->unk_6AD = 4;
                     this->itemAction = itemAction;
                 }
@@ -7172,9 +7178,11 @@ void func_8083DF68(Player* this, f32 arg1, s16 arg2) {
 void func_8083DFE0(Player* this, f32* arg1, s16* arg2) {
     s16 yawDiff = this->yaw - *arg2;
 
+#if CLAMPED_JUMP_VELOCITY
     if (this->meleeWeaponState == 0) {
         this->speedXZ = CLAMP(this->speedXZ, -(R_RUN_SPEED_LIMIT / 100.0f), (R_RUN_SPEED_LIMIT / 100.0f));
     }
+#endif
 
     if (ABS(yawDiff) > 0x6000) {
         if (Math_StepToF(&this->speedXZ, 0.0f, 1.0f)) {
@@ -7331,8 +7339,7 @@ void func_8083E4C4(PlayState* play, Player* this, GetItemEntry* giEntry) {
 s32 Player_ActionHandler_2(Player* this, PlayState* play) {
     Actor* interactedActor;
 
-    if (DEBUG_iREG_67 ||
-        (((interactedActor = this->interactRangeActor) != NULL) && TitleCard_Clear(play, &play->actorCtx.titleCtx))) {
+    if (DEBUG_iREG_67 || (((interactedActor = this->interactRangeActor) != NULL) && TITLECARD_CLEAR(play))) {
         if (DEBUG_iREG_67 || (this->getItemId > GI_NONE)) {
             if (DEBUG_iREG_67) {
                 this->getItemId = iREG(68);
@@ -10801,6 +10808,9 @@ void Player_Init(Actor* thisx, PlayState* play2) {
         }
     }
 
+#if !ENABLE_MM_TITLE_CARDS
+    // Note: MM title cards are handled in `Cutscene_HandleEntranceTriggers` (`z_demo.c`)
+
     if ((respawnFlag == 0) || (respawnFlag < -1)) {
         titleFileSize = scene->titleFile.vromEnd - scene->titleFile.vromStart;
 
@@ -10815,15 +10825,14 @@ void Player_Init(Actor* thisx, PlayState* play2) {
                 ((play->sceneId != SCENE_BOMBCHU_SHOP) || GET_EVENTCHKINF(EVENTCHKINF_25))
 #endif
             ) {
-#if !ENABLE_MM_TITLE_CARDS
                 TitleCard_InitPlaceName(play, &play->actorCtx.titleCtx, this->giObjectSegment, 160, 120,
                                         PLACE_NAME_TEX_WIDTH, PLACE_NAME_TEX_HEIGHT, 20);
-#endif
             }
         }
 
         gSaveContext.showTitleCard = true;
     }
+#endif
 
     if (func_80845C68(play, (respawnFlag == 2) ? 1 : 0) == 0) {
         gSaveContext.respawn[RESPAWN_MODE_DOWN].playerParams =
