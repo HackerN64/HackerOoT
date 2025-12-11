@@ -8,15 +8,17 @@
 ## Tools
 
 # You can get gzinject here https://github.com/PracticeROM/gzinject
-GZINJECT ?= gzinject
+GZINJECT ?= tools/gzinject/gzinject
 
 COPY ?= cp -v
 
+# GameCube:
 # This tool generates a file that the (modified) emulator can read
 # to figure out which parts of the rom to cache.
 # It outputs file indices from the rom and the location and the size of `gDmaDataTable`.
 GEN_DMA_CONFIG := tools/generate_dma_config.py
 
+# GameCube:
 # This tool generates a file that the (modified) emulator can read
 # to figure out where some of the N64 functions are to apply the proper hacks
 # to make the game run properly.
@@ -26,9 +28,14 @@ GEN_DMA_CONFIG := tools/generate_dma_config.py
 # Note: this is only useful when building with GCC.
 GEN_LIB_CONFIG := tools/generate_lib_config.py
 
+# Wii
+WAD_NAME ?= "HackerOoT"
+WAD_ID ?= NHOE
+WAD_REGION ?= $(REGION)
+
 ## Files
 
-BASEWAD := baseroms/baserom-$(REGION).wad
+BASEWAD := baseroms/baserom-$(WAD_REGION).wad
 COMMON_KEY := baseroms/common-key.bin
 WAD := $(ROM:.z64=.wad)
 
@@ -58,11 +65,11 @@ TARGET ?=
 ifeq ($(COMPILER),gcc)
 ifneq ($(TARGET),)
 # TARGET_GC disables `.set gp=64` in exceptasm.s and the 3ms audio delay in `audio_thread_manager.c`
-# TODO: implement better Wii VC compatibility for F3DEX3
-CFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls -fno-toplevel-reorder -DTARGET_GC
-CPPFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls -fno-toplevel-reorder -DTARGET_GC
+CFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls -fno-toplevel-reorder -DTARGET_GC -DWAD_REGION=REGION_$(WAD_REGION)
+CPPFLAGS += -fno-reorder-blocks -fno-optimize-sibling-calls -fno-toplevel-reorder -DTARGET_GC -DWAD_REGION=REGION_$(WAD_REGION)
+CCASFLAGS += -DTARGET_GC -DWAD_REGION=$(WAD_REGION)
 
-$(BUILD_DIR)/src/audio/lib/seqplayer.o: OPTFLAGS := -O1
+$(BUILD_DIR)/src/audio/internal/seqplayer.o: OPTFLAGS := -O1
 endif
 endif
 
@@ -74,7 +81,7 @@ endif
 
 wad:
 	$(V)$(MAKE) compress TARGET=wad
-	$(V)$(GZINJECT) -a inject -r 1 -t "HackerOoT" -i NHOE -k $(COMMON_KEY) -m $(ROMC) -w $(BASEWAD) -o $(WAD) -p gzi/$(REGION).gzi -p gzi/controller.gzi
+	$(V)$(GZINJECT) -a inject -t $(WAD_NAME) -i $(WAD_ID) -k $(COMMON_KEY) -m $(ROMC) -w $(BASEWAD) -o $(WAD) -p gzi/$(WAD_REGION).gzi -p gzi/controller.gzi
 	$(V)$(RM) -r wadextract/
 
 # for ISOs we need to do things manually since we want to remove
