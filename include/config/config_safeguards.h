@@ -141,18 +141,16 @@
 /*****************
  * config_graphics.h
  */
-//! TODO: implement better Wii VC compatibility
-#ifdef CONSOLE_WIIVC
-    #undef ENABLE_F3DEX3
+//! TODO: implement better Wii VC compatibility for Motion Blur and F3DEX3
+#ifdef TARGET_GC
     #undef ENABLE_MOTION_BLUR
-
-    #define ENABLE_F3DEX3 false
     #define ENABLE_MOTION_BLUR false
-#endif
 
-#ifdef CONSOLE_GC
     #undef ENABLE_F3DEX3
     #define ENABLE_F3DEX3 false
+
+    #undef AUDIO_DELAY
+    #define AUDIO_DELAY false
 #endif
 
 #if ENABLE_PROFILER && !ENABLE_HACKER_DEBUG

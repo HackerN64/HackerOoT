@@ -324,10 +324,6 @@ SEQ_CPPFLAGS  := -D_LANGUAGE_ASEQ -DMML_VERSION=MML_VERSION_OOT $(CPP_DEFINES) -
 SBCFLAGS := --matching
 SFCFLAGS := --matching
 
-CFLAGS += $(CPP_DEFINES)
-CPPFLAGS += $(CPP_DEFINES)
-CFLAGS_IDO += $(CPP_DEFINES)
-
 # Extra debugging steps
 ifeq ($(DEBUG_OBJECTS),1)
   OBJDUMP_CMD = @$(OBJDUMP) $(OBJDUMP_FLAGS) $@ > $(@:.o=.s)
@@ -382,12 +378,11 @@ SPEC := spec/spec
 SPEC_INCLUDES := $(wildcard spec/*.inc)
 
 # HackerOoT files
-WAD      := $(ROM:.z64=.wad)
-ISO      := $(ROM:.z64=.iso)
 BPS      := $(ROM:.z64=.bps)
 UCODE_PATCHES := $(wildcard $(F3DEX3_DIR)/*.bps)
 UCODE_FILES   := $(foreach f,$(UCODE_PATCHES:.bps=),$f)
 UCODE_O_FILES := $(foreach f,$(UCODE_FILES),$(BUILD_DIR)/$f.o)
+-include .make_wii-vc.mk
 
 SRC_DIRS := $(shell find src -type d)
 UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
@@ -524,44 +519,6 @@ ifeq ($(COMPILER),gcc)
   $(BUILD_DIR)/src/%.o: CFLAGS += -fexec-charset=utf-8
   $(BUILD_DIR)/src/libultra/libc/ll.o: OPTFLAGS := -Ofast
   $(BUILD_DIR)/src/overlays/%.o: CFLAGS += -fno-merge-constants -mno-explicit-relocs -mno-split-addresses
-
-## HackerOoT overrides ##
-
-  $(BUILD_DIR)/src/overlays/actors/ovl_Item_Shield/%.o: OPTFLAGS := -O2
-  $(BUILD_DIR)/src/overlays/actors/ovl_En_Part/%.o: OPTFLAGS := -O2
-  $(BUILD_DIR)/src/overlays/actors/ovl_Item_B_Heart/%.o: OPTFLAGS := -O0
-  $(BUILD_DIR)/src/overlays/actors/ovl_Bg_Mori_Hineri/%.o: OPTFLAGS := -O0
-
-# library overrides
-ifeq ($(TARGET),iso)
-  MIPS_VERSION_IDO := -mips2
-  CFLAGS_IDO += -G 0 -non_shared -fullwarn -verbose -Xcpluscomm $(INC) -Wab,-r4300_mul -woff 516,609,649,838,712
-  $(BUILD_DIR)/src/libultra/io/viswapbuf.o: OPTFLAGS := -O2
-  $(BUILD_DIR)/src/libultra/io/viswapbuf.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
-  $(BUILD_DIR)/src/libultra/io/viswapbuf.o: CFLAGS := $(CFLAGS_IDO)
-  $(BUILD_DIR)/src/libultra/io/viswapbuf.o: CC := $(CC_IDO)
-  $(BUILD_DIR)/src/libultra/gu/sinf.o: OPTFLAGS := -O2
-  $(BUILD_DIR)/src/libultra/gu/sinf.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
-  $(BUILD_DIR)/src/libultra/gu/sinf.o: CFLAGS := $(CFLAGS_IDO)
-  $(BUILD_DIR)/src/libultra/gu/sinf.o: CC := $(CC_IDO)
-  $(BUILD_DIR)/src/libultra/gu/cosf.o: OPTFLAGS := -O2
-  $(BUILD_DIR)/src/libultra/gu/cosf.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
-  $(BUILD_DIR)/src/libultra/gu/cosf.o: CFLAGS := $(CFLAGS_IDO)
-  $(BUILD_DIR)/src/libultra/gu/cosf.o: CC := $(CC_IDO)
-  $(BUILD_DIR)/src/libultra/gu/perspective.o: OPTFLAGS := -O2
-  $(BUILD_DIR)/src/libultra/gu/perspective.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
-  $(BUILD_DIR)/src/libultra/gu/perspective.o: CFLAGS := $(CFLAGS_IDO)
-  $(BUILD_DIR)/src/libultra/gu/perspective.o: CC := $(CC_IDO)
-  $(BUILD_DIR)/src/libultra/os/getmemsize.o: OPTFLAGS := -O1
-  $(BUILD_DIR)/src/libultra/os/getmemsize.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
-  $(BUILD_DIR)/src/libultra/os/getmemsize.o: CFLAGS := $(CFLAGS_IDO)
-  $(BUILD_DIR)/src/libultra/os/getmemsize.o: CC := $(CC_IDO)
-  $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: OPTFLAGS := -O1
-  $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: MIPS_VERSION := $(MIPS_VERSION_IDO)
-  $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: CFLAGS := $(CFLAGS_IDO)
-  $(BUILD_DIR)/src/libultra/os/aisetnextbuf.o: CC := $(CC_IDO)
-endif
-
 endif
 
 #### Main Targets ###
@@ -654,6 +611,7 @@ $(ROM): $(ELF)
 	@$(PRINT) "${GREEN}Rom Path: $(BLUE)$(ROM)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Build Author: $(BLUE)$(PACKAGE_AUTHOR)$(NO_COL)\n"
 	@$(PRINT) "${GREEN}Commit Author: $(BLUE)$(PACKAGE_COMMIT_AUTHOR)$(NO_COL)\n"
+	@$(PRINT) "${GREEN}Target: $(BLUE)$(TARGET)$(NO_COL)\n"
 ifeq ($(TESTSUITE_MODE),1)
 	@$(PRINT) "${GREEN}Made with HackerTestSuite$(NO_COL)\n"
 endif

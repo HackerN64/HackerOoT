@@ -732,7 +732,7 @@ void AudioHeap_LoadFilter(s16* filter, s32 lowPassCutoff, s32 highPassCutoff) {
     }
 
     // Write back the cache line for this filter
-#if defined(CONSOLE_WIIVC) || defined(CONSOLE_GC)
+#ifdef TARGET_GC
     osWritebackDCache(filter, 8 * sizeof(s16));
 #else
     asm("cache %0, (%1)" ::"i"(CACH_PD | C_HWBINV), "r"(filter));
