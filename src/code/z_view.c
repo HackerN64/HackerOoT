@@ -1,7 +1,5 @@
 #include "view.h"
 
-#include "libc64/malloc.h"
-#include "libu64/debug.h"
 #include "avoid_ub.h"
 #include "gfx.h"
 #include "letterbox.h"
@@ -14,6 +12,14 @@
 #include "widescreen.h"
 #include "idle.h"
 #include "translation.h"
+#include "z_math.h"
+
+#include "libc64/malloc.h"
+#include "libu64/debug.h"
+#include "ultra64.h"
+#include <assert.h>
+#include <stdbool.h>
+#include <string.h>
 
 vu32 sLogOnNextViewInit = true;
 

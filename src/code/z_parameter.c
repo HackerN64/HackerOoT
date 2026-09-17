@@ -1729,6 +1729,7 @@ u8 Item_Give(PlayState* play, u8 item) {
     s16 slot;
     s16 temp;
 
+    //! @bug UB: For items that are not inventory items, the SLOT macro indexes gItemSlots out of bounds.
     slot = SLOT(item);
     if (item >= ITEM_DEKU_STICKS_5) {
         slot = SLOT(sExtraItemBases[item - ITEM_DEKU_STICKS_5]);
@@ -2218,9 +2219,11 @@ u8 Item_Give(PlayState* play, u8 item) {
 
 u8 Item_CheckObtainability(u8 item) {
     s16 i;
-    s16 slot = SLOT(item);
+    s16 slot;
     s16 temp;
 
+    //! @bug UB: For items that are not inventory items, the SLOT macro indexes gItemSlots out of bounds.
+    slot = SLOT(item);
     if (item >= ITEM_DEKU_STICKS_5) {
         slot = SLOT(sExtraItemBases[item - ITEM_DEKU_STICKS_5]);
     }
