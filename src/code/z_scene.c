@@ -5,6 +5,7 @@
 #include "actor.h"
 #include "alignment.h"
 #include "array_count.h"
+#include "attributes.h"
 #include "avoid_ub.h"
 #include "romfile.h"
 #include "config.h"
@@ -23,6 +24,7 @@
 #include "segmented_address.h"
 #include "seqcmd.h"
 #include "sequence.h"
+#include "stack_pad.h"
 #include "terminal.h"
 #include "translation.h"
 #include "z_actor_dlftbls.h"
@@ -91,7 +93,7 @@ s32 Object_LoadPersistent(ObjectContext* objectCtx, s16 objectId) {
 
 void Object_InitContext(PlayState* play, ObjectContext* objectCtx) {
     PlayState* play2 = play;
-    s32 pad;
+    STACK_PAD(s32);
     u32 spaceSize;
     s32 i;
 
@@ -395,7 +397,7 @@ BAD_RETURN(s32) Scene_CommandTransitionActorEntryList(PlayState* play, SceneCmd*
     play->transitionActors.list = SEGMENTED_TO_VIRTUAL(cmd->transiActorList.data);
 }
 
-void Scene_ResetTransitionActorList(GameState* state, TransitionActorList* transitionActors) {
+void Scene_ResetTransitionActorList(UNUSED GameState* state, TransitionActorList* transitionActors) {
     transitionActors->count = 0;
 }
 
@@ -477,7 +479,7 @@ BAD_RETURN(s32) Scene_CommandExitList(PlayState* play, SceneCmd* cmd) {
     play->exitList = SEGMENTED_TO_VIRTUAL(cmd->exitList.data);
 }
 
-BAD_RETURN(s32) Scene_CommandUndefined9(PlayState* play, SceneCmd* cmd) {
+BAD_RETURN(s32) Scene_CommandUndefined9(UNUSED PlayState* play, UNUSED SceneCmd* cmd) {
 }
 
 BAD_RETURN(s32) Scene_CommandSoundSettings(PlayState* play, SceneCmd* cmd) {

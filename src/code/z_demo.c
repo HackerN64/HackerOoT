@@ -6,6 +6,7 @@
 #include "cutscene.h"
 #include "actor.h"
 #include "array_count.h"
+#include "attributes.h"
 #include "audio.h"
 #include "camera.h"
 #include "color.h"
@@ -36,6 +37,7 @@
 #include "seqcmd.h"
 #include "sequence.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "transition.h"
 #include "translation.h"
 #include "z_lib.h"
@@ -187,7 +189,7 @@ void Cutscene_SetupScripted(PlayState* play, CutsceneContext* csCtx);
 void Cutscene_DrawDebugInfo(PlayState* play, Gfx** dlist, CutsceneContext* csCtx) {
     if (CAN_SHOW_CS_INFOS) {
         GfxPrint printer;
-        s32 pad[2];
+        STACK_PADS(s32, 2);
 
         GfxPrint_Init(&printer);
         GfxPrint_Open(&printer, *dlist);
@@ -207,7 +209,7 @@ void Cutscene_DrawDebugInfo(PlayState* play, Gfx** dlist, CutsceneContext* csCtx
 }
 #endif
 
-void Cutscene_InitContext(PlayState* play, CutsceneContext* csCtx) {
+void Cutscene_InitContext(UNUSED PlayState* play, CutsceneContext* csCtx) {
     csCtx->state = CS_STATE_IDLE;
     csCtx->curFrame = 0;
     csCtx->timer = 0.0f;
@@ -219,12 +221,12 @@ void Cutscene_InitContext(PlayState* play, CutsceneContext* csCtx) {
     Audio_SetCutsceneFlag(0);
 }
 
-void Cutscene_StartManual(PlayState* play, CutsceneContext* csCtx) {
+void Cutscene_StartManual(UNUSED PlayState* play, CutsceneContext* csCtx) {
     csCtx->state = CS_STATE_START;
     csCtx->playerCue = NULL;
 }
 
-void Cutscene_StopManual(PlayState* play, CutsceneContext* csCtx) {
+void Cutscene_StopManual(UNUSED PlayState* play, CutsceneContext* csCtx) {
     if (csCtx->state != CS_STATE_RUN_UNSTOPPABLE) {
         csCtx->state = CS_STATE_STOP;
     }
@@ -272,10 +274,10 @@ void Cutscene_UpdateScripted(PlayState* play, CutsceneContext* csCtx) {
     }
 }
 
-void CutsceneHandler_DoNothing(PlayState* play, CutsceneContext* csCtx) {
+void CutsceneHandler_DoNothing(UNUSED PlayState* play, UNUSED CutsceneContext* csCtx) {
 }
 
-u32 Cutscene_StepTimer(PlayState* play, CutsceneContext* csCtx, f32 target) {
+u32 Cutscene_StepTimer(UNUSED PlayState* play, CutsceneContext* csCtx, f32 target) {
     return Math_StepToF(&csCtx->timer, target, 0.1f);
 }
 
@@ -574,19 +576,19 @@ void CutsceneCmd_SetLightSetting(PlayState* play, CutsceneContext* csCtx, CsCmdL
     }
 }
 
-void CutsceneCmd_StartSequence(PlayState* play, CutsceneContext* csCtx, CsCmdStartSeq* cmd) {
+void CutsceneCmd_StartSequence(UNUSED PlayState* play, CutsceneContext* csCtx, CsCmdStartSeq* cmd) {
     if (csCtx->curFrame == cmd->startFrame) {
         Audio_PlaySequenceInCutscene(cmd->seqIdPlusOne - 1);
     }
 }
 
-void CutsceneCmd_StopSequence(PlayState* play, CutsceneContext* csCtx, CsCmdStopSeq* cmd) {
+void CutsceneCmd_StopSequence(UNUSED PlayState* play, CutsceneContext* csCtx, CsCmdStopSeq* cmd) {
     if (csCtx->curFrame == cmd->startFrame) {
         Audio_StopSequenceInCutscene(cmd->seqIdPlusOne - 1);
     }
 }
 
-void CutsceneCmd_FadeOutSequence(PlayState* play, CutsceneContext* csCtx, CsCmdFadeOutSeq* cmd) {
+void CutsceneCmd_FadeOutSequence(UNUSED PlayState* play, CutsceneContext* csCtx, CsCmdFadeOutSeq* cmd) {
     u8 fadeOutDuration;
 
     if ((csCtx->curFrame == cmd->startFrame) && (csCtx->curFrame < cmd->endFrame)) {
@@ -600,13 +602,13 @@ void CutsceneCmd_FadeOutSequence(PlayState* play, CutsceneContext* csCtx, CsCmdF
     }
 }
 
-void CutsceneCmd_RumbleController(PlayState* play, CutsceneContext* csCtx, CsCmdRumble* cmd) {
+void CutsceneCmd_RumbleController(UNUSED PlayState* play, CutsceneContext* csCtx, CsCmdRumble* cmd) {
     if (csCtx->curFrame == cmd->startFrame) {
         Rumble_Request(0.0f, cmd->sourceStrength, cmd->duration, cmd->decreaseRate);
     }
 }
 
-void CutsceneCmd_SetTime(PlayState* play, CutsceneContext* csCtx, CsCmdTime* cmd) {
+void CutsceneCmd_SetTime(UNUSED PlayState* play, CutsceneContext* csCtx, CsCmdTime* cmd) {
     s16 hours;
     s16 minutes;
 
@@ -1679,7 +1681,7 @@ s32 CutsceneCmd_UpdateCamAtSpline(PlayState* play, CutsceneContext* csCtx, u8* s
     return size;
 }
 
-s32 CutsceneCmd_SetCamEye(PlayState* play, CutsceneContext* csCtx, u8* script, u8 unused) {
+s32 CutsceneCmd_SetCamEye(PlayState* play, CutsceneContext* csCtx, u8* script, UNUSED u8 arg3) {
     CsCmdCam* cmd = (CsCmdCam*)script;
     s32 size;
     Vec3f at;
@@ -1728,7 +1730,7 @@ s32 CutsceneCmd_SetCamEye(PlayState* play, CutsceneContext* csCtx, u8* script, u
     return size;
 }
 
-s32 CutsceneCmd_SetCamAt(PlayState* play, CutsceneContext* csCtx, u8* script, u8 unused) {
+s32 CutsceneCmd_SetCamAt(PlayState* play, CutsceneContext* csCtx, u8* script, UNUSED u8 arg3) {
     CsCmdCam* cmd = (CsCmdCam*)script;
     s32 size;
     Vec3f at;
@@ -1776,7 +1778,7 @@ s32 CutsceneCmd_SetCamAt(PlayState* play, CutsceneContext* csCtx, u8* script, u8
 void CutsceneCmd_Text(PlayState* play, CutsceneContext* csCtx, CsCmdText* cmd) {
     u8 dialogState;
 #if PLATFORM_N64
-    s32 pad;
+    STACK_PAD(s32);
 #endif
     s16 endFrame;
 
@@ -2467,7 +2469,7 @@ u16 D_8015FCCC;
 char D_8015FCD0[20]; // unreferenced
 u8 D_8015FCE4;       // only written to, never read
 
-void func_80069048(PlayState* play) {
+void func_80069048(UNUSED PlayState* play) {
     s16 i;
 
     D_8015FCCC = 0;
@@ -2477,7 +2479,7 @@ void func_80069048(PlayState* play) {
     D_8015FCE4 = 0;
 }
 
-void func_8006907C(PlayState* play) {
+void func_8006907C(UNUSED PlayState* play) {
     if (D_8015FCCC != 0) {
         D_8015FCCC = 0;
     }
