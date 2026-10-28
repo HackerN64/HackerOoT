@@ -9,19 +9,19 @@ find-command = $(shell which $(1) 2>/dev/null)
 # Set prefix to mips binutils binaries (mips-linux-gnu-ld => 'mips-linux-gnu-') - Change at your own risk!
 # In nearly all cases, not having 'mips-linux-gnu-*' binaries on the PATH is indicative of missing dependencies
 ifneq ($(call find-command,mips-n64-ld),)
-	MIPS_BINUTILS_PREFIX := mips-n64-
+    MIPS_BINUTILS_PREFIX := mips-n64-
 else ifneq ($(call find-command,mips64-ld),)
-	MIPS_BINUTILS_PREFIX := mips64-
+    MIPS_BINUTILS_PREFIX := mips64-
 else ifneq ($(call find-command,mips-linux-gnu-ld),)
-	MIPS_BINUTILS_PREFIX := mips-linux-gnu-
+    MIPS_BINUTILS_PREFIX := mips-linux-gnu-
 else ifneq ($(call find-command,mips64-linux-gnu-ld),)
-	MIPS_BINUTILS_PREFIX := mips64-linux-gnu-
+    MIPS_BINUTILS_PREFIX := mips64-linux-gnu-
 else ifneq ($(call find-command,mips-ld),)
-	MIPS_BINUTILS_PREFIX := mips-
+    MIPS_BINUTILS_PREFIX := mips-
 else ifneq ($(call find-command,mips64-elf-ld),)
-	MIPS_BINUTILS_PREFIX := mips64-elf-
+    MIPS_BINUTILS_PREFIX := mips64-elf-
 else
-	$(error Unable to detect a suitable MIPS toolchain installed)
+    $(error Unable to detect a suitable MIPS toolchain installed)
 endif
 
 -include tools/print_rules.mk
@@ -84,32 +84,32 @@ CPP_DEFINES += -DCOMPRESS_$(COMPRESSION_TYPE)=1 -DPACKAGE_VERSION='$(PACKAGE_VER
 # F3DZEX2 offsets
 ifeq ($(VERSION),ntsc-1.0)
 # 0xB59ED0, 0x1390
-	UCODE_CODE_OFFSET := 11902672
-	UCODE_CODE_SIZE := 5008
+    UCODE_CODE_OFFSET := 11902672
+    UCODE_CODE_SIZE := 5008
 # 0xB8A520, 0x420
-	UCODE_DATA_OFFSET := 12100896
-	UCODE_DATA_SIZE := 1056
+    UCODE_DATA_OFFSET := 12100896
+    UCODE_DATA_SIZE := 1056
 else ifeq ($(VERSION),ntsc-1.1)
 # 0xB5A090, 0x1390
-	UCODE_CODE_OFFSET := 11903120
-	UCODE_CODE_SIZE := 5008
+    UCODE_CODE_OFFSET := 11903120
+    UCODE_CODE_SIZE := 5008
 # 0xB8A6E0, 0x420
-	UCODE_DATA_OFFSET := 12101344
-	UCODE_DATA_SIZE := 1056
+    UCODE_DATA_OFFSET := 12101344
+    UCODE_DATA_SIZE := 1056
 else ifeq ($(VERSION),ntsc-1.2)
 # 0xB59ED0, 0x1390
-	UCODE_CODE_OFFSET := 11902672
-	UCODE_CODE_SIZE := 5008
+    UCODE_CODE_OFFSET := 11902672
+    UCODE_CODE_SIZE := 5008
 # 0xB8A590, 0x420
-	UCODE_DATA_OFFSET := 12101008
-	UCODE_DATA_SIZE := 1056
+    UCODE_DATA_OFFSET := 12101008
+    UCODE_DATA_SIZE := 1056
 else ifeq ($(VERSION),gc-eu-mq-dbg)
 # 0xBCD0F0, 0x1630
-	UCODE_CODE_OFFSET := 12374256
-	UCODE_CODE_SIZE := 5680
+    UCODE_CODE_OFFSET := 12374256
+    UCODE_CODE_SIZE := 5680
 # 0xBCE720, 0x420
-	UCODE_DATA_OFFSET := 12379936
-	UCODE_DATA_SIZE := 1056
+    UCODE_DATA_OFFSET := 12379936
+    UCODE_DATA_SIZE := 1056
 else
 $(error Unsupported version for F3DEX3: $(VERSION))
 endif
@@ -144,10 +144,10 @@ BASEROM_PATCH ?= baseroms/$(VERSION)/baserom.z64
 
 # Build the codebase to inject in a WAD file (for Wii VC)
 # Steps:
-#		- check if there's the common-key.bin file
-#		- build and compress the rom
-#		- inject the binary in the wad file (and apply patches)
-#		- remove temporary folders
+#    - check if there's the common-key.bin file
+#    - build and compress the rom
+#    - inject the binary in the wad file (and apply patches)
+#    - remove temporary folders
 wad:
 	$(call print_no_args,Patching WAD...)
 ifeq ("$(wildcard baseroms/$(VERSION)/common-key.bin)", "")
@@ -160,14 +160,14 @@ endif
 
 # Build the codebase to inject in a ISO file (for GameCube)
 # Steps:
-#		- build and compress the rom
-#		- create the dma config file
-#		- extract the iso
-#		- copy the rom and dma config file to the extracted iso folder
-#		- remove any unnecessary files
-#		- apply the modifications on the emulator binary
-#		- pack the iso
-#		- remove temporary folders
+#    - build and compress the rom
+#    - create the dma config file
+#    - extract the iso
+#    - copy the rom and dma config file to the extracted iso folder
+#    - remove any unnecessary files
+#    - apply the modifications on the emulator binary
+#    - pack the iso
+#    - remove temporary folders
 iso:
 	$(V)$(MAKE) compress TARGET=iso
 	$(call print_no_args,Patching ISO...)
@@ -183,7 +183,7 @@ iso:
 
 # Create a BPS patch for the built rom
 # Steps:
-#		- run Flips and create the patch
+#    - run Flips and create the patch
 # TODO: add compressed rom support.
 patch:
 	$(call print_no_args,Creating BPS patch...)
@@ -192,7 +192,7 @@ patch:
 
 # Create F3DEX3 bps patches
 # Steps:
-#		- run Flips and create the patches
+#    - run Flips and create the patches
 create_f3dex3_patches: $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/f3dzex2.data
 	$(call print_no_args,Creating F3DEX3 patches...)
 	$(V)$(FLIPS) --create --bps $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/F3DEX3_BrW.code $(F3DEX3_DIR)/F3DEX3_BrW.code.bps
@@ -215,9 +215,9 @@ create_f3dex3_patches: $(F3DEX3_DIR)/f3dzex2.code $(F3DEX3_DIR)/f3dzex2.data
 
 # Build the rom and print its checksum (using md5)
 # Steps:
-#		- run `make clean`
-#		- build the rom
-#		- show the checksum
+#    - run `make clean`
+#    - build the rom
+#    - show the checksum
 verify:
 	$(V)$(MAKE) clean
 	$(V)$(MAKE) rom
