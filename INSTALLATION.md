@@ -17,8 +17,8 @@ The compiler to use is automatically detected by the build system. We recommend 
 ### Windows
 
 For Windows 10 or 11, install WSL and a distribution by following this
-[WSL Installation Guide](https://docs.microsoft.com/en-us/windows/wsl/install).
-We recommend using Ubuntu 20.04 as the Linux distribution.
+[WSL Installation Guide](https://learn.microsoft.com/en-us/windows/wsl/install).
+We recommend using Ubuntu as the Linux distribution.
 
 For older versions of Windows, install a Linux VM or refer to [Docker](docs/BUILDING_DOCKER.md) instructions.
 
@@ -31,23 +31,30 @@ The build process has the following package requirements:
 
 * git
 * build-essential
-* binutils-mips-linux-gnu
 * curl
 * python3
 * python3-pip
 * python3-venv
-* libpng-dev
 * libxml2-dev
-* gcc-mips-linux-gnu
 
-Note: you can use another GCC as long as it target MIPS.
+Python 3.10+ is required.
 
 Under Debian / Ubuntu (which we recommend using), you can install them with the following commands:
 
 ```bash
 sudo apt-get update
-sudo apt-get install git build-essential binutils-mips-linux-gnu curl python3 python3-pip python3-venv libpng-dev libxml2-dev gcc-mips-linux-gnu
+sudo apt-get install git build-essential curl python3 python3-pip python3-venv libxml2-dev
 ```
+
+In addition to these packages, a MIPS binutils installation is required if you're not using ModernSDK. The project aims to support a couple of commonly-encountered MIPS toolchains out-of-the-box, only one is required and is automatically detected:
+
+* mips64-ultra-elf- or mips64- from the [practicerom toolchain](https://github.com/PracticeROM/packages)
+* mips64-elf- from the [libdragon n64 homebrew library](https://github.com/DragonMinded/libdragon/releases/tag/toolchain-continuous-prerelease)
+* mips-linux-gnu- or mips64-linux-gnu- found in common distribution package managers as e.g. `binutils-mips-linux-gnu`
+
+If none of these are available to install, the makefile exposes `MIPS_BINUTILS_PREFIX` as a means to set your own toolchain prefix. Otherwise, consider building one of the first two options from source.
+
+If you are using GCC as the compiler for Ocarina of Time, you will also need the corresponding gcc compiler for the chosen toolchain. For the first two options above, gcc is included automatically. For mips-linux-gnu- or mips64-linux-gnu- it is often a separate package, e.g. `gcc-mips-linux-gnu`.
 
 #### 2. Clone the repository
 
@@ -68,7 +75,13 @@ cd HackerOoT
 
 #### 3. Prepare a base ROM
 
-Place a copy of the Master Quest (Debug) ROM inside the `baseroms/ntsc-1.2/` folder.
+First, pick the version of the game you want to build.
+The supported versions and ROM checksums can be found in the table above.
+As an example, the `ntsc-1.2` version will be used in these instructions.
+
+Place a copy of the ROM inside the `baseroms/<the-version>/` folder for your version of choice.
+For example for `ntsc-1.2`, inside the `baseroms/ntsc-1.2/` folder.
+If you are under WSL, you can run the command `explorer.exe .` to open the current directory in the Windows file explorer.
 
 Rename the file to `baserom.z64`, `baserom.n64` or `baserom.v64`, depending on the original extension.
 
@@ -79,14 +92,17 @@ Rename the file to `baserom.z64`, `baserom.n64` or `baserom.v64`, depending on t
 Setup and extract everything from your ROM with the following command:
 
 ```bash
-make setup
+make setup VERSION=<the-version>
 ```
 
-This downloads some dependencies (from pip), and compiles tools for the build process.
-Then it generates a new ROM "baseroms/ntsc-1.2/baserom-decompressed.z64" that will have the overdump removed and the header patched.
-It will also extract the individual assets from the ROM. This command will also setup F3DEX3 binaries.
+For example for `ntsc-1.2`, run `make setup VERSION=ntsc-1.2`.
 
-**NOTE:** the decompressed baserom will be copied to ``baseroms/gc-eu-mq-dbg/``, this is a temporary solution.
+This downloads some dependencies (from pip), and compiles tools for the build process.
+Then it generates a new ROM `baseroms/<the-version>/baserom-decompressed.z64`.
+For retail (non-debug) versions, that ROM will be the decompressed equivalent of the ROM.
+For the `gc-eu-mq-dbg` version, that ROM will have the overdump removed and the header patched.
+The other debug ROMs `gc-eu-dbg-2` and `gc-eu-dbg` will also have the overdump removed.
+It will also extract the individual assets from the ROM.
 
 #### 5. Build the ROM
 
@@ -94,10 +110,25 @@ Run make to build the ROM.
 Make sure your path to the project is not too long, otherwise this process may error.
 
 ```bash
-make
+make VERSION=<the-version>
 ```
 
-If all goes well, a new ROM should be built at `build/ntsc-1.2/hackeroot-ntsc-1.2.z64`.
+For example for `ntsc-1.2`, run `make VERSION=ntsc-1.2`
+
+If all goes well, a new ROM should be built at `build/<the-version>/hackeroot-<the-version>.z64` (for example `build/ntsc-1.2/hackeroot-ntsc-1.2.z64`), and the following text printed:
+
+```
+build/<the-version>/oot-<the-version>.z64: OK
+```
+
+If you instead see the following:
+
+```
+build/<the-version>/oot-<the-version>.z64: FAILED
+md5sum: WARNING: 1 computed checksum did NOT match
+```
+
+This means that the built ROM isn't the same as the base one, so something went wrong or some part of the code doesn't match.
 
 **NOTE:** to speed up the build, you can either:
 
@@ -139,3 +170,11 @@ You can customize which HackerOoT features you want in your project and which no
 Just define the features as `true` or `false` or, if necessary, put in the value you want (e.g. Text speed).
 
 **TIP:** if you are using VS Code, look at [vscode.md](docs/vscode.md) for useful customization that make working with this project easier.
+
+## Changing build options
+
+By default, if you don't specify a version to build with `VERSION=<the-version>` in the make commands, the `ntsc-1.2` version is used.
+This default can be changed in the Makefile.
+
+The project Makefile is fairly configurable and can also be used to prepare the repo for modding.
+See the options outlined at the top of the Makefile for more information.
