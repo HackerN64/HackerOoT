@@ -1,4 +1,5 @@
 #include "libc64/malloc.h"
+#include "attributes.h"
 #include "libc64/sprintf.h"
 #include "libu64/debug.h"
 #include "array_count.h"
@@ -15,6 +16,7 @@
 #include "printf.h"
 #include "regs.h"
 #include "setup_state.h"
+#include "stack_pad.h"
 #include "sys_cfb.h"
 #include "sys_debug_controller.h"
 #include "sys_ucode.h"
@@ -50,7 +52,11 @@ OSTime sGraphPrevTaskTimeStart;
 #if ENABLE_F3DEX3
 #define GRAPH_UCODE_GLOBAL_SYMBOL gF3DEX3TextBuffer
 #else
+#ifndef F3DEX_GBI_PL
+#define GRAPH_UCODE_GLOBAL_SYMBOL gspF3DZEX2_NoN_fifoTextStart
+#else
 #define GRAPH_UCODE_GLOBAL_SYMBOL gspF3DZEX2_NoN_PosLight_fifoTextStart
+#endif
 #endif
 
 #if IS_MOTION_BLUR_ENABLED
@@ -160,6 +166,13 @@ void Graph_InitTHGA(GraphicsContext* gfxCtx) {
     gfxCtx->debugBuffer = pool->debugBuffer;
 #endif
 
+    //! @bug fbIdx is a signed integer that can overflow into the negatives. When compiled with a C99+ compiler or IDO,
+    //! the remainder operator will yield -1 for odd negative values of fbIdx.
+    //! This causes SysCfb_GetFbPtr to read beyond the bounds of an array when retrieving the framebuffer pointer, which
+    //! will likely crash the game.
+    //!
+    //! This isn't an issue in practice. In the worst case scenario with the game operating at a consistent 60 FPS,
+    //! it would take approximately 414.25 days of continuous operation for fbIdx to overflow.
     gfxCtx->curFrameBuffer = SysCfb_GetFbPtr(gfxCtx->fbIdx % 2);
     gfxCtx->unk_014 = 0;
 }
@@ -203,7 +216,7 @@ void Graph_Init(GraphicsContext* gfxCtx) {
 #endif
 }
 
-void Graph_Destroy(GraphicsContext* gfxCtx) {
+void Graph_Destroy(UNUSED GraphicsContext* gfxCtx) {
 #if DEBUG_FEATURES
     func_800D3210();
     Fault_RemoveClient(&sGraphFaultClient);
@@ -479,7 +492,7 @@ void Graph_Update(GraphicsContext* gfxCtx, GameState* gameState) {
 void Commands_Init(void);
 #endif
 
-void Graph_ThreadEntry(void* arg0) {
+void Graph_ThreadEntry(UNUSED void* arg) {
     GraphicsContext gfxCtx;
     GameState* gameState;
     u32 size;
@@ -536,7 +549,7 @@ void Graph_ThreadEntry(void* arg0) {
 }
 
 void* Graph_Alloc(GraphicsContext* gfxCtx, size_t size) {
-    TwoHeadGfxArena* thga = &gfxCtx->polyOpa;
+    UNUSED_NDEBUG TwoHeadGfxArena* thga = &gfxCtx->polyOpa;
 
     if (HREG(59) == 1) {
         PRINTF("graph_alloc siz=%d thga size=%08x bufp=%08x head=%08x tail=%08x\n", size, thga->size, thga->start,
@@ -546,7 +559,7 @@ void* Graph_Alloc(GraphicsContext* gfxCtx, size_t size) {
 }
 
 void* Graph_Alloc2(GraphicsContext* gfxCtx, size_t size) {
-    TwoHeadGfxArena* thga = &gfxCtx->polyOpa;
+    UNUSED_NDEBUG TwoHeadGfxArena* thga = &gfxCtx->polyOpa;
 
     if (HREG(59) == 1) {
         PRINTF("graph_alloc siz=%d thga size=%08x bufp=%08x head=%08x tail=%08x\n", size, thga->size, thga->start,

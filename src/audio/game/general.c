@@ -8,6 +8,7 @@
 #include "seqcmd.h"
 #include "sequence.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "ultra64.h"
 #include "versions.h"
 #include "audio.h"
@@ -140,8 +141,8 @@ f32 sBehindScreenZ[2] = { -15.0f, -65.0f };
 u8 sAudioIncreasingTranspose = 0;
 u8 gMorphaTransposeTable[16] = { 0, 0, 0, 1, 1, 2, 4, 6, 8, 8, 8, 8, 8, 8, 8, 8 };
 u8 sPrevChargeLevel = 0;
-f32 D_801305E4[4] = { 1.0f, 1.12246f, 1.33484f, 1.33484f }; // 2**({0, 2, 5, 5}/12)
-f32 D_801305F4 = 1.0f;
+f32 sSfxSwordChargeFreqLevels[4] = { 1.0f, 1.12246f, 1.33484f, 1.33484f }; // 2**({0, 2, 5, 5}/12)
+f32 sSfxSwordChargeFreq = 1.0f;
 u8 sGanonsTowerLevelsVol[8] = { 127, 80, 75, 73, 70, 68, 65, 60 };
 u8 sEnterGanonsTowerTimer = 0;
 #if DEBUG_FEATURES
@@ -1389,6 +1390,8 @@ void AudioOcarina_MapNotesToScarecrowButtons(u8 noteSongIndex) {
  *      - ocarina action (only used to make flags != 0)
  * bitmask 0x80000000:
  *      - unused (only used to make flags != 0)
+ *
+ * original name: Na_StartOcarinaSinglePlayCheck2
  */
 void AudioOcarina_Start(u16 ocarinaFlags) {
     u8 i;
@@ -1464,9 +1467,9 @@ void AudioOcarina_CheckIfStartedSong(void) {
  */
 void AudioOcarina_CheckSongsWithMusicStaff(void) {
     u16 curOcarinaSongFlag;
-    u16 pad;
+    STACK_PAD(s16);
     u8 noNewValidInput = false;
-    u16 pad2;
+    STACK_PAD(s16);
     s8 staffOcarinaPlayingPosOffset = 0;
     u8 songIndex;
     OcarinaNote* curNote;
@@ -1639,7 +1642,7 @@ void AudioOcarina_CheckSongsWithoutMusicStaff(void) {
 }
 
 // This unused argument is used in Majora's Mask as a u8
-void AudioOcarina_PlayControllerInput(u8 unused) {
+void AudioOcarina_PlayControllerInput(UNUSED u8 arg0) {
     u32 ocarinaBtnsHeld;
 
     // Prevents two different ocarina notes from being played on two consecutive frames
@@ -1755,6 +1758,8 @@ void AudioOcarina_EnableInput(u8 inputEnabled) {
  * Resets ocarina properties based on the ocarina instrument id
  * If ocarina instrument id is "OCARINA_INSTRUMENT_OFF", turn off the ocarina
  * For all ocarina instrument ids, turn the ocarina on with the instrument id
+ *
+ * original name possibly Na_StopOcarinaMode
  */
 void AudioOcarina_SetInstrument(u8 ocarinaInstrumentId) {
     if (sOcarinaInstrumentId == ocarinaInstrumentId) {
@@ -1789,6 +1794,9 @@ void AudioOcarina_SetInstrument(u8 ocarinaInstrumentId) {
     }
 }
 
+/**
+ * original name possibly Na_StartOcarinaBgm
+ */
 void AudioOcarina_SetPlaybackSong(s8 songIndexPlusOne, s8 playbackState) {
     if (songIndexPlusOne == 0) {
         sPlaybackState = 0;
@@ -1922,13 +1930,12 @@ void AudioOcarina_PlaybackSong(void) {
 
 void AudioOcarina_SetRecordingSong(u8 isRecordingComplete) {
     u16 i;
-    u16 i2;
-    u16 pad;
+    STACK_PADS(s16, 2);
     u8 pitch;
-    OcarinaNote* note;
+    STACK_PAD(s32);
     u8 j;
     u8 k;
-    s32 t;
+    STACK_PAD(s32);
     OcarinaNote* recordedSong;
 
     if (sRecordingState == OCARINA_RECORD_SCARECROW_LONG) {
@@ -2316,10 +2323,10 @@ void AudioOcarina_ResetStaffs(void) {
 #if IS_AUDIO_DEBUG_ENABLED
 #include "debug.inc.c"
 #else
-void AudioDebug_Draw(GfxPrint* printer) {
+void AudioDebug_Draw(UNUSED GfxPrint* printer) {
 }
 
-void AudioDebug_ScrPrt(const char* str, u16 num) {
+void AudioDebug_ScrPrt(UNUSED const char* str, UNUSED u16 num) {
 }
 #endif
 
@@ -2364,10 +2371,10 @@ void Audio_Update(void) {
     }
 }
 
-void func_800F3138(UNK_TYPE arg0) {
+void func_800F3138(UNUSED s32 arg0) {
 }
 
-void func_800F3140(UNK_TYPE arg0, UNK_TYPE arg1) {
+void func_800F3140(UNUSED s32 arg0, UNUSED s32 arg1) {
 }
 
 void func_800F314C(s8 seqId) {
@@ -2452,7 +2459,7 @@ s8 Audio_ComputeSfxReverb(u8 bankId, u8 entryIdx, u8 channelIdx) {
     return reverb;
 }
 
-s8 Audio_ComputeSfxPanSigned(f32 x, f32 z, u8 token) {
+s8 Audio_ComputeSfxPanSigned(f32 x, f32 z, UNUSED u8 token) {
     f32 absX;
     f32 absZ;
     f32 pan;
@@ -2603,7 +2610,7 @@ u8 func_800F37B8(f32 behindScreenZ, SfxBankEntry* arg1, s8 arg2) {
     return (phi_v1 * 0x10) + (u8)((phi_f0 * phi_f12) / (10000.0f / 5.2f));
 }
 
-s8 func_800F3990(f32 posY, u16 sfxParams) {
+s8 func_800F3990(f32 posY, UNUSED u16 sfxParams) {
     s8 combFilterGain = 0;
 
     if (posY >= 0.0f) {
@@ -2629,7 +2636,7 @@ void Audio_SetSfxProperties(u8 bankId, u8 entryIdx, u8 channelIndex) {
     u8 baseFilter = 0;
     SfxBankEntry* entry = &gSfxBanks[bankId][entryIdx];
 #if !(OOT_VERSION < NTSC_1_1 || !PLATFORM_N64)
-    s32 pad;
+    STACK_PAD(s32);
 #endif
 
     switch (bankId) {
@@ -2710,7 +2717,7 @@ void Audio_SetSfxProperties(u8 bankId, u8 entryIdx, u8 channelIndex) {
         sSfxChannelState[channelIndex].freqScale = freqScale;
     }
 
-    //! @bug: comparing a `u8` to an `s8`. if the most significant bit is set,
+    //! @bug comparing a `u8` to an `s8`. if the most significant bit is set,
     //! it'll always pass because the s8 value will be <0 and the u8 value is always >=0
     if (stereoBits != sSfxChannelState[channelIndex].stereoBits) {
         AUDIOCMD_CHANNEL_SET_STEREO(SEQ_PLAYER_SFX, channelIndex, stereoBits | 0x10);
@@ -2822,17 +2829,17 @@ void Audio_PlaySfxRandom(Vec3f* pos, u16 baseSfxId, u8 randLim) {
     SFX_PLAY_AT_POS(pos, baseSfxId + offset);
 }
 
-void func_800F4254(Vec3f* pos, u8 level) {
+void Audio_PlaySwordChargeSfx(Vec3f* pos, u8 level) {
     level &= 3;
     if (level != sPrevChargeLevel) {
-        D_801305F4 = D_801305E4[level];
+        sSfxSwordChargeFreq = sSfxSwordChargeFreqLevels[level];
         switch (level) {
             case 1:
-                Audio_PlaySfxGeneral(NA_SE_PL_SWORD_CHARGE, pos, 4, &D_801305F4, &gSfxDefaultFreqAndVolScale,
+                Audio_PlaySfxGeneral(NA_SE_PL_SWORD_CHARGE, pos, 4, &sSfxSwordChargeFreq, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultReverb);
                 break;
             case 2:
-                Audio_PlaySfxGeneral(NA_SE_PL_SWORD_CHARGE, pos, 4, &D_801305F4, &gSfxDefaultFreqAndVolScale,
+                Audio_PlaySfxGeneral(NA_SE_PL_SWORD_CHARGE, pos, 4, &sSfxSwordChargeFreq, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultReverb);
                 break;
         }
@@ -2841,8 +2848,8 @@ void func_800F4254(Vec3f* pos, u8 level) {
     }
 
     if (level != 0) {
-        Audio_PlaySfxGeneral(NA_SE_IT_SWORD_CHARGE - SFX_FLAG, pos, 4, &D_801305F4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultReverb);
+        Audio_PlaySfxGeneral(NA_SE_IT_SWORD_CHARGE - SFX_FLAG, pos, 4, &sSfxSwordChargeFreq,
+                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 }
 
@@ -3235,6 +3242,9 @@ void Audio_ClearSariaBgm2(void) {
     sSariaBgmPtr = NULL;
 }
 
+/**
+ * original name: Na_StartMorinigBgm
+ */
 void Audio_PlayMorningSceneSequence(u16 seqId) {
     Audio_PlaySceneSequence(seqId);
     // Writing a value of 1 to ioPort 0 will be used by
@@ -3636,7 +3646,7 @@ void Audio_SetBgmEnemyVolume(f32 dist) {
 }
 
 void Audio_UpdateMalonSinging(f32 dist, u16 seqId) {
-    s8 pad;
+    STACK_PAD(u8);
     s8 melodyVolume;
     s16 curSeqId;
 
@@ -4081,7 +4091,7 @@ void func_800F7170(void) {
     AUDIOCMD_GLOBAL_STOP_AUDIOCMDS();
 }
 
-void func_800F71BC(s32 arg0) {
+void func_800F71BC(UNUSED s32 arg0) {
     D_80133418 = 1;
     func_800F6C34();
     AudioOcarina_ResetStaffs();

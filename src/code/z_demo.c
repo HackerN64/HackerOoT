@@ -1,44 +1,64 @@
-#pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
-                               "ique-cn:128 ntsc-1.0:0 ntsc-1.1:0 ntsc-1.2:0 pal-1.0:0 pal-1.1:0"
+#pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0 ique-cn:0" \
+                               "ntsc-1.0:0 ntsc-1.1:0 ntsc-1.2:0 pal-1.0:0 pal-1.1:0"
 #include "padmgr.h"
 #include "config.h"
 #include "libu64/gfxprint.h"
+#include "cutscene.h"
+#include "actor.h"
 #include "array_count.h"
+#include "attributes.h"
+#include "audio.h"
+#include "camera.h"
+#include "color.h"
 #include "controller.h"
+#include "cutscene_flags.h"
+#include "environment.h"
 #include "gfx.h"
 #include "gfxalloc.h"
+#include "interface.h"
+#include "item.h"
 #include "letterbox.h"
+#include "light.h"
 #include "memory_utils.h"
+#include "message.h"
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
+#include "ocarina.h"
+#include "play_state.h"
+#include "player.h"
 #include "printf.h"
+#include "quake.h"
 #include "regs.h"
 #include "rumble.h"
-#include "quake.h"
+#include "save.h"
+#include "scene.h"
 #include "segmented_address.h"
 #include "seqcmd.h"
 #include "sequence.h"
 #include "sfx.h"
+#include "stack_pad.h"
+#include "transition.h"
 #include "translation.h"
 #include "z_lib.h"
-#include "audio.h"
-#include "camera.h"
-#include "cutscene.h"
-#include "cutscene_flags.h"
-#include "ocarina.h"
-#include "play_state.h"
-#include "player.h"
-#include "save.h"
+#include "z_math.h"
+
+#include "assets/scenes/dungeons/bdan/bdan_scene.h"
+#include "assets/scenes/dungeons/ddan/ddan_scene.h"
+#include "assets/scenes/dungeons/ydan/ydan_scene.h"
+#include "assets/scenes/dungeons/ganontika/ganontika_scene.h"
+#include "assets/scenes/dungeons/jyasinboss/jyasinboss_scene.h"
+#include "assets/scenes/dungeons/ice_doukutu/ice_doukutu_scene.h"
 
 #include "assets/scenes/indoors/tokinoma/tokinoma_scene.h"
+
+#include "assets/scenes/misc/hakaana_ouke/hakaana_ouke_scene.h"
 
 #include "assets/scenes/overworld/ganon_tou/ganon_tou_scene.h"
 #include "assets/scenes/overworld/spot00/spot00_scene.h"
 #include "assets/scenes/overworld/spot01/spot01_scene.h"
 #include "assets/scenes/overworld/spot02/spot02_scene.h"
 #include "assets/scenes/overworld/spot04/spot04_scene.h"
-#include "assets/scenes/overworld/spot05/spot05_scene.h"
 #include "assets/scenes/overworld/spot06/spot06_scene.h"
 #include "assets/scenes/overworld/spot07/spot07_scene.h"
 #include "assets/scenes/overworld/spot08/spot08_scene.h"
@@ -51,14 +71,11 @@
 #include "assets/scenes/overworld/spot18/spot18_scene.h"
 #include "assets/scenes/overworld/spot20/spot20_scene.h"
 
-#include "assets/scenes/dungeons/bdan/bdan_scene.h"
-#include "assets/scenes/dungeons/ddan/ddan_scene.h"
-#include "assets/scenes/dungeons/ydan/ydan_scene.h"
-#include "assets/scenes/dungeons/ganontika/ganontika_scene.h"
-#include "assets/scenes/dungeons/jyasinboss/jyasinboss_scene.h"
-#include "assets/scenes/dungeons/ice_doukutu/ice_doukutu_scene.h"
-
-#include "assets/scenes/misc/hakaana_ouke/hakaana_ouke_scene.h"
+#include "libu64/gfxprint.h"
+#include "libu64/pad.h"
+#include "ultra64.h"
+#include <stdbool.h>
+#include <stddef.h>
 
 #if ENABLE_CUTSCENE_IMPROVEMENTS
 struct CutsceneCamera sCutsceneCameraInfo;
@@ -139,7 +156,7 @@ EntranceCutscene sEntranceCutsceneTable[] = {
     { ENTR_INSIDE_GANONS_CASTLE_6, 2, EVENTCHKINF_BF, gLightBarrierCs },
     { ENTR_INSIDE_GANONS_CASTLE_7, 2, EVENTCHKINF_AD, gSpiritBarrierCs },
     { ENTR_SPIRIT_TEMPLE_BOSS_0, 0, EVENTCHKINF_C0, gSpiritBossNabooruKnuckleIntroCs },
-    { ENTR_GERUDOS_FORTRESS_17, 0, EVENTCHKINF_C7, gGerudoFortressFirstCaptureCs },
+    { ENTR_GERUDOS_FORTRESS_17, 0, EVENTCHKINF_GERUDO_CAUGHT_TOWER_FALL, gGerudoFortressFirstCaptureCs },
     { ENTR_DEATH_MOUNTAIN_CRATER_1, 2, EVENTCHKINF_B9, gDeathMountainCraterIntroCs },
     { ENTR_KOKIRI_FOREST_12, 2, EVENTCHKINF_C6, gKokiriForestDekuSproutPart3Cs },
 };
@@ -155,7 +172,7 @@ u16 gCamEyePointAppliedFrame;
 u16 gCamAtPointAppliedFrame;
 
 #pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128 gc-us-mq:128" \
-                               "ique-cn:128 ntsc-1.0:128 ntsc-1.1:128 ntsc-1.2:128 pal-1.0:128 pal-1.1:128"
+                               "ique-cn:128 ntsc-1.0:0 ntsc-1.1:0 ntsc-1.2:0 pal-1.0:0 pal-1.1:0"
 
 // Cam ID to return to when a scripted cutscene is finished
 s16 sReturnToCamId;
@@ -172,7 +189,7 @@ void Cutscene_SetupScripted(PlayState* play, CutsceneContext* csCtx);
 void Cutscene_DrawDebugInfo(PlayState* play, Gfx** dlist, CutsceneContext* csCtx) {
     if (CAN_SHOW_CS_INFOS) {
         GfxPrint printer;
-        s32 pad[2];
+        STACK_PADS(s32, 2);
 
         GfxPrint_Init(&printer);
         GfxPrint_Open(&printer, *dlist);
@@ -192,7 +209,7 @@ void Cutscene_DrawDebugInfo(PlayState* play, Gfx** dlist, CutsceneContext* csCtx
 }
 #endif
 
-void Cutscene_InitContext(PlayState* play, CutsceneContext* csCtx) {
+void Cutscene_InitContext(UNUSED PlayState* play, CutsceneContext* csCtx) {
     csCtx->state = CS_STATE_IDLE;
     csCtx->curFrame = 0;
     csCtx->timer = 0.0f;
@@ -204,12 +221,12 @@ void Cutscene_InitContext(PlayState* play, CutsceneContext* csCtx) {
     Audio_SetCutsceneFlag(0);
 }
 
-void Cutscene_StartManual(PlayState* play, CutsceneContext* csCtx) {
+void Cutscene_StartManual(UNUSED PlayState* play, CutsceneContext* csCtx) {
     csCtx->state = CS_STATE_START;
     csCtx->playerCue = NULL;
 }
 
-void Cutscene_StopManual(PlayState* play, CutsceneContext* csCtx) {
+void Cutscene_StopManual(UNUSED PlayState* play, CutsceneContext* csCtx) {
     if (csCtx->state != CS_STATE_RUN_UNSTOPPABLE) {
         csCtx->state = CS_STATE_STOP;
     }
@@ -257,10 +274,10 @@ void Cutscene_UpdateScripted(PlayState* play, CutsceneContext* csCtx) {
     }
 }
 
-void CutsceneHandler_DoNothing(PlayState* play, CutsceneContext* csCtx) {
+void CutsceneHandler_DoNothing(UNUSED PlayState* play, UNUSED CutsceneContext* csCtx) {
 }
 
-u32 Cutscene_StepTimer(PlayState* play, CutsceneContext* csCtx, f32 target) {
+u32 Cutscene_StepTimer(UNUSED PlayState* play, CutsceneContext* csCtx, f32 target) {
     return Math_StepToF(&csCtx->timer, target, 0.1f);
 }
 
@@ -559,19 +576,19 @@ void CutsceneCmd_SetLightSetting(PlayState* play, CutsceneContext* csCtx, CsCmdL
     }
 }
 
-void CutsceneCmd_StartSequence(PlayState* play, CutsceneContext* csCtx, CsCmdStartSeq* cmd) {
+void CutsceneCmd_StartSequence(UNUSED PlayState* play, CutsceneContext* csCtx, CsCmdStartSeq* cmd) {
     if (csCtx->curFrame == cmd->startFrame) {
         Audio_PlaySequenceInCutscene(cmd->seqIdPlusOne - 1);
     }
 }
 
-void CutsceneCmd_StopSequence(PlayState* play, CutsceneContext* csCtx, CsCmdStopSeq* cmd) {
+void CutsceneCmd_StopSequence(UNUSED PlayState* play, CutsceneContext* csCtx, CsCmdStopSeq* cmd) {
     if (csCtx->curFrame == cmd->startFrame) {
         Audio_StopSequenceInCutscene(cmd->seqIdPlusOne - 1);
     }
 }
 
-void CutsceneCmd_FadeOutSequence(PlayState* play, CutsceneContext* csCtx, CsCmdFadeOutSeq* cmd) {
+void CutsceneCmd_FadeOutSequence(UNUSED PlayState* play, CutsceneContext* csCtx, CsCmdFadeOutSeq* cmd) {
     u8 fadeOutDuration;
 
     if ((csCtx->curFrame == cmd->startFrame) && (csCtx->curFrame < cmd->endFrame)) {
@@ -585,13 +602,13 @@ void CutsceneCmd_FadeOutSequence(PlayState* play, CutsceneContext* csCtx, CsCmdF
     }
 }
 
-void CutsceneCmd_RumbleController(PlayState* play, CutsceneContext* csCtx, CsCmdRumble* cmd) {
+void CutsceneCmd_RumbleController(UNUSED PlayState* play, CutsceneContext* csCtx, CsCmdRumble* cmd) {
     if (csCtx->curFrame == cmd->startFrame) {
         Rumble_Request(0.0f, cmd->sourceStrength, cmd->duration, cmd->decreaseRate);
     }
 }
 
-void CutsceneCmd_SetTime(PlayState* play, CutsceneContext* csCtx, CsCmdTime* cmd) {
+void CutsceneCmd_SetTime(UNUSED PlayState* play, CutsceneContext* csCtx, CsCmdTime* cmd) {
     s16 hours;
     s16 minutes;
 
@@ -696,8 +713,8 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
                 }
                 gSaveContext.respawn[RESPAWN_MODE_TOP].data = 0;
 
-                if (!GET_EVENTCHKINF(EVENTCHKINF_45)) {
-                    SET_EVENTCHKINF(EVENTCHKINF_45);
+                if (!GET_EVENTCHKINF(EVENTCHKINF_OBTAINED_MASTER_SWORD)) {
+                    SET_EVENTCHKINF(EVENTCHKINF_OBTAINED_MASTER_SWORD);
                     play->nextEntranceIndex = ENTR_CUTSCENE_MAP_0;
                     play->transitionTrigger = TRANS_TRIGGER_START;
                     gSaveContext.save.cutsceneIndex = CS_INDEX_3;
@@ -1664,7 +1681,7 @@ s32 CutsceneCmd_UpdateCamAtSpline(PlayState* play, CutsceneContext* csCtx, u8* s
     return size;
 }
 
-s32 CutsceneCmd_SetCamEye(PlayState* play, CutsceneContext* csCtx, u8* script, u8 unused) {
+s32 CutsceneCmd_SetCamEye(PlayState* play, CutsceneContext* csCtx, u8* script, UNUSED u8 arg3) {
     CsCmdCam* cmd = (CsCmdCam*)script;
     s32 size;
     Vec3f at;
@@ -1713,7 +1730,7 @@ s32 CutsceneCmd_SetCamEye(PlayState* play, CutsceneContext* csCtx, u8* script, u
     return size;
 }
 
-s32 CutsceneCmd_SetCamAt(PlayState* play, CutsceneContext* csCtx, u8* script, u8 unused) {
+s32 CutsceneCmd_SetCamAt(PlayState* play, CutsceneContext* csCtx, u8* script, UNUSED u8 arg3) {
     CsCmdCam* cmd = (CsCmdCam*)script;
     s32 size;
     Vec3f at;
@@ -1761,7 +1778,7 @@ s32 CutsceneCmd_SetCamAt(PlayState* play, CutsceneContext* csCtx, u8* script, u8
 void CutsceneCmd_Text(PlayState* play, CutsceneContext* csCtx, CsCmdText* cmd) {
     u8 dialogState;
 #if PLATFORM_N64
-    s32 pad;
+    STACK_PAD(s32);
 #endif
     s16 endFrame;
 
@@ -1874,10 +1891,10 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
     s32 csFrameCount;
     s16 j;
 
-    MemCpy(&totalEntries, script, sizeof(totalEntries));
+    MemCopy(&totalEntries, script, sizeof(totalEntries));
     script += sizeof(totalEntries);
 
-    MemCpy(&csFrameCount, script, sizeof(csFrameCount));
+    MemCopy(&csFrameCount, script, sizeof(csFrameCount));
     script += sizeof(csFrameCount);
 
     if ((csCtx->curFrame > csFrameCount) && (csCtx->state != CS_STATE_RUN_UNSTOPPABLE)) {
@@ -1894,7 +1911,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
 #endif
 
     for (i = 0; i < totalEntries; i++) {
-        MemCpy(&cmdType, script, sizeof(cmdType));
+        MemCopy(&cmdType, script, sizeof(cmdType));
         script += sizeof(cmdType);
 
         if (cmdType == CS_CMD_END_OF_SCRIPT) {
@@ -1903,7 +1920,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
 
         switch (cmdType) {
             case CS_CMD_MISC:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -1913,7 +1930,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_LIGHT_SETTING:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -1923,7 +1940,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_START_SEQ:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -1933,7 +1950,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_STOP_SEQ:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -1943,7 +1960,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_FADE_OUT_SEQ:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -1953,7 +1970,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_RUMBLE_CONTROLLER:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -1963,7 +1980,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_TIME:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -1973,7 +1990,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_PLAYER_CUE:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2006,7 +2023,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
             case CS_CMD_ACTOR_CUE_0_15:
             case CS_CMD_ACTOR_CUE_0_16:
             case CS_CMD_ACTOR_CUE_0_17:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2039,7 +2056,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
             case CS_CMD_ACTOR_CUE_1_15:
             case CS_CMD_ACTOR_CUE_1_16:
             case CS_CMD_ACTOR_CUE_1_17:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2068,7 +2085,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
             case CS_CMD_ACTOR_CUE_2_11:
             case CS_CMD_ACTOR_CUE_2_12:
             case CS_CMD_ACTOR_CUE_2_13:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2096,7 +2113,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
             case CS_CMD_ACTOR_CUE_3_10:
             case CS_CMD_ACTOR_CUE_3_11:
             case CS_CMD_ACTOR_CUE_3_12:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2120,7 +2137,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
             case CS_CMD_ACTOR_CUE_4_6:
             case CS_CMD_ACTOR_CUE_4_7:
             case CS_CMD_ACTOR_CUE_4_8:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2142,7 +2159,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
             case CS_CMD_ACTOR_CUE_5_4:
             case CS_CMD_ACTOR_CUE_5_5:
             case CS_CMD_ACTOR_CUE_5_6:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2165,7 +2182,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
             case CS_CMD_ACTOR_CUE_6_5:
             case CS_CMD_ACTOR_CUE_6_6:
             case CS_CMD_ACTOR_CUE_6_7:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2187,7 +2204,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
             case CS_CMD_ACTOR_CUE_7_4:
             case CS_CMD_ACTOR_CUE_7_5:
             case CS_CMD_ACTOR_CUE_7_6:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2203,7 +2220,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_ACTOR_CUE_8_0:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2219,7 +2236,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_ACTOR_CUE_9_0:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2265,7 +2282,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_TEXT:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2286,7 +2303,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_MOTION_BLUR:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2296,7 +2313,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             default:
-                MemCpy(&cmdEntries, script, 4);
+                MemCopy(&cmdEntries, script, 4);
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
@@ -2452,7 +2469,7 @@ u16 D_8015FCCC;
 char D_8015FCD0[20]; // unreferenced
 u8 D_8015FCE4;       // only written to, never read
 
-void func_80069048(PlayState* play) {
+void func_80069048(UNUSED PlayState* play) {
     s16 i;
 
     D_8015FCCC = 0;
@@ -2462,7 +2479,7 @@ void func_80069048(PlayState* play) {
     D_8015FCE4 = 0;
 }
 
-void func_8006907C(PlayState* play) {
+void func_8006907C(UNUSED PlayState* play) {
     if (D_8015FCCC != 0) {
         D_8015FCCC = 0;
     }
@@ -2532,9 +2549,9 @@ void Cutscene_HandleConditionalTriggers(PlayState* play) {
             Flags_SetEventChkInf(EVENTCHKINF_C4);
             gSaveContext.save.entranceIndex = ENTR_TEMPLE_OF_TIME_0;
             gSaveContext.save.cutsceneIndex = CS_INDEX_8;
-        } else if (!Flags_GetEventChkInf(EVENTCHKINF_C7) &&
+        } else if (!Flags_GetEventChkInf(EVENTCHKINF_GERUDO_CAUGHT_TOWER_FALL) &&
                    (gEntranceTable[((void)0, gSaveContext.save.entranceIndex)].sceneId == SCENE_GANON_BOSS)) {
-            Flags_SetEventChkInf(EVENTCHKINF_C7);
+            Flags_SetEventChkInf(EVENTCHKINF_GERUDO_CAUGHT_TOWER_FALL);
             gSaveContext.save.entranceIndex = ENTR_GANON_BOSS_0;
             gSaveContext.save.cutsceneIndex = CS_INDEX_0;
         }

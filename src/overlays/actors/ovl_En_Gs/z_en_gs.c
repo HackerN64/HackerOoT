@@ -5,7 +5,7 @@
  */
 
 #include "z_en_gs.h"
-#include "overlays/actors/ovl_En_Elf/z_en_elf.h"
+#include "src/overlays/actors/ovl_En_Elf/z_en_elf.h"
 
 #include "gfx.h"
 #include "gfx_setupdl.h"
@@ -13,6 +13,7 @@
 #include "rand.h"
 #include "regs.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_lib.h"
 #include "effect.h"
@@ -20,7 +21,7 @@
 #include "play_state.h"
 #include "player.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/eff_fire.h"
 #include "assets/objects/object_gs/object_gs.h"
 
 #define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_UPDATE_DURING_OCARINA)
@@ -580,7 +581,7 @@ void EnGs_Update(Actor* thisx, PlayState* play2) {
 
 void EnGs_Draw(Actor* thisx, PlayState* play) {
     EnGs* this = (EnGs*)thisx;
-    s32 tmp;
+    STACK_PAD(s32);
     u32 frames;
 
     if (!(this->unk_19E & 8)) {

@@ -8,11 +8,12 @@
 
 #include "gfx.h"
 #include "gfx_setupdl.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "effect.h"
 #include "play_state.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/lens_flare.h"
 
 #define rScale regs[0]
 #define rTimer regs[1]
@@ -53,10 +54,9 @@ u32 EffectSsDeadDs_Init(PlayState* play, u32 index, EffectSs* this, void* initPa
 }
 
 void EffectSsDeadDs_Draw(PlayState* play, u32 index, EffectSs* this) {
-    s32 pad;
+    STACK_PAD(s32);
     f32 scale;
-    s32 pad1;
-    s32 pad2;
+    STACK_PADS(s32, 2);
     MtxF mf;
     f32 yIntersect;
     Vec3f pos;

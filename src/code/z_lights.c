@@ -1,12 +1,14 @@
 #include "avoid_ub.h"
+#include "attributes.h"
 #include "buffers.h"
 #include "gfx.h"
 #include "gfx_setupdl.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "light.h"
 #include "play_state.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/fairy_skel.h"
 
 #define LIGHTS_BUFFER_SIZE 32
 
@@ -155,7 +157,7 @@ void Lights_BindPoint(Lights* lights, LightParams* params, Vec3f* vec) {
     }
 }
 
-void Lights_BindDirectional(Lights* lights, LightParams* params, Vec3f* vec) {
+void Lights_BindDirectional(Lights* lights, LightParams* params, UNUSED Vec3f* vec) {
     Light* light = Lights_FindSlot(lights);
 
     if (light != NULL) {
@@ -254,7 +256,7 @@ Lights* LightContext_NewLights(LightContext* lightCtx, GraphicsContext* gfxCtx) 
     return Lights_New(gfxCtx, lightCtx->ambientColor[0], lightCtx->ambientColor[1], lightCtx->ambientColor[2]);
 }
 
-void LightContext_InitList(PlayState* play, LightContext* lightCtx) {
+void LightContext_InitList(UNUSED PlayState* play, LightContext* lightCtx) {
     lightCtx->listHead = NULL;
 }
 
@@ -271,7 +273,7 @@ void LightContext_DestroyList(PlayState* play, LightContext* lightCtx) {
  * Note: Due to the limited number of slots in a Lights group, inserting too many lights in the
  * list may result in older entries not being bound to a Light when calling Lights_BindAll
  */
-LightNode* LightContext_InsertLight(PlayState* play, LightContext* lightCtx, LightInfo* info) {
+LightNode* LightContext_InsertLight(UNUSED PlayState* play, LightContext* lightCtx, LightInfo* info) {
     LightNode* node;
 
     node = Lights_FindBufSlot();
@@ -291,7 +293,7 @@ LightNode* LightContext_InsertLight(PlayState* play, LightContext* lightCtx, Lig
     return node;
 }
 
-void LightContext_RemoveLight(PlayState* play, LightContext* lightCtx, LightNode* node) {
+void LightContext_RemoveLight(UNUSED PlayState* play, LightContext* lightCtx, LightNode* node) {
     if (node != NULL) {
         if (node->prev != NULL) {
             node->prev->next = node->next;
@@ -397,7 +399,7 @@ void Lights_GlowCheck(PlayState* play) {
 }
 
 void Lights_DrawGlow(PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     LightNode* node = play->lightCtx.listHead;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_lights.c", 887);
@@ -409,7 +411,7 @@ void Lights_DrawGlow(PlayState* play) {
 
     while (node != NULL) {
         if ((node->info->type == LIGHT_POINT_GLOW)) {
-            s32 pad[6];
+            STACK_PADS(s32, 6);
             LightPoint* params = &node->info->params.point;
 
             if (params->drawGlow) {

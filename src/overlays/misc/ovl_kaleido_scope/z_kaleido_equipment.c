@@ -6,6 +6,7 @@
 #include "printf.h"
 #include "regs.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "translation.h"
 #include "play_state.h"
 #include "player.h"
@@ -71,7 +72,7 @@ static u8 sEquipmentItemOffsets[] = {
     ITEM_BOOTS_HOVER - ITEM_SWORD_KOKIRI,  // EQUIP_VALUE_BOOTS_HOVER
 };
 
-void KaleidoScope_DrawEquipmentImage(PlayState* play, void* source, u32 width, u32 height) {
+void KaleidoScope_DrawEquipmentImage(PlayState* play, void* texture, u32 width, u32 height) {
     PauseContext* pauseCtx = &play->pauseCtx;
     u8* curTexture;
     s32 vtxIndex;
@@ -79,7 +80,7 @@ void KaleidoScope_DrawEquipmentImage(PlayState* play, void* source, u32 width, u
     s32 textureHeight;
     s32 remainingSize;
     s32 textureSize;
-    s32 pad;
+    STACK_PAD(s32);
     s32 i;
 
     s16 alpha = pauseCtx->alpha;
@@ -98,7 +99,7 @@ void KaleidoScope_DrawEquipmentImage(PlayState* play, void* source, u32 width, u
     gDPSetTextureFilter(POLY_OPA_DISP++, G_TF_POINT);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, alpha);
 
-    curTexture = source;
+    curTexture = texture;
     remainingSize = width * height * G_IM_SIZ_16b_BYTES;
     textureHeight = TMEM_SIZE / (width * G_IM_SIZ_16b_BYTES);
     textureSize = width * textureHeight * G_IM_SIZ_16b_BYTES;
@@ -721,14 +722,14 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
 
     if ((pauseCtx->mainState == PAUSE_MAIN_STATE_EQUIP_CHANGED) && (sEquipTimer == 9)) {
 #ifndef AVOID_UB
-        //! @bug: This function shouldn't take any arguments
+        //! @bug This function shouldn't take any arguments
         KaleidoScope_ProcessPlayerPreRender(play);
 #else
         KaleidoScope_ProcessPlayerPreRender();
 #endif
     }
 
-    gSPSegment(POLY_OPA_DISP++, 0x07, pauseCtx->playerSegment);
+    gSPSegment(POLY_OPA_DISP++, 0x07, PAUSE_PLAYER_SEGMENT_RENDER_TEXTURE(pauseCtx->playerSegment));
     gSPSegment(POLY_OPA_DISP++, 0x08, pauseCtx->iconItemSegment);
     gSPSegment(POLY_OPA_DISP++, 0x09, pauseCtx->iconItem24Segment);
     gSPSegment(POLY_OPA_DISP++, 0x0A, pauseCtx->nameSegment);
@@ -738,7 +739,8 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
     // Draw player prerender onto the equip page
 
     Gfx_SetupDL_42Opa(play->state.gfxCtx);
-    KaleidoScope_DrawEquipmentImage(play, pauseCtx->playerSegment, PAUSE_EQUIP_PLAYER_WIDTH, PAUSE_EQUIP_PLAYER_HEIGHT);
+    KaleidoScope_DrawEquipmentImage(play, PAUSE_PLAYER_SEGMENT_RENDER_TEXTURE(pauseCtx->playerSegment),
+                                    PAUSE_EQUIP_PLAYER_WIDTH, PAUSE_EQUIP_PLAYER_HEIGHT);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_kaleido_equipment.c", 609);
 }

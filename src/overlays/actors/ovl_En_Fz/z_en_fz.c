@@ -6,6 +6,7 @@
 #include "rand.h"
 #include "segmented_address.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_en_item00.h"
 #include "z_lib.h"
@@ -573,7 +574,8 @@ void EnFz_SetupDespawn(EnFz* this, PlayState* play) {
     this->isActive = false;
     this->timer = 60;
     Actor_ChangeCategory(play, &play->actorCtx, &this->actor, ACTORCAT_PROP);
-    Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos, 0x60);
+    Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos,
+                               COLLECTIBLE_DROP_RANDOM_PARAMS(COLLECTIBLE_DROP_TABLE_6, false));
     this->actionFunc = EnFz_Despawn;
 }
 
@@ -681,7 +683,7 @@ static EnFzSpawnIceSmokeFunc iceSmokeSpawnFuncs[] = {
 
 void EnFz_Update(Actor* thisx, PlayState* play) {
     EnFz* this = (EnFz*)thisx;
-    s32 pad;
+    STACK_PAD(s32);
 
     this->counter++;
 
@@ -730,7 +732,7 @@ void EnFz_Draw(Actor* thisx, PlayState* play) {
         gFreezardHeadChippedDL,         // Entire head chipped off     (1 or 2 health)
     };
     EnFz* this = (EnFz*)thisx;
-    s32 pad;
+    STACK_PAD(s32);
     s32 index;
 
     index = (6 - this->actor.colChkInfo.health) >> 1;

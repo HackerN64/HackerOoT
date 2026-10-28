@@ -1,6 +1,6 @@
 #include "z_en_peehat.h"
-#include "overlays/actors/ovl_En_Bom/z_en_bom.h"
-#include "overlays/effects/ovl_Effect_Ss_Hahen/z_eff_ss_hahen.h"
+#include "src/overlays/actors/ovl_En_Bom/z_en_bom.h"
+#include "src/overlays/effects/ovl_Effect_Ss_Hahen/z_eff_ss_hahen.h"
 
 #include "libc64/qrand.h"
 #include "array_count.h"
@@ -9,6 +9,7 @@
 #include "ichain.h"
 #include "rand.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_math.h"
 #include "sys_matrix.h"
 #include "z_en_item00.h"
@@ -139,8 +140,8 @@ static ColliderQuadInit sQuadInit = {
 };
 
 typedef enum EnPeehatDamageReaction {
-    /* 00 */ PEAHAT_DMG_REACT_ATTACK = 0,
-    /* 06 */ PEAHAT_DMG_REACT_LIGHT_ICE_ARROW = 6,
+    /*  0 */ PEAHAT_DMG_REACT_ATTACK = 0,
+    /*  6 */ PEAHAT_DMG_REACT_LIGHT_ICE_ARROW = 6,
     /* 12 */ PEAHAT_DMG_REACT_FIRE = 12,
     /* 13 */ PEAHAT_DMG_REACT_HOOKSHOT = 13,
     /* 14 */ PEAHAT_DMG_REACT_BOOMERANG = 14,
@@ -183,14 +184,14 @@ static DamageTable sDamageTable = {
 };
 
 typedef enum PeahatState {
-    /* 00 */ PEAHAT_STATE_DYING,
-    /* 01 */ PEAHAT_STATE_EXPLODE,
-    /* 03 */ PEAHAT_STATE_3 = 3,
-    /* 04 */ PEAHAT_STATE_4,
-    /* 05 */ PEAHAT_STATE_FLY,
-    /* 07 */ PEAHAT_STATE_ATTACK_RECOIL = 7,
-    /* 08 */ PEAHAT_STATE_8,
-    /* 09 */ PEAHAT_STATE_9,
+    /*  0 */ PEAHAT_STATE_DYING,
+    /*  1 */ PEAHAT_STATE_EXPLODE,
+    /*  3 */ PEAHAT_STATE_3 = 3,
+    /*  4 */ PEAHAT_STATE_4,
+    /*  5 */ PEAHAT_STATE_FLY,
+    /*  7 */ PEAHAT_STATE_ATTACK_RECOIL = 7,
+    /*  8 */ PEAHAT_STATE_8,
+    /*  9 */ PEAHAT_STATE_9,
     /* 10 */ PEAHAT_STATE_LANDING,
     /* 12 */ PEAHAT_STATE_RETURN_HOME = 12,
     /* 13 */ PEAHAT_STATE_STUNNED,
@@ -302,9 +303,12 @@ void EnPeehat_HitWhenGrounded(EnPeehat* this, PlayState* play) {
         Vec3f itemDropPos = this->actor.world.pos;
 
         itemDropPos.y += 70.0f;
-        Item_DropCollectibleRandom(play, &this->actor, &itemDropPos, 0x40);
-        Item_DropCollectibleRandom(play, &this->actor, &itemDropPos, 0x40);
-        Item_DropCollectibleRandom(play, &this->actor, &itemDropPos, 0x40);
+        Item_DropCollectibleRandom(play, &this->actor, &itemDropPos,
+                                   COLLECTIBLE_DROP_RANDOM_PARAMS(COLLECTIBLE_DROP_TABLE_4, false));
+        Item_DropCollectibleRandom(play, &this->actor, &itemDropPos,
+                                   COLLECTIBLE_DROP_RANDOM_PARAMS(COLLECTIBLE_DROP_TABLE_4, false));
+        Item_DropCollectibleRandom(play, &this->actor, &itemDropPos,
+                                   COLLECTIBLE_DROP_RANDOM_PARAMS(COLLECTIBLE_DROP_TABLE_4, false));
         this->unk_2D4 = 240;
     } else {
         s32 i;
@@ -371,7 +375,7 @@ void EnPeehat_Flying_SetStateGround(EnPeehat* this) {
                      ANIMMODE_ONCE, 0.0f);
     this->seekPlayerTimer = 400;
     this->unk_2D4 = 0;
-    this->unk_2FA = 0; //! @bug: overwrites number of child larva spawned, allowing for more than MAX_LARVA spawns
+    this->unk_2FA = 0; //! @bug overwrites number of child larva spawned, allowing for more than MAX_LARVA spawns
     this->state = PEAHAT_STATE_4;
     EnPeehat_SetupAction(this, EnPeehat_Flying_StateGrounded);
 }
@@ -492,7 +496,7 @@ void EnPeehat_Flying_StateRise(EnPeehat* this, PlayState* play) {
             }
         }
         if (SkelAnime_Update(&this->skelAnime) || this->animTimer == 0) {
-            //! @bug: overwrites number of child larva spawned, allowing for more than MAX_LARVA spawns
+            //! @bug overwrites number of child larva spawned, allowing for more than MAX_LARVA spawns
             this->unk_2FA = 0;
             EnPeehat_Flying_SetStateFly(this);
         } else {
@@ -607,7 +611,8 @@ void EnPeehat_Larva_StateSeekPlayer(EnPeehat* this, PlayState* play) {
             if (!(this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
                 EffectSsDeadSound_SpawnStationary(play, &this->actor.projectedPos, NA_SE_EN_PIHAT_SM_DEAD, 1, 1, 40);
             }
-            Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos, 0x20);
+            Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos,
+                                       COLLECTIBLE_DROP_RANDOM_PARAMS(COLLECTIBLE_DROP_TABLE_2, false));
             Actor_Kill(&this->actor);
         }
     }
@@ -877,7 +882,7 @@ void EnPeehat_SetStateExplode(EnPeehat* this) {
 }
 
 void EnPeehat_StateExplode(EnPeehat* this, PlayState* play) {
-    s32 pad[2];
+    STACK_PADS(s32, 2);
 
     if (this->animTimer == 5) {
         EnBom* bomb = (EnBom*)Actor_Spawn(&play->actorCtx, play, ACTOR_EN_BOM, this->actor.world.pos.x,
@@ -888,9 +893,12 @@ void EnPeehat_StateExplode(EnPeehat* this, PlayState* play) {
     }
     this->animTimer--;
     if (this->animTimer == 0) {
-        Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos, 0x40);
-        Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos, 0x40);
-        Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos, 0x40);
+        Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos,
+                                   COLLECTIBLE_DROP_RANDOM_PARAMS(COLLECTIBLE_DROP_TABLE_4, false));
+        Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos,
+                                   COLLECTIBLE_DROP_RANDOM_PARAMS(COLLECTIBLE_DROP_TABLE_4, false));
+        Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos,
+                                   COLLECTIBLE_DROP_RANDOM_PARAMS(COLLECTIBLE_DROP_TABLE_4, false));
         Actor_Kill(&this->actor);
     }
 }

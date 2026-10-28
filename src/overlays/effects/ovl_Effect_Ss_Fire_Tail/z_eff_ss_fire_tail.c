@@ -8,13 +8,14 @@
 
 #include "gfx.h"
 #include "gfx_setupdl.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_lib.h"
 #include "effect.h"
 #include "play_state.h"
 #include "player.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/eff_fire.h"
 
 #define rScale regs[0]
 #define rLifespan regs[1]
@@ -76,7 +77,7 @@ u32 EffectSsFireTail_Init(PlayState* play, u32 index, EffectSs* this, void* init
 
 void EffectSsFireTail_Draw(PlayState* play, u32 index, EffectSs* this) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
-    s32 pad;
+    STACK_PAD(s32);
     s16 yaw;
     Vec3f scale;
     f32 temp1;

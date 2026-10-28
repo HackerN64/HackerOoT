@@ -5,8 +5,8 @@
  */
 
 #include "z_en_viewer.h"
-#include "overlays/actors/ovl_Boss_Ganon/z_boss_ganon.h"
-#include "overlays/actors/ovl_En_Ganon_Mant/z_en_ganon_mant.h"
+#include "src/overlays/actors/ovl_Boss_Ganon/z_boss_ganon.h"
+#include "src/overlays/actors/ovl_En_Ganon_Mant/z_en_ganon_mant.h"
 
 #include "libc64/qrand.h"
 #include "array_count.h"
@@ -18,6 +18,7 @@
 #include "seqcmd.h"
 #include "sequence.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_lib.h"
 #include "audio.h"
@@ -26,7 +27,7 @@
 #include "skin.h"
 
 #include "assets/objects/object_zl4/object_zl4.h"
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/eff_fire.h"
 #include "assets/objects/object_horse_zelda/object_horse_zelda.h"
 #include "assets/objects/object_horse_ganon/object_horse_ganon.h"
 #include "assets/objects/object_im/object_im.h"
@@ -216,7 +217,7 @@ static s16 sTimer = 0;
 void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
     u8 type = PARAMS_GET_NOMASK(this->actor.params, 8);
     u16 csCurFrame;
-    s32 animationEnded;
+    s32 animFinished;
 
     if (type == ENVIEWER_TYPE_2_ZELDA) {
         if (gSaveContext.sceneLayer == 5) {
@@ -295,7 +296,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
     EnViewer_UpdatePosition(this, play);
     Actor_MoveXZGravity(&this->actor); // has no effect, speed/velocity and gravity are 0
 
-    animationEnded = SkelAnime_Update(&this->skin.skelAnime);
+    animFinished = SkelAnime_Update(&this->skin.skelAnime);
     if (type == ENVIEWER_TYPE_3_GANONDORF || type == ENVIEWER_TYPE_4_HORSE_GANONDORF) {
         if (play->csCtx.state != CS_STATE_IDLE && play->csCtx.actorCues[1] != NULL) {
             if (play->csCtx.actorCues[1]->id == 2 && sTimer == 0) {
@@ -325,7 +326,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
                         }
                         break;
                     case 1:
-                        if (animationEnded) {
+                        if (animFinished) {
                             Animation_MorphToLoop(&this->skin.skelAnime, &gYoungGanondorfHorsebackLookSidewaysLoopAnim,
                                                   -5.0f);
                             this->state++;
@@ -339,7 +340,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
                         }
                         break;
                     case 3:
-                        if (animationEnded) {
+                        if (animFinished) {
                             Animation_MorphToLoop(&this->skin.skelAnime, &gYoungGanondorfHorsebackMagicChargeUpLoopAnim,
                                                   -5.0f);
                             this->state++;
@@ -440,7 +441,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
                     }
                     break;
                 case 2:
-                    if (animationEnded) {
+                    if (animFinished) {
                         Animation_MorphToLoop(&this->skin.skelAnime, &object_opening_demo1_Anim_0048FC, -5.0f);
                         this->state++;
                     }
@@ -460,7 +461,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
                 }
                 break;
             case 1:
-                if (animationEnded) {
+                if (animFinished) {
                     Animation_MorphToLoop(&this->skin.skelAnime, &gYoungGanondorfLaughLoopAnim, -5.0f);
                     this->state++;
                 }
@@ -483,7 +484,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
                 }
                 break;
             case 2:
-                if (animationEnded) {
+                if (animFinished) {
                     Animation_MorphToLoop(&this->skin.skelAnime, &gYoungGanondorfKneelLoopAnim, -5.0f);
                     this->state++;
                 }
@@ -629,7 +630,7 @@ s32 EnViewer_ZeldaOverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, 
 }
 
 void EnViewer_ZeldaPostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, void* thisx) {
-    s32 pad;
+    STACK_PAD(s32);
 
     if (play->sceneId == SCENE_TEMPLE_OF_TIME) {
         if (limbIndex == 16) {
@@ -700,7 +701,7 @@ void EnViewer_DrawImpa(EnViewer* this, PlayState* play) {
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(gImpaEyeOpenTex));
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(gImpaEyeOpenTex));
     gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 255);
-    gSPSegment(POLY_OPA_DISP++, 0x0C, &D_80116280[2]);
+    gSPSegment(POLY_OPA_DISP++, 0x0C, ACTOR_SETUP_OPA_DL);
     SkelAnime_DrawFlexOpa(play, this->skin.skelAnime.skeleton, this->skin.skelAnime.jointTable,
                           this->skin.skelAnime.dListCount, EnViewer_ImpaOverrideLimbDraw, NULL, this);
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_viewer.c", 1740);
@@ -715,7 +716,7 @@ static EnViewerDrawFunc sDrawFuncs[] = {
 
 void EnViewer_Draw(Actor* thisx, PlayState* play) {
     EnViewer* this = (EnViewer*)thisx;
-    s32 pad;
+    STACK_PAD(s32);
     s16 type;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_viewer.c", 1760);

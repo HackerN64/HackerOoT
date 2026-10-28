@@ -11,13 +11,14 @@
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "segmented_address.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_lib.h"
 #include "effect.h"
 #include "play_state.h"
 #include "skin_matrix.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/eff_bomb_explosion.h"
 
 #define EFFSSBOMB_LIFESPAN 20
 
@@ -63,7 +64,7 @@ void EffectSsBomb_Draw(PlayState* play, u32 index, EffectSs* this) {
     MtxF mfResult;
     MtxF mfTransBillboard;
     Mtx* mtx;
-    s32 pad;
+    STACK_PAD(s32);
     f32 scale;
     s16 intensity;
     IF_F3DEX3_DONT_SKIP_TEX_INIT();

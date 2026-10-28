@@ -1,6 +1,6 @@
 #include "z_en_item00.h"
-#include "overlays/actors/ovl_En_Elf/z_en_elf.h"
-#include "overlays/effects/ovl_Effect_Ss_Dead_Sound/z_eff_ss_dead_sound.h"
+#include "src/overlays/actors/ovl_En_Elf/z_en_elf.h"
+#include "src/overlays/effects/ovl_Effect_Ss_Dead_Sound/z_eff_ss_dead_sound.h"
 
 #include "libc64/qrand.h"
 #include "attributes.h"
@@ -10,6 +10,7 @@
 #include "rand.h"
 #include "segmented_address.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_lib.h"
 #include "draw.h"
@@ -19,7 +20,13 @@
 #include "player.h"
 #include "save.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/rupee.h"
+#include "assets/objects/gameplay_keep/drop_recovery_heart_tex.h"
+#include "assets/objects/gameplay_keep/item_drop_dl.h"
+#include "assets/objects/gameplay_keep/gameplay_keep_0x3C870.h"
+#include "assets/objects/gameplay_keep/gameplay_keep_0x3F140.h"
+#include "assets/objects/gameplay_keep/gameplay_keep_0x3B1E0.h"
+#include "assets/objects/gameplay_keep/heart_piece_interior_model.h"
 
 #pragma increment_block_number "gc-eu:128 gc-eu-mq:128 gc-eu-mq-dbg:0 gc-jp:128 gc-jp-ce:128 gc-jp-mq:128 gc-us:128" \
                                "gc-us-mq:128 ique-cn:128 ntsc-1.0:128 ntsc-1.2:128"
@@ -93,7 +100,7 @@ static void* sItemDropTex[] = {
 };
 
 static u8 sItemDropIds[] = {
-    // 0
+    // COLLECTIBLE_DROP_TABLE_0
     ITEM00_RUPEE_GREEN,
     ITEM00_RUPEE_BLUE,
     ITEM00_NONE,
@@ -111,7 +118,7 @@ static u8 sItemDropIds[] = {
     ITEM00_NONE,
     ITEM00_RUPEE_BLUE,
 
-    // 1
+    // COLLECTIBLE_DROP_TABLE_1
     ITEM00_RUPEE_GREEN,
     ITEM00_MAGIC_SMALL,
     ITEM00_RUPEE_GREEN,
@@ -129,7 +136,7 @@ static u8 sItemDropIds[] = {
     ITEM00_NONE,
     ITEM00_MAGIC_SMALL,
 
-    // 2
+    // COLLECTIBLE_DROP_TABLE_2
     ITEM00_RUPEE_GREEN,
     ITEM00_RUPEE_GREEN,
     ITEM00_MAGIC_SMALL,
@@ -147,7 +154,7 @@ static u8 sItemDropIds[] = {
     ITEM00_FLEXIBLE,
     ITEM00_MAGIC_SMALL,
 
-    // 3
+    // COLLECTIBLE_DROP_TABLE_3
     ITEM00_RUPEE_GREEN,
     ITEM00_RUPEE_GREEN,
     ITEM00_NUTS,
@@ -165,7 +172,7 @@ static u8 sItemDropIds[] = {
     ITEM00_NONE,
     ITEM00_NONE,
 
-    // 4
+    // COLLECTIBLE_DROP_TABLE_4
     ITEM00_RUPEE_GREEN,
     ITEM00_RUPEE_GREEN,
     ITEM00_SEEDS,
@@ -183,7 +190,7 @@ static u8 sItemDropIds[] = {
     ITEM00_NONE,
     ITEM00_MAGIC_SMALL,
 
-    // 5
+    // COLLECTIBLE_DROP_TABLE_5
     ITEM00_RUPEE_GREEN,
     ITEM00_MAGIC_SMALL,
     ITEM00_RUPEE_GREEN,
@@ -201,7 +208,7 @@ static u8 sItemDropIds[] = {
     ITEM00_NONE,
     ITEM00_MAGIC_SMALL,
 
-    // 6
+    // COLLECTIBLE_DROP_TABLE_6
     ITEM00_RUPEE_GREEN,
     ITEM00_RUPEE_BLUE,
     ITEM00_NONE,
@@ -219,7 +226,7 @@ static u8 sItemDropIds[] = {
     ITEM00_NONE,
     ITEM00_MAGIC_LARGE,
 
-    // 7
+    // COLLECTIBLE_DROP_TABLE_7
     ITEM00_RUPEE_GREEN,
     ITEM00_NONE,
     ITEM00_RUPEE_BLUE,
@@ -237,7 +244,7 @@ static u8 sItemDropIds[] = {
     ITEM00_NONE,
     ITEM00_MAGIC_LARGE,
 
-    // 8
+    // COLLECTIBLE_DROP_TABLE_8
     ITEM00_ARROWS_LARGE,
     ITEM00_ARROWS_MEDIUM,
     ITEM00_ARROWS_MEDIUM,
@@ -255,7 +262,7 @@ static u8 sItemDropIds[] = {
     ITEM00_ARROWS_LARGE,
     ITEM00_ARROWS_LARGE,
 
-    // 9
+    // COLLECTIBLE_DROP_TABLE_9
     ITEM00_MAGIC_LARGE,
     ITEM00_MAGIC_SMALL,
     ITEM00_MAGIC_SMALL,
@@ -273,7 +280,7 @@ static u8 sItemDropIds[] = {
     ITEM00_MAGIC_SMALL,
     ITEM00_MAGIC_LARGE,
 
-    // 10
+    // COLLECTIBLE_DROP_TABLE_10
     ITEM00_BOMBS_A,
     ITEM00_NONE,
     ITEM00_BOMBS_A,
@@ -291,7 +298,7 @@ static u8 sItemDropIds[] = {
     ITEM00_NONE,
     ITEM00_BOMBS_A,
 
-    // 11
+    // COLLECTIBLE_DROP_TABLE_11
     ITEM00_RECOVERY_HEART,
     ITEM00_RECOVERY_HEART,
     ITEM00_RECOVERY_HEART,
@@ -309,7 +316,7 @@ static u8 sItemDropIds[] = {
     ITEM00_RECOVERY_HEART,
     ITEM00_RECOVERY_HEART,
 
-    // 12
+    // COLLECTIBLE_DROP_TABLE_12
     ITEM00_RUPEE_RED,
     ITEM00_RUPEE_BLUE,
     ITEM00_RUPEE_BLUE,
@@ -327,7 +334,7 @@ static u8 sItemDropIds[] = {
     ITEM00_RUPEE_RED,
     ITEM00_RUPEE_RED,
 
-    // 13
+    // COLLECTIBLE_DROP_TABLE_13
     ITEM00_SEEDS,
     ITEM00_NONE,
     ITEM00_NUTS,
@@ -345,7 +352,7 @@ static u8 sItemDropIds[] = {
     ITEM00_RECOVERY_HEART,
     ITEM00_SEEDS,
 
-    // 14
+    // COLLECTIBLE_DROP_TABLE_14
     ITEM00_RECOVERY_HEART,
     ITEM00_NONE,
     ITEM00_SEEDS,
@@ -388,12 +395,12 @@ void EnItem00_SetupAction(EnItem00* this, EnItem00ActionFunc actionFunc) {
 
 void EnItem00_Init(Actor* thisx, PlayState* play) {
     EnItem00* this = (EnItem00*)thisx;
-    s32 pad;
+    STACK_PAD(s32);
     f32 yOffset = 980.0f;
     f32 shadowScale = 6.0f;
     s32 getItemId = GI_NONE;
     s16 spawnParam8000 = PARAMS_GET_NOSHIFT(this->actor.params, 15, 1);
-    s32 pad1;
+    STACK_PAD(s32);
 
     this->collectibleFlag = PARAMS_GET_S(this->actor.params, 8, 6);
 
@@ -614,7 +621,7 @@ void EnItem00_Destroy(Actor* thisx, PlayState* play) {
     Collider_DestroyCylinder(play, &this->collider);
 }
 
-void func_8001DFC8(EnItem00* this, PlayState* play) {
+void func_8001DFC8(EnItem00* this, UNUSED PlayState* play) {
     if ((this->actor.params <= ITEM00_RUPEE_RED) ||
         ((this->actor.params == ITEM00_RECOVERY_HEART) && (this->despawnTimer < 0)) ||
         (this->actor.params == ITEM00_HEART_PIECE)) {
@@ -690,7 +697,7 @@ void func_8001E1C8(EnItem00* this, PlayState* play) {
 }
 
 void func_8001E304(EnItem00* this, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     Vec3f pos;
     s32 rotOffset;
 
@@ -787,7 +794,7 @@ void EnItem00_Update(Actor* thisx, PlayState* play) {
     s16 i;
     u32* temp;
     EnItem00* this = (EnItem00*)thisx;
-    s32 pad;
+    STACK_PAD(s32);
 
     if (this->despawnTimer > 0) {
         this->despawnTimer--;
@@ -1065,7 +1072,7 @@ void EnItem00_Draw(Actor* thisx, PlayState* play) {
  * Draw Function used for Rupee types of En_Item00.
  */
 void EnItem00_DrawRupee(EnItem00* this, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     s32 texIndex;
     IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
@@ -1122,7 +1129,7 @@ void EnItem00_DrawCollectible(EnItem00* this, PlayState* play) {
  * Draw Function used for the Heart Container type of En_Item00.
  */
 void EnItem00_DrawHeartContainer(EnItem00* this, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1623);
 
@@ -1143,7 +1150,7 @@ void EnItem00_DrawHeartContainer(EnItem00* this, PlayState* play) {
  * Draw Function used for the Piece of Heart type of En_Item00.
  */
 void EnItem00_DrawHeartPiece(EnItem00* this, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_item00.c", 1658);
 
@@ -1194,7 +1201,7 @@ s16 func_8001F404(s16 dropId) {
 // External functions used by other actors to drop collectibles, which usually results in spawning an En_Item00 actor.
 
 EnItem00* Item_DropCollectible(PlayState* play, Vec3f* spawnPos, s16 params) {
-    s32 pad[2];
+    STACK_PADS(s32, 2);
     EnItem00* spawnedActor = NULL;
     s16 param4000 = params & 0x4000;
     s16 param8000 = params & 0x8000;
@@ -1238,7 +1245,7 @@ EnItem00* Item_DropCollectible(PlayState* play, Vec3f* spawnPos, s16 params) {
 
 EnItem00* Item_DropCollectible2(PlayState* play, Vec3f* spawnPos, s16 params) {
     EnItem00* spawnedActor = NULL;
-    s32 pad;
+    STACK_PAD(s32);
     s16 param4000 = params & 0x4000;
     s16 param8000 = params & 0x8000;
     s16 param3F00 = params & 0x3F00;
@@ -1270,7 +1277,7 @@ EnItem00* Item_DropCollectible2(PlayState* play, Vec3f* spawnPos, s16 params) {
 }
 
 void Item_DropCollectibleRandom(PlayState* play, Actor* fromActor, Vec3f* spawnPos, s16 params) {
-    s32 pad;
+    STACK_PAD(s32);
     EnItem00* spawnedActor;
     s16 dropQuantity;
     s16 param8000;

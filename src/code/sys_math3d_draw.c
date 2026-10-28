@@ -1,4 +1,5 @@
 #include "sys_math3d.h"
+#include "attributes.h"
 #include "play_state.h"
 #include "gfx.h"
 #include "sys_matrix.h"

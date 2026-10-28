@@ -21,6 +21,7 @@
 #include "regs.h"
 #include "segment_symbols.h"
 #include "sequence.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "sys_debug_controller.h"
 #include "sys_freeze.h"
@@ -87,15 +88,15 @@ void ConsoleLogo_SetupView(ConsoleLogoState* this, f32 x, f32 y, f32 z) {
 void ConsoleLogo_Draw(ConsoleLogoState* this) {
     static s16 sTitleRotY = 0;
     static Lights1 sTitleLights = gdSPDefLights1(100, 100, 100, 255, 255, 255, 69, 69, 69);
-
     u16 y;
     u16 idx;
-    s32 pad1;
+    STACK_PAD(s32);
     Vec3f v3;
     Vec3f v1;
     Vec3f v2;
-    s32 pad2;
-    s32 pad3;
+#if OOT_VERSION != IQUE_CN
+    STACK_PADS(s32, 2);
+#endif
 
     OPEN_DISPS(this->state.gfxCtx, "../z_title.c", 395);
 
@@ -189,7 +190,7 @@ void ConsoleLogo_Destroy(GameState* thisx) {
 #if PLATFORM_N64
     if (this->unk_1E0) {
         if (func_801C7818() != 0) {
-            func_800D31A0();
+            Freeze_CurrentThread();
         }
         func_801C7268();
     }
@@ -198,7 +199,7 @@ void ConsoleLogo_Destroy(GameState* thisx) {
     Sram_InitSram(&this->state, &this->sramCtx);
 
 #if PLATFORM_N64
-    func_800014E8();
+    CIC6105_EnableAudio();
 #endif
 
 #if ENABLE_NEW_LETTERBOX
@@ -213,7 +214,7 @@ void ConsoleLogo_Init(GameState* thisx) {
 #if PLATFORM_N64
     if ((D_80121210 != 0) && (D_80121211 != 0) && (D_80121212 == 0)) {
         if (func_801C7658() != 0) {
-            func_800D31A0();
+            Freeze_CurrentThread();
         }
         this->unk_1E0 = true;
     } else {

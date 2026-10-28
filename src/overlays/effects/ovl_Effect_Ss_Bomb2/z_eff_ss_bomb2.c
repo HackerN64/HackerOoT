@@ -9,13 +9,14 @@
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "segmented_address.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_lib.h"
 #include "effect.h"
 #include "play_state.h"
 #include "skin_matrix.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/eff_bomb_explosion.h"
 
 #define rScale regs[0]
 #define rTexIndex regs[1]
@@ -80,7 +81,7 @@ void EffectSsBomb2_DrawFade(PlayState* play, u32 index, EffectSs* this) {
     MtxF mfResult;
     MtxF mfTransBillboard;
     Mtx* mtx;
-    s32 pad;
+    STACK_PAD(s32);
     f32 scale;
     IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
@@ -122,7 +123,7 @@ void EffectSsBomb2_DrawLayered(PlayState* play, u32 index, EffectSs* this) {
     MtxF mtx2F;
     Mtx* mtx2;
     Mtx* mtx;
-    s32 pad[3];
+    STACK_PADS(s32, 3);
     f32 scale;
     f32 depth;
     f32 layer2Scale = 0.925f;

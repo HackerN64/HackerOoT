@@ -9,12 +9,13 @@
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "rand.h"
+#include "stack_pad.h"
 #include "sys_math.h"
 #include "sys_matrix.h"
 #include "effect.h"
 #include "play_state.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/eff_ice_fragments.h"
 
 #define rLifespan regs[0]
 #define rYaw regs[1]
@@ -53,7 +54,7 @@ u32 EffectSsIcePiece_Init(PlayState* play, u32 index, EffectSs* this, void* init
 
 void EffectSsIcePiece_Draw(PlayState* play, u32 index, EffectSs* this) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
-    s32 pad;
+    STACK_PAD(s32);
     f32 scale;
     u32 frames;
     f32 alpha;

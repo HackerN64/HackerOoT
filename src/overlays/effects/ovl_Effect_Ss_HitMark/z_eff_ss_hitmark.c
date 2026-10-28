@@ -9,12 +9,13 @@
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "segmented_address.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "effect.h"
 #include "play_state.h"
 #include "skin_matrix.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/eff_hitmark.h"
 
 #define rTexIndex regs[0]
 #define rType regs[1]
@@ -86,7 +87,7 @@ void EffectSsHitMark_Draw(PlayState* play, u32 index, EffectSs* this) {
     MtxF mfTransBillboard;
     Mtx* mtx;
     f32 scale;
-    s32 pad;
+    STACK_PAD(s32);
     IF_F3DEX3_DONT_SKIP_TEX_INIT();
 
     OPEN_DISPS(gfxCtx, "../z_eff_ss_hitmark.c", 297);

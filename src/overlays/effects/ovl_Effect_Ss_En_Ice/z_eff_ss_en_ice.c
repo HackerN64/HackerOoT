@@ -10,6 +10,7 @@
 #include "gfx_setupdl.h"
 #include "printf.h"
 #include "rand.h"
+#include "stack_pad.h"
 #include "sys_math.h"
 #include "sys_matrix.h"
 #include "translation.h"
@@ -18,7 +19,7 @@
 #include "effect.h"
 #include "play_state.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/eff_ice_fragments.h"
 
 #define rLifespan regs[0]
 #define rYaw regs[1]
@@ -101,7 +102,7 @@ u32 EffectSsEnIce_Init(PlayState* play, u32 index, EffectSs* this, void* initPar
 
 void EffectSsEnIce_Draw(PlayState* play, u32 index, EffectSs* this) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
-    s32 pad;
+    STACK_PAD(s32);
     f32 scale;
     Vec3f hiliteLightDir;
     u32 gameplayFrames;

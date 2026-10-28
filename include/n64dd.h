@@ -72,8 +72,8 @@ typedef struct struct_801E0D18 {
     /* 0x00 */ LEOCmd unk_00;
     /* 0x1C */ OSMesgQueue unk_1C;
     /* 0x38 */ LEODiskID diskId;
-    /* 0x58 */ UNK_TYPE unk_58;
-    /* 0x5C */ UNK_TYPE unk_5C;
+    /* 0x58 */ s32 unk_58;
+    /* 0x5C */ s32 unk_5C;
     /* 0x60 */ u32 unk_60;
     /* 0x64 */ u8 unk_64;
     /* 0x65 */ u8 unk_65;
@@ -155,7 +155,7 @@ extern vu8 D_80121214;
 
 extern s32 (*D_801D2E54)(struct_801E0D18*);
 
-extern u8 B_801DC000[];
+extern u8 gN64DDDiskReadTemporaryBuffer[];
 
 extern s32 D_801D2E90;
 extern OSMesgQueue* B_801E0D10[2];
@@ -167,7 +167,7 @@ extern s32 B_801E0F64;
 extern void (*D_801D2EB4)(void*, void*, void*);
 
 // Error messages
-extern const char* D_801D2ED0[];        // "Error Number    " array
+extern const char* gN64DDLocalizedErrorNumberHeaders[]; // "Error Number    " array
 extern const char* D_801D2EE0[2][8][4]; // Array of error message strings
 
 // Error textures

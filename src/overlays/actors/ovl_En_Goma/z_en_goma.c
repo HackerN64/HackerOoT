@@ -5,8 +5,8 @@
  */
 
 #include "z_en_goma.h"
-#include "overlays/actors/ovl_Boss_Goma/z_boss_goma.h"
-#include "overlays/effects/ovl_Effect_Ss_Hahen/z_eff_ss_hahen.h"
+#include "src/overlays/actors/ovl_Boss_Goma/z_boss_goma.h"
+#include "src/overlays/effects/ovl_Effect_Ss_Hahen/z_eff_ss_hahen.h"
 
 #include "libc64/math64.h"
 #include "libc64/qrand.h"
@@ -15,6 +15,7 @@
 #include "ichain.h"
 #include "rand.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_en_item00.h"
 #include "z_lib.h"
@@ -443,7 +444,8 @@ void EnGoma_Dead(EnGoma* this, PlayState* play) {
         }
         SFX_PLAY_AT_POS(&this->actor.projectedPos, NA_SE_EN_EXTINCT);
         Actor_Kill(&this->actor);
-        Item_DropCollectibleRandom(play, NULL, &this->actor.world.pos, 0x30);
+        Item_DropCollectibleRandom(play, NULL, &this->actor.world.pos,
+                                   COLLECTIBLE_DROP_RANDOM_PARAMS(COLLECTIBLE_DROP_TABLE_3, false));
     }
     this->visualState = 2;
 }
@@ -721,7 +723,7 @@ void EnGoma_SetFloorRot(EnGoma* this) {
 
 void EnGoma_Update(Actor* thisx, PlayState* play) {
     EnGoma* this = (EnGoma*)thisx;
-    s32 pad;
+    STACK_PAD(s32);
     Player* player = GET_PLAYER(play);
 
     if (this->actionTimer != 0) {
@@ -805,7 +807,7 @@ Gfx* EnGoma_NoBackfaceCullingDlist(GraphicsContext* gfxCtx) {
 void EnGoma_Draw(Actor* thisx, PlayState* play) {
     EnGoma* this = (EnGoma*)thisx;
     s32 y;
-    s32 pad;
+    STACK_PAD(s32);
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_goma.c", 2040);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);

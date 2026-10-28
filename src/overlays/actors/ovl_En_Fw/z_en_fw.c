@@ -5,7 +5,7 @@
  */
 
 #include "z_en_fw.h"
-#include "overlays/actors/ovl_En_Bom/z_en_bom.h"
+#include "src/overlays/actors/ovl_En_Bom/z_en_bom.h"
 
 #include "libc64/math64.h"
 #include "libc64/qrand.h"
@@ -20,7 +20,7 @@
 #include "play_state.h"
 #include "player.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/dust_textures.h"
 #include "assets/objects/object_fw/object_fw.h"
 
 #define FLAGS                                                                                 \
@@ -276,7 +276,8 @@ void EnFw_Run(EnFw* this, PlayState* play) {
             }
             flareDancer = this->actor.parent;
             flareDancer->params |= 0x4000;
-            Item_DropCollectibleRandom(play, NULL, &this->actor.world.pos, 0xA0);
+            Item_DropCollectibleRandom(play, NULL, &this->actor.world.pos,
+                                       COLLECTIBLE_DROP_RANDOM_PARAMS(COLLECTIBLE_DROP_TABLE_10, false));
             Actor_Kill(&this->actor);
             return;
         }

@@ -5,9 +5,9 @@
  */
 
 #include "z_en_fhg_fire.h"
-#include "overlays/actors/ovl_Boss_Ganondrof/z_boss_ganondrof.h"
-#include "overlays/actors/ovl_En_fHG/z_en_fhg.h"
-#include "overlays/effects/ovl_Effect_Ss_Fhg_Flash/z_eff_ss_fhg_flash.h"
+#include "src/overlays/actors/ovl_Boss_Ganondrof/z_boss_ganondrof.h"
+#include "src/overlays/actors/ovl_En_fHG/z_en_fhg.h"
+#include "src/overlays/effects/ovl_Effect_Ss_Fhg_Flash/z_eff_ss_fhg_flash.h"
 
 #include "libc64/math64.h"
 #include "libc64/qrand.h"
@@ -19,6 +19,7 @@
 #include "rumble.h"
 #include "segmented_address.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "translation.h"
 #include "z_lib.h"
@@ -26,7 +27,7 @@
 #include "play_state.h"
 #include "player.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/dust_textures.h"
 #include "assets/objects/object_fhg/object_fhg.h"
 
 #define FLAGS (ACTOR_FLAG_UPDATE_CULLING_DISABLED | ACTOR_FLAG_DRAW_CULLING_DISABLED)
@@ -99,7 +100,7 @@ void EnFhgFire_SetUpdate(EnFhgFire* this, EnFhgFireUpdateFunc updateFunc) {
 }
 
 void EnFhgFire_Init(Actor* thisx, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     EnFhgFire* this = (EnFhgFire*)thisx;
     Player* player = GET_PLAYER(play);
 
@@ -181,7 +182,7 @@ void EnFhgFire_Init(Actor* thisx, PlayState* play) {
 }
 
 void EnFhgFire_Destroy(Actor* thisx, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     EnFhgFire* this = (EnFhgFire*)thisx;
 
     if ((this->actor.params == FHGFIRE_LIGHTNING_SHOCK) || (this->actor.params == FHGFIRE_LIGHTNING_BURST) ||
@@ -693,7 +694,7 @@ void EnFhgFire_PhantomWarp(EnFhgFire* this, PlayState* play) {
 }
 
 void EnFhgFire_Update(Actor* thisx, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     EnFhgFire* this = (EnFhgFire*)thisx;
 
     this->work[FHGFIRE_VARIANCE_TIMER]++;
@@ -708,12 +709,12 @@ void EnFhgFire_Update(Actor* thisx, PlayState* play) {
     this->updateFunc(this, play);
 }
 
-static void* sDustTextures[] = {
+UNUSED static void* sDustTextures[] = {
     gDust1Tex, gDust2Tex, gDust3Tex, gDust4Tex, gDust5Tex, gDust6Tex, gDust7Tex, gDust8Tex,
 };
 
 void EnFhgFire_Draw(Actor* thisx, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     EnFhgFire* this = (EnFhgFire*)thisx;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_fhg_fire.c", 1723);

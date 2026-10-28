@@ -41,10 +41,11 @@
  * DPad-Down disables sending fault pages over osSyncPrintf.
  */
 
-#pragma increment_block_number "gc-eu:160 gc-eu-mq:160 gc-eu-mq-dbg:160 gc-jp:160 gc-jp-ce:160 gc-jp-mq:160 gc-us:160" \
-                               "gc-us-mq:160 ique-cn:160"
+#pragma increment_block_number "gc-eu:160 gc-eu-dbg:160 gc-eu-dbg-2:160 gc-eu-mq:160 gc-eu-mq-dbg:160 gc-jp:160" \
+                               "gc-jp-ce:160 gc-jp-mq:160 gc-us:160 gc-us-mq:160 ique-cn:160"
 
 #include "libc64/sleep.h"
+#include "attributes.h"
 #include "libc64/sprintf.h"
 #include "alloca.h"
 #include "array_count.h"
@@ -53,6 +54,7 @@
 #include "padmgr.h"
 #include "fault.h"
 #include "stack.h"
+#include "stack_pad.h"
 #include "stackcheck.h"
 #include "terminal.h"
 #include "translation.h"
@@ -652,7 +654,7 @@ OSThread* Fault_FindFaultedThread(void) {
 }
 
 void Fault_Wait5Seconds(void) {
-    s32 pad;
+    STACK_PAD(s32);
     OSTime start = osGetTime();
 
     do {
@@ -662,7 +664,7 @@ void Fault_Wait5Seconds(void) {
     sFaultInstance->autoScroll = !DISABLE_CRASH_DBG_AUTOSCROLL;
 }
 
-void Fault_DrawMemDumpContents(const char* title, uintptr_t addr, u32 arg2) {
+void Fault_DrawMemDumpContents(const char* title, uintptr_t addr, UNUSED u32 arg2) {
     uintptr_t alignedAddr = addr;
     u32* writeAddr;
     s32 y;
@@ -944,7 +946,7 @@ void Fault_LogStackTrace(OSThread* thread, s32 height) {
     uintptr_t ra = thread->context.ra;
     uintptr_t pc = thread->context.pc;
     uintptr_t addr;
-    s32 pad;
+    STACK_PAD(s32);
 
     osSyncPrintf("STACK TRACE\nSP       PC       (VPC)\n");
     for (line = 1; line < height && (ra != 0 || sp != 0) && pc != (uintptr_t)__osCleanupThread; line++) {
@@ -1020,10 +1022,10 @@ void Fault_UpdatePad(void) {
 #define FAULT_MSG_FAULT ((OSMesg)2)
 #define FAULT_MSG_UNK ((OSMesg)3)
 
-void Fault_ThreadEntry(void* arg) {
+void Fault_ThreadEntry(UNUSED void* arg) {
     OSMesg msg;
     OSThread* faultedThread;
-    s32 pad;
+    STACK_PAD(s32);
 
     // Direct OS event messages to the fault event queue
     osSetEventMesg(OS_EVENT_CPU_BREAK, &sFaultInstance->queue, FAULT_MSG_CPU_BREAK);
@@ -1161,7 +1163,7 @@ void Fault_HungupFaultClient(const char* exp1, const char* exp2) {
  */
 NORETURN void Fault_AddHungupAndCrashImpl(const char* exp1, const char* exp2) {
     FaultClient client;
-    s32 pad;
+    STACK_PAD(s32);
 
     Fault_AddClient(&client, Fault_HungupFaultClient, (void*)exp1, (void*)exp2);
     *(u32*)0x11111111 = 0; // trigger an exception via unaligned memory access
