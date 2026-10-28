@@ -118,17 +118,18 @@ For example for `ntsc-1.2`, run `make VERSION=ntsc-1.2`
 If all goes well, a new ROM should be built at `build/<the-version>/hackeroot-<the-version>.z64` (for example `build/ntsc-1.2/hackeroot-ntsc-1.2.z64`), and the following text printed:
 
 ```
-build/<the-version>/oot-<the-version>.z64: OK
+==== Build Options ====
+OoT Version: <the-version>
+MIPS Toolchain: <detected toolchain>
+MIPS ABI: <ABI option>
+Code Version: <commit hash>
+Debug Build: <1 for debug builds otherwise 0>
+Opt. Flags: <optimization flags>
+Rom Path: build/<the-version>/hackeroot-<the-version>.z64
+Build Author: <build author>
+Commit Author: <commit author>
+Build succeeded.
 ```
-
-If you instead see the following:
-
-```
-build/<the-version>/oot-<the-version>.z64: FAILED
-md5sum: WARNING: 1 computed checksum did NOT match
-```
-
-This means that the built ROM isn't the same as the base one, so something went wrong or some part of the code doesn't match.
 
 **NOTE:** to speed up the build, you can either:
 
