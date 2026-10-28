@@ -2303,7 +2303,7 @@ void Cutscene_ProcessScript(PlayState* play, CutsceneContext* csCtx, u8* script)
                 break;
 
             case CS_CMD_MOTION_BLUR:
-                MemCpy(&cmdEntries, script, sizeof(cmdEntries));
+                MemCopy(&cmdEntries, script, sizeof(cmdEntries));
                 script += sizeof(cmdEntries);
 
                 for (j = 0; j < cmdEntries; j++) {
