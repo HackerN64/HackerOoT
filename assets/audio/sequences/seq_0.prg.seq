@@ -6,6 +6,54 @@
 #define IO_PORT_SFX_INDEX_LOBITS IO_PORT_4
 #define IO_PORT_SFX_INDEX_HIBITS IO_PORT_5
 
+/**
+ * Load a dyntable up to 512 entries large and prepare the index into it with the sfx id
+ * using IO ports 4 (SFX_ID_LOBITS) and 5 (SFX_ID_HIBIT)
+ */
+.macro load_table tbl, tbl_size
+.if \tbl_size <= 128
+    /* very short sfx bank */
+        ldio        IO_PORT_SFX_INDEX_LOBITS
+        dyntbl      \tbl
+.elseif \tbl_size <= 256
+    /* short sfx bank */
+        ldio        IO_PORT_SFX_INDEX_LOBITS
+        bgez        1f
+        and         0x7F
+        dyntbl      \tbl + 2 * 1 * 128
+        rjump       2f
+    1:
+        dyntbl      \tbl + 2 * 0 * 128
+    2:
+.elseif \tbl_size <= 512
+    /* large sfx bank */
+        ldio        IO_PORT_SFX_INDEX_HIBITS
+        sub         1
+        rbeqz       1f
+        ldio        IO_PORT_SFX_INDEX_LOBITS
+        bgez        2f
+        /* 128-255 */
+        and         0x7F
+        dyntbl      \tbl + 2 * 1 * 128
+        rjump       3f
+    1:
+        /* 256-383 */
+        dyntbl      \tbl + 2 * 2 * 128
+        ldio        IO_PORT_SFX_INDEX_LOBITS
+        bgez        3f
+        /* 384-511 */
+        and         0x7F
+        dyntbl      \tbl + 2 * 3 * 128
+        rjump       3f
+    2:
+        /*   0-127 */
+        dyntbl      \tbl + 2 * 0 * 128
+    3:
+.else /* >512, driver doesn't support this so raise an error */
+    .error "\tbl is too large. Only up to 512 sfx ids can be registered per bank."
+.endif
+.endm
+
 // Provide the sfx ids for use as constants
 #define DEFINE_SFX(channel, sfxId, importance, distParam, randParam, flags) \
     .internal sfxId;                                                        \
@@ -3426,14 +3474,10 @@ CHAN_169E:
 /* 0x16A3 [0xDC 0x7F               ] */ panweight   127
 /* 0x16A5 [0xFC 0x00 0x7C          ] */ call        CHAN_007C
 /* 0x16A8 [0x92                    ] */ dellayer    2
-/* 0x16A9 [0x64                    ] */ ldio        IO_PORT_SFX_INDEX_LOBITS
-/* 0x16AA [0xF5 0x16 0xB4          ] */ bgez        CHAN_16B4
-/* 0x16AD [0xC9 0x7F               ] */ and         127
-/* 0x16AF [0xC2 0x17 0xD5          ] */ dyntbl      environmentbank_table + 2 * 1 * 128
-/* 0x16B2 [0xF4 0x03               ] */ rjump       CHAN_16B7
 
-CHAN_16B4:
-/* 0x16B4 [0xC2 0x16 0xD5          ] */ dyntbl      environmentbank_table + 2 * 0 * 128
+/* extend environmentbank to 512 samples */
+                                        load_table  environmentbank_table, ENVIRONMENTBANK_TABLE_SIZE
+
 CHAN_16B7:
 /* 0x16B7 [0xE4                    ] */ dyncall
 CHAN_16B8:
