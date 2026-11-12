@@ -9,11 +9,12 @@
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "rand.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "effect.h"
 #include "play_state.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/eff_fire.h"
 
 #define rAlpha regs[0]
 #define rScroll regs[2]
@@ -50,7 +51,7 @@ u32 EffectSsKFire_Init(PlayState* play, u32 index, EffectSs* this, void* initPar
 
 void EffectSsKFire_Draw(PlayState* play, u32 index, EffectSs* this) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
-    s32 pad;
+    STACK_PAD(s32);
     f32 xzScale;
     f32 yScale;
 

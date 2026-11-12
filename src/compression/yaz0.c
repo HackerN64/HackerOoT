@@ -2,6 +2,7 @@
 
 #include "compression.h"
 #include "alignment.h"
+#include "stack_pad.h"
 #include "ultra64.h"
 #include "dma.h"
 
@@ -17,7 +18,7 @@ size_t sYaz0CurSize;
 u8* sYaz0MaxPtr;
 
 void* Yaz0_FirstDMA(void) {
-    s32 pad[2];
+    STACK_PADS(s32, 2);
     size_t dmaSize;
     size_t bufferSize;
 

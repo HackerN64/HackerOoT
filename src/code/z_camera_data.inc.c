@@ -1,4 +1,5 @@
 #include "array_count.h"
+#include "attributes.h"
 #include "ultra64.h"
 
 typedef struct CameraModeValue {
@@ -2712,4 +2713,4 @@ PlayState* D_8015BD7C;
 DebugCam D_8015BD80;
 #endif
 
-CollisionPoly* playerFloorPoly;
+CollisionPoly* sPlayerFloorPoly;

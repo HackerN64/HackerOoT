@@ -15,6 +15,7 @@
 #include "rumble.h"
 #include "segmented_address.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "terminal.h"
 #include "translation.h"
@@ -25,13 +26,6 @@
 #include "assets/objects/gameplay_dangeon_keep/gameplay_dangeon_keep.h"
 
 #define FLAGS ACTOR_FLAG_UPDATE_CULLING_DISABLED
-
-#define OBJSWITCH_TYPE(thisx) PARAMS_GET_U((thisx)->params, 0, 3)
-#define OBJSWITCH_SUBTYPE(thisx) PARAMS_GET_U((thisx)->params, 4, 3)
-#define OBJSWITCH_SWITCH_FLAG(thisx) PARAMS_GET_U((thisx)->params, 8, 6)
-#define OBJSWITCH_FROZEN(thisx) PARAMS_GET_U((thisx)->params, 7, 1)
-
-#define OBJSWITCH_FROZEN_FLAG (1 << 7)
 
 void ObjSwitch_Init(Actor* thisx, PlayState* play);
 void ObjSwitch_Destroy(Actor* thisx, PlayState* play);
@@ -207,7 +201,7 @@ void ObjSwitch_RotateY(Vec3f* dest, Vec3f* src, s16 rotY) {
 }
 
 void ObjSwitch_InitDynaPoly(ObjSwitch* this, PlayState* play, CollisionHeader* collision, s32 moveFlag) {
-    s32 pad;
+    STACK_PAD(s32);
     CollisionHeader* colHeader = NULL;
 
     DynaPolyActor_Init(&this->dyna, moveFlag);
@@ -216,7 +210,7 @@ void ObjSwitch_InitDynaPoly(ObjSwitch* this, PlayState* play, CollisionHeader* c
 
 #if DEBUG_FEATURES
     if (this->dyna.bgId == BG_ACTOR_MAX) {
-        s32 pad2;
+        STACK_PAD(s32);
 
         PRINTF(T("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n",
                  "Warning : move BG registration failed (%s %d)(name %d)(arg_data 0x%04x)\n"),
@@ -266,7 +260,7 @@ Actor* ObjSwitch_SpawnIce(ObjSwitch* this, PlayState* play) {
 }
 
 void ObjSwitch_SetOn(ObjSwitch* this, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     s32 subType;
 
     if (Flags_GetSwitch(play, OBJSWITCH_SWITCH_FLAG(&this->dyna.actor))) {
@@ -622,7 +616,7 @@ void ObjSwitch_CrystalOffInit(ObjSwitch* this) {
     this->crystalColor.r = 0;
     this->crystalColor.g = 0;
     this->crystalColor.b = 0;
-    this->crystalSubtype1texture = gCrstalSwitchRedTex;
+    this->crystalSubtype1texture = gCrystalSwitchRedTex;
     this->actionFunc = ObjSwitch_CrystalOff;
 }
 
@@ -677,7 +671,7 @@ void ObjSwitch_CrystalOnInit(ObjSwitch* this) {
     this->crystalColor.r = 255;
     this->crystalColor.g = 255;
     this->crystalColor.b = 255;
-    this->crystalSubtype1texture = gCrstalSwitchBlueTex;
+    this->crystalSubtype1texture = gCrystalSwitchBlueTex;
     this->actionFunc = ObjSwitch_CrystalOn;
 }
 
@@ -812,7 +806,7 @@ void ObjSwitch_DrawCrystal(Actor* thisx, PlayState* play) {
         gCrystalSwitchCoreOpaDL     // OBJSWITCH_SUBTYPE_SYNC
     };
     ObjSwitch* this = (ObjSwitch*)thisx;
-    s32 pad;
+    STACK_PAD(s32);
     IF_F3DEX3_DONT_SKIP_TEX_INIT();
     s32 subType = OBJSWITCH_SUBTYPE(&this->dyna.actor);
 

@@ -10,13 +10,14 @@
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "segmented_address.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_lib.h"
 #include "effect.h"
 #include "play_state.h"
 #include "skin_matrix.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/eff_lightning.h"
 
 #define rPrimColorR regs[0]
 #define rPrimColorG regs[1]
@@ -131,7 +132,7 @@ void EffectSsLightning_Draw(PlayState* play, u32 index, EffectSs* this) {
 }
 
 void EffectSsLightning_Update(PlayState* play, u32 index, EffectSs* this) {
-    s32 pad;
+    STACK_PAD(s32);
     Vec3f pos;
     s16 yaw;
     f32 scale;

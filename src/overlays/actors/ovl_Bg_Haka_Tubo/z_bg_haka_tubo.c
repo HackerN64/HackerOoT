@@ -11,13 +11,15 @@
 #include "gfx_setupdl.h"
 #include "ichain.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_en_item00.h"
 #include "z_lib.h"
 #include "effect.h"
 #include "play_state.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/eff_fragments_2_model.h"
+#include "assets/objects/gameplay_keep/gameplay_keep_0x173D0.h"
 #include "assets/objects/object_haka_objects/object_haka_objects.h"
 
 #define FLAGS ACTOR_FLAG_UPDATE_CULLING_DISABLED
@@ -90,7 +92,7 @@ static InitChainEntry sInitChain[] = {
 
 void BgHakaTubo_Init(Actor* thisx, PlayState* play) {
     BgHakaTubo* this = (BgHakaTubo*)thisx;
-    s32 pad;
+    STACK_PAD(s32);
     CollisionHeader* colHeader = NULL;
 
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
@@ -231,7 +233,7 @@ void BgHakaTubo_Update(Actor* thisx, PlayState* play) {
 }
 
 void BgHakaTubo_DrawFlameCircle(BgHakaTubo* this, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
 
     OPEN_DISPS(play->state.gfxCtx, "../z_bg_haka_tubo.c", 476);
 

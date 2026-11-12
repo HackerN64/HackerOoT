@@ -8,12 +8,13 @@
 
 #include "gfx.h"
 #include "gfx_setupdl.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_lib.h"
 #include "effect.h"
 #include "play_state.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/gameplay_keep_0x173D0.h"
 
 #define rUnused regs[3] // probably supposed to be an alpha
 #define rRadius regs[8]
@@ -52,7 +53,7 @@ u32 EffectSsFcircle_Init(PlayState* play, u32 index, EffectSs* this, void* initP
 
 void EffectSsFcircle_Draw(PlayState* play, u32 index, EffectSs* this) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
-    s32 pad;
+    STACK_PAD(s32);
     f32 yScale;
     f32 xzScale;
     f32 scale;

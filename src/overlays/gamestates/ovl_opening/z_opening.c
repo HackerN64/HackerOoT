@@ -5,6 +5,7 @@
  */
 
 #include "gfx.h"
+#include "attributes.h"
 #include "regs.h"
 #include "sys_matrix.h"
 #include "title_setup_state.h"
@@ -26,7 +27,7 @@ void TitleSetup_SetupTitleScreen(TitleSetupState* this) {
     SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
 }
 
-void func_80803C5C(TitleSetupState* this) {
+void func_80803C5C(UNUSED TitleSetupState* this) {
 }
 
 void TitleSetup_Main(GameState* thisx) {
@@ -38,7 +39,7 @@ void TitleSetup_Main(GameState* thisx) {
     func_80803C5C(this);
 }
 
-void TitleSetup_Destroy(GameState* thisx) {
+void TitleSetup_Destroy(UNUSED GameState* thisx) {
 #if ENABLE_NEW_LETTERBOX
     ShrinkWindow_Destroy();
 #endif

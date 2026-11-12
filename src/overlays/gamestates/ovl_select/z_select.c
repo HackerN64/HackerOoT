@@ -4,6 +4,10 @@
  * Description: Debug Scene Select Menu
  */
 #include "ultra64.h"
+
+#include "libc64/qrand.h"
+#include "attributes.h"
+#include "libu64/gfxprint.h"
 #include "alloca.h"
 #include "z_select.h"
 #include "debug_opening_state.h"
@@ -23,6 +27,7 @@
 #include "seqcmd.h"
 #include "sequence.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "terminal.h"
 #include "translation.h"
 #include "ultra64.h"
@@ -32,13 +37,13 @@
 #include "helpers.h"
 
 #if PLATFORM_N64
-void func_80800AD0_unknown(MapSelectState* this, s32 arg1) {
+void func_80800AD0_unknown(UNUSED MapSelectState* this, UNUSED s32 arg1) {
     if (D_80121212 != 0) {
         n64dd_SetDiskVersion(1);
     }
 }
 
-void func_80800B08_unknown(MapSelectState* this, s32 arg1) {
+void func_80800B08_unknown(UNUSED MapSelectState* this, UNUSED s32 arg1) {
     if (D_80121212 != 0) {
         n64dd_SetDiskVersion(0);
     }

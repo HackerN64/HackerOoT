@@ -1,5 +1,5 @@
 #include "z_en_syateki_man.h"
-#include "overlays/actors/ovl_En_Syateki_Itm/z_en_syateki_itm.h"
+#include "src/overlays/actors/ovl_En_Syateki_Itm/z_en_syateki_itm.h"
 
 #include "libc64/qrand.h"
 #include "gfx.h"
@@ -9,6 +9,7 @@
 #include "regs.h"
 #include "seqcmd.h"
 #include "sequence.h"
+#include "stack_pad.h"
 #include "terminal.h"
 #include "translation.h"
 #include "play_state.h"
@@ -151,8 +152,8 @@ static u16 sBgmList[] = {
     NA_BGM_WATER_TEMPLE,
     NA_BGM_BRIDGE_TO_GANONS,
     NA_BGM_CUTSCENE_EFFECTS,
-    NA_BGM_OCARINA_OF_TIME,
-    NA_BGM_OCARINA_OF_TIME,
+    NA_BGM_SEAL_OF_SAGES,
+    NA_BGM_SEAL_OF_SAGES,
     NA_BGM_GERUDO_VALLEY,
     NA_BGM_POTION_SHOP,
     NA_BGM_KOTAKE_KOUME,
@@ -161,7 +162,7 @@ static u16 sBgmList[] = {
     NA_BGM_UNDERGROUND,
     NA_BGM_GANONDORF_BOSS,
     NA_BGM_GANON_BOSS,
-    NA_BGM_END_DEMO,
+    NA_BGM_OCARINA_OF_TIME,
 };
 #endif
 
@@ -170,7 +171,7 @@ static s16 sTextIds[] = { 0x2B, 0x2E, 0xC8, 0x2D };
 static s16 sTextBoxCount[] = { TEXT_STATE_CHOICE, TEXT_STATE_EVENT, TEXT_STATE_EVENT, TEXT_STATE_EVENT };
 
 void EnSyatekiMan_Init(Actor* thisx, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     EnSyatekiMan* this = (EnSyatekiMan*)thisx;
 
     PRINTF("\n\n");
@@ -479,7 +480,7 @@ void EnSyatekiMan_Blink(EnSyatekiMan* this) {
 }
 
 void EnSyatekiMan_Update(Actor* thisx, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     EnSyatekiMan* this = (EnSyatekiMan*)thisx;
 
     if (this->timer != 0) {
@@ -517,7 +518,7 @@ s32 EnSyatekiMan_OverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, V
 }
 
 void EnSyatekiMan_Draw(Actor* thisx, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     EnSyatekiMan* this = (EnSyatekiMan*)thisx;
 
     Gfx_SetupDL_25Opa(play->state.gfxCtx);

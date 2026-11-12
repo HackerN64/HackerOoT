@@ -5,6 +5,7 @@
 #include "ichain.h"
 #include "rand.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_en_item00.h"
 #include "z_lib.h"
@@ -368,7 +369,8 @@ void EnCrow_Die(EnCrow* this, PlayState* play) {
     if (Math_StepToF(&this->actor.scale.x, 0.0f, step)) {
         if (this->actor.params == 0) {
             sDeathCount++;
-            Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos, 0);
+            Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos,
+                                       COLLECTIBLE_DROP_RANDOM_PARAMS(COLLECTIBLE_DROP_TABLE_0, false));
         } else {
             Item_DropCollectible(play, &this->actor.world.pos, ITEM00_RUPEE_RED);
         }
@@ -442,7 +444,7 @@ void EnCrow_UpdateDamage(EnCrow* this, PlayState* play) {
 
 void EnCrow_Update(Actor* thisx, PlayState* play) {
     EnCrow* this = (EnCrow*)thisx;
-    f32 pad;
+    STACK_PAD(s32);
     f32 height;
     f32 scale;
 

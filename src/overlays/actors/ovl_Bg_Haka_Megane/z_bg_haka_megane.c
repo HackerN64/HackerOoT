@@ -1,11 +1,12 @@
 /*
  * File: z_bg_haka_megane.c
  * Overlay: ovl_Bg_Haka_Megane
- * Description: Shadow Temple Fake Walls
+ * Description: Shadow Temple and Bottom of the Well Lens of Truth objects
  */
 
 #include "z_bg_haka_megane.h"
 
+#include "attributes.h"
 #include "ichain.h"
 #include "play_state.h"
 
@@ -19,8 +20,8 @@ void BgHakaMegane_Destroy(Actor* thisx, PlayState* play);
 void BgHakaMegane_Update(Actor* thisx, PlayState* play);
 void BgHakaMegane_Draw(Actor* thisx, PlayState* play);
 
-void func_8087DB24(BgHakaMegane* this, PlayState* play);
-void func_8087DBF0(BgHakaMegane* this, PlayState* play);
+void BgHakaMegane_WaitForObject(BgHakaMegane* this, PlayState* play);
+void BgHakaMegane_UpdateState(BgHakaMegane* this, PlayState* play);
 void BgHakaMegane_DoNothing(BgHakaMegane* this, PlayState* play);
 
 ActorProfile Bg_Haka_Megane_Profile = {
@@ -39,28 +40,30 @@ static InitChainEntry sInitChain[] = {
     ICHAIN_VEC3F_DIV1000(scale, 100, ICHAIN_STOP),
 };
 
-static CollisionHeader* sCollisionHeaders[] = {
-    &gBotw1Col,
-    &gBotw2Col,
+static CollisionHeader* sCollisionHeaders[BGHAKAMEGANE_TYPE_MAX] = {
+    &gBotwRoom0FakeWallsAndFloorsCol,
+    &gBotwRoom3ThreeFakeFloorsCol,
     NULL,
-    &object_haka_objects_Col_004330,
-    &object_haka_objects_Col_0044D0,
+    &gShadowTempleFakeCryptWallGlowingSkullCol,
+    &gShadowTempleFakeWallStrangeFaceCol,
     NULL,
-    &object_haka_objects_Col_004780,
-    &object_haka_objects_Col_004940,
+    &gShadowTempleRoom5FakeWallsCol,
+    &gShadowTempleRoom6FakeFloorCol,
     NULL,
-    &object_haka_objects_Col_004B00,
+    &gShadowTempleRoom10FakeWallCol,
     NULL,
-    &object_haka_objects_Col_004CC0,
+    &gShadowTempleRoom18FakeWallCol,
     NULL,
 };
 
-static Gfx* sDLists[] = {
-    gBotwFakeWallsAndFloorsDL,     gBotwThreeFakeFloorsDL,        gBotwHoleTrap2DL,
-    object_haka_objects_DL_0040F0, object_haka_objects_DL_0043B0, object_haka_objects_DL_001120,
-    object_haka_objects_DL_0045A0, object_haka_objects_DL_0047F0, object_haka_objects_DL_0018F0,
-    object_haka_objects_DL_0049B0, object_haka_objects_DL_003CF0, object_haka_objects_DL_004B70,
-    object_haka_objects_DL_002ED0,
+static Gfx* sDLists[BGHAKAMEGANE_TYPE_MAX] = {
+    gBotwRoom0FakeWallsAndFloorsDL,      gBotwRoom3ThreeFakeFloorsDL,
+    gBotwRoom5HiddenPlatformDL,          gShadowTempleFakeCryptWallGlowingSkullDL,
+    gShadowTempleFakeWallStrangeFaceDL,  gShadowTempleRoom3HiddenPlatformsDL,
+    gShadowTempleRoom5FakeWallsDL,       gShadowTempleRoom6FakeFloorDL,
+    gShadowTempleRoom9HiddenPlatformsDL, gShadowTempleRoom10FakeWallDL,
+    gShadowTempleRoom15HiddenWallsDL,    gShadowTempleRoom18FakeWallDL,
+    gShadowTempleRoom11HiddenObjectsDL,
 };
 
 void BgHakaMegane_Init(Actor* thisx, PlayState* play) {
@@ -78,7 +81,7 @@ void BgHakaMegane_Init(Actor* thisx, PlayState* play) {
     if (this->requiredObjectSlot < 0) {
         Actor_Kill(thisx);
     } else {
-        this->actionFunc = func_8087DB24;
+        this->actionFunc = BgHakaMegane_WaitForObject;
     }
 }
 
@@ -88,16 +91,17 @@ void BgHakaMegane_Destroy(Actor* thisx, PlayState* play) {
     DynaPoly_DeleteBgActor(play, &play->colCtx.dyna, this->dyna.bgId);
 }
 
-void func_8087DB24(BgHakaMegane* this, PlayState* play) {
+void BgHakaMegane_WaitForObject(BgHakaMegane* this, PlayState* play) {
     if (Object_IsLoaded(&play->objectCtx, this->requiredObjectSlot)) {
         this->dyna.actor.objectSlot = this->requiredObjectSlot;
         this->dyna.actor.draw = BgHakaMegane_Draw;
         Actor_SetObjectDependency(play, &this->dyna.actor);
+
         if (play->roomCtx.curRoom.lensMode != LENS_MODE_SHOW_ACTORS) {
             CollisionHeader* colHeader;
             CollisionHeader* collision;
 
-            this->actionFunc = func_8087DBF0;
+            this->actionFunc = BgHakaMegane_UpdateState;
             collision = sCollisionHeaders[this->dyna.actor.params];
             if (collision != NULL) {
                 CollisionHeader_GetVirtual(collision, &colHeader);
@@ -109,7 +113,7 @@ void func_8087DB24(BgHakaMegane* this, PlayState* play) {
     }
 }
 
-void func_8087DBF0(BgHakaMegane* this, PlayState* play) {
+void BgHakaMegane_UpdateState(BgHakaMegane* this, PlayState* play) {
     Actor* thisx = &this->dyna.actor;
 
     if (play->actorCtx.lensActive) {
@@ -131,7 +135,7 @@ void BgHakaMegane_Update(Actor* thisx, PlayState* play) {
 }
 
 void BgHakaMegane_Draw(Actor* thisx, PlayState* play) {
-    BgHakaMegane* this = (BgHakaMegane*)thisx;
+    UNUSED BgHakaMegane* this = (BgHakaMegane*)thisx;
 
     if (ACTOR_FLAGS_CHECK_ALL(thisx, ACTOR_FLAG_REACT_TO_LENS)) {
         Gfx_DrawDListXlu(play, sDLists[thisx->params]);
@@ -139,7 +143,7 @@ void BgHakaMegane_Draw(Actor* thisx, PlayState* play) {
         Gfx_DrawDListOpa(play, sDLists[thisx->params]);
     }
 
-    if (thisx->params == 0) {
+    if (thisx->params == BGHAKAMEGANE_TYPE_BOTW_ROOM_0_FAKE) {
         Gfx_DrawDListXlu(play, gBotwBloodSplatterDL);
     }
 }

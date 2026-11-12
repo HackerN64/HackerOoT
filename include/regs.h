@@ -56,7 +56,7 @@ struct PlayState;
 #define R_RUN_SPEED_LIMIT                        REG(45)
 
 #define R_ENABLE_ARENA_DBG                       SREG(0)
-#define R_AUDIOMGR_DEBUG_LEVEL                   SREG(20)
+#define R_AUDIOMGR_ACTIVITY_LEVEL                SREG(20)
 #define R_ROOM_IMAGE_NODRAW_FLAGS                SREG(25)
 #define R_ROOM_BG2D_FORCE_SCALEBG                SREG(26)
 #define R_UPDATE_RATE                            SREG(30)
@@ -70,9 +70,9 @@ struct PlayState;
 #define R_VI_MODE_EDIT_ULX_ADJ                   SREG(53)
 #define R_VI_MODE_EDIT_LRX_ADJ                   SREG(54)
 #define R_FB_FILTER_TYPE                         SREG(80)
-#define R_FB_FILTER_PRIM_COLOR(c)                SREG(81 + (c))
+#define R_FB_FILTER_COLOR1(c)                    SREG(81 + (c))
 #define R_FB_FILTER_A                            SREG(84)
-#define R_FB_FILTER_ENV_COLOR(c)                 SREG(85 + (c))
+#define R_FB_FILTER_COLOR2(c)                    SREG(85 + (c))
 #define R_ENABLE_FB_FILTER                       SREG(88)
 #define R_PAUSE_BG_PRERENDER_STATE               SREG(94) // `PauseBgPreRenderState`
 #define R_CAM_XZ_OFFSET_UPDATE_RATE              OREG(2)

@@ -163,7 +163,6 @@ def addToSpec(actorSpec, actorFileName, objectSpec, actorFileLine):
             beginseg
                 name "ovl_{actorSpec}"
                 include "{"$(BUILD_DIR)" if useNewBuild else "build"}/src/overlays/actors/ovl_{actorSpec}/{actorFileName}.o"
-                include "{"$(BUILD_DIR)" if useNewBuild else "build"}/src/overlays/actors/ovl_{actorSpec}/ovl_{actorSpec}_reloc.o"
             endseg
             
             """)

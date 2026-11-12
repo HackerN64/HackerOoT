@@ -84,7 +84,7 @@ char* AudioDebug_ToStringBinary(u32 num, u8 bits) {
 }
 
 void AudioDebug_Draw(GfxPrint* printer) {
-    s32 pad[3];
+    STACK_PADS(s32, 3);
     u8 i;
     u8 j;
     u8 ctr;
@@ -109,7 +109,7 @@ void AudioDebug_Draw(GfxPrint* printer) {
     GfxPrint_Printf(printer, "- %s -", sAudioDebugPageNames[sAudioDebugPage]);
 
     for (i = 0; i < gAudioSpecs[gAudioSpecId].numNotes; i++) {
-        if (gAudioCtx.notes[i].noteSubEu.bitField0.enabled == 1) {
+        if (gAudioCtx.notes[i].sampleState.bitField0.enabled == 1) {
             numEnabledNotes++;
         }
     }

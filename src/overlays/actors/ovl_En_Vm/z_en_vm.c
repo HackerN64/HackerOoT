@@ -5,7 +5,7 @@
  */
 
 #include "z_en_vm.h"
-#include "overlays/actors/ovl_En_Bom/z_en_bom.h"
+#include "src/overlays/actors/ovl_En_Bom/z_en_bom.h"
 
 #include "libc64/qrand.h"
 #include "gfx.h"
@@ -14,6 +14,7 @@
 #include "rand.h"
 #include "segmented_address.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_en_item00.h"
 #include "z_lib.h"
@@ -22,7 +23,7 @@
 #include "player.h"
 
 #include "assets/objects/object_vm/object_vm.h"
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/eff_enemy_death_flame.h"
 
 #define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_UPDATE_CULLING_DISABLED)
 
@@ -192,7 +193,7 @@ void EnVm_Wait(EnVm* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
     f32 dist;
     s16 headRot;
-    s16 pad;
+    STACK_PAD(s16);
     s16 pitch;
 
     switch (this->unk_25E) {
@@ -395,7 +396,8 @@ void EnVm_Die(EnVm* this, PlayState* play) {
             bomb->timer = 0;
         }
 
-        Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos, 0xA0);
+        Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos,
+                                   COLLECTIBLE_DROP_RANDOM_PARAMS(COLLECTIBLE_DROP_TABLE_10, false));
         Actor_Kill(&this->actor);
     }
 }
@@ -481,7 +483,7 @@ void EnVm_PostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3s* rot, 
     Vec3f sp80 = D_80B2EAF8;
     Vec3f sp74 = D_80B2EB04;
     Vec3f sp68 = D_80B2EB10;
-    s32 pad;
+    STACK_PAD(s32);
     Vec3f posResult;
     CollisionPoly* poly;
     s32 bgId;

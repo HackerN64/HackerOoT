@@ -5,7 +5,7 @@
  */
 
 #include "z_en_skb.h"
-#include "overlays/actors/ovl_En_Encount1/z_en_encount1.h"
+#include "src/overlays/actors/ovl_En_Encount1/z_en_encount1.h"
 
 #include "libc64/qrand.h"
 #include "array_count.h"
@@ -14,6 +14,7 @@
 #include "ichain.h"
 #include "rand.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_math.h"
 #include "z_en_item00.h"
 #include "z_lib.h"
@@ -442,7 +443,8 @@ void EnSkb_SetupDeath(EnSkb* this, PlayState* play) {
 void EnSkb_Death(EnSkb* this, PlayState* play) {
     if (BodyBreak_SpawnParts(&this->actor, &this->bodyBreak, play, 1)) {
         if (this->actor.scale.x == 0.01f) {
-            Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos, 0x10);
+            Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos,
+                                       COLLECTIBLE_DROP_RANDOM_PARAMS(COLLECTIBLE_DROP_TABLE_1, false));
         } else if (this->actor.scale.x <= 0.015f) {
             Item_DropCollectible(play, &this->actor.world.pos, ITEM00_RUPEE_BLUE);
         } else {
@@ -457,7 +459,7 @@ void EnSkb_Death(EnSkb* this, PlayState* play) {
 }
 
 void EnSkb_CheckDamage(EnSkb* this, PlayState* play) {
-    s16 pad;
+    STACK_PAD(s16);
     s32 i;
     Vec3f flamePos;
     s16 scale;
@@ -524,7 +526,7 @@ void EnSkb_CheckDamage(EnSkb* this, PlayState* play) {
 
 void EnSkb_Update(Actor* thisx, PlayState* play) {
     EnSkb* this = (EnSkb*)thisx;
-    s32 pad;
+    STACK_PAD(s32);
 
     EnSkb_CheckDamage(this, play);
     Actor_MoveXZGravity(&this->actor);

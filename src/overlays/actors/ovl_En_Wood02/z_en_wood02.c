@@ -13,6 +13,7 @@
 #include "ichain.h"
 #include "rand.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_en_item00.h"
 #include "z_lib.h"
@@ -327,7 +328,7 @@ void EnWood02_Update(Actor* thisx, PlayState* play2) {
         if (!(this->actor.flags & ACTOR_FLAG_INSIDE_CULLING_VOLUME)) {
             u8 new_var = this->unk_14E[0];
             u8 phi_v0 = 0;
-            s32 pad;
+            STACK_PAD(s32);
 
             if (this->unk_14C < 0) {
                 phi_v0 = 0x80;
@@ -353,7 +354,8 @@ void EnWood02_Update(Actor* thisx, PlayState* play2) {
             dropsSpawnPt.y += 200.0f;
 
             if ((this->unk_14C >= 0) && (this->unk_14C < 0x64)) {
-                Item_DropCollectibleRandom(play, &this->actor, &dropsSpawnPt, this->unk_14C << 4);
+                Item_DropCollectibleRandom(play, &this->actor, &dropsSpawnPt,
+                                           COLLECTIBLE_DROP_RANDOM_PARAMS(this->unk_14C, false));
             } else {
                 if (this->actor.home.rot.z != 0) {
                     this->actor.home.rot.z &= 0x1FFF;
@@ -399,7 +401,7 @@ void EnWood02_Update(Actor* thisx, PlayState* play2) {
                  (player->rideActor->speed != 0.0f))) {
                 if ((this->unk_14C >= 0) && (this->unk_14C < 0x64)) {
                     Item_DropCollectibleRandom(play, &this->actor, &this->actor.world.pos,
-                                               ((this->unk_14C << 4) | 0x8000));
+                                               COLLECTIBLE_DROP_RANDOM_PARAMS(this->unk_14C, true));
                 }
                 this->unk_14C = -0x15;
                 Actor_PlaySfx(&this->actor, NA_SE_EV_TREE_SWING);

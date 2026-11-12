@@ -1,6 +1,6 @@
 -include ../../print_rules.mk
 
-CFLAGS := -Wall -Werror -O3
+CFLAGS := -Wall -Wextra -O3
 
 ifeq ($(shell $(CC) --version | grep clang),)
   OMPFLAGS := -fopenmp

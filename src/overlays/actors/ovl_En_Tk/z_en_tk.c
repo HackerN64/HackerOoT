@@ -6,6 +6,7 @@
 
 #include "z_en_tk.h"
 
+#include "attributes.h"
 #include "libc64/math64.h"
 #include "libc64/qrand.h"
 #include "array_count.h"
@@ -14,6 +15,7 @@
 #include "rand.h"
 #include "segmented_address.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_en_item00.h"
 #include "z_lib.h"
@@ -21,7 +23,7 @@
 #include "play_state.h"
 #include "save.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/dust_textures.h"
 #include "assets/objects/object_tk/object_tk.h"
 
 #define FLAGS (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY)
@@ -480,8 +482,8 @@ s32 EnTk_ChooseReward(EnTk* this) {
 
 void EnTk_DigEff(EnTk* this) {
     Vec3f pos = { 0.0f, 0.0f, 0.0f };
-    Vec3f speed = { 0.0f, 0.0f, 0.0f };
-    Vec3f accel = { 0.0f, 0.3f, 0.0f };
+    UNUSED Vec3f speed = { 0.0f, 0.0f, 0.0f };
+    UNUSED Vec3f accel = { 0.0f, 0.3f, 0.0f };
 
     if (this->skelAnime.curFrame >= 32.0f && this->skelAnime.curFrame < 40.0f) {
         pos.x = (Rand_ZeroOne() - 0.5f) * 12.0f + this->v3f_304.x;
@@ -493,7 +495,7 @@ void EnTk_DigEff(EnTk* this) {
 
 void EnTk_Init(Actor* thisx, PlayState* play) {
     EnTk* this = (EnTk*)thisx;
-    s32 pad;
+    STACK_PAD(s32);
 
     ActorShape_Init(&this->actor.shape, 0, ActorShadow_DrawCircle, 24.0f);
 
@@ -668,7 +670,7 @@ void EnTk_Dig(EnTk* this, PlayState* play) {
 
 void EnTk_Update(Actor* thisx, PlayState* play) {
     EnTk* this = (EnTk*)thisx;
-    s32 pad;
+    STACK_PAD(s32);
 
     Collider_UpdateCylinder(&this->actor, &this->collider);
     CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);

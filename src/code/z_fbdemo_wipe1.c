@@ -1,8 +1,11 @@
 #include "transition_wipe.h"
 
+#include "attributes.h"
 #include "gfx.h"
 #include "widescreen.h"
 #include "save.h"
+#include "stack_pad.h"
+#include "tex_len.h"
 #include "transition_instances.h"
 
 typedef enum TransitionWipeDirection {
@@ -10,7 +13,19 @@ typedef enum TransitionWipeDirection {
     /* 1 */ TRANS_WIPE_DIR_OUT
 } TransitionWipeDirection;
 
-#include "assets/code/fbdemo_wipe1/code.c"
+Vtx sTransWipeVtx[25] = {
+#include "assets/code/fbdemo_wipe1/sTransWipeVtx.inc.c"
+};
+
+#define sTransWipeTex_WIDTH 64
+#define sTransWipeTex_HEIGHT 64
+u64 sTransWipeTex[TEX_LEN(u64, sTransWipeTex_WIDTH, sTransWipeTex_HEIGHT, 4)] = {
+#include "assets/code/fbdemo_wipe1/sTransWipeTex.i4.inc.c"
+};
+
+Gfx sTransWipeDL[31] = {
+#include "assets/code/fbdemo_wipe1/sTransWipeDL.inc.c"
+};
 
 // unused.
 Gfx sTransWipeSyncDL[] = {
@@ -41,7 +56,7 @@ void* TransitionWipe_Init(void* thisx) {
     return this;
 }
 
-void TransitionWipe_Destroy(void* thisx) {
+void TransitionWipe_Destroy(UNUSED void* thisx) {
 }
 
 void TransitionWipe_Update(void* thisx, s32 updateRate) {
@@ -67,7 +82,7 @@ void TransitionWipe_Draw(void* thisx, Gfx** gfxP) {
     Mtx* modelView;
     TransitionWipe* this = (TransitionWipe*)thisx;
     Color_RGBA8_u32* color;
-    s32 pad[3];
+    STACK_PADS(s32, 3);
     Gfx* texScroll;
 
     modelView = this->modelView[this->frame];

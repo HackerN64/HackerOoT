@@ -1,5 +1,6 @@
 #include "libc64/qrand.h"
 #include "array_count.h"
+#include "attributes.h"
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "printf.h"
@@ -9,7 +10,7 @@
 #include "play_state.h"
 #include "skin_matrix.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/gameplay_keep_0x38FB0.h"
 
 // original name: "spark"
 void EffectSpark_Init(void* thisx, void* initParamsx) {
@@ -102,7 +103,7 @@ void EffectSpark_Init(void* thisx, void* initParamsx) {
     }
 }
 
-void EffectSpark_Destroy(void* thisx) {
+void EffectSpark_Destroy(UNUSED void* thisx) {
 }
 
 // original name: "EffectSparkInfo_proc"

@@ -50,7 +50,7 @@ sfc_LDFLAGS     := $(XML_LDFLAGS)
 
 define COMPILE =
 $(1): $($1_SOURCES)
-	$(V)$(CC) $(CFLAGS) $($1_CFLAGS) $$^ $($1_LDFLAGS) -o $$@
+	$(V)$(CC) $(CFLAGS) $(OPTFLAGS) $($1_CFLAGS) $$^ $($1_LDFLAGS) -o $$@
 endef
 
 $(foreach p,$(PROGRAMS),$(eval $(call COMPILE,$(p))))

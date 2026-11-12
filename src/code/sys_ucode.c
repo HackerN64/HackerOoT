@@ -6,8 +6,13 @@
 #include "dma.h"
 
 #if !ENABLE_F3DEX3
+#ifndef F3DEX_GBI_PL
+u64* sDefaultGSPUCodeText = gspF3DZEX2_NoN_fifoTextStart;
+u64* sDefaultGSPUCodeData = gspF3DZEX2_NoN_fifoDataStart;
+#else
 u64* sDefaultGSPUCodeText = gspF3DZEX2_NoN_PosLight_fifoTextStart;
 u64* sDefaultGSPUCodeData = gspF3DZEX2_NoN_PosLight_fifoDataStart;
+#endif
 #endif
 
 u64* SysUcode_GetUCodeBoot(void) {

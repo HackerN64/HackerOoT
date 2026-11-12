@@ -6,6 +6,7 @@
  */
 
 #include "array_count.h"
+#include "attributes.h"
 #include "audiomgr.h"
 #include "printf.h"
 #include "regs.h"
@@ -39,7 +40,7 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
     osStopTimer(&timer);
 #endif
 
-    if (R_AUDIOMGR_DEBUG_LEVEL > AUDIOMGR_DEBUG_LEVEL_NONE) {
+    if (R_AUDIOMGR_ACTIVITY_LEVEL > AUDIOMGR_ACTIVITY_LEVEL_ALL) {
         // Inhibit audio rsp task processing
         audioMgr->rspTask = NULL;
     }
@@ -61,7 +62,7 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
 
     // Update the audio driver
 
-    if (R_AUDIOMGR_DEBUG_LEVEL >= AUDIOMGR_DEBUG_LEVEL_NO_UPDATE) {
+    if (R_AUDIOMGR_ACTIVITY_LEVEL >= AUDIOMGR_ACTIVITY_LEVEL_NO_UPDATE) {
         // Skip update, no rsp task produced
         rspTask = NULL;
     } else {
@@ -91,7 +92,7 @@ void AudioMgr_HandleRetrace(AudioMgr* audioMgr) {
  *
  * @see Audio_PreNMI
  */
-void AudioMgr_HandlePreNMI(AudioMgr* audioMgr) {
+void AudioMgr_HandlePreNMI(UNUSED AudioMgr* audioMgr) {
     PRINTF(
         T("オーディオマネージャが OS_SC_PRE_NMI_MSG を受け取りました\n", "Audio manager received OS_SC_PRE_NMI_MSG\n"));
     Audio_PreNMI();
@@ -165,7 +166,7 @@ void AudioMgr_Init(AudioMgr* audioMgr, void* stack, OSPri pri, OSId id, Schedule
     audioMgr->rspTask = NULL;
 
 #if PLATFORM_N64
-    R_AUDIOMGR_DEBUG_LEVEL = AUDIOMGR_DEBUG_LEVEL_NO_RSP;
+    R_AUDIOMGR_ACTIVITY_LEVEL = AUDIOMGR_ACTIVITY_LEVEL_NO_RSP;
 #endif
 
     osCreateMesgQueue(&audioMgr->taskDoneQueue, &audioMgr->taskDoneMsg, 1);

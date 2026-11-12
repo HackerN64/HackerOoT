@@ -11,12 +11,13 @@
 #include "gfx_setupdl.h"
 #include "one_point_cutscene.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_lib.h"
 #include "effect.h"
 #include "play_state.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/gameplay_keep_0x33910.h"
 
 #define FLAGS ACTOR_FLAG_UPDATE_CULLING_DISABLED
 
@@ -113,7 +114,7 @@ void ObjIcePoly_Init(Actor* thisx, PlayState* play) {
 }
 
 void ObjIcePoly_Destroy(Actor* thisx, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     ObjIcePoly* this = (ObjIcePoly*)thisx;
 
     if ((this->actor.params >= 0) && (this->actor.params < 3)) {
@@ -124,7 +125,7 @@ void ObjIcePoly_Destroy(Actor* thisx, PlayState* play) {
 
 void ObjIcePoly_Idle(ObjIcePoly* this, PlayState* play) {
     static Vec3f zeroVec = { 0.0f, 0.0f, 0.0f };
-    s32 pad;
+    STACK_PAD(s32);
     Vec3f pos;
 
     if (this->iceCollider.base.acFlags & AC_HIT) {
@@ -193,14 +194,14 @@ void ObjIcePoly_Melt(ObjIcePoly* this, PlayState* play) {
 }
 
 void ObjIcePoly_Update(Actor* thisx, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     ObjIcePoly* this = (ObjIcePoly*)thisx;
 
     this->actionFunc(this, play);
 }
 
 void ObjIcePoly_Draw(Actor* thisx, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     ObjIcePoly* this = (ObjIcePoly*)thisx;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_obj_ice_poly.c", 421);

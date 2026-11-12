@@ -11,11 +11,12 @@
 #include "gfx_setupdl.h"
 #include "ichain.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "light.h"
 #include "play_state.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/eff_fire.h"
 #include "assets/objects/object_syokudai/object_syokudai.h"
 
 #define FLAGS 0
@@ -86,7 +87,7 @@ static InitChainEntry sInitChain[] = {
 
 void BgPoSyokudai_Init(Actor* thisx, PlayState* play) {
     BgPoSyokudai* this = (BgPoSyokudai*)thisx;
-    s32 pad;
+    STACK_PAD(s32);
 
     Actor_ProcessInitChain(thisx, sInitChain);
 
@@ -140,7 +141,7 @@ void BgPoSyokudai_Destroy(Actor* thisx, PlayState* play) {
 
 void BgPoSyokudai_Update(Actor* thisx, PlayState* play) {
     BgPoSyokudai* this = (BgPoSyokudai*)thisx;
-    s32 pad;
+    STACK_PAD(s32);
 
     CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
     CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);

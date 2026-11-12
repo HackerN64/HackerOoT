@@ -12,13 +12,14 @@
 #include "one_point_cutscene.h"
 #include "printf.h"
 #include "sfx.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "translation.h"
 #include "z_lib.h"
 #include "play_state.h"
 #include "save.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/gameplay_keep_0x173D0.h"
 
 #define FLAGS ACTOR_FLAG_UPDATE_CULLING_DISABLED
 
@@ -79,7 +80,7 @@ ActorProfile Bg_Hidan_Curtain_Profile = {
 };
 
 void BgHidanCurtain_Init(Actor* thisx, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     BgHidanCurtain* this = (BgHidanCurtain*)thisx;
     BgHidanCurtainParams* hcParams;
 
@@ -131,7 +132,7 @@ void BgHidanCurtain_Init(Actor* thisx, PlayState* play) {
 }
 
 void BgHidanCurtain_Destroy(Actor* thisx, PlayState* play) {
-    s32 pad;
+    STACK_PAD(s32);
     BgHidanCurtain* this = (BgHidanCurtain*)thisx;
 
     Collider_DestroyCylinder(play, &this->collider);

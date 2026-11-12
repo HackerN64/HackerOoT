@@ -4,6 +4,7 @@
 
 #include "array_count.h"
 #include "audiothread_cmd.h"
+#include "stack_pad.h"
 #include "ultra64.h"
 #include "versions.h"
 #include "audio.h"
@@ -41,7 +42,7 @@ AudioTask* AudioThread_UpdateImpl(void) {
 #endif
     u32 samplesRemainingInAi;
     s32 abiCmdCnt;
-    s32 pad;
+    STACK_PAD(s32);
     s32 j;
     s32 sp5C;
     s16* curAiBuffer;
@@ -52,12 +53,12 @@ AudioTask* AudioThread_UpdateImpl(void) {
     s32 i;
 
     gAudioCtx.totalTaskCount++;
-    if (gAudioCtx.totalTaskCount % (gAudioCtx.audioBufferParameters.specUnk4) != 0) {
+    if ((gAudioCtx.totalTaskCount % gAudioCtx.audioBufferParameters.specUnk4) != 0) {
         if (gAudioCustomUpdateFunction != NULL) {
             gAudioCustomUpdateFunction();
         }
 
-        if ((gAudioCtx.totalTaskCount % gAudioCtx.audioBufferParameters.specUnk4) + 1 ==
+        if (((gAudioCtx.totalTaskCount % gAudioCtx.audioBufferParameters.specUnk4) + 1) ==
             gAudioCtx.audioBufferParameters.specUnk4) {
             return sWaitingAudioTask;
         } else {
@@ -211,7 +212,7 @@ AudioTask* AudioThread_UpdateImpl(void) {
  */
 void AudioThread_ProcessGlobalCmd(AudioCmd* cmd) {
     s32 i;
-    s32 pad[3];
+    STACK_PADS(s32, 3);
     u32 flags;
 
     switch (cmd->op) {
@@ -255,11 +256,11 @@ void AudioThread_ProcessGlobalCmd(AudioCmd* cmd) {
             if (cmd->asUInt == 1) {
                 for (i = 0; i < gAudioCtx.numNotes; i++) {
                     Note* note = &gAudioCtx.notes[i];
-                    NoteSubEu* subEu = &note->noteSubEu;
+                    NoteSampleState* sampleState = &note->sampleState;
 
-                    if (subEu->bitField0.enabled && (note->playbackState.unk_04 == 0) &&
+                    if (sampleState->bitField0.enabled && (note->playbackState.unk_04 == 0) &&
                         (note->playbackState.parentLayer->channel->muteBehavior & MUTE_BEHAVIOR_3)) {
-                        subEu->bitField0.finished = true;
+                        sampleState->bitField0.finished = true;
                     }
                 }
             }
@@ -557,7 +558,7 @@ void Audio_GetSampleBankIdsOfFont(s32 fontId, u32* sampleBankId1, u32* sampleBan
  * original name: Nap_CheckSpecChange
  */
 s32 func_800E5EDC(void) {
-    s32 pad;
+    STACK_PAD(s32);
     s32 specId;
 
     if (osRecvMesg(gAudioCtx.audioResetQueueP, (OSMesg*)&specId, OS_MESG_NOBLOCK) == -1) {
@@ -585,7 +586,7 @@ void func_800E5F34(void) {
 s32 AudioThread_ResetAudioHeap(s32 specId) {
     s32 resetStatus;
     OSMesg msg;
-    s32 pad;
+    STACK_PAD(s32);
 
     func_800E5F34();
     resetStatus = gAudioCtx.resetStatus;
@@ -758,7 +759,7 @@ void AudioThread_ProcessChannelCmd(SequenceChannel* channel, AudioCmd* cmd) {
             break;
 
         case AUDIOCMD_OP_CHANNEL_SET_PAN_WEIGHT:
-            //! @bug: Should compare `asSbyte` to `panChannelWeight`
+            //! @bug Should compare `asSbyte` to `panChannelWeight`
             if (channel->newPan != cmd->asSbyte) {
                 channel->panChannelWeight = cmd->asSbyte;
                 channel->changes.s.pan = true;
@@ -874,7 +875,7 @@ s32 func_800E6590(s32 seqPlayerIndex, s32 channelIndex, s32 layerIndex) {
 
             note = layer->note;
             if (layer == note->playbackState.parentLayer) {
-                tunedSample = note->noteSubEu.tunedSample;
+                tunedSample = note->sampleState.tunedSample;
                 if (tunedSample == NULL) {
                     return 0;
                 }
@@ -888,6 +889,9 @@ s32 func_800E6590(s32 seqPlayerIndex, s32 channelIndex, s32 layerIndex) {
     return 0;
 }
 
+/**
+ * original name possibly "Nap_SilenceCheck"
+ */
 s32 func_800E6680(void) {
     return func_800E66C0(0);
 }
@@ -902,7 +906,7 @@ void func_800E66A0(void) {
 s32 func_800E66C0(s32 flags) {
     s32 phi_v1;
     NotePlaybackState* playbackState;
-    NoteSubEu* noteSubEu;
+    NoteSampleState* sampleState;
     s32 i;
     Note* note;
     TunedSample* tunedSample;
@@ -911,12 +915,12 @@ s32 func_800E66C0(s32 flags) {
     for (i = 0; i < gAudioCtx.numNotes; i++) {
         note = &gAudioCtx.notes[i];
         playbackState = &note->playbackState;
-        if (note->noteSubEu.bitField0.enabled) {
-            noteSubEu = &note->noteSubEu;
+        if (note->sampleState.bitField0.enabled) {
+            sampleState = &note->sampleState;
             if (playbackState->adsr.action.s.state != 0) {
                 if (flags >= 2) {
-                    tunedSample = noteSubEu->tunedSample;
-                    if (tunedSample == NULL || noteSubEu->bitField1.isSyntheticWave) {
+                    tunedSample = sampleState->tunedSample;
+                    if (tunedSample == NULL || sampleState->bitField1.isSyntheticWave) {
                         continue;
                     }
                     if (tunedSample->sample->medium == MEDIUM_RAM) {

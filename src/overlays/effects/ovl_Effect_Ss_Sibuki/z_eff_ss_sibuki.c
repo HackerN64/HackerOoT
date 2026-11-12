@@ -11,13 +11,15 @@
 #include "gfx_setupdl.h"
 #include "regs.h"
 #include "segmented_address.h"
+#include "stack_pad.h"
 #include "sys_matrix.h"
 #include "z_lib.h"
 #include "effect.h"
 #include "play_state.h"
 #include "player.h"
 
-#include "assets/objects/gameplay_keep/gameplay_keep.h"
+#include "assets/objects/gameplay_keep/gameplay_keep_0x55DB0.h"
+#include "assets/objects/gameplay_keep/eff_bubble.h"
 
 #define rPrimColorR regs[0]
 #define rPrimColorG regs[1]
@@ -91,7 +93,7 @@ void EffectSsSibuki_Draw(PlayState* play, u32 index, EffectSs* this) {
 
 void EffectSsSibuki_Update(PlayState* play, u32 index, EffectSs* this) {
     Player* player = GET_PLAYER(play);
-    s32 pad[2];
+    STACK_PADS(s32, 2);
     f32 xzVelScale;
 
     if (this->pos.y <= player->actor.floorHeight) {

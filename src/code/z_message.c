@@ -15,6 +15,7 @@
 #include "printf.h"
 #include "segment_symbols.h"
 #include "sequence.h"
+#include "stack_pad.h"
 #include "regs.h"
 #include "terminal.h"
 #include "translation.h"
@@ -133,7 +134,7 @@ s32 sCharTexScale;
 
 s16 sTextFade = false; // original name: key_off_flag ?
 
-char D_8014B2F4 = 0;
+char sMessageStartFrameCount = 0;
 
 s16 sOcarinaButtonIndexBufPos = 0;
 
@@ -146,7 +147,7 @@ u16 sNextTextId = 0;
 s16 sTextIsCredits = false;
 
 #if PLATFORM_GC && OOT_PAL
-UNK_TYPE D_8014B30C = 0;
+UNUSED static s32 D_8014B30C = 0;
 #endif
 
 s16 sLastPlayedSong = 0xFF;
@@ -487,7 +488,7 @@ void Message_DrawTextChar(PlayState* play, void* textureImage, Gfx** p) {
     Gfx* gfx = *p;
     s16 x = msgCtx->textPosX;
     s16 y = msgCtx->textPosY;
-    s32 pad;
+    STACK_PAD(s32);
 
     gDPPipeSync(gfx++);
 
@@ -1080,7 +1081,7 @@ f32 sFontWidths[144] = {
 };
 
 u16 Message_DrawItemIcon(PlayState* play, u16 itemId, Gfx** p, u16 i) {
-    s32 pad;
+    STACK_PAD(s32);
     Gfx* gfx = *p;
     MessageContext* msgCtx = &play->msgCtx;
 
@@ -1325,9 +1326,10 @@ void Message_DrawTextWide(PlayState* play, Gfx** gfxP) {
                     (R_TEXTBOX_BG_YPOS + 48 + sTextboxBackgroundYOffsets[msgCtx->textboxBackgroundYOffsetIdx]) << 2,
                     G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
 
-                gDPLoadTextureBlock_4b(gfx++, msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + 0x900, G_IM_FMT_I, 96,
-                                       48, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
-                                       G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+                gDPLoadTextureBlock_4b(
+                    gfx++, msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + MESSAGE_TEXTURE_STATIC_TEX_SIZE,
+                    G_IM_FMT_I, 96, 48, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+                    G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
                 gSPTextureRectangle(
                     gfx++, (msgCtx->textPosX + 96 + 1) << 2,
                     (R_TEXTBOX_BG_YPOS + sTextboxBackgroundYOffsets[msgCtx->textboxBackgroundYOffsetIdx]) << 2,
@@ -1347,9 +1349,10 @@ void Message_DrawTextWide(PlayState* play, Gfx** gfxP) {
                 gSPTextureRectangle(gfx++, msgCtx->textPosX << 2, R_TEXTBOX_BG_YPOS << 2, (msgCtx->textPosX + 96) << 2,
                                     (R_TEXTBOX_BG_YPOS + 48) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
 
-                gDPLoadTextureBlock_4b(gfx++, (msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + 0x900), G_IM_FMT_I,
-                                       96, 48, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
-                                       G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+                gDPLoadTextureBlock_4b(
+                    gfx++, (msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + MESSAGE_TEXTURE_STATIC_TEX_SIZE),
+                    G_IM_FMT_I, 96, 48, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+                    G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
                 gSPTextureRectangle(gfx++, (msgCtx->textPosX + 96) << 2, R_TEXTBOX_BG_YPOS << 2,
                                     (msgCtx->textPosX + 192) << 2, (R_TEXTBOX_BG_YPOS + 48) << 2, G_TX_RENDERTILE, 0, 0,
                                     1 << 10, 1 << 10);
@@ -1501,7 +1504,7 @@ void Message_DrawTextWide(PlayState* play, Gfx** gfxP) {
  */
 void Message_DrawText(PlayState* play, Gfx** gfxP) {
     MessageContext* msgCtx = &play->msgCtx;
-    s16 pad;
+    STACK_PAD(s16);
     u8 character;
     u16 j;
     u16 i;
@@ -1667,9 +1670,10 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
                     (R_TEXTBOX_BG_YPOS + 48 + sTextboxBackgroundYOffsets[msgCtx->textboxBackgroundYOffsetIdx]) << 2,
                     G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
 
-                gDPLoadTextureBlock_4b(gfx++, msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + 0x900, G_IM_FMT_I, 96,
-                                       48, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
-                                       G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+                gDPLoadTextureBlock_4b(
+                    gfx++, msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + MESSAGE_TEXTURE_STATIC_TEX_SIZE,
+                    G_IM_FMT_I, 96, 48, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+                    G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
                 gSPTextureRectangle(
                     gfx++, (msgCtx->textPosX + 96 + 1) << 2,
                     (R_TEXTBOX_BG_YPOS + sTextboxBackgroundYOffsets[msgCtx->textboxBackgroundYOffsetIdx]) << 2,
@@ -1689,9 +1693,10 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
                 gSPTextureRectangle(gfx++, msgCtx->textPosX << 2, R_TEXTBOX_BG_YPOS << 2, (msgCtx->textPosX + 96) << 2,
                                     (R_TEXTBOX_BG_YPOS + 48) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
 
-                gDPLoadTextureBlock_4b(gfx++, (msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + 0x900), G_IM_FMT_I,
-                                       96, 48, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
-                                       G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+                gDPLoadTextureBlock_4b(
+                    gfx++, (msgCtx->textboxSegment + MESSAGE_STATIC_TEX_SIZE + MESSAGE_TEXTURE_STATIC_TEX_SIZE),
+                    G_IM_FMT_I, 96, 48, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+                    G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
                 gSPTextureRectangle(gfx++, (msgCtx->textPosX + 96) << 2, R_TEXTBOX_BG_YPOS << 2,
                                     (msgCtx->textPosX + 192) << 2, (R_TEXTBOX_BG_YPOS + 48) << 2, G_TX_RENDERTILE, 0, 0,
                                     1 << 10, 1 << 10);
@@ -1845,19 +1850,27 @@ void Message_Decode(PlayState* play) {
     s32 charTexIdx = 0;
     s16 i;
 #if !(PLATFORM_GC && OOT_PAL)
+#if OOT_NTSC
     s16 j;
+#else
+    STACK_PAD(s16);
+#endif
 #endif
     s16 decodedBufPos = 0;
     s16 numLines = 0;
     s16 digits[4];
-    s32 pad;
+    STACK_PAD(s32);
     s16 playerNameLen;
     s16 loadChar;
     u16 value;
     u8 curChar;
 #if !(PLATFORM_GC && OOT_PAL)
+#if OOT_NTSC
     u16 curCharWide;
     u8* fontBuf;
+#else
+    STACK_PADS(s32, 2);
+#endif
 #endif
 
     msgCtx->textDelayTimer = 0;
@@ -2644,7 +2657,12 @@ void Message_Decode(PlayState* play) {
 }
 
 void Message_OpenText(PlayState* play, u16 textId) {
-    static s16 messageStaticIndices[] = { 0, 1, 3, 2 };
+    static s16 messageStaticIndices[] = {
+        0, // TEXTBOX_TYPE_BLACK
+        1, // TEXTBOX_TYPE_WOODEN
+        3, // TEXTBOX_TYPE_BLUE
+        2, // TEXTBOX_TYPE_OCARINA
+    };
     MessageContext* msgCtx = &play->msgCtx;
     Font* font = &msgCtx->font;
     s16 textBoxType;
@@ -2657,7 +2675,7 @@ void Message_OpenText(PlayState* play, u16 textId) {
         Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_A_HEARTS_MAGIC_FORCE);
     }
 
-    sMessageHasSetSfx = D_8014B2F4 = sTextboxSkipped = sTextIsCredits = 0;
+    sMessageHasSetSfx = sMessageStartFrameCount = sTextboxSkipped = sTextIsCredits = 0;
 
     if (textId >= 0x0500 && textId < 0x0600) { // text ids 0500 to 0600 are reserved for credits
         sTextIsCredits = true;
@@ -2860,7 +2878,7 @@ void Message_ContinueTextbox(PlayState* play, u16 textId) {
     MessageContext* msgCtx = &play->msgCtx;
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
 #if PLATFORM_N64
-    s32 pad2[3];
+    STACK_PADS(s32, 3);
 #endif
 
     PRINTF_COLOR_GREEN();
@@ -3070,7 +3088,7 @@ void Message_DrawTextBox(PlayState* play, Gfx** p) {
     gDPSetPrimColor(gfx++, 0, 0, msgCtx->textboxColorRed, msgCtx->textboxColorGreen, msgCtx->textboxColorBlue,
                     msgCtx->textboxColorAlphaCurrent);
 
-    if (!(msgCtx->textBoxType) || msgCtx->textBoxType == TEXTBOX_TYPE_BLUE) {
+    if (!msgCtx->textBoxType /* TEXTBOX_TYPE_BLACK */ || msgCtx->textBoxType == TEXTBOX_TYPE_BLUE) {
         gDPLoadTextureBlock_4b(gfx++, msgCtx->textboxSegment, G_IM_FMT_I, 128, 64, 0, G_TX_MIRROR, G_TX_NOMIRROR, 7, 0,
                                G_TX_NOLOD, G_TX_NOLOD);
     } else {
@@ -3789,8 +3807,8 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                         T("録音終了！！！！！！！！！録音終了\n", "Recording complete!!!!!!!!! Recording Complete\n"));
                     PRINTF_COLOR_YELLOW();
                     PRINTF("\n====================================================================\n");
-                    MemCpy(gSaveContext.save.info.scarecrowLongSong, gScarecrowLongSongPtr,
-                           sizeof(gSaveContext.save.info.scarecrowLongSong));
+                    MemCopy(gSaveContext.save.info.scarecrowLongSong, gScarecrowLongSongPtr,
+                            sizeof(gSaveContext.save.info.scarecrowLongSong));
                     for (i = 0; i < ARRAY_COUNT(gSaveContext.save.info.scarecrowLongSong); i++) {
                         PRINTF("%d, ", gSaveContext.save.info.scarecrowLongSong[i]);
                     }
@@ -3853,8 +3871,8 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                     SFX_PLAY_CENTERED(NA_SE_SY_TRE_BOX_APPEAR);
                     PRINTF_COLOR_YELLOW();
                     PRINTF("\n====================================================================\n");
-                    MemCpy(gSaveContext.save.info.scarecrowSpawnSong, gScarecrowSpawnSongPtr,
-                           sizeof(gSaveContext.save.info.scarecrowSpawnSong));
+                    MemCopy(gSaveContext.save.info.scarecrowSpawnSong, gScarecrowSpawnSongPtr,
+                            sizeof(gSaveContext.save.info.scarecrowSpawnSong));
                     for (i = 0; i < ARRAY_COUNT(gSaveContext.save.info.scarecrowSpawnSong); i++) {
                         PRINTF("%d, ", gSaveContext.save.info.scarecrowSpawnSong[i]);
                     }
@@ -4119,7 +4137,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
 void Message_DrawDebugVariableChanged(s16* var, GraphicsContext* gfxCtx) {
     static s16 sVarLastValue = 0;
     static s16 sFillTimer = 0;
-    s32 pad;
+    STACK_PAD(s32);
 
     OPEN_DISPS(gfxCtx, "../z_message_PAL.c", 3485);
 
@@ -4146,9 +4164,9 @@ void Message_DrawDebugVariableChanged(s16* var, GraphicsContext* gfxCtx) {
 }
 
 void Message_DrawDebugText(PlayState* play, Gfx** p) {
-    s32 pad;
+    STACK_PAD(s32);
     GfxPrint printer;
-    s32 pad1;
+    STACK_PAD(s32);
 
     GfxPrint_Init(&printer);
     GfxPrint_Open(&printer, *p);
@@ -4210,31 +4228,30 @@ void Message_Update(PlayState* play) {
     static s16 sTextboxEndIconYOffset[] = {
         59, 59, 59, 59, 34, 59,
     };
-    static s16 D_80153D3C[] = {
-        // additional unreferenced data
+    UNUSED static s16 D_80153D3C[] = {
         0x0400, 0x0400, 0x0200, 0x0000, 0x1038, 0x0008, 0x200A, 0x088B, 0x0007, 0x0009, 0x000A, 0x107E, 0x2008, 0x2007,
         0x0015, 0x0016, 0x0017, 0x0003, 0x0000, 0x270B, 0x00C8, 0x012C, 0x012D, 0xFFDA, 0x0014, 0x0016, 0x0014, 0x0016,
     };
 #if OOT_VERSION < GC_US
-    static s32 sUnknown = 0;
+    UNUSED static s32 sUnknown = 0;
 #elif PLATFORM_IQUE
-    static u16 sUnknown = 0;
+    UNUSED static u16 sUnknown = 0;
 #endif
     static char D_80153D74 = 0;
     MessageContext* msgCtx = &play->msgCtx;
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
     Player* player = GET_PLAYER(play);
-    Input* input = &play->state.input[0];
+    UNUSED_NDEBUG Input* input = &play->state.input[0];
     s16 var;
     s16 focusScreenPosX;
     s16 averageY;
     s16 playerFocusScreenPosY;
     s16 actorFocusScreenPosY;
 #if OOT_VERSION < GC_US
-    s32 pad1;
+    STACK_PAD(s32);
 #endif
 #if OOT_NTSC && OOT_VERSION < GC_US
-    s32 pad2;
+    STACK_PAD(s32);
 #endif
 
     if (ENABLE_FAST_TEXT) {
@@ -4274,17 +4291,17 @@ void Message_Update(PlayState* play) {
     if (msgCtx->msgLength != 0) {
         switch (msgCtx->msgMode) {
             case MSGMODE_TEXT_START:
-                D_8014B2F4++;
+                sMessageStartFrameCount++;
 
                 var = false;
                 if (R_SCENE_CAM_TYPE == SCENE_CAM_TYPE_FIXED_MARKET) {
-                    if (D_8014B2F4 >= 4) {
+                    if (sMessageStartFrameCount >= 4) {
                         var = true;
                     }
                 } else if (R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_DEFAULT ||
                            play->sceneId == SCENE_CASTLE_COURTYARD_GUARDS_DAY) {
                     var = true;
-                } else if (D_8014B2F4 >= 4 || msgCtx->talkActor == NULL) {
+                } else if (sMessageStartFrameCount >= 4 || msgCtx->talkActor == NULL) {
                     var = true;
                 }
 

@@ -37,6 +37,7 @@
 #include "printf.h"
 #include "segment_symbols.h"
 #include "stack.h"
+#include "stack_pad.h"
 #include "stackcheck.h"
 #include "terminal.h"
 #include "translation.h"
@@ -132,7 +133,7 @@ s32 DmaMgr_DmaRomToRam(uintptr_t rom, void* ram, size_t size) {
     s32 ret;
     size_t buffSize = gDmaMgrDmaBuffSize;
 #if DEBUG_FEATURES
-    UNUSED s32 pad;
+    STACK_PAD(s32);
 #endif
 
     if (buffSize == 0) {
@@ -178,7 +179,7 @@ s32 DmaMgr_DmaRomToRam(uintptr_t rom, void* ram, size_t size) {
 
     SET_IOMSG(ioMsg, &queue, rom, ram, size);
 
-    { UNUSED s32 pad2; }
+    { STACK_PAD(s32); }
 
     if (gDmaMgrVerbose == 10) {
         PRINTF(T("%10lld ノーマルＤＭＡ %08x %08x %08x (%d)\n", "%10lld Normal DMA %08x %08x %08x (%d)\n"),
@@ -250,7 +251,7 @@ s32 DmaMgr_AudioDmaHandler(OSPiHandle* pihandle, OSIoMesg* mb, s32 direction) {
  */
 void DmaMgr_DmaFromDriveRom(void* ram, uintptr_t rom, size_t size) {
 #if PLATFORM_N64
-    s32 pad;
+    STACK_PAD(s32);
 #endif
     OSPiHandle* handle = osDriveRomInit();
     OSMesgQueue queue;
@@ -325,7 +326,7 @@ NORETURN void DmaMgr_Error(DmaRequest* req, const char* filename, const char* er
  * @param vrom Virtual ROM location
  * @return Pointer to associated filename
  */
-const char* DmaMgr_FindFileName(uintptr_t vrom) {
+const char* DmaMgr_FindFileName(UNUSED_NDEBUG uintptr_t vrom) {
 #if DEBUG_FEATURES
     DmaEntry* iter = gDmaDataTable;
     const char** name = sDmaMgrFileNames;
@@ -349,7 +350,7 @@ const char* DmaMgr_FindFileName(uintptr_t vrom) {
 }
 #endif
 
-const char* DmaMgr_GetFileName(uintptr_t vrom) {
+const char* DmaMgr_GetFileName(UNUSED_NDEBUG uintptr_t vrom) {
 #if PLATFORM_GC && DEBUG_FEATURES
     const char* ret = DmaMgr_FindFileName(vrom);
 
@@ -380,7 +381,9 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
     u8 found = false;
     DmaEntry* iter;
     UNUSED_NDEBUG const char* filename;
+#if !PLATFORM_GC
     s32 i = 0;
+#endif
 
 #if DEBUG_FEATURES
     // Get the filename (for debugging)
@@ -510,7 +513,7 @@ void DmaMgr_ProcessRequest(DmaRequest* req) {
     }
 }
 
-void DmaMgr_ThreadEntry(void* arg) {
+void DmaMgr_ThreadEntry(UNUSED void* arg) {
     OSMesg msg;
     DmaRequest* req;
 
@@ -556,9 +559,9 @@ void DmaMgr_ThreadEntry(void* arg) {
  * @param msg Message to send to `queue` once the transfer is complete.
  * @return 0
  */
-s32 DmaMgr_RequestAsync(DmaRequest* req, void* ram, uintptr_t vrom, size_t size, u32 unk, OSMesgQueue* queue,
+s32 DmaMgr_RequestAsync(DmaRequest* req, void* ram, uintptr_t vrom, size_t size, UNUSED u32 unk, OSMesgQueue* queue,
                         OSMesg msg) {
-    static s32 sDmaMgrQueueFullLogged = 0;
+    UNUSED_NDEBUG static s32 sDmaMgrQueueFullLogged = 0;
 
 #if PLATFORM_IQUE
     PRINTF("dmacopy_bg(%x, %x, %x, %x, %x, %x, %x)\n", req, ram, vrom, size, unk, queue, msg);
@@ -631,9 +634,9 @@ s32 DmaMgr_RequestSync(void* ram, uintptr_t vrom, size_t size) {
 }
 
 void DmaMgr_Init(void) {
-    const char** name;
-    s32 idx;
-    DmaEntry* iter;
+    UNUSED_NDEBUG const char** name;
+    UNUSED_NDEBUG s32 idx;
+    UNUSED_NDEBUG DmaEntry* iter;
 
     // DMA the dma data table to RAM
     DmaMgr_DmaRomToRam((uintptr_t)_dmadataSegmentRomStart, _dmadataSegmentStart,
@@ -709,7 +712,7 @@ s32 DmaMgr_RequestSyncDebug(void* ram, uintptr_t vrom, size_t size, const char* 
     s32 ret;
     OSMesgQueue queue;
     OSMesg msg;
-    s32 pad;
+    STACK_PAD(s32);
 
     req.filename = file;
     req.line = line;
