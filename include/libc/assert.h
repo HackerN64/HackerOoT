@@ -29,6 +29,20 @@ __attribute__((noreturn)) void __assert(const char* assertion, const char* file,
 # define assert(cond) ((void)0)
 #endif
 
+// Standard assert macro with additional message
+// assertf, print a message before abort
+#ifndef NDEBUG
+# define assertf(cond, fmt, ...)                    \
+    do {                                            \
+        if (!(cond)) {                              \
+            PRINTF(fmt, ##__VA_ARGS__);             \
+            __assert(#cond, __FILE__, __LINE__);    \
+        }                                           \
+    } while (0)
+#else
+# define assertf(cond, fmt, ...) ((void)0)
+#endif
+
 // Static/compile-time assertions
 
 #if !defined(__sgi) && (__GNUC__ >= 5 || __STDC_VERSION__ >= 201112L)

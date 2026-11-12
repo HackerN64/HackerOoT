@@ -167,6 +167,12 @@ typedef struct ActorShape {
 // Note: Not implemented yet.
 #define ACTOR_FLAG_FREEZE_EXCEPTION (1 << 29)
 
+// Custom flag: determines whether an actor should use ucode point lights. This is needed for F3DEX2 since ucode point
+// lights require cooperation from the display lists that are drawn with them. This actor flag indicates that the
+// display lists for the actor are compatible with ucode point lights.
+// NOTE that this is distinct from and overrides the behavior of ACTOR_FLAG_IGNORE_POINT_LIGHTS.
+#define ACTOR_FLAG_REAL_POINT_LIGHTS (1 << 30)
+
 #define ACTOR_FLAGS_CHECK_ALL(thisx, mask) (((thisx)->flags & (mask)) == (mask))
 
 #define COLORFILTER_GET_COLORINTENSITY(colorFilterParams) (((colorFilterParams) & 0x1F00) >> 5)

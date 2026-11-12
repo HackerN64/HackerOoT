@@ -131,7 +131,7 @@ void ActorShadow_DrawHorse(Actor* actor, Lights* lights, PlayState* play) {
     ActorShadow_Draw(actor, lights, play, gHorseShadowDL, NULL);
 }
 
-void ActorShadow_DrawFoot(PlayState* play, Light* light, MtxF* arg2, s32 arg3, f32 arg4, f32 arg5, f32 arg6) {
+void ActorShadow_DrawFoot(PlayState* play, s8* lightDir, MtxF* arg2, s32 arg3, f32 arg4, f32 arg5, f32 arg6) {
     s32 pad1;
     f32 sp58;
     f32 temp;
@@ -142,11 +142,9 @@ void ActorShadow_DrawFoot(PlayState* play, Light* light, MtxF* arg2, s32 arg3, f
     temp = arg3 * 0.00005f;
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 0, 0, 0, (u32)(arg4 * (temp > 1.0f ? 1.0f : temp)) & 0xFF);
 
-    sp58 = Math_FAtan2F(light->l.dir[0], light->l.dir[2]);
-    arg6 *= (4.5f - (light->l.dir[1] * 0.035f));
-    if (arg6 < 1.0f) {
-        arg6 = 1.0f;
-    }
+    sp58 = Math_FAtan2F(lightDir[0], lightDir[2]);
+    arg6 *= (4.5f - (lightDir[1] * 0.035f));
+    arg6 = (arg6 < 1.0f) ? 1.0f : arg6;
     Matrix_Put(arg2);
     Matrix_RotateY(sp58, MTXMODE_APPLY);
     Matrix_Scale(arg5, 1.0f, arg5 * arg6, MTXMODE_APPLY);
@@ -221,13 +219,15 @@ void ActorShadow_DrawFeet(Actor* actor, Lights* lights, PlayState* play) {
                 lightNumMax = 0;
                 lightPtr = firstLightPtr;
 
+                s8 lightDir[3];
+                Lights_GetDirection(lightPtr, &actor->world.pos, lightDir);
+
                 for (j = 0; j < numLights; j++) {
-                    if (lightPtr->l.dir[1] > 0) {
-                        lightNum =
-                            (lightPtr->l.col[0] + lightPtr->l.col[1] + lightPtr->l.col[2]) * ABS(lightPtr->l.dir[1]);
+                    if (lightDir[1] > 0) {
+                        lightNum = (lightPtr->l.col[0] + lightPtr->l.col[1] + lightPtr->l.col[2]) * ABS(lightDir[1]);
                         if (lightNum > 0) {
                             lightNumMax += lightNum;
-                            ActorShadow_DrawFoot(play, lightPtr, &floorMtx, lightNum, shadowAlpha, shadowScaleX,
+                            ActorShadow_DrawFoot(play, lightDir, &floorMtx, lightNum, shadowAlpha, shadowScaleX,
                                                  shadowScaleZ);
                         }
                     }
@@ -235,12 +235,11 @@ void ActorShadow_DrawFeet(Actor* actor, Lights* lights, PlayState* play) {
                 }
 
                 for (j = 0; j < 2; j++) {
-                    if (lightPtr->l.dir[1] > 0) {
-                        lightNum =
-                            ((lightPtr->l.col[0] + lightPtr->l.col[1] + lightPtr->l.col[2]) * ABS(lightPtr->l.dir[1])) -
-                            (lightNumMax * 8);
+                    if (lightDir[1] > 0) {
+                        lightNum = ((lightPtr->l.col[0] + lightPtr->l.col[1] + lightPtr->l.col[2]) * ABS(lightDir[1])) -
+                                   (lightNumMax * 8);
                         if (lightNum > 0) {
-                            ActorShadow_DrawFoot(play, lightPtr, &floorMtx, lightNum, shadowAlpha, shadowScaleX,
+                            ActorShadow_DrawFoot(play, lightDir, &floorMtx, lightNum, shadowAlpha, shadowScaleX,
                                                  shadowScaleZ);
                         }
                     }
@@ -2609,12 +2608,6 @@ void Actor_Draw(PlayState* play, Actor* actor) {
 
     OPEN_DISPS(play->state.gfxCtx, "../z_actor.c", 6035);
 
-    lights = LightContext_NewLights(&play->lightCtx, play->state.gfxCtx);
-
-    Lights_BindAll(lights, play->lightCtx.listHead,
-                   (actor->flags & ACTOR_FLAG_IGNORE_POINT_LIGHTS) ? NULL : &actor->world.pos);
-    Lights_Draw(lights, play->state.gfxCtx);
-
     if (actor->flags & ACTOR_FLAG_IGNORE_QUAKE) {
         Matrix_SetTranslateRotateYXZ(actor->world.pos.x + play->mainCamera.quakeOffset.x,
                                      actor->world.pos.y +
@@ -2637,6 +2630,15 @@ void Actor_Draw(PlayState* play, Actor* actor) {
     gSPSegment(POLY_OPA_DISP++, 0x06, slots[actor->objectSlot].segment);
     gSPSegment(POLY_XLU_DISP++, 0x06, slots[actor->objectSlot].segment);
 #endif
+
+    // Whether to use ucode point lights. This is always possible for F3DEX3 while for F3DEX2 it requires that the
+    // actor's display lists be compatible with point lighting.
+    s32 useUcodePointLights = ENABLE_F3DEX3 || !!(actor->flags & ACTOR_FLAG_REAL_POINT_LIGHTS);
+    // Whether to use a reference position for the actor. Done if using ucode point lights or the actor does not ignore
+    // "fake" point lights.
+    s32 useRefPos = useUcodePointLights || !(actor->flags & ACTOR_FLAG_IGNORE_POINT_LIGHTS);
+
+    lights = Lights_BindAndDraw(play, useRefPos ? &actor->world.pos : NULL, useUcodePointLights);
 
     if (actor->colorFilterTimer != 0) {
         Color_RGBA8 color = { 0, 0, 0, 255 };
@@ -2669,6 +2671,8 @@ void Actor_Draw(PlayState* play, Actor* actor) {
     if (actor->shape.shadowDraw != NULL) {
         actor->shape.shadowDraw(actor, lights, play);
     }
+
+    Lights_Pop(play);
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_actor.c", 6119);
 
